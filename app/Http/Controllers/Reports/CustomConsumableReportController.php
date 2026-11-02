@@ -73,7 +73,7 @@ class CustomConsumableReportController extends Controller
             $headerRow = $this->generateHeaders($request, $mappings);
 
             Log::debug('Adding headers: '.$this->getExecutionTime());
-            fputcsv($handle, $headerRow, escape: '\\');
+            fputcsv($handle, $headerRow, escape: '\\', eol: "\r\n");
             Log::debug('Added headers: '.$this->getExecutionTime());
 
             $this->buildQuery($request)->orderBy('consumables.id', 'ASC')->chunk(500, function ($consumables) use ($handle, $request, $mappings) {
@@ -99,11 +99,11 @@ class CustomConsumableReportController extends Controller
 
                         // CSV_ESCAPE_FORMULAS is set to false in the .env
                         if (config('app.escape_formulas') === false) {
-                            fputcsv($handle, $row, escape: '\\');
+                            fputcsv($handle, $row, escape: '\\', eol: "\r\n");
 
                             // CSV_ESCAPE_FORMULAS is set to true or is not set in the .env
                         } else {
-                            fputcsv($handle, $formatter->escapeRecord($row), escape: '\\');
+                            fputcsv($handle, $formatter->escapeRecord($row), escape: '\\', eol: "\r\n");
                         }
 
                         Log::debug('-- Record '.$count.' Consumable ID:'.$consumable->id.' in '.$this->getExecutionTime());
@@ -293,7 +293,7 @@ class CustomConsumableReportController extends Controller
                 'orderItems.order.supplier',
             ]);
 
-        $request->whenFilled('include_assignments', fn() => $query->with('users.companies'));
+        $request->whenFilled('include_assignments', fn () => $query->with('users.companies'));
 
         $query = $this->appendLocalConstraints($query, $request, [
             'by_model_number' => 'consumables.model_number',

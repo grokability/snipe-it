@@ -8,14 +8,14 @@ use App\Models\Statuslabel;
 use App\Models\SyncAdapterConfig;
 use App\Models\SyncAdapterInstance;
 use App\SyncAdapters\Jamf\JamfAdapter;
-use App\SyncAdapters\PushableAdapter;
+use App\SyncAdapters\PushableSyncAdapter;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 /**
  * End-to-end coverage for the Jamf Pro push path. Verifies the
- * PushableAdapter interface, the PATCH payload shape (asset_tag
+ * PushableSyncAdapter interface, the PATCH payload shape (asset_tag
  * writes to general.assetTag per Jamf's ComputerGeneralUpdate
  * schema), and dry-run behavior.
  */
@@ -29,7 +29,7 @@ class JamfPushTest extends TestCase
 
     public function test_jamf_adapter_implements_pushable_interface()
     {
-        $this->assertInstanceOf(PushableAdapter::class, $this->configuredJamf());
+        $this->assertInstanceOf(PushableSyncAdapter::class, $this->configuredJamf());
     }
 
     public function test_push_asset_tag_writes_to_general_asset_tag_path()

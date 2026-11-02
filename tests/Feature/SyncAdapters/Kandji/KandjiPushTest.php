@@ -7,7 +7,7 @@ use App\Models\Statuslabel;
 use App\Models\SyncAdapterConfig;
 use App\Models\SyncAdapterInstance;
 use App\SyncAdapters\Kandji\KandjiAdapter;
-use App\SyncAdapters\PushableAdapter;
+use App\SyncAdapters\PushableSyncAdapter;
 use App\SyncAdapters\SyncAdapter;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
@@ -15,7 +15,7 @@ use Tests\TestCase;
 
 /**
  * End-to-end coverage for the Kandji push path. Verifies the mapping
- * table's direction column, PushableAdapter dispatch, and the actual
+ * table's direction column, PushableSyncAdapter dispatch, and the actual
  * PATCH shape (form-encoded asset_tag) that goes to Kandji.
  */
 class KandjiPushTest extends TestCase
@@ -30,7 +30,7 @@ class KandjiPushTest extends TestCase
     {
         $adapter = $this->configuredKandji();
 
-        $this->assertInstanceOf(PushableAdapter::class, $adapter);
+        $this->assertInstanceOf(PushableSyncAdapter::class, $adapter);
     }
 
     public function test_push_asset_tag_sends_patch_to_kandji()

@@ -4,8 +4,8 @@ namespace App\SyncAdapters\Jamf;
 
 use App\Models\Asset;
 use App\SyncAdapters\HostInventoryRecord;
-use App\SyncAdapters\PushableAdapter;
-use App\SyncAdapters\SyncAdapter;
+use App\SyncAdapters\PushableSyncAdapter;
+use App\SyncAdapters\Traits\UsesAppleDbEnrichment;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 
@@ -19,8 +19,10 @@ use Illuminate\Support\Arr;
  * /api/v1/computers-inventory-detail/{id} PATCH endpoint using the
  * same exchanged bearer.
  */
-class JamfAdapter extends SyncAdapter implements PushableAdapter
+class JamfAdapter extends PushableSyncAdapter
 {
+    use UsesAppleDbEnrichment;
+
     public static function typeLabel(): string
     {
         return 'Jamf Pro';
@@ -62,12 +64,14 @@ class JamfAdapter extends SyncAdapter implements PushableAdapter
                 'required' => false,
                 'help' => trans('admin/settings/sync_adapters.jamf_include_mobile_devices_help'),
             ],
+            $this->appleDbSettingsField(),
         ];
     }
 
     public function extraFields(): array
     {
         return [
+            ...$this->appleDbExtraFieldsDeclaration(),
             'jamf_udid' => ['label_key' => 'admin/settings/sync_adapters.extra_udid'],
             'jamf_last_enrolled' => ['label_key' => 'admin/settings/sync_adapters.extra_last_enrolled', 'type' => 'date'],
             'jamf_model_identifier' => ['label_key' => 'admin/settings/sync_adapters.extra_model_identifier'],
@@ -115,15 +119,52 @@ class JamfAdapter extends SyncAdapter implements PushableAdapter
             clientSecret: $this->credential('client_secret'),
         );
 
+        $enrichmentEnabled = $this->appleDbEnrichmentEnabled();
+        $enrichmentHandled = [];
+
         foreach ($client->computers() as $computer) {
-            yield $this->normalizeComputer($computer);
+            $record = $this->normalizeComputer($computer);
+            if ($enrichmentEnabled) {
+                $enrichmentHandled = $this->enrichFromAppleDb($record, $enrichmentHandled);
+            }
+            yield $record;
         }
 
         if ($this->shouldPullMobileDevices()) {
             foreach ($client->mobileDevices() as $device) {
-                yield $this->normalizeMobileDevice($device);
+                $record = $this->normalizeMobileDevice($device);
+                if ($enrichmentEnabled) {
+                    $enrichmentHandled = $this->enrichFromAppleDb($record, $enrichmentHandled);
+                }
+                yield $record;
             }
         }
+    }
+
+    /**
+     * Pass the Jamf record to the shared enrichment flow. Both the
+     * computer and mobile normalize paths put the AppleDB-shape
+     * hardware identifier into jamf_model_identifier, so the lookup
+     * is unified here. hardwareModel ends up as the AssetModel name
+     * (Jamf's model string is already the marketing-ish shape
+     * admins see in Snipe-IT today).
+     *
+     * @param  array<string, bool>  $handled
+     * @return array<string, bool>
+     */
+    private function enrichFromAppleDb(HostInventoryRecord $record, array $handled): array
+    {
+        $modelName = $record->hardwareModel;
+        if (! is_string($modelName) || $modelName === '') {
+            return $handled;
+        }
+
+        $productType = $record->extra['jamf_model_identifier'] ?? null;
+        if (! is_string($productType) || $productType === '') {
+            return $handled;
+        }
+
+        return $this->enrichModelFromAppleDb($modelName, $productType, null, $handled);
     }
 
     /**
@@ -159,6 +200,11 @@ class JamfAdapter extends SyncAdapter implements PushableAdapter
      */
     private function normalizeComputer(array $computer): HostInventoryRecord
     {
+        $productType = Arr::get($computer, 'hardware.modelIdentifier');
+        $modelName = Arr::get($computer, 'hardware.model');
+        $canonical = $this->canonicalIdentityFor($productType, $modelName);
+        $appleDbExtras = $this->appleDbExtrasFor($productType, $modelName);
+
         return new HostInventoryRecord(
             sourceKey: $this->name(),
             sourceId: (string) Arr::get($computer, 'id'),
@@ -176,10 +222,13 @@ class JamfAdapter extends SyncAdapter implements PushableAdapter
             assignedUserName: Arr::get($computer, 'userAndLocation.username'),
             vendorGroupId: Arr::has($computer, 'general.site.id') ? (string) Arr::get($computer, 'general.site.id') : null,
             extra: [
+                ...$appleDbExtras,
                 'jamf_udid' => Arr::get($computer, 'udid'),
                 'jamf_last_enrolled' => Arr::get($computer, 'general.lastEnrolledDate'),
                 'jamf_model_identifier' => Arr::get($computer, 'hardware.modelIdentifier'),
             ],
+            canonicalMarketingName: $canonical['canonicalMarketingName'],
+            canonicalModelNumber: $canonical['canonicalModelNumber'],
         );
     }
 
@@ -197,6 +246,10 @@ class JamfAdapter extends SyncAdapter implements PushableAdapter
     private function normalizeMobileDevice(array $device): HostInventoryRecord
     {
         $sourceId = 'mobile:'.(string) Arr::get($device, 'id');
+        $productType = Arr::get($device, 'modelIdentifier');
+        $modelName = Arr::get($device, 'model');
+        $canonical = $this->canonicalIdentityFor($productType, $modelName);
+        $appleDbExtras = $this->appleDbExtrasFor($productType, $modelName);
 
         return new HostInventoryRecord(
             sourceKey: $this->name(),
@@ -215,12 +268,15 @@ class JamfAdapter extends SyncAdapter implements PushableAdapter
             assignedUserName: Arr::get($device, 'location.username'),
             vendorGroupId: Arr::has($device, 'site.id') ? (string) Arr::get($device, 'site.id') : null,
             extra: [
+                ...$appleDbExtras,
                 'jamf_udid' => Arr::get($device, 'udid'),
                 'jamf_model_identifier' => Arr::get($device, 'modelIdentifier'),
                 'jamf_mobile_device_type' => Arr::get($device, 'deviceType'),
                 'jamf_mobile_managed' => Arr::get($device, 'managed'),
                 'jamf_mobile_supervised' => Arr::get($device, 'supervised'),
             ],
+            canonicalMarketingName: $canonical['canonicalMarketingName'],
+            canonicalModelNumber: $canonical['canonicalModelNumber'],
         );
     }
 

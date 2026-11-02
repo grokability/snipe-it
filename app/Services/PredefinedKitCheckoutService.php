@@ -240,7 +240,13 @@ class PredefinedKitCheckoutService
                         continue;
                     }
 
-                    $error = $asset->checkOut($user, $admin, $checkout_at, $expected_checkin, $note, null);
+                    // Pass the current name as the override so Asset::checkOut()
+                    // does not null it out. The sixth arg is the admin-provided
+                    // rename-at-checkout value and the method assigns it to
+                    // $this->name unconditionally. Kit checkout has no form
+                    // field for renaming, so passing the existing name
+                    // preserves the asset's name across the save.
+                    $error = $asset->checkOut($user, $admin, $checkout_at, $expected_checkin, $note, $asset->name);
                     if ($error) {
                         array_merge_recursive($errors, $asset->getErrors()->toArray());
                     }

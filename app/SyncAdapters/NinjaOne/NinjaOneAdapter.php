@@ -4,7 +4,7 @@ namespace App\SyncAdapters\NinjaOne;
 
 use App\Models\Asset;
 use App\SyncAdapters\HostInventoryRecord;
-use App\SyncAdapters\PushableAdapter;
+use App\SyncAdapters\PushableSyncAdapter;
 use App\SyncAdapters\SyncAdapter;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Log;
  * the admin puts in the "Asset Tag Custom Field Name" schema slot. If
  * empty, push silently no-ops (nothing to write to).
  */
-class NinjaOneAdapter extends SyncAdapter implements PushableAdapter
+class NinjaOneAdapter extends PushableSyncAdapter
 {
     public static function typeLabel(): string
     {

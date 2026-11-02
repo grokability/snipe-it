@@ -5,7 +5,6 @@ namespace App\Models\Traits;
 use App\Enums\CheckoutRequestState;
 use App\Models\CheckoutRequest;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 // $asset->requests
@@ -125,6 +124,12 @@ trait Requestable
      * prevents already-terminal rows (fulfilled/canceled) from
      * getting their canceled_at bumped, and prevents no-op
      * cancellations from looking like real events downstream.
+     *
+     * Iterate + save (via cancelAndSync) rather than a query-builder
+     * ->update() so the HasCalendarEvents observer fires per row and
+     * the matching calendar_events index row gets cleaned up. The
+     * cancel count on this path is small (one requester's open
+     * requests for one item) so the N+1 shape is deliberate.
      */
     public function cancelRequest($user_id = null): int
     {
@@ -132,13 +137,20 @@ trait Requestable
             $user_id = auth()->id();
         }
 
-        return $this->requests()
+        $pending = $this->requests()
             ->where('user_id', $user_id)
             ->where('state', CheckoutRequestState::Pending->value)
-            ->update([
-                'state' => CheckoutRequestState::Canceled->value,
-                'canceled_at' => Carbon::now(),
-            ]);
+            ->get();
+
+        $affected = 0;
+        /** @var CheckoutRequest $request */
+        foreach ($pending as $request) {
+            if ($request->cancelAndSync()) {
+                $affected++;
+            }
+        }
+
+        return $affected;
     }
 
     /**

@@ -8,7 +8,7 @@ use App\Models\Statuslabel;
 use App\Models\SyncAdapterConfig;
 use App\Models\SyncAdapterInstance;
 use App\SyncAdapters\GoogleWorkspace\GoogleWorkspaceAdapter;
-use App\SyncAdapters\PushableAdapter;
+use App\SyncAdapters\PushableSyncAdapter;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -41,7 +41,7 @@ class GoogleWorkspacePushTest extends TestCase
 
     public function test_adapter_implements_pushable_interface(): void
     {
-        $this->assertInstanceOf(PushableAdapter::class, $this->configuredAdapter());
+        $this->assertInstanceOf(PushableSyncAdapter::class, $this->configuredAdapter());
     }
 
     public function test_composed_notes_template_patches_google_chrome_device(): void

@@ -4,7 +4,7 @@ namespace App\SyncAdapters\WorkspaceOne;
 
 use App\Models\Asset;
 use App\SyncAdapters\HostInventoryRecord;
-use App\SyncAdapters\PushableAdapter;
+use App\SyncAdapters\PushableSyncAdapter;
 use App\SyncAdapters\SyncAdapter;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\Log;
  * sibling with a different schema is the right shape rather than
  * making this schema conditional on auth mode.
  */
-class WorkspaceOneAdapter extends SyncAdapter implements PushableAdapter
+class WorkspaceOneAdapter extends PushableSyncAdapter
 {
     public static function typeLabel(): string
     {

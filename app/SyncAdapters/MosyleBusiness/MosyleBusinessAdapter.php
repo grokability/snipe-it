@@ -4,8 +4,8 @@ namespace App\SyncAdapters\MosyleBusiness;
 
 use App\Models\Asset;
 use App\SyncAdapters\HostInventoryRecord;
-use App\SyncAdapters\PushableAdapter;
-use App\SyncAdapters\SyncAdapter;
+use App\SyncAdapters\PushableSyncAdapter;
+use App\SyncAdapters\Traits\UsesAppleDbEnrichment;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -27,8 +27,10 @@ use Illuminate\Support\Facades\Log;
  * field. This adapter wires that up through the composed-notes
  * framework.
  */
-class MosyleBusinessAdapter extends SyncAdapter implements PushableAdapter
+class MosyleBusinessAdapter extends PushableSyncAdapter
 {
+    use UsesAppleDbEnrichment;
+
     public static function typeLabel(): string
     {
         return 'Mosyle Business';
@@ -69,6 +71,7 @@ class MosyleBusinessAdapter extends SyncAdapter implements PushableAdapter
                 'secret' => true,
                 'help' => trans('admin/settings/sync_adapters.mosyle_business_password_help'),
             ],
+            $this->appleDbSettingsField(),
         ];
     }
 
@@ -81,6 +84,7 @@ class MosyleBusinessAdapter extends SyncAdapter implements PushableAdapter
     public function extraFields(): array
     {
         return [
+            ...$this->appleDbExtraFieldsDeclaration(),
             // Hardware / inventory
             'mosyle_battery' => ['label_key' => 'admin/settings/sync_adapters.mosyle_extra_battery'],
             'mosyle_total_disk' => ['label_key' => 'admin/settings/sync_adapters.mosyle_extra_total_disk'],
@@ -120,6 +124,7 @@ class MosyleBusinessAdapter extends SyncAdapter implements PushableAdapter
             'mosyle_latitude' => ['label_key' => 'admin/settings/sync_adapters.mosyle_extra_latitude'],
             'mosyle_longitude' => ['label_key' => 'admin/settings/sync_adapters.mosyle_extra_longitude'],
             'mosyle_altitude' => ['label_key' => 'admin/settings/sync_adapters.mosyle_extra_altitude'],
+            'mosyle_device_model' => ['label_key' => 'admin/settings/sync_adapters.extra_model_identifier'],
         ];
     }
 
@@ -127,9 +132,40 @@ class MosyleBusinessAdapter extends SyncAdapter implements PushableAdapter
     {
         $client = $this->makeClient();
 
+        $enrichmentEnabled = $this->appleDbEnrichmentEnabled();
+        $enrichmentHandled = [];
+
         foreach ($client->devices() as $device) {
-            yield $this->normalize($device);
+            $record = $this->normalize($device);
+            if ($enrichmentEnabled) {
+                $enrichmentHandled = $this->enrichFromAppleDb($record, $enrichmentHandled);
+            }
+            yield $record;
         }
+    }
+
+    /**
+     * Pass the Mosyle Business record to the shared enrichment flow.
+     * Business and Manager share field semantics: `device_model` is
+     * the AppleDB identifier shape ("iPad12,1" per the Business API
+     * reference), `device_model_name` is the marketing shape.
+     *
+     * @param  array<string, bool>  $handled
+     * @return array<string, bool>
+     */
+    private function enrichFromAppleDb(HostInventoryRecord $record, array $handled): array
+    {
+        $modelName = $record->hardwareModel;
+        if (! is_string($modelName) || $modelName === '') {
+            return $handled;
+        }
+
+        $productType = $record->extra['mosyle_device_model'] ?? null;
+        if (! is_string($productType) || $productType === '') {
+            return $handled;
+        }
+
+        return $this->enrichModelFromAppleDb($modelName, $productType, null, $handled);
     }
 
     /**
@@ -142,12 +178,17 @@ class MosyleBusinessAdapter extends SyncAdapter implements PushableAdapter
      */
     private function normalize(array $device): HostInventoryRecord
     {
+        $productType = Arr::get($device, 'device_model');
+        $modelName = Arr::get($device, 'device_model_name') ?? $productType;
+        $canonical = $this->canonicalIdentityFor($productType, $modelName);
+        $appleDbExtras = $this->appleDbExtrasFor($productType, $modelName);
+
         return new HostInventoryRecord(
             sourceKey: $this->name(),
             sourceId: (string) Arr::get($device, 'deviceudid'),
             hostname: Arr::get($device, 'device_name'),
             hardwareSerial: Arr::get($device, 'serial_number'),
-            hardwareModel: Arr::get($device, 'device_model_name') ?? Arr::get($device, 'device_model'),
+            hardwareModel: $modelName,
             manufacturer: 'Apple',
             primaryMac: Arr::get($device, 'wifi_mac_address'),
             primaryIp: Arr::get($device, 'last_lan_ip'),
@@ -158,6 +199,7 @@ class MosyleBusinessAdapter extends SyncAdapter implements PushableAdapter
             assignedUserEmail: Arr::get($device, 'useremail'),
             assignedUserName: Arr::get($device, 'username'),
             extra: [
+                ...$appleDbExtras,
                 // Hardware / inventory
                 'mosyle_battery' => Arr::get($device, 'battery'),
                 'mosyle_total_disk' => Arr::get($device, 'total_disk'),
@@ -197,7 +239,10 @@ class MosyleBusinessAdapter extends SyncAdapter implements PushableAdapter
                 'mosyle_latitude' => Arr::get($device, 'latitude'),
                 'mosyle_longitude' => Arr::get($device, 'longitude'),
                 'mosyle_altitude' => Arr::get($device, 'altitude'),
+                'mosyle_device_model' => $productType,
             ],
+            canonicalMarketingName: $canonical['canonicalMarketingName'],
+            canonicalModelNumber: $canonical['canonicalModelNumber'],
         );
     }
 

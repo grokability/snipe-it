@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Actionlog;
 use App\SyncAdapters\SyncErrorFormatter;
 use App\Traits\LocksLongRunningOperation;
+use App\SyncAdapters\PushableSyncAdapter;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -393,7 +394,7 @@ class SyncAdapterController extends Controller
     /**
      * Push Snipe-IT-authoritative fields to the vendor for every asset
      * already linked to this adapter instance. Only meaningful for
-     * adapters that implement PushableAdapter. Iterates the instance's
+     * adapters that implement PushableSyncAdapter. Iterates the instance's
      * asset_external_sources rows so we only touch assets the vendor
      * actually knows about. A fresh Snipe-IT asset that's never been
      * synced from this instance gets no push (we'd have no vendor id
@@ -410,7 +411,7 @@ class SyncAdapterController extends Controller
         // Hidden mirror from the panel's push-dry-run checkbox so the
         // admin's live intent is honored for this one click without
         // needing to Save the config form first.
-        if ($request->has('dry_run_override')) {
+        if ($request->has('dry_run_override') && $adapter instanceof PushableSyncAdapter) {
             $adapter->withPushDryRunOverride($request->boolean('dry_run_override'));
         }
 
@@ -420,7 +421,7 @@ class SyncAdapterController extends Controller
         // nothing. The flash message alone is one-shot and vanishes on
         // reload or on the next action - admins need something they
         // can go back and read.
-        if (! $adapter instanceof \App\SyncAdapters\PushableAdapter) {
+        if (!$adapter instanceof \App\SyncAdapters\PushableSyncAdapter) {
             $message = trans('admin/settings/sync_adapters.push_not_supported');
             $this->captureSyncRunLog($instance->slug, 'push', function () use ($instance, $message) {
                 Log::channel('sync-adapters')->warning($instance->slug.' push aborted before run: push_not_supported - '.$message);
@@ -771,7 +772,7 @@ class SyncAdapterController extends Controller
     public function postPreviewPushPayload(\App\Models\SyncAdapterInstance $instance): JsonResponse
     {
         $adapter = $instance->adapter();
-        if (! $adapter instanceof \App\SyncAdapters\PushableAdapter) {
+        if (!$adapter instanceof \App\SyncAdapters\PushableSyncAdapter) {
             return response()->json(['error' => trans('admin/settings/sync_adapters.push_not_supported')], 400);
         }
         if (! $adapter->isEnabled()) {
@@ -797,7 +798,7 @@ class SyncAdapterController extends Controller
         ];
 
         // Keep the method_exists check: peekPushPayload lives on
-        // CustomHttpAdapter today, not on the PushableAdapter
+        // CustomHttpAdapter today, not on the PushableSyncAdapter
         // interface. Other adapters fall back to the dry-run log
         // capture below.
         if (method_exists($adapter, 'peekPushPayload')) {
@@ -834,7 +835,7 @@ class SyncAdapterController extends Controller
     public function postTest1Push(\App\Models\SyncAdapterInstance $instance): JsonResponse
     {
         $adapter = $instance->adapter();
-        if (! $adapter instanceof \App\SyncAdapters\PushableAdapter) {
+        if (!$adapter instanceof \App\SyncAdapters\PushableSyncAdapter) {
             return response()->json(['error' => trans('admin/settings/sync_adapters.push_not_supported')], 400);
         }
         if (! $adapter->isEnabled()) {

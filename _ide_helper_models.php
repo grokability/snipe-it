@@ -317,6 +317,7 @@ namespace App\Models{
  * @property \Carbon\Carbon|string|null $last_checkin
  * @property bool $requestable
  * @property Asset|Location|User|null $assigned Current checkout target. morphTo relation named `assigned` (declared on method `assignedTo()`). Eloquent resolves the dynamic property by the morphTo name arg, not the method name, so this `@property` is distinct from `@property ... $assignedTo` written by ide-helper.
+ * @property Asset|Location|User|null $assignedTo Current checkout target. morphTo relation named `assigned` (declared on method `assignedTo()`). Eloquent resolves the dynamic property by the morphTo name arg, not the method name, so this `@property` is distinct from `@property ... $assigned` written by ide-helper.
  * @property int $id
  * @property string|null $name
  * @property string|null $asset_tag
@@ -375,7 +376,6 @@ namespace App\Models{
  * @property-read int|null $assigned_accessories_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Asset> $assignedAssets
  * @property-read int|null $assigned_assets_count
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $assignedTo
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CalendarEvent> $calendarEvents
  * @property-read int|null $calendar_events_count
  * @property-read \App\Models\Category|null $category
@@ -610,6 +610,9 @@ namespace App\Models{
  * @version v1.0
  * @property int $id
  * @property string $name
+ * @property string|null $mfg_marketing_name
+ * @property \Illuminate\Support\Carbon|null $mfg_release_date
+ * @property \Illuminate\Support\Carbon|null $mfg_discontinued_date
  * @property string|null $tag_slug
  * @property string|null $model_number
  * @property string|null $hardware_identifier
@@ -702,6 +705,9 @@ namespace App\Models{
  * @method static \App\Models\Builders\AssetModelQueryBuilder<static>|AssetModel whereId($value)
  * @method static \App\Models\Builders\AssetModelQueryBuilder<static>|AssetModel whereImage($value)
  * @method static \App\Models\Builders\AssetModelQueryBuilder<static>|AssetModel whereManufacturerId($value)
+ * @method static \App\Models\Builders\AssetModelQueryBuilder<static>|AssetModel whereMfgDiscontinuedDate($value)
+ * @method static \App\Models\Builders\AssetModelQueryBuilder<static>|AssetModel whereMfgMarketingName($value)
+ * @method static \App\Models\Builders\AssetModelQueryBuilder<static>|AssetModel whereMfgReleaseDate($value)
  * @method static \App\Models\Builders\AssetModelQueryBuilder<static>|AssetModel whereMinAmt($value)
  * @method static \App\Models\Builders\AssetModelQueryBuilder<static>|AssetModel whereModelNumber($value)
  * @method static \App\Models\Builders\AssetModelQueryBuilder<static>|AssetModel whereName($value)
@@ -2971,6 +2977,48 @@ namespace App\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperSamlNonce {}
+}
+
+namespace App\Models{
+/**
+ * Named filter-preset for a listing page's advanced-search. Each
+ * record stores a URL query string (filter[.
+ *
+ * ..] + filter_operator)
+ * captured from the advanced-search modal. Loading a saved search
+ * means navigating back to the originating listing route with the
+ * stored query string re-attached. Private to the creator for v1
+ * (no sharing/default yet).
+ *
+ * table_name holds the bs-table idTable (e.g. 'accessoriesListingTable')
+ * so a single table's saved-searches dropdown only lists its own.
+ *
+ * @property int $id
+ * @property int $created_by
+ * @property string $table_name
+ * @property string|null $model
+ * @property string $name
+ * @property string $query_string
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $creator
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch forTable(string $tableName)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch ownedByCurrent()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch whereModel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch whereQueryString($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch whereTableName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SavedSearch whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperSavedSearch {}
 }
 
 namespace App\Models{

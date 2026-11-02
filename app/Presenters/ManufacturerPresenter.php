@@ -162,7 +162,7 @@ class ManufacturerPresenter extends Presenter
             ], [
                 'field' => 'created_by',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.created_by'),
                 'visible' => false,

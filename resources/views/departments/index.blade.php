@@ -20,6 +20,7 @@
             <x-table
                     name="department"
                     show_column_search="false"
+                    show_advanced_search="true"
                     buttons="departmentButtons"
                     fixed_right_number="1"
                     fixed_number="1"
@@ -35,4 +36,8 @@
 @section('moar_scripts')
     @include ('partials.bootstrap-table')
 
+    <x-table.advanced-search
+        tableId="departmentListingTable"
+        :model="\App\Models\Department::class"
+    />
 @stop

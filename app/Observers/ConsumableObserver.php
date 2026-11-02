@@ -2,7 +2,6 @@
 
 namespace App\Observers;
 
-use App\Enums\CheckoutRequestState;
 use App\Models\Actionlog;
 use App\Models\CheckoutAcceptance;
 use App\Models\CheckoutRequest;
@@ -51,11 +50,7 @@ class ConsumableObserver
 
         // Archive-time request cleanup.
         if ($consumable->wasChanged('archived') && $consumable->archived) {
-            $consumable->openRequests()->get()->each(function (CheckoutRequest $request): void {
-                $request->canceled_at = now();
-                $request->state = CheckoutRequestState::Canceled;
-                $request->saveQuietly();
-            });
+            $consumable->openRequests()->get()->each(fn (CheckoutRequest $request) => $request->cancelAndSync());
         }
     }
 
@@ -94,11 +89,7 @@ class ConsumableObserver
             ->where('checkoutable_id', $consumable->id)
             ->delete();
 
-        $consumable->openRequests()->get()->each(function (CheckoutRequest $request): void {
-            $request->canceled_at = now();
-            $request->state = CheckoutRequestState::Canceled;
-            $request->saveQuietly();
-        });
+        $consumable->openRequests()->get()->each(fn (CheckoutRequest $request) => $request->cancelAndSync());
 
         $logAction = new Actionlog;
         $logAction->item_type = Consumable::class;

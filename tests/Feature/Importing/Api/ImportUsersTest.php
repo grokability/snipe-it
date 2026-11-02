@@ -577,17 +577,7 @@ class ImportUsersTest extends ImportDataTestCase implements TestsPermissionsRequ
 
         $this->assertEquals("{$row['firstName']} {$row['lastName']}", $newUser->display_name);
     }
-
-    /**
-     * GHSA-wq64-46j7-h5vr regression coverage: an imported avatar cell
-     * containing a relative traversal string ("../barcodes/target.png")
-     * used to persist verbatim into users.avatar, and the profile
-     * image-delete sink built a storage key by concatenating it onto
-     * "avatars/", giving a cross-directory delete inside the public
-     * uploads tree. The importer now reduces local filenames to their
-     * basename, mirroring how AssetImporter and AccessoryImporter treat
-     * their image cell.
-     */
+    
     #[Test]
     public function import_reduces_avatar_path_traversal_to_basename(): void
     {
@@ -664,5 +654,32 @@ class ImportUsersTest extends ImportDataTestCase implements TestsPermissionsRequ
         $this->importFileResponse(['import' => $import->id, 'import-update' => true])->assertOk();
 
         $this->assertNull($user->fresh()->avatar);
+    }
+
+    /**
+     * GHSA-fr6v-rhmg-9h3p regression coverage: the previous CSV-avatar
+     * sanitizer applied basename() only to non-URL cells, so a cell like
+     * `https://x/../../../barcodes/target.png` persisted verbatim and
+     * BulkDelete / Purge composed it into a Flysystem key that normalized
+     * past the `avatars/` prefix, deleting files elsewhere on the public
+     * disk. The sanitizer now parses URL cells and rejects any value
+     * whose path contains a `..` segment. The authoritative URL
+     * short-circuit lives on the delete sink.
+     */
+    #[Test]
+    public function import_rejects_avatar_url_with_traversal_segment(): void
+    {
+        $importFileBuilder = ImportFileBuilder::new([
+            'avatar' => 'https://x/../../../barcodes/target.png',
+        ]);
+        $row = $importFileBuilder->firstRow();
+        $import = Import::factory()->users()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
+
+        $this->actingAsForApi(User::factory()->superuser()->create());
+        $this->importFileResponse(['import' => $import->id])->assertOk();
+
+        $newUser = User::query()->where('username', $row['username'])->sole();
+
+        $this->assertNull($newUser->avatar);
     }
 }

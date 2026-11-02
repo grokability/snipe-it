@@ -19,6 +19,7 @@
     <x-table
         :fixed_right_number="$fixed_right_number"
         :fixed_number="$fixed_number"
+        show_advanced_search="true"
         buttons="maintenanceButtons"
         api_url="{{ $route ?? route('api.maintenances.index') }}"
         :presenter="\App\Presenters\MaintenancesPresenter::dataTableLayout($hide_fields)"

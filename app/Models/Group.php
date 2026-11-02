@@ -66,6 +66,35 @@ class Group extends SnipeModel
     ];
 
     /**
+     * Advanced-search filterable fields. Groups has no model-level FKs
+     * beyond created_by, so the filter set is narrow.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
+
+    /**
      * Detach all users_groups pivot rows when a group is deleted.
      */
     protected static function booted(): void

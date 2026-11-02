@@ -62,6 +62,34 @@ class KandjiClient
     }
 
     /**
+     * Fetch the rich per-device detail payload. Only called when the
+     * admin has enabled AppleDB enrichment, which needs the
+     * AppleDB-shape hardware identifier (e.g. "MacBookPro18,3")
+     * from `hardware_overview.model_identifier`. The list endpoint
+     * stops short at marketing name only.
+     *
+     * Returns null when Kandji does not know the device-id or any
+     * HTTP error is raised, so a single bad device does not abort
+     * the entire pull. Caller treats null as "no enrichment target
+     * resolvable for this device."
+     *
+     * @return array<string, mixed>|null
+     */
+    public function deviceDetails(string $deviceId): ?array
+    {
+        try {
+            $response = $this->request()
+                ->get('/api/v1/devices/'.rawurlencode($deviceId).'/details')
+                ->throwIfNotJson()
+                ->json();
+        } catch (\Throwable) {
+            return null;
+        }
+
+        return is_array($response) ? $response : null;
+    }
+
+    /**
      * List every Blueprint in the Kandji tenant. Used by the
      * adapter's fetchGroups() so admins can map Blueprints to
      * Snipe-IT companies. Endpoint returns a paginated list. Walk

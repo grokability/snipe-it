@@ -154,6 +154,185 @@ class Maintenance extends SnipeModel implements CompanyableChild
     }
 
     /**
+     * Advanced-search filterable fields. The asset_tag entry's field
+     * key matches the bs-table column.field so the modal widget-swap
+     * replaces the auto-generated text input with the select2
+     * checkboxes picker.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'asset_tag',
+                'type' => 'fk',
+                'column' => 'item_id',
+                'endpoint' => 'hardware',
+                'label' => trans('general.assets'),
+            ],
+            [
+                // Field name matches the bs-table column.field in the
+                // maintenances presenter so the modal's widget-swap
+                // finds the auto-generated carrier input and replaces
+                // the plain-text picker with a select2 checkboxes
+                // against the maintenance-types selectlist.
+                'field' => 'maintenance_type_details',
+                'type' => 'fk',
+                'column' => 'maintenance_type_id',
+                'endpoint' => 'maintenance-types',
+                'label' => trans('admin/maintenances/form.asset_maintenance_type'),
+            ],
+            [
+                // status_label is a derived display column that reads
+                // from the related asset's status_id. applyCustomFilter
+                // walks that relation via whereHas so the picker still
+                // writes a familiar statuslabels id CSV.
+                'field' => 'status_label',
+                'type' => 'fk',
+                'column' => null,
+                'endpoint' => 'statuslabels',
+                'label' => trans('admin/hardware/table.status'),
+            ],
+            [
+                'field' => 'supplier',
+                'type' => 'fk',
+                'column' => 'supplier_id',
+                'endpoint' => 'suppliers',
+                'label' => trans('general.supplier'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'completed_by',
+                'type' => 'fk',
+                'column' => 'completed_by',
+                'endpoint' => 'users',
+                'label' => trans('admin/maintenances/form.completed_by'),
+            ],
+            [
+                'field' => 'responsible_party',
+                'type' => 'fk',
+                'column' => 'responsible_party_id',
+                'endpoint' => 'users',
+                'label' => trans('admin/maintenances/form.responsible_party'),
+            ],
+            [
+                'field' => 'is_warranty',
+                'type' => 'boolean',
+                'label' => trans('admin/maintenances/form.is_warranty'),
+            ],
+            [
+                'field' => 'cost',
+                'type' => 'numeric',
+                'label' => trans('admin/maintenances/form.cost'),
+            ],
+            [
+                'field' => 'asset_maintenance_time',
+                'type' => 'numeric',
+                'label' => trans('admin/maintenances/form.asset_maintenance_time'),
+            ],
+            [
+                'field' => 'start_date',
+                'type' => 'date-range',
+                'label' => trans('admin/maintenances/form.start_date'),
+            ],
+            [
+                'field' => 'expected_completion_date',
+                'type' => 'date-range',
+                'label' => trans('admin/maintenances/form.completion_date'),
+            ],
+            [
+                'field' => 'completed_at',
+                'type' => 'date-range',
+                'label' => trans('admin/maintenances/form.completed_at'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
+
+    /**
+     * Override hook from Searchable. asset_tag picks against the
+     * hardware selectlist, so route the chosen ids to item_id AND
+     * pin item_type = Asset so the whereIn does not collide with a
+     * future non-Asset maintenance that happens to share one of
+     * those numeric ids. status_label walks the related asset's
+     * status_id since the maintenances table has no status column.
+     */
+    protected function applyCustomFilter(\Illuminate\Database\Eloquent\Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?\Illuminate\Database\Eloquent\Builder
+    {
+        if ($filterKey === 'asset_tag') {
+            $parsed = $this->parseIdsAndNullSentinel($filterValue);
+            if ($parsed === null) {
+                return null;
+            }
+            [$ids, $includeNull] = $parsed;
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($ids, $includeNull) {
+                $nested->where('maintenances.item_type', Asset::class);
+                if (!empty($ids)) {
+                    $nested->whereIn('maintenances.item_id', $ids);
+                }
+                if ($includeNull) {
+                    if (!empty($ids)) {
+                        $nested->orWhereNull('maintenances.item_id');
+                    } else {
+                        $nested->whereNull('maintenances.item_id');
+                    }
+                }
+            });
+
+            return $query;
+        }
+
+        if ($filterKey === 'status_label') {
+            $parsed = $this->parseIdsAndNullSentinel($filterValue);
+            if ($parsed === null) {
+                return null;
+            }
+            [$ids, $includeNull] = $parsed;
+            if (empty($ids) && !$includeNull) {
+                return null;
+            }
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($ids, $includeNull) {
+                $nested->whereHas('asset', function ($assetQuery) use ($ids, $includeNull) {
+                    if (!empty($ids) && $includeNull) {
+                        $assetQuery->where(function ($q) use ($ids) {
+                            $q->whereIn('assets.status_id', $ids)
+                                ->orWhereNull('assets.status_id');
+                        });
+                    } elseif (!empty($ids)) {
+                        $assetQuery->whereIn('assets.status_id', $ids);
+                    } else {
+                        $assetQuery->whereNull('assets.status_id');
+                    }
+                });
+            });
+
+            return $query;
+        }
+
+        return null;
+    }
+
+    /**
      * getImprovementOptions
      *
      * @return array

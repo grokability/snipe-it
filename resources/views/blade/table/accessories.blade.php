@@ -1,7 +1,7 @@
 @props([
     'route' => route('api.accessories.index'),
     'name' => 'default',
-    'presenter' => \App\Presenters\AccessoryPresenter::dataTableLayout(),
+    'presenter' => \App\Presenters\AccessoryPresenter::dataTableLayout(['deleted_at']),
     'fixed_right_number' => 2,
     'fixed_number' => 2,
     'table_header' => trans('general.accessories'),

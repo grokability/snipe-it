@@ -67,6 +67,9 @@ class AssetModel extends SnipeModel implements Importable
         'category_id' => 'required|integer|exists:categories,id',
         'manufacturer_id' => 'integer|exists:manufacturers,id|nullable',
         'eol' => 'integer:min:0|max:240|nullable',
+        'mfg_marketing_name' => 'string|max:255|nullable',
+        'mfg_release_date' => 'date|nullable',
+        'mfg_discontinued_date' => 'date|nullable',
     ];
 
     /**
@@ -81,12 +84,20 @@ class AssetModel extends SnipeModel implements Importable
         'fieldset_id',
         'image',
         'manufacturer_id',
+        'mfg_discontinued_date',
+        'mfg_marketing_name',
+        'mfg_release_date',
         'min_amt',
         'model_number',
         'name',
         'notes',
         'requestable',
         'require_serial',
+    ];
+
+    protected $casts = [
+        'mfg_release_date' => 'date',
+        'mfg_discontinued_date' => 'date',
     ];
 
     use Searchable;
@@ -99,6 +110,9 @@ class AssetModel extends SnipeModel implements Importable
     protected $searchableAttributes = [
         'created_at',
         'eol',
+        'mfg_discontinued_date',
+        'mfg_marketing_name',
+        'mfg_release_date',
         'min_amt',
         'model_number',
         'name',
@@ -117,6 +131,121 @@ class AssetModel extends SnipeModel implements Importable
         'fieldset' => ['name'],
         'adminuser' => ['first_name', 'last_name', 'display_name'],
     ];
+
+    /**
+     * Advanced-search filterable fields. assets_count is a withCount
+     * alias so it routes through applyCustomFilter below rather than
+     * resolving to a direct column.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'category',
+                'type' => 'fk',
+                'column' => 'category_id',
+                'endpoint' => 'categories/asset',
+                'label' => trans('general.category'),
+            ],
+            [
+                'field' => 'manufacturer',
+                'type' => 'fk',
+                'column' => 'manufacturer_id',
+                'endpoint' => 'manufacturers',
+                'label' => trans('general.manufacturer'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'requestable',
+                'type' => 'boolean',
+                'label' => trans('admin/hardware/general.requestable'),
+            ],
+            [
+                'field' => 'require_serial',
+                'type' => 'boolean',
+                'label' => trans('admin/hardware/general.require_serial'),
+            ],
+            [
+                'field' => 'eol',
+                'type' => 'numeric',
+                'label' => trans('admin/hardware/form.eol_rate'),
+            ],
+            [
+                'field' => 'min_amt',
+                'type' => 'numeric',
+                'label' => trans('general.min_amt'),
+            ],
+            [
+                'field' => 'assets_count',
+                'type' => 'numeric',
+                'label' => trans('general.assets'),
+            ],
+            [
+                'field' => 'mfg_release_date',
+                'type' => 'date-range',
+                'label' => trans('admin/models/general.mfg_release_date'),
+            ],
+            [
+                'field' => 'mfg_discontinued_date',
+                'type' => 'date-range',
+                'label' => trans('admin/models/general.mfg_discontinued_date'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
+
+    /**
+     * Override hook from Searchable. Routes assets_count through a
+     * correlated subquery that counts non-trashed assets on this
+     * model, matching the withCount alias the API controller uses to
+     * populate the displayed column.
+     */
+    protected function applyCustomFilter(\Illuminate\Database\Eloquent\Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?\Illuminate\Database\Eloquent\Builder
+    {
+        if ($filterKey !== 'assets_count') {
+            return null;
+        }
+
+        $bounds = $this->parseGtLtBounds($filterValue);
+        if ($bounds === null) {
+            return null;
+        }
+        [$gt, $lt] = $bounds;
+
+        $assetsCountSub = \Illuminate\Support\Facades\DB::table('assets')
+            ->whereColumn('assets.model_id', 'models.id')
+            ->whereNull('assets.deleted_at')
+            ->selectRaw('COUNT(*)');
+
+        $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+        $query->{$outerBoolean}(function ($nested) use ($assetsCountSub, $gt, $lt) {
+            if ($gt !== null) {
+                $nested->where($assetsCountSub, '>', $gt);
+            }
+            if ($lt !== null) {
+                $nested->where($assetsCountSub, '<', $lt);
+            }
+        });
+
+        return $query;
+    }
 
     /**
      * Computed aliases (withCount/withSum) that can be searched via TextSearch filters.

@@ -128,6 +128,8 @@
                 </x-copy-to-clipboard>
             </x-info-element>
 
+            <x-info-panel.mfg-fields :model="$infoPanelObj->model" />
+
         @elseif ($infoPanelObj->model_number)
             <!-- This is not an asset (with a model) so just grab it off the object -->
             <x-info-element icon_type="number" title="{{ trans('general.model_no') }}">
@@ -136,6 +138,10 @@
                     {{ $infoPanelObj->model_number }}
                 </x-copy-to-clipboard>
             </x-info-element>
+        @endif
+
+        @if ($infoPanelObj instanceof \App\Models\AssetModel)
+            <x-info-panel.mfg-fields :model="$infoPanelObj" />
         @endif
 
         @if ($infoPanelObj->item_no)

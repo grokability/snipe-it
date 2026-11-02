@@ -16,6 +16,7 @@ use Illuminate\Support\Collection;
 
 /**
  * @property \App\Enums\CheckoutRequestState $state
+ *
  * @mixin IdeHelperCheckoutRequest
  */
 class CheckoutRequest extends Model
@@ -226,6 +227,31 @@ class CheckoutRequest extends Model
     }
 
     /**
+     * Flip the row to canceled without firing the full model-event
+     * cascade (archive-time cleanup paths on Accessory / Component /
+     * Consumable rely on this so a parent-entity update does not
+     * trigger a storm of per-request notification observers), but
+     * still explicitly re-sync the calendar_events index so the
+     * reservation drops off the calendar on cancel. The persistent-
+     * calendar-event bug reported against the archive and user-
+     * initiated cancel paths traced back to a saveQuietly() /
+     * query-builder update() combination that bypassed the
+     * HasCalendarEvents observer entirely.
+     */
+    public function cancelAndSync(): bool
+    {
+        $this->canceled_at = now();
+        $this->state = CheckoutRequestState::Canceled;
+        $saved = $this->saveQuietly();
+
+        if ($saved) {
+            $this->forceSyncCalendarEvents();
+        }
+
+        return $saved;
+    }
+
+    /**
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
@@ -342,13 +368,11 @@ class CheckoutRequest extends Model
      *     other type has a direct category relation.
      *   - AssetModel has no company relation (asset models are
      *     shared across companies), so its branch skips company.
-     *
-     * @return Builder
      */
-    public function advancedTextSearch(Builder $query, array $terms)
+    public function advancedTextSearch(Builder $outer, Builder $nested, array $terms): void
     {
         if (empty($terms)) {
-            return $query;
+            return;
         }
 
         $morphTypes = [
@@ -360,7 +384,7 @@ class CheckoutRequest extends Model
             License::class,
         ];
 
-        return $query->orWhereHasMorph('requestable', $morphTypes, function (Builder $q, string $type) use ($terms): void {
+        $nested->orWhereHasMorph('requestable', $morphTypes, function (Builder $q, string $type) use ($terms): void {
             $q->where(function (Builder $inner) use ($type, $terms): void {
                 foreach ($terms as $term) {
                     $like = '%'.$term.'%';

@@ -157,7 +157,9 @@
                             // chance to normalize. The mask itself is the
                             // authoritative cap.
                             $macAttrs = $isMac ? ' inputmode="text" autocomplete="off"' : '';
-                            $placeholder = $isMac ? 'AA:BB:CC:DD:EE:FF' : 'Enter '.strtolower($field->format).' text';
+                            $placeholder = $isMac
+                                ? 'AA:BB:CC:DD:EE:FF'
+                                : trans('admin/custom_fields/general.enter_format_text', ['format' => strtolower($field->format)]);
                         @endphp
                         @if ($format_icon)
                             <div class="input-group">

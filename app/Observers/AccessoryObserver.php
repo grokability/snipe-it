@@ -2,7 +2,6 @@
 
 namespace App\Observers;
 
-use App\Enums\CheckoutRequestState;
 use App\Models\Accessory;
 use App\Models\Actionlog;
 use App\Models\CheckoutRequest;
@@ -49,11 +48,7 @@ class AccessoryObserver
 
         // Archive-time request cleanup.
         if ($accessory->wasChanged('archived') && $accessory->archived) {
-            $accessory->openRequests()->get()->each(function (CheckoutRequest $request): void {
-                $request->canceled_at = now();
-                $request->state = CheckoutRequestState::Canceled;
-                $request->saveQuietly();
-            });
+            $accessory->openRequests()->get()->each(fn (CheckoutRequest $request) => $request->cancelAndSync());
         }
     }
 
@@ -80,11 +75,7 @@ class AccessoryObserver
      */
     public function deleting(Accessory $accessory)
     {
-        $accessory->openRequests()->get()->each(function (CheckoutRequest $request): void {
-            $request->canceled_at = now();
-            $request->state = CheckoutRequestState::Canceled;
-            $request->saveQuietly();
-        });
+        $accessory->openRequests()->get()->each(fn (CheckoutRequest $request) => $request->cancelAndSync());
 
         $logAction = new Actionlog;
         $logAction->item_type = Accessory::class;

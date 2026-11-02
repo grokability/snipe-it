@@ -38,10 +38,10 @@ class DemoModeLocksFormTest extends TestCase
         $this->assertMatchesRegularExpression('/name="fleet_log_heartbeats"[^>]*disabled/', $html);
         $this->assertMatchesRegularExpression('/name="fleet_mapping\[hostname\]"[^>]*disabled/', $html);
 
-        // Same coverage for the key-pair auth shape (Addigy). Different
-        // partial, same shell, so locking must apply symmetrically.
-        $this->assertMatchesRegularExpression('/name="addigy_key_id"[^>]*disabled/', $html);
-        $this->assertMatchesRegularExpression('/name="addigy_key_secret"[^>]*disabled/', $html);
+        // Same coverage for the single-API-key auth shape (Addigy v2).
+        // Different partial, same shell, so locking must apply
+        // symmetrically.
+        $this->assertMatchesRegularExpression('/name="addigy_api_key"[^>]*disabled/', $html);
         $this->assertMatchesRegularExpression('/name="addigy_active"[^>]*disabled/', $html);
 
         // Save button lives in the footer, disabled by the index page

@@ -51,6 +51,29 @@
                 />
 
                 <x-form.row
+                    :label="trans('admin/models/general.mfg_marketing_name')"
+                    :$item
+                    name="mfg_marketing_name"
+                    input_div_class="col-md-7"
+                />
+
+                <x-form.row
+                    :label="trans('admin/models/general.mfg_release_date')"
+                    :$item
+                    name="mfg_release_date"
+                    type="datepicker"
+                    input_div_class="col-md-4"
+                />
+
+                <x-form.row
+                    :label="trans('admin/models/general.mfg_discontinued_date')"
+                    :$item
+                    name="mfg_discontinued_date"
+                    type="datepicker"
+                    input_div_class="col-md-4"
+                />
+
+                <x-form.row
                     :label="trans('general.depreciation')"
                     name="depreciation_id"
                     input_div_class="col-md-7"

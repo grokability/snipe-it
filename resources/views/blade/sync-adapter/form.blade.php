@@ -368,9 +368,9 @@
     {{-- Per-field target mapping.  --}}
     @php
         // Show push controls only when the adapter implements
-        // PushableAdapter AND canPush() (instance-level runtime check
+        // PushableSyncAdapter AND canPush() (instance-level runtime check
         // (Fleet Free returns false because manual labels are Premium).
-        $supportsPush = $adapter instanceof \App\SyncAdapters\PushableAdapter && $adapter->canPush();
+        $supportsPush = $adapter instanceof \App\SyncAdapters\PushableSyncAdapter && $adapter->canPush();
         $directionOptions = [
             'pull' => trans('admin/settings/sync_adapters.direction_pull'),
             'push' => trans('admin/settings/sync_adapters.direction_push'),
@@ -584,7 +584,7 @@
          multiple candidates. Positioned after the standard + extras
          mapping so admins finish configuring the per-field targets
          before deciding what goes into the composed notes blob. --}}
-    @if ($adapter instanceof \App\SyncAdapters\PushableAdapter && $adapter->canPush() && $adapter->supportsComposedNotesPush())
+                @if ($adapter instanceof \App\SyncAdapters\PushableSyncAdapter && $adapter->canPush() && $adapter->supportsComposedNotesPush())
         <fieldset>
             <x-form.legend icon="tip" help_text="{{ trans('admin/settings/sync_adapters.push_notes_section_intro') }}">
                 {{ trans('admin/settings/sync_adapters.push_notes_section_title') }}
@@ -640,7 +640,7 @@
 
                     <div class="form-group">
                         <div class="col-md-12">
-                            @if ($adapter instanceof \App\SyncAdapters\PushableAdapter && $adapter->canPush())
+                            @if ($adapter instanceof \App\SyncAdapters\PushableSyncAdapter && $adapter->canPush())
                                 <button
                                     type="button"
                                     class="btn btn-theme js-sync-diagnostic-button"

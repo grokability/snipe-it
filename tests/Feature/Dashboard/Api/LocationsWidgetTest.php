@@ -83,8 +83,9 @@ class LocationsWidgetTest extends TestCase
             ->assertOk();
     }
 
-    public function test_search_and_filter_params_are_ignored()
+    public function test_search_param_filters_rows_but_other_params_are_ignored()
     {
+        // Issue #19979: `search` was ignored. Everything else still is.
         Location::factory()->count(3)->create();
 
         Passport::actingAs(User::factory()->viewAccessories()->create());
@@ -92,8 +93,13 @@ class LocationsWidgetTest extends TestCase
         $unfilteredTotal = $this->getJson(route('api.dashboard.locations'))
             ->assertOk()
             ->json('total');
-        $probeTotal = $this->getJson(route('api.dashboard.locations', [
-            'search' => 'never-matches',
+
+        $searchHonoredTotal = $this->getJson(route('api.dashboard.locations', ['search' => 'never-matches']))
+            ->assertOk()
+            ->json('total');
+        $this->assertSame(0, $searchHonoredTotal);
+
+        $extraParamsIgnoredTotal = $this->getJson(route('api.dashboard.locations', [
             'filter' => 'never-matches',
             'name' => 'never-matches',
             'city' => 'never-matches',
@@ -101,7 +107,6 @@ class LocationsWidgetTest extends TestCase
         ]))
             ->assertOk()
             ->json('total');
-
-        $this->assertSame($unfilteredTotal, $probeTotal);
+        $this->assertSame($unfilteredTotal, $extraParamsIgnoredTotal);
     }
 }

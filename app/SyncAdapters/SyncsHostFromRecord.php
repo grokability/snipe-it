@@ -210,9 +210,21 @@ trait SyncsHostFromRecord
      * Look up an existing Snipe-IT asset with a matching serial to
      * adopt into this adapter's external-sources link, when the
      * admin has turned on adopt_by_serial for this adapter instance.
-     * Skips assets that already have an external_sources row for
-     * this source so re-runs are idempotent and multi-adapter
-     * installs don't accidentally re-link.
+     *
+     * Re-enrollment: some vendors rotate the device's external_id
+     * (Intune managedDevice ID, Kandji device UDID, etc)
+     * when the device is reinstalled or re-enrolled. On the
+     * next sync the record's new external_id does not match the
+     * asset's prior asset_external_sources row, so the (source,
+     * external_id) lookup in provisionAsset misses. If the hardware
+     * serial still matches and adopt_by_serial is on, treat the
+     * prior row's external_id as stale and update it to the new one
+     * rather than creating a duplicate asset.
+     *
+     * The genuine case of two actively-enrolled devices
+     * legitimately sharing a serial (vendor cloning bug / BYOD) is
+     * not handled here: the external_id will flap between the two
+     * records across syncs. True fix is pull-level reconciliation :(
      */
     private static function adoptExistingAssetBySerial(HostInventoryRecord $record, ?SyncAdapterInstance $instance): ?Asset
     {
@@ -230,15 +242,30 @@ trait SyncsHostFromRecord
 
         $candidate = Asset::query()
             ->where('serial', $record->hardwareSerial)
-            ->whereNotIn('id', function ($q) use ($record) {
-                $q->select('asset_id')
-                    ->from('asset_external_sources')
-                    ->where('source', $record->sourceKey);
-            })
             ->first();
 
         if ($candidate === null) {
             return null;
+        }
+
+        $existing = DB::table('asset_external_sources')
+            ->where('asset_id', $candidate->id)
+            ->where('source', $record->sourceKey)
+            ->first();
+
+        if ($existing !== null) {
+            DB::table('asset_external_sources')
+                ->where('id', $existing->id)
+                ->update([
+                    'external_id' => $record->sourceId,
+                    'updated_at' => now(),
+                ]);
+
+            Log::channel('sync-adapters')->info(
+                "{$instance->label} re-linked asset #{$candidate->id} (serial {$record->hardwareSerial}): external_id {$existing->external_id} -> {$record->sourceId}. Prior enrollment id appears to have rotated."
+            );
+
+            return $candidate;
         }
 
         DB::table('asset_external_sources')->insert([
@@ -1119,6 +1146,39 @@ trait SyncsHostFromRecord
 
     private static function resolveModelIdByName(string $modelName, ?SyncAdapterInstance $instance = null, ?HostInventoryRecord $record = null): int
     {
+        $canonicalModelNumber = $record?->canonicalModelNumber;
+        $canonicalMarketingName = $record?->canonicalMarketingName;
+
+        // When AppleDB enrichment updated
+        // canonical values on the model record, consolidate rows across
+        // adapters that emit the same hardware under different
+        // vendor name strings (e.g. ABM's long marketing name vs.
+        // Fleet's short osquery name for the same productType).
+        // Primary clause finds-by-name-and-number. Fallback clause
+        // picks up rows a prior sync named differently but tagged
+        // with the same canonical marketing name.
+        if ($canonicalModelNumber !== null) {
+            $query = AssetModel::query()
+                ->where('model_number', $canonicalModelNumber)
+                ->where(function ($q) use ($modelName, $canonicalMarketingName) {
+                    $q->where('name', $modelName);
+                    if ($canonicalMarketingName !== null) {
+                        $q->orWhere('mfg_marketing_name', $canonicalMarketingName);
+                    }
+                });
+
+            $model = $query->first();
+            if ($model !== null) {
+                $perRecordId = self::perRecordCategoryId($instance, $record);
+                if ($perRecordId !== null && $model->category_id !== $perRecordId) {
+                    $model->category_id = $perRecordId;
+                    $model->save();
+                }
+
+                return $model->id;
+            }
+        }
+
         $model = AssetModel::where('name', $modelName)->first();
         if ($model !== null) {
             // Re-sync the category ONLY when the adapter has a
@@ -1141,6 +1201,12 @@ trait SyncsHostFromRecord
         $model->name = $modelName;
         $model->category_id = self::categoryIdFor($instance, $record);
         $model->manufacturer_id = self::manufacturerIdFor($record);
+        if ($canonicalModelNumber !== null) {
+            $model->model_number = $canonicalModelNumber;
+        }
+        if ($canonicalMarketingName !== null) {
+            $model->mfg_marketing_name = $canonicalMarketingName;
+        }
         $adapter = $instance?->adapter();
         if ($adapter instanceof SyncAdapter) {
             $model->fieldset_id = $adapter->defaultFieldsetId();

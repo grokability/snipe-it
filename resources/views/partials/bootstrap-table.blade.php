@@ -56,6 +56,8 @@
         var advancedSearchAndText = @json(trans('general.and'));
         var advancedSearchOrText = @json(trans('general.or'));
         var advancedSearchClearAllText = @json(trans('general.clear_all_filters'));
+        var advancedSearchYesText = @json(trans('general.yes'));
+        var advancedSearchNoText = @json(trans('general.no'));
         var advancedSearchOperatorStorageKey = 'snipeit.bs.table.advancedSearchOperator';
 
         var normalizeAdvancedSearchOperator = function (operator) {
@@ -299,6 +301,27 @@
                 var html = '<span class="label label-warning" style="font-size: 12px; margin-right:6px;display:inline-block;margin-bottom:6px; padding: 4px;">' +
                     advancedSearchOperatorLabel + ': ' + (op === 'or' ? advancedSearchOrText : advancedSearchAndText) + '</span>';
 
+                // Advanced-filter widget registry. The per-table JS that
+                // injects compact multi-select widgets into the modal
+                // (see accessories/index.blade.php for the first user)
+                // writes an {id: name} map to
+                // window.snipeAdvancedFilterLabels[idTable][field] on
+                // every widget change. The pill renderer resolves each
+                // CSV of ids back to names via this registry so the
+                // operator sees "Supplier: Batz LLC, Thompson Group"
+                // instead of "Supplier: 10, 42". Unknown ids fall back
+                // to their raw value.
+                var labelRegistry = (window.snipeAdvancedFilterLabels || {})[this.options.idTable] || {};
+                var resolveFilterLabel = function (field, value) {
+                    var map = labelRegistry[field];
+                    if (!map || typeof value !== 'string' || value === '') { return value; }
+                    var parts = value.split(',').map(function (v) { return v.trim(); }).filter(Boolean);
+                    if (parts.length === 0) { return value; }
+                    return parts.map(function (id) {
+                        return (map && map[id]) ? map[id] : id;
+                    }).join(', ');
+                };
+
                 Object.keys(filters).forEach(f => {
                     // The filter name comes from the URL (deeplink hydration in
                     // the block below), so it is attacker-controllable. Both
@@ -310,10 +333,85 @@
                     // jQuery.html() would then parse and execute).
                     var safeLabel = escapeAdvancedSearchValue(colMap[f] || f);
                     var safeField = escapeAdvancedSearchAttr(f);
-                    html += '<span class="label label-primary" style="font-size: 12px; margin-right:6px;display:inline-block;margin-bottom:6px; padding: 4px;"><b>' +
-                        safeLabel + ':</b> ' + escapeAdvancedSearchValue(filters[f]) +
-                        ' <a href="javascript:void(0)" class="snipe-advanced-search-tag-remove" data-field="' + safeField +
-                        '" style="font-size: 12px; margin-right:6px;display:inline-block;color:#fff;text-decoration:none;">&times;</a></span>';
+                    var rawValue = (filters[f] || '').toString();
+                    var map = labelRegistry[f] || null;
+                    // A CSV of ids coming from the compact multi-select
+                    // widget is split into one chip per term so the admin
+                    // can remove individual selections without clearing
+                    // the whole column filter. Plain-text filters
+                    // (free-text, prefix-syntax, single values) stay in
+                    // the single-chip shape with one × on the whole pill.
+                    var parts = rawValue.split(',').map(function (v) { return v.trim(); }).filter(Boolean);
+                    var isMultiTerm = parts.length > 1;
+                    // Date-range shape: `start..end` (either side may
+                    // be empty). Rendered as one chip "Field: start – end"
+                    // with a single × on the whole pill, matching the
+                    // single-term shape rather than the per-term
+                    // multi-chip shape used for id CSVs.
+                    var dateRangeMatch = rawValue.match(/^(\d{4}-\d{2}-\d{2})?\.\.(\d{4}-\d{2}-\d{2})?$/);
+                    // Numeric-range shape: `gt:X`, `lt:Y`, or
+                    // `gt:X,lt:Y`. Parsed with the same intent as the
+                    // backend matcher, rendered as "Field: > X, < Y"
+                    // (comma-separated when both halves present).
+                    var numericGt = null;
+                    var numericLt = null;
+                    rawValue.split(',').forEach(function (p) {
+                        var gm = p.trim().match(/^gt:(-?\d+(\.\d+)?)$/);
+                        var lm = p.trim().match(/^lt:(-?\d+(\.\d+)?)$/);
+                        if (gm) { numericGt = gm[1]; }
+                        else if (lm) { numericLt = lm[1]; }
+                    });
+                    var isNumericRange = numericGt !== null || numericLt !== null;
+                    // Boolean shape: field is declared as a boolean
+                    // in the per-table field-type registry populated
+                    // by the advanced-filters component. The raw
+                    // value is normalized to a yes/no display label
+                    // instead of the "1"/"0" that gets sent on the
+                    // wire.
+                    var fieldTypes = (window.snipeAdvancedFilterFieldTypes || {})[this.options.idTable] || {};
+                    var isBoolean = fieldTypes[f] === 'boolean';
+
+                    if (isBoolean) {
+                        var boolDisplay = /^(1|true|yes)$/i.test(rawValue) ? advancedSearchYesText : advancedSearchNoText;
+                        html += '<span class="label label-primary" style="font-size: 12px; margin-right:6px;display:inline-block;margin-bottom:6px; padding: 4px;"><b>' +
+                            safeLabel + ':</b> ' + escapeAdvancedSearchValue(boolDisplay) +
+                            ' <a href="javascript:void(0)" class="snipe-advanced-search-tag-remove" data-field="' + safeField +
+                            '" style="font-size: 12px; margin-right:6px;display:inline-block;color:#fff;text-decoration:none;">&times;</a></span>';
+                    } else if (isNumericRange) {
+                        var numericBits = [];
+                        if (numericGt !== null) { numericBits.push('> ' + numericGt); }
+                        if (numericLt !== null) { numericBits.push('< ' + numericLt); }
+                        html += '<span class="label label-primary" style="font-size: 12px; margin-right:6px;display:inline-block;margin-bottom:6px; padding: 4px;"><b>' +
+                            safeLabel + ':</b> ' + escapeAdvancedSearchValue(numericBits.join(', ')) +
+                            ' <a href="javascript:void(0)" class="snipe-advanced-search-tag-remove" data-field="' + safeField +
+                            '" style="font-size: 12px; margin-right:6px;display:inline-block;color:#fff;text-decoration:none;">&times;</a></span>';
+                    } else if (dateRangeMatch) {
+                        var startDate = dateRangeMatch[1] || '…';
+                        var endDate = dateRangeMatch[2] || '…';
+                        var dateRangeDisplay = startDate + ' – ' + endDate;
+                        html += '<span class="label label-primary" style="font-size: 12px; margin-right:6px;display:inline-block;margin-bottom:6px; padding: 4px;"><b>' +
+                            safeLabel + ':</b> ' + escapeAdvancedSearchValue(dateRangeDisplay) +
+                            ' <a href="javascript:void(0)" class="snipe-advanced-search-tag-remove" data-field="' + safeField +
+                            '" style="font-size: 12px; margin-right:6px;display:inline-block;color:#fff;text-decoration:none;">&times;</a></span>';
+                    } else if (isMultiTerm) {
+                        var inner = '<span style="font-size:12px;font-weight:bold;margin-right:4px;align-self:center;">' + safeLabel + ':</span>';
+                        parts.forEach(function (id) {
+                            var termLabel = (map && map[id]) ? map[id] : id;
+                            var safeTermText = escapeAdvancedSearchValue(termLabel);
+                            var safeTermIdAttr = escapeAdvancedSearchAttr(id);
+                            inner += '<span class="label label-primary" style="font-size:12px;font-weight:normal;margin:2px;padding:3px 6px;display:inline-flex;align-items:center;">' +
+                                safeTermText +
+                                ' <a href="javascript:void(0)" class="snipe-advanced-search-term-remove" data-field="' + safeField + '" data-term-id="' + safeTermIdAttr + '" style="color:#fff;text-decoration:none;margin-left:6px;">&times;</a>' +
+                                '</span>';
+                        });
+                        html += '<span style="display:inline-flex;flex-wrap:wrap;align-items:center;max-width:90vw;margin-right:12px;margin-bottom:6px;">' + inner + '</span>';
+                    } else {
+                        var displayValue = resolveFilterLabel(f, filters[f]);
+                        html += '<span class="label label-primary" style="font-size: 12px; margin-right:6px;display:inline-block;margin-bottom:6px; padding: 4px;"><b>' +
+                            safeLabel + ':</b> ' + escapeAdvancedSearchValue(displayValue) +
+                            ' <a href="javascript:void(0)" class="snipe-advanced-search-tag-remove" data-field="' + safeField +
+                            '" style="font-size: 12px; margin-right:6px;display:inline-block;color:#fff;text-decoration:none;">&times;</a></span>';
+                    }
                 });
 
                 // "Clear all" pill: same shortcut as opening the modal and hitting
@@ -342,6 +440,33 @@
 
                             _this.renderAdvancedSearchTags();
                         }
+                    })
+                    .on('click.snipeAdvancedSearchTags', '.snipe-advanced-search-term-remove', function (e) {
+                        // Per-term × on multi-id filters. Removes the one
+                        // clicked id from the CSV, leaves the rest of the
+                        // column's filter intact. When the removal
+                        // empties the column, the whole key is dropped
+                        // from filterColumnsPartial so the pill goes
+                        // away cleanly rather than lingering as an empty
+                        // filter.
+                        e.preventDefault();
+                        var field = $(this).data('field');
+                        var termId = String($(this).data('term-id'));
+                        if (!field || !_this.filterColumnsPartial) { return; }
+                        var currentCsv = (_this.filterColumnsPartial[field] || '').toString();
+                        var remaining = currentCsv.split(',')
+                            .map(function (v) { return v.trim(); })
+                            .filter(function (v) { return v !== '' && v !== termId; });
+                        if (remaining.length === 0) {
+                            delete _this.filterColumnsPartial[field];
+                        } else {
+                            _this.filterColumnsPartial[field] = remaining.join(',');
+                        }
+                        _this.options.pageNumber = 1;
+                        _this.initSearch();
+                        _this.updatePagination();
+                        _this.trigger('column-advanced-search', _this.filterColumnsPartial, _this.getAdvancedSearchOperator());
+                        _this.renderAdvancedSearchTags();
                     })
                     .on('click.snipeAdvancedSearchTags', '.snipe-advanced-search-tags-clear-all', function (e) {
                         e.preventDefault();
@@ -411,11 +536,13 @@
                 html.push(`
                     <div class="form-group row">
                         <label class="col-sm-4 control-label">${this.options.formatAdvancedSearchOperator()}</label>
-                        <div class="col-sm-6">
-                            <select class="form-control ${this.constants.classes.input}" name="__advanced_search_operator">
-                                <option value="and"${operator === 'and' ? ' selected' : ''}>${advancedSearchAndText}</option>
-                                <option value="or"${operator === 'or' ? ' selected' : ''}>${advancedSearchOrText}</option>
-                            </select>
+                        <div class="col-sm-6" style="padding-top:7px;">
+                            <label class="radio-inline" style="margin-right:16px;vertical-align:middle;">
+                                <input type="radio" name="__advanced_search_operator" value="and" style="vertical-align:middle;"${operator === 'and' ? ' checked' : ''}>&nbsp;&nbsp;<span style="vertical-align:middle;">${advancedSearchAndText}</span>
+                            </label>
+                            <label class="radio-inline" style="vertical-align:middle;">
+                                <input type="radio" name="__advanced_search_operator" value="or" style="vertical-align:middle;"${operator === 'or' ? ' checked' : ''}>&nbsp;&nbsp;<span style="vertical-align:middle;">${advancedSearchOrText}</span>
+                            </label>
                         </div>
                     </div>
                 `);
@@ -851,6 +978,7 @@
                     'export',
                     'print',
                     'fullscreen',
+                    'btnAddMaintenance',
                     'advancedSearch',
                 ],
                 classes: 'table table-responsive table-striped snipe-table table-no-bordered',

@@ -8,7 +8,7 @@ use App\Models\Statuslabel;
 use App\Models\SyncAdapterConfig;
 use App\Models\SyncAdapterInstance;
 use App\SyncAdapters\NinjaOne\NinjaOneAdapter;
-use App\SyncAdapters\PushableAdapter;
+use App\SyncAdapters\PushableSyncAdapter;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -30,7 +30,7 @@ class NinjaOnePushTest extends TestCase
 
     public function test_ninjaone_adapter_implements_pushable_interface()
     {
-        $this->assertInstanceOf(PushableAdapter::class, $this->configuredNinja());
+        $this->assertInstanceOf(PushableSyncAdapter::class, $this->configuredNinja());
     }
 
     public function test_push_asset_tag_writes_to_configured_custom_field()

@@ -10,7 +10,7 @@ use App\Models\Manufacturer;
 use App\Models\Statuslabel;
 use App\Models\SyncAdapterConfig;
 use App\Models\SyncAdapterInstance;
-use App\SyncAdapters\Fleet\FleetAdapter;
+use App\SyncAdapters\Jamf\JamfAdapter;
 use Illuminate\Support\Facades\Crypt;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -28,7 +28,7 @@ class ComposedNotesForPushTest extends TestCase
     #[Test]
     public function returns_null_when_no_template_configured(): void
     {
-        $adapter = $this->configuredFleetAdapter();
+        $adapter = $this->configuredJamfAdapter();
         $asset = $this->makeAsset(['asset_tag' => 'ABC-123']);
 
         $this->assertNull($adapter->composeNotesForPush($asset));
@@ -37,7 +37,7 @@ class ComposedNotesForPushTest extends TestCase
     #[Test]
     public function returns_null_when_template_is_whitespace_only(): void
     {
-        $adapter = $this->configuredFleetAdapter();
+        $adapter = $this->configuredJamfAdapter();
         SyncAdapterConfig::put($adapter->getInstanceId(), 'push_notes_template', "  \n\t");
         $asset = $this->makeAsset(['asset_tag' => 'ABC-123']);
 
@@ -47,9 +47,7 @@ class ComposedNotesForPushTest extends TestCase
     #[Test]
     public function returns_null_when_no_target_can_be_resolved(): void
     {
-        // Fleet doesn't ship a notesFieldTarget default, so with no
-        // admin override for push_notes_target we can't resolve one.
-        $adapter = $this->configuredFleetAdapter();
+        $adapter = $this->configuredJamfAdapter();
         SyncAdapterConfig::put($adapter->getInstanceId(), 'push_notes_template', 'Tag: {asset_tag}');
         $asset = $this->makeAsset(['asset_tag' => 'ABC-123']);
 
@@ -59,7 +57,7 @@ class ComposedNotesForPushTest extends TestCase
     #[Test]
     public function substitutes_native_placeholders_from_asset_columns(): void
     {
-        $adapter = $this->configuredFleetAdapterWithNotesTarget();
+        $adapter = $this->configuredJamfAdapterWithNotesTarget();
         SyncAdapterConfig::put(
             $adapter->getInstanceId(),
             'push_notes_template',
@@ -86,7 +84,7 @@ class ComposedNotesForPushTest extends TestCase
     #[Test]
     public function admin_target_override_wins_over_adapter_default(): void
     {
-        $adapter = $this->configuredFleetAdapter();
+        $adapter = $this->configuredJamfAdapter();
         SyncAdapterConfig::put($adapter->getInstanceId(), 'push_notes_template', 'Tag: {asset_tag}');
         SyncAdapterConfig::put($adapter->getInstanceId(), 'push_notes_target', 'custom.notes_field');
         $asset = $this->makeAsset(['asset_tag' => 'ABC-123']);
@@ -101,7 +99,7 @@ class ComposedNotesForPushTest extends TestCase
     #[Test]
     public function unknown_placeholders_render_blank(): void
     {
-        $adapter = $this->configuredFleetAdapterWithNotesTarget();
+        $adapter = $this->configuredJamfAdapterWithNotesTarget();
         SyncAdapterConfig::put(
             $adapter->getInstanceId(),
             'push_notes_template',
@@ -118,7 +116,7 @@ class ComposedNotesForPushTest extends TestCase
     #[Test]
     public function null_native_values_render_blank_not_literal(): void
     {
-        $adapter = $this->configuredFleetAdapterWithNotesTarget();
+        $adapter = $this->configuredJamfAdapterWithNotesTarget();
         SyncAdapterConfig::put(
             $adapter->getInstanceId(),
             'push_notes_template',
@@ -136,7 +134,7 @@ class ComposedNotesForPushTest extends TestCase
     #[Test]
     public function custom_field_placeholder_resolves_by_display_name(): void
     {
-        $adapter = $this->configuredFleetAdapterWithNotesTarget();
+        $adapter = $this->configuredJamfAdapterWithNotesTarget();
 
         $field = CustomField::factory()->create([
             'element' => 'text',
@@ -161,7 +159,7 @@ class ComposedNotesForPushTest extends TestCase
     #[Test]
     public function custom_field_with_unknown_name_renders_blank(): void
     {
-        $adapter = $this->configuredFleetAdapterWithNotesTarget();
+        $adapter = $this->configuredJamfAdapterWithNotesTarget();
         SyncAdapterConfig::put(
             $adapter->getInstanceId(),
             'push_notes_template',
@@ -198,18 +196,24 @@ class ComposedNotesForPushTest extends TestCase
         ], $overrides));
     }
 
-    private function configuredFleetAdapter(): FleetAdapter
+    private function configuredJamfAdapter(): JamfAdapter
     {
         $instance = SyncAdapterInstance::create([
-            'adapter_type' => 'fleet',
-            'label' => 'Test Fleet '.uniqid(),
+            'adapter_type' => 'jamf',
+            'label' => 'Test Jamf ' . uniqid(),
             'active' => true,
         ]);
-        SyncAdapterConfig::put($instance->id, 'url', 'https://fleet.example.test');
+        SyncAdapterConfig::put($instance->id, 'url', 'https://jamf.example.test');
         SyncAdapterConfig::put($instance->id, 'token', Crypt::encrypt('fake-token'));
 
-        return new class($instance) extends FleetAdapter
+        // Jamf *does* ship a notesFieldTarget default, so we need to disable it
+        return new class($instance) extends JamfAdapter
         {
+            public function notesFieldTarget(): ?string
+            {
+                return null;
+            }
+
             public function getInstanceId(): int
             {
                 return $this->instance->id;
@@ -218,12 +222,12 @@ class ComposedNotesForPushTest extends TestCase
     }
 
     /**
-     * Fleet with an admin-set notes target so composeNotesForPush()
+     * Jamf with an admin-set notes target so composeNotesForPush()
      * can resolve `target` and actually build a payload.
      */
-    private function configuredFleetAdapterWithNotesTarget(): FleetAdapter
+    private function configuredJamfAdapterWithNotesTarget(): JamfAdapter
     {
-        $adapter = $this->configuredFleetAdapter();
+        $adapter = $this->configuredJamfAdapter();
         SyncAdapterConfig::put($adapter->getInstanceId(), 'push_notes_target', 'notes');
 
         return $adapter;

@@ -212,6 +212,382 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         'adminuser' => ['first_name', 'last_name', 'display_name'],
     ];
 
+    /**
+     * Advanced-search filterable fields.
+     *
+     * Scope for v1 rollout: direct-column FK dropdowns, date-range
+     * widgets on the four built-in date columns, boolean widgets on
+     * the common user flags.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                // Field name matches the bs-table column.field in
+                // UserPresenter so the modal's auto-generated carrier
+                // input is keyed as `companies`. Backend
+                // applyCustomFilter branches off that exact key.
+                'field' => 'companies',
+                'type' => 'fk',
+                // Column is unused for this entry. User-to-company
+                // runs through the company_user pivot under FMCS, so
+                // applyCustomFilter intercepts the 'companies' key
+                // and emits a semi-join rather than a
+                // legacy_company_id whereIn.
+                'column' => null,
+                'endpoint' => 'companies',
+                'label' => trans('general.company'),
+            ],
+            [
+                'field' => 'groups',
+                'type' => 'fk',
+                // Column is unused for this entry. User-to-group runs
+                // through the users_groups pivot. applyCustomFilter
+                // intercepts the 'groups' key and semi-joins.
+                'column' => null,
+                'endpoint' => 'groups',
+                'label' => trans('general.groups'),
+            ],
+            [
+                'field' => 'location',
+                'type' => 'fk',
+                'column' => 'location_id',
+                'endpoint' => 'locations',
+                'label' => trans('general.location'),
+            ],
+            [
+                'field' => 'department',
+                'type' => 'fk',
+                'column' => 'department_id',
+                'endpoint' => 'departments',
+                'label' => trans('general.department'),
+            ],
+            [
+                'field' => 'manager',
+                'type' => 'fk',
+                'column' => 'manager_id',
+                'endpoint' => 'users',
+                'label' => trans('admin/users/table.manager'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'vip',
+                'type' => 'boolean',
+                'label' => trans('admin/users/general.vip_label'),
+            ],
+            [
+                'field' => 'remote',
+                'type' => 'boolean',
+                'label' => trans('admin/users/general.remote'),
+            ],
+            [
+                'field' => 'activated',
+                'type' => 'boolean',
+                'label' => trans('general.login_enabled'),
+            ],
+            [
+                'field' => 'autoassign_licenses',
+                'type' => 'boolean',
+                'label' => trans('general.autoassign_licenses'),
+            ],
+            [
+                'field' => 'ldap_import',
+                'type' => 'boolean',
+                'label' => trans('admin/settings/general.ldap_enabled'),
+            ],
+            [
+                'field' => 'two_factor_enrolled',
+                'type' => 'boolean',
+                'label' => trans('admin/users/general.two_factor_enrolled'),
+            ],
+            [
+                'field' => 'two_factor_optin',
+                'type' => 'boolean',
+                'label' => trans('admin/users/general.two_factor_active'),
+            ],
+            [
+                'field' => 'show_in_list',
+                'type' => 'boolean',
+                'label' => trans('general.show_in_list'),
+            ],
+            // admin / superuser live in the permissions JSON column
+            // rather than as direct columns, so applyCustomFilter
+            // intercepts both keys and inlines the LIKE patterns
+            // UserQueryBuilder's onlyAdminsAndSuperAdmins /
+            // onlySuperAdmins scopes use.
+            [
+                'field' => 'admin',
+                'type' => 'boolean',
+                'label' => trans('general.admin_label'),
+            ],
+            [
+                'field' => 'superuser',
+                'type' => 'boolean',
+                'label' => trans('general.superuser'),
+            ],
+            [
+                'field' => 'assets_count',
+                'type' => 'numeric',
+                'label' => trans('general.assets'),
+            ],
+            [
+                'field' => 'accessories_count',
+                'type' => 'numeric',
+                'label' => trans('general.accessories'),
+            ],
+            [
+                'field' => 'consumables_count',
+                'type' => 'numeric',
+                'label' => trans('general.consumables'),
+            ],
+            [
+                'field' => 'licenses_count',
+                'type' => 'numeric',
+                'label' => trans('general.licenses'),
+            ],
+            [
+                'field' => 'manages_users_count',
+                'type' => 'numeric',
+                'label' => trans('admin/users/table.managed_users'),
+            ],
+            [
+                'field' => 'manages_locations_count',
+                'type' => 'numeric',
+                'label' => trans('admin/users/table.managed_locations'),
+            ],
+            [
+                'field' => 'start_date',
+                'type' => 'date-range',
+                'label' => trans('general.start_date'),
+            ],
+            [
+                'field' => 'end_date',
+                'type' => 'date-range',
+                'label' => trans('general.end_date'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+            [
+                'field' => 'last_login',
+                'type' => 'date-range',
+                'label' => trans('general.last_login'),
+            ],
+            [
+                'field' => 'activated_at',
+                'type' => 'date-range',
+                'label' => trans('general.activated_at'),
+            ],
+        ];
+    }
+
+    /**
+     * Override hook from Searchable. Routes count-column filter keys
+     * (assets_count, licenses_count, etc.) to correlated subqueries
+     * that mirror the withCount() shape UsersController@index uses to
+     * populate those columns on the API response. Default list
+     * queries never pay the subquery cost. This only runs when a
+     * matching filter key is on the request.
+     *
+     * Semantics match the displayed column exactly:
+     *   - assets_count counts non-trashed assets whose polymorphic
+     *     assigned_type/assigned_to pair points at this user, same
+     *     as the controller's `assets as assets_count` withCount
+     *     with a `withoutTrashed()` closure.
+     *   - accessories_count / consumables_count / licenses_count
+     *     count rows in the pivot tables that the matching
+     *     belongsToMany relation uses.
+     *   - manages_users_count / manages_locations_count count
+     *     records whose `manager_id` points at this user.
+     */
+    protected function applyCustomFilter(\Illuminate\Database\Eloquent\Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?\Illuminate\Database\Eloquent\Builder
+    {
+        // admin / superuser live on the permissions JSON column and
+        // can also be granted via a user's groups. Mirror the LIKE
+        // patterns UserQueryBuilder's onlySuperAdmins /
+        // onlyAdminsAndSuperAdmins scopes use. For a Yes-match we
+        // apply the matching scope. For a No-match we invert: users
+        // whose id does NOT appear in the matching-ids subquery.
+        $permissionBranches = [
+            'superuser' => [
+                'user_patterns' => ['%"superuser":"1"%', '%"superuser":1%'],
+                'group_patterns' => ['%"superuser":"1"%', '%"superuser":1%'],
+            ],
+            'admin' => [
+                'user_patterns' => ['%"superuser":"1"%', '%"superuser":1%', '%"admin":1%', '%"admin":"1"%'],
+                'group_patterns' => ['%"superuser":"1"%', '%"superuser":1%', '%"admin":1%', '%"admin":"1"%'],
+            ],
+        ];
+
+        if (array_key_exists($filterKey, $permissionBranches)) {
+            $normalized = strtolower(trim($filterValue));
+            $trueTokens = ['1', 'true', 'yes'];
+            $falseTokens = ['0', 'false', 'no'];
+            if (!in_array($normalized, array_merge($trueTokens, $falseTokens), true)) {
+                return null;
+            }
+            $wantMatch = in_array($normalized, $trueTokens, true);
+            $patterns = $permissionBranches[$filterKey];
+
+            // Subquery returning user ids that match the permission.
+            // Direct permission on users.permissions OR permission
+            // granted via a user's group.
+            $matchingIds = function ($q) use ($patterns) {
+                $q->from('users')
+                    ->select('users.id')
+                    ->where(function ($inner) use ($patterns) {
+                        foreach ($patterns['user_patterns'] as $i => $p) {
+                            if ($i === 0) {
+                                $inner->where('users.permissions', 'LIKE', $p);
+                            } else {
+                                $inner->orWhere('users.permissions', 'LIKE', $p);
+                            }
+                        }
+                    })
+                    ->orWhereIn('users.id', function ($inner) use ($patterns) {
+                        $inner->from('users_groups')
+                            ->select('users_groups.user_id')
+                            ->whereIn('users_groups.group_id', function ($pg) use ($patterns) {
+                                $pg->from('permission_groups')
+                                    ->select('permission_groups.id')
+                                    ->where(function ($pginner) use ($patterns) {
+                                        foreach ($patterns['group_patterns'] as $i => $p) {
+                                            if ($i === 0) {
+                                                $pginner->where('permission_groups.permissions', 'LIKE', $p);
+                                            } else {
+                                                $pginner->orWhere('permission_groups.permissions', 'LIKE', $p);
+                                            }
+                                        }
+                                    });
+                            });
+                    });
+            };
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($matchingIds, $wantMatch) {
+                if ($wantMatch) {
+                    $nested->whereIn('users.id', $matchingIds);
+                } else {
+                    $nested->whereNotIn('users.id', $matchingIds);
+                }
+            });
+
+            return $query;
+        }
+
+        // M2M-via-pivot FK filters. 'company' and 'groups' both carry
+        // the usual CSV-of-ids (with optional "null" sentinel) that
+        // Searchable's matchFilterableRelationIds accepts, but the
+        // relationship lives on a pivot table rather than a direct
+        // column on users. Semi-join through the pivot. Null sentinel
+        // matches users with no pivot row (users not in any company /
+        // not in any group).
+        $pivotBranches = [
+            'companies' => ['table' => 'company_user', 'column' => 'company_id'],
+            'groups' => ['table' => 'users_groups', 'column' => 'group_id'],
+        ];
+
+        if (array_key_exists($filterKey, $pivotBranches)) {
+            $parsed = $this->parseIdsAndNullSentinel($filterValue);
+            if ($parsed === null) {
+                return null;
+            }
+            [$ids, $includeNull] = $parsed;
+            $pivot = $pivotBranches[$filterKey];
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($pivot, $ids, $includeNull) {
+                if (!empty($ids)) {
+                    $nested->whereIn('users.id', function ($q) use ($pivot, $ids) {
+                        $q->from($pivot['table'])
+                            ->whereIn($pivot['table'] . '.' . $pivot['column'], $ids)
+                            ->select($pivot['table'] . '.user_id');
+                    });
+                }
+                if ($includeNull) {
+                    $nullMatcher = function ($q) use ($pivot) {
+                        $q->whereNotIn('users.id', function ($sub) use ($pivot) {
+                            $sub->from($pivot['table'])->select($pivot['table'] . '.user_id');
+                        });
+                    };
+                    if (empty($ids)) {
+                        $nullMatcher($nested);
+                    } else {
+                        $nested->orWhereNotIn('users.id', function ($sub) use ($pivot) {
+                            $sub->from($pivot['table'])->select($pivot['table'] . '.user_id');
+                        });
+                    }
+                }
+            });
+
+            return $query;
+        }
+
+        $countBranches = [
+            'assets_count' => fn() => \App\Models\Asset::query()
+                ->whereColumn('assets.assigned_to', 'users.id')
+                ->where('assets.assigned_type', self::class)
+                ->whereNull('assets.deleted_at')
+                ->selectRaw('COUNT(*)'),
+            'accessories_count' => fn() => \Illuminate\Support\Facades\DB::table('accessories_checkout')
+                ->whereColumn('accessories_checkout.assigned_to', 'users.id')
+                ->where('accessories_checkout.assigned_type', self::class)
+                ->selectRaw('COUNT(*)'),
+            'consumables_count' => fn() => \Illuminate\Support\Facades\DB::table('consumables_users')
+                ->whereColumn('consumables_users.assigned_to', 'users.id')
+                ->selectRaw('COUNT(*)'),
+            'licenses_count' => fn() => \Illuminate\Support\Facades\DB::table('license_seats')
+                ->whereColumn('license_seats.assigned_to', 'users.id')
+                ->selectRaw('COUNT(*)'),
+            'manages_users_count' => fn() => \Illuminate\Support\Facades\DB::table('users as managed_users')
+                ->whereColumn('managed_users.manager_id', 'users.id')
+                ->whereNull('managed_users.deleted_at')
+                ->selectRaw('COUNT(*)'),
+            'manages_locations_count' => fn() => \Illuminate\Support\Facades\DB::table('locations')
+                ->whereColumn('locations.manager_id', 'users.id')
+                ->whereNull('locations.deleted_at')
+                ->selectRaw('COUNT(*)'),
+        ];
+
+        if (!array_key_exists($filterKey, $countBranches)) {
+            return null;
+        }
+
+        $bounds = $this->parseGtLtBounds($filterValue);
+        if ($bounds === null) {
+            return null;
+        }
+        [$gt, $lt] = $bounds;
+
+        $sub = $countBranches[$filterKey]();
+        $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+        $query->{$outerBoolean}(function ($nested) use ($sub, $gt, $lt) {
+            if ($gt !== null) {
+                $nested->where($sub, '>', $gt);
+            }
+            if ($lt !== null) {
+                $nested->where($sub, '<', $lt);
+            }
+        });
+
+        return $query;
+    }
+
     protected $searchableCounts = [
         'accessories_count',
         'assets_count',
@@ -1785,10 +2161,10 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
      *
      * @param  array<int, string>  $terms  The search terms
      */
-    public function advancedTextSearch(Builder $query, array $terms)
+    public function advancedTextSearch(Builder $outer, Builder $nested, array $terms): void
     {
         foreach ($terms as $term) {
-            $query->orWhereMultipleColumns(
+            $nested->orWhereMultipleColumns(
                 [
                     'users.first_name',
                     'users.last_name',
@@ -1800,8 +2176,6 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
                 ], $term
             );
         }
-
-        return $query;
     }
 
     /**

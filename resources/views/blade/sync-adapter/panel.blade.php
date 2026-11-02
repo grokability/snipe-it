@@ -72,7 +72,7 @@
                 />
                 {{ trans('admin/settings/sync_adapters.pull_dry_run_label') }}
             </label>
-            @if ($adapter instanceof \App\SyncAdapters\PushableAdapter && $adapter->canPush())
+            @if ($adapter instanceof \App\SyncAdapters\PushableSyncAdapter && $adapter->canPush())
                 <label class="form-control">
                     <x-input.checkbox
                         :name="$slug . '_push_dry_run'"
@@ -144,7 +144,7 @@
                 </span>
             </form>
 
-            @if ($adapter instanceof \App\SyncAdapters\PushableAdapter && $adapter->canPush())
+            @if ($adapter instanceof \App\SyncAdapters\PushableSyncAdapter && $adapter->canPush())
                 <form
                     method="POST"
                     action="{{ route('settings.adapters.push', $slug) }}"
@@ -183,7 +183,7 @@
 
     {{-- Full-width tip callout --}}
     <x-callout type="info" icon="tip" live="polite" style="margin-top: 10px;">
-        @if ($adapter instanceof \App\SyncAdapters\PushableAdapter && $adapter->canPush())
+        @if ($adapter instanceof \App\SyncAdapters\PushableSyncAdapter && $adapter->canPush())
             {!! trans('admin/settings/sync_adapters.large_fleet_note', [
                 'pull_command' => '<code>php artisan snipeit:pull-inventory '.e($slug).'</code>',
                 'push_command' => '<code>php artisan snipeit:push-inventory '.e($slug).'</code>',

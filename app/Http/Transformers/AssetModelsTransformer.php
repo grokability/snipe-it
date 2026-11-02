@@ -52,6 +52,9 @@ class AssetModelsTransformer
             'qr_code_url' => route('qr_code/common', ['object_type' => 'models', 'id' => $assetmodel->id]),
             'model_number' => ($assetmodel->model_number ? e($assetmodel->model_number) : null),
             'min_amt' => ($assetmodel->min_amt) ? (int) $assetmodel->min_amt : null,
+            'mfg_marketing_name' => ($assetmodel->mfg_marketing_name) ? e($assetmodel->mfg_marketing_name) : null,
+            'mfg_release_date' => Helper::getFormattedDateObject($assetmodel->mfg_release_date, 'date'),
+            'mfg_discontinued_date' => Helper::getFormattedDateObject($assetmodel->mfg_discontinued_date, 'date'),
 
             'depreciation' => ($assetmodel->depreciation) ? [
                 'id' => (int) $assetmodel->depreciation->id,

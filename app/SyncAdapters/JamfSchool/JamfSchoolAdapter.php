@@ -4,6 +4,7 @@ namespace App\SyncAdapters\JamfSchool;
 
 use App\SyncAdapters\HostInventoryRecord;
 use App\SyncAdapters\SyncAdapter;
+use App\SyncAdapters\Traits\UsesAppleDbEnrichment;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 
@@ -16,6 +17,8 @@ use Illuminate\Support\Arr;
  */
 class JamfSchoolAdapter extends SyncAdapter
 {
+    use UsesAppleDbEnrichment;
+
     public static function typeLabel(): string
     {
         return 'Jamf School';
@@ -50,12 +53,14 @@ class JamfSchoolAdapter extends SyncAdapter
                 'secret' => true,
                 'help' => trans('admin/settings/sync_adapters.jamf_school_api_key_help'),
             ],
+            $this->appleDbSettingsField(),
         ];
     }
 
     public function extraFields(): array
     {
         return [
+            ...$this->appleDbExtraFieldsDeclaration(),
             'jamf_school_model_identifier' => ['label_key' => 'admin/settings/sync_adapters.extra_model_identifier'],
             'jamf_school_supervised' => ['label_key' => 'admin/settings/sync_adapters.extra_supervised', 'type' => 'boolean'],
             'jamf_school_location_id' => ['label_key' => 'admin/settings/sync_adapters.extra_location_id'],
@@ -98,9 +103,40 @@ class JamfSchoolAdapter extends SyncAdapter
             apiKey: $this->credential('api_key'),
         );
 
+        $enrichmentEnabled = $this->appleDbEnrichmentEnabled();
+        $enrichmentHandled = [];
+
         foreach ($client->devices() as $device) {
-            yield $this->normalize($device);
+            $record = $this->normalize($device);
+            if ($enrichmentEnabled) {
+                $enrichmentHandled = $this->enrichFromAppleDb($record, $enrichmentHandled);
+            }
+            yield $record;
         }
+    }
+
+    /**
+     * Pass the Jamf School record to the shared enrichment flow.
+     * Jamf School exposes the AppleDB-shape identifier at
+     * `model.identifier`; `model.name` is the marketing-ish string
+     * admins see as the AssetModel name.
+     *
+     * @param  array<string, bool>  $handled
+     * @return array<string, bool>
+     */
+    private function enrichFromAppleDb(HostInventoryRecord $record, array $handled): array
+    {
+        $modelName = $record->hardwareModel;
+        if (! is_string($modelName) || $modelName === '') {
+            return $handled;
+        }
+
+        $productType = $record->extra['jamf_school_model_identifier'] ?? null;
+        if (! is_string($productType) || $productType === '') {
+            return $handled;
+        }
+
+        return $this->enrichModelFromAppleDb($modelName, $productType, null, $handled);
     }
 
     /**
@@ -112,6 +148,11 @@ class JamfSchoolAdapter extends SyncAdapter
      */
     private function normalize(array $device): HostInventoryRecord
     {
+        $productType = Arr::get($device, 'model.identifier');
+        $modelName = Arr::get($device, 'model.name');
+        $canonical = $this->canonicalIdentityFor($productType, $modelName);
+        $appleDbExtras = $this->appleDbExtrasFor($productType, $modelName);
+
         return new HostInventoryRecord(
             sourceKey: $this->name(),
             sourceId: (string) Arr::get($device, 'UDID'),
@@ -139,11 +180,14 @@ class JamfSchoolAdapter extends SyncAdapter
             assignedUserName: Arr::get($device, 'owner.username'),
             vendorGroupId: Arr::has($device, 'locationId') ? (string) Arr::get($device, 'locationId') : null,
             extra: [
+                ...$appleDbExtras,
                 'jamf_school_model_identifier' => Arr::get($device, 'model.identifier'),
                 'jamf_school_supervised' => Arr::get($device, 'isSupervised'),
                 'jamf_school_location_id' => Arr::get($device, 'locationId'),
                 'jamf_school_device_type' => Arr::get($device, 'deviceType'),
             ],
+            canonicalMarketingName: $canonical['canonicalMarketingName'],
+            canonicalModelNumber: $canonical['canonicalModelNumber'],
         );
     }
 

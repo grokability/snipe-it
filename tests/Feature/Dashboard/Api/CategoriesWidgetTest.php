@@ -85,8 +85,9 @@ class CategoriesWidgetTest extends TestCase
             ->assertOk();
     }
 
-    public function test_search_and_filter_params_are_ignored()
+    public function test_search_param_filters_rows_but_other_params_are_ignored()
     {
+        // Issue #19979: `search` was ignored. Everything else still is.
         Category::factory()->count(3)->create(['category_type' => 'accessory']);
 
         Passport::actingAs(User::factory()->viewAccessories()->create());
@@ -94,16 +95,20 @@ class CategoriesWidgetTest extends TestCase
         $unfilteredTotal = $this->getJson(route('api.dashboard.categories'))
             ->assertOk()
             ->json('total');
-        $probeTotal = $this->getJson(route('api.dashboard.categories', [
-            'search' => 'never-matches-anything',
+
+        $searchHonoredTotal = $this->getJson(route('api.dashboard.categories', ['search' => 'never-matches-anything']))
+            ->assertOk()
+            ->json('total');
+        $this->assertSame(0, $searchHonoredTotal);
+
+        $extraParamsIgnoredTotal = $this->getJson(route('api.dashboard.categories', [
             'filter' => 'never-matches-anything',
             'name' => 'never-matches-anything',
             'created_by' => 999_999,
         ]))
             ->assertOk()
             ->json('total');
-
-        $this->assertSame($unfilteredTotal, $probeTotal);
+        $this->assertSame($unfilteredTotal, $extraParamsIgnoredTotal);
     }
 
     public function test_limit_caps_at_fifty()

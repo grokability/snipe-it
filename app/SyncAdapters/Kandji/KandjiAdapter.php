@@ -4,8 +4,8 @@ namespace App\SyncAdapters\Kandji;
 
 use App\Models\Asset;
 use App\SyncAdapters\HostInventoryRecord;
-use App\SyncAdapters\PushableAdapter;
-use App\SyncAdapters\SyncAdapter;
+use App\SyncAdapters\PushableSyncAdapter;
+use App\SyncAdapters\Traits\UsesAppleDbEnrichment;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -16,8 +16,10 @@ use Illuminate\Support\Facades\Log;
  * objects. Also pushes Snipe-IT-authoritative fields back to Kandji
  * (asset_tag today) when the admin marks the mapping row as 'push'.
  */
-class KandjiAdapter extends SyncAdapter implements PushableAdapter
+class KandjiAdapter extends PushableSyncAdapter
 {
+    use UsesAppleDbEnrichment;
+
     public static function typeLabel(): string
     {
         return 'Iru (Kandji)';
@@ -52,15 +54,18 @@ class KandjiAdapter extends SyncAdapter implements PushableAdapter
                 'secret' => true,
                 'help' => trans('admin/settings/sync_adapters.kandji_token_help'),
             ],
+            $this->appleDbSettingsField(),
         ];
     }
 
     public function extraFields(): array
     {
         return [
+            ...$this->appleDbExtraFieldsDeclaration(),
             'kandji_blueprint_id' => ['label_key' => 'admin/settings/sync_adapters.extra_blueprint_id'],
             'kandji_mdm_enabled' => ['label_key' => 'admin/settings/sync_adapters.extra_mdm_enabled', 'type' => 'boolean'],
             'kandji_is_missing' => ['label_key' => 'admin/settings/sync_adapters.extra_marked_missing', 'type' => 'boolean'],
+            'kandji_model_identifier' => ['label_key' => 'admin/settings/sync_adapters.extra_model_identifier'],
         ];
     }
 
@@ -91,9 +96,69 @@ class KandjiAdapter extends SyncAdapter implements PushableAdapter
     {
         $client = new KandjiClient(baseUrl: $this->url(), token: $this->credential('token'));
 
+        $enrichmentEnabled = $this->appleDbEnrichmentEnabled();
+        $enrichmentHandled = [];
+
         foreach ($client->devices() as $device) {
-            yield $this->normalize($device);
+            // Kandji's list endpoint omits the AppleDB-shape hardware
+            // identifier so an enrichment-enabled pull hits
+            // /devices/{id}/details per record. Pays N+1 API cost for
+            // the enrichment, which is why the toggle is opt-in.
+            $identifier = null;
+            if ($enrichmentEnabled && Arr::get($device, 'platform') !== null) {
+                $details = $client->deviceDetails((string) Arr::get($device, 'device_id'));
+                $identifier = $details !== null ? $this->extractKandjiIdentifier($details) : null;
+            }
+
+            $record = $this->normalize($device, $identifier);
+            if ($enrichmentEnabled) {
+                $enrichmentHandled = $this->enrichFromAppleDb($record, $enrichmentHandled);
+            }
+            yield $record;
         }
+    }
+
+    /**
+     * Kandji's /devices/{id}/details response nests the AppleDB-
+     * shape identifier under hardware_overview on Macs. iPads /
+     * iPhones place the equivalent under a different key depending
+     * on the model class, so walk the two most common locations and
+     * accept whichever responds. Non-Apple devices (if Kandji ever
+     * adds them) are already filtered out before this is called via
+     * the enrichment toggle gate.
+     *
+     * @param  array<string, mixed>  $details
+     */
+    private function extractKandjiIdentifier(array $details): ?string
+    {
+        $identifier = Arr::get($details, 'hardware_overview.model_identifier')
+            ?? Arr::get($details, 'general.model_identifier');
+
+        return is_string($identifier) && $identifier !== '' ? $identifier : null;
+    }
+
+    /**
+     * Pass the Kandji record to the shared enrichment flow. Uses
+     * the normalized hardwareModel as the AssetModel name, same as
+     * the list-endpoint behavior before enrichment landed. The
+     * details-fetched identifier flows through the record extras.
+     *
+     * @param  array<string, bool>  $handled
+     * @return array<string, bool>
+     */
+    private function enrichFromAppleDb(HostInventoryRecord $record, array $handled): array
+    {
+        $modelName = $record->hardwareModel;
+        if (! is_string($modelName) || $modelName === '') {
+            return $handled;
+        }
+
+        $productType = $record->extra['kandji_model_identifier'] ?? null;
+        if (! is_string($productType) || $productType === '') {
+            return $handled;
+        }
+
+        return $this->enrichModelFromAppleDb($modelName, $productType, null, $handled);
     }
 
     /**
@@ -108,14 +173,18 @@ class KandjiAdapter extends SyncAdapter implements PushableAdapter
      *
      * @param  array<string, mixed>  $device
      */
-    private function normalize(array $device): HostInventoryRecord
+    private function normalize(array $device, ?string $modelIdentifier = null): HostInventoryRecord
     {
+        $modelName = Arr::get($device, 'model');
+        $canonical = $this->canonicalIdentityFor($modelIdentifier, $modelName);
+        $appleDbExtras = $this->appleDbExtrasFor($modelIdentifier, $modelName);
+
         return new HostInventoryRecord(
             sourceKey: $this->name(),
             sourceId: (string) Arr::get($device, 'device_id'),
             hostname: Arr::get($device, 'device_name'),
             hardwareSerial: Arr::get($device, 'serial_number'),
-            hardwareModel: Arr::get($device, 'model'),
+            hardwareModel: $modelName,
             manufacturer: Arr::get($device, 'platform') === 'Mac' ? 'Apple' : null,
             primaryMac: null,
             primaryIp: null,
@@ -127,10 +196,14 @@ class KandjiAdapter extends SyncAdapter implements PushableAdapter
             assignedUserName: Arr::get($device, 'user.name'),
             vendorGroupId: Arr::has($device, 'assigned_blueprint_id') ? (string) Arr::get($device, 'assigned_blueprint_id') : null,
             extra: [
+                ...$appleDbExtras,
                 'kandji_blueprint_id' => Arr::get($device, 'assigned_blueprint_id'),
                 'kandji_mdm_enabled' => Arr::get($device, 'mdm_enabled'),
                 'kandji_is_missing' => Arr::get($device, 'is_missing'),
+                'kandji_model_identifier' => $modelIdentifier,
             ],
+            canonicalMarketingName: $canonical['canonicalMarketingName'],
+            canonicalModelNumber: $canonical['canonicalModelNumber'],
         );
     }
 

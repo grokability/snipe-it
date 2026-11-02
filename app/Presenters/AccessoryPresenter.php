@@ -15,12 +15,14 @@ class AccessoryPresenter extends Presenter
     /**
      * JSON column layout for bootstrap-table.
      *
-     * @param  bool  $showDeletedAt  Make the deleted_at column visible
-     *                               by default. Passed from the Deleted-index view so admins
-     *                               see when each row was deleted. Still switchable elsewhere.
+     * @param  array<int, string>  $hide_fields  Column field names to omit from the layout
+     *                                           entirely. Used by the main /accessories list
+     *                                           to skip `deleted_at`, which is always NULL on
+     *                                           non-trash views (the Archived / Deleted
+     *                                           status filter owns surfacing those rows).
      * @return string
      */
-    public static function dataTableLayout(bool $showDeletedAt = false)
+    public static function dataTableLayout(array $hide_fields = [])
     {
         $layout = [
             [
@@ -108,7 +110,7 @@ class AccessoryPresenter extends Presenter
             ], [
                 'field' => 'min_amt',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.min_amt'),
                 'formatter' => 'minAmtFormatter',
@@ -116,7 +118,7 @@ class AccessoryPresenter extends Presenter
             ], [
                 'field' => 'qty',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('admin/accessories/general.total'),
                 'footerFormatter' => 'qtySumFormatter',
@@ -124,7 +126,7 @@ class AccessoryPresenter extends Presenter
             ], [
                 'field' => 'remaining',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 // Kept hidden by default so the primary "% Remaining"
                 // progress bar column stays the headline signal; users
@@ -137,7 +139,7 @@ class AccessoryPresenter extends Presenter
             ], [
                 'field' => 'checkouts_count',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => true,
                 'title' => trans('general.checked_out'),
@@ -161,7 +163,7 @@ class AccessoryPresenter extends Presenter
                 // through OrderByLastPurchaseDate accordingly.
                 'field' => 'purchase_date',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('general.last_purchase_date'),
@@ -169,7 +171,7 @@ class AccessoryPresenter extends Presenter
             ], [
                 'field' => 'purchase_cost',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.last_unit_cost'),
                 'class' => 'text-right text-padding-number-cell',
@@ -204,7 +206,7 @@ class AccessoryPresenter extends Presenter
             ], [
                 'field' => 'requestable',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'visible' => false,
@@ -222,7 +224,7 @@ class AccessoryPresenter extends Presenter
             ], [
                 'field' => 'created_by',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.created_by'),
                 'visible' => false,
@@ -251,7 +253,7 @@ class AccessoryPresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'switchable' => true,
-                'visible' => $showDeletedAt,
+                'visible' => true,
                 'title' => trans('general.deleted_at'),
                 'formatter' => 'dateDisplayFormatter',
             ], [
@@ -275,6 +277,12 @@ class AccessoryPresenter extends Presenter
                 'class' => 'hidden-print',
             ],
         ];
+
+        if (! empty($hide_fields)) {
+            $layout = array_values(array_filter($layout, function ($col) use ($hide_fields) {
+                return ! in_array($col['field'], $hide_fields, true);
+            }));
+        }
 
         return json_encode($layout);
     }

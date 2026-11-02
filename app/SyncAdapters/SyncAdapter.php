@@ -3,7 +3,6 @@
 namespace App\SyncAdapters;
 
 use App\Models\Asset;
-use App\Models\CustomField;
 use App\Models\SyncAdapterConfig;
 use App\Models\SyncAdapterInstance;
 use App\Rules\ExternalUrl;
@@ -153,14 +152,17 @@ abstract class SyncAdapter
     }
 
     /**
-     * Type slug -> {label, docs_url} catalog. Powers the help pane's
-     * table of supported adapters so admins can jump into either the
-     * "Add adapter" modal with the type pre-selected or the docs page
-     * (vendor's own for named adapters, Snipe-IT's own for Custom
-     * HTTP). docs_url is null for adapters whose vendor has no stable
-     * public reference URL or gates its docs behind a login.
+     * Type slug -> {label, docs_url, direction} catalog. Powers the
+     * help pane's list of supported adapters so admins can jump into
+     * either the "Add adapter" modal with the type pre-selected or
+     * the docs page (vendor's own for named adapters, Snipe-IT's own
+     * for Custom HTTP). docs_url is null for adapters whose vendor
+     * has no stable public reference URL or gates its docs behind a
+     * login. direction is derived from whether the class extends
+     * PushableSyncAdapter so the catalog UI reflects reality without
+     * a separate list for admins or docs to drift from.
      *
-     * @return array<string, array{label: string, docs_url: ?string}>
+     * @return array<string, array{label: string, docs_url: ?string, direction: 'pull'|'both'}>
      */
     public static function typeCatalog(): array
     {
@@ -169,6 +171,7 @@ abstract class SyncAdapter
             $out[$slug] = [
                 'label' => $class::typeLabel(),
                 'docs_url' => $class::docsUrl(),
+                'direction' => is_subclass_of($class, PushableSyncAdapter::class) ? 'both' : 'pull',
             ];
         }
 
@@ -819,7 +822,7 @@ abstract class SyncAdapter
      * Grouped here so saveConfig() reads as a list of intent rather
      * than a wall of SyncAdapterConfig::put() calls.
      */
-    private function persistOperationalSettings(Request $request, string $slug): void
+    protected function persistOperationalSettings(Request $request, string $slug): void
     {
         SyncAdapterConfig::put(
             $this->instance->id,
@@ -911,7 +914,7 @@ abstract class SyncAdapter
         SyncAdapterConfig::put(
             $this->instance->id,
             'create_snipeit_assets_on_pull',
-            $request->boolean($slug . '_create_snipeit_assets_on_pull') ? '1' : '0',
+            $request->boolean($slug.'_create_snipeit_assets_on_pull') ? '1' : '0',
         );
 
         // Per-device enrichment opt-in. Only persisted for adapters
@@ -926,16 +929,6 @@ abstract class SyncAdapter
             );
         }
 
-        // Push dry-run flag. When on, adapters log the push payload
-        // instead of sending it, so admins can verify mapping +
-        // direction config against real assets without any vendor
-        // side effect.
-        SyncAdapterConfig::put(
-            $this->instance->id,
-            'push_dry_run',
-            $request->boolean($slug.'_push_dry_run') ? '1' : '0',
-        );
-
         // Pull dry-run flag. When on, Sync Now still calls pull() so
         // vendor-side fetch, mapping, and normalization all run - but
         // the consumer logs each HostInventoryRecord instead of handing
@@ -945,28 +938,6 @@ abstract class SyncAdapter
             $this->instance->id,
             'pull_dry_run',
             $request->boolean($slug.'_pull_dry_run') ? '1' : '0',
-        );
-
-        // Push notes template. Blade-ish {placeholder} string that
-        // adapters with a notes-shape vendor field (Intune, Kandji,
-        // Jamf, etc.) render + push to that field. Blank = don't push
-        // a notes field. Empty-string save clears the template.
-        SyncAdapterConfig::put(
-            $this->instance->id,
-            'push_notes_template',
-            (string) $request->input($slug.'_push_notes_template', ''),
-        );
-
-        // Optional override for which vendor field the composed
-        // notes get pushed to. Blank = use the adapter's default
-        // (Kandji: notes, Jamf: general.notes, Intune: notes, etc.).
-        // Admin sets this when their vendor has multiple candidate
-        // fields (Kandji's `notes` vs a specific custom field, WS1's
-        // Custom Attribute name, Ninja's Custom Field name).
-        SyncAdapterConfig::put(
-            $this->instance->id,
-            'push_notes_target',
-            (string) $request->input($slug.'_push_notes_target', ''),
         );
     }
 
@@ -1046,13 +1017,17 @@ abstract class SyncAdapter
      * Per-field direction (pull / push / skip). Orthogonal to the
      * target column stored above so admins can flip direction without
      * re-picking the target. Only meaningful for adapters that
-     * implement PushableAdapter. For pull-only adapters the form
-     * doesn't render the direction column, and the default is always pull.
+     * implement PushableSyncAdapter. For pull-only adapters the form
+     * doesn't render the direction column, and the default is always pull, and
+     * this method is a no-op.
      *
      * @param  array<int, string>  $validFields
      */
-    private function persistFieldDirections(Request $request, string $slug, array $validFields): void
+    protected function persistFieldDirections(Request $request, string $slug, array $validFields): void
     {
+        \Log::debug("This should never be called - there's no such thing as 'direction' for pull-only SyncAdapters");
+        // Though, maybe, there is? 'skip' is a direction, and you might use that?
+        // TODO - this is copypasta from PushableSyncAdapter, but without it, tests won't pass
         $posted = (array) $request->input($slug.'_direction', []);
 
         // Widgets' picker rows submit their unfinished pair under
@@ -1080,7 +1055,7 @@ abstract class SyncAdapter
         // push/both on non-pushable standard fields down to pull so
         // we don't persist an unenforceable direction. Extras are
         // defined by the adapter and assumed pushable.
-        $pushable = $this->pushableFields();
+        $pushable = MappingTargets::FIELDS;
 
         foreach ($posted as $field => $direction) {
             if (! in_array($field, $validFields, true)) {
@@ -1123,22 +1098,6 @@ abstract class SyncAdapter
     }
 
     /**
-     * Dry-run mode for push: when true, PushableAdapter::push()
-     * implementations should build the payload and log it via the
-     * sync-adapters channel but skip the actual vendor API call.
-     * Lets admins verify their mapping + direction configuration
-     * end-to-end without touching the vendor. Off by default.
-     */
-    public function isPushDryRun(): bool
-    {
-        if ($this->pushDryRunOverride !== null) {
-            return $this->pushDryRunOverride;
-        }
-
-        return SyncAdapterConfig::get($this->instance->id, 'push_dry_run') === '1';
-    }
-
-    /**
      * Dry-run mode for pull: when true, Sync Now still fetches from
      * the vendor and runs the adapter's normalization, but the pull
      * consumers (PullInventory CLI + SyncAdapterController UI) log
@@ -1158,22 +1117,13 @@ abstract class SyncAdapter
     /**
      * Per-request override for the dry-run flags. Set by callers that
      * want to force a dry run without flipping the persisted config
-     * (CLI --dry-run flag on snipeit:pull-inventory /
-     * snipeit:push-inventory, UI toggle inside a single click, etc.).
+     * (CLI --dry-run flag on snipeit:pull-inventory, UI toggle inside a
+     * single click, etc.).
      * Null means "fall back to the persisted config value". Lives on
      * the adapter instance so it's scoped to one adapter object for
      * the current request.
      */
-    protected ?bool $pushDryRunOverride = null;
-
     protected ?bool $pullDryRunOverride = null;
-
-    public function withPushDryRunOverride(?bool $override): static
-    {
-        $this->pushDryRunOverride = $override;
-
-        return $this;
-    }
 
     public function withPullDryRunOverride(?bool $override): static
     {
@@ -1182,48 +1132,7 @@ abstract class SyncAdapter
         return $this;
     }
 
-    /**
-     * Valid placeholder keys for the composed-notes push template.
-     * Admins wrap these tokens in {curly-braces} inside their
-     * push_notes_template to build a single-field notes blob from
-     * many Snipe-IT fields. `{custom.Field Name}` accesses any
-     * CustomField by its exact display name (case-sensitive).
-     * Unknown placeholders and null values render as empty so a
-     * template referencing missing fields degrades gracefully.
-     *
-     * Admin-facing descriptions of each placeholder live in the
-     * `push_notes_template_help` translation, not here, so the
-     * catalog stays translator-friendly.
-     *
-     * @var array<int, string>
-     */
-    public const NOTES_TEMPLATE_PLACEHOLDERS = [
-        'asset_tag',
-        'name',
-        'serial',
-        'model',
-        'model_number',
-        'manufacturer',
-        'category',
-        'status',
-        'status_type',
-        'assigned_to',
-        'assigned_to_email',
-        'assigned_to_username',
-        'location',
-        'company',
-        'supplier',
-        'last_checkout',
-        'last_checkin',
-        'expected_checkin',
-        'notes',
-        'order_number',
-        'purchase_date',
-        'purchase_cost',
-        'warranty_months',
-        'warranty_expires',
-    ];
-
+    // FIXME - do we want to do this differently here versus elsewhere?
     public function directionFor(string $field): string
     {
         $stored = SyncAdapterConfig::get($this->instance->id, 'direction.'.$field);
@@ -1231,29 +1140,6 @@ abstract class SyncAdapter
         return in_array($stored, ['pull', 'push', 'skip', 'both'], true) ? $stored : 'pull';
     }
 
-    /**
-     * Enumeration of source-field names currently directed 'push' or
-     * 'both' on this instance. Used by push() implementations to
-     * build the PATCH payload without scanning every possible field.
-     *
-     * @return array<int, string>
-     */
-    /**
-     * Standard fields this adapter actually knows how to push TO the
-     * vendor. The direction dropdown in the settings UI only offers
-     * push/both for fields in this list - picking push for a field
-     * the adapter can't push would silently drop at buildPushPayload
-     * time, confusing the admin.
-     *
-     * Default: every MappingTargets::FIELDS entry, which matches the
-     * behavior adapters had before this hook existed. CustomHttp
-     * overrides to just its hard-coded PUSHABLE_STANDARD_FIELDS set
-     * (hostname / serial / asset_tag / model - the only four we can
-     * resolve to an Asset-side value). Other adapters that fully
-     * handle every standard field don't need to override.
-     *
-     * @return array<int, string>
-     */
     /**
      * Whether this adapter's settings form should render the
      * "<Adapter>-specific fields" mapping-picker section. True by
@@ -1266,497 +1152,6 @@ abstract class SyncAdapter
     public function rendersExtrasPicker(): bool
     {
         return true;
-    }
-
-    public function pushableFields(): array
-    {
-        return MappingTargets::FIELDS;
-    }
-
-    public function pushDirectedFields(): array
-    {
-        $out = [];
-        $candidates = array_merge(MappingTargets::FIELDS, array_keys($this->extraFields()));
-        foreach ($candidates as $field) {
-            // Standard-field target "Skip (do not sync)" wins over
-            // whatever the paired direction dropdown says - the field
-            // is explicitly opted out of syncing in either direction.
-            // The direction value may still be 'push' in the stored
-            // config from before the target was flipped to skip, but
-            // we treat the field as excluded from the push set
-            // regardless. Also protects against stale state on
-            // direction=push + mapping=skip combos the UI used to be
-            // able to produce.
-            //
-            // Extras skip this gate because their mapping default is
-            // 'skip' (no stored row = "not configured, not synced")
-            // and their direction toggle is the only control the
-            // admin has to pick push on them.
-            if (in_array($field, MappingTargets::FIELDS, true) && $this->mappingFor($field) === 'skip') {
-                continue;
-            }
-            if (in_array($this->directionFor($field), ['push', 'both'], true)) {
-                $out[] = $field;
-            }
-        }
-
-        return $out;
-    }
-
-    /**
-     * Resolve one of the standard source-field names (hostname,
-     * asset_tag, serial, model, notes, etc.) to the matching value
-     * on the asset. Push implementations call this when building
-     * their outgoing payload so every adapter reads Snipe-IT values
-     * the same way. Returns null for unknown source-field names,
-     * for extras (vendor-specific keys the base class can't map),
-     * or when the asset has no value for that field.
-     *
-     * Adapters with a vendor-specific extra that needs pushing
-     * override in the subclass, call parent for the standard fields,
-     * and handle the vendor-specific keys in the child branch.
-     */
-    protected function assetValueForSourceField(Asset $asset, string $field): mixed
-    {
-        // Native fast-path: the four fields every adapter can push
-        // without consulting a mapping target. Pre-dates the mapping-
-        // target resolver below so adapters that call this with
-        // non-mapped fields (test harnesses, future callers) still get
-        // a sensible answer.
-        $native = match ($field) {
-            'hostname', 'name' => $asset->name,
-            'serial' => $asset->serial,
-            'asset_tag' => $asset->asset_tag,
-            'model' => $asset->model?->name,
-            'notes' => $asset->notes,
-            default => null,
-        };
-        if ($native !== null) {
-            return $native;
-        }
-
-        // For other source fields (os, os_version, last_seen, mac,
-        // custom:X, etc.) consult the per-field mapping target so the
-        // middleman push scenario (pull from vendor A, push to vendor
-        // B) can actually surface the stored value. The mapping is
-        // the admin's choice of "where in Snipe-IT does this field
-        // live" - we read from that slot.
-        $target = $this->mappingFor($field);
-        if ($target === '' || $target === 'skip') {
-            return null;
-        }
-
-        if (str_starts_with($target, 'custom:')) {
-            $customFieldId = (int) substr($target, 7);
-            $customField = CustomField::find($customFieldId);
-            if ($customField === null || $customField->db_column === null) {
-                return null;
-            }
-
-            return $asset->getAttribute($customField->db_column);
-        }
-
-        if (str_starts_with($target, 'external:')) {
-            $column = substr($target, 9);
-            $row = \Illuminate\Support\Facades\DB::table('asset_external_sources')
-                ->where('asset_id', $asset->id)
-                ->where('source', $this->name())
-                ->first();
-
-            return $row->{$column} ?? null;
-        }
-
-        if (str_starts_with($target, 'native:')) {
-            // Direct read from the asset column named after the
-            // target. The sync writers use the same convention, so
-            // native:foo stored by pull is readable as $asset->foo.
-            $column = substr($target, 7);
-
-            return $asset->getAttribute($column);
-        }
-
-        return null;
-    }
-
-    /**
-     * Standard push() implementation for single-endpoint adapters. An
-     * adapter whose push() writes one payload to one endpoint (Kandji,
-     * Jamf, NinjaOne) overrides two hooks (buildPushPayload,
-     * dispatchPush) and delegates push() to this template.
-     *
-     * Adapters with split-endpoint pushes (Mosyle posts asset_tag and
-     * notes to separate operations, Workspace ONE splits device fields
-     * from Custom Attributes) implement push() directly and don't call
-     * this. CustomHttp also implements push() directly because its
-     * dry-run log and dispatch depend on admin-configured HTTP method
-     * and endpoint that the template can't parameterize.
-     *
-     * Success and dry-run log lines use typeLabel() plus the flat
-     * $touched list (falling back to array_keys($payload) when the
-     * adapter builds a flat-keyed payload and doesn't populate
-     * $touched). Adapters wanting vendor-specific log wording override
-     * push() directly instead of using the template.
-     *
-     * @param  array<int, string>  $changedFields
-     */
-    protected function pushViaSinglePayload(Asset $asset, array $changedFields): bool
-    {
-        $externalSource = $this->pushPrologue($asset, $changedFields);
-        if ($externalSource === null) {
-            return false;
-        }
-
-        [$payload, $touched] = $this->buildPushPayload($asset);
-        $this->applyComposedNotesToPayload($asset, $payload, $touched);
-
-        if ($payload === []) {
-            return false;
-        }
-
-        $written = $touched !== [] ? $touched : array_keys($payload);
-
-        if ($this->isPushDryRun()) {
-            Log::channel('sync-adapters')->info(sprintf(
-                '%s push [dry-run]: would send %s to %s device %s',
-                $this->name(),
-                json_encode($payload, JSON_UNESCAPED_SLASHES),
-                static::typeLabel(),
-                $externalSource->external_id,
-            ));
-
-            return true;
-        }
-
-        $this->dispatchPush($externalSource, $payload);
-
-        Log::channel('sync-adapters')->info(sprintf(
-            '%s push: updated %s device %s [%s]',
-            $this->name(),
-            static::typeLabel(),
-            $externalSource->external_id,
-            implode(', ', $written),
-        ));
-
-        return true;
-    }
-
-    /**
-     * Build the outgoing vendor payload for pushViaSinglePayload().
-     * Adapters that call pushViaSinglePayload() override this to
-     * return their payload and the flat list of dot-paths / keys that
-     * were written (for the post-push audit log). Empty payload signals
-     * "nothing to send" and the template short-circuits.
-     *
-     * @return array{0: array<string, mixed>, 1: array<int, string>}
-     */
-    protected function buildPushPayload(Asset $asset): array
-    {
-        throw new \LogicException(static::class.' calls pushViaSinglePayload() but does not override buildPushPayload().');
-    }
-
-    /**
-     * Fire the vendor HTTP call for pushViaSinglePayload(). Adapters
-     * that call pushViaSinglePayload() override this. Failures throw
-     * (the outer controller catches and renders a red-flash summary,
-     * matching the pull path). No return value: presence of the call
-     * is enough, the template logs success on its own.
-     *
-     * @param  array<string, mixed>  $payload
-     */
-    protected function dispatchPush(\App\Models\AssetExternalSource $externalSource, array $payload): void
-    {
-        throw new \LogicException(static::class.' calls pushViaSinglePayload() but does not override dispatchPush().');
-    }
-
-    /**
-     * Shared prologue for every PushableAdapter::push() implementation.
-     * Runs the three identical guards each adapter's push() started with
-     * and returns the AssetExternalSource row when the push should
-     * proceed, or null when any guard rejects it. Callers early-return
-     * on null.
-     *
-     * The three guards, in order:
-     *  1. pushDirectedFields is empty AND no composed-notes template is
-     *     configured (nothing to send, skip).
-     *  2. Caller-provided $changedFields is non-empty but doesn't
-     *     intersect pushDirectedFields (the caller told us which
-     *     fields changed and none of them are push-directed on this
-     *     instance, so skip the vendor call).
-     *  3. asset_external_sources row missing (the asset was never
-     *     synced from this instance, so we have no vendor device id
-     *     to write against).
-     *
-     * @param  array<int, string>  $changedFields
-     */
-    public function pushPrologue(Asset $asset, array $changedFields): ?\App\Models\AssetExternalSource
-    {
-        $pushFields = $this->pushDirectedFields();
-        $notesConfigured = $this->hasComposedNotesConfigured();
-
-        if ($pushFields === [] && ! $notesConfigured) {
-            // Nothing directed push and no composed-notes template.
-            // Logged at info because this is a config-shape issue
-            // the admin should see in the per-run log + file log
-            // instead of just "0 pushed, N skipped" with no reason.
-            Log::channel('sync-adapters')->info(sprintf(
-                '%s push: skipped asset %d (asset_tag=%s) - no push-directed fields and no composed-notes template configured',
-                $this->name(),
-                $asset->id,
-                $asset->asset_tag ?? '(none)',
-            ));
-
-            return null;
-        }
-
-        if ($pushFields !== [] && $changedFields !== []
-            && array_intersect($changedFields, $pushFields) === []) {
-            Log::channel('sync-adapters')->info(sprintf(
-                '%s push: skipped asset %d (asset_tag=%s) - changed fields [%s] do not intersect push-directed fields [%s]',
-                $this->name(),
-                $asset->id,
-                $asset->asset_tag ?? '(none)',
-                implode(', ', $changedFields),
-                implode(', ', $pushFields),
-            ));
-
-            return null;
-        }
-
-        $externalSource = \App\Models\AssetExternalSource::query()
-            ->where('asset_id', $asset->id)
-            ->where('source', $this->name())
-            ->first();
-
-        if ($externalSource === null) {
-            Log::channel('sync-adapters')->info(sprintf(
-                '%s push: skipped asset %d (asset_tag=%s) - no asset_external_sources row for this adapter instance',
-                $this->name(),
-                $asset->id,
-                $asset->asset_tag ?? '(none)',
-            ));
-        }
-
-        return $externalSource;
-    }
-
-    /**
-     * Composed notes payload for a push, or null when nothing to
-     * push. Reads the admin's push_notes_template from config,
-     * resolves the target vendor field (admin override or
-     * PushableAdapter::notesFieldTarget() default), then substitutes
-     * every {placeholder} against the given asset.
-     *
-     * Placeholders are enumerated in NOTES_TEMPLATE_PLACEHOLDERS.
-     * `{custom.Field Name}` resolves any CustomField by exact
-     * display name. Unknown keys and null values render as empty,
-     * so a template referencing missing fields degrades gracefully
-     * instead of throwing.
-     *
-     * Adapter push() implementations call this and check for null:
-     * non-null returns give both the vendor field name (`target`)
-     * and the rendered string (`value`), so the caller can splice
-     * both into its payload in one hit.
-     *
-     * @return array{target: string, value: string}|null
-     */
-    public function composeNotesForPush(Asset $asset): ?array
-    {
-        $template = (string) SyncAdapterConfig::get($this->instance->id, 'push_notes_template');
-        if (trim($template) === '') {
-            // Blank template is the common "feature not in use" case,
-            // so log at debug - skipping it on every asset push would
-            // just noise up the file log on fleets that haven't set
-            // up composed notes.
-            Log::channel('sync-adapters')->debug(sprintf(
-                '%s push: asset %d (asset_tag=%s) - composed notes not applied: push_notes_template is blank',
-                $this->name(),
-                $asset->id,
-                $asset->asset_tag ?? '(none)',
-            ));
-
-            return null;
-        }
-
-        $target = $this->resolveComposedNotesTarget();
-        if ($target === null) {
-            // Template is set but target field path is not. This IS
-            // worth surfacing at info - the admin wrote a template
-            // expecting it to be pushed somewhere and the destination
-            // config is missing.
-            Log::channel('sync-adapters')->info(sprintf(
-                '%s push: asset %d (asset_tag=%s) - composed notes not applied: push_notes_template is set but no target field is configured (push_notes_target)',
-                $this->name(),
-                $asset->id,
-                $asset->asset_tag ?? '(none)',
-            ));
-
-            return null;
-        }
-
-        // Match anything between braces that isn't itself a brace.
-        // Permissive so custom-field names with spaces or punctuation
-        // ({custom.Cost Center}, {custom.Warranty (extended)}) match
-        // cleanly. The inner match block below decides validity.
-        $value = preg_replace_callback(
-            '/\{([^{}]+)\}/',
-            function (array $m) use ($asset): string {
-                $key = $m[1];
-
-                if (str_starts_with($key, 'custom.')) {
-                    $field = CustomField::query()->where('name', substr($key, 7))->first();
-                    if ($field === null || $field->db_column === null) {
-                        return '';
-                    }
-                    $stored = $asset->getAttribute($field->db_column);
-
-                    return $stored === null ? '' : (string) $stored;
-                }
-
-                return match ($key) {
-                    'asset_tag' => (string) ($asset->asset_tag ?? ''),
-                    'name' => (string) ($asset->name ?? ''),
-                    'serial' => (string) ($asset->serial ?? ''),
-                    'model' => (string) ($asset->model?->name ?? ''),
-                    'model_number' => (string) ($asset->model?->model_number ?? ''),
-                    'manufacturer' => (string) ($asset->model?->manufacturer?->name ?? ''),
-                    'category' => (string) ($asset->model?->category?->name ?? ''),
-                    'status' => (string) ($asset->status?->name ?? ''),
-                    'status_type' => (string) ($asset->status?->getStatuslabelType() ?? ''),
-                    'assigned_to' => (string) ($asset->assignedTo?->present()?->name() ?? ''),
-                    'assigned_to_email' => (string) ($asset->assignedTo?->email ?? ''),
-                    'assigned_to_username' => (string) ($asset->assignedTo?->username ?? ''),
-                    'location' => (string) ($asset->location?->name ?? ''),
-                    'company' => (string) ($asset->company?->name ?? ''),
-                    'supplier' => (string) ($asset->supplier?->name ?? ''),
-                    'last_checkout' => (string) ($asset->last_checkout ?? ''),
-                    'last_checkin' => (string) ($asset->last_checkin ?? ''),
-                    'expected_checkin' => (string) ($asset->expected_checkin ?? ''),
-                    'notes' => (string) ($asset->notes ?? ''),
-                    'order_number' => (string) ($asset->order_number ?? ''),
-                    'purchase_date' => (string) ($asset->purchase_date ?? ''),
-                    'purchase_cost' => (string) ($asset->purchase_cost ?? ''),
-                    'warranty_months' => (string) ($asset->warranty_months ?? ''),
-                    'warranty_expires' => (string) ($asset->warranty_expires ?? ''),
-                    default => '',
-                };
-            },
-            $template,
-        ) ?? '';
-
-        return ['target' => $target, 'value' => $value];
-    }
-
-    /**
-     * Splice the composed-notes payload (from composeNotesForPush)
-     * into an outgoing vendor payload. Returns true when composed
-     * notes were configured and spliced, false when there was
-     * nothing to send. Callers that track which fields they pushed
-     * (for post-push logging or event dispatch) pass their $touched
-     * array by reference. The target field name gets appended to
-     * it on success.
-     *
-     * Uses Arr::set so dotted target paths (Jamf's "general.notes"
-     * shape) branch into nested payload structures rather than
-     * writing a literal key with a dot in it.
-     *
-     * @param  array<mixed>  $payload
-     * @param  array<int, string>  $touched
-     */
-    public function applyComposedNotesToPayload(Asset $asset, array &$payload, array &$touched = []): bool
-    {
-        $composedNotes = $this->composeNotesForPush($asset);
-        if ($composedNotes === null) {
-            return false;
-        }
-
-        \Illuminate\Support\Arr::set($payload, $composedNotes['target'], $composedNotes['value']);
-        $touched[] = $composedNotes['target'];
-
-        return true;
-    }
-
-    /**
-     * Stored composed-notes template + target-override, exposed for
-     * the settings-page form so it can pre-fill the two inputs.
-     * Runtime callers use composeNotesForPush() instead, which
-     * resolves the effective target (falling back to
-     * PushableAdapter::notesFieldTarget()) and does the substitution
-     * in one hit.
-     *
-     * @return array{template: string, target_override: ?string}
-     */
-    public function storedPushNotesConfig(): array
-    {
-        $template = (string) SyncAdapterConfig::get($this->instance->id, 'push_notes_template');
-        $target = (string) SyncAdapterConfig::get($this->instance->id, 'push_notes_target');
-
-        return [
-            'template' => $template,
-            'target_override' => $target === '' ? null : $target,
-        ];
-    }
-
-    /**
-     * True when this instance has ANY push configuration in place
-     * (at least one field directed 'push' OR a composed-notes
-     * template + target). Used by the controller's Push Now handler
-     * to abort with a clear error before iterating asset rows when
-     * the admin hit the button on a fresh or incorrectly-configured
-     * adapter, instead of iterating N rows that each silent-no-op
-     * and reporting an inaccurate success.
-     */
-    public function hasPushConfiguration(): bool
-    {
-        return $this->pushDirectedFields() !== [] || $this->hasComposedNotesConfigured();
-    }
-
-    /**
-     * Cheap "should we bother trying to push composed notes?" check
-     * used by pushPrologue to gate the vendor call without paying
-     * the cost of rendering the template. True when the admin has a
-     * non-blank push_notes_template AND a resolvable target field.
-     */
-    private function hasComposedNotesConfigured(): bool
-    {
-        $template = (string) SyncAdapterConfig::get($this->instance->id, 'push_notes_template');
-
-        return trim($template) !== '' && $this->resolveComposedNotesTarget() !== null;
-    }
-
-    /**
-     * Vendor field name for the composed-notes push. Admin's
-     * override (push_notes_target config key) wins if set. Falls
-     * back to the adapter's suggested default via
-     * PushableAdapter::notesFieldTarget(). Null when neither is
-     * set (adapter has no notes concept AND admin didn't name a
-     * target field).
-     */
-    private function resolveComposedNotesTarget(): ?string
-    {
-        $stored = (string) SyncAdapterConfig::get($this->instance->id, 'push_notes_target');
-        if ($stored !== '') {
-            return $stored;
-        }
-
-        return $this instanceof PushableAdapter
-            ? $this->notesFieldTarget()
-            : null;
-    }
-
-    /**
-     * Whether the composed-notes push UI should appear on this
-     * adapter's settings page. Default is "yes if the adapter is
-     * pushable at all" so existing adapters stay unchanged. Adapters
-     * targeting APIs that have no notes-like field anywhere in their
-     * push payload (Mosyle Manager v2's push elements, for example)
-     * override this to false so admins don't fill in a template that
-     * can never land. notesFieldTarget() returning null doesn't carry
-     * this meaning (Workspace ONE / NinjaOne return null legitimately
-     * because the admin picks the target).
-     */
-    public function supportsComposedNotesPush(): bool
-    {
-        return $this instanceof PushableAdapter && $this->canPush();
     }
 
     /**

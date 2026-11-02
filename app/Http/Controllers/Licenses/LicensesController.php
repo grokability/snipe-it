@@ -395,7 +395,7 @@ class LicensesController extends Controller
                         trans('general.created_at'),
                     ];
 
-                    fputcsv($handle, $headers, escape: '\\');
+                    fputcsv($handle, $headers, escape: '\\', eol: "\r\n");
 
                     $formatter = new EscapeFormula('`');
 
@@ -432,11 +432,11 @@ class LicensesController extends Controller
 
                         // CSV_ESCAPE_FORMULAS is set to false in the .env
                         if (config('app.escape_formulas') === false) {
-                            fputcsv($handle, $values, escape: '\\');
+                            fputcsv($handle, $values, escape: '\\', eol: "\r\n");
 
                             // CSV_ESCAPE_FORMULAS is set to true or is not set in the .env
                         } else {
-                            fputcsv($handle, $formatter->escapeRecord($values), escape: '\\');
+                            fputcsv($handle, $formatter->escapeRecord($values), escape: '\\', eol: "\r\n");
                         }
                     }
                 });

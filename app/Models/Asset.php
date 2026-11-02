@@ -47,6 +47,7 @@ use Watson\Validating\ValidatingTrait;
  * @property \Carbon\Carbon|string|null $last_checkin
  * @property bool $requestable
  * @property Asset|Location|User|null $assigned Current checkout target. morphTo relation named `assigned` (declared on method `assignedTo()`). Eloquent resolves the dynamic property by the morphTo name arg, not the method name, so this `@property` is distinct from `@property ... $assignedTo` written by ide-helper.
+ * @property Asset|Location|User|null $assignedTo Current checkout target. morphTo relation named `assigned` (declared on method `assignedTo()`). Eloquent resolves the dynamic property by the morphTo name arg, not the method name, so this `@property` is distinct from `@property ... $assigned` written by ide-helper.
  *
  * @mixin IdeHelperAsset
  */
@@ -101,11 +102,6 @@ class Asset extends Depreciable implements Importable
      * @var string
      */
     protected $table = 'assets';
-
-    /**
-     * Leaving this commented out, since we need to test further, but this would eager load the model relationship every single
-     * time the asset model is loaded.
-     */
 
     /**
      * Whether the model should inject it's identifier to the unique
@@ -273,6 +269,270 @@ class Asset extends Depreciable implements Importable
     ];
 
     /**
+     * Advanced-search filterable fields for the hardware index. First
+     * pass covers the direct-column FKs, booleans, numeric columns,
+     * and date columns admins commonly filter on.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'company',
+                'type' => 'fk',
+                'column' => 'company_id',
+                'endpoint' => 'companies',
+                'label' => trans('admin/companies/table.title'),
+            ],
+            [
+                'field' => 'model',
+                'type' => 'fk',
+                'column' => 'model_id',
+                'endpoint' => 'models',
+                'label' => trans('admin/hardware/form.model'),
+            ],
+
+            [
+                'field' => 'category',
+                'type' => 'fk',
+                'column' => null,
+                'endpoint' => 'categories/asset',
+                'label' => trans('general.category'),
+            ],
+            [
+                'field' => 'manufacturer',
+                'type' => 'fk',
+                'column' => null,
+                'endpoint' => 'manufacturers',
+                'label' => trans('general.manufacturer'),
+            ],
+            [
+                'field' => 'status',
+                'type' => 'fk',
+                'column' => 'status_id',
+                'endpoint' => 'statuslabels',
+                'label' => trans('general.status'),
+            ],
+
+            [
+                'field' => 'status_type',
+                'type' => 'enum',
+                'options' => [
+                    ['value' => 'deployable', 'label' => trans('admin/statuslabels/table.deployable')],
+                    ['value' => 'pending', 'label' => trans('admin/statuslabels/table.pending')],
+                    ['value' => 'undeployable', 'label' => trans('admin/statuslabels/table.undeployable')],
+                    ['value' => 'archived', 'label' => trans('admin/statuslabels/table.archived')],
+                ],
+                'label' => trans('admin/statuslabels/table.status_type'),
+            ],
+            [
+                'field' => 'supplier',
+                'type' => 'fk',
+                'column' => 'supplier_id',
+                'endpoint' => 'suppliers',
+                'label' => trans('general.supplier'),
+            ],
+            [
+                'field' => 'location',
+                'type' => 'fk',
+                'column' => 'location_id',
+                'endpoint' => 'locations',
+                'label' => trans('general.location'),
+            ],
+            [
+                'field' => 'rtd_location',
+                'type' => 'fk',
+                'column' => 'rtd_location_id',
+                'endpoint' => 'locations',
+                'label' => trans('admin/hardware/form.default_location'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            // assigned_to is polymorphic  so gets three fields in the advanced search
+            [
+                'field' => 'assigned_user',
+                'type' => 'fk',
+                'column' => null,
+                'endpoint' => 'users',
+                'label' => trans('admin/hardware/table.assigned_to') . ' - ' . trans('general.user'),
+            ],
+            [
+                'field' => 'assigned_asset',
+                'type' => 'fk',
+                'column' => null,
+                'endpoint' => 'hardware',
+                'label' => trans('admin/hardware/table.assigned_to') . ' - ' . trans('general.asset'),
+            ],
+            [
+                'field' => 'assigned_location',
+                'type' => 'fk',
+                'column' => null,
+                'endpoint' => 'locations',
+                'label' => trans('admin/hardware/table.assigned_to') . ' - ' . trans('general.location'),
+            ],
+            [
+                'field' => 'requestable',
+                'type' => 'boolean',
+                'label' => trans('admin/hardware/general.requestable'),
+            ],
+            [
+                'field' => 'byod',
+                'type' => 'boolean',
+                'label' => trans('general.byod'),
+            ],
+            [
+                'field' => 'purchase_cost',
+                'type' => 'numeric',
+                'label' => trans('general.purchase_cost'),
+            ],
+            [
+                'field' => 'warranty_months',
+                'type' => 'numeric',
+                'label' => trans('admin/hardware/form.warranty'),
+            ],
+            [
+                'field' => 'purchase_date',
+                'type' => 'date-range',
+                'label' => trans('general.purchase_date'),
+            ],
+            [
+                'field' => 'last_checkout',
+                'type' => 'date-range',
+                'label' => trans('admin/hardware/table.checkout_date'),
+            ],
+            [
+                'field' => 'last_checkin',
+                'type' => 'date-range',
+                'label' => trans('admin/hardware/table.last_checkin_date'),
+            ],
+            [
+                'field' => 'last_audit_date',
+                'type' => 'date-range',
+                'label' => trans('general.last_audit'),
+            ],
+            [
+                'field' => 'next_audit_date',
+                'type' => 'date-range',
+                'label' => trans('general.next_audit_date'),
+            ],
+            [
+                'field' => 'asset_eol_date',
+                'type' => 'date-range',
+                'label' => trans('admin/hardware/form.eol_date'),
+            ],
+            [
+                'field' => 'expected_checkin',
+                'type' => 'date-range',
+                'label' => trans('admin/hardware/form.expected_checkin'),
+            ],
+            // warranty_expires is purchase_date + warranty_months.
+            // Not a stored column, routed via applyCustomFilter.
+            [
+                'field' => 'warranty_expires',
+                'type' => 'date-range',
+                'label' => trans('admin/hardware/form.warranty_expires'),
+            ],
+            // age in years since purchase_date, computed via
+            // TIMESTAMPDIFF. Routed via applyCustomFilter.
+            [
+                'field' => 'age',
+                'type' => 'numeric',
+                'label' => trans('general.age'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+            ...static::customFieldFilterableWidgets(),
+        ];
+    }
+
+    /**
+     * Dynamic tail of filterableFields built from the custom_fields
+     * table. One widget per field whose fieldset is attached to at
+     * least one AssetModel. The widget type is picked from the
+     * field's `element` column (the UI widget shape):
+     *   - date_picker / datetime_picker → date-range (stored as
+     *     native date / datetime column, standard whereBetween).
+     *   - listbox / radio → enum (single stored value, whereIn
+     *     against the field_values).
+     *   - checkbox → set (multi-value stored as `implode(', ',
+     *     $values)` in AssetsController. Searchable's set-type
+     *     path uses CONCAT-wrap + positional LIKE to match each
+     *     selected token against the comma-joined storage).
+     *   - text / textarea / markdown-textarea → skipped. bs-table
+     *     auto-renders a text input for the searchable column, and
+     *     Searchable's custom-field LIKE path already handles the
+     *     filter payload. No new widget needed.
+     *
+     * This matches the shape AssetPresenter uses to emit custom
+     * field columns, so the field names (db_column) line up for
+     * carrier-matching inside the modal.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    protected static function customFieldFilterableWidgets(): array
+    {
+        $widgets = [];
+        $fields = CustomField::whereHas('fieldset', function ($query) {
+            $query->whereHas('models');
+        })->get();
+
+        foreach ($fields as $field) {
+            $type = match ($field->element) {
+                'date_picker', 'datetime_picker' => 'date-range',
+                'listbox', 'radio' => 'enum',
+                'checkbox' => 'set',
+                default => null,
+            };
+
+            if ($type === null) {
+                continue;
+            }
+
+            $widget = [
+                'field' => $field->db_column,
+                'type' => $type,
+                'label' => $field->name,
+            ];
+
+            if ($type === 'enum' || $type === 'set') {
+                $options = [];
+                foreach ($field->formatFieldValuesAsArray() as $value => $label) {
+                    // The accessor prepends an empty-key "Select X"
+                    // placeholder for listbox / radio. That's a form-
+                    // facing affordance, not a stored value, so drop
+                    // it from the filter widget options.
+                    if ($value === '') {
+                        continue;
+                    }
+                    $options[] = [
+                        'value' => (string) $value,
+                        'label' => (string) $label,
+                    ];
+                }
+                $widget['options'] = $options;
+            }
+
+            $widgets[] = $widget;
+        }
+
+        return $widgets;
+    }
+
+    /**
      * Maps the field names exposed by the API / transformers to the actual
      * Eloquent relation names used in $searchableRelations.
      *
@@ -345,6 +605,201 @@ class Asset extends Depreciable implements Importable
                 );
             }
         });
+    }
+
+    /**
+     * Override hook from Searchable. Routes category / manufacturer
+     * through semi-joins on the AssetModel table because those two
+     * values live on `models` rather than directly on `assets`. The
+     * "null" sentinel resolves to "assets whose model has that FK
+     * null, OR assets with no model at all" so an admin looking for
+     * uncategorized hardware sees everything that can't be assigned
+     * a category by its model.
+     *
+     * Default list queries never pay the subquery cost. Only runs
+     * when a matching filter key is on the request.
+     */
+    protected function applyCustomFilter(\Illuminate\Database\Eloquent\Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?\Illuminate\Database\Eloquent\Builder
+    {
+        $modelFkByKey = [
+            'category' => 'category_id',
+            'manufacturer' => 'manufacturer_id',
+        ];
+
+        if (array_key_exists($filterKey, $modelFkByKey)) {
+            $parsed = $this->parseIdsAndNullSentinel($filterValue);
+            if ($parsed === null) {
+                return null;
+            }
+            [$ids, $includeNull] = $parsed;
+            $modelFkColumn = $modelFkByKey[$filterKey];
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($modelFkColumn, $ids, $includeNull) {
+                if (!empty($ids)) {
+                    $nested->whereIn('assets.model_id', function ($q) use ($modelFkColumn, $ids) {
+                        $q->from('models')
+                            ->whereIn('models.' . $modelFkColumn, $ids)
+                            ->select('models.id');
+                    });
+                }
+                if ($includeNull) {
+                    $nullMatcher = function ($q) use ($modelFkColumn) {
+                        $q->whereIn('assets.model_id', function ($sub) use ($modelFkColumn) {
+                            $sub->from('models')
+                                ->whereNull('models.' . $modelFkColumn)
+                                ->select('models.id');
+                        })->orWhereNull('assets.model_id');
+                    };
+                    if (empty($ids)) {
+                        $nullMatcher($nested);
+                    } else {
+                        $nested->orWhereIn('assets.model_id', function ($sub) use ($modelFkColumn) {
+                            $sub->from('models')
+                                ->whereNull('models.' . $modelFkColumn)
+                                ->select('models.id');
+                        })->orWhereNull('assets.model_id');
+                    }
+                }
+            });
+
+            return $query;
+        }
+
+        // warranty_expires is purchase_date + warranty_months.
+        // Not a stored column, so compute inline. DATE_ADD returns
+        // NULL when either operand is NULL, and BETWEEN excludes
+        // NULLs, so assets without a purchase date or without a
+        // warranty duration naturally fall out of the match.
+        if ($filterKey === 'warranty_expires') {
+            if (!preg_match('/^(\d{4}-\d{2}-\d{2})?\.\.(\d{4}-\d{2}-\d{2})?$/', trim($filterValue), $m)) {
+                return null;
+            }
+            $start = $m[1] !== '' ? $m[1] : null;
+            $end = $m[2] !== '' ? $m[2] : null;
+            if ($start === null && $end === null) {
+                return null;
+            }
+
+            $expr = 'DATE_ADD(assets.purchase_date, INTERVAL assets.warranty_months MONTH)';
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($expr, $start, $end) {
+                if ($start !== null && $end !== null) {
+                    $nested->whereRaw("$expr BETWEEN ? AND ?", [$start, $end]);
+                } elseif ($start !== null) {
+                    $nested->whereRaw("$expr >= ?", [$start]);
+                } elseif ($end !== null) {
+                    $nested->whereRaw("$expr <= ?", [$end]);
+                }
+            });
+
+            return $query;
+        }
+
+        // age in years since purchase_date. TIMESTAMPDIFF returns
+        // NULL for NULL purchase_date, so BETWEEN / > / < drop
+        // never-purchased assets automatically.
+        if ($filterKey === 'age') {
+            $bounds = $this->parseGtLtBounds($filterValue);
+            if ($bounds === null) {
+                return null;
+            }
+            [$gt, $lt] = $bounds;
+
+            $expr = 'TIMESTAMPDIFF(YEAR, assets.purchase_date, NOW())';
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($expr, $gt, $lt) {
+                if ($gt !== null) {
+                    $nested->whereRaw("$expr > ?", [$gt]);
+                }
+                if ($lt !== null) {
+                    $nested->whereRaw("$expr < ?", [$lt]);
+                }
+            });
+
+            return $query;
+        }
+
+        // status_type is the fixed-enum variant of the status
+        // filter. Each selected type resolves to the set of
+        // status_label ids currently matching that category via
+        // the cached Statuslabel::idsFor() helper (deployable /
+        // pending / undeployable / archived). Multi-select unions
+        // the id sets so picking "deployable" + "pending" filters
+        // assets whose current status is in EITHER bucket.
+        if ($filterKey === 'status_type') {
+            $validTypes = ['deployable', 'pending', 'undeployable', 'archived'];
+            $requested = array_map('trim', explode(',', trim($filterValue)));
+            $types = array_values(array_intersect($validTypes, $requested));
+            if (empty($types)) {
+                return null;
+            }
+
+            $allIds = [];
+            foreach ($types as $type) {
+                $allIds = array_merge($allIds, Statuslabel::idsFor($type)->all());
+            }
+            $allIds = array_values(array_unique(array_map('intval', $allIds)));
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            if (empty($allIds)) {
+                // No status labels of any requested type exist on
+                // this install. Keep intent: zero results instead
+                // of silently dropping the filter.
+                $query->{$outerBoolean}(function ($nested) {
+                    $nested->whereRaw('1 = 0');
+                });
+            } else {
+                $whereInMethod = $boolean === 'or' ? 'orWhereIn' : 'whereIn';
+                $query->{$whereInMethod}('assets.status_id', $allIds);
+            }
+
+            return $query;
+        }
+
+        // Polymorphic assigned_to split into three per-type widgets.
+        // The query pins both `assets.assigned_type` AND
+        // `assets.assigned_to` so the id list only matches rows
+        // currently checked out to that specific class. Null
+        // sentinel resolves to `assigned_to IS NULL` (completely
+        // unassigned) regardless of which type the admin opened the
+        // sentinel from, so "not checked out to anyone" has one
+        // answer across all three dropdowns.
+        $assignedTypeByKey = [
+            'assigned_user' => User::class,
+            'assigned_asset' => self::class,
+            'assigned_location' => Location::class,
+        ];
+
+        if (array_key_exists($filterKey, $assignedTypeByKey)) {
+            $parsed = $this->parseIdsAndNullSentinel($filterValue);
+            if ($parsed === null) {
+                return null;
+            }
+            [$ids, $includeNull] = $parsed;
+            $assignedType = $assignedTypeByKey[$filterKey];
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($assignedType, $ids, $includeNull) {
+                if (!empty($ids)) {
+                    $nested->where(function ($q) use ($assignedType, $ids) {
+                        $q->where('assets.assigned_type', $assignedType)
+                            ->whereIn('assets.assigned_to', $ids);
+                    });
+                }
+                if ($includeNull) {
+                    if (empty($ids)) {
+                        $nested->whereNull('assets.assigned_to');
+                    } else {
+                        $nested->orWhereNull('assets.assigned_to');
+                    }
+                }
+            });
+
+            return $query;
+        }
+
+        return null;
     }
 
     public function setExpectedCheckinAttribute($value)
@@ -960,10 +1415,8 @@ class Asset extends Depreciable implements Importable
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @since  [v4.0]
-     *
-     * @return \ArrayObject
      */
-    public function assetLoc($iterations = 1, $first_asset = null)
+    public function assetLoc($iterations = 1, $first_asset = null): ?Location
     {
         if (! empty($this->assignedType())) {
             if ($this->assignedType() == self::ASSET) {
@@ -1599,15 +2052,20 @@ class Asset extends Depreciable implements Importable
      * on the Searchable trait to also search assigned user, location,
      * and asset-to-asset checkouts.
      *
+     * $outer carries the leftJoins (joins cannot live inside Eloquent
+     * nested-where closures). $nested carries the orWhere clauses
+     * that reference the joined columns, confining them inside the
+     * trait's scope AND group so a multi-term search cannot escape
+     * the surrounding FMCS CompanyableScope.
+     *
      * @param  array<int, string>  $terms  The search terms
      */
-    public function advancedTextSearch(Builder $query, array $terms)
+    public function advancedTextSearch(Builder $outer, Builder $nested, array $terms): void
     {
-
         /**
          * Assigned user
          */
-        $query = $query->leftJoin(
+        $outer->leftJoin(
             'users as assets_users', function ($leftJoin) {
                 $leftJoin->on('assets_users.id', '=', 'assets.assigned_to')
                     ->where('assets.assigned_type', '=', User::class);
@@ -1615,8 +2073,7 @@ class Asset extends Depreciable implements Importable
         );
 
         foreach ($terms as $term) {
-
-            $query = $query
+            $nested
                 ->orWhere('assets_users.first_name', 'LIKE', '%'.$term.'%')
                 ->orWhere('assets_users.last_name', 'LIKE', '%'.$term.'%')
                 ->orWhere('assets_users.display_name', 'LIKE', '%'.$term.'%')
@@ -1640,7 +2097,7 @@ class Asset extends Depreciable implements Importable
         /**
          * Assigned location
          */
-        $query = $query->leftJoin(
+        $outer->leftJoin(
             'locations as assets_locations', function ($leftJoin) {
                 $leftJoin->on('assets_locations.id', '=', 'assets.assigned_to')
                     ->where('assets.assigned_type', '=', Location::class);
@@ -1648,14 +2105,13 @@ class Asset extends Depreciable implements Importable
         );
 
         foreach ($terms as $term) {
-
-            $query = $query->orWhere('assets_locations.name', 'LIKE', '%'.$term.'%');
+            $nested->orWhere('assets_locations.name', 'LIKE', '%'.$term.'%');
         }
 
         /**
          * Assigned assets
          */
-        $query = $query->leftJoin(
+        $outer->leftJoin(
             'assets as assigned_assets', function ($leftJoin) {
                 $leftJoin->on('assigned_assets.id', '=', 'assets.assigned_to')
                     ->where('assets.assigned_type', '=', self::class);
@@ -1663,11 +2119,8 @@ class Asset extends Depreciable implements Importable
         );
 
         foreach ($terms as $term) {
-            $query = $query->orWhere('assigned_assets.name', 'LIKE', '%'.$term.'%');
-
+            $nested->orWhere('assigned_assets.name', 'LIKE', '%'.$term.'%');
         }
-
-        return $query;
     }
 
     public function calendarEventCompanyId(): ?int

@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\AssetExternalSource;
 use App\Models\SyncAdapterInstance;
-use App\SyncAdapters\PushableAdapter;
+use App\SyncAdapters\PushableSyncAdapter;
 use App\Traits\LocksLongRunningOperation;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -56,7 +56,7 @@ class PushInventory extends Command
 
         foreach ($instances as $instance) {
             $adapter = $instance->adapter();
-            if (! $adapter instanceof PushableAdapter) {
+            if (!$adapter instanceof PushableSyncAdapter) {
                 continue;
             }
             if (! $adapter->isEnabled() || ! $adapter->canPush()) {
@@ -94,7 +94,7 @@ class PushInventory extends Command
         $startedAt = microtime(true);
 
         $adapter = $instance->adapter();
-        if (! $adapter instanceof PushableAdapter) {
+        if (!$adapter instanceof PushableSyncAdapter) {
             $this->error("Adapter \"{$slug}\" does not support push.");
             $rows[] = [$slug, 'Not pushable', '-', '-', self::formatElapsed($startedAt)];
 

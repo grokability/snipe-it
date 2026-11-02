@@ -206,7 +206,7 @@ class SettingsController extends Controller
                 'Item Location',
                 'Location Company',
                 'Location Company ID',
-            ], escape: '\\');
+            ], escape: '\\', eol: "\r\n");
 
             // Formula-escape data rows using the same helper + setting as
             // ReportsController's exports. Row values include user-editable
@@ -218,9 +218,9 @@ class SettingsController extends Controller
             $formatter = new EscapeFormula('`');
             foreach ($mismatched as $row) {
                 if (config('app.escape_formulas') === false) {
-                    fputcsv($out, $row, escape: '\\');
+                    fputcsv($out, $row, escape: '\\', eol: "\r\n");
                 } else {
-                    fputcsv($out, $formatter->escapeRecord($row), escape: '\\');
+                    fputcsv($out, $formatter->escapeRecord($row), escape: '\\', eol: "\r\n");
                 }
             }
             fclose($out);
@@ -960,7 +960,7 @@ class SettingsController extends Controller
             return redirect()->route('settings.backups.index')->with('error', trans('general.feature_disabled'));
         }
 
-        if (!$this->acquireOperationLock(self::BACKUP_RESTORE_LOCK)) {
+        if (! $this->acquireOperationLock(self::BACKUP_RESTORE_LOCK)) {
             return redirect()->route('settings.backups.index')
                 ->with('error', $this->operationAlreadyRunningMessage('general.backup_or_restore'));
         }
@@ -1127,7 +1127,7 @@ class SettingsController extends Controller
             return redirect()->route('settings.backups.index')->with('error', trans('general.feature_disabled'));
         }
 
-        if (!$this->acquireOperationLock(self::BACKUP_RESTORE_LOCK)) {
+        if (! $this->acquireOperationLock(self::BACKUP_RESTORE_LOCK)) {
             return redirect()->route('settings.backups.index')
                 ->with('error', $this->operationAlreadyRunningMessage('general.backup_or_restore'));
         }
@@ -1297,12 +1297,12 @@ class SettingsController extends Controller
                 $migrationApplied = DB::table('migrations')
                     ->where('migration', $newestMigration)
                     ->exists();
-                if (!$migrationApplied) {
+                if (! $migrationApplied) {
                     Log::error(
                         'Migrate reported success after restore, but the newest migration ('
-                        . $newestMigration
-                        . ') is not recorded in the migrations table. Schema is out of date. Pre-restore backup available at '
-                        . $preBackupHint
+                        .$newestMigration
+                        .') is not recorded in the migrations table. Schema is out of date. Pre-restore backup available at '
+                        .$preBackupHint
                     );
 
                     Auth::logout();
