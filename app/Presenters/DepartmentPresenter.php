@@ -61,7 +61,7 @@ class DepartmentPresenter extends Presenter
             ], [
                 'field' => 'manager',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/departments/table.manager'),
@@ -70,7 +70,7 @@ class DepartmentPresenter extends Presenter
             ], [
                 'field' => 'location',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('general.location'),

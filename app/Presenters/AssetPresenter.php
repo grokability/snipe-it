@@ -205,7 +205,7 @@ class AssetPresenter extends Presenter
             [
                 'field' => 'age',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => false,
                 'visible' => false,
                 'title' => trans('general.age'),
@@ -259,7 +259,7 @@ class AssetPresenter extends Presenter
             ], [
                 'field' => 'warranty_expires',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => false,
                 'visible' => false,
                 'title' => trans('admin/hardware/form.warranty_expires'),
@@ -267,7 +267,7 @@ class AssetPresenter extends Presenter
             ], [
                 'field' => 'requestable',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('admin/hardware/general.requestable'),
@@ -308,7 +308,7 @@ class AssetPresenter extends Presenter
             ], [
                 'field' => 'created_by',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.created_by'),
                 'visible' => false,
@@ -352,7 +352,7 @@ class AssetPresenter extends Presenter
             [
                 'field' => 'last_checkout',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('admin/hardware/table.checkout_date'),
@@ -360,7 +360,7 @@ class AssetPresenter extends Presenter
             ], [
                 'field' => 'last_checkin',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('admin/hardware/table.last_checkin_date'),
@@ -376,7 +376,7 @@ class AssetPresenter extends Presenter
             ], [
                 'field' => 'last_audit_date',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('general.last_audit'),
@@ -384,7 +384,7 @@ class AssetPresenter extends Presenter
             ], [
                 'field' => 'next_audit_date',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('general.next_audit_date'),
@@ -392,7 +392,7 @@ class AssetPresenter extends Presenter
             ], [
                 'field' => 'byod',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('general.byod'),

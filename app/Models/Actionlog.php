@@ -154,6 +154,116 @@ class Actionlog extends SnipeModel
     ];
 
     /**
+     * Advanced-search filterable fields for the activity report.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        $typeOptions = array_map(
+            fn(\App\Enums\ActivityItemType $case) => [
+                'value' => $case->value,
+                'label' => $case->label(),
+            ],
+            \App\Enums\ActivityItemType::cases()
+        );
+
+        $actionTypeOptions = array_map(
+            fn(\App\Enums\ActionType $case) => [
+                'value' => $case->value,
+                'label' => ucwords($case->value),
+            ],
+            \App\Enums\ActionType::cases()
+        );
+
+        return [
+            [
+                'field' => 'item',
+                'type' => 'enum',
+                'options' => $typeOptions,
+                'label' => trans('general.item_type_label'),
+            ],
+            [
+                'field' => 'target',
+                'type' => 'enum',
+                'options' => $typeOptions,
+                'label' => trans('general.target_type_label'),
+            ],
+            [
+                'field' => 'action_type',
+                'type' => 'enum',
+                'column' => 'action_type',
+                'options' => $actionTypeOptions,
+                'label' => trans('general.action_type_label'),
+            ],
+            [
+                'field' => 'action_source',
+                'type' => 'enum',
+                'column' => 'action_source',
+                'options' => [
+                    ['value' => 'gui', 'label' => 'GUI'],
+                    ['value' => 'api', 'label' => 'API'],
+                    ['value' => 'cli/unknown', 'label' => 'CLI'],
+                ],
+                'label' => trans('general.action_source'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'action_date',
+                'type' => 'date-range',
+                'label' => trans('general.action_date'),
+            ],
+        ];
+    }
+
+    /**
+     * Override hook from Searchable. The `item` and `target` filters
+     * carry ActivityItemType short-name tokens from the modal widgets
+     * (asset, accessory, user, ...). action_logs stores the FQCN,
+     * so resolve each short name to its class string before the
+     * whereIn against item_type / target_type.
+     */
+    protected function applyCustomFilter(\Illuminate\Database\Eloquent\Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?\Illuminate\Database\Eloquent\Builder
+    {
+        if ($filterKey !== 'item' && $filterKey !== 'target') {
+            return null;
+        }
+
+        $tokens = array_values(array_filter(array_map('trim', explode(',', $filterValue)), 'strlen'));
+        if ($tokens === []) {
+            return null;
+        }
+
+        $classes = [];
+        foreach ($tokens as $token) {
+            $case = \App\Enums\ActivityItemType::tryFromAny($token);
+            if ($case !== null) {
+                $classes[] = $case->class();
+            }
+        }
+        if ($classes === []) {
+            return null;
+        }
+
+        $column = $filterKey === 'item' ? 'item_type' : 'target_type';
+        $method = $boolean === 'or' ? 'orWhereIn' : 'whereIn';
+        $query->{$method}('action_logs.' . $column, array_values(array_unique($classes)));
+
+        return $query;
+    }
+
+    /**
      * Override from Builder to automatically add the company
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]

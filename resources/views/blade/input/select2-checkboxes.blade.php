@@ -20,6 +20,9 @@
        maxSelectAll : optional per-widget ceiling for ?all=1 (clamped by MAX_UNPAGINATED).
        labelClass   : grid class for the label (default col-md-3).
        inputClass   : grid class for the input column (default col-md-7).
+       includeNull  : opt-in sentinel "No value" row (id='null') prepended to the first
+                      page of selectlist results. Used by the advanced-filter dropdown
+                      widgets to let admins filter rows where the FK is NULL. Default false.
 --}}
 @props([
     'name',
@@ -38,6 +41,7 @@
     'maxSelectAll' => null,
     'labelClass' => 'col-md-3',
     'inputClass' => 'col-md-7',
+    'includeNull' => false,
 ])
 
 @php
@@ -72,6 +76,7 @@
             @if ($companyId) data-company-id="{{ $companyId }}" @endif
             @if ($excludeId) data-exclude-id="{{ $excludeId }}" @endif
             @if ($onlyTopLevel) data-only-top-level="1" @endif
+            @if ($includeNull) data-include-null="1" @endif
             style="width: 100%"
             aria-label="{{ $label }}"
             multiple

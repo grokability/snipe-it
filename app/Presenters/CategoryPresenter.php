@@ -118,7 +118,7 @@ class CategoryPresenter extends Presenter
             ], [
                 'field' => 'created_by',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.created_by'),
                 'visible' => false,
@@ -135,7 +135,7 @@ class CategoryPresenter extends Presenter
             ], [
                 'field' => 'updated_at',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('general.updated_at'),

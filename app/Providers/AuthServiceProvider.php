@@ -21,6 +21,7 @@ use App\Models\Maintenance;
 use App\Models\MaintenanceType;
 use App\Models\Manufacturer;
 use App\Models\PredefinedKit;
+use App\Models\SavedSearch;
 use App\Models\Statuslabel;
 use App\Models\Supplier;
 use App\Models\User;
@@ -42,6 +43,7 @@ use App\Policies\MaintenancePolicy;
 use App\Policies\MaintenanceTypePolicy;
 use App\Policies\ManufacturerPolicy;
 use App\Policies\PredefinedKitPolicy;
+use App\Policies\SavedSearchPolicy;
 use App\Policies\StatuslabelPolicy;
 use App\Policies\SupplierPolicy;
 use App\Policies\UserPolicy;
@@ -80,6 +82,7 @@ class AuthServiceProvider extends ServiceProvider
         Maintenance::class => MaintenancePolicy::class,
         MaintenanceType::class => MaintenanceTypePolicy::class,
         PredefinedKit::class => PredefinedKitPolicy::class,
+        SavedSearch::class => SavedSearchPolicy::class,
         Statuslabel::class => StatuslabelPolicy::class,
         Supplier::class => SupplierPolicy::class,
         User::class => UserPolicy::class,

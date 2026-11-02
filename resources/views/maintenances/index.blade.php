@@ -33,4 +33,9 @@
 @section('moar_scripts')
     @include ('partials.bootstrap-table', ['exportFile' => 'maintenances-export', 'search' => true])
     <x-modals.maintenance-complete />
+
+    <x-table.advanced-search
+        tableId="maintenanceListingTable"
+        :model="\App\Models\Maintenance::class"
+    />
 @stop

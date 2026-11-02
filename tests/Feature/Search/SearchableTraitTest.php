@@ -1413,4 +1413,105 @@ class SearchableTraitTest extends TestCase
             ->assertOk()
             ->assertJson(fn (AssertableJson $json) => $json->has('rows', 1)->etc());
     }
+
+    /**
+     * Regression: ?filter[field]=value URL-array form must apply the
+     * structured filter instead of degrading to free-text. Before the
+     * fix in scopeTextSearch, the array was imploded to the value
+     * only (keys discarded), so the field constraint was lost and the
+     * value matched any searchable attribute.
+     */
+    public function test_array_form_filter_applies_as_structured_filter()
+    {
+        Asset::factory()->create(['name' => 'MacBook Pro 15"', 'serial' => 'SN-UNIQUE-NAME']);
+        Asset::factory()->create(['name' => 'MacBook Pro 16"', 'serial' => 'SN-OTHER']);
+
+        $this->actingAsForApi(User::factory()->viewAssets()->create())
+            ->getJson(route('api.assets.index', [
+                'filter' => ['serial' => 'SN-UNIQUE-NAME'],
+            ]))
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) => $json->has('rows', 1)->etc());
+    }
+
+    /**
+     * Array-form filter with multiple fields defaults to AND semantics.
+     */
+    public function test_array_form_filter_combines_fields_with_and_by_default()
+    {
+        Asset::factory()->create(['name' => 'MacBook', 'serial' => 'SN-MATCH']);
+        Asset::factory()->create(['name' => 'MacBook', 'serial' => 'SN-OTHER']);
+        Asset::factory()->create(['name' => 'Dell', 'serial' => 'SN-MATCH']);
+
+        $this->actingAsForApi(User::factory()->viewAssets()->create())
+            ->getJson(route('api.assets.index', [
+                'filter' => [
+                    'name' => 'MacBook',
+                    'serial' => 'SN-MATCH',
+                ],
+            ]))
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) => $json->has('rows', 1)->etc());
+    }
+
+    /**
+     * Array-form filter honors ?filter_operator=or.
+     */
+    public function test_array_form_filter_honors_or_operator()
+    {
+        Asset::factory()->create(['name' => 'OnlyNameMatch-Alpha']);
+        Asset::factory()->create(['name' => 'OtherAsset', 'serial' => 'OnlySerialMatch-Beta']);
+        Asset::factory()->create(['name' => 'Unrelated', 'serial' => 'SomethingElse']);
+
+        $this->actingAsForApi(User::factory()->viewAssets()->create())
+            ->getJson(route('api.assets.index', [
+                'filter' => [
+                    'name' => 'OnlyNameMatch-Alpha',
+                    'serial' => 'OnlySerialMatch-Beta',
+                ],
+                'filter_operator' => 'or',
+            ]))
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) => $json->has('rows', 2)->etc());
+    }
+
+    /**
+     * Empty values in the array-form filter are dropped (so clearing an
+     * input in the UI does not emit a noisy no-op filter that
+     * accidentally narrows the result set).
+     */
+    public function test_array_form_filter_ignores_empty_values()
+    {
+        Asset::factory()->create(['name' => 'KeeperAsset']);
+        Asset::factory()->create(['name' => 'OtherAsset']);
+
+        $this->actingAsForApi(User::factory()->viewAssets()->create())
+            ->getJson(route('api.assets.index', [
+                'filter' => [
+                    'name' => 'KeeperAsset',
+                    'serial' => '',
+                ],
+            ]))
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) => $json->has('rows', 1)->etc());
+    }
+
+    /**
+     * Array-form filter also works on relation keys, not just direct
+     * attributes, confirming the full structured-filter pipeline
+     * engages, not just the attribute path.
+     */
+    public function test_array_form_filter_resolves_relation_keys()
+    {
+        $supplier = Supplier::factory()->create(['name' => 'ArrayFormSupplier-'.now()->timestamp]);
+        Asset::factory()->create(['name' => 'A', 'supplier_id' => $supplier->id]);
+        Asset::factory()->create(['name' => 'B']);
+
+        $this->actingAsForApi(User::factory()->viewAssets()->create())
+            ->getJson(route('api.assets.index', [
+                'filter' => ['supplier' => 'ArrayFormSupplier'],
+            ]))
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) => $json->has('rows', 1)->etc());
+    }
 }

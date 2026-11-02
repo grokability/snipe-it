@@ -113,7 +113,7 @@ class LicensePresenter extends Presenter
             ],  [
                 'field' => 'min_amt',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('mail.min_QTY'),
                 'formatter' => 'minAmtFormatter',
@@ -121,7 +121,7 @@ class LicensePresenter extends Presenter
             ], [
                 'field' => 'seats',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('admin/accessories/general.total'),
                 'class' => 'text-right text-padding-number-cell',
@@ -129,7 +129,7 @@ class LicensePresenter extends Presenter
             ], [
                 'field' => 'free_seats_count',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('admin/accessories/general.remaining'),
                 'class' => 'text-right text-padding-number-cell',
@@ -166,7 +166,7 @@ class LicensePresenter extends Presenter
             [
                 'field' => 'maintained',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('admin/licenses/form.maintained'),
@@ -174,7 +174,7 @@ class LicensePresenter extends Presenter
             ], [
                 'field' => 'reassignable',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('admin/licenses/form.reassignable'),
@@ -206,7 +206,7 @@ class LicensePresenter extends Presenter
             ], [
                 'field' => 'created_by',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.created_by'),
                 'visible' => false,
@@ -214,7 +214,7 @@ class LicensePresenter extends Presenter
             ], [
                 'field' => 'created_at',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('general.created_at'),
@@ -222,7 +222,7 @@ class LicensePresenter extends Presenter
             ], [
                 'field' => 'updated_at',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('general.updated_at'),

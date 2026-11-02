@@ -20,6 +20,7 @@
     <x-container>
         <x-box name="components" sr_only_title>
             <x-table.components
+                name="components"
                 :route="route('api.components.index', ['status' => e(request('status'))])"
                 :presenter="\App\Presenters\ComponentPresenter::dataTableLayout(request('status') === 'Deleted')"
             />
@@ -33,6 +34,8 @@
 @section('moar_scripts')
 @include ('partials.bootstrap-table', ['exportFile' => 'components-export', 'search' => true, 'showFooter' => true, 'columns' => \App\Presenters\ComponentPresenter::dataTableLayout()])
 
-
-
+<x-table.advanced-search
+    tableId="componentsListingTable"
+    :model="\App\Models\Component::class"
+/>
 @stop

@@ -122,6 +122,99 @@ class Statuslabel extends SnipeModel
      */
     protected $searchableRelations = [];
 
+    /**
+     * Advanced-search filterable fields.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'type',
+                'type' => 'enum',
+                'options' => [
+                    ['value' => 'deployable', 'label' => trans('admin/statuslabels/table.deployable')],
+                    ['value' => 'pending', 'label' => trans('admin/statuslabels/table.pending')],
+                    ['value' => 'undeployable', 'label' => trans('admin/statuslabels/table.undeployable')],
+                    ['value' => 'archived', 'label' => trans('admin/statuslabels/table.archived')],
+                ],
+                'label' => trans('admin/statuslabels/table.status_type'),
+            ],
+            [
+                'field' => 'show_in_nav',
+                'type' => 'boolean',
+                'label' => trans('admin/statuslabels/table.show_in_nav'),
+            ],
+            [
+                'field' => 'default_label',
+                'type' => 'boolean',
+                'label' => trans('admin/statuslabels/table.default_label'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
+
+    /**
+     * Override hook from Searchable. The `type` filter is a four-way
+     * enum (deployable / pending / undeployable / archived) that
+     * decomposes into a WHERE on the stored (deployable, pending,
+     * archived) tuple. Multi-select is supported by OR-combining the
+     * per-value triples inside a single scope so a sibling AND
+     * continues to compose cleanly.
+     */
+    protected function applyCustomFilter(\Illuminate\Database\Eloquent\Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?\Illuminate\Database\Eloquent\Builder
+    {
+        if ($filterKey !== 'type') {
+            return null;
+        }
+
+        $tokens = array_values(array_filter(array_map('trim', explode(',', $filterValue)), 'strlen'));
+        if ($tokens === []) {
+            return null;
+        }
+
+        $tuples = [
+            'deployable' => [1, 0, 0],
+            'pending' => [0, 1, 0],
+            'undeployable' => [0, 0, 0],
+            'archived' => [0, 0, 1],
+        ];
+        $matched = array_values(array_intersect_key($tuples, array_flip($tokens)));
+        if ($matched === []) {
+            return null;
+        }
+
+        $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+        $query->{$outerBoolean}(function ($nested) use ($matched) {
+            foreach ($matched as $triple) {
+                $nested->orWhere(function ($row) use ($triple) {
+                    $row->where('deployable', $triple[0])
+                        ->where('pending', $triple[1])
+                        ->where('archived', $triple[2]);
+                });
+            }
+        });
+
+        return $query;
+    }
+
     public function isDeletable()
     {
         return Gate::allows('delete', $this)
