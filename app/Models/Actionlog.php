@@ -11,10 +11,12 @@ use App\Presenters\ActionlogPresenter;
 use App\Presenters\Presentable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
@@ -48,6 +50,41 @@ class Actionlog extends SnipeModel
     protected static ?string $ambientSource = null;
 
     protected $with = ['adminuser'];
+
+    /**
+     * Mask the diff blob on read when it carries license-key values the
+     * current user is not permitted to see.
+     */
+    protected function logMeta(): Attribute
+    {
+        return Attribute::get(function ($value) {
+            if ($value === null || $value === '') {
+                return $value;
+            }
+
+            if (!$this->item instanceof License) {
+                return $value;
+            }
+
+            if (Gate::allows('viewKeys', $this->item)) {
+                return $value;
+            }
+
+            $decoded = json_decode($value, true);
+            if (!is_array($decoded) || !isset($decoded['serial']) || !is_array($decoded['serial'])) {
+                return $value;
+            }
+
+            if (array_key_exists('old', $decoded['serial'])) {
+                $decoded['serial']['old'] = License::PRODUCT_KEY_MASK;
+            }
+            if (array_key_exists('new', $decoded['serial'])) {
+                $decoded['serial']['new'] = License::PRODUCT_KEY_MASK;
+            }
+
+            return json_encode($decoded);
+        });
+    }
 
     protected $presenter = ActionlogPresenter::class;
 

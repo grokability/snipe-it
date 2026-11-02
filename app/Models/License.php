@@ -59,6 +59,18 @@ class License extends Depreciable implements Importable
      */
     public const PRODUCT_KEY_MASK = '------------';
 
+    /**
+     * Mask the product key on read when the current user does not hold
+     * the licenses.keys gate.
+     */
+    protected function serial(): Attribute
+    {
+        return Attribute::get(fn($value) => $value !== null && !Gate::allows('viewKeys', $this)
+            ? self::PRODUCT_KEY_MASK
+            : $value
+        );
+    }
+
     protected $casts = [
         'purchase_date' => 'date',
         'expiration_date' => 'date',
