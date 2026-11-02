@@ -164,7 +164,7 @@ class Consumable extends SnipeModel implements Importable
         'company' => ['name'],
         'location' => ['name'],
         'manufacturer' => ['name'],
-        // Search by the parent's "typical supplier" template — see the
+        // Search by the parent's "typical supplier" template. See the
         // Accessory model for the rationale.
         'defaultSupplier' => ['name'],
         'adminuser' => ['first_name', 'last_name', 'display_name'],
@@ -173,6 +173,210 @@ class Consumable extends SnipeModel implements Importable
         // the Orders table so historical order references still match.
         'orders' => ['order_number'],
     ];
+
+    /**
+     * Advanced-search filterable fields. The purchase_date, remaining, and
+     * purchase_cost fields are derived from the Orders / Users
+     * pivot and routed through applyCustomFilter below rather than
+     * a direct column on consumables.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'company',
+                'type' => 'fk',
+                'column' => 'company_id',
+                'endpoint' => 'companies',
+                'label' => trans('admin/companies/table.title'),
+            ],
+            [
+                'field' => 'category',
+                'type' => 'fk',
+                'column' => 'category_id',
+                'endpoint' => 'categories/consumable',
+                'label' => trans('general.category'),
+            ],
+            [
+                'field' => 'manufacturer',
+                'type' => 'fk',
+                'column' => 'manufacturer_id',
+                'endpoint' => 'manufacturers',
+                'label' => trans('general.manufacturer'),
+            ],
+            [
+                'field' => 'supplier',
+                'type' => 'fk',
+                'column' => 'default_supplier_id',
+                'endpoint' => 'suppliers',
+                'label' => trans('general.supplier'),
+            ],
+            [
+                'field' => 'location',
+                'type' => 'fk',
+                'column' => 'location_id',
+                'endpoint' => 'locations',
+                'label' => trans('general.location'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'requestable',
+                'type' => 'boolean',
+                'label' => trans('admin/hardware/general.requestable'),
+            ],
+            [
+                'field' => 'qty',
+                'type' => 'numeric',
+                'label' => trans('admin/accessories/general.total'),
+            ],
+            [
+                'field' => 'min_amt',
+                'type' => 'numeric',
+                'label' => trans('general.min_amt'),
+            ],
+            [
+                'field' => 'remaining',
+                'type' => 'numeric',
+                'label' => trans('admin/accessories/general.remaining'),
+            ],
+            [
+                'field' => 'purchase_cost',
+                'type' => 'numeric',
+                'label' => trans('general.last_unit_cost'),
+            ],
+            [
+                'field' => 'purchase_date',
+                'type' => 'date-range',
+                'label' => trans('general.last_purchase_date'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
+
+    /**
+     * Override hook from Searchable. Same shape as
+     * Accessory::applyCustomFilter. purchase_date / purchase_cost
+     * route through correlated subqueries on OrderItem (via the
+     * HasOrders polymorphic pivot). remaining routes through a
+     * subquery on the consumables_users pivot. Default list queries
+     * never pay the subquery cost. Only runs when a matching filter
+     * key is on the request.
+     */
+    protected function applyCustomFilter(\Illuminate\Database\Eloquent\Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?\Illuminate\Database\Eloquent\Builder
+    {
+        if ($filterKey === 'purchase_date') {
+            if (!preg_match('/^(\d{4}-\d{2}-\d{2})?\.\.(\d{4}-\d{2}-\d{2})?$/', trim($filterValue), $m)) {
+                return null;
+            }
+            $start = $m[1] !== '' ? $m[1] : null;
+            $end = $m[2] !== '' ? $m[2] : null;
+            if ($start === null && $end === null) {
+                return null;
+            }
+
+            $lastDateSub = \App\Models\OrderItem::query()
+                ->join('orders', 'orders.id', '=', 'order_items.order_id')
+                ->whereColumn('order_items.item_id', 'consumables.id')
+                ->where('order_items.item_type', static::class)
+                ->orderByDesc('order_items.id')
+                ->limit(1)
+                ->select('orders.purchase_date');
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($lastDateSub, $start, $end) {
+                if ($start !== null && $end !== null) {
+                    $nested->whereBetween($lastDateSub, [$start, $end]);
+                } elseif ($start !== null) {
+                    $nested->where($lastDateSub, '>=', $start);
+                } elseif ($end !== null) {
+                    $nested->where($lastDateSub, '<=', $end);
+                }
+            });
+
+            return $query;
+        }
+
+        if ($filterKey === 'remaining') {
+            $bounds = $this->parseGtLtBounds($filterValue);
+            if ($bounds === null) {
+                return null;
+            }
+            [$gt, $lt] = $bounds;
+
+            // numCheckedOut on Consumable walks consumables_users
+            // (one pivot row per handout). Filter mirrors that exact
+            // shape so advanced-search semantics match the displayed
+            // "remaining" column.
+            $checkoutCountSub = \Illuminate\Support\Facades\DB::table('consumables_users')
+                ->whereColumn('consumables_users.consumable_id', 'consumables.id')
+                ->selectRaw('COUNT(*)');
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($checkoutCountSub, $gt, $lt) {
+                [$countSql, $countBindings] = [$checkoutCountSub->toSql(), $checkoutCountSub->getBindings()];
+                if ($gt !== null) {
+                    $nested->whereRaw(
+                        "(consumables.qty - ({$countSql})) > ?",
+                        array_merge($countBindings, [$gt])
+                    );
+                }
+                if ($lt !== null) {
+                    $nested->whereRaw(
+                        "(consumables.qty - ({$countSql})) < ?",
+                        array_merge($countBindings, [$lt])
+                    );
+                }
+            });
+
+            return $query;
+        }
+
+        if ($filterKey === 'purchase_cost') {
+            $bounds = $this->parseGtLtBounds($filterValue);
+            if ($bounds === null) {
+                return null;
+            }
+            [$gt, $lt] = $bounds;
+
+            $lastCostSub = \App\Models\OrderItem::query()
+                ->whereColumn('order_items.item_id', 'consumables.id')
+                ->where('order_items.item_type', static::class)
+                ->orderByDesc('order_items.id')
+                ->limit(1)
+                ->select('order_items.price');
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($lastCostSub, $gt, $lt) {
+                if ($gt !== null) {
+                    $nested->where($lastCostSub, '>', $gt);
+                }
+                if ($lt !== null) {
+                    $nested->where($lastCostSub, '<', $lt);
+                }
+            });
+
+            return $query;
+        }
+
+        return null;
+    }
 
     /**
      * On hard-delete, wipe the image file and Files-tab attachments.
