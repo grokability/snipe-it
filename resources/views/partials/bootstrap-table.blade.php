@@ -978,6 +978,7 @@
                     'export',
                     'print',
                     'fullscreen',
+                    'btnAddMaintenance',
                     'advancedSearch',
                 ],
                 classes: 'table table-responsive table-striped snipe-table table-no-bordered',
