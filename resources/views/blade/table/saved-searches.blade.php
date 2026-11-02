@@ -1,6 +1,7 @@
 @props([
     'tableId',
     'model' => null,
+    'preserveParams' => [],
 ])
 
 <div id="{{ $tableId }}SavedSearchesModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="{{ $tableId }}SavedSearchesModalLabel" aria-hidden="true">
@@ -32,6 +33,13 @@
     (function () {
         var tableId = @json($tableId);
         var modelClass = @json($model);
+        // Extra URL keys to roll into saved-search query strings
+        // alongside bs-table's own filter state. Used by listings
+        // (e.g. the activity report) whose filter UI writes directly
+        // to window.location rather than through bs-table's advanced
+        // search modal. Both scalar (?k=v) and array (?k[]=v) shapes
+        // are captured.
+        var preserveParams = @json(array_values($preserveParams));
         var baseUrl = $('meta[name="baseUrl"]').attr('content') || '/';
         var csrfToken = $('meta[name="csrf-token"]').attr('content');
         var apiHeaders = {
@@ -128,6 +136,19 @@
             // view the user built. Pagination is intentionally dropped.
             var current = new URLSearchParams(window.location.search);
             ['sort', 'order', 'status'].forEach(function (k) {
+                if (current.has(k)) {
+                    params.append(k, current.get(k));
+                }
+            });
+
+            // Carry caller-declared extra params. Each key may appear
+            // as a scalar (?k=v) or as a repeated array (?k[]=a&k[]=b);
+            // both forms are preserved so the deeplink restores
+            // identically to what the toolbar wrote.
+            preserveParams.forEach(function (k) {
+                current.getAll(k + '[]').forEach(function (v) {
+                    params.append(k + '[]', v);
+                });
                 if (current.has(k)) {
                     params.append(k, current.get(k));
                 }
@@ -248,18 +269,28 @@
         // "Save current" affordance can hide when there are no
         // filters to save. The dropdown ITSELF hides when both
         // filters AND saved-searches are empty (nothing to do here).
+        // preserveParams keys count toward the total too, so a
+        // listing (like the activity report) whose UI writes outside
+        // bs-table's filter state still gates the Save row correctly.
         function currentFilterCount() {
-            var bsTable = $('#' + tableId).data('bootstrap.table');
-            if (!bsTable || !bsTable.filterColumnsPartial) {
-                return 0;
-            }
             var n = 0;
-            Object.keys(bsTable.filterColumnsPartial).forEach(function (k) {
-                var v = bsTable.filterColumnsPartial[k];
-                if (v !== undefined && v !== null && String(v) !== '') {
-                    n++;
-                }
-            });
+            var bsTable = $('#' + tableId).data('bootstrap.table');
+            if (bsTable && bsTable.filterColumnsPartial) {
+                Object.keys(bsTable.filterColumnsPartial).forEach(function (k) {
+                    var v = bsTable.filterColumnsPartial[k];
+                    if (v !== undefined && v !== null && String(v) !== '') {
+                        n++;
+                    }
+                });
+            }
+            if (preserveParams.length) {
+                var current = new URLSearchParams(window.location.search);
+                preserveParams.forEach(function (k) {
+                    if (current.getAll(k + '[]').length > 0 || current.has(k)) {
+                        n++;
+                    }
+                });
+            }
             return n;
         }
 
@@ -275,6 +306,22 @@
             // the menu auto-open on page load, which is exactly the
             // bug this comment is here to prevent.
             $('.js-saved-searches-toggle').toggle(showToggle);
+
+            // Restore the Advanced Search button's rounded right edge
+            // when the saved-searches toggle is hidden. The toggle
+            // sits in the same .btn-group as the Advanced Search
+            // button, so Bootstrap's :first-child squared-right rule
+            // still applies to the Advanced Search button while its
+            // sibling is only display:none. Zeroing the overrides
+            // (empty string) when the toggle IS visible lets the
+            // sibling pack-join take over again.
+            var bsTable = $('#' + tableId).data('bootstrap.table');
+            if (bsTable && typeof bsTable.getAdvancedSearchButton === 'function') {
+                bsTable.getAdvancedSearchButton().css({
+                    'border-top-right-radius': showToggle ? '' : '4px',
+                    'border-bottom-right-radius': showToggle ? '' : '4px',
+                });
+            }
             // Items inside the menu are safe to show/hide. The
             // Save-Current entry (and its divider) only make sense
             // when there is actually a filter state to capture.
