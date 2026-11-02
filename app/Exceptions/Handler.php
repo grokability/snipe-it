@@ -224,6 +224,8 @@ class Handler extends ExceptionHandler
                 $route = 'home';
             } elseif ($route === 'customuserlabels.index') {
                 $route = 'settings.labels.index';
+            } elseif ($route === 'maintenancetypes.index') {
+                $route = 'maintenance-types.index';
             }
 
             // Normalize the space-separated derived name to underscore
