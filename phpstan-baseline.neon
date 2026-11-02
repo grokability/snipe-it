@@ -37,15 +37,9 @@ parameters:
 			path: app/Console/Commands/BulkDelete.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$avatar\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Console/Commands/BulkDelete.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
-			count: 17
+			count: 9
 			path: app/Console/Commands/BulkDelete.php
 
 		-
@@ -61,21 +55,9 @@ parameters:
 			path: app/Console/Commands/BulkDelete.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$username\.$#'
-			identifier: property.notFound
-			count: 8
-			path: app/Console/Commands/BulkDelete.php
-
-		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:assetlog\(\)\.$#'
 			identifier: method.notFound
 			count: 10
-			path: app/Console/Commands/BulkDelete.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:companies\(\)\.$#'
-			identifier: method.notFound
-			count: 2
 			path: app/Console/Commands/BulkDelete.php
 
 		-
@@ -94,18 +76,6 @@ parameters:
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:maintenances\(\)\.$#'
 			identifier: method.notFound
 			count: 2
-			path: app/Console/Commands/BulkDelete.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:syncLegacyCompanyIdMirror\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Console/Commands/BulkDelete.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:userlog\(\)\.$#'
-			identifier: method.notFound
-			count: 1
 			path: app/Console/Commands/BulkDelete.php
 
 		-
@@ -129,7 +99,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
-			count: 2
+			count: 1
 			path: app/Console/Commands/CheckinAndDeleteItems.php
 
 		-
@@ -385,12 +355,6 @@ parameters:
 			path: app/Console/Commands/RotateAppKey.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Console/Commands/SendExpectedCheckinAlerts.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 2
@@ -401,42 +365,6 @@ parameters:
 			identifier: greater.alwaysTrue
 			count: 1
 			path: app/Console/Commands/SendInventoryAlerts.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$display_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Console/Commands/SendUpcomingAuditReport.php
-
-		-
-			message: '#^Access to an undefined property ArrayObject\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 4
-			path: app/Console/Commands/SyncAssetLocations.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Console/Commands/SyncAssetLocations.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Console/Commands/SyncAssetLocations.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$userLoc\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Console/Commands/SyncAssetLocations.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: app/Console/Commands/SyncAssetLocations.php
 
 		-
 			message: '#^Method App\\Console\\Commands\\ToggleCustomfieldEncryption\:\:handle\(\) should return int but return statement is missing\.$#'
@@ -1537,12 +1465,6 @@ parameters:
 			path: app/Http/Controllers/AssetModelsController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Assets/AssetCheckinController.php
-
-		-
 			message: '#^Method Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<Illuminate\\Database\\Eloquent\\Model,Illuminate\\Database\\Eloquent\\Model\>\:\:disassociate\(\) invoked with 1 parameter, 0 required\.$#'
 			identifier: arguments.count
 			count: 1
@@ -2265,7 +2187,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$display_name\.$#'
 			identifier: property.notFound
-			count: 3
+			count: 2
 			path: app/Http/Controllers/ReportsController.php
 
 		-
@@ -2823,7 +2745,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$display_name\.$#'
 			identifier: property.notFound
-			count: 2
+			count: 1
 			path: app/Http/Transformers/MaintenancesTransformer.php
 
 		-
@@ -3787,6 +3709,12 @@ parameters:
 			path: app/Models/Accessory.php
 
 		-
+			message: '#^Call to function method_exists\(\) with class\-string\<static\(App\\Models\\Accessory\)\> and ''filterableFields'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Models/Accessory.php
+
+		-
 			message: '#^Cannot access property \$id on class\-string\|object\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -3841,6 +3769,24 @@ parameters:
 			path: app/Models/Accessory.php
 
 		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 2
+			path: app/Models/Accessory.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 2
+			path: app/Models/Accessory.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/Accessory.php
+
+		-
 			message: '#^Strict comparison using \=\=\= between class\-string\<static\(App\\Models\\Accessory\)\> and ''App\\\\Models\\\\AssetModel'' will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
@@ -3850,6 +3796,12 @@ parameters:
 			message: '#^Strict comparison using \=\=\= between class\-string\<static\(App\\Models\\Accessory\)\> and ''App\\\\Models\\\\LicenseSeat'' will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
+			path: app/Models/Accessory.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 2
 			path: app/Models/Accessory.php
 
 		-
@@ -3897,6 +3849,24 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(App\\Models\\AccessoryCheckout\) and ''assignedTo'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Models/AccessoryCheckout.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/AccessoryCheckout.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/AccessoryCheckout.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Models/AccessoryCheckout.php
 
@@ -3967,6 +3937,24 @@ parameters:
 			path: app/Models/Actionlog.php
 
 		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/Actionlog.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/Actionlog.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/Actionlog.php
+
+		-
 			message: '#^Unsafe access to private property App\\Models\\Actionlog\:\:\$customFieldFilterMapCache through static\:\:\.$#'
 			identifier: staticClassAccess.privateProperty
 			count: 4
@@ -4015,12 +4003,6 @@ parameters:
 			path: app/Models/Asset.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$userLoc\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/Asset.php
-
-		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:present\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -4051,20 +4033,14 @@ parameters:
 			path: app/Models/Asset.php
 
 		-
-			message: '#^Cannot access property \$id on class\-string\|object\.$#'
-			identifier: property.nonObject
+			message: '#^Call to function method_exists\(\) with class\-string\<static\(App\\Models\\Asset\)\> and ''filterableFields'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
 			count: 1
 			path: app/Models/Asset.php
 
 		-
-			message: '#^Method App\\Models\\Asset\:\:assetLoc\(\) should return ArrayObject but returns App\\Models\\Location\|null\.$#'
-			identifier: return.type
-			count: 2
-			path: app/Models/Asset.php
-
-		-
-			message: '#^Method App\\Models\\Asset\:\:assetLoc\(\) should return ArrayObject but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
+			message: '#^Cannot access property \$id on class\-string\|object\.$#'
+			identifier: property.nonObject
 			count: 1
 			path: app/Models/Asset.php
 
@@ -4147,6 +4123,12 @@ parameters:
 			path: app/Models/Asset.php
 
 		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 2
+			path: app/Models/Asset.php
+
+		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 2
@@ -4159,9 +4141,27 @@ parameters:
 			path: app/Models/Asset.php
 
 		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 2
+			path: app/Models/Asset.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/Asset.php
+
+		-
 			message: '#^Strict comparison using \=\=\= between class\-string\<static\(App\\Models\\Asset\)\> and ''App\\\\Models\\\\LicenseSeat'' will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
+			path: app/Models/Asset.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 2
 			path: app/Models/Asset.php
 
 		-
@@ -4249,6 +4249,12 @@ parameters:
 			path: app/Models/AssetModel.php
 
 		-
+			message: '#^Call to function method_exists\(\) with class\-string\<static\(App\\Models\\AssetModel\)\> and ''filterableFields'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Models/AssetModel.php
+
+		-
 			message: '#^Method App\\Models\\AssetModel\:\:getImageUrl\(\) should return Illuminate\\Database\\Eloquent\\Relations\\Relation but returns false\.$#'
 			identifier: return.type
 			count: 1
@@ -4291,7 +4297,25 @@ parameters:
 			path: app/Models/AssetModel.php
 
 		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/AssetModel.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/AssetModel.php
+
+		-
 			message: '#^Strict comparison using \=\=\= between class\-string\<static\(App\\Models\\AssetModel\)\> and ''App\\\\Models\\\\LicenseSeat'' will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/AssetModel.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Models/AssetModel.php
@@ -4351,6 +4375,24 @@ parameters:
 			path: app/Models/Category.php
 
 		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/Category.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/Category.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/Category.php
+
+		-
 			message: '#^Unsafe access to private property App\\Models\\Category\:\:\$customFieldFilterMapCache through static\:\:\.$#'
 			identifier: staticClassAccess.privateProperty
 			count: 4
@@ -4377,6 +4419,24 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
 			identifier: function.impossibleType
+			count: 1
+			path: app/Models/CheckoutRequest.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/CheckoutRequest.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/CheckoutRequest.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Models/CheckoutRequest.php
 
@@ -4495,6 +4555,12 @@ parameters:
 			path: app/Models/Company.php
 
 		-
+			message: '#^Call to function method_exists\(\) with ''App\\\\Models\\\\Company'' and ''filterableFields'' will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: app/Models/Company.php
+
+		-
 			message: '#^Loose comparison using \=\= between ''App\\\\Models\\\\Company'' and ''App\\\\Models\\\\Asset'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 3
@@ -4539,7 +4605,13 @@ parameters:
 		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
-			count: 2
+			count: 3
+			path: app/Models/Company.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
 			path: app/Models/Company.php
 
 		-
@@ -4550,6 +4622,12 @@ parameters:
 
 		-
 			message: '#^Strict comparison using \=\=\= between mixed and \*NEVER\* will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/Company.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Models/Company.php
@@ -4657,6 +4735,12 @@ parameters:
 			path: app/Models/Component.php
 
 		-
+			message: '#^Call to function method_exists\(\) with class\-string\<static\(App\\Models\\Component\)\> and ''filterableFields'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Models/Component.php
+
+		-
 			message: '#^Cannot access property \$id on class\-string\|object\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -4699,6 +4783,24 @@ parameters:
 			path: app/Models/Component.php
 
 		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 2
+			path: app/Models/Component.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 2
+			path: app/Models/Component.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/Component.php
+
+		-
 			message: '#^Strict comparison using \=\=\= between class\-string\<static\(App\\Models\\Component\)\> and ''App\\\\Models\\\\AssetModel'' will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
@@ -4708,6 +4810,12 @@ parameters:
 			message: '#^Strict comparison using \=\=\= between class\-string\<static\(App\\Models\\Component\)\> and ''App\\\\Models\\\\LicenseSeat'' will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
+			path: app/Models/Component.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 2
 			path: app/Models/Component.php
 
 		-
@@ -4755,6 +4863,24 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
 			identifier: function.impossibleType
+			count: 1
+			path: app/Models/ComponentAssignment.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/ComponentAssignment.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/ComponentAssignment.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Models/ComponentAssignment.php
 
@@ -4831,6 +4957,12 @@ parameters:
 			path: app/Models/Consumable.php
 
 		-
+			message: '#^Call to function method_exists\(\) with class\-string\<static\(App\\Models\\Consumable\)\> and ''filterableFields'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Models/Consumable.php
+
+		-
 			message: '#^Cannot access property \$id on class\-string\|object\.$#'
 			identifier: property.nonObject
 			count: 1
@@ -4873,6 +5005,24 @@ parameters:
 			path: app/Models/Consumable.php
 
 		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 2
+			path: app/Models/Consumable.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 2
+			path: app/Models/Consumable.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/Consumable.php
+
+		-
 			message: '#^Strict comparison using \=\=\= between class\-string\<static\(App\\Models\\Consumable\)\> and ''App\\\\Models\\\\AssetModel'' will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
@@ -4882,6 +5032,12 @@ parameters:
 			message: '#^Strict comparison using \=\=\= between class\-string\<static\(App\\Models\\Consumable\)\> and ''App\\\\Models\\\\LicenseSeat'' will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
+			path: app/Models/Consumable.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 2
 			path: app/Models/Consumable.php
 
 		-
@@ -5029,7 +5185,25 @@ parameters:
 			path: app/Models/Department.php
 
 		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/Department.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/Department.php
+
+		-
 			message: '#^Strict comparison using \=\=\= between class\-string\<static\(App\\Models\\Department\)\> and ''App\\\\Models\\\\LicenseSeat'' will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/Department.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Models/Department.php
@@ -5101,6 +5275,24 @@ parameters:
 			path: app/Models/Depreciation.php
 
 		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/Depreciation.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/Depreciation.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/Depreciation.php
+
+		-
 			message: '#^Unsafe access to private property App\\Models\\Depreciation\:\:\$customFieldFilterMapCache through static\:\:\.$#'
 			identifier: staticClassAccess.privateProperty
 			count: 4
@@ -5133,6 +5325,24 @@ parameters:
 		-
 			message: '#^Property App\\Models\\Group\:\:\$searchableRelations \(array\) on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.property
+			count: 1
+			path: app/Models/Group.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/Group.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/Group.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Models/Group.php
 
@@ -5293,22 +5503,10 @@ parameters:
 			path: app/Models/Labels/CustomLabels/CustomTapeLabel.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(App\\Models\\Labels\\CustomLabels\\CustomTapeLabel\) and ''getLogoPlacement'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: app/Models/Labels/CustomLabels/CustomTapeLabel.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(App\\Models\\Labels\\CustomLabels\\CustomTapeLabel\) and ''getTagPositionMode'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 3
 			path: app/Models/Labels/CustomLabels/CustomTapeLabel.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$display_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/Labels/FieldOption.php
 
 		-
 			message: '#^Dead catch \- Throwable is never thrown in the try block\.$#'
@@ -5481,7 +5679,7 @@ parameters:
 		-
 			message: '#^Method App\\Models\\Ldap\:\:findLdapUsers\(\) should return array\|bool but returns Illuminate\\Http\\RedirectResponse\.$#'
 			identifier: return.type
-			count: 2
+			count: 1
 			path: app/Models/Ldap.php
 
 		-
@@ -5545,6 +5743,12 @@ parameters:
 			path: app/Models/License.php
 
 		-
+			message: '#^Call to function method_exists\(\) with class\-string\<static\(App\\Models\\License\)\> and ''filterableFields'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Models/License.php
+
+		-
 			message: '#^Method App\\Models\\License\:\:adjustSeatCount\(\) should return Illuminate\\Database\\Eloquent\\Relations\\Relation but returns false\.$#'
 			identifier: return.type
 			count: 1
@@ -5599,6 +5803,18 @@ parameters:
 			path: app/Models/License.php
 
 		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/License.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/License.php
+
+		-
 			message: '#^Strict comparison using \=\=\= between class\-string\<static\(App\\Models\\License\)\> and ''App\\\\Models\\\\AssetModel'' will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
@@ -5606,6 +5822,12 @@ parameters:
 
 		-
 			message: '#^Strict comparison using \=\=\= between class\-string\<static\(App\\Models\\License\)\> and ''App\\\\Models\\\\LicenseSeat'' will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/License.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Models/License.php
@@ -5689,6 +5911,24 @@ parameters:
 			path: app/Models/LicenseSeat.php
 
 		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/LicenseSeat.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/LicenseSeat.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/LicenseSeat.php
+
+		-
 			message: '#^Unsafe access to private property App\\Models\\LicenseSeat\:\:\$customFieldFilterMapCache through static\:\:\.$#'
 			identifier: staticClassAccess.privateProperty
 			count: 4
@@ -5755,7 +5995,25 @@ parameters:
 			path: app/Models/Location.php
 
 		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/Location.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/Location.php
+
+		-
 			message: '#^Strict comparison using \=\=\= between class\-string\<static\(App\\Models\\Location\)\> and ''App\\\\Models\\\\LicenseSeat'' will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/Location.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Models/Location.php
@@ -5827,7 +6085,25 @@ parameters:
 			path: app/Models/Maintenance.php
 
 		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/Maintenance.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/Maintenance.php
+
+		-
 			message: '#^Strict comparison using \=\=\= between class\-string\<static\(App\\Models\\Maintenance\)\> and ''App\\\\Models\\\\LicenseSeat'' will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/Maintenance.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Models/Maintenance.php
@@ -5869,6 +6145,24 @@ parameters:
 			path: app/Models/Manufacturer.php
 
 		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/Manufacturer.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/Manufacturer.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/Manufacturer.php
+
+		-
 			message: '#^Unsafe access to private property App\\Models\\Manufacturer\:\:\$customFieldFilterMapCache through static\:\:\.$#'
 			identifier: staticClassAccess.privateProperty
 			count: 4
@@ -5889,6 +6183,24 @@ parameters:
 		-
 			message: '#^Property App\\Models\\PredefinedKit\:\:\$searchableRelations \(array\) on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.property
+			count: 1
+			path: app/Models/PredefinedKit.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/PredefinedKit.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/PredefinedKit.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Models/PredefinedKit.php
 
@@ -6013,6 +6325,24 @@ parameters:
 			path: app/Models/Statuslabel.php
 
 		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/Statuslabel.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/Statuslabel.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/Statuslabel.php
+
+		-
 			message: '#^Unsafe access to private property App\\Models\\Statuslabel\:\:\$customFieldFilterMapCache through static\:\:\.$#'
 			identifier: staticClassAccess.privateProperty
 			count: 4
@@ -6073,7 +6403,25 @@ parameters:
 			path: app/Models/Supplier.php
 
 		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/Supplier.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/Supplier.php
+
+		-
 			message: '#^Strict comparison using \=\=\= between class\-string\<static\(App\\Models\\Supplier\)\> and ''App\\\\Models\\\\LicenseSeat'' will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/Supplier.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Models/Supplier.php
@@ -6205,6 +6553,12 @@ parameters:
 			path: app/Models/User.php
 
 		-
+			message: '#^Call to function method_exists\(\) with class\-string\<static\(App\\Models\\User\)\> and ''filterableFields'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Models/User.php
+
+		-
 			message: '#^Method App\\Models\\User\:\:allAssignedCount\(\) should return Illuminate\\Database\\Eloquent\\Relations\\Relation but returns int\<0, max\>\.$#'
 			identifier: return.type
 			count: 1
@@ -6253,6 +6607,18 @@ parameters:
 			path: app/Models/User.php
 
 		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/User.php
+
+		-
 			message: '#^Strict comparison using \=\=\= between class\-string\<static\(App\\Models\\User\)\> and ''App\\\\Models\\\\LicenseSeat'' will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
@@ -6260,6 +6626,12 @@ parameters:
 
 		-
 			message: '#^Strict comparison using \=\=\= between mixed and \*NEVER\* will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-falsy\-string and null will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Models/User.php
@@ -7405,24 +7777,6 @@ parameters:
 			path: app/SyncAdapters/MerakiSystemsManager/MerakiClient.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/SyncAdapters/SyncAdapter.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$username\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/SyncAdapters/SyncAdapter.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:present\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/SyncAdapters/SyncAdapter.php
-
-		-
 			message: '#^Property App\\Models\\IdeHelperAsset\:\:\$byod \(int\|null\) does not accept bool\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -7431,30 +7785,6 @@ parameters:
 		-
 			message: '#^Property App\\Models\\IdeHelperAsset\:\:\$purchase_date \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
 			identifier: assign.propertyType
-			count: 1
-			path: app/SyncAdapters/SyncAdapter.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>email" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/SyncAdapters/SyncAdapter.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>model_number" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/SyncAdapters/SyncAdapter.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 7
-			path: app/SyncAdapters/SyncAdapter.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>username" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
 			count: 1
 			path: app/SyncAdapters/SyncAdapter.php
 
