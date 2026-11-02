@@ -1,6 +1,7 @@
 @props([
     'tableId',
     'model' => null,
+    'preserveParams' => [],
 ])
 
 <x-table.advanced-filters
@@ -11,4 +12,5 @@
 <x-table.saved-searches
     :tableId="$tableId"
     :model="$model"
+    :preserveParams="$preserveParams"
 />
