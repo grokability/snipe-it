@@ -856,6 +856,13 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
     /**
      * Maintenance types API routes
      */
+    Route::get('maintenance-types/selectlist',
+        [
+            Api\MaintenanceTypesController::class,
+            'selectlist',
+        ]
+    )->name('api.maintenance-types.selectlist');
+
     Route::resource('maintenance-types',
         Api\MaintenanceTypesController::class,
         ['names' => [
