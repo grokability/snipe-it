@@ -125,8 +125,8 @@
                         data-cookie-id-table="activityReport"
                         data-id-table="activityReport"
                         data-side-pagination="server"
-                    data-advanced-search="true"
-                    data-advanced-search-deeplink="true"
+                        data-advanced-search="true"
+                        data-advanced-search-deeplink="true"
                         data-sort-order="desc"
                         data-sort-name="created_at"
                         id="activityReport"
@@ -145,7 +145,7 @@
 @section('moar_scripts')
 @include ('partials.bootstrap-table', ['exportFile' => 'activity-export', 'search' => true])
 
-{{-- Wire the advanced search AND abive-table filters --}}
+{{-- Wire the advanced search AND above-table filters --}}
 <x-table.advanced-search
     tableId="activityReport"
     :model="\App\Models\Actionlog::class"
