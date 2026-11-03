@@ -345,7 +345,7 @@ class SnipeMutableCollection extends MutableCollection
 
         return $object->{$this->attribute}()
             ->pluck('users.id')
-            ->map(fn ($id) => ['value' => $id, '$ref' => $ref_prefix.$id, 'display' => null])
+            ->map(fn ($id) => ['value' => (string) $id, '$ref' => $ref_prefix.$id, 'display' => null])
             ->all();
     }
 
