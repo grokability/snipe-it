@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Listeners\CheckoutableListener;
 use App\Listeners\CheckoutablesCheckedOutInBulkListener;
+use App\Listeners\ForceBase64MailEncoding;
 use App\Listeners\FulfillCheckoutRequestListener;
 use App\Listeners\LogFailedLogin;
 use App\Listeners\LogListener;
@@ -11,6 +12,7 @@ use App\Listeners\LogSuccessfulLogin;
 use App\Listeners\RegenerateIdeHelperAfterMigrate;
 use Illuminate\Database\Events\MigrationsEnded;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Mail\Events\MessageSending;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -35,6 +37,10 @@ class EventServiceProvider extends ServiceProvider
         // have barryvdh/laravel-ide-helper installed.
         MigrationsEnded::class => [
             RegenerateIdeHelperAfterMigrate::class,
+        ],
+
+        MessageSending::class => [
+            ForceBase64MailEncoding::class,
         ],
     ];
 
