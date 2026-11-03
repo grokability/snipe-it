@@ -634,6 +634,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Acceptance Signature Max Dimension
+    |--------------------------------------------------------------------------
+    | Upper bound (in pixels) on the width AND height of a signature PNG
+    | uploaded on asset acceptance. The 6000 default covers typical retina
+    | and 5K displays with headroom. Operators whose users produce
+    | signatures above this ceiling (8K / scaled high-DPI panels) can
+    | raise it via ACCEPTANCE_SIGNATURE_MAX_DIMENSION in .env. Each pixel
+    | adds proportional memory per acceptance because the flatten path
+    | allocates one same-size buffer during server-side re-encoding.
+    */
+
+    'acceptance_signature_max_dimension' => (int) env('ACCEPTANCE_SIGNATURE_MAX_DIMENSION', 6000),
+
+    /*
+    |--------------------------------------------------------------------------
     | Report Execution Time Limit
     |--------------------------------------------------------------------------
     | Seconds passed to ini_set('max_execution_time') at the top of the
