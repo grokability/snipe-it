@@ -17,7 +17,7 @@ have a [Docker image](https://snipe-it.readme.io/docs/docker) available if that'
 
 -----
 
-## Table of Contents
+## 🍽️ Table of Contents
 
 * [General Features](#general-features)
 * [Included Sync Adapters](#included-sync-adapters)
@@ -35,7 +35,9 @@ have a [Docker image](https://snipe-it.readme.io/docs/docker) available if that'
 
 -----
 
-## General Features
+<a name="general-features"></a>
+
+## 🎯 General Features
 
 <table border="0" width="100%">
 <tr>
@@ -81,7 +83,9 @@ list!
 
 -----
 
-## Included Sync Adapters
+<a name="included-sync-adapters"></a>
+
+## 🔄 Included Sync Adapters
 
 Snipe-IT comes with 25 (and growing!) sync adapters that let you integrate your favorite (or at least begrudgingly
 useful) MDM and RMM systems with Snipe-IT so that everything stays updated across all of your tooling.
@@ -131,17 +135,24 @@ useful) MDM and RMM systems with Snipe-IT so that everything stays updated acros
 
 -----
 
-## Live Demo
+<a name="live-demo"></a>
+
+## 🌟 Live Demo
 
 Want to try Snipe-IT before installing it? Hop into one of our public sandboxes. No signup required.
 
-- **Stable release**: [demo.snipeitapp.com](https://demo.snipeitapp.com)
-- **Develop branch** (previews unreleased features): [develop.snipeitapp.com](https://develop.snipeitapp.com)
+| Branch                                            | URL                                                      |
+|---------------------------------------------------|----------------------------------------------------------|
+| **Stable release**                                | [demo.snipeitapp.com](https://demo.snipeitapp.com)       |
+| **Develop branch** (previews unreleased features) | [develop.snipeitapp.com](https://develop.snipeitapp.com) |
 
+Log in with any of the following accounts:
 
-- Admin User: Log in as `admin` / `password`.
-- Assets Manager User: Log in as `assets` / `password`.
-- Test User: Log in as `testuser` / `password`.
+| Role                 | Username   | Password   |
+|----------------------|------------|------------|
+| Admin user           | `admin`    | `password` |
+| Assets manager       | `assets`   | `password` |
+| Test user (no privs) | `testuser` | `password` |
 
 > [!IMPORTANT]
 > These are **public** demos. Please do not enter real asset, license, or user information while testing. Data resets
@@ -155,7 +166,9 @@ latest code from the develop branch, or the database is being reset.
 
 -----
 
-## Installation
+<a name="installation"></a>
+
+## 🛠️ Installation
 
 For instructions on installing and configuring Snipe-IT on your server, check out the [installation manual](https://snipe-it.readme.io/docs). (Please see the [requirements documentation](https://snipe-it.readme.io/docs/requirements) for full requirements.)
 
@@ -163,12 +176,16 @@ If you're having trouble with the installation, please check the [Common Issues]
 
 -----
 
-## User's Manual
+<a name="users-manual"></a>
+
+## 🫶🏻 User's Manual
 For help using Snipe-IT, check out the [user's manual](https://snipe-it.readme.io/docs/overview).
 
 -----
 
-## Bug Reports & Feature Requests
+<a name="bug-reports--feature-requests"></a>
+
+## 🐛 Bug Reports & Feature Requests
 
 Feel free to check out the [GitHub Issues for this project](https://github.com/grokability/snipe-it/issues) to open a bug report or see what open issues you can help with. Please search through existing issues (open *and* closed) to see if your question has already been answered before opening a new issue.
 
@@ -177,7 +194,9 @@ Feel free to check out the [GitHub Issues for this project](https://github.com/g
 
 -----
 
-## Security
+<a name="security"></a>
+
+## 🔒 Security
 
 > [!IMPORTANT]
 > To report a security vulnerability, use
@@ -207,19 +226,25 @@ our [Security Researchers Hall of Fame](https://snipeitapp.com/thanks#security-r
 
 -----
 
-## Upgrading
+<a name="upgrading"></a>
+
+## ⬆️ Upgrading
 
 Please see the [upgrading documentation](https://snipe-it.readme.io/docs/upgrading) for instructions on upgrading Snipe-IT.
 
 ------
 
-## Translations!
+<a name="translations-"></a>
+
+## 🌐 Translations!
 
 Please see the [translations documentation](https://snipe-it.readme.io/docs/translations) for information about available languages and how to add translations to Snipe-IT.
 
 -----
 
-## Libraries, Modules & Related Projects
+<a name="libraries-modules--related-projects"></a>
+
+## 👩‍💻 Libraries, Modules & Related Projects
 
 Since the release of the JSON REST API, several third-party developers have been developing modules and libraries to work with Snipe-IT.  
 
@@ -258,7 +283,9 @@ We also have a handful of [Google Apps scripts](https://github.com/grokability/g
 
 -----
 
-## Mobile Apps
+<a name="mobile-apps"></a>
+
+## 📱 Mobile Apps
 
 Our [official mobile app](https://github.com/grokability/snipe-it-mobile) is currently in beta, and other developers
 have also created native mobile apps for Snipe-IT using our API.
@@ -283,7 +310,9 @@ Third-party apps built on the Snipe-IT API:
 
 -----
 
-## Join the Community!
+<a name="join-the-community"></a>
+
+## 🕺 Join the Community!
 
 - **[Join our Discord](https://discord.gg/yZFtShAcKk)!** It’s full of great people. We even wrote about it [here](https://grokstar.dev/culture/2024/06/the-unlikely-rise-of-discord-as-a-support-channel/)!
 - **Follow us on Bluesky** at [@snipeitapp.com](https://bsky.app/profile/snipeitapp.com)
@@ -293,7 +322,9 @@ Third-party apps built on the Snipe-IT API:
 
 -----
 
-## Contributing
+<a name="contributing"></a>
+
+## ✍️ Contributing
 
 **Please refrain from submitting issues or pull requests generated by fully-automated tools. Maintainers reserve the right, at their sole discretion, to close such submissions and to block any account responsible for them.** Please see our [AI Contribution Policy](https://snipe-it.readme.io/docs/contributing-overview#ai-usage-policy) for more information.
 
@@ -311,8 +342,15 @@ Be sure to check out all of the [amazing people](CONTRIBUTORS.md) that have cont
 
 ------
 
-## Announcement List
+<a name="announcement-list"></a>
 
-To be notified of important news (such as new releases, security advisories, etc), [sign up for our list](http://eepurl.com/XyZKz). We'll never sell or give away your info, and we'll only email you when it's important. 
+## 📢 Announcement List
 
-We also usually make smaller announcements on our social accounts, our Discord, and our blog, so be sure to subscribe to those if you're looking for more granular announcements.
+To be notified of important news (such as new releases, security advisories,
+etc.), [sign up for our list](http://eepurl.com/XyZKz). We'll never sell or give away your info, and we'll only email
+you when it's important.
+
+We also usually make smaller announcements on our social
+accounts, [our Discord channel](https://grokstar.dev/culture/2024/06/the-unlikely-rise-of-discord-as-a-support-channel/),
+and [our blog](https://grokstar.dev), so be sure to
+subscribe to those if you're looking for more granular announcements.
