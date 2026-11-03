@@ -79,6 +79,11 @@ RUN a2enmod rewrite
 COPY docker/apache-limits.conf /etc/apache2/conf-available/limits.conf
 RUN a2enconf limits
 
+# Suppress Apache version + OS from the Server response header and from
+# the default error-page footer.
+RUN sed -i 's/^ServerTokens.*/ServerTokens Prod/' /etc/apache2/conf-available/security.conf \
+    && sed -i 's/^ServerSignature.*/ServerSignature Off/' /etc/apache2/conf-available/security.conf
+
 COPY docker/column-statistics.cnf /etc/mysql/conf.d/column-statistics.cnf
 
 ############ INITIAL APPLICATION SETUP #####################

@@ -53,6 +53,11 @@ COPY  docker/apache-limits.conf /etc/apache2/conf.d/limits.conf
 # Enable mod_rewrite
 RUN sed -i '/LoadModule rewrite_module/s/^#//g' /etc/apache2/httpd.conf
 
+# Suppress Apache version + OS from the Server response header and from
+# the default error-page footer.
+RUN sed -i 's/^ServerTokens.*/ServerTokens Prod/' /etc/apache2/httpd.conf \
+    && sed -i 's/^ServerSignature.*/ServerSignature Off/' /etc/apache2/httpd.conf
+
 COPY . /var/www/html
 
 WORKDIR /var/www/html
