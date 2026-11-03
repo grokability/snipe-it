@@ -5149,6 +5149,19 @@
         window.setTimeout(fn, 120);
     }
 
+    // A page remembered from another view can be past the end of this result.
+    // bootstrap-table clamps pageNumber to 1 but keeps the empty response, so
+    // fetch page 1 once.
+    $(document).on('load-success.bs.table', '.snipe-table', function (e, res) {
+        var instance = $(this).data('bootstrap.table');
+        if (instance && res && res.total > 0 && Array.isArray(res.rows) && res.rows.length === 0 && !instance.snipeRefetchedEmptyPage) {
+            instance.snipeRefetchedEmptyPage = true;
+            instance.updatePagination();
+        } else if (instance) {
+            instance.snipeRefetchedEmptyPage = false;
+        }
+    });
+
     // Re-measure after every bootstrap-table render. Delegated on document
     // so it catches tables that init after this handler was attached.
     //
