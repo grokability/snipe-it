@@ -335,6 +335,59 @@ class SettingCustomCssTest extends TestCase
         $this->assertStringNotContainsString('image(', $out);
     }
 
+    public function test_var_indirection_through_custom_property_is_blocked(): void
+    {
+        /*
+         * GHSA-gmvp-6qh3-5xm6: Reporter's PoC. `url()` scheme check sees
+         * `var(--b)` which has no scheme literal, but the browser resolves
+         * the variable at computed-value time and fetches the stashed URL.
+         */
+        $out = $this->withCustomCss(':root{--b:"https://attacker.example/p"}body{background:url(var(--b))}');
+
+        $this->assertStringNotContainsString('attacker.example', $out);
+        $this->assertStringNotContainsString('--b', $out);
+        $this->assertStringNotContainsString('var(', $out);
+    }
+
+    public function test_custom_property_declaration_alone_is_blocked(): void
+    {
+        /*
+         * A planter could override one of Snipe-IT's own :root variables
+         * to redirect any builtin rule that reads it, so refuse the
+         * declaration shape outright even without a visible url().
+         */
+        $out = $this->withCustomCss(':root { --primary-color: red; } .nav { color: black; }');
+
+        $this->assertSame('', $out);
+    }
+
+    public function test_reading_an_existing_variable_still_works(): void
+    {
+        /*
+         * Admin branding CSS legitimately reads existing Snipe-IT
+         * variables (e.g. to recolor nav elements). The fix must not
+         * break that use case.
+         */
+        $out = $this->withCustomCss('.nav > li { color: var(--primary-color); }');
+
+        $this->assertStringContainsString('var(--primary-color)', $out);
+    }
+
+    public function test_var_inside_url_argument_is_rejected_defense_in_depth(): void
+    {
+        /*
+         * Defense-in-depth check inside the url() callback. Exercise it
+         * directly by feeding a CSS payload that uses var() only inside a
+         * url() argument (no top-level --* declaration to trip the earlier
+         * guard). The url() must emit empty while the surrounding rule
+         * still carries through.
+         */
+        $out = $this->withCustomCss('body { background: url(var(--existing-color)); color: red; }');
+
+        $this->assertStringNotContainsString('var(', $out);
+        $this->assertStringContainsString('color: red', $out);
+    }
+
     public function test_balanced_paren_walker_handles_nested_url_inside_image_set(): void
     {
         // image-set can wrap url() calls as children. The stripper
