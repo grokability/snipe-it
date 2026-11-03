@@ -35,7 +35,9 @@
                     <x-tabs.maintenance-tab count="{{ $user->assignedMaintenances()->count() }}"/>
                     <x-tabs.files-tab :item="$user" count="{{ $user->uploads()->count() }}"/>
                     <x-tabs.eula-tab count="{{ $user->eulas()->count() }}"/>
-                    <x-tabs.location-tab count="{{ $user->managedLocations()->count() }}"/>
+                    @can('view', \App\Models\Location::class)
+                        <x-tabs.location-tab count="{{ $user->managedLocations()->count() }}"/>
+                    @endcan
                     <x-tabs.user-tab count="{{ $user->managesUsers()->count() }}" name="managed-users" icon_type="manager" :label="trans('admin/users/table.managed_users')"/>
                     <x-tabs.history-tab count="{{ $user->history->count() }}" :model="$user"/>
                     <x-tabs.upload-tab :item="$user"/>
@@ -463,6 +465,12 @@
 
 
                     <!-- start locations tab pane -->
+                    {{-- Gate both the tab link (above) and this pane on
+                         locations.view: the api_url below hits
+                         /api/v1/locations which 403s callers without the
+                         permission. Showing the tab for a viewer who
+                         cannot populate it is an empty-state footgun. --}}
+                    @can('view', \App\Models\Location::class)
                     <x-tabs.pane name="locations">
 
                         <x-slot:table_header>
@@ -477,6 +485,7 @@
                         />
 
                     </x-tabs.pane>
+                    @endcan
 
 
                     <!-- start history tab pane -->
