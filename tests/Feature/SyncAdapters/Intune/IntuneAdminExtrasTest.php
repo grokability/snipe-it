@@ -77,8 +77,8 @@ class IntuneAdminExtrasTest extends TestCase
         $record = iterator_to_array($adapter->pull())[0];
 
         $this->assertSame('01:23:45:67:89:AB', $record->extra['intune_wifi_mac']);
-        $this->assertSame(494000000000, $record->extra['intune_total_storage_bytes']);
-        $this->assertSame(353000000000, $record->extra['intune_free_storage_bytes']);
+        $this->assertSame(494, $record->extra['intune_total_storage_gb']);
+        $this->assertSame(353, $record->extra['intune_free_storage_gb']);
         $this->assertTrue($record->extra['intune_is_encrypted']);
         $this->assertSame('Unknown', $record->extra['intune_jail_broken']);
         $this->assertFalse($record->extra['intune_is_supervised']);
@@ -117,7 +117,7 @@ class IntuneAdminExtrasTest extends TestCase
         $record = iterator_to_array($adapter->pull())[0];
 
         $this->assertNull($record->extra['intune_ethernet_mac']);
-        $this->assertNull($record->extra['intune_physical_memory_bytes']);
+        $this->assertNull($record->extra['intune_physical_memory_gb']);
     }
 
     public function test_per_device_enrichment_backfills_ethernet_mac_and_physical_memory()
@@ -150,7 +150,8 @@ class IntuneAdminExtrasTest extends TestCase
         $record = iterator_to_array($adapter->pull())[0];
 
         $this->assertSame('DE:AD:BE:EF:00:01', $record->extra['intune_ethernet_mac']);
-        $this->assertSame(17179869184, $record->extra['intune_physical_memory_bytes']);
+        // 17179869184 bytes / 1e9 = 17.179869184, rounded to 17.18 GB.
+        $this->assertSame(17.18, $record->extra['intune_physical_memory_gb']);
     }
 
     public function test_admin_defined_extras_overlay_on_vendor_record()

@@ -62,7 +62,7 @@ class Actionlog extends SnipeModel
                 return $value;
             }
 
-            if (!$this->item instanceof License) {
+            if (! $this->item instanceof License) {
                 return $value;
             }
 
@@ -71,7 +71,7 @@ class Actionlog extends SnipeModel
             }
 
             $decoded = json_decode($value, true);
-            if (!is_array($decoded) || !isset($decoded['serial']) || !is_array($decoded['serial'])) {
+            if (! is_array($decoded) || ! isset($decoded['serial']) || ! is_array($decoded['serial'])) {
                 return $value;
             }
 
@@ -198,7 +198,7 @@ class Actionlog extends SnipeModel
     public static function filterableFields(): array
     {
         $typeOptions = array_map(
-            fn(\App\Enums\ActivityItemType $case) => [
+            fn (\App\Enums\ActivityItemType $case) => [
                 'value' => $case->value,
                 'label' => $case->label(),
             ],
@@ -206,7 +206,7 @@ class Actionlog extends SnipeModel
         );
 
         $actionTypeOptions = array_map(
-            fn(\App\Enums\ActionType $case) => [
+            fn (\App\Enums\ActionType $case) => [
                 'value' => $case->value,
                 'label' => ucwords($case->value),
             ],
@@ -295,7 +295,7 @@ class Actionlog extends SnipeModel
 
         $column = $filterKey === 'item' ? 'item_type' : 'target_type';
         $method = $boolean === 'or' ? 'orWhereIn' : 'whereIn';
-        $query->{$method}('action_logs.' . $column, array_values(array_unique($classes)));
+        $query->{$method}('action_logs.'.$column, array_values(array_unique($classes)));
 
         return $query;
     }

@@ -53,7 +53,7 @@ class JamfClient
 
         // Build the query string by hand so the wire form matches
         // what Jamf actually reads.
-        $sections = ['GENERAL', 'HARDWARE', 'OPERATING_SYSTEM', 'USER_AND_LOCATION'];
+        $sections = ['GENERAL', 'HARDWARE', 'OPERATING_SYSTEM', 'USER_AND_LOCATION', 'STORAGE'];
 
         do {
             $query = http_build_query([
@@ -138,6 +138,96 @@ class JamfClient
             ->json();
 
         return is_array($response) ? $response : [];
+    }
+
+    /**
+     * List every Computer Group (smart + static) in the Jamf Pro tenant.
+     * Used by the adapter's optional group filter so admins who don't
+     * use Sites can still scope the sync to specific Smart Groups (or
+     * static groups), e.g. "Law School Macs".
+     *
+     * Hits the classic API because /JSSResource/computergroups has been
+     * the stable membership-returning endpoint across every supported
+     * Jamf Pro release, where the v1 pro-API equivalent has moved
+     * several times and omits smart-group member lists on older tenants.
+     * Bearer-token auth works against classic API endpoints since Jamf
+     * Pro 10.35, which is well below our effective minimum.
+     *
+     * Returns a list of {id, name, is_smart} entries.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function computerGroups(): array
+    {
+        $response = $this->request()
+            ->get('/JSSResource/computergroups')
+            ->throw()
+            ->json();
+
+        return (array) ($response['computer_groups'] ?? []);
+    }
+
+    /**
+     * Return the computer IDs that currently belong to a given Computer
+     * Group. The classic group-detail endpoint returns the full group
+     * payload including a `computers` array of `{id, name, ...}` entries
+     * for both smart and static groups. We just need the IDs.
+     *
+     * @return array<int, int>
+     */
+    public function computerGroupMembers(int $groupId): array
+    {
+        $response = $this->request()
+            ->get('/JSSResource/computergroups/id/'.$groupId)
+            ->throw()
+            ->json();
+
+        $computers = (array) ($response['computer_group']['computers'] ?? []);
+
+        return array_values(array_filter(array_map(
+            fn (array $computer) => isset($computer['id']) ? (int) $computer['id'] : null,
+            $computers,
+        )));
+    }
+
+    /**
+     * Mobile device groups counterpart to computerGroups(). Only queried
+     * when the admin has enabled mobile-device sync AND configured a
+     * group filter, so Jamf tenants without mobile device groups don't
+     * pay for the call.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function mobileDeviceGroups(): array
+    {
+        $response = $this->request()
+            ->get('/JSSResource/mobiledevicegroups')
+            ->throw()
+            ->json();
+
+        return (array) ($response['mobile_device_groups'] ?? []);
+    }
+
+    /**
+     * Mobile device ID list for a given Mobile Device Group. Same shape
+     * as computerGroupMembers() but the classic payload nests the member
+     * list under `mobile_devices` instead of `computers`.
+     *
+     * @return array<int, int>
+     */
+    public function mobileDeviceGroupMembers(int $groupId): array
+    {
+        $response = $this->request()
+            ->get('/JSSResource/mobiledevicegroups/id/'.$groupId)
+            ->throw()
+            ->json();
+
+        $devices = (array) ($response['mobile_device_group']['mobile_devices'] ?? []);
+
+        return array_values(array_filter(array_map(
+            fn (array $device) => isset($device['id']) ? (int) $device['id'] : null,
+            $devices,
+        )));
     }
 
     /**
