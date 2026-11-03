@@ -392,11 +392,11 @@ class Actionlog extends SnipeModel
     /**
      * Establishes the actionlog -> item relationship
      *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo<\Illuminate\Database\Eloquent\Model, $this>
      * @since  [v3.0]
      *
-     * @return Relation
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      */
     public function item()
     {
@@ -585,11 +585,11 @@ class Actionlog extends SnipeModel
     /**
      * Establishes the actionlog -> target relationship
      *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo<\Illuminate\Database\Eloquent\Model, $this>
      * @since  [v3.0]
      *
-     * @return Relation
+     * @author [A. Gianotto] [<snipe@snipe.net>]
+     *
      */
     public function target()
     {
