@@ -180,7 +180,7 @@ class AcceptanceController extends Controller
                 // signature-pad JavaScript creates only PNG files.
                 //
                 // Dimension ceiling is operator-tunable via the
-                // ACCEPTANCE_SIGNATURE_MAX_DIMENSION env var. 
+                // ACCEPTANCE_SIGNATURE_MAX_DIMENSION env var.
                 $maxSignatureDimension = (int) config('app.acceptance_signature_max_dimension', 6000);
                 $imgInfo = @getimagesizefromstring($decoded_image);
                 if ($imgInfo === false || $imgInfo[2] !== IMAGETYPE_PNG) {

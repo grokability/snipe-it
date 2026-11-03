@@ -94,6 +94,7 @@
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Policies/ConsumablePolicy.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Policies/LicensePolicy.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Policies/MaintenancePolicy.php"/>
+  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Policies/SavedSearchPolicy.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Policies/SnipePermissionsPolicy.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Providers/BreadcrumbsServiceProvider.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Providers/RouteServiceProvider.php"/>
@@ -101,6 +102,7 @@
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Rules/AssetCannotBeCheckedOutToNondeployableStatus.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Rules/AssetTagPatternRule.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Rules/CssColor.php"/>
+  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Rules/EloquentModelClass.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Rules/ExternalUrl.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Rules/UniqueUndeleted.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Rules/UserCannotSwitchCompaniesIfItemsAssigned.php"/>
