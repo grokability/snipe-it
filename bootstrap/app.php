@@ -35,7 +35,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 $app = Application::configure(basePath: dirname(__DIR__))
     // Auto-discovers plain handle()-style listeners in app/Listeners (e.g. LogSuccessfulLogin,
-    ->withEvents(false)
+    ->withEvents(true)
     ->withMiddleware(function (Middleware $middleware) {
         // --- Global stack ---
         // ValidatePathEncoding, InvokeDeferredCallbacks, *NOT* TrustProxies, HandleCors,
