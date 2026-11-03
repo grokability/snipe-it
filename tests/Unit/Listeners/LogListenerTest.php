@@ -3,6 +3,7 @@
 namespace Tests\Unit\Listeners;
 
 use App\Events\CheckoutableCheckedOut;
+use App\Listeners\CheckoutableCheckedOutLogCheckout;
 use App\Listeners\LogListener;
 use App\Models\Asset;
 use App\Models\User;
@@ -19,7 +20,7 @@ class LogListenerTest extends TestCase
         // Simply to ensure `created_by` is set in the action log
         $this->actingAs($checkedOutBy);
 
-        (new LogListener)->onCheckoutableCheckedOut(new CheckoutableCheckedOut(
+        (new CheckoutableCheckedOutLogCheckout())->handle(new CheckoutableCheckedOut(
             $asset,
             $checkedOutTo,
             $checkedOutBy,
