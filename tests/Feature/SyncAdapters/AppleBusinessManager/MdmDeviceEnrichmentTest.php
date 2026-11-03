@@ -122,8 +122,8 @@ class MdmDeviceEnrichmentTest extends TestCase
                         'deviceLockStatus' => 'UNLOCKED',
                         'lostModeStatus' => 'DISABLED',
                         'deviceEraseStatus' => 'NORMAL',
-                        'storageTotalCapacity' => 494,
-                        'storageFreeCapacity' => 353,
+                        'storageTotalCapacity' => 494000000000,
+                        'storageFreeCapacity' => 353000000000,
                     ],
                 ],
             ]),
@@ -146,8 +146,8 @@ class MdmDeviceEnrichmentTest extends TestCase
         $this->assertSame('UNLOCKED', $record->extra['abm_mdm_device_lock_status']);
         $this->assertSame('DISABLED', $record->extra['abm_mdm_lost_mode_status']);
         $this->assertSame('NORMAL', $record->extra['abm_mdm_device_erase_status']);
-        $this->assertSame(494, $record->extra['abm_mdm_storage_total']);
-        $this->assertSame(353, $record->extra['abm_mdm_storage_free']);
+        $this->assertSame(494, $record->extra['abm_mdm_storage_total_gb']);
+        $this->assertSame(353, $record->extra['abm_mdm_storage_free_gb']);
     }
 
     public function test_ethernet_mac_used_when_wifi_missing()

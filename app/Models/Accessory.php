@@ -211,7 +211,7 @@ class Accessory extends SnipeModel implements Importable
     protected function applyCustomFilter(\Illuminate\Database\Eloquent\Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?\Illuminate\Database\Eloquent\Builder
     {
         if ($filterKey === 'purchase_date') {
-            if (!preg_match('/^(\d{4}-\d{2}-\d{2})?\.\.(\d{4}-\d{2}-\d{2})?$/', trim($filterValue), $m)) {
+            if (! preg_match('/^(\d{4}-\d{2}-\d{2})?\.\.(\d{4}-\d{2}-\d{2})?$/', trim($filterValue), $m)) {
                 return null;
             }
             $start = $m[1] !== '' ? $m[1] : null;

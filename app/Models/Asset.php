@@ -360,21 +360,21 @@ class Asset extends Depreciable implements Importable
                 'type' => 'fk',
                 'column' => null,
                 'endpoint' => 'users',
-                'label' => trans('admin/hardware/table.assigned_to') . ' - ' . trans('general.user'),
+                'label' => trans('admin/hardware/table.assigned_to').' - '.trans('general.user'),
             ],
             [
                 'field' => 'assigned_asset',
                 'type' => 'fk',
                 'column' => null,
                 'endpoint' => 'hardware',
-                'label' => trans('admin/hardware/table.assigned_to') . ' - ' . trans('general.asset'),
+                'label' => trans('admin/hardware/table.assigned_to').' - '.trans('general.asset'),
             ],
             [
                 'field' => 'assigned_location',
                 'type' => 'fk',
                 'column' => null,
                 'endpoint' => 'locations',
-                'label' => trans('admin/hardware/table.assigned_to') . ' - ' . trans('general.location'),
+                'label' => trans('admin/hardware/table.assigned_to').' - '.trans('general.location'),
             ],
             [
                 'field' => 'requestable',
@@ -636,10 +636,10 @@ class Asset extends Depreciable implements Importable
 
             $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
             $query->{$outerBoolean}(function ($nested) use ($modelFkColumn, $ids, $includeNull) {
-                if (!empty($ids)) {
+                if (! empty($ids)) {
                     $nested->whereIn('assets.model_id', function ($q) use ($modelFkColumn, $ids) {
                         $q->from('models')
-                            ->whereIn('models.' . $modelFkColumn, $ids)
+                            ->whereIn('models.'.$modelFkColumn, $ids)
                             ->select('models.id');
                     });
                 }
@@ -647,7 +647,7 @@ class Asset extends Depreciable implements Importable
                     $nullMatcher = function ($q) use ($modelFkColumn) {
                         $q->whereIn('assets.model_id', function ($sub) use ($modelFkColumn) {
                             $sub->from('models')
-                                ->whereNull('models.' . $modelFkColumn)
+                                ->whereNull('models.'.$modelFkColumn)
                                 ->select('models.id');
                         })->orWhereNull('assets.model_id');
                     };
@@ -656,7 +656,7 @@ class Asset extends Depreciable implements Importable
                     } else {
                         $nested->orWhereIn('assets.model_id', function ($sub) use ($modelFkColumn) {
                             $sub->from('models')
-                                ->whereNull('models.' . $modelFkColumn)
+                                ->whereNull('models.'.$modelFkColumn)
                                 ->select('models.id');
                         })->orWhereNull('assets.model_id');
                     }
@@ -672,7 +672,7 @@ class Asset extends Depreciable implements Importable
         // NULLs, so assets without a purchase date or without a
         // warranty duration naturally fall out of the match.
         if ($filterKey === 'warranty_expires') {
-            if (!preg_match('/^(\d{4}-\d{2}-\d{2})?\.\.(\d{4}-\d{2}-\d{2})?$/', trim($filterValue), $m)) {
+            if (! preg_match('/^(\d{4}-\d{2}-\d{2})?\.\.(\d{4}-\d{2}-\d{2})?$/', trim($filterValue), $m)) {
                 return null;
             }
             $start = $m[1] !== '' ? $m[1] : null;
@@ -781,7 +781,7 @@ class Asset extends Depreciable implements Importable
 
             $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
             $query->{$outerBoolean}(function ($nested) use ($assignedType, $ids, $includeNull) {
-                if (!empty($ids)) {
+                if (! empty($ids)) {
                     $nested->where(function ($q) use ($assignedType, $ids) {
                         $q->where('assets.assigned_type', $assignedType)
                             ->whereIn('assets.assigned_to', $ids);
