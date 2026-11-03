@@ -34,6 +34,7 @@ class AcceptanceSignatureImageValidationTest extends TestCase
         ob_start();
         imagepng($canvas);
         $bytes = (string) ob_get_clean();
+
         return $bytes;
     }
 
@@ -97,9 +98,58 @@ class AcceptanceSignatureImageValidationTest extends TestCase
             'signature_output' => 'data:image/png;base64,'.base64_encode($bombHeader),
         ];
 
-        $this->actingAs($target)
+        $response = $this->actingAs($target)
             ->post(route('account.store-acceptance', $acceptance), $payload)
             ->assertSessionHas('error');
+
+        // Assert the dimension-cap-specific message (not the generic
+        // "no signature detected" shitty_browser string) so the user
+        // sees why their legitimate browser is being rejected and what
+        // to do about it.
+        $this->assertSame(
+            trans('general.signature_too_large', ['max' => 6000]),
+            $response->getSession()->get('error'),
+        );
+
+        $acceptance->refresh();
+        $this->assertNull($acceptance->accepted_at);
+        $this->assertEmpty(Storage::disk()->files('private_uploads/signatures'));
+    }
+
+    public function test_signature_dimension_cap_is_operator_tunable_via_config(): void
+    {
+        // Operators on 8K / scaled high-DPI monitors have been reported
+        // to produce legitimate signatures above the 6000 default.
+        // Lower the ceiling to prove the config knob is actually read:
+        // a tiny real PNG that passes the default 6000 ceiling (and
+        // succeeds end-to-end today) now trips the dimension cap when
+        // the operator-tunable ceiling is set below its declared size.
+        // Covers the inverse direction of the oversized-dimensions test
+        // which already proves the default rejects 10000x10000.
+        Storage::fake();
+        $this->enableRequiredSignatures();
+        config(['app.acceptance_signature_max_dimension' => 1]);
+
+        $target = User::factory()->create();
+        $acceptance = $this->pendingAcceptance($target);
+
+        // A 2x2 real PNG. Under the default 6000 ceiling this would
+        // pass the dimension check and reach the flatten re-encode.
+        // With the override at 1px it must be rejected at the
+        // dimension cap before any pixel buffer is allocated.
+        $payload = [
+            'asset_acceptance' => 'accepted',
+            'signature_output' => 'data:image/png;base64,'.base64_encode($this->tinyPng()),
+        ];
+
+        $response = $this->actingAs($target)
+            ->post(route('account.store-acceptance', $acceptance), $payload)
+            ->assertSessionHas('error');
+
+        $this->assertSame(
+            trans('general.signature_too_large', ['max' => 1]),
+            $response->getSession()->get('error'),
+        );
 
         $acceptance->refresh();
         $this->assertNull($acceptance->accepted_at);
