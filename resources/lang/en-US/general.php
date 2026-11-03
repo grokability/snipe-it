@@ -599,6 +599,7 @@ return [
     'backup_delete_not_allowed' => 'Deleting backups has been disabled in the .env file. Contact support or your systems administrator.',
     'additional_files' => 'Additional Files',
     'shitty_browser' => 'No signature detected. If you are using an older browser, please use a more modern browser to complete your asset acceptance.',
+    'signature_too_large' => 'Your signature image is larger than this installation allows (:max px per side). Try resizing your browser window to a smaller size and signing again. If this keeps happening, ask your administrator to raise the ACCEPTANCE_SIGNATURE_MAX_DIMENSION setting.',
     'bulk_soft_delete' => 'Also soft-delete these users. Their item history will remain intact unless/until you purge deleted records in the Admin Settings.',
     'bulk_checkin_delete_success' => 'Your selected users have been deleted and their items have been checked in.',
     'bulk_checkin_success' => 'The items for the selected users have been checked in.',
