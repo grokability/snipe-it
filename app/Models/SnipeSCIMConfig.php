@@ -248,7 +248,7 @@ class SnipeRootComplex extends Complex
     {
         if ($path !== null && $path->isNotEmpty() && $this->parent === null) {
             $valuePathAttributes = $path->getValuePathAttributes();
-            if (!empty($valuePathAttributes) && $this->getSubNode($valuePathAttributes[0]) === null) {
+            if (! empty($valuePathAttributes) && $this->getSubNode($valuePathAttributes[0]) === null) {
                 $attrName = $valuePathAttributes[0];
                 $attribute = null;
 
@@ -1054,7 +1054,17 @@ class SnipeSCIMConfig
                     eloquent('title', 'jobtitle'),
                     eloquent('preferredLanguage', 'locale'),
                     (new Collection('groups'))->withSubAttributes(
-                        eloquent('value', 'id'),
+                        (new class('value', 'id') extends Eloquent
+                        {
+                            // RFC 7643 §4.1.2 defines groups[].value as a
+                            // string.
+                            protected function doRead(&$object, $attributes = [])
+                            {
+                                $value = parent::doRead($object, $attributes);
+
+                                return $value === null ? null : (string) $value;
+                            }
+                        }),
                         (new class('$ref') extends Eloquent
                         {
                             protected function doRead(&$object, $attributes = [])
