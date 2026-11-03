@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Models\Company;
 use App\Models\CustomField;
+use App\Models\Department;
 use App\Models\Location;
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
@@ -666,6 +668,50 @@ class ValidationServiceProvider extends ServiceProvider
 
         Validator::replacer('fmcs_company', function ($message) {
             return str_replace(':attribute', trans('general.company'), $message);
+        });
+
+        /*
+         * Confirms a manager_id write references a user visible within the
+         * acting user's FMCS scope.
+         */
+        Validator::extend('fmcs_manager', function ($attribute, $value, $parameters, $validator) {
+            if (empty($value)) {
+                return true;
+            }
+            // CLI contexts (snipeit:import, seeders, queue workers) have no
+            // auth user.
+            if (! auth()->check()) {
+                return true;
+            }
+            $manager = User::withoutGlobalScopes()->find((int) $value);
+            if (! $manager) {
+                return true;
+            }
+
+            return (bool) Company::isCurrentUserHasAccess($manager);
+        });
+
+        Validator::replacer('fmcs_manager', function ($message) {
+            return str_replace(':attribute', trans('general.manager'), $message);
+        });
+
+        Validator::extend('fmcs_department', function ($attribute, $value, $parameters, $validator) {
+            if (empty($value)) {
+                return true;
+            }
+            if (! auth()->check()) {
+                return true;
+            }
+            $department = Department::withoutGlobalScopes()->find((int) $value);
+            if (! $department) {
+                return true;
+            }
+
+            return (bool) Company::isCurrentUserHasAccess($department);
+        });
+
+        Validator::replacer('fmcs_department', function ($message) {
+            return str_replace(':attribute', trans('general.department'), $message);
         });
 
         // Validates that the company of the validated object matches the company of the location in case of scoped locations
