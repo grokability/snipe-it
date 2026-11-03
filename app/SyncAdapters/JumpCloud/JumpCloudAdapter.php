@@ -113,12 +113,14 @@ class JumpCloudAdapter extends SyncAdapter
                 Log::channel('sync-adapters')->info(
                     $this->name().': API key does not have System Insights permission (403), falling back to V1 /systems fields only.',
                 );
-            } else {
-                Log::channel('sync-adapters')->warning(
-                    $this->name().': V2 System Insights fetch failed (HTTP '.($status ?? 'n/a').'), falling back to V1 /systems fields only.',
-                    ['exception' => $e->getMessage()],
-                );
+
+                return $map;
             }
+
+            Log::channel('sync-adapters')->warning(
+                $this->name().': V2 System Insights fetch failed (HTTP '.($status ?? 'n/a').'), falling back to V1 /systems fields only.',
+                ['exception' => $e->getMessage()],
+            );
         }
 
         return $map;

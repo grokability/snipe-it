@@ -94,14 +94,16 @@ class JumpCloudClient
 
             // V2 System Insights returns a flat array of records (no
             // envelope / totalCount), so pagination terminates on a
-            // short page.
+            // short page. Capture the page size once into a variable
+            // so the while condition isn't a call expression.
             $results = is_array($response) ? $response : [];
+            $pageSize = count($results);
             foreach ($results as $insight) {
                 yield $insight;
             }
 
             $skip += $limit;
-        } while (count($results) >= $limit);
+        } while ($pageSize >= $limit);
     }
 
     private function request(): PendingRequest
