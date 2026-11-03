@@ -61,6 +61,49 @@ class JumpCloudClient
         } while (! $done);
     }
 
+    /**
+     * Iterate the V2 System Insights `system_info` collection. This is
+     * the only JumpCloud endpoint that returns actual hardware_model
+     * and hardware_vendor strings. V1 `/systems` has `systemType` which
+     * is a free-form label (often null for non-Mac enrollments) and
+     * no vendor at all.
+     *
+     * System Insights is a paid-tier feature on some JumpCloud plans.
+     * A tenant without the entitlement gets 403 here, which the caller
+     * is expected to translate into "fall back to V1 shape" rather
+     * than aborting the sync. This method does not catch the 403 so
+     * the adapter can decide the recovery policy explicitly.
+     *
+     * Returns the V2 flat shape unchanged. The adapter joins to V1
+     * `/systems` on `system_id`.
+     *
+     * @return iterable<array<string, mixed>>
+     */
+    public function systemInsights(int $limit = 100): iterable
+    {
+        $skip = 0;
+
+        do {
+            $response = $this->request()
+                ->get('/v2/systeminsights/system_info', [
+                    'limit' => $limit,
+                    'skip' => $skip,
+                ])
+                ->throw()
+                ->json();
+
+            // V2 System Insights returns a flat array of records (no
+            // envelope / totalCount), so pagination terminates on a
+            // short page.
+            $results = is_array($response) ? $response : [];
+            foreach ($results as $insight) {
+                yield $insight;
+            }
+
+            $skip += $limit;
+        } while (count($results) >= $limit);
+    }
+
     private function request(): PendingRequest
     {
         return $this->withTransientRetry(
