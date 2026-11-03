@@ -4,7 +4,6 @@ namespace Tests\Unit\Listeners;
 
 use App\Events\CheckoutableCheckedOut;
 use App\Listeners\CheckoutableCheckedOutLogCheckout;
-use App\Listeners\LogListener;
 use App\Models\Asset;
 use App\Models\User;
 use Tests\TestCase;
