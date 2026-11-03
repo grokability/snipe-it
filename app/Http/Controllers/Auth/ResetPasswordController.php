@@ -63,23 +63,12 @@ class ResetPasswordController extends Controller
 
     public function showResetForm(Request $request, $token = null)
     {
-
-        $credentials = $request->only('email', 'token');
-
-        // Password::broker() is typed to return the interface
-        // Illuminate\Contracts\Auth\PasswordBroker, which doesn't
-        // declare getUser(). The concrete Illuminate\Auth\Passwords\
-        // PasswordBroker does. Narrow the type locally so PHPStan can
-        // resolve the method against the concrete class.
-        /** @var \Illuminate\Auth\Passwords\PasswordBroker $broker */
-        $broker = $this->broker();
-
-        if (is_null($broker->getUser($credentials))) {
-            Log::debug('Password reset form FAILED - this token is not valid.');
-
-            return redirect()->route('password.request')->with('error', trans('passwords.token'));
-        }
-
+        /*
+         * Always render the form, regardless of whether the supplied email
+         * resolves to an account to prevent email oracle.
+         * Token + user validation now happens only in reset(),
+         * which already returns identical responses for valid and invalid credentials.
+         */
         return view('auth.passwords.reset')->with(
             [
                 'token' => $token,
