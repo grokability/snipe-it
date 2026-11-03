@@ -2,85 +2,46 @@
 
 namespace App\Listeners;
 
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Mail;
 use App\Events\CheckoutableCheckedIn;
-use App\Models\Accessory;
-use App\Models\Asset;
-use App\Models\LicenseSeat;
-use App\Models\Component;
-use App\Models\Setting;
-use App\Models\User;
 use App\Mail\CheckinAccessoryMail;
 use App\Mail\CheckinAssetMail;
-use App\Mail\CheckinLicenseMail;
 use App\Mail\CheckinComponentMail;
+use App\Mail\CheckinLicenseMail;
+use App\Models\Accessory;
+use App\Models\Asset;
+use App\Models\CheckoutAcceptance;
+use App\Models\Component;
+use App\Models\LicenseSeat;
+use App\Models\Setting;
+use App\Models\User;
 use App\Notifications\CheckinAccessoryNotification;
 use App\Notifications\CheckinAssetNotification;
-use App\Notifications\CheckinLicenseSeatNotification;
 use App\Notifications\CheckinComponentNotification;
-use Illuminate\Notifications\Notification as BaseNotification;
+use App\Notifications\CheckinLicenseSeatNotification;
 use GuzzleHttp\Exception\ClientException;
-use Exception;
+use Illuminate\Notifications\Notification as BaseNotification;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Osama\LaravelTeamsNotification\TeamsNotification;
+use Exception;
 
-class CheckoutableCheckedInNotifications extends CheckInOutNotificationsBase
+class CheckoutableCheckedInWebhookNotification extends CheckInOutNotificationsBase
 {
     public function handle(CheckoutableCheckedIn $event)
     {
-        Log::debug('onCheckedIn in the Checkoutable listener fired');
-        
+        Log::debug('CheckoutableCheckedInWebhookNotification fired');
+
         if ($this->shouldNotSendAnyNotifications($event->checkoutable)) {
             return;
         }
 
-        $shouldSendEmailToUser = $this->checkoutableCategoryShouldSendEmail($event->checkoutable);
-        $shouldSendEmailToAlertAddress = $this->shouldSendEmailToAlertAddress();
         $shouldSendWebhookNotification = $this->shouldSendWebhookNotification($event->checkoutable);
-        if (!$shouldSendEmailToUser && !$shouldSendEmailToAlertAddress && !$shouldSendWebhookNotification) {
-            return;
-        }
-
-        if ($shouldSendEmailToUser || $shouldSendEmailToAlertAddress) {
-            /**
-             * Send the appropriate notification
-             */
-            $mailable = $this->getCheckinMailType($event);
-            $notifiable = $this->getNotifiableUser($event);
-
-            $notifiableHasEmail = $notifiable instanceof User && $notifiable->email;
-
-            $shouldSendEmailToUser = $shouldSendEmailToUser && $notifiableHasEmail;
-
-            [$to, $cc] = $this->generateEmailRecipients($shouldSendEmailToUser, $shouldSendEmailToAlertAddress, $notifiable);
-
-            if (!empty($to)) {
-                try {
-                    $toMail = (clone $mailable)->locale($notifiable?->locale);
-                    Mail::to(array_flatten($to))->send($toMail);
-                    Log::info('Checkin Mail sent to checkin target');
-                } catch (ClientException $e) {
-                    Log::debug('Exception caught during checkin email: ' . $e->getMessage());
-                } catch (Exception $e) {
-                    Log::debug('Exception caught during checkin email: ' . $e->getMessage());
-                }
-            }
-            if (!empty($cc)) {
-                try {
-                    $ccMail = (clone $mailable)->locale(Setting::getSettings()->locale);
-                    Mail::cc(array_flatten($cc))->send($ccMail);
-                } catch (ClientException $e) {
-                    Log::debug('Exception caught during checkin email: ' . $e->getMessage());
-                } catch (Exception $e) {
-                    Log::debug('Exception caught during checkin email: ' . $e->getMessage());
-                }
-            }
-        }
 
         if ($shouldSendWebhookNotification) {
-            // Send Webhook notification
             $webhookSource = $this->webhookSource($event->checkoutable);
+
+            // Send Webhook notification
             try {
                 if ($this->newMicrosoftTeamsWebhookEnabled($event->checkoutable)) {
                     $message = $this->getCheckinNotification($event, true)->toMicrosoftTeams();
@@ -98,6 +59,7 @@ class CheckoutableCheckedInNotifications extends CheckInOutNotificationsBase
 
                     return redirect()->back()->with('warning', ucfirst($webhookSource->webhook_selected) . trans('admin/settings/message.webhook.webhook_channel_not_found'));
                 } else {
+                    // @phpstan-ignore identical.alwaysFalse
                     if ($status >= 500 || $status === null) {
                         Log::error($webhookSource->webhook_selected . ' notification failed: ' . $e->getMessage());
                     } else {
@@ -118,27 +80,12 @@ class CheckoutableCheckedInNotifications extends CheckInOutNotificationsBase
         }
     }
 
-    private function getCheckinMailType($event)
-    {
-        $lookup = [
-            Accessory::class => CheckinAccessoryMail::class,
-            Asset::class => CheckinAssetMail::class,
-            LicenseSeat::class => CheckinLicenseMail::class,
-            Component::class => CheckinComponentMail::class,
-        ];
-        $mailable = $lookup[get_class($event->checkoutable)];
-
-        return new $mailable($event->checkoutable, $event->checkedOutTo, $event->checkedInBy, $event->note);
-
-    }
-
     /**
      * Get the appropriate notification for the event
      *
      * @param  CheckoutableCheckedIn  $event
-     * @return Notification
      */
-    private function getCheckinNotification($event, bool $refreshCheckoutable = false): BaseNotification
+    protected function getCheckinNotification($event, bool $refreshCheckoutable = false): CheckinAccessoryNotification|CheckinAssetNotification|CheckinLicenseSeatNotification|CheckinComponentNotification
     {
         $notificationClass = null;
         $checkoutable = $this->getCheckoutableForNotification($event->checkoutable, $refreshCheckoutable);
@@ -162,5 +109,6 @@ class CheckoutableCheckedInNotifications extends CheckInOutNotificationsBase
 
         return new $notificationClass($checkoutable, $event->checkedOutTo, $event->checkedInBy, $event->note, $this->webhookSource($checkoutable));
     }
+
 
 }
