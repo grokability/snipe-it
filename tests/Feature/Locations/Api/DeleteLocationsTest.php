@@ -37,7 +37,7 @@ class DeleteLocationsTest extends TestCase implements TestsPermissionsRequiremen
 
     public function test_error_returned_via_api_if_location_is_already_deleted()
     {
-        $location = Location::factory()->deletedLocation()->create();
+        $location = Location::factory()->deleted()->create();
         $this->actingAsForApi(User::factory()->superuser()->create())
             ->deleteJson(route('api.locations.destroy', $location->id))
             ->assertOk()
