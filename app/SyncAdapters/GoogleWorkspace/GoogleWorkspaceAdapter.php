@@ -3,6 +3,7 @@
 namespace App\SyncAdapters\GoogleWorkspace;
 
 use App\Models\Asset;
+use App\Models\SyncAdapterConfig;
 use App\SyncAdapters\HostInventoryRecord;
 use App\SyncAdapters\PushableSyncAdapter;
 use App\SyncAdapters\SyncAdapter;
@@ -414,11 +415,13 @@ class GoogleWorkspaceAdapter extends PushableSyncAdapter
 
     private function buildClient(): GoogleWorkspaceClient
     {
+        $customerId = SyncAdapterConfig::get($this->instance->id, 'customer_id');
+
         return new GoogleWorkspaceClient(
             serviceAccountEmail: $this->credential('service_account_email'),
             privateKeyPem: $this->credential('private_key'),
             impersonateEmail: $this->credential('impersonate_email'),
-            customerId: $this->credential('customer_id') ?: 'my_customer',
+            customerId: is_string($customerId) && $customerId !== '' ? $customerId : 'my_customer',
         );
     }
 }
