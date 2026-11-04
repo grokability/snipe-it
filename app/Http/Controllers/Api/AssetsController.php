@@ -148,6 +148,11 @@ class AssetsController extends Controller
             'maintenances_count',
             'assigned_assets_count',
 
+            // Age is computed from purchase_date (see the age sort
+            // case below), not a stored column, but the sort switch
+            // can still route it.
+            'age',
+
         ];
 
         $all_custom_fields = CustomField::all(); // used as a 'cache' of custom fields throughout this page load
@@ -492,6 +497,14 @@ class AssetsController extends Controller
                 break;
             case 'assigned_assets_count':
                 $assets->orderAssignedAssetsCount($order);
+                break;
+            case 'age':
+                // Age is a monotonic function of purchase_date, so
+                // sorting by age is just sorting by purchase_date with
+                // the direction flipped. Avoids a cross-DB-portability
+                // headache around TIMESTAMPDIFF vs EXTRACT(AGE FROM..)
+                // vs julianday().
+                $assets->orderBy('assets.purchase_date', $order === 'asc' ? 'desc' : 'asc');
                 break;
             default:
                 $numeric_sort = false;

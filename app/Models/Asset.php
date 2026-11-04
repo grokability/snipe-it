@@ -438,12 +438,12 @@ class Asset extends Depreciable implements Importable
                 'type' => 'date-range',
                 'label' => trans('admin/hardware/form.warranty_expires'),
             ],
-            // age in years since purchase_date, computed via
+            // age in days since purchase_date, computed via
             // TIMESTAMPDIFF. Routed via applyCustomFilter.
             [
                 'field' => 'age',
                 'type' => 'numeric',
-                'label' => trans('general.age'),
+                'label' => trans('general.age_in_days'),
             ],
             [
                 'field' => 'licenses_count',
@@ -757,25 +757,27 @@ class Asset extends Depreciable implements Importable
             $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
             $query->{$outerBoolean}(function ($nested) use ($countSubqueryBuilders, $filterKey, $gt, $lt) {
                 /*
-                 * parseGtLtBounds captures the threshold via a regex
+                 * parseGtLtBounds gets the threshold via a regex
                  * on \d+(\.\d+)?, so the value is always a numeric
-                 * literal string. Cast to float so the DB compares
-                 * numerically rather than lexically.
+                 * literal string. Wrap the threshold in DB::raw so it embeds as a
+                 * numeric literal in the SQL.
                  */
                 if ($gt !== null) {
-                    $nested->where($countSubqueryBuilders[$filterKey](), '>', (float) $gt);
+                    $nested->where($countSubqueryBuilders[$filterKey](), '>', DB::raw((float) $gt));
                 }
                 if ($lt !== null) {
-                    $nested->where($countSubqueryBuilders[$filterKey](), '<', (float) $lt);
+                    $nested->where($countSubqueryBuilders[$filterKey](), '<', DB::raw((float) $lt));
                 }
             });
 
             return $query;
         }
 
-        // age in years since purchase_date. TIMESTAMPDIFF returns
-        // NULL for NULL purchase_date, so BETWEEN / > / < drop
-        // never-purchased assets automatically.
+        // age in DAYS since purchase_date. Days is the useful unit
+        // for admins who want to answer questions like "assets older
+        // than 30 days" or "purchased in the last 14." TIMESTAMPDIFF
+        // returns NULL for NULL purchase_date, so BETWEEN / > / <
+        // drop never-purchased assets automatically.
         if ($filterKey === 'age') {
             $bounds = $this->parseGtLtBounds($filterValue);
             if ($bounds === null) {
@@ -783,7 +785,7 @@ class Asset extends Depreciable implements Importable
             }
             [$gt, $lt] = $bounds;
 
-            $expr = 'TIMESTAMPDIFF(YEAR, assets.purchase_date, NOW())';
+            $expr = 'TIMESTAMPDIFF(DAY, assets.purchase_date, NOW())';
             $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
             $query->{$outerBoolean}(function ($nested) use ($expr, $gt, $lt) {
                 if ($gt !== null) {

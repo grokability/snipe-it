@@ -30,6 +30,7 @@ return [
     'administrator' => 'Administrator',
     'add_seats' => 'Added seats',
     'age' => 'Age',
+    'age_in_days' => 'Age (days)',
     'all_assets' => 'All Assets',
     'all' => 'All',
     'archived' => 'Archived',

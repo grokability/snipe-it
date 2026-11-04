@@ -206,7 +206,7 @@ class AssetPresenter extends Presenter
                 'field' => 'age',
                 'scope' => 'col',
                 'searchable' => true,
-                'sortable' => false,
+                'sortable' => true,
                 'visible' => false,
                 'title' => trans('general.age'),
             ], [
