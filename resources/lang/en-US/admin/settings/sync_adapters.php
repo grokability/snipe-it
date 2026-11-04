@@ -587,7 +587,7 @@ return [
     'abm_extra_added_to_org' => 'AxM Added to Org',
     'abm_extra_released_from_org' => 'AxM Released from Org',
     'abm_extra_org_status' => 'AxM Org Status',
-    'abm_extra_activation_lock_enabled' => 'AxM Activation Lock Enabled',
+    'abm_extra_activation_lock_enabled' => 'AxM Activation Lock Enabled (set true only when AxM confirms)',
     'abm_extra_mdm_file_vault_enabled' => 'AxM MDM FileVault Enabled',
     'abm_extra_mdm_firewall_enabled' => 'AxM MDM Firewall Enabled',
     'abm_extra_mdm_device_lock_status' => 'AxM MDM Device Lock Status',

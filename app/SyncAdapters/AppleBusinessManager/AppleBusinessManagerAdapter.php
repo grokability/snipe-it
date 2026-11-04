@@ -632,6 +632,17 @@ class AppleBusinessManagerAdapter extends SyncAdapter
      * to be cleared before a device can be redeployed to a new user.
      * On empty or failed responses just return the un-enriched record
      * so the sync doesn't stall on a transient AL endpoint issue.
+     *
+     * Only trust `true` from the endpoint. A `false` response is
+     * ambiguous: Apple returns false when the device is genuinely
+     * not activation-locked AND when the API account's role lacks
+     * visibility into the device's lock state (common with the
+     * least-privilege "View device management services" role) AND
+     * for devices whose Activation Lock is managed by a third-party
+     * MDM (Jamf, Kandji, etc.) rather than Apple's own.
+     * Writing `false` indiscriminately would tell
+     * admins devices are safe to redeploy when many may actually be
+     * locked.
      */
     private function enrichRecordWithActivationLock(HostInventoryRecord $record, AppleBusinessManagerClient $client): HostInventoryRecord
     {
@@ -649,12 +660,12 @@ class AppleBusinessManagerAdapter extends SyncAdapter
         }
 
         $enabled = Arr::get($status, 'attributes.activationLockEnabled');
-        if (! is_bool($enabled)) {
+        if ($enabled !== true) {
             return $record;
         }
 
         $extra = $record->extra;
-        $extra['abm_activation_lock_enabled'] = $enabled;
+        $extra['abm_activation_lock_enabled'] = true;
 
         return new HostInventoryRecord(
             sourceKey: $record->sourceKey,
