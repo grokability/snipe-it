@@ -44,6 +44,35 @@ class NinjaOneAdapterTest extends TestCase
         $this->assertDatabaseHas('asset_external_sources', ['source' => 'ninjaone', 'external_id' => '99']);
     }
 
+    public function test_token_exchange_requests_both_monitoring_and_management_scopes()
+    {
+        /*
+         * Regression for issue #20020. NinjaOne only issues the scopes
+         * literally named in the token-exchange POST body. If scope is
+         * just "monitoring", the push side (PATCH /v2/device/{id}/
+         * custom-fields) fails with 401 insufficient_privileges. The
+         * single cached bearer has to carry both scopes so pull and
+         * push both work against the same token.
+         */
+        $adapter = $this->configuredAdapter();
+
+        Http::fake([
+            '*/ws/oauth/token' => Http::response(['access_token' => 'stub-bearer', 'expires_in' => 3600]),
+            '*/v2/devices-detailed*' => Http::response([]),
+        ]);
+
+        iterator_to_array($adapter->pull());
+
+        Http::assertSent(function ($request) {
+            if (! str_contains($request->url(), '/ws/oauth/token')) {
+                return false;
+            }
+            parse_str($request->body(), $parsed);
+
+            return ($parsed['scope'] ?? null) === 'monitoring management';
+        });
+    }
+
     public function test_normalized_record_carries_expected_fields()
     {
         $adapter = $this->configuredAdapter();
