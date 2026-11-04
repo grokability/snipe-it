@@ -248,4 +248,159 @@ class OidcApiAuthTest extends TestCase
             ->getJson('/_test/oidc-whoami')
             ->assertUnauthorized();
     }
+
+    /*
+     * Regression against the multi-issuer username-collision reported by
+     * Javier Garcia Herrera. With two trusted issuers in OIDC_API_ISSUERS,
+     * a token from issuer B carrying preferred_username="lab-admin" must
+     * NOT resolve to the issuer-A-provisioned local user. The resolver
+     * matches on the (iss, sub) tuple when the local user has it pinned
+     * and rejects the username-only fallback under multi-issuer configs.
+     */
+    public function test_multi_issuer_collision_is_rejected_when_user_is_pinned_to_other_issuer()
+    {
+        $otherIssuer = 'https://issuer-b.test/v2.0';
+        config(['oidc.issuers' => [$this->issuer, $otherIssuer]]);
+
+        // Legitimate user provisioned under issuer A.
+        User::factory()->create([
+            'username' => 'lab-admin',
+            'activated' => 1,
+            'oidc_issuer' => $this->issuer,
+            'oidc_subject' => 'admin-from-a',
+        ]);
+
+        // Attacker's token is signed by our stub (which is issuer A's
+        // key, but we're overriding the `iss` claim to issuer B here to
+        // simulate what a real two-issuer deployment would receive). The
+        // resolver layer is what we exercise: it must not inherit
+        // issuer-A's user from a token claiming issuer B.
+        $tokenFromOtherIssuer = $this->token([
+            'iss' => $otherIssuer,
+            'sub' => 'attacker-from-b',
+            'preferred_username' => 'lab-admin',
+        ]);
+
+        // Allow the validator stub to accept issuer B too.
+        $this->allowValidatorForIssuer($otherIssuer);
+
+        $this->withHeaders($this->bearer($tokenFromOtherIssuer))
+            ->getJson('/_test/oidc-whoami')
+            ->assertUnauthorized();
+    }
+
+    public function test_multi_issuer_fallback_is_rejected_when_user_has_no_pin()
+    {
+        // Same two-issuer deployment but the local user hasn't been
+        // pinned to either issuer. On a multi-issuer config the resolver
+        // refuses to fall back to a bare username match, because either
+        // issuer's token could then claim the account. Admin has to
+        // pin the user explicitly before OIDC auth works.
+        $otherIssuer = 'https://issuer-b.test/v2.0';
+        config(['oidc.issuers' => [$this->issuer, $otherIssuer]]);
+
+        User::factory()->create([
+            'username' => 'lab-admin',
+            'activated' => 1,
+            'oidc_issuer' => null,
+            'oidc_subject' => null,
+        ]);
+
+        $this->withHeaders($this->bearer($this->token(['preferred_username' => 'lab-admin'])))
+            ->getJson('/_test/oidc-whoami')
+            ->assertUnauthorized();
+    }
+
+    public function test_tuple_match_wins_over_username_fallback()
+    {
+        /*
+         * If a user has an (iss, sub) pin, the resolver matches on that
+         * tuple exclusively and ignores a token whose preferred_username
+         * happens to match a different unpinned user. Pins the collision-
+         * free lookup path as the primary.
+         */
+        $pinnedUser = User::factory()->create([
+            'username' => 'lab-admin',
+            'activated' => 1,
+            'oidc_issuer' => $this->issuer,
+            'oidc_subject' => 'stable-subject-id',
+        ]);
+
+        $token = $this->token([
+            'sub' => 'stable-subject-id',
+            // Different username claim on the token, but the tuple
+            // match wins -- the resolver returns the pinned user, not
+            // whatever else matches by username.
+            'preferred_username' => 'different-username',
+        ]);
+
+        $this->withHeaders($this->bearer($token))
+            ->getJson('/_test/oidc-whoami')
+            ->assertOk()
+            ->assertJson(['username' => $pinnedUser->username]);
+    }
+
+    public function test_successful_username_fallback_pins_the_user_for_future_requests()
+    {
+        /*
+         * Single-issuer deployment, user has no (iss, sub) pin yet. First
+         * successful auth should write the token's iss + sub onto the
+         * user so subsequent requests take the tuple path. Also confirms
+         * that the fallback path still works for single-issuer configs
+         * (the backward-compat case).
+         */
+        $user = User::factory()->create([
+            'username' => 'oidcuser',
+            'activated' => 1,
+            'oidc_issuer' => null,
+            'oidc_subject' => null,
+        ]);
+
+        $this->withHeaders($this->bearer($this->token(['sub' => 'brand-new-sub'])))
+            ->getJson('/_test/oidc-whoami')
+            ->assertOk();
+
+        $user->refresh();
+        $this->assertSame($this->issuer, $user->oidc_issuer);
+        $this->assertSame('brand-new-sub', $user->oidc_subject);
+    }
+
+    /*
+     * Rewire the validator stub to also accept a second trusted issuer
+     * for multi-issuer tests. The baseline stub pins to a single issuer
+     * to make sure untrusted issuers can never reach key resolution, so
+     * tests that genuinely need two trusted issuers swap in a stub that
+     * accepts both.
+     */
+    private function allowValidatorForIssuer(string $alsoTrusted): void
+    {
+        $privatePem = $this->privatePem;
+        $kid = $this->kid;
+        $expectedA = $this->issuer;
+        $publicPem = openssl_pkey_get_details(openssl_pkey_get_private($privatePem))['key'];
+
+        $this->app->instance(OidcTokenValidator::class, new class($publicPem, $kid, [$expectedA, $alsoTrusted]) extends OidcTokenValidator
+        {
+            private string $pub;
+
+            private string $signingKid;
+
+            /** @var array<int, string> */
+            private array $expectedIssuers;
+
+            public function __construct(string $pub, string $signingKid, array $expectedIssuers)
+            {
+                $this->pub = $pub;
+                $this->signingKid = $signingKid;
+                $this->expectedIssuers = $expectedIssuers;
+            }
+
+            protected function signingKeys(string $issuer): array
+            {
+                Assert::assertContains($issuer, $this->expectedIssuers);
+
+                return [$this->signingKid => new Key($this->pub, 'RS256')];
+            }
+        });
+    }
 }
