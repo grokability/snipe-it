@@ -357,12 +357,16 @@ class LdapSync extends Command
                             $ldap_manager = Ldap::findLdapUsers($item['manager'], -1, $this->option('filter'));
                         } catch (\Exception $e) {
                             Log::channel('ldap')->warning('Manager lookup caused an exception: ' . $e->getMessage() . '. Falling back to direct username lookup');
-                            // Hail-mary for Okta manager 'shortnames' - will only work if
-                            // Okta configuration is using full email-address-style usernames
+                            $ldap_manager = ['count' => 0];
+                        }
+
+                        // Hail-mary for directories whose manager attribute holds a bare
+                        // username rather than a DN
+                        if (($ldap_manager['count'] ?? 0) === 0) {
                             $ldap_manager = [
                                 'count' => 1,
                                 0 => [
-                                    $ldap_map['username'] => [$item['manager']],
+                                    $ldap_map['username'] => [(string) $item['manager']],
                                 ],
                             ];
                         }
