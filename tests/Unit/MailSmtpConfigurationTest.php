@@ -258,6 +258,9 @@ class MailSmtpConfigurationTest extends TestCase
      * Start a one-connection SMTP server on a free 127.0.0.1 port. It advertises
      * AUTH PLAIN, accepts anything, and records only the SMTP verbs and the EHLO
      * argument (never an AUTH payload) in a log file.
+     * proc_open() requires the $pipes argument even though it is not read here.
+     *
+     * @SuppressWarnings("PHPMD.UnusedLocalVariable")
      */
     private function startSmtpServer(): int
     {
