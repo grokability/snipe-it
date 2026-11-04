@@ -573,6 +573,8 @@ return [
     'consumables_count' => 'Consumables Count',
     'components_count' => 'Components Count',
     'licenses_count' => 'Licenses Count',
+    'maintenances_count' => 'Maintenances Count',
+    'assigned_assets_count' => 'Assigned Assets Count',
     'notification_error' => 'Error',
     'notification_error_hint' => 'Please check the form below for errors',
     'notification_bulk_error_hint' => 'The following fields had validation errors and were not edited:',

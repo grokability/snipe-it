@@ -10,6 +10,7 @@ use App\Models\Statuslabel;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @template TModel of Asset
@@ -332,6 +333,58 @@ class AssetQueryBuilder extends Builder
         return $this
             ->leftJoin('companies as company_sort', 'assets.company_id', '=', 'company_sort.id')
             ->orderBy('company_sort.name', $order);
+    }
+
+
+    /*
+     * Sort by the number of license seats currently assigned
+     */
+    public function orderLicensesCount(string $order): self
+    {
+        $sub = DB::table('license_seats')
+            ->select(DB::raw('count(*)'))
+            ->whereColumn('license_seats.asset_id', 'assets.id');
+
+        return $this->orderBy($sub, $order);
+    }
+
+    /*
+     * Sort by the number of components currently checked out
+     */
+    public function orderComponentsCount(string $order): self
+    {
+        $sub = DB::table('components_assets')
+            ->select(DB::raw('count(*)'))
+            ->whereColumn('components_assets.asset_id', 'assets.id');
+
+        return $this->orderBy($sub, $order);
+    }
+
+    /*
+     * Sort by the number of maintenances
+     */
+    public function orderMaintenancesCount(string $order): self
+    {
+        $sub = DB::table('maintenances')
+            ->select(DB::raw('count(*)'))
+            ->whereColumn('maintenances.item_id', 'assets.id')
+            ->where('maintenances.item_type', Asset::class);
+
+        return $this->orderBy($sub, $order);
+    }
+
+    /*
+     * Sort by the number of child assets
+     */
+    public function orderAssignedAssetsCount(string $order): self
+    {
+        $sub = DB::table('assets AS child_assets')
+            ->select(DB::raw('count(*)'))
+            ->whereColumn('child_assets.assigned_to', 'assets.id')
+            ->where('child_assets.assigned_type', Asset::class)
+            ->whereNull('child_assets.deleted_at');
+
+        return $this->orderBy($sub, $order);
     }
 
     /**

@@ -446,6 +446,26 @@ class Asset extends Depreciable implements Importable
                 'label' => trans('general.age'),
             ],
             [
+                'field' => 'licenses_count',
+                'type' => 'numeric',
+                'label' => trans('general.licenses_count'),
+            ],
+            [
+                'field' => 'components_count',
+                'type' => 'numeric',
+                'label' => trans('general.components_count'),
+            ],
+            [
+                'field' => 'maintenances_count',
+                'type' => 'numeric',
+                'label' => trans('general.maintenances_count'),
+            ],
+            [
+                'field' => 'assigned_assets_count',
+                'type' => 'numeric',
+                'label' => trans('general.assigned_assets_count'),
+            ],
+            [
                 'field' => 'created_at',
                 'type' => 'date-range',
                 'label' => trans('general.created_at'),
@@ -690,6 +710,63 @@ class Asset extends Depreciable implements Importable
                     $nested->whereRaw("$expr >= ?", [$start]);
                 } elseif ($end !== null) {
                     $nested->whereRaw("$expr <= ?", [$end]);
+                }
+            });
+
+            return $query;
+        }
+
+        /*
+         * Builder sub-query per filter key. Same as the correlated
+         * subqueries in the AssetQueryBuilder order* scopes so the
+         * filter and the sort agree on what each count means. The
+         * DB::raw('count(*)') aggregate is portable across MySQL,
+         * SQLite, and Postgres. All other params are expressed
+         * via builder methods (whereColumn, where, whereNull) so
+         * Laravel handles identifier quoting and parameter binding
+         * per driver.
+         */
+        $countSubqueryBuilders = [
+            'licenses_count' => fn () => DB::table('license_seats')
+                ->select(DB::raw('count(*)'))
+                ->whereColumn('license_seats.asset_id', 'assets.id'),
+            'components_count' => fn () => DB::table('components_assets')
+                ->select(DB::raw('count(*)'))
+                ->whereColumn('components_assets.asset_id', 'assets.id'),
+            'maintenances_count' => fn () => DB::table('maintenances')
+                ->select(DB::raw('count(*)'))
+                ->whereColumn('maintenances.item_id', 'assets.id')
+                ->where('maintenances.item_type', self::class),
+            // Self-join on assets, so give the inner an alias to
+            // avoid colliding with the outer assets table name.
+            // Filter out trashed children to match the withCount
+            // closure on the controller side.
+            'assigned_assets_count' => fn () => DB::table('assets AS child_assets')
+                ->select(DB::raw('count(*)'))
+                ->whereColumn('child_assets.assigned_to', 'assets.id')
+                ->where('child_assets.assigned_type', self::class)
+                ->whereNull('child_assets.deleted_at'),
+        ];
+        if (array_key_exists($filterKey, $countSubqueryBuilders)) {
+            $bounds = $this->parseGtLtBounds($filterValue);
+            if ($bounds === null) {
+                return null;
+            }
+            [$gt, $lt] = $bounds;
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($countSubqueryBuilders, $filterKey, $gt, $lt) {
+                /*
+                 * parseGtLtBounds captures the threshold via a regex
+                 * on \d+(\.\d+)?, so the value is always a numeric
+                 * literal string. Cast to float so the DB compares
+                 * numerically rather than lexically.
+                 */
+                if ($gt !== null) {
+                    $nested->where($countSubqueryBuilders[$filterKey](), '>', (float) $gt);
+                }
+                if ($lt !== null) {
+                    $nested->where($countSubqueryBuilders[$filterKey](), '<', (float) $lt);
                 }
             });
 

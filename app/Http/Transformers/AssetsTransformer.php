@@ -125,6 +125,10 @@ class AssetsTransformer
             'checkin_counter' => (int) $asset->checkin_counter,
             'checkout_counter' => (int) $asset->checkout_counter,
             'requests_counter' => (int) $asset->requests_counter,
+            'licenses_count' => isset($asset->licenses_count) ? (int) $asset->licenses_count : null,
+            'components_count' => isset($asset->components_count) ? (int) $asset->components_count : null,
+            'maintenances_count' => isset($asset->maintenances_count) ? (int) $asset->maintenances_count : null,
+            'assigned_assets_count' => isset($asset->assigned_assets_count) ? (int) $asset->assigned_assets_count : null,
             'user_can_checkout' => (bool) $asset->availableForCheckout(),
             'book_value' => Helper::formatCurrencyOutput($asset->getDepreciatedValue()),
 

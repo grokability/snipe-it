@@ -18,7 +18,6 @@ use App\Http\Transformers\ActionlogsTransformer;
 use App\Http\Transformers\AssetsTransformer;
 use App\Http\Transformers\SelectlistTransformer;
 use App\Models\AccessoryCheckout;
-use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\CheckoutAcceptance;
@@ -143,6 +142,12 @@ class AssetsController extends Controller
             'external_os_version',
             'last_seen',
 
+            // Related-item counts exposed via withCount
+            'licenses_count',
+            'components_count',
+            'maintenances_count',
+            'assigned_assets_count',
+
         ];
 
         $all_custom_fields = CustomField::all(); // used as a 'cache' of custom fields throughout this page load
@@ -152,15 +157,6 @@ class AssetsController extends Controller
         }
 
         $assets = Asset::select('assets.*')
-//            ->addSelect([
-//                'first_checkout_at' => Actionlog::query()
-//                    ->select('created_at')
-//                    ->whereColumn('item_id', 'assets.id')
-//                    ->where('item_type', Asset::class)
-//                    ->where('action_type', 'checkout')
-//                    ->orderBy('created_at')
-//                    ->limit(1),
-//            ])
             ->with(
                 'model',
                 'location',
@@ -176,7 +172,13 @@ class AssetsController extends Controller
                 'model.depreciation',
                 'supplier',
                 'externalSource',
-            ); // it might be tempting to add 'assetlog' here, but don't. It blows up update-heavy users.
+            ) // it might be tempting to add 'assetlog' here, but don't. It blows up update-heavy users.
+            ->withCount([
+                'licenses as licenses_count',
+                'components as components_count',
+                'maintenances as maintenances_count',
+                'assignedAssets as assigned_assets_count' => fn ($query) => $query->withoutTrashed(),
+            ]);
 
         if ($filter_non_deprecable_assets) {
             $non_deprecable_models = AssetModel::select('id')->whereNotNull('depreciation_id')->get();
@@ -467,6 +469,30 @@ class AssetsController extends Controller
             case 'last_seen':
                 $assets->OrderExternalSource($order, 'last_seen');
                 break;
+                /*
+                 * Per-asset counts route through AssetQueryBuilder
+                 * instead of a plain `orderBy('licenses_count', $order)`
+                 * on the withCount alias, even though the alias is
+                 * visible on `$assets` at this point. The id-pluck further
+                 * down does `(clone $assets)->select('assets.id')`,
+                 * which replaces the SELECT list on the pluck clone and
+                 * strips every withCount alias. The ORDER BY clause here
+                 * comes along on the clone, so an orderBy on
+                 * the alias would then reference a column the pluck
+                 * clone no longer has.
+                 */
+            case 'licenses_count':
+                $assets->orderLicensesCount($order);
+                break;
+            case 'components_count':
+                $assets->orderComponentsCount($order);
+                break;
+            case 'maintenances_count':
+                $assets->orderMaintenancesCount($order);
+                break;
+            case 'assigned_assets_count':
+                $assets->orderAssignedAssetsCount($order);
+                break;
             default:
                 $numeric_sort = false;
 
@@ -516,6 +542,17 @@ class AssetsController extends Controller
                 ->withTrashed()
                 ->whereIn('assets.id', $ids)
                 ->setEagerLoads($assets->getEagerLoads())
+                // withCount is a SELECT-list correlated subquery, not an
+                // eager load, so it doesn't survive setEagerLoads on the
+                // rehydration pass. Re-apply the per-asset counts
+                // the index exposes so the transformer sees the alias
+                // columns. This is a query optimization.
+                ->withCount([
+                    'licenses as licenses_count',
+                    'components as components_count',
+                    'maintenances as maintenances_count',
+                    'assignedAssets as assigned_assets_count' => fn ($query) => $query->withoutTrashed(),
+                ])
                 ->get()
                 ->sortBy(fn ($model) => $order[$model->getKey()] ?? PHP_INT_MAX)
                 ->values();
