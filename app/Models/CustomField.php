@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Http\Traits\UniqueUndeletedTrait;
+use App\Models\Traits\HasCachedNameMap;
 use EasySlugger\Utf8Slugger;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,7 @@ use Watson\Validating\ValidatingTrait;
  */
 class CustomField extends Model
 {
+    use HasCachedNameMap;
     use HasFactory;
     use UniqueUndeletedTrait,
         ValidatingTrait;

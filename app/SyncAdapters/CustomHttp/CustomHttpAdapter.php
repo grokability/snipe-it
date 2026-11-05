@@ -77,10 +77,9 @@ class CustomHttpAdapter extends PushableSyncAdapter
         $options['native:purchase_date'] = \App\SyncAdapters\MappingTargets::labelFor('native:purchase_date');
         $options['native:order_number'] = \App\SyncAdapters\MappingTargets::labelFor('native:order_number');
 
-        // Custom field destinations. Text and textarea-shaped fields
-        // land here so admins can route vendor blobs to whatever
-        // custom field they've defined on the fieldset.
-        foreach (\App\Models\CustomField::whereIn('element', ['text', 'textarea', 'markdown-textarea'])->orderBy('name')->get() as $cf) {
+        // Share the request-memoized pool from MappingTargets so N adapter tabs
+        // don't each refetch the same list. (N+1 query problem.)
+        foreach (\App\SyncAdapters\MappingTargets::textLikeCustomFields() as $cf) {
             $options['custom:'.$cf->id] = trans('admin/settings/sync_adapters.target_custom_prefix').': '.$cf->name;
         }
 
