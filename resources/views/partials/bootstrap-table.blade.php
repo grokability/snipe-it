@@ -2445,11 +2445,13 @@
     function updateSelectedCount(table) {
         var countId = $(table).data('selected-count-id');
         if (!countId) return;
+        var $form = $($(table).data('bulk-form-id'));
+        if (!$form.length) return;
         var rawCountId = countId.charAt(0) === '#' ? countId.substring(1) : countId;
         if (!rawCountId) return;
         var el = document.getElementById(rawCountId);
         if (!el) return;
-        var count = $(table).bootstrapTable('getSelections').length;
+        var count = $form.find('input[name="ids[]"]').length;
         $(el).find('.badge').text(count);
         if (count > 0) {
             $(el).show();
@@ -2461,6 +2463,8 @@
     $('.snipe-table').on('post-body.bs.table', function () {
         var countId = $(this).data('selected-count-id');
         if (!countId) return;
+        var $form = $($(this).data('bulk-form-id'));
+        if (!$form.length) return;
         var rawCountId = countId.charAt(0) === '#' ? countId.substring(1) : countId;
         if (!rawCountId) return;
         var $paginationDetail = $(this).closest('.bootstrap-table')
@@ -2666,10 +2670,14 @@
         $table.bootstrapTable('getSelections').forEach(function (row) {
             selectedIds[row.id] = true;
         });
-
+        // Track rows on the current page only.
+        var currentIds = {};
+        $table.bootstrapTable('getData').forEach(function (row) {
+            currentIds[row.id] = true;
+        });
         // Remove hidden inputs for rows no longer selected.
         $form.find('input[name="ids[]"]').each(function () {
-            if (! selectedIds[this.value]) {
+            if (currentIds[this.value] && !selectedIds[this.value]) {
                 $(this).remove();
             }
         });
@@ -2686,7 +2694,7 @@
             }
         });
 
-        if (Object.keys(selectedIds).length > 0) {
+        if ($form.find('input[name="ids[]"]').length > 0) {
             $button.removeAttr('disabled');
         } else {
             $button.attr('disabled', 'disabled');
@@ -2803,19 +2811,60 @@
             clearActionDependentRowStyling($table);
         }
     });
+    // Restore previously selected rows when navigating between pages.
+    $('.snipe-table').on('post-body.bs.table', function () {
+        var $table = $(this);
+        var $form = $($table.data('bulk-form-id'));
+        if (!$form.length) return;
+
+        var selectedIds = {};
+
+        $form.find('input[name="ids[]"]').each(function () {
+            selectedIds[this.value] = true;
+        });
+
+        var currentIds = [];
+
+        $table.bootstrapTable('getData').forEach(function (row) {
+            if (selectedIds[row.id]) {
+                currentIds.push(row.id);
+            }
+        });
+
+        if (currentIds.length > 0) {
+            $table.data('restoringSelections', true);
+
+            try {
+                $table.bootstrapTable('checkBy', {
+                    field: 'id',
+                    values: currentIds
+                });
+            } finally {
+                $table.data('restoringSelections', false);
+            }
+        }
+
+        updateSelectedCount(this);
+    });
 
     // These methods dynamically add/remove hidden input values in the bulk actions form
     $('.snipe-table').on('check.bs.table .btSelectItem', function (row, $element) {
         var buttonName =  $(this).data('bulk-button-id');
         var tableId =  $(this).data('id-table');
 
-        $(buttonName).removeAttr('disabled');
-        $(buttonName).after($('<input/>', {
-            id: tableId + '_checkbox_' + $element.id,
-            type: 'hidden',
-            name: 'ids[]',
-            value: $element.id
-        }));
+        if (!document.getElementById(tableId + '_checkbox_' + $element.id)) {
+            $(buttonName).removeAttr('disabled');
+            $(buttonName).after($('<input/>', {
+                id: tableId + '_checkbox_' + $element.id,
+                type: 'hidden',
+                name: 'ids[]',
+                value: $element.id
+            }));
+        }
+        // Don't run bulk-action logic while restoring saved selections.
+        if ($(this).data('restoringSelections')) {
+            return;
+        }
 
         // Skip the expensive bulk-actions refresh + re-entry when
         // this check is being fired by our own batch auto-uncheck /
