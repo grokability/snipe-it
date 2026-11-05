@@ -111,7 +111,7 @@ class SyncAdapterConfig
     public static function warmInstanceCache(iterable $instances): void
     {
         foreach ($instances as $instance) {
-            if ($instance instanceof SyncAdapterInstance && $instance->id !== null) {
+            if ($instance instanceof SyncAdapterInstance) {
                 self::$instanceCache[(int) $instance->id] = $instance;
             }
         }
