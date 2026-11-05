@@ -236,9 +236,11 @@ class DefaultLabel extends RectangleSheet
             'barcode_1d_size' => $this->getBarcode1DSize(),
             'barcode_2d_size' => $this->getBarcode2DSize(),
             'barcode_2d_margin' => $this->getBarcode2DMargin(),
+            'barcode2D_H_align' => 'L',
             'logo_width' => $this->getLogoSize()[0],
             'logo_height' => $this->getLogoSize()[1],
             'logo_margin' => $this->getLogoMargin(),
+            'logo_h_align' => 'R',
         ];
     }
 
