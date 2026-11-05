@@ -129,6 +129,16 @@ return [
     'adopt_by_serial_help' => 'Migration aid for customers moving from a homegrown sync script that already populated the assets table or manually entered devices. When enabled, this adapter will first check for an existing Snipe-IT asset with the same serial number and link them. Turn this off after your initial migration if you want new vendor assets to always create fresh asset rows.',
     'create_snipeit_assets_on_pull_label' => 'Create new Snipe-IT assets for vendor records with no existing match',
     'create_snipeit_assets_on_pull_help' => 'Turn this OFF if your vendor data contains records that should not become Snipe-IT assets (e.g. devices with generic serials that would duplicate rows you entered manually). The sync will update rows already linked to this adapter and log-and-skip anything with no match.',
+    'archive_missing_enabled_label' => 'Auto-change status on linked assets the vendor no longer reports',
+    'archive_missing_enabled_help' => 'When a linked device drops out of this adapter\'s pull results for several successful pulls in a row, set the asset to a chosen status label (for example Archived or Retired) and record the change in the asset history. Off by default. Failed or empty pulls are skipped, so an API outage cannot wipe assets. If the record reappears, the counter resets.',
+    'archive_missing_threshold_label' => 'Missing pulls before changing status',
+    'archive_missing_threshold_help' => 'Change the status after this many consecutive successful pulls without the record. Minimum 1. A larger number is safer.',
+    'archive_missing_status_id_label' => 'Status to apply (not checked out)',
+    'archive_missing_status_id_help' => 'Pick the status label applied when the threshold is reached and the asset is not checked out. Choose one that isn\'t Ready to Deploy so the asset doesn\'t stay checkout-eligible after the vendor stopped reporting it.',
+    'archive_missing_review_status_id_label' => 'Status to apply (checked out)',
+    'archive_missing_review_status_id_help' => 'Optional. When the threshold is reached but the asset is still checked out to a user, asset, or location, flip to this status instead and keep the checkout intact so an admin can review. Leave blank to skip the change and log a warning for admins to review manually.',
+    'archive_missing_actionlog_note' => 'Sync adapter \':adapter\' stopped returning this device for :count consecutive pull(s). Status set to \':status\'.',
+    'archive_missing_sync_summary' => 'Auto-archive reconciled :reconciled link(s), :archived asset(s) marked, :flagged_for_review flagged for review, :skipped_confirm skipped by adapter confirmation, :skipped_checked_out held back (still checked out).',
 
     // Push dry-run + composite notes push
     'push_dry_run_label' => 'Dry-run push (log payloads, do not send)',
