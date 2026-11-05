@@ -813,6 +813,7 @@
                 :entries="$extraEntries"
                 :direction_options="$directionOptions"
                 :direction_icons="$directionIcons"
+                :target_icons="$targetIcons"
                 :supports_push="$supportsPush"
                 :locked="$locked"
             />

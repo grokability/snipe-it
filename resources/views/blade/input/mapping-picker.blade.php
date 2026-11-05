@@ -4,6 +4,7 @@
     'entries' => [],
     'direction_options' => [],
     'direction_icons' => [],
+    'target_icons' => [],
     'supports_push' => false,
     'locked' => false,
     'add_label' => null,
@@ -40,17 +41,15 @@
                 <tr data-field-key="{{ $key }}">
                     <td>{{ $entry['label'] }}</td>
                     <td>
-                        <select
-                            name="{{ $name }}[{{ $key }}]"
-                            class="select2 mapping-picker-row-target"
-                            style="width: 100%"
-                            @if ($locked) disabled @endif
-                            aria-label="{{ $entry['label'] }} {{ trans('admin/settings/sync_adapters.mapping_picker_col_target') }}"
-                        >
-                            @foreach ($entry['target_options'] as $optionValue => $optionLabel)
-                                <option value="{{ $optionValue }}" @if ((string) $optionValue === (string) $entry['stored_target']) selected @endif>{{ $optionLabel }}</option>
-                            @endforeach
-                        </select>
+                        <x-input.icon-select
+                            :name="$name . '[' . $key . ']'"
+                            :options="$entry['target_options']"
+                            :icons="$target_icons"
+                            :selected="$entry['stored_target']"
+                            class="mapping-picker-row-target"
+                            :disabled="$locked"
+                            :aria-label="$entry['label'] . ' ' . trans('admin/settings/sync_adapters.mapping_picker_col_target')"
+                        />
                     </td>
                     @if ($showDirection)
                         <td>
@@ -152,7 +151,7 @@
     <tr data-field-key="__KEY__">
         <td>__LABEL__</td>
         <td>
-            <select name="{{ $name }}[__KEY__]" class="select2 mapping-picker-row-target" style="width: 100%" aria-label="__LABEL__ target">
+            <select name="{{ $name }}[__KEY__]" class="select2 js-icon-select mapping-picker-row-target" style="width: 100%" aria-label="__LABEL__ target">
                 __TARGET_OPTIONS__
             </select>
         </td>
