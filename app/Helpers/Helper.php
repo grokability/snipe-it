@@ -1912,6 +1912,50 @@ class Helper
     }
 
     /**
+     * Narrow trust gate for the IdP-initiated SAML SLO response URL.
+     *
+     *
+     * $expectedUrl is the IdP SLO response URL from SP settings
+     * (Auth::getSLOResponseUrl). Null / empty on either input returns
+     * null, same as sameOriginUrl.
+     */
+    public static function sameHostAsConfiguredIdpUrl(?string $url, ?string $expectedUrl): ?string
+    {
+        if ($url === null || $url === '' || $expectedUrl === null || $expectedUrl === '') {
+            return null;
+        }
+
+        $url = str_replace(["\r", "\n"], '', $url);
+
+        $urlParts = parse_url($url);
+        $expectedParts = parse_url($expectedUrl);
+        if ($urlParts === false || $expectedParts === false) {
+            return null;
+        }
+
+        $scheme = isset($urlParts['scheme']) ? strtolower($urlParts['scheme']) : '';
+        if (! in_array($scheme, ['http', 'https'], true)) {
+            return null;
+        }
+
+        if (isset($urlParts['user']) || isset($urlParts['pass'])) {
+            return null;
+        }
+
+        $actualHost = $urlParts['host'] ?? null;
+        $expectedHost = $expectedParts['host'] ?? null;
+        if ($actualHost === null || $expectedHost === null) {
+            return null;
+        }
+
+        if (strcasecmp($actualHost, $expectedHost) !== 0) {
+            return null;
+        }
+
+        return $url;
+    }
+
+    /**
      * Emission-side replacement for Laravel's redirect()->intended().
      *
      * Laravel's redirect()->intended() pulls session('url.intended') and
