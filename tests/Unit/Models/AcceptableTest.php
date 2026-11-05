@@ -20,6 +20,9 @@ class AcceptableTest extends TestCase
     #[DataProvider('modelDeletions')]
     public function test_deleting_an_item_clears_only_its_pending_acceptances(string $modelClass, bool $forceDelete): void
     {
+        /**
+         * @SuppressWarnings(PHPMD.ElseExpression)
+         */
         [$item, $other] = Model::withoutEvents(fn () => [
             $modelClass::factory()->create(),
             $modelClass::factory()->create(),
@@ -28,6 +31,7 @@ class AcceptableTest extends TestCase
         $accepted = $this->acceptanceFor($item, ['accepted_at' => now()]);
         $declined = $this->acceptanceFor($item, ['declined_at' => now()]);
         $unrelated = $this->acceptanceFor($other);
+
 
         if ($forceDelete) {
             $item->forceDelete();
