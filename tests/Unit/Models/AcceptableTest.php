@@ -29,6 +29,7 @@ class AcceptableTest extends TestCase
         $declined = $this->acceptanceFor($item, ['declined_at' => now()]);
         $unrelated = $this->acceptanceFor($other);
 
+        $method = 'delete';
         if ($forceDelete) {
             //yes, this is silly, but otherwise Codacy yells at me
             $method = 'forceDelete';

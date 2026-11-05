@@ -50,27 +50,23 @@ trait Loggable
     public static function bootLoggable(): void
     {
         self::updating(function (self $item) {
-            \Log::error('UPDATING!');
             if (!$item->action_type) {
-                \Log::error('UPDATING! Because action_type was blank');
+                \Log::debug('UPDATING! Because action_type was blank');
                 $item->action_type = ActionType::Update;
             } else {
-                \Log::error('NOT updating because action_type is: ' . $item->action_type->name);
+                \Log::debug('NOT updating because action_type is: ' . $item->action_type->name);
             }
         });
 
         self::creating(function (self $item) {
-            \Log::error('Creating.....');
             $item->action_type = ActionType::Create;
         });
 
         self::deleting(function (self $item) {
-            \Log::error('deleting....');
             $item->action_type = ActionType::Delete;
         });
 
         self::restoring(function (self $item) {
-            \Log::error('Restoring....');
             $item->action_type = ActionType::Restore;
         });
 
@@ -80,7 +76,6 @@ trait Loggable
         // });
 
         self::deleted(function (self $item) {
-            \Log::error('DELETED!');
             $item->log_lifecycle_events();
         });
 
@@ -94,15 +89,14 @@ trait Loggable
         $this->currentActionLog = null;
 
         // This is where the magic happens!
-        \Log::error("Here's the item: " . print_r($this->toArray(), true));
         try {
-            \Log::error('ActionType: ' . ($this->action_type ? $this->action_type->name : 'NULL'));
+            \Log::debug('ActionType: ' . ($this->action_type ? $this->action_type->name : 'NULL'));
         } catch (\Exception $e) {
-            \Log::error('Exception: ' . $e->getMessage());
+            \Log::debug('Exception: ' . $e->getMessage());
         }
 
         if (!$this->action_type) {
-            \Log::error('No action type, aborting save.');
+            \Log::debug('No action type, aborting save.');
 
             return;
         }
@@ -118,30 +112,32 @@ trait Loggable
 
         if (empty($changed) && $this->action_type == ActionType::Update) {
             // empty changeset, and this is an 'update' - don't log it
-            \Log::error("Not saving an action log because there's no changes, and no 'interesting' action type");
+            \Log::debug("Not saving an action log because there's no changes, and no 'interesting' action type");
             $this->action_type = null;
 
             return;
         }
 
+        $logAction = $this->makeLifecycleLog($changed);
+        $logAction->logaction($this->action_type);
+        $this->currentActionLog = $logAction;
+        // That inherently did a save, yeah?
+        $this->action_type = null;
+        \Log::debug('Finished logging now, resetting action_type to null');
+    }
+
+    /**
+     * @param  array<string, array{old: mixed, new: mixed}>  $changed
+     */
+    protected function makeLifecycleLog(array $changed): Actionlog
+    {
         $logAction = new Actionlog;
         $logAction->item_type = $this::class;
         $logAction->item_id = $this->id;
         $logAction->action_date = date('Y-m-d H:i:s');
         $logAction->created_at = now();
         $logAction->created_by = auth()->id();
-        if ($this instanceof User && $this->action_type !== ActionType::Create) {
-            // Users are a weird exception where they target themselves on changes (but not on Create)
-            $logAction->target()->associate($this);
-        }
-        if ($this instanceof Maintenance) {
-            //a Maintenance action has a *real* target of whatever is being maintained (->item)
-            $logAction->target()->associate($this->item);
-            if (in_array($this->action_type, [ActionType::Create, ActionType::Delete], true)) {
-                // Another oddity - actionlog 'note' apparently propagates the maintenance note on Create/Delete?
-                $logAction->note = $this->notes;
-            }
-        }
+        $this->setLifecycleLogTarget($logAction);
         // Fallback to the model's own created_by so seeder / artisan
         // paths (no authenticated user) still attribute the create log
         // to a real user. On web requests auth()->id() is always set,
@@ -154,6 +150,29 @@ trait Loggable
         }
         $logAction->log_meta = json_encode($changed);
 
+        $this->setLifecycleLogQuantity($logAction);
+
+        return $logAction;
+    }
+
+    protected function setLifecycleLogTarget(Actionlog $logAction): void
+    {
+        if ($this instanceof User && $this->action_type !== ActionType::Create) {
+            // Users are a weird exception where they target themselves on changes (but not on Create)
+            $logAction->target()->associate($this);
+        }
+        if ($this instanceof Maintenance) {
+            // a Maintenance action has a *real* target of whatever is being maintained (->item)
+            $logAction->target()->associate($this->item);
+            if (in_array($this->action_type, [ActionType::Create, ActionType::Delete], true)) {
+                // Another oddity - actionlog 'note' apparently propagates the maintenance note on Create/Delete?
+                $logAction->note = $this->notes;
+            }
+        }
+    }
+
+    protected function setLifecycleLogQuantity(Actionlog $logAction): void
+    {
         if ($this->order_item) {
             $logAction->order_item_id = $this->order_item->id;
             $logAction->quantity = $this->order_item->qty;
@@ -162,12 +181,6 @@ trait Loggable
             && array_key_exists('qty', $this->getAttributes())) {
             $logAction->quantity = (int) $this->getAttributes()['qty'];
         }
-
-        $logAction->logaction($this->action_type);
-        $this->currentActionLog = $logAction;
-        // That inherently did a save, yeah?
-        $this->action_type = null;
-        \Log::error('Finished logging now, resetting action_type to null');
     }
 
     /**
@@ -186,62 +199,24 @@ trait Loggable
         return null;
     }
 
-    public function get_changes(?array $limit_keys = null)
+    /**
+     * @param  list<string>|null  $limit_keys
+     * @return array<string, array{old: mixed, new: mixed}>
+     */
+    public function get_changes(?array $limit_keys = null): array
     {
-        $limited_key_hash = null;
-        if (!is_null($limit_keys)) {
-            $limited_key_hash = array_flip($limit_keys);
-        }
-
         $masked_fields_hash = array_flip($this->maskedLogFields());
-        $allowed_fields = $this->allowedLogFields();
-        $allowed_fields_hash = null;
-        if ($allowed_fields !== null) {
-            $allowed_fields_hash = array_flip($allowed_fields);
-        }
-
         $changed = [];
 
-        $originalValues = $this->getRawOriginal();
+        $originalValues = $this->getLoggableOriginalValues($limit_keys);
         foreach ($originalValues as $key => $oldValue) {
-            if ($allowed_fields_hash && !array_key_exists($key, $allowed_fields_hash)) {
-                // "disallowed" field at the _model_ level; do not log it
-                continue;
-            }
-
-            if ($limited_key_hash && !array_key_exists($key, $limited_key_hash)) {
-                // key limited at the *call site* - for checkin, checkout
-                // - things where you want to limit the changeable fields
-                continue;
-            }
-
             $newValue = $this->getAttributes()[$key];
 
-            //special-case handling for 'permissions' key of Users
+            // special-case handling for 'permissions' key of Users
             if ($key === 'permissions' and $this instanceof User) {
-                // Compare decoded to avoid spurious diffs from key reordering or type coercion.
-                $oldDecoded = json_decode($oldValue ?? '{}', true) ?: [];
-                $newDecoded = json_decode($newValue ?? '{}', true) ?: [];
-                if ($oldDecoded == $newDecoded) {
-                    continue;
-                }
-                // Only log the permission keys that actually changed.
-                $diffOld = [];
-                $diffNew = [];
-                foreach (array_unique(array_merge(array_keys($oldDecoded), array_keys($newDecoded))) as $permKey) {
-                    $oldPerm = $oldDecoded[$permKey] ?? null;
-                    $newPerm = $newDecoded[$permKey] ?? null;
-                    // null and "0" are both "inherit" — treat them as equivalent
-                    $normalizedOld = ($oldPerm === null || $oldPerm === '0' || $oldPerm === 0) ? null : $oldPerm;
-                    $normalizedNew = ($newPerm === null || $newPerm === '0' || $newPerm === 0) ? null : $newPerm;
-                    if ($normalizedOld !== $normalizedNew) {
-                        $diffOld[$permKey] = $oldPerm;
-                        $diffNew[$permKey] = $newPerm;
-                    }
-                }
-                if (!empty($diffOld) || !empty($diffNew)) {
-                    $changed['permissions']['old'] = json_encode($diffOld);
-                    $changed['permissions']['new'] = json_encode($diffNew);
+                $permissionChanges = $this->getPermissionChanges($oldValue, $newValue);
+                if ($permissionChanges !== null) {
+                    $changed['permissions'] = $permissionChanges;
                 }
 
                 continue;
@@ -259,7 +234,70 @@ trait Loggable
             }
             // NOTE - if the attribute exists in $originalValues, but *not* in ->getAttributes(), it isn't added to $changed
         }
+
         return $changed;
+    }
+
+    /**
+     * @param  list<string>|null  $limitKeys
+     * @return array<string, mixed>
+     */
+    protected function getLoggableOriginalValues(?array $limitKeys): array
+    {
+        $originalValues = $this->getRawOriginal();
+        $allowedFields = $this->allowedLogFields();
+
+        if ($allowedFields) {
+            // "disallowed" field at the _model_ level; do not log it
+            $originalValues = array_intersect_key($originalValues, array_flip($allowedFields));
+        }
+
+        if ($limitKeys) {
+            // key limited at the *call site* - for checkin, checkout
+            // - things where you want to limit the changeable fields
+            $originalValues = array_intersect_key($originalValues, array_flip($limitKeys));
+        }
+
+        return $originalValues;
+    }
+
+    /**
+     * @return array{old: string|false, new: string|false}|null
+     */
+    protected function getPermissionChanges(?string $oldValue, ?string $newValue): ?array
+    {
+        // Compare decoded to avoid spurious diffs from key reordering or type coercion.
+        $oldDecoded = json_decode($oldValue ?? '{}', true) ?: [];
+        $newDecoded = json_decode($newValue ?? '{}', true) ?: [];
+        if ($oldDecoded == $newDecoded) {
+            return null;
+        }
+
+        // Only log the permission keys that actually changed.
+        $diffOld = [];
+        $diffNew = [];
+        foreach (array_unique(array_merge(array_keys($oldDecoded), array_keys($newDecoded))) as $permKey) {
+            $oldPerm = $oldDecoded[$permKey] ?? null;
+            $newPerm = $newDecoded[$permKey] ?? null;
+            $normalizedOld = $this->normalizePermissionForLog($oldPerm);
+            $normalizedNew = $this->normalizePermissionForLog($newPerm);
+            if ($normalizedOld !== $normalizedNew) {
+                $diffOld[$permKey] = $oldPerm;
+                $diffNew[$permKey] = $newPerm;
+            }
+        }
+
+        if (!empty($diffOld) || !empty($diffNew)) {
+            return ['old' => json_encode($diffOld), 'new' => json_encode($diffNew)];
+        }
+
+        return null;
+    }
+
+    protected function normalizePermissionForLog(mixed $value): mixed
+    {
+        // null and "0" are both "inherit" — treat them as equivalent
+        return in_array($value, [null, '0', 0], true) ? null : $value;
     }
 
     /**
