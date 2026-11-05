@@ -376,7 +376,7 @@ abstract class SyncAdapter
         ];
 
         // Merge the two memoized MappingTargets pools instead
-        // of firing a third element-set query. 
+        // of firing a third element-set query.
         $customFields = MappingTargets::textLikeCustomFields()
             ->concat(MappingTargets::checkboxCustomFields())
             ->sortBy('name')

@@ -92,6 +92,17 @@ class KandjiAdapter extends PushableSyncAdapter
         );
     }
 
+    /**
+     * Kandji keeps missing devices in its /devices list but flips the
+     * `is_missing` boolean. Treat those as missing for the auto-archive
+     * reconcile (issue #20015) so the threshold flow applies to devices
+     * the vendor still enumerates but has marked gone.
+     */
+    public function recordReportsRemoved(HostInventoryRecord $record): bool
+    {
+        return ($record->extra['kandji_is_missing'] ?? false) === true;
+    }
+
     public function pull(): iterable
     {
         $client = new KandjiClient(baseUrl: $this->url(), token: $this->credential('token'));

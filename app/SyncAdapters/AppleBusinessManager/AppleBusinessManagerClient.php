@@ -80,6 +80,31 @@ class AppleBusinessManagerClient
     }
 
     /**
+     * Fetch a single device by its AxM id. The list endpoint drops
+     * released / sold / returned devices from its results, but this
+     * one keeps returning them with releasedFromOrgDateTime set and
+     * attributes.status === 'DEVICE_ASSIGNMENT_UNKNOWN'. Used by the
+     * auto-archive confirmation hook to distinguish a
+     * genuinely released device from one that fell out of pagination
+     * for a transient vendor reason. Returns null on 404.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function deviceById(string $deviceId): ?array
+    {
+        $response = $this->request()
+            ->get('/v1/orgDevices/' . $deviceId);
+
+        if ($response->status() === 404) {
+            return null;
+        }
+
+        $response->throw();
+
+        return $response->json('data');
+    }
+
+    /**
      * Fetch every AppleCare coverage plan for a single device. Apple
      * returns an array (a device can carry multiple overlapping plans
      * for various renewals / extensions), so callers pick the best

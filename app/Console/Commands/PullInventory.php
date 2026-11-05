@@ -137,6 +137,8 @@ class PullInventory extends Command
             $seen = 0;
             $skipped = 0;
             $errors = 0;
+            // External ids this pull actually returned
+            $seenExternalIds = [];
 
             Log::channel('sync-adapters')->info("{$slug} sync starting (CLI)");
 
@@ -166,27 +168,34 @@ class PullInventory extends Command
             }
 
             try {
-                Actionlog::withActionSource('sync:'.$slug, function () use ($adapter, $slug, $dryRun, $limit, &$seen, &$skipped, &$errors) {
+                Actionlog::withActionSource('sync:' . $slug, function () use ($adapter, $slug, $dryRun, $limit, &$seen, &$skipped, &$errors, &$seenExternalIds) {
                     foreach ($adapter->pull() as $record) {
                         if ($limit !== null && ($seen + $skipped + $errors) >= $limit) {
                             Log::channel('sync-adapters')->info("{$slug} sync: --limit {$limit} reached, stopping early");
                             break;
                         }
                         try {
+                            // Per-record "vendor says this is gone"
+                            $vendorReportsGone = $adapter->recordReportsRemoved($record);
+
                             if ($dryRun) {
                                 // Mirror of the push dry-run shape: log the
                                 // normalized record, tally it as "seen" so the
                                 // run summary reports useful counts, skip the
                                 // asset-side write entirely.
                                 Log::channel('sync-adapters')->info(sprintf(
-                                    '%s sync [dry-run]: would upsert record source=%s id=%s hostname=%s serial=%s',
+                                    '%s sync [dry-run]: would upsert record source=%s id=%s hostname=%s serial=%s%s',
                                     $slug,
                                     $record->sourceKey,
                                     $record->sourceId,
                                     $record->hostname ?? '(none)',
                                     $record->hardwareSerial ?? '(none)',
+                                    $vendorReportsGone ? ' (vendor reports removed)' : '',
                                 ));
                                 $seen++;
+                                if (!$vendorReportsGone && $record->sourceId !== null && $record->sourceId !== '') {
+                                    $seenExternalIds[] = (string) $record->sourceId;
+                                }
 
                                 continue;
                             }
@@ -196,6 +205,12 @@ class PullInventory extends Command
                                 $skipped++;
                             } else {
                                 $seen++;
+                            }
+
+                            // Record what the vendor returned regardless of
+                            // whether syncFromRecord upserted.
+                            if (!$vendorReportsGone && $record->sourceId !== null && $record->sourceId !== '') {
+                                $seenExternalIds[] = (string) $record->sourceId;
                             }
                         } catch (Throwable $e) {
                             $errors++;
@@ -228,6 +243,35 @@ class PullInventory extends Command
                 return self::FAILURE;
             }
 
+            // Auto-archive reconcile (issue #20015). Only runs when
+            // the pull completed without abort, actually returned at
+            // least one record, and is not dry-run. An empty response
+            // or a failed pull must not trip the reconciler, or an
+            // API outage would sweep every linked asset to the
+            // configured status.
+            $reconcileSummary = null;
+            if (!$dryRun && $seen > 0 && $adapter->archivesMissingLinks()) {
+                try {
+                    $recon = $adapter->reconcileMissingLinks($seenExternalIds);
+                    $reconcileSummary = trans('admin/settings/sync_adapters.archive_missing_sync_summary', [
+                        'reconciled' => $recon['reconciled'],
+                        'archived' => $recon['archived'],
+                        'flagged_for_review' => $recon['flagged_for_review'],
+                        'skipped_confirm' => $recon['skipped_confirm'],
+                        'skipped_checked_out' => $recon['skipped_checked_out'],
+                    ]);
+                    Log::channel('sync-adapters')->info("{$slug} sync: {$reconcileSummary}");
+                } catch (Throwable $e) {
+                    // The reconcile pass is advisory. A failure here
+                    // must not mark the whole pull as failed, so swallow
+                    // and log. Admins see it in the sync-adapters log.
+                    Log::channel('sync-adapters')->warning(
+                        "{$slug} sync: auto-archive reconcile failed: " . SyncErrorFormatter::summary($e),
+                        SyncErrorFormatter::logContext($e),
+                    );
+                }
+            }
+
             // Same lang key as the UI so both paths render the same phrasing
             // on the settings page.
             $result = trans('admin/settings/sync_adapters.sync_complete', [
@@ -235,6 +279,9 @@ class PullInventory extends Command
                 'skipped' => $skipped,
                 'errors' => $errors,
             ]);
+            if ($reconcileSummary !== null) {
+                $result .= ' ' . $reconcileSummary;
+            }
             $instance->last_synced_at = now();
             $instance->last_sync_result = $result;
             $instance->save();
