@@ -45,7 +45,6 @@ class SecurityHeaders
         $feature_policy[] = "autoplay 'none'";
         $feature_policy[] = "camera 'none'";
         $feature_policy[] = "display-capture 'none'";
-        $feature_policy[] = "document-domain 'none'";
         $feature_policy[] = "encrypted-media 'none'";
         $feature_policy[] = "fullscreen 'none'";
         $feature_policy[] = "geolocation 'none'";
@@ -89,6 +88,10 @@ class SecurityHeaders
             $csp_policy[] = "object-src 'none'";
             $csp_policy[] = "font-src 'self' data:";
             $csp_policy[] = "img-src 'self' data: ".config('app.url').' '.config('app.additional_csp_urls').' '.config('filesystems.disks.public.url').' https://secure.gravatar.com http://gravatar.com maps.google.com maps.gstatic.com *.googleapis.com';
+            $csp_policy[] = "base-uri 'self'";
+            if (config('app.allow_iframing') == false) {
+                $csp_policy[] = "frame-ancestors 'none'";
+            }
 
             $csp_policy = implode(';', $csp_policy);
 

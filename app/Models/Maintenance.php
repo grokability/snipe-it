@@ -285,11 +285,11 @@ class Maintenance extends SnipeModel implements CompanyableChild
             $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
             $query->{$outerBoolean}(function ($nested) use ($ids, $includeNull) {
                 $nested->where('maintenances.item_type', Asset::class);
-                if (!empty($ids)) {
+                if (! empty($ids)) {
                     $nested->whereIn('maintenances.item_id', $ids);
                 }
                 if ($includeNull) {
-                    if (!empty($ids)) {
+                    if (! empty($ids)) {
                         $nested->orWhereNull('maintenances.item_id');
                     } else {
                         $nested->whereNull('maintenances.item_id');
@@ -306,19 +306,19 @@ class Maintenance extends SnipeModel implements CompanyableChild
                 return null;
             }
             [$ids, $includeNull] = $parsed;
-            if (empty($ids) && !$includeNull) {
+            if (empty($ids) && ! $includeNull) {
                 return null;
             }
 
             $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
             $query->{$outerBoolean}(function ($nested) use ($ids, $includeNull) {
                 $nested->whereHas('asset', function ($assetQuery) use ($ids, $includeNull) {
-                    if (!empty($ids) && $includeNull) {
+                    if (! empty($ids) && $includeNull) {
                         $assetQuery->where(function ($q) use ($ids) {
                             $q->whereIn('assets.status_id', $ids)
                                 ->orWhereNull('assets.status_id');
                         });
-                    } elseif (!empty($ids)) {
+                    } elseif (! empty($ids)) {
                         $assetQuery->whereIn('assets.status_id', $ids);
                     } else {
                         $assetQuery->whereNull('assets.status_id');

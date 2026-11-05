@@ -438,7 +438,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
             $normalized = strtolower(trim($filterValue));
             $trueTokens = ['1', 'true', 'yes'];
             $falseTokens = ['0', 'false', 'no'];
-            if (!in_array($normalized, array_merge($trueTokens, $falseTokens), true)) {
+            if (! in_array($normalized, array_merge($trueTokens, $falseTokens), true)) {
                 return null;
             }
             $wantMatch = in_array($normalized, $trueTokens, true);
@@ -512,24 +512,24 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
 
             $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
             $query->{$outerBoolean}(function ($nested) use ($pivot, $ids, $includeNull) {
-                if (!empty($ids)) {
+                if (! empty($ids)) {
                     $nested->whereIn('users.id', function ($q) use ($pivot, $ids) {
                         $q->from($pivot['table'])
-                            ->whereIn($pivot['table'] . '.' . $pivot['column'], $ids)
-                            ->select($pivot['table'] . '.user_id');
+                            ->whereIn($pivot['table'].'.'.$pivot['column'], $ids)
+                            ->select($pivot['table'].'.user_id');
                     });
                 }
                 if ($includeNull) {
                     $nullMatcher = function ($q) use ($pivot) {
                         $q->whereNotIn('users.id', function ($sub) use ($pivot) {
-                            $sub->from($pivot['table'])->select($pivot['table'] . '.user_id');
+                            $sub->from($pivot['table'])->select($pivot['table'].'.user_id');
                         });
                     };
                     if (empty($ids)) {
                         $nullMatcher($nested);
                     } else {
                         $nested->orWhereNotIn('users.id', function ($sub) use ($pivot) {
-                            $sub->from($pivot['table'])->select($pivot['table'] . '.user_id');
+                            $sub->from($pivot['table'])->select($pivot['table'].'.user_id');
                         });
                     }
                 }
@@ -539,32 +539,32 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         }
 
         $countBranches = [
-            'assets_count' => fn() => \App\Models\Asset::query()
+            'assets_count' => fn () => \App\Models\Asset::query()
                 ->whereColumn('assets.assigned_to', 'users.id')
                 ->where('assets.assigned_type', self::class)
                 ->whereNull('assets.deleted_at')
                 ->selectRaw('COUNT(*)'),
-            'accessories_count' => fn() => \Illuminate\Support\Facades\DB::table('accessories_checkout')
+            'accessories_count' => fn () => \Illuminate\Support\Facades\DB::table('accessories_checkout')
                 ->whereColumn('accessories_checkout.assigned_to', 'users.id')
                 ->where('accessories_checkout.assigned_type', self::class)
                 ->selectRaw('COUNT(*)'),
-            'consumables_count' => fn() => \Illuminate\Support\Facades\DB::table('consumables_users')
+            'consumables_count' => fn () => \Illuminate\Support\Facades\DB::table('consumables_users')
                 ->whereColumn('consumables_users.assigned_to', 'users.id')
                 ->selectRaw('COUNT(*)'),
-            'licenses_count' => fn() => \Illuminate\Support\Facades\DB::table('license_seats')
+            'licenses_count' => fn () => \Illuminate\Support\Facades\DB::table('license_seats')
                 ->whereColumn('license_seats.assigned_to', 'users.id')
                 ->selectRaw('COUNT(*)'),
-            'manages_users_count' => fn() => \Illuminate\Support\Facades\DB::table('users as managed_users')
+            'manages_users_count' => fn () => \Illuminate\Support\Facades\DB::table('users as managed_users')
                 ->whereColumn('managed_users.manager_id', 'users.id')
                 ->whereNull('managed_users.deleted_at')
                 ->selectRaw('COUNT(*)'),
-            'manages_locations_count' => fn() => \Illuminate\Support\Facades\DB::table('locations')
+            'manages_locations_count' => fn () => \Illuminate\Support\Facades\DB::table('locations')
                 ->whereColumn('locations.manager_id', 'users.id')
                 ->whereNull('locations.deleted_at')
                 ->selectRaw('COUNT(*)'),
         ];
 
-        if (!array_key_exists($filterKey, $countBranches)) {
+        if (! array_key_exists($filterKey, $countBranches)) {
             return null;
         }
 
@@ -941,6 +941,30 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         }
 
         return $this->checkPermissionSection($section);
+    }
+
+    /**
+     * True when the user carries an explicit "-1" on the given
+     * permission section at the user level. Group permissions do not
+     * express "deny", only "grant", so an explicit user-level "-1" is
+     * the only way an operator can shut off a specific action for an
+     * account. Callers that treat a deny as absolute (beating implicit
+     * grants that would otherwise return true via related permissions)
+     * use this to short-circuit before the normal has-access check.
+     */
+    public function isPermissionExplicitlyDenied(string $section): bool
+    {
+        if (! is_string($this->permissions) || $this->permissions === '') {
+            return false;
+        }
+
+        $permissions = json_decode($this->permissions, true);
+
+        if (! is_array($permissions)) {
+            return false;
+        }
+
+        return ($permissions[$section] ?? null) === '-1';
     }
 
     /**

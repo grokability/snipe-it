@@ -110,6 +110,155 @@ class JamfAdapterTest extends TestCase
         $this->assertNotNull($record->lastSeen);
     }
 
+    public function test_computer_ram_and_boot_disk_storage_are_extracted()
+    {
+        /*
+         * Jamf STORAGE section can list more than one disk when an
+         * external drive is plugged in at inventory time. The boot disk
+         * is the one whose partitions contain a partitionType=BOOT
+         * entry. The adapter must land on the internal boot disk's size,
+         * not the external drive's or the sum of both.
+         */
+        $adapter = $this->configuredJamfAdapter();
+
+        Http::fake([
+            '*/api/oauth/token' => $this->jamfTokenResponse(),
+            '*/api/v1/computers-inventory*' => Http::response([
+                'totalCount' => 1,
+                'results' => [
+                    $this->jamfComputer(
+                        id: 42,
+                        name: 'design-mbp',
+                        model: 'MacBook Pro',
+                        totalRamMegabytes: 32768,
+                        storageDisks: [
+                            [
+                                'device' => 'disk0',
+                                'sizeMegabytes' => 1000000,
+                                'partitions' => [
+                                    ['name' => 'Macintosh HD', 'partitionType' => 'BOOT'],
+                                    ['name' => 'Recovery', 'partitionType' => 'RECOVERY'],
+                                ],
+                            ],
+                            [
+                                'device' => 'disk2',
+                                'sizeMegabytes' => 4000000,
+                                'partitions' => [
+                                    ['name' => 'External SSD', 'partitionType' => 'OTHER'],
+                                ],
+                            ],
+                        ],
+                    ),
+                ],
+            ]),
+        ]);
+
+        $records = iterator_to_array($adapter->pull());
+
+        $this->assertCount(1, $records);
+        $this->assertSame(32.77, $records[0]->extra['jamf_ram_gb']);
+        $this->assertSame(
+            1000,
+            $records[0]->extra['jamf_storage_gb'],
+            'Boot disk (disk0, with partitionType=BOOT) wins over the larger external drive.',
+        );
+    }
+
+    public function test_storage_falls_back_to_first_disk_when_no_boot_partition_tagged()
+    {
+        /*
+         * Older Jamf versions don't always tag a partition as BOOT. In
+         * that case fall back to disks[0] because on every modern Mac
+         * the internal SSD reports as disk0 and external drives come
+         * later. The fallback keeps RAM + storage reporting useful
+         * without pretending we have signal we don't.
+         */
+        $adapter = $this->configuredJamfAdapter();
+
+        Http::fake([
+            '*/api/oauth/token' => $this->jamfTokenResponse(),
+            '*/api/v1/computers-inventory*' => Http::response([
+                'totalCount' => 1,
+                'results' => [
+                    $this->jamfComputer(
+                        id: 42,
+                        storageDisks: [
+                            [
+                                'device' => 'disk0',
+                                'sizeMegabytes' => 500000,
+                                'partitions' => [
+                                    ['name' => 'Untagged', 'partitionType' => 'OTHER'],
+                                ],
+                            ],
+                        ],
+                    ),
+                ],
+            ]),
+        ]);
+
+        $records = iterator_to_array($adapter->pull());
+
+        $this->assertSame(500, $records[0]->extra['jamf_storage_gb']);
+    }
+
+    public function test_storage_is_null_when_jamf_returns_no_storage_section()
+    {
+        $adapter = $this->configuredJamfAdapter();
+
+        Http::fake([
+            '*/api/oauth/token' => $this->jamfTokenResponse(),
+            '*/api/v1/computers-inventory*' => Http::response([
+                'totalCount' => 1,
+                'results' => [
+                    $this->jamfComputer(id: 42, totalRamMegabytes: null, storageDisks: null),
+                ],
+            ]),
+        ]);
+
+        $records = iterator_to_array($adapter->pull());
+
+        $this->assertNull($records[0]->extra['jamf_storage_gb']);
+        $this->assertNull($records[0]->extra['jamf_ram_gb']);
+    }
+
+    public function test_mobile_record_includes_storage_capacity()
+    {
+        $adapter = $this->configuredJamfAdapter(includeMobile: true);
+
+        Http::fake([
+            '*/api/oauth/token' => $this->jamfTokenResponse(),
+            '*/api/v1/computers-inventory*' => Http::response(['totalCount' => 0, 'results' => []]),
+            '*/api/v2/mobile-devices*' => Http::response([
+                'totalCount' => 1,
+                'results' => [
+                    [
+                        'id' => '77',
+                        'name' => 'law-ipad-01',
+                        'udid' => 'jamf-mobile-udid-77',
+                        'serialNumber' => 'DMPXYZ',
+                        'assetTag' => null,
+                        'model' => 'iPad Pro',
+                        'modelIdentifier' => 'iPad13,1',
+                        'deviceType' => 'ios',
+                        'osType' => 'iOS',
+                        'osVersion' => '17.4',
+                        'wifiMacAddress' => null,
+                        'ipAddress' => null,
+                        'lastInventoryUpdateTimestamp' => null,
+                        'managed' => true,
+                        'supervised' => true,
+                        'capacityMb' => 256000,
+                        'location' => ['username' => null, 'emailAddress' => null],
+                    ],
+                ],
+            ]),
+        ]);
+
+        $records = iterator_to_array($adapter->pull());
+
+        $this->assertSame(256, $records[0]->extra['jamf_mobile_storage_gb']);
+    }
+
     public function test_mobile_devices_pulled_when_toggle_is_on()
     {
         $adapter = $this->configuredJamfAdapter(includeMobile: true);
@@ -289,13 +438,174 @@ class JamfAdapterTest extends TestCase
         $this->assertSame('throttled-mac', $records[0]->hostname);
     }
 
-    private function configuredJamfAdapter(bool $includeMobile = false): JamfAdapter
+    public function test_group_filter_narrows_computers_by_smart_group_membership()
+    {
+        $adapter = $this->configuredJamfAdapter(groupFilter: 'Law School Macs, 7');
+
+        Http::fake([
+            '*/api/oauth/token' => $this->jamfTokenResponse(),
+            // Specific member-detail URLs first so Laravel's first-match
+            // fake dispatch doesn't catch them in the broader
+            // /computergroups list pattern below.
+            '*/JSSResource/computergroups/id/3' => Http::response([
+                'computer_group' => [
+                    'id' => 3,
+                    'name' => 'Law School Macs',
+                    'computers' => [
+                        ['id' => 42, 'name' => 'law-mac-01'],
+                    ],
+                ],
+            ]),
+            '*/JSSResource/computergroups/id/7' => Http::response([
+                'computer_group' => [
+                    'id' => 7,
+                    'name' => 'Faculty Loaners',
+                    'computers' => [
+                        ['id' => 99, 'name' => 'loaner-mac-01'],
+                    ],
+                ],
+            ]),
+            '*/JSSResource/computergroups' => Http::response([
+                'computer_groups' => [
+                    ['id' => 3, 'name' => 'Law School Macs', 'is_smart' => true],
+                    ['id' => 7, 'name' => 'Faculty Loaners', 'is_smart' => true],
+                    ['id' => 11, 'name' => 'Medical School Macs', 'is_smart' => true],
+                ],
+            ]),
+            '*/api/v1/computers-inventory*' => Http::response([
+                'totalCount' => 3,
+                'results' => [
+                    $this->jamfComputer(id: 42, name: 'law-mac-01', model: 'MacBook Pro'),
+                    $this->jamfComputer(id: 99, name: 'loaner-mac-01', model: 'MacBook Air'),
+                    $this->jamfComputer(id: 500, name: 'med-mac-01', model: 'iMac'),
+                ],
+            ]),
+        ]);
+
+        $records = iterator_to_array($adapter->pull());
+
+        $this->assertCount(2, $records);
+        $hostnames = array_map(fn ($r) => $r->hostname, $records);
+        $this->assertContains('law-mac-01', $hostnames);
+        $this->assertContains('loaner-mac-01', $hostnames);
+        $this->assertNotContains('med-mac-01', $hostnames);
+    }
+
+    public function test_group_filter_also_narrows_mobile_devices_when_mobile_toggle_on()
+    {
+        $adapter = $this->configuredJamfAdapter(includeMobile: true, groupFilter: 'Law School');
+
+        Http::fake([
+            '*/api/oauth/token' => $this->jamfTokenResponse(),
+            '*/JSSResource/computergroups/id/3' => Http::response([
+                'computer_group' => [
+                    'id' => 3,
+                    'name' => 'Law School',
+                    'computers' => [
+                        ['id' => 42, 'name' => 'law-mac-01'],
+                    ],
+                ],
+            ]),
+            '*/JSSResource/computergroups' => Http::response([
+                'computer_groups' => [
+                    ['id' => 3, 'name' => 'Law School', 'is_smart' => true],
+                ],
+            ]),
+            '*/JSSResource/mobiledevicegroups/id/8' => Http::response([
+                'mobile_device_group' => [
+                    'id' => 8,
+                    'name' => 'Law School',
+                    'mobile_devices' => [
+                        ['id' => 10, 'name' => 'law-ipad-01'],
+                    ],
+                ],
+            ]),
+            '*/JSSResource/mobiledevicegroups' => Http::response([
+                'mobile_device_groups' => [
+                    ['id' => 8, 'name' => 'Law School', 'is_smart' => true],
+                ],
+            ]),
+            '*/api/v1/computers-inventory*' => Http::response([
+                'totalCount' => 2,
+                'results' => [
+                    $this->jamfComputer(id: 42, name: 'law-mac-01', model: 'MacBook Pro'),
+                    $this->jamfComputer(id: 500, name: 'med-mac-01', model: 'iMac'),
+                ],
+            ]),
+            '*/api/v2/mobile-devices*' => Http::response([
+                'totalCount' => 2,
+                'results' => [
+                    $this->jamfMobileDevice(id: 10, name: 'law-ipad-01', model: 'iPad Pro'),
+                    $this->jamfMobileDevice(id: 20, name: 'med-ipad-01', model: 'iPad'),
+                ],
+            ]),
+        ]);
+
+        $records = iterator_to_array($adapter->pull());
+
+        $hostnames = array_map(fn ($r) => $r->hostname, $records);
+        $this->assertContains('law-mac-01', $hostnames);
+        $this->assertContains('law-ipad-01', $hostnames);
+        $this->assertNotContains('med-mac-01', $hostnames);
+        $this->assertNotContains('med-ipad-01', $hostnames);
+    }
+
+    public function test_blank_group_filter_skips_group_resolution_calls()
+    {
+        $adapter = $this->configuredJamfAdapter(groupFilter: '');
+
+        Http::fake([
+            '*/api/oauth/token' => $this->jamfTokenResponse(),
+            '*/api/v1/computers-inventory*' => Http::response([
+                'totalCount' => 1,
+                'results' => [$this->jamfComputer(id: 42, name: 'any-mac', model: 'iMac')],
+            ]),
+        ]);
+
+        iterator_to_array($adapter->pull());
+
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), '/JSSResource/computergroups'));
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), '/JSSResource/mobiledevicegroups'));
+    }
+
+    public function test_group_filter_unresolvable_entry_does_not_crash_pull()
+    {
+        $adapter = $this->configuredJamfAdapter(groupFilter: 'Law School, Nonexistent Group');
+
+        Http::fake([
+            '*/api/oauth/token' => $this->jamfTokenResponse(),
+            '*/JSSResource/computergroups/id/3' => Http::response([
+                'computer_group' => [
+                    'id' => 3,
+                    'name' => 'Law School',
+                    'computers' => [['id' => 42, 'name' => 'law-mac-01']],
+                ],
+            ]),
+            '*/JSSResource/computergroups' => Http::response([
+                'computer_groups' => [
+                    ['id' => 3, 'name' => 'Law School', 'is_smart' => true],
+                ],
+            ]),
+            '*/api/v1/computers-inventory*' => Http::response([
+                'totalCount' => 1,
+                'results' => [$this->jamfComputer(id: 42, name: 'law-mac-01', model: 'iMac')],
+            ]),
+        ]);
+
+        $records = iterator_to_array($adapter->pull());
+
+        $this->assertCount(1, $records);
+        $this->assertSame('law-mac-01', $records[0]->hostname);
+    }
+
+    private function configuredJamfAdapter(bool $includeMobile = false, string $groupFilter = ''): JamfAdapter
     {
         $instance = SyncAdapterInstance::where('slug', 'jamf')->firstOrFail();
         SyncAdapterConfig::put($instance->id, 'url', 'https://example.jamfcloud.com');
         SyncAdapterConfig::put($instance->id, 'client_id', Crypt::encrypt('fake-jamf-client-id'));
         SyncAdapterConfig::put($instance->id, 'client_secret', Crypt::encrypt('fake-jamf-client-secret'));
         SyncAdapterConfig::put($instance->id, 'include_mobile_devices', $includeMobile ? '1' : '0');
+        SyncAdapterConfig::put($instance->id, 'group_filter', $groupFilter);
 
         return new JamfAdapter($instance->fresh());
     }
@@ -363,6 +673,7 @@ class JamfAdapterTest extends TestCase
     }
 
     /**
+     * @param  array<int, array<string, mixed>>|null  $storageDisks
      * @return array<string, mixed>
      */
     private function jamfComputer(
@@ -374,6 +685,8 @@ class JamfAdapterTest extends TestCase
         ?string $osName = 'macOS',
         ?string $osVersion = null,
         ?string $lastContactTime = null,
+        ?int $totalRamMegabytes = null,
+        ?array $storageDisks = null,
     ): array {
         return [
             'id' => (string) $id,
@@ -389,11 +702,13 @@ class JamfAdapterTest extends TestCase
                 'modelIdentifier' => 'Mac'.$id,
                 'serialNumber' => $serialNumber,
                 'macAddress' => $macAddress,
+                'totalRamMegabytes' => $totalRamMegabytes,
             ],
             'operatingSystem' => [
                 'name' => $osName,
                 'version' => $osVersion,
             ],
+            'storage' => $storageDisks !== null ? ['disks' => $storageDisks] : null,
         ];
     }
 }

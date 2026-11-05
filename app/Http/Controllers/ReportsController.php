@@ -380,20 +380,14 @@ class ReportsController extends Controller
                             $item_name = '';
                         }
 
-                        // Mask license serial when the current user
-                        // does not hold viewKeys. A license's serial is
-                        // the product key, and the licenses / index /
-                        // export sinks already treat it that way. Without
-                        // this the Activity report CSV leaks every key
-                        // for licenses in the caller's scope.
-                        $itemSerial = null;
-                        if ($actionlog->item && $actionlog->item->serial) {
-                            if ($actionlog->item instanceof License && ! Gate::allows('viewKeys', $actionlog->item)) {
-                                $itemSerial = License::PRODUCT_KEY_MASK;
-                            } else {
-                                $itemSerial = $actionlog->item->serial;
-                            }
-                        }
+                        // License::getSerialAttribute and
+                        // Actionlog::getLogMetaAttribute apply the
+                        // licenses.keys mask upstream, so the raw
+                        // product key never reaches this writer when
+                        // the viewer is not permitted.
+                        $itemSerial = ($actionlog->item && $actionlog->item->serial)
+                            ? $actionlog->item->serial
+                            : null;
 
                         $row = [
                             $actionlog->created_at,
@@ -577,10 +571,6 @@ class ReportsController extends Controller
             fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
 
             $header = [];
-
-            if ($request->filled('is_shared')) {
-                $header[] = trans('admin/reports/general.share_template');
-            }
 
             if ($request->filled('id')) {
                 $header[] = trans('general.id');
@@ -804,11 +794,6 @@ class ReportsController extends Controller
             fputcsv($handle, $headerFormatter->escapeRecord($header), escape: '\\', eol: "\r\n");
             $executionTime = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
             Log::debug('Added headers: '.$executionTime);
-
-            if ($request->filled('is_shared')) {
-                // to fill with logic for the report template and NOT the assets retrieved by the query
-                // do we scope here or??
-            }
 
             $assets = Asset::select('assets.*')->with([
                 'location', 'status', 'company', 'defaultLoc',

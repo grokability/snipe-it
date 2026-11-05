@@ -272,8 +272,8 @@ class AppleBusinessManagerAdapter extends SyncAdapter
             'abm_mdm_device_lock_status' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_mdm_device_lock_status'],
             'abm_mdm_lost_mode_status' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_mdm_lost_mode_status'],
             'abm_mdm_device_erase_status' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_mdm_device_erase_status'],
-            'abm_mdm_storage_total' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_mdm_storage_total'],
-            'abm_mdm_storage_free' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_mdm_storage_free'],
+            'abm_mdm_storage_total_gb' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_mdm_storage_total_gb'],
+            'abm_mdm_storage_free_gb' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_mdm_storage_free_gb'],
         ];
     }
 
@@ -632,6 +632,17 @@ class AppleBusinessManagerAdapter extends SyncAdapter
      * to be cleared before a device can be redeployed to a new user.
      * On empty or failed responses just return the un-enriched record
      * so the sync doesn't stall on a transient AL endpoint issue.
+     *
+     * Only trust `true` from the endpoint. A `false` response is
+     * ambiguous: Apple returns false when the device is genuinely
+     * not activation-locked AND when the API account's role lacks
+     * visibility into the device's lock state (common with the
+     * least-privilege "View device management services" role) AND
+     * for devices whose Activation Lock is managed by a third-party
+     * MDM (Jamf, Kandji, etc.) rather than Apple's own.
+     * Writing `false` indiscriminately would tell
+     * admins devices are safe to redeploy when many may actually be
+     * locked.
      */
     private function enrichRecordWithActivationLock(HostInventoryRecord $record, AppleBusinessManagerClient $client): HostInventoryRecord
     {
@@ -649,12 +660,12 @@ class AppleBusinessManagerAdapter extends SyncAdapter
         }
 
         $enabled = Arr::get($status, 'attributes.activationLockEnabled');
-        if (! is_bool($enabled)) {
+        if ($enabled !== true) {
             return $record;
         }
 
         $extra = $record->extra;
-        $extra['abm_activation_lock_enabled'] = $enabled;
+        $extra['abm_activation_lock_enabled'] = true;
 
         return new HostInventoryRecord(
             sourceKey: $record->sourceKey,
@@ -774,6 +785,25 @@ class AppleBusinessManagerAdapter extends SyncAdapter
     }
 
     /**
+     * Normalize MDM-reported bytes (storageTotalCapacity /
+     * storageFreeCapacity) to GB for cross-adapter consistency with
+     * the other storage extras across sync adapters. Divides by 10^9
+     * (decimal GB, same convention Apple uses in marketed capacity).
+     * Null or non-numeric input returns null so an unpopulated field
+     * stays unpopulated rather than becoming a bogus 0 GB that an
+     * admin filter could misread.
+     */
+    private static function bytesToGb(mixed $bytes): int|float|null
+    {
+        if (! is_numeric($bytes)) {
+            return null;
+        }
+        $gb = $bytes / 1_000_000_000;
+
+        return $gb == (int) $gb ? (int) $gb : round($gb, 2);
+    }
+
+    /**
      * Pick the primary MAC from the MDM detail attributes. Prefers
      * Wi-Fi, falls back to Ethernet (desktops without Wi-Fi), then
      * whatever the orgDevices path already set.
@@ -834,8 +864,8 @@ class AppleBusinessManagerAdapter extends SyncAdapter
         $extra['abm_mdm_device_lock_status'] = Arr::get($attrs, 'deviceLockStatus');
         $extra['abm_mdm_lost_mode_status'] = Arr::get($attrs, 'lostModeStatus');
         $extra['abm_mdm_device_erase_status'] = Arr::get($attrs, 'deviceEraseStatus');
-        $extra['abm_mdm_storage_total'] = Arr::get($attrs, 'storageTotalCapacity');
-        $extra['abm_mdm_storage_free'] = Arr::get($attrs, 'storageFreeCapacity');
+        $extra['abm_mdm_storage_total_gb'] = self::bytesToGb(Arr::get($attrs, 'storageTotalCapacity'));
+        $extra['abm_mdm_storage_free_gb'] = self::bytesToGb(Arr::get($attrs, 'storageFreeCapacity'));
 
         // Wi-Fi and Bluetooth are single-radio on every current Apple
         // SKU so they stay scalar. Ethernet can be a two-element array

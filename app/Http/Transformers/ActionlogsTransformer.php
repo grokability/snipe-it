@@ -160,40 +160,14 @@ class ActionlogsTransformer
 
             }
             $clean_meta = $this->changedInfo($clean_meta);
-
-            // A license serial is the product key. When the current
-            // user does not hold licenses.keys / create / edit, the
-            // resource / index / export sinks all mask the raw key.
-            // The old / new pair in log_meta['serial'] on a license
-            // edit would otherwise leak both the previous and new
-            // key through the History tab and the activity report.
-            if ($actionlog->item instanceof License
-                && ! Gate::allows('viewKeys', $actionlog->item)
-                && isset($clean_meta['serial'])
-                && is_array($clean_meta['serial'])
-            ) {
-                if (isset($clean_meta['serial']['old'])) {
-                    $clean_meta['serial']['old'] = License::PRODUCT_KEY_MASK;
-                }
-                if (isset($clean_meta['serial']['new'])) {
-                    $clean_meta['serial']['new'] = License::PRODUCT_KEY_MASK;
-                }
-            }
         }
 
-        // A license serial is the product key. When the current user
-        // does not hold licenses.keys / create / edit, mask it here the
-        // same way LicensesTransformer masks product_key. Without this
-        // the /api/v1/licenses/{id}/history and /api/v1/reports/activity
-        // sinks leak the raw key through actionlog rows.
-        $itemSerial = null;
-        if ($actionlog->item && $actionlog->item->serial) {
-            if ($actionlog->item instanceof License && ! Gate::allows('viewKeys', $actionlog->item)) {
-                $itemSerial = License::PRODUCT_KEY_MASK;
-            } else {
-                $itemSerial = e($actionlog->item->serial);
-            }
-        }
+        // License::getSerialAttribute and Actionlog::getLogMetaAttribute
+        // apply the licenses.keys mask upstream, so the raw product key
+        // never reaches this layer when the viewer is not permitted.
+        $itemSerial = ($actionlog->item && $actionlog->item->serial)
+            ? e($actionlog->item->serial)
+            : null;
 
         $array = [
             'id' => (int) $actionlog->id,

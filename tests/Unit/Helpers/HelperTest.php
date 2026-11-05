@@ -374,6 +374,78 @@ class HelperTest extends TestCase
         $this->assertNull(Helper::sameOriginUrl('https://user:pass@evil.example.com/'));
     }
 
+    public function test_same_host_as_configured_idp_url_returns_null_for_empty_input(): void
+    {
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl(null, 'https://keycloak.example.net/sls'));
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl('', 'https://keycloak.example.net/sls'));
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl('https://keycloak.example.net/sls', null));
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl('https://keycloak.example.net/sls', ''));
+    }
+
+    public function test_same_host_as_configured_idp_url_accepts_idp_target_off_origin()
+    {
+        // Issue #20023 regression: when Keycloak sends an IdP-initiated
+        // LogoutRequest, SamlController::sls must be able to carry the
+        // SP-configured IdP SLO response URL back to LoginController
+        // even though it is off-origin. This is the gate that lets that
+        // happen.
+        config(['app.url' => 'https://snipe-it.example.com']);
+        $expected = 'https://keycloak.example.net/realms/snipe/protocol/saml';
+        $target = $expected.'?SAMLResponse=abc&RelayState=https%3A%2F%2Fapp.example.com%2Fdashboard';
+
+        $this->assertSame($target, Helper::sameHostAsConfiguredIdpUrl($target, $expected));
+    }
+
+    public function test_same_host_as_configured_idp_url_rejects_host_mismatch()
+    {
+        // A toolkit bug or crafted input that pointed the Location at a
+        // third-party host (not the SP-configured IdP) must be dropped.
+        $this->assertNull(
+            Helper::sameHostAsConfiguredIdpUrl(
+                'https://attacker.example.net/phish',
+                'https://keycloak.example.net/sls'
+            )
+        );
+    }
+
+    public function test_same_host_as_configured_idp_url_rejects_dangerous_schemes()
+    {
+        $expected = 'https://keycloak.example.net/sls';
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl('javascript:alert(1)', $expected));
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl('data:text/html,<script>alert(1)</script>', $expected));
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl('file:///etc/passwd', $expected));
+    }
+
+    public function test_same_host_as_configured_idp_url_rejects_userinfo_authority()
+    {
+        // Credentials in the authority can hide the real host behind an
+        // `@`, which is a parser-differential bypass of the host-match
+        // check. Reject outright, matching sameOriginUrl's treatment.
+        $expected = 'https://keycloak.example.net/sls';
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl('https://user@attacker.example.net@keycloak.example.net/', $expected));
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl('https://user:pass@keycloak.example.net/sls', $expected));
+    }
+
+    public function test_same_host_as_configured_idp_url_strips_crlf()
+    {
+        $expected = 'https://keycloak.example.net/sls';
+        $target = "https://keycloak.example.net/sls?SAMLResponse=abc\r\nSet-Cookie: attacker=1";
+
+        $sanitized = Helper::sameHostAsConfiguredIdpUrl($target, $expected);
+
+        $this->assertNotNull($sanitized);
+        $this->assertStringNotContainsString("\r", $sanitized);
+        $this->assertStringNotContainsString("\n", $sanitized);
+    }
+
+    public function test_same_host_as_configured_idp_url_host_match_is_case_insensitive()
+    {
+        $this->assertSame(
+            'https://Keycloak.Example.Net/sls?SAMLResponse=abc',
+            Helper::sameHostAsConfiguredIdpUrl('https://Keycloak.Example.Net/sls?SAMLResponse=abc', 'https://keycloak.example.net/sls')
+        );
+    }
+
     public function test_safe_intended_returns_stored_url_when_it_passes_the_origin_guard(): void
     {
         config(['app.url' => 'https://app.example.com']);

@@ -11,7 +11,10 @@
         .snipe-advanced-search-tags .snipe-advanced-search-tags-clear-all:focus,
         .snipe-advanced-search-tags .snipe-advanced-search-tag-remove,
         .snipe-advanced-search-tags .snipe-advanced-search-tag-remove:hover,
-        .snipe-advanced-search-tags .snipe-advanced-search-tag-remove:focus {
+        .snipe-advanced-search-tags .snipe-advanced-search-tag-remove:focus,
+        .snipe-advanced-search-tags .snipe-advanced-search-tag-more,
+        .snipe-advanced-search-tags .snipe-advanced-search-tag-more:hover,
+        .snipe-advanced-search-tags .snipe-advanced-search-tag-more:focus {
             color: #fff !important;
             text-decoration: none !important;
         }
@@ -49,6 +52,121 @@
         var BootstrapTable = $.BootstrapTable;
         var baseBootstrapTablePrototype = Object.getPrototypeOf(BootstrapTable.prototype);
         var baseInitSearch = baseBootstrapTablePrototype.initSearch;
+
+        // bs-table's reorderable-columns extension restores a saved
+        // column order by walking the persisted cookie and swapping
+        // thead DOM nodes in place (dragtable's _restoreState calling
+        // _bubbleCols). It does NOT update this.columns,
+        // this.header.fields, this.options.columns[0], or
+        // this.fieldsColumnsIndex to match. initBody renders tbody
+        // rows using this.header.fields, so tbody comes back in the
+        // natural (presenter-declared) order while thead is already
+        // in the saved order. THis results in a persistent header / body
+        // misalignment visible on every reload that has a saved
+        // column order. Dragging a column stomps on it because
+        // beforeStop runs a full re-sync of columns + header.fields
+        // and re-renders both.
+        //
+        // To prevent this, we apply the saved order to this.options.columns[0]
+        // (and downstream state) BEFORE the base initHeader builds
+        // the thead. Now the thead is built in the saved order from
+        // the start, header.fields is populated in the saved order,
+        // tbody renders in the saved order, and the extension's
+        // follow-up _restoreState is a no-op because the DOM already
+        // matches the cookie.
+        if (typeof BootstrapTable.prototype.initHeader === 'function') {
+            var originalInitHeaderForReorder = BootstrapTable.prototype.initHeader;
+            BootstrapTable.prototype.initHeader = function () {
+                snipeApplySavedColumnOrder(this);
+                return originalInitHeaderForReorder.apply(this, arguments);
+            };
+        }
+
+        function snipeApplySavedColumnOrder(that) {
+            if (!that.options || !that.options.reorderableColumns || !that.options.cookie) {
+                return;
+            }
+            if (!that._storage || typeof that._storage.getItem !== 'function') {
+                return;
+            }
+            if (!that.options.cookieIdTable) {
+                return;
+            }
+            if (!that.options.columns || !Array.isArray(that.options.columns[0])) {
+                return;
+            }
+
+            var raw;
+            try {
+                raw = that._storage.getItem(that.options.cookieIdTable + '.bs.table.reorderColumns');
+            } catch (e) {
+                return;
+            }
+            if (!raw) {
+                return;
+            }
+
+            var savedOrder;
+            try {
+                savedOrder = JSON.parse(raw);
+            } catch (e) {
+                return;
+            }
+            if (!savedOrder || typeof savedOrder !== 'object') {
+                return;
+            }
+
+            var currentColumns = that.options.columns[0];
+            var byField = {};
+            currentColumns.forEach(function (col) {
+                if (col && col.field) {
+                    byField[col.field] = col;
+                }
+            });
+
+            // Sort columns the cookie recognizes by their saved
+            // position, then append anything the cookie does not know
+            // about (e.g. a new column added by a code update since
+            // the user last dragged) at the end in presenter order.
+            var ordered = Object.keys(savedOrder).filter(function (field) {
+                return byField[field];
+            }).sort(function (a, b) {
+                return parseInt(savedOrder[a], 10) - parseInt(savedOrder[b], 10);
+            }).map(function (field) {
+                return byField[field];
+            });
+
+            var seen = {};
+            ordered.forEach(function (col) {
+                seen[col.field] = true;
+            });
+            currentColumns.forEach(function (col) {
+                if (col && (!col.field || !seen[col.field])) {
+                    ordered.push(col);
+                }
+            });
+
+            var changed = false;
+            for (var i = 0; i < ordered.length; i++) {
+                if (ordered[i] !== currentColumns[i]) {
+                    changed = true;
+                    break;
+                }
+            }
+            if (!changed) {
+                return;
+            }
+
+            that.options.columns[0] = ordered;
+            that.columns = ordered.slice();
+            that.fieldsColumnsIndex = [];
+            ordered.forEach(function (col, i) {
+                col.fieldIndex = i;
+                if (col.field) {
+                    that.fieldsColumnsIndex[col.field] = i;
+                }
+            });
+        }
         var defaultAdvancedSearchOperator = 'and';
         var advancedSearchSearchText = @json(trans('general.search'));
 
@@ -58,7 +176,16 @@
         var advancedSearchClearAllText = @json(trans('general.clear_all_filters'));
         var advancedSearchYesText = @json(trans('general.yes'));
         var advancedSearchNoText = @json(trans('general.no'));
+        var advancedSearchMoreTemplate = @json(trans('general.count_more'));
         var advancedSearchOperatorStorageKey = 'snipeit.bs.table.advancedSearchOperator';
+
+        // Per-field cap on the per-term pill fan under the advanced search
+        // strip. A 400-term filter (e.g. select-all against a big category
+        // list) would otherwise push the actual table rows well below the
+        // fold. First N terms render, the rest collapse into a +K more
+        // chip that opens the advanced-search modal so the admin can
+        // review / edit the full selection in the select2 widget.
+        var defaultAdvancedSearchPillCap = 10;
 
         var normalizeAdvancedSearchOperator = function (operator) {
             return (operator || defaultAdvancedSearchOperator).toString().toLowerCase() === 'or' ? 'or' : 'and';
@@ -394,8 +521,13 @@
                             ' <a href="javascript:void(0)" class="snipe-advanced-search-tag-remove" data-field="' + safeField +
                             '" style="font-size: 12px; margin-right:6px;display:inline-block;color:#fff;text-decoration:none;">&times;</a></span>';
                     } else if (isMultiTerm) {
+                        var pillCap = parseInt(_this.$el.data('advanced-search-pill-cap'), 10);
+                        if (isNaN(pillCap) || pillCap <= 0) {
+                            pillCap = defaultAdvancedSearchPillCap;
+                        }
+                        var visibleParts = parts.slice(0, pillCap);
                         var inner = '<span style="font-size:12px;font-weight:bold;margin-right:4px;align-self:center;">' + safeLabel + ':</span>';
-                        parts.forEach(function (id) {
+                        visibleParts.forEach(function (id) {
                             var termLabel = (map && map[id]) ? map[id] : id;
                             var safeTermText = escapeAdvancedSearchValue(termLabel);
                             var safeTermIdAttr = escapeAdvancedSearchAttr(id);
@@ -404,6 +536,14 @@
                                 ' <a href="javascript:void(0)" class="snipe-advanced-search-term-remove" data-field="' + safeField + '" data-term-id="' + safeTermIdAttr + '" style="color:#fff;text-decoration:none;margin-left:6px;">&times;</a>' +
                                 '</span>';
                         });
+                        if (parts.length > pillCap) {
+                            var moreCount = parts.length - pillCap;
+                            var moreText = advancedSearchMoreTemplate.replace(':count', String(moreCount));
+                            inner += '<a href="javascript:void(0)" class="label label-info snipe-advanced-search-tag-more" data-field="' + safeField +
+                                '" style="font-size:12px;font-weight:normal;margin:2px;padding:3px 6px;display:inline-flex;align-items:center;color:#fff;text-decoration:none;cursor:pointer;">' +
+                                escapeAdvancedSearchValue(moreText) +
+                                '</a>';
+                        }
                         html += '<span style="display:inline-flex;flex-wrap:wrap;align-items:center;max-width:90vw;margin-right:12px;margin-bottom:6px;">' + inner + '</span>';
                     } else {
                         var displayValue = resolveFilterLabel(f, filters[f]);
@@ -467,6 +607,16 @@
                         _this.updatePagination();
                         _this.trigger('column-advanced-search', _this.filterColumnsPartial, _this.getAdvancedSearchOperator());
                         _this.renderAdvancedSearchTags();
+                    })
+                    .on('click.snipeAdvancedSearchTags', '.snipe-advanced-search-tag-more', function (e) {
+                        // +N more chip: opens the advanced-search modal so
+                        // the admin can review / edit the full selection in
+                        // the select2 widget for that field.
+                        e.preventDefault();
+                        var $button = _this.getAdvancedSearchButton();
+                        if ($button.length) {
+                            $button.trigger('click');
+                        }
                     })
                     .on('click.snipeAdvancedSearchTags', '.snipe-advanced-search-tags-clear-all', function (e) {
                         e.preventDefault();
@@ -949,6 +1099,40 @@
             // callbacks reach the real table.
             var $bootstrapTableEl = $(this);
 
+            // Pin sticky columns out of the drag-to-reorder set. Sticky
+            // columns are positioned via CSS nth-child on the <table>
+            // (snipe-table--sticky-left-N / --sticky-right-N): their DOM
+            // slot is their sticky anchor, so letting them drag would
+            // break the pinning. We tag the non-sticky columns with a
+            // marker class and hand that class to dragtable's dragaccept
+            // option. dragtable then filters both the draggable source
+            // set and the drop-target set down to just those.
+            var dragacceptSelector = null;
+            var tableClasses = this.className || '';
+            var leftStickyMatch = tableClasses.match(/snipe-table--sticky-left-(\d+)/);
+            var rightStickyMatch = tableClasses.match(/snipe-table--sticky-right-(\d+)/);
+            var leftStickyCount = leftStickyMatch ? parseInt(leftStickyMatch[1], 10) : 0;
+            var rightStickyCount = rightStickyMatch ? parseInt(rightStickyMatch[1], 10) : 0;
+            if (leftStickyCount > 0 || rightStickyCount > 0) {
+                var columnsJson = $bootstrapTableEl.attr('data-columns');
+                if (columnsJson) {
+                    try {
+                        var parsedColumns = JSON.parse(columnsJson);
+                        var totalColumns = parsedColumns.length;
+                        parsedColumns.forEach(function (col, idx) {
+                            var isSticky = (idx < leftStickyCount) || (idx >= totalColumns - rightStickyCount);
+                            if (!isSticky) {
+                                col.class = ((col.class || '') + ' snipe-reorderable-col').trim();
+                            }
+                        });
+                        $bootstrapTableEl.attr('data-columns', JSON.stringify(parsedColumns));
+                        dragacceptSelector = '.snipe-reorderable-col';
+                    } catch (e) {
+                        // data-columns is not JSON. Leave reordering unconstrained.
+                    }
+                }
+            }
+
             $(this).bootstrapTable({
 
                 ajaxOptions: {
@@ -986,6 +1170,7 @@
                 cookie: true,
                 cookieExpire: '2y',
                 cookieStorage: '{{ config('session.bs_table_storage') }}',
+                dragaccept: dragacceptSelector,
                 iconsPrefix: 'fa',
                 maintainSelected: data_with_default('maintain-selected', true),
                 minimumCountColumns: data_with_default('minimum-count-columns', 2),
@@ -2260,11 +2445,13 @@
     function updateSelectedCount(table) {
         var countId = $(table).data('selected-count-id');
         if (!countId) return;
+        var $form = $($(table).data('bulk-form-id'));
+        if (!$form.length) return;
         var rawCountId = countId.charAt(0) === '#' ? countId.substring(1) : countId;
         if (!rawCountId) return;
         var el = document.getElementById(rawCountId);
         if (!el) return;
-        var count = $(table).bootstrapTable('getSelections').length;
+        var count = $form.find('input[name="ids[]"]').length;
         $(el).find('.badge').text(count);
         if (count > 0) {
             $(el).show();
@@ -2276,6 +2463,8 @@
     $('.snipe-table').on('post-body.bs.table', function () {
         var countId = $(this).data('selected-count-id');
         if (!countId) return;
+        var $form = $($(this).data('bulk-form-id'));
+        if (!$form.length) return;
         var rawCountId = countId.charAt(0) === '#' ? countId.substring(1) : countId;
         if (!rawCountId) return;
         var $paginationDetail = $(this).closest('.bootstrap-table')
@@ -2481,10 +2670,14 @@
         $table.bootstrapTable('getSelections').forEach(function (row) {
             selectedIds[row.id] = true;
         });
-
+        // Track rows on the current page only.
+        var currentIds = {};
+        $table.bootstrapTable('getData').forEach(function (row) {
+            currentIds[row.id] = true;
+        });
         // Remove hidden inputs for rows no longer selected.
         $form.find('input[name="ids[]"]').each(function () {
-            if (! selectedIds[this.value]) {
+            if (currentIds[this.value] && !selectedIds[this.value]) {
                 $(this).remove();
             }
         });
@@ -2501,7 +2694,7 @@
             }
         });
 
-        if (Object.keys(selectedIds).length > 0) {
+        if ($form.find('input[name="ids[]"]').length > 0) {
             $button.removeAttr('disabled');
         } else {
             $button.attr('disabled', 'disabled');
@@ -2618,19 +2811,60 @@
             clearActionDependentRowStyling($table);
         }
     });
+    // Restore previously selected rows when navigating between pages.
+    $('.snipe-table').on('post-body.bs.table', function () {
+        var $table = $(this);
+        var $form = $($table.data('bulk-form-id'));
+        if (!$form.length) return;
+
+        var selectedIds = {};
+
+        $form.find('input[name="ids[]"]').each(function () {
+            selectedIds[this.value] = true;
+        });
+
+        var currentIds = [];
+
+        $table.bootstrapTable('getData').forEach(function (row) {
+            if (selectedIds[row.id]) {
+                currentIds.push(row.id);
+            }
+        });
+
+        if (currentIds.length > 0) {
+            $table.data('restoringSelections', true);
+
+            try {
+                $table.bootstrapTable('checkBy', {
+                    field: 'id',
+                    values: currentIds
+                });
+            } finally {
+                $table.data('restoringSelections', false);
+            }
+        }
+
+        updateSelectedCount(this);
+    });
 
     // These methods dynamically add/remove hidden input values in the bulk actions form
     $('.snipe-table').on('check.bs.table .btSelectItem', function (row, $element) {
         var buttonName =  $(this).data('bulk-button-id');
         var tableId =  $(this).data('id-table');
 
-        $(buttonName).removeAttr('disabled');
-        $(buttonName).after($('<input/>', {
-            id: tableId + '_checkbox_' + $element.id,
-            type: 'hidden',
-            name: 'ids[]',
-            value: $element.id
-        }));
+        if (!document.getElementById(tableId + '_checkbox_' + $element.id)) {
+            $(buttonName).removeAttr('disabled');
+            $(buttonName).after($('<input/>', {
+                id: tableId + '_checkbox_' + $element.id,
+                type: 'hidden',
+                name: 'ids[]',
+                value: $element.id
+            }));
+        }
+        // Don't run bulk-action logic while restoring saved selections.
+        if ($(this).data('restoringSelections')) {
+            return;
+        }
 
         // Skip the expensive bulk-actions refresh + re-entry when
         // this check is being fired by our own batch auto-uncheck /
@@ -5148,6 +5382,19 @@
         });
         window.setTimeout(fn, 120);
     }
+
+    // A page remembered from another view can be past the end of this result.
+    // bootstrap-table clamps pageNumber to 1 but keeps the empty response, so
+    // fetch page 1 once.
+    $(document).on('load-success.bs.table', '.snipe-table', function (e, res) {
+        var instance = $(this).data('bootstrap.table');
+        if (instance && res && res.total > 0 && Array.isArray(res.rows) && res.rows.length === 0 && !instance.snipeRefetchedEmptyPage) {
+            instance.snipeRefetchedEmptyPage = true;
+            instance.updatePagination();
+        } else if (instance) {
+            instance.snipeRefetchedEmptyPage = false;
+        }
+    });
 
     // Re-measure after every bootstrap-table render. Delegated on document
     // so it catches tables that init after this handler was attached.

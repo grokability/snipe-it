@@ -302,6 +302,19 @@ class Setting extends Model
         // regexes below see the same token stream the browser will.
         $custom_css = preg_replace('#/\*.*?\*/#s', '', (string) $custom_css);
 
+        // Custom-property declarations (`--name: ...`) let a planter stash
+        // an arbitrary value that `var(--name)` can inject into a url()
+        // argument at computed-value time, bypassing the literal-text
+        // check further down. A planter could also override one of
+        // Snipe-IT's own `:root` variables and feed it back into any
+        // builtin rule that reads it.
+        // CSS reads existing variables via `var(--primary-color)`
+        // but does not need to declare new ones, so refuse any CSS that
+        // declares a custom property.
+        if (preg_match('/--[a-zA-Z0-9_-]+\s*:/', $custom_css)) {
+            return '';
+        }
+
         // \b (word boundary) instead of \s+ so `@import"url"` and
         // `@import/*c*/"url"` (both valid CSS tokenizations that a
         // \s+ pattern would leave in place) still get stripped. \b
@@ -331,6 +344,14 @@ class Setting extends Model
                 // literal against the scheme regex below would miss the
                 // bypass.
                 if ($value === '' || str_contains($value, '\\')) {
+                    return '';
+                }
+
+                // Defense in depth against the custom-property stash path
+                // caught above. If a later edit relaxes the --* declaration
+                // guard, we still refuse any url() value that resolves
+                // through var(). See GHSA-gmvp-6qh3-5xm6.
+                if (stripos($value, 'var(') !== false) {
                     return '';
                 }
 

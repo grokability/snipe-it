@@ -42,6 +42,10 @@ class ModalController extends Controller
         ];
 
         if (in_array($type, $allowed_types)) {
+            if (in_array($type, ['kit-model', 'kit-license', 'kit-consumable', 'kit-accessory']) && empty($itemId)) {
+                abort(404, 'Kit modal requires a kit id');
+            }
+
             $view = view("blade.modals.{$type}");
 
             if ($type == 'statuslabel') {

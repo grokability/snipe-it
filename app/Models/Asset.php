@@ -360,21 +360,21 @@ class Asset extends Depreciable implements Importable
                 'type' => 'fk',
                 'column' => null,
                 'endpoint' => 'users',
-                'label' => trans('admin/hardware/table.assigned_to') . ' - ' . trans('general.user'),
+                'label' => trans('admin/hardware/table.assigned_to').' - '.trans('general.user'),
             ],
             [
                 'field' => 'assigned_asset',
                 'type' => 'fk',
                 'column' => null,
                 'endpoint' => 'hardware',
-                'label' => trans('admin/hardware/table.assigned_to') . ' - ' . trans('general.asset'),
+                'label' => trans('admin/hardware/table.assigned_to').' - '.trans('general.asset'),
             ],
             [
                 'field' => 'assigned_location',
                 'type' => 'fk',
                 'column' => null,
                 'endpoint' => 'locations',
-                'label' => trans('admin/hardware/table.assigned_to') . ' - ' . trans('general.location'),
+                'label' => trans('admin/hardware/table.assigned_to').' - '.trans('general.location'),
             ],
             [
                 'field' => 'requestable',
@@ -438,12 +438,32 @@ class Asset extends Depreciable implements Importable
                 'type' => 'date-range',
                 'label' => trans('admin/hardware/form.warranty_expires'),
             ],
-            // age in years since purchase_date, computed via
+            // age in days since purchase_date, computed via
             // TIMESTAMPDIFF. Routed via applyCustomFilter.
             [
                 'field' => 'age',
                 'type' => 'numeric',
-                'label' => trans('general.age'),
+                'label' => trans('general.age_in_days'),
+            ],
+            [
+                'field' => 'licenses_count',
+                'type' => 'numeric',
+                'label' => trans('general.licenses_count'),
+            ],
+            [
+                'field' => 'components_count',
+                'type' => 'numeric',
+                'label' => trans('general.components_count'),
+            ],
+            [
+                'field' => 'maintenances_count',
+                'type' => 'numeric',
+                'label' => trans('general.maintenances_count'),
+            ],
+            [
+                'field' => 'assigned_assets_count',
+                'type' => 'numeric',
+                'label' => trans('general.assigned_assets_count'),
             ],
             [
                 'field' => 'created_at',
@@ -636,10 +656,10 @@ class Asset extends Depreciable implements Importable
 
             $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
             $query->{$outerBoolean}(function ($nested) use ($modelFkColumn, $ids, $includeNull) {
-                if (!empty($ids)) {
+                if (! empty($ids)) {
                     $nested->whereIn('assets.model_id', function ($q) use ($modelFkColumn, $ids) {
                         $q->from('models')
-                            ->whereIn('models.' . $modelFkColumn, $ids)
+                            ->whereIn('models.'.$modelFkColumn, $ids)
                             ->select('models.id');
                     });
                 }
@@ -647,7 +667,7 @@ class Asset extends Depreciable implements Importable
                     $nullMatcher = function ($q) use ($modelFkColumn) {
                         $q->whereIn('assets.model_id', function ($sub) use ($modelFkColumn) {
                             $sub->from('models')
-                                ->whereNull('models.' . $modelFkColumn)
+                                ->whereNull('models.'.$modelFkColumn)
                                 ->select('models.id');
                         })->orWhereNull('assets.model_id');
                     };
@@ -656,7 +676,7 @@ class Asset extends Depreciable implements Importable
                     } else {
                         $nested->orWhereIn('assets.model_id', function ($sub) use ($modelFkColumn) {
                             $sub->from('models')
-                                ->whereNull('models.' . $modelFkColumn)
+                                ->whereNull('models.'.$modelFkColumn)
                                 ->select('models.id');
                         })->orWhereNull('assets.model_id');
                     }
@@ -672,7 +692,7 @@ class Asset extends Depreciable implements Importable
         // NULLs, so assets without a purchase date or without a
         // warranty duration naturally fall out of the match.
         if ($filterKey === 'warranty_expires') {
-            if (!preg_match('/^(\d{4}-\d{2}-\d{2})?\.\.(\d{4}-\d{2}-\d{2})?$/', trim($filterValue), $m)) {
+            if (! preg_match('/^(\d{4}-\d{2}-\d{2})?\.\.(\d{4}-\d{2}-\d{2})?$/', trim($filterValue), $m)) {
                 return null;
             }
             $start = $m[1] !== '' ? $m[1] : null;
@@ -696,9 +716,68 @@ class Asset extends Depreciable implements Importable
             return $query;
         }
 
-        // age in years since purchase_date. TIMESTAMPDIFF returns
-        // NULL for NULL purchase_date, so BETWEEN / > / < drop
-        // never-purchased assets automatically.
+        /*
+         * Builder sub-query per filter key. Same as the correlated
+         * subqueries in the AssetQueryBuilder order* scopes so the
+         * filter and the sort agree on what each count means. The
+         * DB::raw('count(*)') aggregate is portable across MySQL,
+         * SQLite, and Postgres. All other params are expressed
+         * via builder methods (whereColumn, where, whereNull) so
+         * Laravel handles identifier quoting and parameter binding
+         * per driver.
+         */
+        $countSubqueryBuilders = [
+            'licenses_count' => fn () => DB::table('license_seats')
+                ->select(DB::raw('count(*)'))
+                ->whereColumn('license_seats.asset_id', 'assets.id'),
+            'components_count' => fn () => DB::table('components_assets')
+                ->select(DB::raw('count(*)'))
+                ->whereColumn('components_assets.asset_id', 'assets.id'),
+            'maintenances_count' => fn () => DB::table('maintenances')
+                ->select(DB::raw('count(*)'))
+                ->whereColumn('maintenances.item_id', 'assets.id')
+                ->where('maintenances.item_type', self::class),
+            // Self-join on assets, so give the inner an alias to
+            // avoid colliding with the outer assets table name.
+            // Filter out trashed children to match the withCount
+            // closure on the controller side.
+            'assigned_assets_count' => fn () => DB::table('assets AS child_assets')
+                ->select(DB::raw('count(*)'))
+                ->whereColumn('child_assets.assigned_to', 'assets.id')
+                ->where('child_assets.assigned_type', self::class)
+                ->whereNull('child_assets.deleted_at'),
+        ];
+        if (array_key_exists($filterKey, $countSubqueryBuilders)) {
+            $bounds = $this->parseGtLtBounds($filterValue);
+            if ($bounds === null) {
+                return null;
+            }
+            [$gt, $lt] = $bounds;
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($countSubqueryBuilders, $filterKey, $gt, $lt) {
+                /*
+                 * parseGtLtBounds gets the threshold via a regex
+                 * on \d+(\.\d+)?, so the value is always a numeric
+                 * literal string. Wrap the threshold in DB::raw so it embeds as a
+                 * numeric literal in the SQL.
+                 */
+                if ($gt !== null) {
+                    $nested->where($countSubqueryBuilders[$filterKey](), '>', DB::raw((float) $gt));
+                }
+                if ($lt !== null) {
+                    $nested->where($countSubqueryBuilders[$filterKey](), '<', DB::raw((float) $lt));
+                }
+            });
+
+            return $query;
+        }
+
+        // age in DAYS since purchase_date. Days is the useful unit
+        // for admins who want to answer questions like "assets older
+        // than 30 days" or "purchased in the last 14." TIMESTAMPDIFF
+        // returns NULL for NULL purchase_date, so BETWEEN / > / <
+        // drop never-purchased assets automatically.
         if ($filterKey === 'age') {
             $bounds = $this->parseGtLtBounds($filterValue);
             if ($bounds === null) {
@@ -706,7 +785,7 @@ class Asset extends Depreciable implements Importable
             }
             [$gt, $lt] = $bounds;
 
-            $expr = 'TIMESTAMPDIFF(YEAR, assets.purchase_date, NOW())';
+            $expr = 'TIMESTAMPDIFF(DAY, assets.purchase_date, NOW())';
             $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
             $query->{$outerBoolean}(function ($nested) use ($expr, $gt, $lt) {
                 if ($gt !== null) {
@@ -781,7 +860,7 @@ class Asset extends Depreciable implements Importable
 
             $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
             $query->{$outerBoolean}(function ($nested) use ($assignedType, $ids, $includeNull) {
-                if (!empty($ids)) {
+                if (! empty($ids)) {
                     $nested->where(function ($q) use ($assignedType, $ids) {
                         $q->where('assets.assigned_type', $assignedType)
                             ->whereIn('assets.assigned_to', $ids);
@@ -883,7 +962,7 @@ class Asset extends Depreciable implements Importable
     protected function warrantyExpires(): Attribute
     {
         return Attribute::make(
-            get: fn (mixed $value, array $attributes) => (! empty($attributes['warranty_months']) && ! empty($attributes['purchase_date'])) ? Carbon::parse($attributes['purchase_date'])->addMonths((int) $attributes['warranty_months']) : null,
+            get: fn (mixed $value, array $attributes) => (! empty($attributes['warranty_months']) && ! empty($attributes['purchase_date'])) ? Carbon::parse($attributes['purchase_date'])->addMonthsNoOverflow((int) $attributes['warranty_months']) : null,
         );
     }
 
@@ -1684,7 +1763,7 @@ class Asset extends Depreciable implements Importable
             ->get();
 
         $expired_warranties = $assets_with_warranties->filter(function ($asset) use ($now, $end) {
-            $expiration_window = Carbon::parse($asset->purchase_date)->addMonths((int) $asset->warranty_months);
+            $expiration_window = Carbon::parse($asset->purchase_date)->addMonthsNoOverflow((int) $asset->warranty_months);
 
             return $expiration_window->betweenIncluded($now, $end);
         });

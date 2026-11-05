@@ -28,6 +28,13 @@ class LicensePolicy extends CheckoutablePermissionsPolicy
      */
     public function viewKeys(User $user, ?License $license = null)
     {
+        // An explicit "-1" on licenses.keys is an absolute deny that
+        // beats the implicit grants from licenses.create and
+        // licenses.edit below.
+        if ($user->isPermissionExplicitlyDenied('licenses.keys')) {
+            return false;
+        }
+
         if ($user->hasAccess('licenses.keys') || $user->hasAccess('licenses.create') || $user->hasAccess('licenses.edit')) {
             return true;
         }

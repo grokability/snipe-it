@@ -5,7 +5,6 @@ namespace App\SyncAdapters\Intune;
 use App\Models\Asset;
 use App\SyncAdapters\HostInventoryRecord;
 use App\SyncAdapters\PushableSyncAdapter;
-use App\SyncAdapters\SyncAdapter;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -100,8 +99,8 @@ class IntuneAdapter extends PushableSyncAdapter
             'intune_management_agent' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_management_agent'],
             'intune_ownership' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_ownership'],
             'intune_wifi_mac' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_wifi_mac'],
-            'intune_total_storage_bytes' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_total_storage_bytes'],
-            'intune_free_storage_bytes' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_free_storage_bytes'],
+            'intune_total_storage_gb' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_total_storage_gb'],
+            'intune_free_storage_gb' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_free_storage_gb'],
             'intune_is_encrypted' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_is_encrypted', 'type' => 'boolean'],
             'intune_jail_broken' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_jail_broken'],
             'intune_is_supervised' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_is_supervised', 'type' => 'boolean'],
@@ -133,7 +132,7 @@ class IntuneAdapter extends PushableSyncAdapter
             // "Fetch per-device details" opt-in is on - Graph's LIST
             // endpoint returns null for these regardless of $select.
             'intune_ethernet_mac' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_ethernet_mac'],
-            'intune_physical_memory_bytes' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_physical_memory_bytes'],
+            'intune_physical_memory_gb' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_physical_memory_gb'],
         ];
     }
 
@@ -368,11 +367,13 @@ class IntuneAdapter extends PushableSyncAdapter
             // setting is on. Null otherwise - Graph's LIST never
             // populates these fields.
             'intune_ethernet_mac' => self::blankToNull(Arr::get($device, 'ethernetMacAddress')),
-            'intune_physical_memory_bytes' => Arr::get($device, 'physicalMemoryInBytes'),
-            // Hardware inventory. Graph reports storage in bytes -
-            // admins who want GB can run a custom-field formula.
-            'intune_total_storage_bytes' => Arr::get($device, 'totalStorageSpaceInBytes'),
-            'intune_free_storage_bytes' => Arr::get($device, 'freeStorageSpaceInBytes'),
+            'intune_physical_memory_gb' => self::bytesToGb(Arr::get($device, 'physicalMemoryInBytes')),
+            // Hardware inventory. Graph reports storage in bytes which
+            // we convert to GB at the adapter boundary so the value
+            // lines up with the other adapters that speak GB natively
+            // (Addigy, Levelio, Mosyle, AxM device_capacity, Jamf).
+            'intune_total_storage_gb' => self::bytesToGb(Arr::get($device, 'totalStorageSpaceInBytes')),
+            'intune_free_storage_gb' => self::bytesToGb(Arr::get($device, 'freeStorageSpaceInBytes')),
             'intune_is_encrypted' => Arr::get($device, 'isEncrypted'),
             'intune_jail_broken' => Arr::get($device, 'jailBroken'),
             'intune_is_supervised' => Arr::get($device, 'isSupervised'),
@@ -458,6 +459,25 @@ class IntuneAdapter extends PushableSyncAdapter
         )));
 
         return $parts === [] ? null : implode(',', $parts);
+    }
+
+    /**
+     * Normalize a raw byte value from Graph's hardware inventory into
+     * GB so the storage/memory extras line up with the GB unit the
+     * other sync adapters already use. Divides by 10^9 (decimal GB,
+     * same convention Apple uses in marketed capacity). Null or
+     * non-numeric input returns null so an unpopulated field stays
+     * unpopulated rather than becoming a bogus 0 GB that an admin
+     * filter could misread.
+     */
+    private static function bytesToGb(mixed $bytes): int|float|null
+    {
+        if (! is_numeric($bytes)) {
+            return null;
+        }
+        $gb = $bytes / 1_000_000_000;
+
+        return $gb == (int) $gb ? (int) $gb : round($gb, 2);
     }
 
     private function parseTimestamp(mixed $value): ?Carbon

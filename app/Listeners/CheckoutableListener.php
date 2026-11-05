@@ -34,7 +34,6 @@ use App\Notifications\CheckoutAssetNotification;
 use App\Notifications\CheckoutComponentNotification;
 use App\Notifications\CheckoutConsumableNotification;
 use App\Notifications\CheckoutLicenseSeatNotification;
-use Exception;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -110,9 +109,8 @@ class CheckoutableListener
                     $toMail = (clone $mailable)->locale($notifiable?->locale);
                     Mail::to(array_flatten($to))->send($toMail);
                     Log::info('Checkout Mail sent to checkout target');
-                } catch (ClientException $e) {
-                    Log::debug('Exception caught during checkout email: '.$e->getMessage());
-                } catch (Exception $e) {
+                } catch (\Throwable $e) {
+                    // Throwable catches both Exception and Error subtypes.
                     Log::debug('Exception caught during checkout email: '.$e->getMessage());
                 }
             }
@@ -120,9 +118,7 @@ class CheckoutableListener
                 try {
                     $ccMail = (clone $mailable)->locale(Setting::getSettings()->locale);
                     Mail::cc(array_flatten($cc))->send($ccMail);
-                } catch (ClientException $e) {
-                    Log::debug('Exception caught during checkout email: '.$e->getMessage());
-                } catch (Exception $e) {
+                } catch (\Throwable $e) {
                     Log::debug('Exception caught during checkout email: '.$e->getMessage());
                 }
             }
@@ -158,7 +154,7 @@ class CheckoutableListener
                 }
 
                 return redirect()->back()->with('warning', ucfirst($webhookSource->webhook_selected).trans('admin/settings/message.webhook.webhook_fail'));
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 Log::warning(ucfirst($webhookSource->webhook_selected).' webhook notification failed:', [
                     'error' => $e->getMessage(),
                     'webhook_endpoint' => $webhookSource->webhook_endpoint,
@@ -210,9 +206,10 @@ class CheckoutableListener
                     $toMail = (clone $mailable)->locale($notifiable?->locale);
                     Mail::to(array_flatten($to))->send($toMail);
                     Log::info('Checkin Mail sent to checkin target');
-                } catch (ClientException $e) {
-                    Log::debug('Exception caught during checkin email: '.$e->getMessage());
-                } catch (Exception $e) {
+                } catch (\Throwable $e) {
+                    // See the matching catch in onCheckedOut. Mail is
+                    // best-effort and transport-level failures must not
+                    // 500 the checkin / transfer flow.
                     Log::debug('Exception caught during checkin email: '.$e->getMessage());
                 }
             }
@@ -220,9 +217,7 @@ class CheckoutableListener
                 try {
                     $ccMail = (clone $mailable)->locale(Setting::getSettings()->locale);
                     Mail::cc(array_flatten($cc))->send($ccMail);
-                } catch (ClientException $e) {
-                    Log::debug('Exception caught during checkin email: '.$e->getMessage());
-                } catch (Exception $e) {
+                } catch (\Throwable $e) {
                     Log::debug('Exception caught during checkin email: '.$e->getMessage());
                 }
             }
@@ -256,7 +251,7 @@ class CheckoutableListener
                         return redirect()->back()->with('warning', ucfirst($webhookSource->webhook_selected).trans('admin/settings/message.webhook.webhook_fail'));
                     }
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 Log::warning(ucfirst($webhookSource->webhook_selected).' webhook notification failed:', [
                     'error' => $e->getMessage(),
                     'webhook_endpoint' => $webhookSource->webhook_endpoint,

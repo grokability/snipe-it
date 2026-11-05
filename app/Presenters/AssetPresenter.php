@@ -194,19 +194,10 @@ class AssetPresenter extends Presenter
             //                'formatter' => 'dateDisplayFormatter',
             //            ],
             [
-                'field' => 'last_checkout',
-                'scope' => 'col',
-                'searchable' => true,
-                'sortable' => true,
-                'visible' => false,
-                'title' => trans('general.last_checkout'),
-                'formatter' => 'dateDisplayFormatter',
-            ],
-            [
                 'field' => 'age',
                 'scope' => 'col',
                 'searchable' => true,
-                'sortable' => false,
+                'sortable' => true,
                 'visible' => false,
                 'title' => trans('general.age'),
             ], [
@@ -304,6 +295,50 @@ class AssetPresenter extends Presenter
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('general.user_requests_count'),
+
+            ], [
+                'field' => 'licenses_count',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'class' => 'css-license',
+                'visible' => false,
+                'title' => trans('general.licenses_count'),
+                'titleTooltip' => trans('general.licenses_count'),
+
+            ], [
+                'field' => 'components_count',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'class' => 'css-component',
+                'visible' => false,
+                'title' => trans('general.components_count'),
+                'titleTooltip' => trans('general.components_count'),
+
+            ], [
+                'field' => 'maintenances_count',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'class' => 'css-maintenances',
+                'visible' => false,
+                'title' => trans('general.maintenances_count'),
+                'titleTooltip' => trans('general.maintenances_count'),
+
+            ], [
+                'field' => 'assigned_assets_count',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'class' => 'css-barcode',
+                'visible' => false,
+                'title' => trans('general.assigned_assets_count'),
+                'titleTooltip' => trans('general.assigned_assets_count'),
 
             ], [
                 'field' => 'created_by',

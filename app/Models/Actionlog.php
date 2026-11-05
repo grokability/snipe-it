@@ -11,10 +11,12 @@ use App\Presenters\ActionlogPresenter;
 use App\Presenters\Presentable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
@@ -48,6 +50,41 @@ class Actionlog extends SnipeModel
     protected static ?string $ambientSource = null;
 
     protected $with = ['adminuser'];
+
+    /**
+     * Mask the diff blob on read when it carries license-key values the
+     * current user is not permitted to see.
+     */
+    protected function logMeta(): Attribute
+    {
+        return Attribute::get(function ($value) {
+            if ($value === null || $value === '') {
+                return $value;
+            }
+
+            if (! $this->item instanceof License) {
+                return $value;
+            }
+
+            if (Gate::allows('viewKeys', $this->item)) {
+                return $value;
+            }
+
+            $decoded = json_decode($value, true);
+            if (! is_array($decoded) || ! isset($decoded['serial']) || ! is_array($decoded['serial'])) {
+                return $value;
+            }
+
+            if (array_key_exists('old', $decoded['serial'])) {
+                $decoded['serial']['old'] = License::PRODUCT_KEY_MASK;
+            }
+            if (array_key_exists('new', $decoded['serial'])) {
+                $decoded['serial']['new'] = License::PRODUCT_KEY_MASK;
+            }
+
+            return json_encode($decoded);
+        });
+    }
 
     protected $presenter = ActionlogPresenter::class;
 
@@ -161,7 +198,7 @@ class Actionlog extends SnipeModel
     public static function filterableFields(): array
     {
         $typeOptions = array_map(
-            fn(\App\Enums\ActivityItemType $case) => [
+            fn (\App\Enums\ActivityItemType $case) => [
                 'value' => $case->value,
                 'label' => $case->label(),
             ],
@@ -169,7 +206,7 @@ class Actionlog extends SnipeModel
         );
 
         $actionTypeOptions = array_map(
-            fn(\App\Enums\ActionType $case) => [
+            fn (\App\Enums\ActionType $case) => [
                 'value' => $case->value,
                 'label' => ucwords($case->value),
             ],
@@ -258,7 +295,7 @@ class Actionlog extends SnipeModel
 
         $column = $filterKey === 'item' ? 'item_type' : 'target_type';
         $method = $boolean === 'or' ? 'orWhereIn' : 'whereIn';
-        $query->{$method}('action_logs.' . $column, array_values(array_unique($classes)));
+        $query->{$method}('action_logs.'.$column, array_values(array_unique($classes)));
 
         return $query;
     }

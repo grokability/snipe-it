@@ -40,6 +40,7 @@
         'snipe-table--sticky-right-' . $fixed_right_number => (bool) $fixed_right_number,
         'snipe-table--sticky-left-' . $fixed_number => (bool) $fixed_number,
     ])
+    data-reorderable-columns="true"
     data-cookie-id-table="{{ $name }}ListingTable"
     data-id-table="{{ $name }}ListingTable"
     data-sort-order="{{ $sort_order }}"

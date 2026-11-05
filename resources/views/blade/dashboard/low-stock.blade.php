@@ -43,6 +43,7 @@
                     data-pagination="false"
                     data-side-pagination="server"
                     data-id-table="dashLowStock"
+                    data-advanced-search="false"
                     data-sticky-header="false"
                     data-search="false"
                     data-show-columns="false"

@@ -357,12 +357,16 @@ class LdapSync extends Command
                             $ldap_manager = Ldap::findLdapUsers($item['manager'], -1, $this->option('filter'));
                         } catch (\Exception $e) {
                             Log::channel('ldap')->warning('Manager lookup caused an exception: ' . $e->getMessage() . '. Falling back to direct username lookup');
-                            // Hail-mary for Okta manager 'shortnames' - will only work if
-                            // Okta configuration is using full email-address-style usernames
+                            $ldap_manager = ['count' => 0];
+                        }
+
+                        // Hail-mary for directories whose manager attribute holds a bare
+                        // username rather than a DN
+                        if (($ldap_manager['count'] ?? 0) === 0) {
                             $ldap_manager = [
                                 'count' => 1,
                                 0 => [
-                                    $ldap_map['username'] => [$item['manager']],
+                                    $ldap_map['username'] => [(string) $item['manager']],
                                 ],
                             ];
                         }
@@ -394,9 +398,9 @@ class LdapSync extends Command
             }
 
             // Sync activated state for Active Directory.
-            if (! empty($ldap_map['activated'])) { // IF we have an 'active' flag set....
-                // ....then *most* things that are truthy will activate the user. Anything falsey will deactivate them.
-                // (Specifically, we don't handle a value of '0.0' correctly)
+            if (!empty($ldap_map['activated'])) {
+                // IF we have an 'active' flag set, then *most* things that are truthy will activate the user.
+                // Anything falsey will deactivate them. (Specifically, we don't handle a value of '0.0' correctly)
                 $raw_value = @$results[$i][$ldap_map['activated']][0];
                 $filter_var = filter_var($raw_value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
@@ -410,42 +414,10 @@ class LdapSync extends Command
                 }
 
             } elseif (array_key_exists('useraccountcontrol', $results[$i])) {
-                // ....otherwise, (ie if no 'active' LDAP flag is defined), IF the UAC setting exists,
-                // ....then use the UAC setting on the account to determine can-log-in vs. cannot-log-in
+                // No explicit ldap_active_flag is configured, but the LDAP
+                // row carries useraccountcontrol which implies AD.
+                $user->activated = self::isActivatedByUserAccountControl((int) $results[$i]['useraccountcontrol'][0]) ? 1 : 0;
 
-                /* The following is _probably_ the correct logic, but we can't use it because
-                    some users may have been dependent upon the previous behavior, and this
-                    could cause additional access to be available to users they don't want
-                    to allow to log in.
-
-                 $useraccountcontrol = $results[$i]['useraccountcontrol'][0];
-                 if(
-                     // based on MS docs at: https://support.microsoft.com/en-us/help/305144/how-to-use-useraccountcontrol-to-manipulate-user-account-properties
-                     ($useraccountcontrol & 0x200) && // is a NORMAL_ACCOUNT
-                     !($useraccountcontrol & 0x02) && // *and* _not_ ACCOUNTDISABLE
-                     !($useraccountcontrol & 0x10)    // *and* _not_ LOCKOUT
-                 ) {
-                     $user->activated = 1;
-                 } else {
-                     $user->activated = 0;
-                 } */
-                $enabled_accounts = [
-                    '512',    //     0x200 NORMAL_ACCOUNT
-                    '544',    //     0x220 NORMAL_ACCOUNT, PASSWD_NOTREQD
-                    '66048',  //   0x10200 NORMAL_ACCOUNT, DONT_EXPIRE_PASSWORD
-                    '66080',  //   0x10220 NORMAL_ACCOUNT, PASSWD_NOTREQD, DONT_EXPIRE_PASSWORD
-                    '262656', //   0x40200 NORMAL_ACCOUNT, SMARTCARD_REQUIRED
-                    '262688', //   0x40220 NORMAL_ACCOUNT, PASSWD_NOTREQD, SMARTCARD_REQUIRED
-                    '328192', //   0x50200 NORMAL_ACCOUNT, SMARTCARD_REQUIRED, DONT_EXPIRE_PASSWORD
-                    '328224', //   0x50220 NORMAL_ACCOUNT, PASSWD_NOT_REQD, SMARTCARD_REQUIRED, DONT_EXPIRE_PASSWORD
-                    '4194816', //  0x400200 NORMAL_ACCOUNT, DONT_REQ_PREAUTH
-                    '4260352', // 0x410200 NORMAL_ACCOUNT, DONT_EXPIRE_PASSWORD, DONT_REQ_PREAUTH
-                    '1049088', // 0x100200 NORMAL_ACCOUNT, NOT_DELEGATED
-                    '1114624', // 0x110200 NORMAL_ACCOUNT, DONT_EXPIRE_PASSWORD, NOT_DELEGATED,
-                ];
-                $user->activated = (in_array($results[$i]['useraccountcontrol'][0], $enabled_accounts)) ? 1 : 0;
-
-                // If we're not using AD, and there isn't an activated flag set, activate all users
             } /* implied 'else' here - leave the $user->activated flag alone. Newly-created accounts will be active.
             already-existing accounts will be however the administrator has set them */
 
@@ -586,5 +558,22 @@ class LdapSync extends Command
         $user = $query->where('username', $username)->first();
 
         return User::verifyExactUsernameMatch($user, $username);
+    }
+
+    /**
+     * Translate an Active Directory userAccountControl integer into
+     * a boolean "is this account activated" per Microsoft's documented
+     * semantics. See https://learn.microsoft.com/windows/win32/adschema/a-useraccountcontrol.
+     *
+     * A user is activated when the UAC value has the NORMAL_ACCOUNT
+     * bit set AND the ACCOUNTDISABLED and LOCKOUT bits unset.
+     */
+    public static function isActivatedByUserAccountControl(int $useraccountcontrol): bool
+    {
+        $isNormalAccount = ($useraccountcontrol & 0x200) !== 0;
+        $isDisabled = ($useraccountcontrol & 0x2) !== 0;
+        $isLockedOut = ($useraccountcontrol & 0x10) !== 0;
+
+        return $isNormalAccount && !$isDisabled && !$isLockedOut;
     }
 }
