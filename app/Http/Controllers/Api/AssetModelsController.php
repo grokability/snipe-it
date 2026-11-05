@@ -95,9 +95,13 @@ class AssetModelsController extends Controller
         ])
             ->with('category', 'depreciation', 'manufacturer', 'fieldset.fields.defaultValues', 'adminuser')
             ->withCount('assets as assets_count')
-            ->withCount('availableAssets as remaining')
             ->withCount('assignedAssets as assets_assigned_count')
-            ->withCount('archivedAssets as assets_archived_count');
+            ->withCount('archivedAssets as assets_archived_count')
+            ->withCount([
+                'assets as assets_pending_count' => fn($q) => $q->whereNull('assets.assigned_to')->pending(),
+                'assets as assets_undeployable_count' => fn($q) => $q->whereNull('assets.assigned_to')->undeployable(),
+                'assets as remaining' => fn($q) => $q->rtd(),
+            ]);
 
         // This invokes the Searchable model trait scopeTextSearch and will handle input by search or by advanced search filter
         if ($request->filled('filter') || $request->filled('search')) {
