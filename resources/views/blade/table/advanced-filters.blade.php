@@ -102,6 +102,9 @@
             }
 
             var modalSelector = '#avdSearchModal_' + tableId;
+            var addFilterLabel = @json(trans('general.add_filter'));
+            var removeLabel = @json(trans('button.remove'));
+            var noValueLabel = @json(trans('general.no_value'));
 
             var widgetFields = $stash.find('[data-advanced-filter-widget]').map(function () {
                 return $(this).data('advanced-filter-widget');
@@ -118,7 +121,6 @@
             // page-load from the stashed widgets' data-advanced-filter-type.
             window.snipeAdvancedFilterFieldTypes = window.snipeAdvancedFilterFieldTypes || {};
             window.snipeAdvancedFilterFieldTypes[tableId] = window.snipeAdvancedFilterFieldTypes[tableId] || {};
-            var noValueLabel = @json(trans('general.no_value'));
             $stash.find('[data-advanced-filter-widget]').each(function () {
                 var $slot = $(this);
                 var field = $slot.data('advanced-filter-widget');
@@ -162,6 +164,56 @@
                 if (bsTable && typeof bsTable.renderAdvancedSearchTags === 'function') {
                     bsTable.renderAdvancedSearchTags();
                 }
+            }
+
+            // Column titles land in the bs-table instance's columns
+            // array as the presenter's `title` string, which can be
+            // entity-encoded user input (e.g. AssetPresenter emits
+            // `e($field->name)` for custom fields). Round-trip through
+            // a detached textarea via jQuery.html so the entity string
+            // decodes to its intended display text without ever
+            // constructing a scriptable element.
+            function decodeHtmlEntities(str) {
+                return $('<textarea>').html(String(str == null ? '' : str)).val();
+            }
+
+            // Union of stash-declared widgets and bs-table's
+            // `searchable: true` columns. Each entry:
+            //   { field, label, type, source: 'stash' | 'column' }
+            // 'stash' entries reuse the pre-rendered widget from the
+            // hidden stash div. 'column' entries get a freshly built
+            // text-input widget on row insert.
+            function buildFieldRegistry(bsTable) {
+                var registry = {};
+                $stash.find('[data-advanced-filter-widget]').each(function () {
+                    var $slot = $(this);
+                    var field = $slot.data('advanced-filter-widget');
+                    var type = $slot.data('advanced-filter-type') || 'select2-checkboxes';
+                    // Pull label from the widget's own `.control-label`
+                    // element rather than a parallel data attribute.
+                    // Blade already interpolates `$widget['label']`
+                    // there with correct casing / translations, so this
+                    // is both DRYer and more robust than maintaining a
+                    // second copy on the wrapper.
+                    var label = ($slot.find('.control-label').first().text() || '').trim() || field;
+                    registry[field] = {field: field, label: label, type: type, source: 'stash'};
+                });
+                if (bsTable && Array.isArray(bsTable.columns)) {
+                    bsTable.columns.forEach(function (c) {
+                        if (!c || !c.field || c.checkbox || !c.visible || !c.searchable) {
+                            return;
+                        }
+                        if (registry[c.field]) {
+                            return;
+                        }
+                        var label = decodeHtmlEntities(c.title || c.field).trim();
+                        if (label === '') {
+                            label = c.field;
+                        }
+                        registry[c.field] = {field: c.field, label: label, type: 'text', source: 'column'};
+                    });
+                }
+                return registry;
             }
 
             function findWidgetSelect($widget, field) {
@@ -556,6 +608,208 @@
                 backfillLabelsForFiltered();
             });
 
+            // Builds a fresh text-input widget for a `searchable: true`
+            // column that the model did NOT declare in filterableFields().
+            // Shape mirrors stash widgets so appendFilterRow can treat
+            // text and declared widgets the same way downstream.
+            function buildTextWidget(field, label) {
+                var $formGroup = $('<div class="form-group row"></div>');
+                $('<label class="col-sm-4 control-label"></label>').text(label).appendTo($formGroup);
+                var $controlCol = $('<div class="col-sm-6"></div>');
+                $('<input type="text" class="form-control">')
+                    .attr('placeholder', label)
+                    .attr('aria-label', label)
+                    .appendTo($controlCol);
+                $controlCol.appendTo($formGroup);
+                return $formGroup;
+            }
+
+            // Wraps a widget in the row-container shape the modal expects:
+            //   .snipe-advanced-filter-row[data-field][data-source]
+            //     └── <widget form-group with × column appended>
+            // × fires the delegated remove handler attached to the form
+            // in the shown.bs.modal hook.
+            function wrapAsFilterRow($widget, field, source) {
+                var $removeCol = $('<div class="col-sm-1 text-right"></div>');
+                var $removeBtn = $('<button type="button" class="btn btn-link btn-sm js-advanced-filter-row-remove" style="padding:6px 0;"></button>')
+                    .attr('aria-label', removeLabel)
+                    .attr('title', removeLabel);
+                $('<i class="fa fa-times text-danger" aria-hidden="true"></i>').appendTo($removeBtn);
+                $removeBtn.appendTo($removeCol);
+                // Append × as third column (label col-sm-4 + control col-sm-6 + × col-sm-1 = 11/12).
+                $widget.find('.form-group.row').first().append($removeCol);
+                var $row = $('<div class="snipe-advanced-filter-row"></div>')
+                    .attr('data-field', field)
+                    .attr('data-source', source)
+                    .append($widget);
+                return $row;
+            }
+
+            // Inserts a filter row into the rows container and wires it
+            // up end-to-end: widget source resolution, carrier plumbing,
+            // per-type setup, deeplink reconciliation. Used by both the
+            // modal-open hydration path (for every active filter) and
+            // the picker's select handler (for newly-added filters).
+            function appendFilterRow($rowsContainer, field, csv, $modal, registry) {
+                var entry = registry[field];
+                if (!entry) {
+                    return;
+                }
+                // Defense against a stale picker click or a hydration
+                // key that collides with an already-active row. The
+                // picker's refresh pass hides used fields, but the
+                // guard makes the "same field twice" case a no-op
+                // instead of a duplicate row.
+                if ($rowsContainer.find('.snipe-advanced-filter-row').filter(function () {
+                    return $(this).attr('data-field') === field;
+                }).length) {
+                    return;
+                }
+
+                var $widget;
+                if (entry.source === 'stash') {
+                    var $stashSlot = $stash.find('[data-advanced-filter-widget="' + field + '"]');
+                    $widget = $stashSlot.children().first();
+                    if ($widget.length === 0) {
+                        return;
+                    }
+                } else {
+                    $widget = buildTextWidget(field, entry.label);
+                }
+
+                $widget.attr('data-advanced-filter-widget', field);
+                $widget.attr('data-advanced-filter-type', entry.type);
+
+                // Carrier: for text widgets, the visible text input IS
+                // the serialized carrier (its `name` is the field).
+                // For every other widget type we synthesize a hidden
+                // input and append it inside the widget so a single
+                // serializeArray pass sees exactly one key=value per
+                // active filter.
+                var $carrier;
+                if (entry.type === 'text') {
+                    $carrier = $widget.find('input[type="text"]').first();
+                    $carrier.attr('name', field);
+                    $carrier.val(csv);
+                } else {
+                    $carrier = $('<input type="hidden">')
+                        .attr('name', field)
+                        .attr('aria-hidden', 'true')
+                        .val(csv);
+                    $widget.append($carrier);
+                }
+
+                var $row = wrapAsFilterRow($widget, field, entry.source);
+                $rowsContainer.append($row);
+
+                // Type-specific wiring. Each setup<Type>Widget
+                // reconciles the widget's control with the carrier CSV
+                // and binds the carrier-sync handlers.
+                if (entry.type === 'date-range') {
+                    setupDateRangeWidget(field, $widget, $carrier, csv, $modal);
+                } else if (entry.type === 'boolean') {
+                    setupBooleanWidget(field, $widget, $carrier, csv, $modal);
+                } else if (entry.type === 'numeric') {
+                    setupNumericWidget(field, $widget, $carrier, csv, $modal);
+                } else if (entry.type === 'text') {
+                    // The input itself is the carrier: no sync shim
+                    // needed, serializeArray reads it directly. Nudge
+                    // the pill strip on input so pills reflect the
+                    // current state immediately without waiting for
+                    // Apply.
+                    $carrier.off('input.advancedFilterSync').on('input.advancedFilterSync', nudgePillRender);
+                } else {
+                    setupSelectCheckboxesWidget(field, $widget, $carrier, csv, $modal);
+                }
+
+                nudgePillRender();
+            }
+
+            // Tears down a row and returns its widget to the stash
+            // (for stash widgets) or discards it (for text widgets).
+            // Also drops the carrier value from filterColumnsPartial so
+            // the pill strip updates immediately rather than waiting
+            // for Apply.
+            function removeFilterRow($row, $modal) {
+                var field = $row.attr('data-field');
+                var source = $row.attr('data-source');
+                var $widget = $row.find('[data-advanced-filter-widget="' + field + '"]').first();
+
+                if ($widget.length) {
+                    $widget.find('select').off('change.advancedFilterSync select2:select.advancedFilterSync select2:unselect.advancedFilterSync');
+                    $widget.find('.js-date-range-start, .js-date-range-end').off('dp.change.advancedFilterSync dp.change.advancedFilterLink');
+                    $widget.find('input.js-advanced-filter-boolean-yes, input.js-advanced-filter-boolean-no').off('change.advancedFilterSync');
+                    $widget.find('input.js-advanced-filter-numeric-gt, input.js-advanced-filter-numeric-lt').off('input.advancedFilterSync change.advancedFilterSync');
+                    $widget.find('input').off('input.advancedFilterSync');
+
+                    // Strip the × column we appended on row insert so
+                    // the widget returns to the stash in the same
+                    // shape it was emitted.
+                    $widget.find('.js-advanced-filter-row-remove').closest('.col-sm-1').remove();
+                    // Drop the carrier before returning to the stash
+                    // so the next open gets a fresh input.
+                    $widget.find('input[name="' + field + '"]').filter(function () {
+                        return $(this).attr('type') === 'hidden';
+                    }).remove();
+
+                    if (source === 'stash') {
+                        var $stashSlot = $stash.find('[data-advanced-filter-widget="' + field + '"]');
+                        if ($stashSlot.length) {
+                            $stashSlot.append($widget);
+                        }
+                    }
+                }
+
+                $row.remove();
+
+                // Clear the filter from state right away so the pill
+                // strip and the saved-searches "has filters" toggle
+                // both reflect the removal without waiting for Apply.
+                var bsTable = $('#' + tableId).data('bootstrap.table');
+                if (bsTable && bsTable.filterColumnsPartial && Object.prototype.hasOwnProperty.call(bsTable.filterColumnsPartial, field)) {
+                    delete bsTable.filterColumnsPartial[field];
+                    nudgePillRender();
+                }
+            }
+
+            // Repopulates the picker's option list with every registry
+            // entry not already present as an active row. Called on
+            // open, after each pick, and after each × remove. Destroy
+            // + re-init the select2 instance because its view only
+            // syncs with the backing <option> set at init time.
+            function refreshPickerOptions($picker, $rowsContainer, registry) {
+                var active = {};
+                $rowsContainer.find('.snipe-advanced-filter-row').each(function () {
+                    active[$(this).attr('data-field')] = true;
+                });
+
+                var available = [];
+                Object.keys(registry).forEach(function (field) {
+                    if (!active[field]) {
+                        available.push(registry[field]);
+                    }
+                });
+                available.sort(function (a, b) {
+                    return a.label.localeCompare(b.label);
+                });
+
+                if ($picker.data('select2')) {
+                    $picker.select2('destroy');
+                }
+                $picker.empty();
+                // Blank first option so select2 renders the placeholder
+                // and a clean no-selection state after each pick.
+                $picker.append('<option value=""></option>');
+                available.forEach(function (entry) {
+                    $('<option></option>').val(entry.field).text(entry.label).appendTo($picker);
+                });
+                $picker.select2({
+                    placeholder: addFilterLabel,
+                    allowClear: false,
+                    width: '100%',
+                });
+            }
+
             $(document).on('shown.bs.modal', modalSelector, function () {
                 backfillLabelsForFiltered();
                 var $modal = $(modalSelector);
@@ -563,10 +817,9 @@
 
                 // Scrub stray `_adv`-shaped filter keys left over
                 // from earlier builds where the select carried its
-                // name into the serialized form. The current build
-                // strips the `name` on inject, but any state from
-                // before that fix still lingers in
-                // filterColumnsPartial without this.
+                // name into the serialized form. Current build strips
+                // the `name` on inject, but any state from before that
+                // fix still lingers in filterColumnsPartial without this.
                 var bsTable = $('#' + tableId).data('bootstrap.table');
                 if (bsTable && bsTable.filterColumnsPartial) {
                     Object.keys(bsTable.filterColumnsPartial).forEach(function (k) {
@@ -577,110 +830,101 @@
                     nudgePillRender();
                 }
 
-                widgetFields.forEach(function (field) {
-                    var $stashSlot = $stash.find('[data-advanced-filter-widget="' + field + '"]');
-                    var type = $stashSlot.data('advanced-filter-type') || 'select2-checkboxes';
-                    var $widget = $stashSlot.children().first();
-                    if ($widget.length === 0) {
+                var $form = $modal.find('.toolbar-model-form');
+                if ($form.length === 0) {
+                    return;
+                }
+
+                // bs-table's createToolbarForm (our override) emits a
+                // form-group per `searchable: true` column on every
+                // open. Strip them all except the two we keep:
+                //   - the search-tip help-block row (user-facing hint)
+                //   - the AND/OR operator radio row (load-bearing)
+                // Everything else is replaced by the dynamic picker
+                // and active-filter rows we insert below.
+                $form.children('.form-group.row').each(function () {
+                    var $fg = $(this);
+                    if ($fg.find('input[name="__advanced_search_operator"]').length) {
                         return;
                     }
+                    if ($fg.find('.help-block').length) {
+                        return;
+                    }
+                    $fg.remove();
+                });
 
-                    // Carrier can come from one of two places:
-                    //   (a) bs-table auto-generated a text input for a
-                    //       `searchable: true` presenter column with
-                    //       this field name. In that case we take over
-                    //       the existing input, flip it to hidden, and
-                    //       replace the form-group with our widget.
-                    //   (b) No presenter column exists for this field
-                    //       (filter-only concept, e.g. User's
-                    //       admin / superuser derived from the
-                    //       permissions JSON). Synthesize a hidden
-                    //       input and append the widget to the end of
-                    //       the modal form so the filter still rides
-                    //       through serializeArray.
-                    var $carrier = findCarrier($modal, field);
-                    var $bsFormGroup = null;
-                    var synthesized = false;
+                var registry = buildFieldRegistry(bsTable);
 
-                    if ($carrier.length) {
-                        $bsFormGroup = $carrier.closest('.form-group');
-                        if ($bsFormGroup.length === 0) {
-                            return;
-                        }
-                    }
-                    else {
-                        $carrier = $('<input type="hidden">').attr('name', field);
-                        synthesized = true;
-                    }
+                var $rowsContainer = $('<div class="snipe-advanced-filter-rows"></div>');
+                var $pickerRow = $(
+                    '<div class="form-group row snipe-advanced-filter-picker-row">' +
+                        '<label class="col-sm-4 control-label" for="' + tableId + 'AdvancedFilterPicker"></label>' +
+                        '<div class="col-sm-7">' +
+                            '<select class="js-advanced-filter-picker" id="' + tableId + 'AdvancedFilterPicker" style="width:100%;"></select>' +
+                        '</div>' +
+                    '</div>'
+                );
+                $pickerRow.find('label').text(addFilterLabel);
+                $form.append($rowsContainer).append($pickerRow);
 
-                    var currentCsv = ($carrier.val() || '').toString().trim();
-                    $widget.attr('data-advanced-filter-widget', field);
-                    $widget.attr('data-advanced-filter-type', type);
+                var filterColumnsPartial = (bsTable && bsTable.filterColumnsPartial) || {};
+                Object.keys(filterColumnsPartial).forEach(function (field) {
+                    if (!registry[field]) {
+                        return;
+                    }
+                    var csv = (filterColumnsPartial[field] || '').toString();
+                    appendFilterRow($rowsContainer, field, csv, $modal, registry);
+                });
 
-                    // Make sure the carrier is hidden regardless of
-                    // path. For (a), bs-table rendered a visible text
-                    // input we are hijacking. For (b), the input we
-                    // just synthesized was never visible to begin with.
-                    // Belt-and-suspenders style / hide / aria calls
-                    // because some browsers reject changing an
-                    // input's `type` after creation and leave the
-                    // element rendering as text.
-                    $carrier.attr('type', 'hidden').hide().css('display', 'none').attr('aria-hidden', 'true');
+                var $picker = $pickerRow.find('.js-advanced-filter-picker');
+                refreshPickerOptions($picker, $rowsContainer, registry);
 
-                    if (type === 'date-range') {
-                        setupDateRangeWidget(field, $widget, $carrier, currentCsv, $modal);
+                $picker.off('change.snipeAdvancedFilterPicker').on('change.snipeAdvancedFilterPicker', function () {
+                    var field = $(this).val();
+                    if (!field) {
+                        return;
                     }
-                    else if (type === 'boolean') {
-                        setupBooleanWidget(field, $widget, $carrier, currentCsv, $modal);
-                    }
-                    else if (type === 'numeric') {
-                        setupNumericWidget(field, $widget, $carrier, currentCsv, $modal);
-                    }
-                    else {
-                        setupSelectCheckboxesWidget(field, $widget, $carrier, currentCsv, $modal);
-                    }
+                    appendFilterRow($rowsContainer, field, '', $modal, registry);
+                    refreshPickerOptions($picker, $rowsContainer, registry);
+                });
 
-                    $widget.append($carrier);
-                    if (synthesized) {
-                        // No existing bs-table form-group to replace,
-                        // so append the widget as a new row at the
-                        // end of the modal form.
-                        $modal.find('.toolbar-model-form').append($widget);
-                    }
-                    else {
-                        // Replace bs-table's form-group row with the
-                        // widget wrapper, carrying the hidden input
-                        // along inside it so the form still owns it.
-                        $bsFormGroup.replaceWith($widget);
-                    }
+                $form.off('click.snipeAdvancedFilterRemove').on('click.snipeAdvancedFilterRemove', '.js-advanced-filter-row-remove', function (e) {
+                    e.preventDefault();
+                    var $row = $(this).closest('.snipe-advanced-filter-row');
+                    removeFilterRow($row, $modal);
+                    refreshPickerOptions($picker, $rowsContainer, registry);
                 });
             });
 
             $(document).on('hidden.bs.modal', modalSelector, function () {
                 var $modal = $(modalSelector);
-                widgetFields.forEach(function (field) {
-                    var $widget = $modal.find('[data-advanced-filter-widget="' + field + '"]');
+                // Walk every active row at close time. For stash-sourced
+                // widgets we tear down handlers, strip the × column +
+                // carrier, and return the widget to its slot. For text
+                // widgets there is no slot, so we just discard the row.
+                $modal.find('.snipe-advanced-filter-row').each(function () {
+                    var $row = $(this);
+                    var field = $row.attr('data-field');
+                    var source = $row.attr('data-source');
+                    var $widget = $row.find('[data-advanced-filter-widget="' + field + '"]').first();
                     if ($widget.length === 0) {
                         return;
                     }
                     $widget.find('select').off('change.advancedFilterSync select2:select.advancedFilterSync select2:unselect.advancedFilterSync');
-                    // Date-range widgets listen on the picker wrappers
-                    // instead of the inner <select>. Namespaced .off()
-                    // clears whichever namespace is attached to this
-                    // widget type without caring which type we routed
-                    // to on open.
                     $widget.find('.js-date-range-start, .js-date-range-end').off('dp.change.advancedFilterSync dp.change.advancedFilterLink');
                     $widget.find('input.js-advanced-filter-boolean-yes, input.js-advanced-filter-boolean-no').off('change.advancedFilterSync');
                     $widget.find('input.js-advanced-filter-numeric-gt, input.js-advanced-filter-numeric-lt').off('input.advancedFilterSync change.advancedFilterSync');
-                    // Drop the carrier input before moving the
-                    // widget back to the stash so a fresh bs-table
-                    // modal body on the next open gets its own fresh
-                    // input.
-                    $widget.find('input[type="hidden"]').filter(function () {
-                        return $(this).attr('name') === field;
+                    $widget.find('input').off('input.advancedFilterSync');
+                    $widget.find('.js-advanced-filter-row-remove').closest('.col-sm-1').remove();
+                    $widget.find('input[name="' + field + '"]').filter(function () {
+                        return $(this).attr('type') === 'hidden';
                     }).remove();
-                    var $stashSlot = $stash.find('[data-advanced-filter-widget="' + field + '"]');
-                    $stashSlot.append($widget);
+                    if (source === 'stash') {
+                        var $stashSlot = $stash.find('[data-advanced-filter-widget="' + field + '"]');
+                        if ($stashSlot.length) {
+                            $stashSlot.append($widget);
+                        }
+                    }
                 });
             });
         })();

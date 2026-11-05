@@ -12,6 +12,7 @@ return [
     'action' => 'Action',
     'action_date' => 'Action Date',
     'activity_report' => 'Activity Report',
+    'add_filter' => 'Add filter',
     'address' => 'Address',
     'adjust_quantity' => 'Adjust Quantity',
     'adjust_quantity_success' => 'Quantity adjusted successfully.',
