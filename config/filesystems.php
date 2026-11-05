@@ -108,6 +108,7 @@ $config = [
             'driver' => env('BACKUP_FILESYSTEM_DRIVER', 'local'),
             'key' => env('PRIVATE_AWS_ACCESS_KEY_ID'),
             'secret' => env('PRIVATE_AWS_SECRET_ACCESS_KEY'),
+            'token' => env('PRIVATE_AWS_SESSION_TOKEN'),
             'region' => env('PRIVATE_AWS_DEFAULT_REGION'),
             'bucket' => env('PRIVATE_AWS_BUCKET'),
             // Root defaults differ by driver so the same disk config
