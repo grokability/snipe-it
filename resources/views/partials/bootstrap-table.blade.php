@@ -11,7 +11,10 @@
         .snipe-advanced-search-tags .snipe-advanced-search-tags-clear-all:focus,
         .snipe-advanced-search-tags .snipe-advanced-search-tag-remove,
         .snipe-advanced-search-tags .snipe-advanced-search-tag-remove:hover,
-        .snipe-advanced-search-tags .snipe-advanced-search-tag-remove:focus {
+        .snipe-advanced-search-tags .snipe-advanced-search-tag-remove:focus,
+        .snipe-advanced-search-tags .snipe-advanced-search-tag-more,
+        .snipe-advanced-search-tags .snipe-advanced-search-tag-more:hover,
+        .snipe-advanced-search-tags .snipe-advanced-search-tag-more:focus {
             color: #fff !important;
             text-decoration: none !important;
         }
@@ -58,7 +61,16 @@
         var advancedSearchClearAllText = @json(trans('general.clear_all_filters'));
         var advancedSearchYesText = @json(trans('general.yes'));
         var advancedSearchNoText = @json(trans('general.no'));
+        var advancedSearchMoreTemplate = @json(trans('general.count_more'));
         var advancedSearchOperatorStorageKey = 'snipeit.bs.table.advancedSearchOperator';
+
+        // Per-field cap on the per-term pill fan under the advanced search
+        // strip. A 400-term filter (e.g. select-all against a big category
+        // list) would otherwise push the actual table rows well below the
+        // fold. First N terms render, the rest collapse into a +K more
+        // chip that opens the advanced-search modal so the admin can
+        // review / edit the full selection in the select2 widget.
+        var defaultAdvancedSearchPillCap = 10;
 
         var normalizeAdvancedSearchOperator = function (operator) {
             return (operator || defaultAdvancedSearchOperator).toString().toLowerCase() === 'or' ? 'or' : 'and';
@@ -394,8 +406,13 @@
                             ' <a href="javascript:void(0)" class="snipe-advanced-search-tag-remove" data-field="' + safeField +
                             '" style="font-size: 12px; margin-right:6px;display:inline-block;color:#fff;text-decoration:none;">&times;</a></span>';
                     } else if (isMultiTerm) {
+                        var pillCap = parseInt(_this.$el.data('advanced-search-pill-cap'), 10);
+                        if (isNaN(pillCap) || pillCap <= 0) {
+                            pillCap = defaultAdvancedSearchPillCap;
+                        }
+                        var visibleParts = parts.slice(0, pillCap);
                         var inner = '<span style="font-size:12px;font-weight:bold;margin-right:4px;align-self:center;">' + safeLabel + ':</span>';
-                        parts.forEach(function (id) {
+                        visibleParts.forEach(function (id) {
                             var termLabel = (map && map[id]) ? map[id] : id;
                             var safeTermText = escapeAdvancedSearchValue(termLabel);
                             var safeTermIdAttr = escapeAdvancedSearchAttr(id);
@@ -404,6 +421,14 @@
                                 ' <a href="javascript:void(0)" class="snipe-advanced-search-term-remove" data-field="' + safeField + '" data-term-id="' + safeTermIdAttr + '" style="color:#fff;text-decoration:none;margin-left:6px;">&times;</a>' +
                                 '</span>';
                         });
+                        if (parts.length > pillCap) {
+                            var moreCount = parts.length - pillCap;
+                            var moreText = advancedSearchMoreTemplate.replace(':count', String(moreCount));
+                            inner += '<a href="javascript:void(0)" class="label label-info snipe-advanced-search-tag-more" data-field="' + safeField +
+                                '" style="font-size:12px;font-weight:normal;margin:2px;padding:3px 6px;display:inline-flex;align-items:center;color:#fff;text-decoration:none;cursor:pointer;">' +
+                                escapeAdvancedSearchValue(moreText) +
+                                '</a>';
+                        }
                         html += '<span style="display:inline-flex;flex-wrap:wrap;align-items:center;max-width:90vw;margin-right:12px;margin-bottom:6px;">' + inner + '</span>';
                     } else {
                         var displayValue = resolveFilterLabel(f, filters[f]);
@@ -467,6 +492,16 @@
                         _this.updatePagination();
                         _this.trigger('column-advanced-search', _this.filterColumnsPartial, _this.getAdvancedSearchOperator());
                         _this.renderAdvancedSearchTags();
+                    })
+                    .on('click.snipeAdvancedSearchTags', '.snipe-advanced-search-tag-more', function (e) {
+                        // +N more chip: opens the advanced-search modal so
+                        // the admin can review / edit the full selection in
+                        // the select2 widget for that field.
+                        e.preventDefault();
+                        var $button = _this.getAdvancedSearchButton();
+                        if ($button.length) {
+                            $button.trigger('click');
+                        }
                     })
                     .on('click.snipeAdvancedSearchTags', '.snipe-advanced-search-tags-clear-all', function (e) {
                         e.preventDefault();
