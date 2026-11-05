@@ -52,6 +52,121 @@
         var BootstrapTable = $.BootstrapTable;
         var baseBootstrapTablePrototype = Object.getPrototypeOf(BootstrapTable.prototype);
         var baseInitSearch = baseBootstrapTablePrototype.initSearch;
+
+        // bs-table's reorderable-columns extension restores a saved
+        // column order by walking the persisted cookie and swapping
+        // thead DOM nodes in place (dragtable's _restoreState calling
+        // _bubbleCols). It does NOT update this.columns,
+        // this.header.fields, this.options.columns[0], or
+        // this.fieldsColumnsIndex to match. initBody renders tbody
+        // rows using this.header.fields, so tbody comes back in the
+        // natural (presenter-declared) order while thead is already
+        // in the saved order. THis results in a persistent header / body
+        // misalignment visible on every reload that has a saved
+        // column order. Dragging a column stomps on it because
+        // beforeStop runs a full re-sync of columns + header.fields
+        // and re-renders both.
+        //
+        // To prevent this, we apply the saved order to this.options.columns[0]
+        // (and downstream state) BEFORE the base initHeader builds
+        // the thead. Now the thead is built in the saved order from
+        // the start, header.fields is populated in the saved order,
+        // tbody renders in the saved order, and the extension's
+        // follow-up _restoreState is a no-op because the DOM already
+        // matches the cookie.
+        if (typeof BootstrapTable.prototype.initHeader === 'function') {
+            var originalInitHeaderForReorder = BootstrapTable.prototype.initHeader;
+            BootstrapTable.prototype.initHeader = function () {
+                snipeApplySavedColumnOrder(this);
+                return originalInitHeaderForReorder.apply(this, arguments);
+            };
+        }
+
+        function snipeApplySavedColumnOrder(that) {
+            if (!that.options || !that.options.reorderableColumns || !that.options.cookie) {
+                return;
+            }
+            if (!that._storage || typeof that._storage.getItem !== 'function') {
+                return;
+            }
+            if (!that.options.cookieIdTable) {
+                return;
+            }
+            if (!that.options.columns || !Array.isArray(that.options.columns[0])) {
+                return;
+            }
+
+            var raw;
+            try {
+                raw = that._storage.getItem(that.options.cookieIdTable + '.bs.table.reorderColumns');
+            } catch (e) {
+                return;
+            }
+            if (!raw) {
+                return;
+            }
+
+            var savedOrder;
+            try {
+                savedOrder = JSON.parse(raw);
+            } catch (e) {
+                return;
+            }
+            if (!savedOrder || typeof savedOrder !== 'object') {
+                return;
+            }
+
+            var currentColumns = that.options.columns[0];
+            var byField = {};
+            currentColumns.forEach(function (col) {
+                if (col && col.field) {
+                    byField[col.field] = col;
+                }
+            });
+
+            // Sort columns the cookie recognizes by their saved
+            // position, then append anything the cookie does not know
+            // about (e.g. a new column added by a code update since
+            // the user last dragged) at the end in presenter order.
+            var ordered = Object.keys(savedOrder).filter(function (field) {
+                return byField[field];
+            }).sort(function (a, b) {
+                return parseInt(savedOrder[a], 10) - parseInt(savedOrder[b], 10);
+            }).map(function (field) {
+                return byField[field];
+            });
+
+            var seen = {};
+            ordered.forEach(function (col) {
+                seen[col.field] = true;
+            });
+            currentColumns.forEach(function (col) {
+                if (col && (!col.field || !seen[col.field])) {
+                    ordered.push(col);
+                }
+            });
+
+            var changed = false;
+            for (var i = 0; i < ordered.length; i++) {
+                if (ordered[i] !== currentColumns[i]) {
+                    changed = true;
+                    break;
+                }
+            }
+            if (!changed) {
+                return;
+            }
+
+            that.options.columns[0] = ordered;
+            that.columns = ordered.slice();
+            that.fieldsColumnsIndex = [];
+            ordered.forEach(function (col, i) {
+                col.fieldIndex = i;
+                if (col.field) {
+                    that.fieldsColumnsIndex[col.field] = i;
+                }
+            });
+        }
         var defaultAdvancedSearchOperator = 'and';
         var advancedSearchSearchText = @json(trans('general.search'));
 
