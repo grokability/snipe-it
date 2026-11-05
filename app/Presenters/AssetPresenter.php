@@ -194,15 +194,6 @@ class AssetPresenter extends Presenter
             //                'formatter' => 'dateDisplayFormatter',
             //            ],
             [
-                'field' => 'last_checkout',
-                'scope' => 'col',
-                'searchable' => true,
-                'sortable' => true,
-                'visible' => false,
-                'title' => trans('general.last_checkout'),
-                'formatter' => 'dateDisplayFormatter',
-            ],
-            [
                 'field' => 'age',
                 'scope' => 'col',
                 'searchable' => true,

@@ -949,6 +949,40 @@
             // callbacks reach the real table.
             var $bootstrapTableEl = $(this);
 
+            // Pin sticky columns out of the drag-to-reorder set. Sticky
+            // columns are positioned via CSS nth-child on the <table>
+            // (snipe-table--sticky-left-N / --sticky-right-N): their DOM
+            // slot is their sticky anchor, so letting them drag would
+            // break the pinning. We tag the non-sticky columns with a
+            // marker class and hand that class to dragtable's dragaccept
+            // option. dragtable then filters both the draggable source
+            // set and the drop-target set down to just those.
+            var dragacceptSelector = null;
+            var tableClasses = this.className || '';
+            var leftStickyMatch = tableClasses.match(/snipe-table--sticky-left-(\d+)/);
+            var rightStickyMatch = tableClasses.match(/snipe-table--sticky-right-(\d+)/);
+            var leftStickyCount = leftStickyMatch ? parseInt(leftStickyMatch[1], 10) : 0;
+            var rightStickyCount = rightStickyMatch ? parseInt(rightStickyMatch[1], 10) : 0;
+            if (leftStickyCount > 0 || rightStickyCount > 0) {
+                var columnsJson = $bootstrapTableEl.attr('data-columns');
+                if (columnsJson) {
+                    try {
+                        var parsedColumns = JSON.parse(columnsJson);
+                        var totalColumns = parsedColumns.length;
+                        parsedColumns.forEach(function (col, idx) {
+                            var isSticky = (idx < leftStickyCount) || (idx >= totalColumns - rightStickyCount);
+                            if (!isSticky) {
+                                col.class = ((col.class || '') + ' snipe-reorderable-col').trim();
+                            }
+                        });
+                        $bootstrapTableEl.attr('data-columns', JSON.stringify(parsedColumns));
+                        dragacceptSelector = '.snipe-reorderable-col';
+                    } catch (e) {
+                        // data-columns is not JSON. Leave reordering unconstrained.
+                    }
+                }
+            }
+
             $(this).bootstrapTable({
 
                 ajaxOptions: {
@@ -986,6 +1020,7 @@
                 cookie: true,
                 cookieExpire: '2y',
                 cookieStorage: '{{ config('session.bs_table_storage') }}',
+                dragaccept: dragacceptSelector,
                 iconsPrefix: 'fa',
                 maintainSelected: data_with_default('maintain-selected', true),
                 minimumCountColumns: data_with_default('minimum-count-columns', 2),
