@@ -28,6 +28,10 @@
                 <x-tabs.pane name="fields">
                     <x-slot:table_header>{{ trans('admin/custom_fields/general.custom_fields') }}</x-slot:table_header>
 
+                    <x-slot:bulkactions>
+                        <x-table.bulk-customfields />
+                    </x-slot:bulkactions>
+
                     <x-table
                         name="customField"
                         show_column_search="false"
@@ -42,6 +46,10 @@
 
                 <x-tabs.pane name="fieldsets">
                     <x-slot:table_header>{{ trans('admin/custom_fields/general.fieldsets') }}</x-slot:table_header>
+
+                    <x-slot:bulkactions>
+                        <x-table.bulk-customfieldsets />
+                    </x-slot:bulkactions>
 
                     <x-table
                         name="customFieldset"

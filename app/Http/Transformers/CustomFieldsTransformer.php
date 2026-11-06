@@ -74,7 +74,10 @@ class CustomFieldsTransformer
             'display_checkin' => ($field->display_checkin == '1') ? true : false,
             'display_checkout' => ($field->display_checkout == '1') ? true : false,
             'display_audit' => ($field->display_audit == '1') ? true : false,
-            'fieldsets' => (new DatatablesTransformer)->transformDatatables($fieldsetRows, count($fieldsetRows)),
+            'fieldsets' => [
+                'total' => count($fieldsetRows),
+                'rows' => $fieldsetRows,
+            ],
             'created_by' => ($field->adminuser) ? [
                 'id' => (int) $field->adminuser->id,
                 'name' => e($field->adminuser->display_name),
@@ -83,9 +86,16 @@ class CustomFieldsTransformer
             'updated_at' => Helper::getFormattedDateObject($field->updated_at, 'datetime'),
         ];
 
+        $deletable = $field->isDeletable();
         $array['available_actions'] = [
             'update' => Gate::allows('update', $field),
-            'delete' => Gate::allows('delete', $field) && $field->fieldset->count() === 0,
+            'delete' => $deletable,
+            // Consumed by checkboxEnabledFormatter on the fields index.
+            // Keyed per bulk-dropdown action so adding e.g. bulk-archive later
+            // just needs another key.
+            'bulk_selectable' => [
+                'delete' => $deletable,
+            ],
         ];
 
         return $array;
