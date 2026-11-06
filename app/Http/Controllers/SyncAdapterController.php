@@ -50,7 +50,13 @@ class SyncAdapterController extends Controller
         // then inactive (red). Within each bucket, preserve the
         // database ORDER BY label.
         $readinessRank = ['active' => 0, 'partial' => 1, 'inactive' => 2];
-        $adapters = $instanceQuery->get()
+        $instanceRows = $instanceQuery->get();
+        // Pre-warm SyncAdapterConfig's per-instance cache with the
+        // rows we just fetched, otherwise every per-tab config read
+        // runs its own SyncAdapterInstance::find and the page picks
+        // up one duplicate SELECT per adapter.
+        \App\Models\SyncAdapterConfig::warmInstanceCache($instanceRows);
+        $adapters = $instanceRows
             ->map(fn ($i) => \App\SyncAdapters\SyncAdapter::factory($i))
             ->filter()
             ->sortBy(fn ($a) => $readinessRank[$a->readinessStatus()] ?? 99)
@@ -295,28 +301,41 @@ class SyncAdapterController extends Controller
             }
 
             $abortedRedirect = null;
-            $this->captureSyncRunLog($instance->slug, 'pull', function () use ($adapter, $instance, $dryRun, $limit, &$seen, &$skipped, &$errors, &$abortedRedirect) {
+            // External ids this pull actually returned, used by the
+            // auto-archive reconcile pass at end-of-pull (issue #20015).
+            $seenExternalIds = [];
+            $this->captureSyncRunLog($instance->slug, 'pull', function () use ($adapter, $instance, $dryRun, $limit, &$seen, &$skipped, &$errors, &$abortedRedirect, &$seenExternalIds) {
                 try {
-                    Actionlog::withActionSource('sync:'.$instance->slug, function () use ($adapter, $instance, $dryRun, $limit, &$seen, &$skipped, &$errors) {
+                    Actionlog::withActionSource('sync:'.$instance->slug, function () use ($adapter, $instance, $dryRun, $limit, &$seen, &$skipped, &$errors, &$seenExternalIds) {
                         foreach ($adapter->pull() as $record) {
                             if ($limit !== null && ($seen + $skipped + $errors) >= $limit) {
                                 Log::channel('sync-adapters')->info($instance->slug.' sync: limit '.$limit.' reached, stopping early');
                                 break;
                             }
                             try {
+                                // Per-record "vendor says this is gone"
+                                // check (issue #20015). See the twin
+                                // path in PullInventory for the full
+                                // reasoning.
+                                $vendorReportsGone = $adapter->recordReportsRemoved($record);
+
                                 if ($dryRun) {
                                     // Mirror of the push dry-run shape: log the
                                     // normalized record and tally it as "seen"
                                     // without handing it to syncFromRecord.
                                     Log::channel('sync-adapters')->info(sprintf(
-                                        '%s sync [dry-run]: would upsert record source=%s id=%s hostname=%s serial=%s',
+                                        '%s sync [dry-run]: would upsert record source=%s id=%s hostname=%s serial=%s%s',
                                         $instance->slug,
                                         $record->sourceKey,
                                         $record->sourceId,
                                         $record->hostname ?? '(none)',
                                         $record->hardwareSerial ?? '(none)',
+                                        $vendorReportsGone ? ' (vendor reports removed)' : '',
                                     ));
                                     $seen++;
+                                    if (! $vendorReportsGone && $record->sourceId !== null && $record->sourceId !== '') {
+                                        $seenExternalIds[] = (string) $record->sourceId;
+                                    }
 
                                     continue;
                                 }
@@ -326,6 +345,10 @@ class SyncAdapterController extends Controller
                                     $skipped++;
                                 } else {
                                     $seen++;
+                                }
+
+                                if (! $vendorReportsGone && $record->sourceId !== null && $record->sourceId !== '') {
+                                    $seenExternalIds[] = (string) $record->sourceId;
                                 }
                             } catch (\Throwable $e) {
                                 $errors++;
@@ -355,11 +378,37 @@ class SyncAdapterController extends Controller
                 return $abortedRedirect;
             }
 
+            // Auto-archive reconcile (issue #20015). Same gating as the
+            // CLI path: successful non-empty non-dry-run pull. Failures
+            // here are logged but don't fail the overall pull.
+            $reconcileSummary = null;
+            if (! $dryRun && $seen > 0 && $adapter->archivesMissingLinks()) {
+                try {
+                    $recon = $adapter->reconcileMissingLinks($seenExternalIds);
+                    $reconcileSummary = trans('admin/settings/sync_adapters.archive_missing_sync_summary', [
+                        'reconciled' => $recon['reconciled'],
+                        'archived' => $recon['archived'],
+                        'flagged_for_review' => $recon['flagged_for_review'],
+                        'skipped_confirm' => $recon['skipped_confirm'],
+                        'skipped_checked_out' => $recon['skipped_checked_out'],
+                    ]);
+                    Log::channel('sync-adapters')->info($instance->slug.' sync: '.$reconcileSummary);
+                } catch (\Throwable $e) {
+                    Log::channel('sync-adapters')->warning(
+                        $instance->slug.' sync: auto-archive reconcile failed: '.SyncErrorFormatter::summary($e),
+                        SyncErrorFormatter::logContext($e),
+                    );
+                }
+            }
+
             $result = trans('admin/settings/sync_adapters.sync_complete', [
                 'count' => $seen,
                 'skipped' => $skipped,
                 'errors' => $errors,
             ]);
+            if ($reconcileSummary !== null) {
+                $result .= ' '.$reconcileSummary;
+            }
             $instance->last_synced_at = now();
             $instance->last_sync_result = $result;
             $instance->save();

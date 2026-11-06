@@ -31,10 +31,13 @@ class AssetExternalSource extends Model
         'os',
         'os_version',
         'last_seen',
+        'consecutive_missing_pulls',
+        'missing_archived_at',
     ];
 
     protected $casts = [
         'last_seen' => 'datetime',
+        'missing_archived_at' => 'datetime',
     ];
 
     public function asset(): BelongsTo

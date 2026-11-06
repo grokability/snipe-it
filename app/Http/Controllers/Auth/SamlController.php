@@ -146,6 +146,24 @@ class SamlController extends Controller
         $auth = $this->saml->getAuth();
         $retrieveParametersFromServer = $this->saml->getSetting('retrieveParametersFromServer', false);
         $saml_exception = false;
+
+        // Two possble SLS entry points carry different trust properties for
+        // the URL processSLO returns:
+        //   - SAMLRequest (IdP-initiated SLO): the toolkit built a
+        //     LogoutResponse, and returned `getSLOResponseUrl()` from
+        //     the SP settings as the redirect target. By design that
+        //     URL points away from Snipe-IT to the configured IdP and must
+        //     NOT pass through same-origin sanitization, otherwise
+        //     the Response is dropped and the LoginController's SLO
+        //     branch starts a brand-new LogoutRequest to the IdP
+        //     instead of completing the
+        //     one in progress.
+        //   - SAMLResponse (WE initiated SLO): the toolkit returns
+        //     the RelayState value, which is attacker-controllable
+        //     when a hostile IdP reflects it. That is the original
+        //     sanitization target of GHSA-579m-9gf4-28jp.
+        $isIdpInitiated = $request->has('SAMLRequest');
+
         try {
             $sloUrl = $auth->processSLO(true, null, $retrieveParametersFromServer, null, true);
         } catch (\Exception $e) {
@@ -161,18 +179,14 @@ class SamlController extends Controller
             return view('errors.403');
         }
 
-        // SLO RelayState sanitize. $sloUrl is whatever onelogin/saml2's
-        // processSLO returned as the RelayState from the IdP's
-        // LogoutResponse. In the legitimate flow Snipe-IT sets its own
-        // RelayState at SLO initiation, so the value here is same-origin.
-        // A hostile IdP (or an IdP that reflects an attacker-chosen
-        // RelayState) can inject an external URL that LoginController's
-        // SLO-response branch would later feed to redirect()->away().
-        // Sanitize at the write path, mirror of the ACS RelayState guard
-        // closed under GHSA-579m-9gf4-28jp. Null survives as null and the
-        // read side falls back to the usual logout destination.
-        $safeSloUrl = Helper::sameOriginUrl($sloUrl);
+        $safeSloUrl = $isIdpInitiated
+            ? Helper::sameHostAsConfiguredIdpUrl($sloUrl, $auth->getSLOResponseUrl())
+            : Helper::sameOriginUrl($sloUrl);
 
-        return redirect()->route('logout.get')->with(['saml_logout' => true, 'saml_slo_redirect_url' => $safeSloUrl]);
+        return redirect()->route('logout.get')->with([
+            'saml_logout' => true,
+            'saml_slo_redirect_url' => $safeSloUrl,
+            'saml_slo_idp_initiated' => $isIdpInitiated,
+        ]);
     }
 }

@@ -349,6 +349,65 @@ class AppleBusinessManagerAdapter extends SyncAdapter
         };
     }
 
+    /**
+     * Apple drops released devices from /v1/orgDevices so the base
+     * "missing from list" sees the normal case, but if AxM
+     * ever surfaces a released device in the list response
+     * (edge case or future API behavior), the releasedFromOrgDateTime
+     * extra would be populated, and we should treat it as missing for the reconciliation.
+     */
+    public function recordReportsRemoved(HostInventoryRecord $record): bool
+    {
+        $released = $record->extra['abm_released_from_org'] ?? null;
+
+        return $released !== null && $released !== '';
+    }
+
+    /**
+     * AxM-specific auto-archive confirmation. The list
+     * endpoint (/v1/orgDevices) leaves out released / sold / returned
+     * devices, so the base correctly sees them as "missing
+     * from this pull". The single-device endpoint still returns them
+     * with releasedFromOrgDateTime set, so we double-check here:
+     *   - 404 from the vendor: really gone, allow the archive.
+     *   - releasedFromOrgDateTime set: vendor confirms it left the
+     *     org, allow the archive.
+     *   - Otherwise: the record is still active and just dropped out
+     *     of pagination for a transient reason (403 from a scope
+     *     change, network error, etc). Hold off.
+     * Errors from the single-device call fall through to "hold off"
+     * so a transient 5xx cannot archive a fleet.
+     */
+    public function confirmRecordRemoved(string $externalId): bool
+    {
+        try {
+            $client = new AppleBusinessManagerClient(
+                clientId: $this->credential('client_id'),
+                keyId: $this->credential('key_id'),
+                privateKeyPem: $this->credential('private_key'),
+                mode: $this->resolvedMode(),
+            );
+
+            $device = $client->deviceById($externalId);
+            if ($device === null) {
+                return true;
+            }
+
+            $releasedAt = \Illuminate\Support\Arr::get($device, 'attributes.releasedFromOrgDateTime');
+
+            return is_string($releasedAt) && $releasedAt !== '';
+        } catch (\Throwable $e) {
+            Log::channel('sync-adapters')->warning(sprintf(
+                '%s: auto-archive confirmation for AxM device %s failed, holding off: %s',
+                $this->instance->slug,
+                $externalId,
+                $e->getMessage(),
+            ));
+
+            return false;
+        }
+    }
+
     public function pull(): iterable
     {
         $client = new AppleBusinessManagerClient(
