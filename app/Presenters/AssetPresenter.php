@@ -452,8 +452,12 @@ class AssetPresenter extends Presenter
             $layout[] = [
                 'field' => $field->db_column,
                 'scope' => 'col',
-                'searchable' => true,
-                'sortable' => true,
+                // Encrypted values would sort by ciphertext and only ever
+                // substring-match the ciphertext. Drop both so the header
+                // doesn't suggest an ordering / search the data can't
+                // deliver.
+                'searchable' => ($field->field_encrypted == '1') ? false : true,
+                'sortable' => ($field->field_encrypted == '1') ? false : true,
                 'switchable' => true,
                 'title' => e($field->name),
                 'formatter' => 'customFieldsFormatter',

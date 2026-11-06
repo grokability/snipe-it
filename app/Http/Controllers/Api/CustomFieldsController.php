@@ -20,12 +20,108 @@ class CustomFieldsController extends Controller
      *
      * @since [v3.0]
      */
-    public function index(): array
+    public function index(Request $request): array
     {
         $this->authorize('index', CustomField::class);
-        $fields = CustomField::get();
 
-        return (new CustomFieldsTransformer)->transformCustomFields($fields, $fields->count());
+        $allowed_columns = [
+            'id',
+            'name',
+            'help_text',
+            'db_column',
+            'format',
+            'element',
+            'field_encrypted',
+            'show_in_listview',
+            'display_in_user_view',
+            'show_in_email',
+            'show_in_requestable_list',
+            'is_unique',
+            'display_checkin',
+            'display_checkout',
+            'display_audit',
+            'created_at',
+            'updated_at',
+        ];
+
+        $fields = CustomField::with('fieldset', 'adminuser');
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $fields->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', '%'.$search.'%')
+                    ->orWhere('help_text', 'LIKE', '%'.$search.'%')
+                    ->orWhere('db_column', 'LIKE', '%'.$search.'%')
+                    ->orWhere('format', 'LIKE', '%'.$search.'%')
+                    ->orWhere('element', 'LIKE', '%'.$search.'%');
+            });
+        }
+
+        // Advanced-search filter[] params. filterableFields() widgets
+        // put bool filters in the stash. Every searchable: true column
+        // auto-gets a text widget. Handle both here.
+        $filter = $request->input('filter', []);
+        if (is_string($filter)) {
+            $decoded = json_decode($filter, true);
+            $filter = is_array($decoded) ? $decoded : [];
+        }
+        $booleanFilterFields = [
+            'field_encrypted',
+            'show_in_listview',
+            'is_unique',
+            'display_checkin',
+            'display_checkout',
+            'display_audit',
+        ];
+        foreach ($booleanFilterFields as $boolField) {
+            if (array_key_exists($boolField, $filter) && $filter[$boolField] !== '' && $filter[$boolField] !== null) {
+                $values = is_array($filter[$boolField]) ? $filter[$boolField] : [$filter[$boolField]];
+                $fields->whereIn($boolField, $values);
+            }
+        }
+
+        // Text filters generated for every searchable: true column in
+        // the presenter. Map the column fields the admin UI emits
+        // (db_column_name, type) back to their actual DB column.
+        $textFilterMap = [
+            'name' => 'name',
+            'help_text' => 'help_text',
+            'db_column_name' => 'db_column',
+            'format' => 'format',
+            'type' => 'element',
+        ];
+        foreach ($textFilterMap as $widgetField => $dbColumn) {
+            if (! array_key_exists($widgetField, $filter)) {
+                continue;
+            }
+            $value = $filter[$widgetField];
+            if ($value === '' || $value === null) {
+                continue;
+            }
+            $values = is_array($value) ? $value : [$value];
+            $fields->where(function ($q) use ($values, $dbColumn) {
+                foreach ($values as $v) {
+                    $q->orWhere($dbColumn, 'LIKE', '%'.$v.'%');
+                }
+            });
+        }
+
+        if (! empty($filter['created_by'])) {
+            $userIds = is_array($filter['created_by']) ? $filter['created_by'] : [$filter['created_by']];
+            $fields->whereIn('created_by', $userIds);
+        }
+
+        $total = $fields->count();
+        $offset = ($request->input('offset') > $total) ? $total : app('api_offset_value');
+        $limit = app('api_limit_value');
+
+        $order = $request->input('order') === 'asc' ? 'asc' : 'desc';
+        $sort = in_array($request->input('sort'), $allowed_columns) ? $request->input('sort') : 'name';
+        $fields->orderBy($sort, $order);
+
+        $fields = $fields->skip($offset)->take($limit)->get();
+
+        return (new CustomFieldsTransformer)->transformCustomFields($fields, $total);
     }
 
     /**

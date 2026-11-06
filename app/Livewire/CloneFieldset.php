@@ -12,6 +12,15 @@ class CloneFieldset extends Component
 {
     public bool $iconOnly = false;
 
+    /**
+     * When true, the component renders only its teleported modal, no
+     * inline trigger link. Used by the custom fields index, where the
+     * clone button lives in the bs-table AJAX actions column and opens
+     * the matching modal by data-target rather than via an inline
+     * trigger.
+     */
+    public bool $triggerless = false;
+
     #[Locked]
     public int $id;
 

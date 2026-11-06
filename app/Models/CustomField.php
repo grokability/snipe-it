@@ -458,6 +458,55 @@ class CustomField extends Model
         return $this->belongsToMany(CustomFieldset::class);
     }
 
+    /**
+     * Advanced-search widget definitions for the custom fields index.
+     * Consumed by the shared x-table.advanced-search component.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'field_encrypted',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.encrypted'),
+            ],
+            [
+                'field' => 'show_in_listview',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.show_in_listview_short'),
+            ],
+            [
+                'field' => 'is_unique',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.unique'),
+            ],
+            [
+                'field' => 'display_checkin',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.display_checkin'),
+            ],
+            [
+                'field' => 'display_checkout',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.display_checkout'),
+            ],
+            [
+                'field' => 'display_audit',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.display_audit'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+        ];
+    }
+
     public function displayFieldInCheckinForm()
     {
         if ($this->display_checkin == '1') {
@@ -514,6 +563,11 @@ class CustomField extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function adminuser()
+    {
+        return $this->belongsTo(User::class, 'created_by')->withTrashed();
     }
 
     /**

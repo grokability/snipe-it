@@ -4284,10 +4284,11 @@
     }
 
     // Custom fieldsets need a tweaked actions formatter so the "clone"
-    // button opens a pre-rendered livewire modal (data-target) instead
-    // of navigating to a /clone URL (which does not exist for fieldsets).
+    // button opens the pre-rendered livewire modal matching this row
+    // (data-target="#cloneFieldsetModal{row.id}"), rather than
+    // navigating to a /clone URL (which does not exist for fieldsets).
     // Pass clone=false to the base so the generic URL-based clone
-    // button is skipped, then inject a modal-targeted one in its
+    // button is skipped, then inject the modal-targeted one in its
     // place. Edit + delete fall through to the generic behavior.
     (function () {
         var baseFieldsetsActions = genericActionsFormatter('customFieldsets');

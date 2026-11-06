@@ -5,6 +5,7 @@ namespace App\Http\Transformers;
 use App\Helpers\Helper;
 use App\Models\CustomField;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Gate;
 
 class CustomFieldsTransformer
 {
@@ -38,10 +39,26 @@ class CustomFieldsTransformer
 
     public function transformCustomField(CustomField $field)
     {
+        $fieldsetRows = [];
+        foreach ($field->fieldset as $fs) {
+            $fieldsetRows[] = [
+                'id' => (int) $fs->id,
+                'name' => e($fs->name),
+            ];
+        }
+
+        $expectedSlug = $field->convertUnicodeDbSlug();
         $array = [
             'id' => $field->id,
             'name' => e($field->name),
-            'db_column_name' => e($field->db_column_name()),
+            'help_text' => e($field->help_text),
+            'db_column_name' => e($expectedSlug),
+            'db_column_warning' => $expectedSlug !== $field->db_column
+                ? trans('admin/custom_fields/general.db_convert_warning', [
+                    'db_column' => e($field->db_column),
+                    'expected' => e($expectedSlug),
+                ])
+                : null,
             'format' => e($field->format),
             'field_values' => ($field->field_values) ? e($field->field_values) : null,
             'field_encrypted' => ($field->field_encrypted == '1') ? true : false,
@@ -51,11 +68,24 @@ class CustomFieldsTransformer
             'display_in_user_view' => ($field->display_in_user_view == '1') ? true : false,
             'auto_add_to_fieldsets' => ($field->auto_add_to_fieldsets == '1') ? true : false,
             'show_in_listview' => ($field->show_in_listview == '1') ? true : false,
+            'show_in_email' => ($field->show_in_email == '1') ? true : false,
+            'show_in_requestable_list' => ($field->show_in_requestable_list == '1') ? true : false,
+            'is_unique' => ($field->is_unique == '1') ? true : false,
             'display_checkin' => ($field->display_checkin == '1') ? true : false,
             'display_checkout' => ($field->display_checkout == '1') ? true : false,
             'display_audit' => ($field->display_audit == '1') ? true : false,
+            'fieldsets' => (new DatatablesTransformer)->transformDatatables($fieldsetRows, count($fieldsetRows)),
+            'created_by' => ($field->adminuser) ? [
+                'id' => (int) $field->adminuser->id,
+                'name' => e($field->adminuser->display_name),
+            ] : null,
             'created_at' => Helper::getFormattedDateObject($field->created_at, 'datetime'),
             'updated_at' => Helper::getFormattedDateObject($field->updated_at, 'datetime'),
+        ];
+
+        $array['available_actions'] = [
+            'update' => Gate::allows('update', $field),
+            'delete' => Gate::allows('delete', $field) && $field->fieldset->count() === 0,
         ];
 
         return $array;

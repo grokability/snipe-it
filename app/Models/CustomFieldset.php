@@ -80,6 +80,33 @@ class CustomFieldset extends SnipeModel
     }
 
     /**
+     * Advanced-search widget definitions for the fieldsets index.
+     * The models filter is the real win here: pick one or more asset
+     * models and get every fieldset assigned to any of them.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'models',
+                'type' => 'fk',
+                'column' => 'models',
+                'endpoint' => 'models',
+                'label' => trans('general.asset_models'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+        ];
+    }
+
+    /**
      * Establishes the fieldset -> admin user relationship
      *
      * @author [Brady Wetherington] [<uberbrady@gmail.com>]

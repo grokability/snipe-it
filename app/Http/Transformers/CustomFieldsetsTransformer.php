@@ -5,6 +5,7 @@ namespace App\Http\Transformers;
 use App\Helpers\Helper;
 use App\Models\CustomFieldset;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Gate;
 
 class CustomFieldsetsTransformer
 {
@@ -20,24 +21,40 @@ class CustomFieldsetsTransformer
 
     public function transformCustomFieldset(CustomFieldset $fieldset)
     {
-        $fields = $fieldset->fields;
-        $models = $fieldset->models;
         $modelsArray = [];
-
-        foreach ($models as $model) {
+        $modelNames = [];
+        foreach ($fieldset->models as $model) {
+            $label = $model->name.($model->model_number ? ' ('.$model->model_number.')' : '');
             $modelsArray[] = [
                 'id' => $model->id,
-                'name' => e($model->name),
+                'name' => e($label),
             ];
+            $modelNames[] = e($label);
         }
+
+        $fieldsCount = (int) ($fieldset->fields_count ?? $fieldset->fields->count());
+        $modelsCount = (int) ($fieldset->models_count ?? $fieldset->models->count());
 
         $array = [
             'id' => (int) $fieldset->id,
             'name' => e($fieldset->name),
-            'fields' => (new CustomFieldsTransformer)->transformCustomFields($fields, $fieldset->fields_count),
-            'models' => (new DatatablesTransformer)->transformDatatables($modelsArray, $fieldset->models_count),
+            'fields_count' => $fieldsCount,
+            'models_count' => $modelsCount,
+            'models_list' => implode(', ', $modelNames),
+            'fields' => (new CustomFieldsTransformer)->transformCustomFields($fieldset->fields, $fieldsCount),
+            'models' => (new DatatablesTransformer)->transformDatatables($modelsArray, $modelsCount),
+            'created_by' => ($fieldset->adminuser) ? [
+                'id' => (int) $fieldset->adminuser->id,
+                'name' => e($fieldset->adminuser->display_name),
+            ] : null,
             'created_at' => Helper::getFormattedDateObject($fieldset->created_at, 'datetime'),
             'updated_at' => Helper::getFormattedDateObject($fieldset->updated_at, 'datetime'),
+        ];
+
+        $array['available_actions'] = [
+            'update' => Gate::allows('update', $fieldset),
+            'delete' => Gate::allows('delete', $fieldset) && $modelsCount === 0,
+            'clone' => Gate::allows('clone', $fieldset),
         ];
 
         return $array;
