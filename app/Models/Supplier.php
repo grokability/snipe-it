@@ -129,6 +129,20 @@ class Supplier extends SnipeModel implements Importable
     }
 
     /**
+     * Whether the sidebar info-panel disclosure for this supplier has
+     * anything to reveal. Gates the "+" button so rows with only a name
+     * don't offer an empty expander.
+     */
+    public function hasInfoPanelDetails(): bool
+    {
+        return (bool) ($this->contact
+            || $this->phone
+            || $this->email
+            || $this->url
+            || trim($this->present()->displayAddress()));
+    }
+
+    /**
      * On delete (soft or force), null out the `default_supplier_id`
      * pointers on any accessory / consumable / component that used this
      * supplier as its "typical supplier" template. Historical Orders

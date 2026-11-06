@@ -151,6 +151,21 @@ class Manufacturer extends SnipeModel implements Importable
             && ($this->deleted_at == '');
     }
 
+    /**
+     * Whether the sidebar info-panel disclosure for this manufacturer
+     * has anything to reveal. Gates the "+" button so rows with only a
+     * name don't offer an empty expander.
+     */
+    public function hasInfoPanelDetails(): bool
+    {
+        return (bool) ($this->support_phone
+            || $this->support_email
+            || $this->warranty_lookup_url
+            || $this->url
+            || $this->support_url
+            || trim($this->present()->displayAddress()));
+    }
+
     public function assets()
     {
         return $this->hasManyThrough(Asset::class, AssetModel::class, 'manufacturer_id', 'model_id');

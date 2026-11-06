@@ -12,10 +12,29 @@ class CloneFieldset extends Component
 {
     public bool $iconOnly = false;
 
+    /**
+     * When true, the component renders only its teleported modal, no
+     * inline trigger link. Used by the custom fields index, where the
+     * clone button lives in the bs-table AJAX actions column and opens
+     * the matching modal by data-target rather than via an inline
+     * trigger.
+     */
+    public bool $triggerless = false;
+
     #[Locked]
     public int $id;
 
     public string $name = '';
+
+    /**
+     * Source fieldset's name, passed in by the Blade iteration that
+     * mounts one component per cloneable fieldset. Avoids a per-
+     * instance CustomFieldset::find() just to render the modal title,
+     * which was an N+1 on the fields index when the page carries many
+     * cloneable fieldsets.
+     */
+    #[Locked]
+    public string $sourceName = '';
 
     public function render()
     {
@@ -28,7 +47,7 @@ class CloneFieldset extends Component
         return sprintf(
             '%s: %s',
             trans('admin/custom_fields/general.clone_fieldset'),
-            CustomFieldset::find($this->id)?->name
+            $this->sourceName !== '' ? $this->sourceName : (CustomFieldset::find($this->id)?->name ?? '')
         );
     }
 

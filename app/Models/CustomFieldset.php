@@ -79,6 +79,44 @@ class CustomFieldset extends SnipeModel
         return $this->hasMany(AssetModel::class, 'fieldset_id');
     }
 
+    public function isDeletable(): bool
+    {
+        return Gate::allows('delete', $this)
+            && (($this->models_count ?? $this->models()->count()) === 0);
+    }
+
+    /**
+     * Advanced-search widget definitions for the fieldsets index.
+     * The models filter is the real win here: pick one or more asset
+     * models and get every fieldset assigned to any of them.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'models',
+                'type' => 'fk',
+                'column' => 'models',
+                'endpoint' => 'models',
+                'label' => trans('general.asset_models'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+        ];
+    }
+
     /**
      * Establishes the fieldset -> admin user relationship
      *

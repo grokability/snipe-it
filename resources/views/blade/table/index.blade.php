@@ -81,3 +81,19 @@
     }'>
 </table>
 
+{{-- Nukes the localStorage key dragtable persists under
+     and reloads, so bs-table rebuilds from the presenter's declared
+     order in case someone mangles their table so badly they can't untangle it --}}
+<p class="text-right small hidden-print pull-right">
+    <a
+        href="#"
+        class="text-muted hidden-print"
+        data-tooltip="true"
+        title="{{ trans('table.reset_column_order_tooltip') }}"
+        onclick="event.preventDefault(); try { localStorage.removeItem('{{ $name }}ListingTable.bs.table.reorderColumns'); } catch (e) {} window.location.reload();"
+    >
+        <x-icon type="sync" class="fa-fw"/>
+        {{ trans('table.reset_column_order') }}
+    </a>
+</p>
+

@@ -8,6 +8,7 @@ use EasySlugger\Utf8Slugger;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Watson\Validating\ValidatingTrait;
@@ -458,6 +459,94 @@ class CustomField extends Model
         return $this->belongsToMany(CustomFieldset::class);
     }
 
+    public function isDeletable(): bool
+    {
+        return Gate::allows('delete', $this)
+            && (($this->fieldset_count ?? $this->fieldset()->count()) === 0);
+    }
+
+    /**
+     * Advanced-search widget definitions for the custom fields index.
+     * Consumed by the shared x-table.advanced-search component.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'field_encrypted',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.encrypted'),
+            ],
+            [
+                'field' => 'show_in_listview',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.show_in_listview_short'),
+            ],
+            [
+                'field' => 'is_unique',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.unique'),
+            ],
+            [
+                'field' => 'display_checkin',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.display_checkin'),
+            ],
+            [
+                'field' => 'display_checkout',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.display_checkout'),
+            ],
+            [
+                'field' => 'display_audit',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.display_audit'),
+            ],
+            [
+                'field' => 'show_in_email',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.show_in_email_short'),
+            ],
+            [
+                'field' => 'show_in_requestable_list',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.show_in_requestable_list_short'),
+            ],
+            [
+                'field' => 'display_in_user_view',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.display_in_user_view_table'),
+            ],
+            [
+                'field' => 'auto_add_to_fieldsets',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.auto_add_to_fieldsets'),
+            ],
+            [
+                'field' => 'element',
+                'type' => 'enum',
+                'label' => trans('admin/custom_fields/general.field_element'),
+                'options' => collect(self::ELEMENT_KEYS)
+                    ->map(fn($k) => ['value' => $k, 'label' => trans('admin/custom_fields/general.types.' . $k)])
+                    ->toArray(),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+        ];
+    }
+
     public function displayFieldInCheckinForm()
     {
         if ($this->display_checkin == '1') {
@@ -514,6 +603,11 @@ class CustomField extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function adminuser()
+    {
+        return $this->belongsTo(User::class, 'created_by')->withTrashed();
     }
 
     /**

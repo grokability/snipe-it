@@ -31,10 +31,13 @@ class CustomFieldsController extends Controller
     {
         $this->authorize('view', CustomField::class);
 
-        $fieldsets = CustomFieldset::with('fields', 'models')->get();
-        $fields = CustomField::with('fieldset')->get();
+        // Pre-fetch every fieldset so the fieldsets tab can pre-render
+        // one teleported clone-fieldset livewire modal per row. The
+        // AJAX actions column matches the row id back to the matching
+        // #cloneFieldsetModal{id} via data-target.
+        $cloneable_fieldsets = CustomFieldset::select('id', 'name')->get();
 
-        return view('custom_fields.index')->with('custom_fieldsets', $fieldsets)->with('custom_fields', $fields);
+        return view('custom_fields.index', compact('cloneable_fieldsets'));
     }
 
     /**

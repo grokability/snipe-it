@@ -1453,6 +1453,7 @@ namespace App\Models{
  * @property int $display_checkin
  * @property int $display_checkout
  * @property int $display_audit
+ * @property-read \App\Models\User|null $adminuser
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AssetModel> $defaultValues
  * @property-read int|null $default_values_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CustomFieldset> $fieldset

@@ -212,11 +212,17 @@ class AssetsController extends Controller
                 }
 
                 if ($request->has('use_cloned_image')) {
-                    $cloned_model_img = Asset::select('image')->find($request->input('clone_image_from_id'));
-                    if ($cloned_model_img) {
-                        $new_image_name = 'clone-'.date('U').'-'.$cloned_model_img->image;
-                        $new_image = 'assets/'.$new_image_name;
-                        Storage::disk('public')->copy('assets/'.$cloned_model_img->image, $new_image);
+                    // Authorize the source first
+                    $cloned = Asset::findOrFail($request->input('clone_image_from_id'));
+                    $this->authorize('clone', $cloned);
+
+                    $source_image = $cloned->image;
+                    if ($source_image) {
+                        $new_image_name = 'clone-' . date('U') . '-' . $source_image;
+                        Storage::disk('public')->copy(
+                            FileStorage::Assets->publicPath() . $source_image,
+                            FileStorage::Assets->publicPath() . $new_image_name,
+                        );
                         $asset->image = $new_image_name;
                     }
 
