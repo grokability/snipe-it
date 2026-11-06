@@ -854,6 +854,8 @@
                                         'ldap_manager' => trans('admin/settings/general.ldap_manager'),
                                         'ldap_dept' => trans('admin/settings/general.ldap_dept'),
                                         'ldap_location' => trans('admin/settings/general.ldap_location'),
+                                        'ldap_company' => trans('admin/settings/general.ldap_company'),
+                                        'ldap_website' => trans('admin/settings/general.ldap_website'),
                                         'ldap_active_flag' => trans('admin/settings/general.ldap_active_flag'),
                                         'ldap_invert_active_flag' => trans('admin/settings/general.ldap_invert_active_flag'),
                                     ],
