@@ -1109,8 +1109,19 @@
 
         <script nonce="{{ csrf_token() }}">
 
-            // Handle the first selected tabs regardless of permissions
-            if ($('li.snipetab').is(':first-of-type')) {
+            // Pick the active tab. URL hash wins so controllers can
+            // redirect()->withFragment('tab-name') and the user lands
+            // back on the tab they were working in. Fall back to the
+            // first tab on the page when no hash is present or the
+            // hash doesn't match a snipetab-pane.
+            var hashTarget = window.location.hash && $('.snipetab-pane' + window.location.hash).length
+                ? window.location.hash
+                : null;
+
+            if (hashTarget) {
+                $('li.snipetab a[href="' + hashTarget + '"]').closest('li').addClass('active');
+                $(hashTarget + '.snipetab-pane').addClass('in active');
+            } else if ($('li.snipetab').is(':first-of-type')) {
                 var hash = $('li.snipetab:first-of-type').children().attr('href');
                 $('li.snipetab:first-of-type').addClass('active');
                 $('div'+hash+'.snipetab-pane').addClass('in active');
