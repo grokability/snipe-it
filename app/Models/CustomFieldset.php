@@ -78,7 +78,7 @@ class CustomFieldset extends SnipeModel
     {
         return $this->hasMany(AssetModel::class, 'fieldset_id');
     }
-    
+
     public function isDeletable(): bool
     {
         return Gate::allows('delete', $this)
@@ -108,6 +108,11 @@ class CustomFieldset extends SnipeModel
                 'column' => 'created_by',
                 'endpoint' => 'users',
                 'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
             ],
         ];
     }

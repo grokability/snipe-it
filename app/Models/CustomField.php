@@ -458,7 +458,7 @@ class CustomField extends Model
     {
         return $this->belongsToMany(CustomFieldset::class);
     }
-    
+
     public function isDeletable(): bool
     {
         return Gate::allows('delete', $this)
@@ -505,11 +505,36 @@ class CustomField extends Model
                 'label' => trans('admin/custom_fields/general.display_audit'),
             ],
             [
+                'field' => 'show_in_email',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.show_in_email_short'),
+            ],
+            [
+                'field' => 'show_in_requestable_list',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.show_in_requestable_list_short'),
+            ],
+            [
+                'field' => 'display_in_user_view',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.display_in_user_view_table'),
+            ],
+            [
+                'field' => 'auto_add_to_fieldsets',
+                'type' => 'boolean',
+                'label' => trans('admin/custom_fields/general.auto_add_to_fieldsets'),
+            ],
+            [
                 'field' => 'created_by',
                 'type' => 'fk',
                 'column' => 'created_by',
                 'endpoint' => 'users',
                 'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
             ],
         ];
     }

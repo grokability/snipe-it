@@ -74,6 +74,7 @@
                 </x-tabs.pane>
             </x-slot:tabpanes>
         </x-tabs>
+        <x-shiftclick />
     </x-container>
 @stop
 

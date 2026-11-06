@@ -53,7 +53,7 @@
                     </div>
                 @elseif ($type === 'enum' || $type === 'set')
                     <div class="form-group row">
-                        <label class="col-sm-4 control-label" for="{{ $widget['field'] }}_adv">{{ $widget['label'] }}</label>
+                        <label class="col-sm-4 control-label" for="{{ $tableId }}_{{ $widget['field'] }}_adv">{{ $widget['label'] }}</label>
                         <div class="col-sm-6">
                             {{-- Static select2-checkboxes with no data-endpoint. snipeit.js
                                  falls back to reading option tags from the DOM when the
@@ -62,9 +62,12 @@
                                  Rendering is identical for `enum` and `set` because the
                                  UI shape (multi-select from fixed options) is the same.
                                  Backend path differs: enum does whereIn on a single-value
-                                 column, set does per-value LIKE on a comma-joined column. --}}
+                                 column, set does per-value LIKE on a comma-joined column.
+                                 id is prefixed with tableId so one page can render
+                                 two modals that both carry a filter with the same
+                                 field name without colliding. --}}
                             <select
-                                id="{{ $widget['field'] }}_adv"
+                                id="{{ $tableId }}_{{ $widget['field'] }}_adv"
                                 name="{{ $widget['field'] }}_adv[]"
                                 class="js-select2-checkboxes"
                                 multiple
@@ -87,6 +90,7 @@
                         labelClass="col-sm-4"
                         inputClass="col-sm-6"
                         :includeNull="true"
+                        :idPrefix="$tableId"
                     />
                 @endif
             </div>
