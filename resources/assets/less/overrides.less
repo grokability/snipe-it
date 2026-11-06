@@ -1668,6 +1668,15 @@ Radio toggle styles for permission settings and check/uncheck all
   word-break: break-word;
 }
 
+// Set overflow info-panel rows on detail pages, so they don't
+// get cut off when the content is too long and get jammed in under
+// the neighboring well
+.list-group-item,
+dd {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 // Long wizard content (dozens of mapping rows) can push the modal past
 // the viewport. Bootstrap 3 doesn't scroll the modal-body by default, so
 // the footer buttons (Back / Next / Preview / Process) end up below the

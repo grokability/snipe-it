@@ -1897,6 +1897,11 @@ Radio toggle styles for permission settings and check/uncheck all
   overflow-wrap: anywhere;
   word-break: break-word;
 }
+.list-group-item,
+dd {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
 .modal-xl .modal-body {
   max-height: calc(100vh - 200px);
   overflow-y: auto;
