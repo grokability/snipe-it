@@ -711,16 +711,20 @@ class Helper
      *
      * @return array
      */
-    public static function statusTypeList()
+    public static function statusTypeList(?string $scope = null)
     {
-        $statuslabel_types =
-              ['' => trans('admin/hardware/form.select_statustype')]
-            + ['deployable' => trans('admin/hardware/general.deployable')]
-            + ['pending' => trans('admin/hardware/general.pending')]
-            + ['undeployable' => trans('admin/hardware/general.undeployable')]
-            + ['archived' => trans('admin/hardware/general.archived')];
+        $types = [
+            'deployable' => trans('admin/hardware/general.deployable'),
+            'pending' => trans('admin/hardware/general.pending'),
+            'undeployable' => trans('admin/hardware/general.undeployable'),
+            'archived' => trans('admin/hardware/general.archived'),
+        ];
+        
+        if ($scope === 'non_deployable') {
+            unset($types['deployable']);
+        }
 
-        return $statuslabel_types;
+        return ['' => trans('admin/hardware/form.select_statustype')] + $types;
     }
 
     /**

@@ -101,14 +101,14 @@ class MappingTargets
 
         return match ($type) {
             'native' => match ($id) {
-                'purchase_date', 'order_number' => trans('general.' . $id),
+                'purchase_date', 'order_number' => trans('general.'.$id),
                 'model_number' => trans('general.model_no'),
                 'eol_date' => trans('admin/hardware/form.eol_date'),
-                default => trans('admin/settings/sync_adapters.target_native_' . $id),
+                default => trans('admin/settings/sync_adapters.target_native_'.$id),
             },
             'external' => trans('admin/settings/sync_adapters.target_external_'.$id),
             'custom' => trans('admin/settings/sync_adapters.target_custom_prefix').': '
-                .(CustomField::find((int) $id)?->name ?? '?'),
+                .(CustomField::nameMap()->get((int) $id) ?? '?'),
             default => $target,
         };
     }
@@ -152,17 +152,17 @@ class MappingTargets
         // Admin-defined extras stay custom-only across every type
         // because arbitrary tenant-labeled data doesn't carry a
         // semantic that maps to native asset columns.
-        if (!$adminDefined) {
+        if (! $adminDefined) {
             if ($type === 'boolean') {
                 $options['native:byod'] = self::labelFor('native:byod');
             } else {
                 if ($type === 'date') {
                     foreach (['purchase_date', 'eol_date'] as $nativeColumn) {
-                        $options['native:' . $nativeColumn] = self::labelFor('native:' . $nativeColumn);
+                        $options['native:'.$nativeColumn] = self::labelFor('native:'.$nativeColumn);
                     }
                 }
                 foreach (['asset_tag', 'model', 'model_number', 'notes', 'order_number'] as $nativeColumn) {
-                    $options['native:' . $nativeColumn] = self::labelFor('native:' . $nativeColumn);
+                    $options['native:'.$nativeColumn] = self::labelFor('native:'.$nativeColumn);
                 }
             }
         }
@@ -193,18 +193,13 @@ class MappingTargets
      */
     private static function compatibleCustomFields(string $field): \Illuminate\Support\Collection
     {
-        $textLike = ['text', 'textarea', 'markdown-textarea'];
-        $dateLike = ['date_picker', 'datetime_picker'];
-
-        $accepted = match ($field) {
-            'last_seen' => $dateLike,
-            default => $textLike,
-        };
-
-        return CustomField::query()
-            ->whereIn('element', $accepted)
-            ->orderBy('name')
-            ->get();
+        // `last_seen` is the only normalized field that wants a date
+        // custom field. Everything else wants text, so reuse the two
+        // memoized per-request pools below instead of hitting the DB
+        // afresh per (field, adapter) pair.
+        return $field === 'last_seen'
+            ? self::dateLikeCustomFields()
+            : self::textLikeCustomFields();
     }
 
     /**
@@ -212,14 +207,20 @@ class MappingTargets
      * Extras are stringified before write so any text-like field can
      * hold whatever the vendor emits.
      *
+     * Memoized per-request via once(): every adapter tab-pane walks
+     * MappingTargets::options() for its mapping widgets AND
+     * optionsForExtra() for its extras, each of which hits this pool
+     * for every field. Without the cache that's dozens of identical
+     * queries per page load (see the debugbar dump).
+     *
      * @return \Illuminate\Support\Collection<int, CustomField>
      */
-    private static function textLikeCustomFields(): \Illuminate\Support\Collection
+    public static function textLikeCustomFields(): \Illuminate\Support\Collection
     {
-        return CustomField::query()
+        return once(fn () => CustomField::query()
             ->whereIn('element', ['text', 'textarea', 'markdown-textarea'])
             ->orderBy('name')
-            ->get();
+            ->get());
     }
 
     /**
@@ -228,12 +229,12 @@ class MappingTargets
      *
      * @return \Illuminate\Support\Collection<int, CustomField>
      */
-    private static function checkboxCustomFields(): \Illuminate\Support\Collection
+    public static function checkboxCustomFields(): \Illuminate\Support\Collection
     {
-        return CustomField::query()
+        return once(fn () => CustomField::query()
             ->where('element', 'checkbox')
             ->orderBy('name')
-            ->get();
+            ->get());
     }
 
     /**
@@ -243,11 +244,11 @@ class MappingTargets
      *
      * @return \Illuminate\Support\Collection<int, CustomField>
      */
-    private static function dateLikeCustomFields(): \Illuminate\Support\Collection
+    public static function dateLikeCustomFields(): \Illuminate\Support\Collection
     {
-        return CustomField::query()
+        return once(fn () => CustomField::query()
             ->whereIn('element', ['date_picker', 'datetime_picker'])
             ->orderBy('name')
-            ->get();
+            ->get());
     }
 }
