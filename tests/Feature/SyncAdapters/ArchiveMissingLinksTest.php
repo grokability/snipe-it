@@ -183,6 +183,8 @@ class ArchiveMissingLinksTest extends TestCase
         {
             public function confirmRecordRemoved(string $externalId): bool
             {
+                unset($externalId);
+
                 return false;
             }
         };

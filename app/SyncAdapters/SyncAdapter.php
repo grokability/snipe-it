@@ -595,14 +595,14 @@ abstract class SyncAdapter
             $slug.'_adopt_by_serial' => ['nullable', 'boolean'],
             $slug.'_create_snipeit_assets_on_pull' => ['nullable', 'boolean'],
             // Auto-archive opt-in
-            $slug . '_archive_missing_enabled' => ['nullable', 'boolean'],
-            $slug . '_archive_missing_threshold' => [
+            $slug.'_archive_missing_enabled' => ['nullable', 'boolean'],
+            $slug.'_archive_missing_threshold' => [
                 'nullable',
                 'integer',
                 'min:1',
                 "required_if:{$slug}_archive_missing_enabled,1",
             ],
-            $slug . '_archive_missing_status_id' => [
+            $slug.'_archive_missing_status_id' => [
                 'nullable',
                 'integer',
                 "required_if:{$slug}_archive_missing_enabled,1",
@@ -611,7 +611,7 @@ abstract class SyncAdapter
             // Optional second picker. Same non-deployable constraint
             // so admins can't accidentally pick Ready to Deploy as the
             // "under review" state for a checked-out asset.
-            $slug . '_archive_missing_review_status_id' => [
+            $slug.'_archive_missing_review_status_id' => [
                 'nullable',
                 'integer',
                 'exists:status_labels,id,deployable,0',
@@ -977,42 +977,45 @@ abstract class SyncAdapter
         SyncAdapterConfig::put(
             $this->instance->id,
             'archive_missing_enabled',
-            $request->boolean($slug . '_archive_missing_enabled') ? '1' : '0',
+            $request->boolean($slug.'_archive_missing_enabled') ? '1' : '0',
         );
 
-        $threshold = (int) $request->input($slug . '_archive_missing_threshold');
+        $threshold = (int) $request->input($slug.'_archive_missing_threshold');
         SyncAdapterConfig::put(
             $this->instance->id,
             'archive_missing_threshold',
             (string) ($threshold < 1 ? 3 : $threshold),
         );
 
-        $statusInput = $request->input($slug . '_archive_missing_status_id');
-        $statusId = ($statusInput === null || $statusInput === '') ? 0 : (int) $statusInput;
-        if ($statusId > 0) {
-            SyncAdapterConfig::put(
-                $this->instance->id,
-                'archive_missing_status_id',
-                (string) $statusId,
-            );
-        } else {
-            SyncAdapterConfig::forget($this->instance->id, 'archive_missing_status_id');
-        }
+        $statusInput = $request->input($slug.'_archive_missing_status_id');
+        $this->putOrForgetPositiveInt(
+            'archive_missing_status_id',
+            ($statusInput === null || $statusInput === '') ? 0 : (int) $statusInput,
+        );
 
         // Optional "flag for review" status for still-checked-out
         // assets (#20015 followup). Blank clears the config so a
         // later pull falls back to skip-and-warn.
-        $reviewInput = $request->input($slug . '_archive_missing_review_status_id');
-        $reviewId = ($reviewInput === null || $reviewInput === '') ? 0 : (int) $reviewInput;
-        if ($reviewId > 0) {
-            SyncAdapterConfig::put(
-                $this->instance->id,
-                'archive_missing_review_status_id',
-                (string) $reviewId,
-            );
-        } else {
-            SyncAdapterConfig::forget($this->instance->id, 'archive_missing_review_status_id');
+        $reviewInput = $request->input($slug.'_archive_missing_review_status_id');
+        $this->putOrForgetPositiveInt(
+            'archive_missing_review_status_id',
+            ($reviewInput === null || $reviewInput === '') ? 0 : (int) $reviewInput,
+        );
+    }
+
+    /**
+     * Shared pattern used by persistOperationalSettings: a positive int
+     * is stored under $key, anything else forgets the key entirely.
+     */
+    private function putOrForgetPositiveInt(string $key, int $value): void
+    {
+        if ($value > 0) {
+            SyncAdapterConfig::put($this->instance->id, $key, (string) $value);
+
+            return;
         }
+
+        SyncAdapterConfig::forget($this->instance->id, $key);
     }
 
     /**
@@ -1439,18 +1442,29 @@ abstract class SyncAdapter
     }
 
     /**
-     * Optional per-adapter confirmation hook.
+     * Optional per-adapter confirmation hook. Fires per link when the
+     * missing-pull counter reaches the threshold. Subclasses override
+     * to re-verify absence against a per-record vendor endpoint (AxM
+     * does this via the single-device endpoint). Default trusts the
+     * pull-side signal and returns true unconditionally.
      */
     public function confirmRecordRemoved(string $externalId): bool
     {
+        unset($externalId);
+
         return true;
     }
 
     /**
-     * Per-record "vendor says this is gone" hook.
+     * Per-record "vendor says this is gone" hook. Kandji / AxM override
+     * to flag records with is_missing / releasedFromOrgDateTime. Default
+     * returns false so adapters without a per-record missing flag keep
+     * today's behavior.
      */
     public function recordReportsRemoved(HostInventoryRecord $record): bool
     {
+        unset($record);
+
         return false;
     }
 
@@ -1483,133 +1497,168 @@ abstract class SyncAdapter
             'skipped_checked_out' => 0,
         ];
 
-        if (!$this->archivesMissingLinks()) {
+        if (! $this->archivesMissingLinks()) {
             return $result;
         }
 
-        $statusId = $this->archiveMissingStatusId();
+        $statuses = $this->resolveArchiveStatuses();
+        if ($statuses === null) {
+            return $result;
+        }
+        [$status, $reviewStatus] = $statuses;
+
         $threshold = $this->archiveMissingThreshold();
-        if ($statusId === null) {
-            return $result;
-        }
-
-        // Pre-fetch the target status labels so we fail fast when the
-        // admin picked an id that no longer exists (e.g. status
-        // deleted after setup) and don't eat the lookup inside the
-        // per-row loop.
-        $status = Statuslabel::find($statusId);
-        if ($status === null) {
-            Log::channel('sync-adapters')->warning(sprintf(
-                '%s: auto-archive configured with status id %d which no longer exists, skipping reconcile',
-                $this->instance->slug,
-                $statusId,
-            ));
-
-            return $result;
-        }
-
-        // Optional review-status for checked-out assets. Null (admin
-        // left it blank) means we fall back to skip-and-warn below.
-        // An id that no longer resolves is a soft failure: log and
-        // fall back to skip-and-warn for this run rather than aborting
-        // the whole reconcile.
-        $reviewStatus = null;
-        $reviewStatusId = $this->archiveMissingReviewStatusId();
-        if ($reviewStatusId !== null) {
-            $reviewStatus = Statuslabel::find($reviewStatusId);
-            if ($reviewStatus === null) {
-                Log::channel('sync-adapters')->warning(sprintf(
-                    '%s: auto-archive review-status id %d no longer exists, checked-out assets will be skipped this run',
-                    $this->instance->slug,
-                    $reviewStatusId,
-                ));
-            }
-        }
-
         $seen = array_fill_keys(array_map('strval', $seenExternalIds), true);
 
         AssetExternalSource::query()
             ->where('source', $this->instance->slug)
             ->chunkById(500, function ($links) use (&$result, $seen, $threshold, $status, $reviewStatus) {
                 foreach ($links as $link) {
-                    $result['reconciled']++;
-
-                    if (isset($seen[(string) $link->external_id])) {
-                        // Record returned this pull. Clear any
-                        // in-flight missing streak so a future
-                        // disappearance starts fresh.
-                        if ($link->consecutive_missing_pulls !== 0 || $link->missing_archived_at !== null) {
-                            $link->consecutive_missing_pulls = 0;
-                            $link->missing_archived_at = null;
-                            $link->save();
-                        }
-
-                        continue;
-                    }
-
-                    $link->consecutive_missing_pulls = ((int) $link->consecutive_missing_pulls) + 1;
-
-                    // Already archived in this miss streak.
-                    if ($link->missing_archived_at !== null) {
-                        $link->save();
-
-                        continue;
-                    }
-
-                    if ($link->consecutive_missing_pulls < $threshold) {
-                        $link->save();
-
-                        continue;
-                    }
-
-                    if (!$this->confirmRecordRemoved((string) $link->external_id)) {
-                        $result['skipped_confirm']++;
-                        $link->save();
-
-                        continue;
-                    }
-
-                    // Checked-out branch. assigned_to is polymorphic so
-                    // this fires for user, asset, and location checkouts
-                    // alike. If the admin configured a review-status
-                    // label, flip to that and keep the assignment
-                    // intact so the admin sees `target=X,
-                    // status=Pending Review` in reports. Otherwise
-                    // fall back to skip-and-warn and let the admin
-                    // manually check in before the next pull archives.
-                    $asset = $link->asset;
-                    if ($asset !== null && $asset->assigned_to !== null) {
-                        if ($reviewStatus !== null) {
-                            $this->applyArchiveStatus($link, $reviewStatus);
-                            $link->missing_archived_at = now();
-                            $link->save();
-                            $result['flagged_for_review']++;
-
-                            continue;
-                        }
-
-                        $result['skipped_checked_out']++;
-                        $link->save();
-                        Log::channel('sync-adapters')->warning(sprintf(
-                            '%s: auto-archive skipped for asset %d (external id %s): still checked out to %s id %s. Check it in manually, next pull will archive.',
-                            $this->instance->slug,
-                            $asset->id,
-                            $link->external_id,
-                            (string) $asset->assigned_type,
-                            (string) $asset->assigned_to,
-                        ));
-
-                        continue;
-                    }
-
-                    $this->applyArchiveStatus($link, $status);
-                    $link->missing_archived_at = now();
-                    $link->save();
-                    $result['archived']++;
+                    $this->reconcileLink($link, $seen, $threshold, $status, $reviewStatus, $result);
                 }
             });
 
         return $result;
+    }
+
+    /**
+     * Pre-resolve the target archive status label (and optional
+     * review-status for still-checked-out assets) so the per-row loop
+     * in reconcileMissingLinks doesn't eat DB lookups per link.
+     * Returns null when the main status is unresolvable (config not
+     * set or id points at a deleted row), which short-circuits the
+     * whole reconcile.
+     *
+     * @return array{0: Statuslabel, 1: ?Statuslabel}|null
+     */
+    private function resolveArchiveStatuses(): ?array
+    {
+        $statusId = $this->archiveMissingStatusId();
+        if ($statusId === null) {
+            return null;
+        }
+
+        $status = Statuslabel::find($statusId);
+        if ($status === null) {
+            Log::channel('sync-adapters')->warning(
+                $this->instance->slug.': auto-archive configured with status id '.$statusId.' which no longer exists, skipping reconcile',
+            );
+
+            return null;
+        }
+
+        $reviewStatus = null;
+        $reviewStatusId = $this->archiveMissingReviewStatusId();
+        if ($reviewStatusId !== null) {
+            $reviewStatus = Statuslabel::find($reviewStatusId);
+            if ($reviewStatus === null) {
+                Log::channel('sync-adapters')->warning(
+                    $this->instance->slug.': auto-archive review-status id '.$reviewStatusId.' no longer exists, checked-out assets will be skipped this run',
+                );
+            }
+        }
+
+        return [$status, $reviewStatus];
+    }
+
+    /**
+     * Per-row branch of reconcileMissingLinks. Split out of the chunk
+     * callback to keep that method's cyclomatic complexity sane.
+     *
+     * @param  array<string, true>  $seen
+     * @param  array{reconciled: int, archived: int, flagged_for_review: int, skipped_confirm: int, skipped_checked_out: int}  $result
+     */
+    private function reconcileLink(
+        AssetExternalSource $link,
+        array $seen,
+        int $threshold,
+        Statuslabel $status,
+        ?Statuslabel $reviewStatus,
+        array &$result,
+    ): void {
+        $result['reconciled']++;
+
+        if (isset($seen[(string) $link->external_id])) {
+            // Record returned this pull. Clear any in-flight missing
+            // streak so a future disappearance starts fresh.
+            if ($link->consecutive_missing_pulls !== 0 || $link->missing_archived_at !== null) {
+                $link->consecutive_missing_pulls = 0;
+                $link->missing_archived_at = null;
+                $link->save();
+            }
+
+            return;
+        }
+
+        $link->consecutive_missing_pulls = ((int) $link->consecutive_missing_pulls) + 1;
+
+        if ($link->missing_archived_at !== null) {
+            // Already archived earlier in this miss streak.
+            $link->save();
+
+            return;
+        }
+
+        if ($link->consecutive_missing_pulls < $threshold) {
+            $link->save();
+
+            return;
+        }
+
+        if (! $this->confirmRecordRemoved((string) $link->external_id)) {
+            $result['skipped_confirm']++;
+            $link->save();
+
+            return;
+        }
+
+        $asset = $link->asset;
+        if ($asset !== null && $asset->assigned_to !== null) {
+            $this->handleCheckedOutLink($link, $asset, $reviewStatus, $result);
+
+            return;
+        }
+
+        $this->applyArchiveStatus($link, $status);
+        $link->missing_archived_at = now();
+        $link->save();
+        $result['archived']++;
+    }
+
+    /**
+     * Still-checked-out branch of reconcileLink. assigned_to is
+     * polymorphic so this fires for user, asset, and location
+     * checkouts alike. With a configured review-status label, flip to
+     * that and keep the assignment intact so the admin sees
+     * target=X, status=Pending Review in reports. Without one, fall
+     * back to skip-and-warn and let the admin manually check in
+     * before the next pull archives.
+     *
+     * @param  array{reconciled: int, archived: int, flagged_for_review: int, skipped_confirm: int, skipped_checked_out: int}  $result
+     */
+    private function handleCheckedOutLink(
+        AssetExternalSource $link,
+        Asset $asset,
+        ?Statuslabel $reviewStatus,
+        array &$result,
+    ): void {
+        if ($reviewStatus !== null) {
+            $this->applyArchiveStatus($link, $reviewStatus);
+            $link->missing_archived_at = now();
+            $link->save();
+            $result['flagged_for_review']++;
+
+            return;
+        }
+
+        $result['skipped_checked_out']++;
+        $link->save();
+        Log::channel('sync-adapters')->warning(
+            $this->instance->slug.': auto-archive skipped for asset '.$asset->id
+            .' (external id '.$link->external_id.'): still checked out to '
+            .(string) $asset->assigned_type.' id '.(string) $asset->assigned_to
+            .'. Check it in manually, next pull will archive.',
+        );
     }
 
     /**
