@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\CheckoutRequests\FulfillCheckoutRequestAction;
+use App\Enums\FileStorage;
 use App\Helpers\Helper;
 use App\Http\Requests\ImageUploadRequest;
 use App\Http\Requests\StoreAssetModelRequest;
@@ -96,11 +97,17 @@ class AssetModelsController extends Controller
         }
 
         if ($request->has('use_cloned_image')) {
-            $cloned_model_img = AssetModel::select('image')->find($request->input('clone_image_from_id'));
-            if ($cloned_model_img) {
-                $new_image_name = 'clone-'.date('U').'-'.$cloned_model_img->image;
-                $new_image = 'models/'.$new_image_name;
-                Storage::disk('public')->copy('models/'.$cloned_model_img->image, $new_image);
+            // Authorize the source first
+            $cloned = AssetModel::findOrFail($request->input('clone_image_from_id'));
+            $this->authorize('clone', $cloned);
+
+            $source_image = $cloned->image;
+            if ($source_image) {
+                $new_image_name = 'clone-' . date('U') . '-' . $source_image;
+                Storage::disk('public')->copy(
+                    FileStorage::Models->publicPath() . $source_image,
+                    FileStorage::Models->publicPath() . $new_image_name,
+                );
                 $model->image = $new_image_name;
             }
 

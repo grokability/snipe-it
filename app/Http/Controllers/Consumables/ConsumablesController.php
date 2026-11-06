@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Consumables;
 
+use App\Enums\FileStorage;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdjustQuantityRequest;
@@ -105,11 +106,17 @@ class ConsumablesController extends Controller
         $consumable->default_supplier_id = $request->input('default_supplier_id', $request->input('supplier_id'));
 
         if ($request->has('use_cloned_image')) {
-            $cloned_model_img = Consumable::select('image')->find($request->input('clone_image_from_id'));
-            if ($cloned_model_img) {
-                $new_image_name = 'clone-'.date('U').'-'.$cloned_model_img->image;
-                $new_image = 'consumables/'.$new_image_name;
-                Storage::disk('public')->copy('consumables/'.$cloned_model_img->image, $new_image);
+            // Authorize the source first
+            $cloned = Consumable::findOrFail($request->input('clone_image_from_id'));
+            $this->authorize('clone', $cloned);
+
+            $source_image = $cloned->image;
+            if ($source_image) {
+                $new_image_name = 'clone-' . date('U') . '-' . $source_image;
+                Storage::disk('public')->copy(
+                    FileStorage::Consumables->publicPath() . $source_image,
+                    FileStorage::Consumables->publicPath() . $new_image_name,
+                );
                 $consumable->image = $new_image_name;
             }
 
