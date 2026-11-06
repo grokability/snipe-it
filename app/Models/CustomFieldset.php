@@ -79,6 +79,12 @@ class CustomFieldset extends SnipeModel
         return $this->hasMany(AssetModel::class, 'fieldset_id');
     }
 
+    public function isDeletable(): bool
+    {
+        return Gate::allows('delete', $this)
+            && (($this->models_count ?? $this->models()->count()) === 0);
+    }
+
     /**
      * Advanced-search widget definitions for the fieldsets index.
      * The models filter is the real win here: pick one or more asset
@@ -102,6 +108,11 @@ class CustomFieldset extends SnipeModel
                 'column' => 'created_by',
                 'endpoint' => 'users',
                 'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
             ],
         ];
     }

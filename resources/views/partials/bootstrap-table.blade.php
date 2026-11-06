@@ -3441,13 +3441,10 @@
                 }) + '&nbsp;';
             }
 
-            if ((row.available_actions) && (row.available_actions.update === true)) {
+            // Delete button is gated on available_actions.delete
+            if ((row.available_actions) && (row.available_actions.delete === true)) {
                 // use the asset tag if no name is provided
-                if (row.name) {
-                    var name_for_box = row.name
-                } else if (row.asset_tag) {
-                    var name_for_box = row.asset_tag
-                }
+                var name_for_box = row.name || row.asset_tag || '';
 
                 actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '" '
                     + ' class="actions btn btn-danger btn-sm delete-asset hidden-print" data-tooltip="true"  '
@@ -3456,7 +3453,8 @@
                     + ' data-title="{{  trans('general.delete') }}" onClick="return false;">'
                     + '<x-icon type="delete" class="fa-fw" /><span class="sr-only">{{ trans('general.delete') }}</span></a>&nbsp;';
             } else {
-                // Do not show the delete button on things that are already deleted
+                // Suppress the disabled-delete on already-deleted
+                // rows. Those render the Restore button in its place for things that have soft-deletes.
                 if ((row.available_actions) && (row.available_actions.restore != true)) {
                     actions += '<span data-tooltip="true" title="{{ trans('general.cannot_be_deleted') }}"><a class="btn btn-danger btn-sm delete-asset disabled hidden-print" onClick="return false;"><x-icon type="delete" class="fa-fw" /><span class="sr-only">{{ trans('general.cannot_be_deleted') }}</span></a></span>&nbsp;';
                 }

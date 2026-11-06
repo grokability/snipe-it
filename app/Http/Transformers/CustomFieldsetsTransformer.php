@@ -51,10 +51,15 @@ class CustomFieldsetsTransformer
             'updated_at' => Helper::getFormattedDateObject($fieldset->updated_at, 'datetime'),
         ];
 
+        $deletable = $fieldset->isDeletable();
         $array['available_actions'] = [
             'update' => Gate::allows('update', $fieldset),
-            'delete' => Gate::allows('delete', $fieldset) && $modelsCount === 0,
+            'delete' => $deletable,
             'clone' => Gate::allows('clone', $fieldset),
+            // Consumed by checkboxEnabledFormatter on the fieldsets index.
+            'bulk_selectable' => [
+                'delete' => $deletable,
+            ],
         ];
 
         return $array;

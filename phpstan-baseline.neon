@@ -7,6 +7,18 @@ parameters:
 			path: app/Actions/Acceptances/RegenerateAcceptancesAction.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Relations\\Pivot\:\:\$(required|order)\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/FieldsetFieldPicker.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\CustomField\:\:\$pivot\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Livewire/FieldsetFieldPicker.php
+
+		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Category\>\:\:requiresAcceptance\(\)\.$#'
 			identifier: method.notFound
 			count: 1

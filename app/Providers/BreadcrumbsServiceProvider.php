@@ -344,15 +344,22 @@ class BreadcrumbsServiceProvider extends ServiceProvider
          * Custom fieldsets Breadcrumbs
          */
         Breadcrumbs::for('fieldsets.create', fn (Trail $trail) => $trail->parent('fields.index', route('fields.index'))
+            ->push(trans('admin/custom_fields/general.fieldsets'), route('fields.index').'#fieldsets')
             ->push(trans('admin/custom_fields/general.create_fieldset'), route('fieldsets.create'))
         );
 
         Breadcrumbs::for('fieldsets.show', fn (Trail $trail, CustomFieldset $fieldset) => $trail->parent('fields.index', route('fields.index'))
-            ->push($fieldset->name, route('fields.index'))
+            ->push(trans('admin/custom_fields/general.fieldsets'), route('fields.index').'#fieldsets')
+            ->push($fieldset->name, route('fieldsets.show', $fieldset))
         );
 
-        Breadcrumbs::for('fieldsets.edit', fn (Trail $trail, CustomFieldset $fieldset) => $trail->parent('fields.index', route('fields.index'))
-            ->push($fieldset->display_name, route('fieldsets.show', $fieldset))
+        // Shim route is named `fieldsets.edit.show`, not `fieldsets.edit`
+        // (see routes/web/fields.php - the shim exists for bootstrap-table
+        // URL compatibility). Breadcrumbs::for keys must match the route
+        // name exactly.
+        Breadcrumbs::for('fieldsets.edit.show', fn (Trail $trail, CustomFieldset $fieldset) => $trail->parent('fields.index', route('fields.index'))
+            ->push(trans('admin/custom_fields/general.fieldsets'), route('fields.index').'#fieldsets')
+            ->push($fieldset->name, route('fieldsets.show', $fieldset))
             ->push(trans('general.update'))
         );
 

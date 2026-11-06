@@ -1904,6 +1904,13 @@ $(function () {
             var breadcrumbAppendedLeaf = null;
 
             var setBreadcrumbTabLeaf = function (label) {
+                // Treat a label that matches the base leaf as "no
+                // label" to stop the trail from reading
+                // "Custom Fields > Custom Fields" when a page's
+                // primary tab shares the title of the page itself.
+                if (label && label.trim() === breadcrumbBaseText) {
+                    label = null;
+                }
                 if (!label) {
                     if (breadcrumbAppendedLeaf) {
                         breadcrumbAppendedLeaf.remove();

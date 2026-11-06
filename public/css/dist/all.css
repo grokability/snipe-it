@@ -25205,7 +25205,7 @@ dl.table-display {
 .label-normal-bold {
   font-weight: bold !important;
   font-size: 11px !important;
-  line-height: 34px !important;
+  line-height: 20px !important;
   padding-left: 3px;
   border: 1px solid var(--main-footer-top-border-color);
 }
@@ -29486,7 +29486,7 @@ dl.table-display {
 .label-normal-bold {
   font-weight: bold !important;
   font-size: 11px !important;
-  line-height: 34px !important;
+  line-height: 20px !important;
   padding-left: 3px;
   border: 1px solid var(--main-footer-top-border-color);
 }
