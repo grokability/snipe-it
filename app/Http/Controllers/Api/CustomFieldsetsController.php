@@ -46,8 +46,19 @@ class CustomFieldsetsController extends Controller
             'updated_at',
         ];
 
+        // Inner 'fields' load pulls fieldset + adminuser on each row
+        // and aggregates fieldset_count. Without those, CustomFieldsTransformer
+        // lazy-loads $field->fieldset, $field->adminuser, and runs a
+        // fieldset()->count() in isDeletable() per field - three extra
+        // queries per field, per fieldset, on the index payload.
         $fieldsets = CustomFieldset::withCount('fields as fields_count', 'models as models_count')
-            ->with('fields', 'models', 'adminuser');
+            ->with([
+                'fields' => fn ($q) => $q
+                    ->withCount('fieldset as fieldset_count')
+                    ->with(['fieldset', 'adminuser']),
+                'models',
+                'adminuser',
+            ]);
 
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -70,10 +81,16 @@ class CustomFieldsetsController extends Controller
             $filter = is_array($decoded) ? $decoded : [];
         }
         if (! empty($filter['models'])) {
-            $modelIds = is_array($filter['models']) ? $filter['models'] : [$filter['models']];
-            $fieldsets->whereHas('models', function ($m) use ($modelIds) {
-                $m->whereIn('models.id', $modelIds);
-            });
+            // select2-checkboxes widgets write the carrier as a CSV
+            // string, so split before whereIn.
+            $modelIds = is_array($filter['models'])
+                ? $filter['models']
+                : array_values(array_filter(array_map('trim', explode(',', (string) $filter['models'])), 'strlen'));
+            if (! empty($modelIds)) {
+                $fieldsets->whereHas('models', function ($m) use ($modelIds) {
+                    $m->whereIn('models.id', $modelIds);
+                });
+            }
         }
         if (array_key_exists('name', $filter) && $filter['name'] !== '' && $filter['name'] !== null) {
             $values = is_array($filter['name']) ? $filter['name'] : [$filter['name']];
@@ -85,8 +102,12 @@ class CustomFieldsetsController extends Controller
         }
 
         if (! empty($filter['created_by'])) {
-            $userIds = is_array($filter['created_by']) ? $filter['created_by'] : [$filter['created_by']];
-            $fieldsets->whereIn('created_by', $userIds);
+            $userIds = is_array($filter['created_by'])
+                ? $filter['created_by']
+                : array_values(array_filter(array_map('trim', explode(',', (string) $filter['created_by'])), 'strlen'));
+            if (! empty($userIds)) {
+                $fieldsets->whereIn('created_by', $userIds);
+            }
         }
 
         $total = $fieldsets->count();

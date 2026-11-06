@@ -26,7 +26,6 @@
 
             <x-slot:tabpanes>
                 <x-tabs.pane name="fields">
-                    <x-slot:table_header>{{ trans('admin/custom_fields/general.custom_fields') }}</x-slot:table_header>
 
                     <x-slot:bulkactions>
                         <x-table.bulk-customfields />
@@ -45,8 +44,6 @@
                 </x-tabs.pane>
 
                 <x-tabs.pane name="fieldsets">
-                    <x-slot:table_header>{{ trans('admin/custom_fields/general.fieldsets') }}</x-slot:table_header>
-
                     <x-slot:bulkactions>
                         <x-table.bulk-customfieldsets />
                     </x-slot:bulkactions>
@@ -68,7 +65,12 @@
                          corresponding #cloneFieldsetModal id. --}}
                     @foreach ($cloneable_fieldsets ?? [] as $cloneable)
                         @can('clone', $cloneable)
-                            <livewire:clone-fieldset :id="$cloneable->id" triggerless :key="'clone-fieldset-'.$cloneable->id" />
+                            <livewire:clone-fieldset
+                                :id="$cloneable->id"
+                                :source-name="$cloneable->name"
+                                triggerless
+                                :key="'clone-fieldset-'.$cloneable->id"
+                            />
                         @endcan
                     @endforeach
                 </x-tabs.pane>

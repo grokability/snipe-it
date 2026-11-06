@@ -44,7 +44,12 @@ class CustomFieldsController extends Controller
             'updated_at',
         ];
 
-        $fields = CustomField::with('fieldset', 'adminuser');
+        // withCount feeds isDeletable()'s fieldset_count accessor on the
+        // transformer's bulk_selectable gate. Without it every row runs
+        // a per-field COUNT(*) on custom_field_custom_fieldset in
+        // isDeletable()'s fallback branch.
+        $fields = CustomField::with('fieldset', 'adminuser')
+            ->withCount('fieldset as fieldset_count');
 
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -72,6 +77,10 @@ class CustomFieldsController extends Controller
             'display_checkin',
             'display_checkout',
             'display_audit',
+            'show_in_email',
+            'show_in_requestable_list',
+            'display_in_user_view',
+            'auto_add_to_fieldsets',
         ];
         foreach ($booleanFilterFields as $boolField) {
             if (array_key_exists($boolField, $filter) && $filter[$boolField] !== '' && $filter[$boolField] !== null) {
@@ -80,15 +89,32 @@ class CustomFieldsController extends Controller
             }
         }
 
+        // Enum filter on the 'element' column. Accepts filter[element]
+        // (current admin UI + new integrations) and filter[type] (older
+        // integrations that predated the API-alias cleanup). Whichever
+        // is non-empty wins. Values match exactly since the picker emits
+        // whole enum values, not substrings.
+        // Frontend writes the carrier as a CSV string (see
+        // setupSelectCheckboxesWidget in advanced-filters.blade.php),
+        // so split on commas before the whereIn.
+        $elementFilter = ! empty($filter['element']) ? $filter['element'] : ($filter['type'] ?? null);
+        if (! empty($elementFilter)) {
+            $values = is_array($elementFilter)
+                ? $elementFilter
+                : array_values(array_filter(array_map('trim', explode(',', (string) $elementFilter)), 'strlen'));
+            if (! empty($values)) {
+                $fields->whereIn('element', $values);
+            }
+        }
+
         // Text filters generated for every searchable: true column in
-        // the presenter. Map the column fields the admin UI emits
-        // (db_column_name, type) back to their actual DB column.
+        // the presenter. Map the column fields the admin UI emits back
+        // to their actual DB column.
         $textFilterMap = [
             'name' => 'name',
             'help_text' => 'help_text',
             'db_column_name' => 'db_column',
             'format' => 'format',
-            'type' => 'element',
         ];
         foreach ($textFilterMap as $widgetField => $dbColumn) {
             if (! array_key_exists($widgetField, $filter)) {
@@ -107,8 +133,13 @@ class CustomFieldsController extends Controller
         }
 
         if (! empty($filter['created_by'])) {
-            $userIds = is_array($filter['created_by']) ? $filter['created_by'] : [$filter['created_by']];
-            $fields->whereIn('created_by', $userIds);
+            // Same CSV-carrier shape as the element filter above.
+            $userIds = is_array($filter['created_by'])
+                ? $filter['created_by']
+                : array_values(array_filter(array_map('trim', explode(',', (string) $filter['created_by'])), 'strlen'));
+            if (! empty($userIds)) {
+                $fields->whereIn('created_by', $userIds);
+            }
         }
 
         $total = $fields->count();

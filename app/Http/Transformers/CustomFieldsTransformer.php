@@ -63,6 +63,10 @@ class CustomFieldsTransformer
             'field_values' => ($field->field_values) ? e($field->field_values) : null,
             'field_encrypted' => ($field->field_encrypted == '1') ? true : false,
             'field_values_array' => ($field->field_values) ? preg_split('/\r\n|\r|\n/', e($field->field_values)) : null,
+            'element' => e($field->element),
+            // Back-compat alias for the 'element' key above. Older
+            // integrations consume the field under this name. Keep both
+            // in sync. Do not remove without a deprecation cycle.
             'type' => e($field->element),
             'required' => (($field->pivot) && ($field->pivot->required == '1')) ? true : false,
             'display_in_user_view' => ($field->display_in_user_view == '1') ? true : false,
@@ -113,6 +117,8 @@ class CustomFieldsTransformer
         return [
             'id' => $field->id,
             'name' => e($field->name),
+            'element' => e($field->element),
+            // Back-compat alias for 'element'. See transformCustomField() above.
             'type' => e($field->element),
             'field_values_array' => ($field->field_values) ? preg_split('/\r\n|\r|\n/', e($field->field_values)) : null,
             'default_value' => $field->defaultValue($modelId),

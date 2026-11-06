@@ -525,6 +525,14 @@ class CustomField extends Model
                 'label' => trans('admin/custom_fields/general.auto_add_to_fieldsets'),
             ],
             [
+                'field' => 'element',
+                'type' => 'enum',
+                'label' => trans('admin/custom_fields/general.field_element'),
+                'options' => collect(self::ELEMENT_KEYS)
+                    ->map(fn($k) => ['value' => $k, 'label' => trans('admin/custom_fields/general.types.' . $k)])
+                    ->toArray(),
+            ],
+            [
                 'field' => 'created_by',
                 'type' => 'fk',
                 'column' => 'created_by',

@@ -165,7 +165,7 @@ final class CustomFieldPresenter
                 'class' => 'css-clipboard-check text-center',
                 'formatter' => 'trueFalseFormatter',
             ], [
-                'field' => 'type',
+                'field' => 'element',
                 'scope' => 'col',
                 'searchable' => true,
                 'sortable' => true,
