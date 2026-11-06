@@ -9,11 +9,14 @@
 @if ($infoPanelObj->supplier && (! method_exists($infoPanelObj, 'hasConsistentSupplier') || $infoPanelObj->hasConsistentSupplier()))
     <x-info-element icon_type="supplier" icon_color="{{ $infoPanelObj->supplier->tag_color }}" title="{{ trans('general.supplier') }}">
         {!!  $infoPanelObj->supplier->present()->nameUrl !!}
-        <a class="pull-right js-copy-link" style="font-size: 16px; margin-right: 3px;" type="button" data-toggle="collapse" data-target="#supplierContact" aria-expanded="false" aria-controls="supplierContact">
-            <x-icon type="plus" class="fa-fw"/>
-        </a>
+        @if ($infoPanelObj->supplier->hasInfoPanelDetails())
+            <a class="pull-right js-copy-link" style="font-size: 16px; margin-right: 3px;" type="button" data-toggle="collapse" data-target="#supplierContact" aria-expanded="false" aria-controls="supplierContact">
+                <x-icon type="plus" class="fa-fw"/>
+            </a>
+        @endif
     </x-info-element>
 
+    @if ($infoPanelObj->supplier->hasInfoPanelDetails())
     <span class="collapse" id="supplierContact">
 
         <x-info-element class="subitem well well-sm">
@@ -54,5 +57,6 @@
             </p>
         </x-info-element>
             </span>
+    @endif
 
 @endif
