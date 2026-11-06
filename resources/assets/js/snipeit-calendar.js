@@ -360,6 +360,26 @@ function init(elementId, config) {
         el.parentNode.insertBefore(filterContainer, el);
     }
 
+    // Peel the wrapper-only keys out of `config` before we spread the
+    // rest into FullCalendar's options. FC treats anything it doesn't
+    // recognize as an unknown option and warns to the console. These
+    // are all consumed above or below (state.filter, state.limit,
+    // state.onFetchMeta, the buildFilterButtons branch, the
+    // phpDateFormat -> dayPopoverFormat translation, our wrapped
+    // eventsSource overriding config.events). `fcConfig` carries just
+    // the FC-recognized overrides the caller wants to apply.
+    const {
+        urlState: _urlState,
+        limit: _limit,
+        onFetchMeta: _onFetchMeta,
+        filter: _filter,
+        filterMulti: _filterMulti,
+        filterButtons: _filterButtons,
+        phpDateFormat: _phpDateFormat,
+        events: _events,
+        ...fcConfig
+    } = config;
+
     const options = Object.assign(
         {
             initialView: urlState.view || 'dayGridMonth',
@@ -410,7 +430,7 @@ function init(elementId, config) {
             },
         },
         // Allow per-page overrides for any of the above.
-        config,
+        fcConfig,
     );
 
     // plugins + events are always set by us - callers can't drop the

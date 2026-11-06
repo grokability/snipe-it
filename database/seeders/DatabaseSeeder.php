@@ -30,11 +30,11 @@ class DatabaseSeeder extends Seeder
         // their own image dirs, but these four are one-per-event dirs
         // that grow indefinitely.
         foreach ([
-                     'private_uploads/eula-pdfs',
-                     'private_uploads/audits',
-                     'private_uploads/signatures',
-                     'private_uploads/imports',
-                 ] as $accumulatorDir) {
+            'private_uploads/eula-pdfs',
+            'private_uploads/audits',
+            'private_uploads/signatures',
+            'private_uploads/imports',
+        ] as $accumulatorDir) {
             if (Storage::exists($accumulatorDir)) {
                 Storage::deleteDirectory($accumulatorDir);
             }
@@ -91,6 +91,15 @@ class DatabaseSeeder extends Seeder
         // clear them centrally here.
         DB::table('order_items')->truncate();
         DB::table('orders')->truncate();
+
+        // Truncate skips the Eloquent deleted observer that the
+        // HasCalendarEvents trait uses to sweep calendar_events when a
+        // source is removed, so a reseed of assets / users / maintenances
+        // / etc. would leave the previous run's calendar rows pointing
+        // at ids that now belong to brand-new source rows (or no row at
+        // all). Clear the index table here so the inventory seeders
+        // below rebuild it from scratch via their own save() paths.
+        DB::table('calendar_events')->truncate();
 
         $this->call(AccessorySeeder::class);
         $this->reportMemory('after AccessorySeeder');
