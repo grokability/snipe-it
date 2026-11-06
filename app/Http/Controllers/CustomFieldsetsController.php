@@ -27,6 +27,7 @@ class CustomFieldsetsController extends Controller
     public function index(): RedirectResponse
     {
         return redirect()->route('fields.index')
+            ->withFragment('fieldsets')
             ->with('error', trans('admin/custom_fields/message.fieldset.does_not_exist'));
     }
 
@@ -63,6 +64,7 @@ class CustomFieldsetsController extends Controller
         }
 
         return redirect()->route('fields.index')
+            ->withFragment('fieldsets')
             ->with('error', trans('admin/custom_fields/message.fieldset.does_not_exist'));
     }
 
@@ -73,6 +75,12 @@ class CustomFieldsetsController extends Controller
      *
      * @since [v1.8]
      */
+    /**
+     * "New Fieldset" entry point. Shows a name-only prompt instead of
+     * the full picker, since the picker needs a persisted fieldset
+     * (with an id) to operate on. After the admin submits, store()
+     * saves, runs auto-add, and redirects to the picker.
+     */
     public function create(): View
     {
         $this->authorize('create', CustomField::class);
@@ -81,11 +89,9 @@ class CustomFieldsetsController extends Controller
     }
 
     /**
-     * Validates and stores a new custom fieldset.
-     *
-     * @author [Brady Wetherington] [<uberbrady@gmail.com>]
-     *
-     * @since [v1.8]
+     * Programmatic create path. Still used by external POSTers against
+     * the resource route. The UI "New Fieldset" button no longer
+     * routes through here, it goes through create() above.
      *
      * @throws AuthorizationException
      */
@@ -100,24 +106,45 @@ class CustomFieldsetsController extends Controller
 
         $validator = Validator::make($request->all(), $fieldset->rules);
 
-        if ($validator->passes()) {
-            $fieldset->save();
-
-            // Sync fieldset with auto_add_to_fieldsets
-            $fields = CustomField::select('id')->where('auto_add_to_fieldsets', '=', '1')->get();
-            if ($fields->count() > 0) {
-                foreach ($fields as $field) {
-                    $field_ids[] = $field->id;
-                }
-
-                $fieldset->fields()->sync($field_ids);
-            }
-
-            return redirect()->route('fieldsets.show', [$fieldset->id])
-                ->with('success', trans('admin/custom_fields/message.fieldset.create.success'));
+        if ($validator->fails()) {
+            return redirect()->back()->withInput()->withErrors($validator);
         }
 
-        return redirect()->back()->withInput()->withErrors($validator);
+        $fieldset->save();
+        $this->syncAutoAddFields($fieldset);
+
+        return redirect()->route('fieldsets.show', [$fieldset->id])
+            ->with('success', trans('admin/custom_fields/message.fieldset.create.success'));
+    }
+
+    /**
+     * Attach every CustomField flagged auto_add_to_fieldsets=1 to the
+     * given fieldset, assigning sequential order values + an explicit
+     * required=false pivot. Shared by create() and store() so both
+     * entry points produce consistent pivot rows. The prior
+     * sync($field_ids) call passed bare ids, which left order + required
+     * at their column defaults. Every auto-added field landed tied at
+     * order=0 and the first drag reorder was funky.
+     */
+    private function syncAutoAddFields(CustomFieldset $fieldset): void
+    {
+        $autoAddFieldIds = CustomField::where('auto_add_to_fieldsets', '=', '1')
+            ->orderBy('name')
+            ->pluck('id')
+            ->all();
+
+        if (empty($autoAddFieldIds)) {
+            return;
+        }
+
+        $pivot = [];
+        $order = 1;
+        foreach ($autoAddFieldIds as $fieldId) {
+            $pivot[(int) $fieldId] = ['order' => $order, 'required' => false];
+            $order++;
+        }
+
+        $fieldset->fields()->sync($pivot);
     }
 
     /**
@@ -148,7 +175,7 @@ class CustomFieldsetsController extends Controller
         $fieldset->name = $request->input('name');
 
         if ($fieldset->save()) {
-            return redirect()->route('fields.index')->with('success', trans('admin/custom_fields/general.fieldset_updated'));
+            return redirect()->route('fields.index')->withFragment('fieldsets')->with('success', trans('admin/custom_fields/general.fieldset_updated'));
         }
 
         return redirect()->back()->withInput()->withErrors($fieldset->getErrors());
@@ -175,13 +202,13 @@ class CustomFieldsetsController extends Controller
             if ($models->count() == 0) {
                 $fieldset->delete();
 
-                return redirect()->route('fields.index')->with('success', trans('admin/custom_fields/message.fieldset.delete.success'));
+                return redirect()->route('fields.index')->withFragment('fieldsets')->with('success', trans('admin/custom_fields/message.fieldset.delete.success'));
             }
 
-            return redirect()->route('fields.index')->with('error', trans('admin/custom_fields/message.fieldset.delete.in_use'));
+            return redirect()->route('fields.index')->withFragment('fieldsets')->with('error', trans('admin/custom_fields/message.fieldset.delete.in_use'));
         }
 
-        return redirect()->route('fields.index')->with('error', trans('admin/custom_fields/message.fieldset.does_not_exist'));
+        return redirect()->route('fields.index')->withFragment('fieldsets')->with('error', trans('admin/custom_fields/message.fieldset.does_not_exist'));
     }
 
     /**
