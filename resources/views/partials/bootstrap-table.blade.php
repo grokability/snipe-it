@@ -53,19 +53,21 @@
         var baseBootstrapTablePrototype = Object.getPrototypeOf(BootstrapTable.prototype);
         var baseInitSearch = baseBootstrapTablePrototype.initSearch;
 
+        // The Saga of Daggable columns + Sticky Columns Part I:
         // bs-table's reorderable-columns extension restores a saved
-        // column order by walking the persisted cookie and swapping
-        // thead DOM nodes in place (dragtable's _restoreState calling
+        // column order by walking the persisted localStorage and swapping
+        // thead DOM nodes IN PLACE (dragtable's _restoreState calling
         // _bubbleCols). It does NOT update this.columns,
         // this.header.fields, this.options.columns[0], or
         // this.fieldsColumnsIndex to match. initBody renders tbody
         // rows using this.header.fields, so tbody comes back in the
-        // natural (presenter-declared) order while thead is already
-        // in the saved order. THis results in a persistent header / body
+        // PRESENTER-declared order while thead is already
+        // in the saved order. This results in a persistent header / body
         // misalignment visible on every reload that has a saved
-        // column order. Dragging a column stomps on it because
+        // column order. Dragging a column craps on it because
         // beforeStop runs a full re-sync of columns + header.fields
-        // and re-renders both.
+        // and re-renders both, so it can insert a new column in the
+        // wrong place and the values don't align with the headers.
         //
         // To prevent this, we apply the saved order to this.options.columns[0]
         // (and downstream state) BEFORE the base initHeader builds
@@ -79,6 +81,39 @@
             BootstrapTable.prototype.initHeader = function () {
                 snipeApplySavedColumnOrder(this);
                 return originalInitHeaderForReorder.apply(this, arguments);
+            };
+        }
+
+        // The Saga of Daggable columns + Sticky Columns Part II:
+        // Second monkey-patch, tackles the column-toggle case specifically.
+        // Flow: user selects a hidden column in the column picker, _toggleColumn
+        // fires, super.initHeader builds the thead (in the interpolated
+        // order we set up in snipeApplySavedColumnOrder below), then the
+        // reorder-columns extension calls makeColumnsReorderable, which
+        // gives dragtable a restoreState object loaded from localStorage.
+        // That localStorage copy pre-dates the just-shown column and so
+        // has no slot for it. dragtable's _restoreState then bubbles THs
+        // to match the stale saved positions against a DOM that has one
+        // more column, scrambling the thead order without touching the
+        // tbody. Re-reading columnsSortOrder from the current thead DOM
+        // right before dragtable sees it means _restoreState bubbles
+        // against the live set and ends up a no-op, since the DOM already
+        // matches. This also keeps persistReorderColumnsState (which
+        // JSON-encodes columnsSortOrder on drag) emitting a shape that
+        // reflects reality.
+        if (typeof BootstrapTable.prototype.makeColumnsReorderable === 'function') {
+            var originalMakeColumnsReorderable = BootstrapTable.prototype.makeColumnsReorderable;
+            BootstrapTable.prototype.makeColumnsReorderable = function () {
+                if (this.$el && this.options && this.options.reorderableColumns) {
+                    var sortOrder = {};
+                    this.$el.find('thead th').each(function (i, el) {
+                        if (el.dataset && el.dataset.field !== undefined) {
+                            sortOrder[el.dataset.field] = i;
+                        }
+                    });
+                    this.columnsSortOrder = sortOrder;
+                }
+                return originalMakeColumnsReorderable.apply(this, arguments);
             };
         }
 
@@ -117,33 +152,105 @@
             }
 
             var currentColumns = that.options.columns[0];
-            var byField = {};
+
+            // Capture the true presenter order ONCE, on first call for
+            // this table. Every subsequent call on the same table reads
+            // from the saved map, since currentColumns may already have
+            // been reordered by a prior invocation of this function (on
+            // column toggles, pagination re-renders, etc.) and using
+            // its current indexes as "presenter positions" would feed
+            // the interpolation garbage.
+            if (!that._snipePresenterOrderByField) {
+                var snapshot = {};
+                currentColumns.forEach(function (col, i) {
+                    if (col && col.field) {
+                        snapshot[col.field] = i;
+                    }
+                });
+                that._snipePresenterOrderByField = snapshot;
+            }
+            var presenterOrderByField = that._snipePresenterOrderByField;
+
+            function presenterIndexFor(col) {
+                if (!col || !col.field) {
+                    return Number.MAX_SAFE_INTEGER;
+                }
+                var p = presenterOrderByField[col.field];
+                // A field that showed up after the first snapshot (very
+                // rare but can happen if runtime code appends a column)
+                // sorts after everything else by default.
+                return p === undefined ? Number.MAX_SAFE_INTEGER : p;
+            }
+
+            // Compute a sort key per column. Columns the saved order
+            // knows about use their saved position as an integer key.
+            // Columns the saved order does NOT know about (dragtable
+            // beforeStop only walks visible THs in the DOM, so hidden
+            // columns never make it into localStorage, same for brand-
+            // new presenter columns added by a code update) interpolate
+            // between the saved positions of the nearest known columns
+            // BEFORE and AFTER them in presenter order. That keeps a
+            // newly-shown or newly-added column in its declared slot
+            // instead of appending it past the sticky actions column at
+            // the tail. bs-table calls this feature `cookie` but the
+            // storage is actually localStorage, hence the
+            // `.bs.table.reorderColumns` key suffix on `_storage`.
+            var knownByField = {};
+            var knownPresenterToKey = [];
             currentColumns.forEach(function (col) {
-                if (col && col.field) {
-                    byField[col.field] = col;
+                if (col && col.field && savedOrder[col.field] !== undefined) {
+                    var key = parseInt(savedOrder[col.field], 10);
+                    knownByField[col.field] = key;
+                    knownPresenterToKey.push({i: presenterIndexFor(col), key: key});
                 }
             });
 
-            // Sort columns the cookie recognizes by their saved
-            // position, then append anything the cookie does not know
-            // about (e.g. a new column added by a code update since
-            // the user last dragged) at the end in presenter order.
-            var ordered = Object.keys(savedOrder).filter(function (field) {
-                return byField[field];
-            }).sort(function (a, b) {
-                return parseInt(savedOrder[a], 10) - parseInt(savedOrder[b], 10);
-            }).map(function (field) {
-                return byField[field];
-            });
-
-            var seen = {};
-            ordered.forEach(function (col) {
-                seen[col.field] = true;
-            });
-            currentColumns.forEach(function (col) {
-                if (col && (!col.field || !seen[col.field])) {
-                    ordered.push(col);
+            function interpolatedKey(presenterIndex) {
+                var prevKey = null, nextKey = null;
+                for (var k = 0; k < knownPresenterToKey.length; k++) {
+                    var entry = knownPresenterToKey[k];
+                    if (entry.i < presenterIndex) {
+                        if (prevKey === null || entry.key > prevKey) {
+                            prevKey = entry.key;
+                        }
+                    }
+                    else if (entry.i > presenterIndex) {
+                        if (nextKey === null || entry.key < nextKey) {
+                            nextKey = entry.key;
+                        }
+                    }
                 }
+                if (prevKey !== null && nextKey !== null) {
+                    return (prevKey + nextKey) / 2;
+                }
+                if (prevKey !== null) {
+                    return prevKey + 0.5;
+                }
+                if (nextKey !== null) {
+                    return nextKey - 0.5;
+                }
+                return presenterIndex;
+            }
+
+            var withKeys = currentColumns.map(function (col) {
+                var pIdx = presenterIndexFor(col);
+                var key = (col && col.field && knownByField[col.field] !== undefined)
+                    ? knownByField[col.field]
+                    : interpolatedKey(pIdx);
+                return {col: col, key: key, presenterIndex: pIdx};
+            });
+            withKeys.sort(function (a, b) {
+                if (a.key !== b.key) {
+                    return a.key - b.key;
+                }
+                // Stable on ties: two unknown columns inserted between
+                // the same two known neighbors fall back to their
+                // presenter order so the declared sequence is preserved
+                // among the fresh additions.
+                return a.presenterIndex - b.presenterIndex;
+            });
+            var ordered = withKeys.map(function (w) {
+                return w.col;
             });
 
             var changed = false;
@@ -1373,16 +1480,18 @@
 
                     var lookup = {};
                     var lookup_initialized = false;
-                    var ths = $('th');
+                    // Scope to this table's thead. The previous $('th')
+                    // walked every TH on the page, which meant the lookup
+                    // built from the first table bled into every subsequent
+                    // one and headers in later tables got no tooltip.
+                    var ths = $bootstrapTableEl.find('thead th');
                     var toolbar_buttons = $('.tableButton');
 
                     ths.each(function (index, element) {
                         th = $(element);
                         //only populate the lookup table once; don't need to keep doing it.
                         if (!lookup_initialized) {
-                            // th -> tr -> thead -> table
-                            var table = th.parent().parent().parent()
-                            var column_data = table.data('columns')
+                            var column_data = $bootstrapTableEl.data('columns');
 
                             for (var column in column_data) {
                                 lookup[column_data[column].field] = column_data[column].titleTooltip;
@@ -3028,32 +3137,32 @@
        }
     });
 
-
-    // This specifies the footer columns that should have special styles associated
-    // (usually numbers)
-    window.footerStyle = column => ({
-        remaining: {
-            classes: 'text-padding-number-footer-cell'
-        },
-        qty: {
-            classes: 'text-padding-number-footer-cell',
-        },
-        purchase_cost: {
-            classes: 'text-padding-number-footer-cell'
-        },
-        checkouts_count: {
-            classes: 'text-padding-number-footer-cell'
-        },
-        assets_count: {
-            classes: 'text-padding-number-footer-cell'
-        },
-        seats: {
-            classes: 'text-padding-number-footer-cell'
-        },
-        free_seats_count: {
-            classes: 'text-padding-number-footer-cell'
-        },
-    }[column.field]);
+    // Called by bs-table for every visible column when it renders the
+    // tfoot. Return { classes: '...' } to add classes to the footer TH
+    // and the number-cell padding class lines the aggregate up with
+    // text-padding-number-cell in the body. Auto-apply it when BOTH
+    // conditions hold: the column has a known numeric aggregator AND
+    // its body already carries text-padding-number-cell. The body
+    // check matters because some presenters opt into text-right only
+    // (Asset's purchase_cost / book_value, say) and padding only the
+    // footer would shift the total 20px left of the body column it is
+    // supposed to line up with.
+    // If we ever add a new style of numeric footer aggregator,
+    // add it to this array.
+    var numericFooterFormatters = ['qtySumFormatter', 'sumFormatter', 'sumFormatterQuantity'];
+    window.footerStyle = function (column) {
+        if (!column || !column.footerFormatter) {
+            return;
+        }
+        if (numericFooterFormatters.indexOf(column.footerFormatter) === -1) {
+            return;
+        }
+        var bodyClasses = (column.class || '').split(/\s+/);
+        if (bodyClasses.indexOf('text-padding-number-cell') === -1) {
+            return;
+        }
+        return {classes: 'text-padding-number-footer-cell'};
+    };
 
 
 
@@ -3067,6 +3176,12 @@
         // in genericActionsFormatter.
         if (destination == 'maintenanceTypes') {
             destination = 'maintenance-types';
+        }
+        if (destination == 'customFields') {
+            destination = 'fields';
+        }
+        if (destination == 'customFieldsets' || destination == 'fieldsets') {
+            destination = 'fields/fieldsets';
         }
         return function (value,row) {
 
@@ -3132,6 +3247,12 @@
         // formatters for the groups -> admin/groups precedent.
         if (destination == 'maintenanceTypes') {
             destination = 'maintenance-types';
+        }
+        if (destination == 'customFields') {
+            destination = 'fields';
+        }
+        if (destination == 'customFieldsets' || destination == 'fieldsets') {
+            destination = 'fields/fieldsets';
         }
         return function (value) {
             if ((value) && (value.status_meta)) {
@@ -3260,6 +3381,14 @@
 
             if (dest == 'maintenanceTypes') {
                 dest = 'maintenance-types';
+            }
+
+            if (dest == 'customFields') {
+                dest = 'fields';
+            }
+
+            if (dest == 'customFieldsets' || dest == 'fieldsets') {
+                dest = 'fields/fieldsets';
             }
 
 
@@ -4128,6 +4257,8 @@
         'companies',
         'components',
         'consumables',
+        'customFields',
+        'customFieldsets',
         'departments',
         'depreciations',
         'fieldsets',
@@ -4151,6 +4282,39 @@
         window[formatters[i] + 'ActionsFormatter'] = genericActionsFormatter(formatters[i]);
         window[formatters[i] + 'InOutFormatter'] = genericCheckinCheckoutFormatter(formatters[i]);
     }
+
+    // Custom fieldsets need a tweaked actions formatter so the "clone"
+    // button opens a pre-rendered livewire modal (data-target) instead
+    // of navigating to a /clone URL (which does not exist for fieldsets).
+    // Pass clone=false to the base so the generic URL-based clone
+    // button is skipped, then inject a modal-targeted one in its
+    // place. Edit + delete fall through to the generic behavior.
+    (function () {
+        var baseFieldsetsActions = genericActionsFormatter('customFieldsets');
+        window.customFieldsetsActionsFormatter = function (value, row) {
+            var canClone = row && row.available_actions && row.available_actions.clone === true;
+            var scrubbedRow = row;
+            if (canClone) {
+                scrubbedRow = $.extend(true, {}, row);
+                scrubbedRow.available_actions.clone = false;
+            }
+            var base = baseFieldsetsActions(value, scrubbedRow) || '';
+            if (!canClone) {
+                return base;
+            }
+            var cloneBtn = '<a href="#cloneFieldsetModal' + row.id + '" data-toggle="modal" '
+                + 'class="actions btn btn-sm btn-info hidden-print" data-tooltip="true" '
+                + 'title="{{ trans('admin/custom_fields/general.clone_fieldset') }}">'
+                + '<x-icon type="clone" class="fa-fw" />'
+                + '<span class="sr-only">{{ trans('admin/custom_fields/general.clone_fieldset') }}</span>'
+                + '</a>&nbsp;';
+            // Slot the modal clone button immediately after the opening
+            // <nobr> so it renders before edit + delete, matching the
+            // position the inline livewire trigger used to occupy in
+            // the legacy server-rendered row.
+            return base.replace('<nobr>', '<nobr>' + cloneBtn);
+        };
+    })();
 
     // Maintenances need a custom actions formatter (adds the green
     // "mark complete" button between update and delete). Defined AFTER the
@@ -4366,6 +4530,35 @@
         }
     }
 
+    // Fieldsets "used by models" column: renders every attached asset
+    // model as a label pill linking to its show page. Reads value.rows
+    // (DatatablesTransformer shape) and matches the pill style the
+    // legacy server-rendered row used.
+    function customFieldsetsModelsFormatter(value) {
+        if (!value || !value.rows || !value.rows.length) {
+            return '';
+        }
+        var pills = '';
+        for (var i in value.rows) {
+            pills += '<a href="{{ config('app.url') }}/models/' + value.rows[i].id + '" class="label label-light label-normal-bold">' + value.rows[i].name + '</a> ';
+        }
+        return pills;
+    }
+
+    // Fields "fieldsets" column: renders every fieldset the field is
+    // attached to as a label pill linking to the fieldset show page.
+    // Mirrors customFieldsetsModelsFormatter but points at fieldset URLs.
+    function customFieldsFieldsetsFormatter(value) {
+        if (!value || !value.rows || !value.rows.length) {
+            return '';
+        }
+        var pills = '';
+        for (var i in value.rows) {
+            pills += '<a href="{{ config('app.url') }}/fields/fieldsets/' + value.rows[i].id + '" class="label label-light label-normal-bold">' + value.rows[i].name + '</a> ';
+        }
+        return pills;
+    }
+
 
 
     function changeLogFormatter(value) {
@@ -4483,6 +4676,22 @@
             return '<a href="{{ config('app.url') }}/hardware/' + row.asset.id + '">' + row.asset.serial + '</a>';
         }
         return '';
+    }
+
+    // Custom fields db_column column: wrap the expected slug in <code>
+    // and append the db_convert_warning when the stored db_column does
+    // not match the expected slug (upstream slug rules changed since
+    // the field was originally created). Warning HTML is pre-rendered
+    // on the transformer side so the formatter stays dumb.
+    function customFieldDbColumnFormatter(value, row) {
+        if (!value) {
+            return '';
+        }
+        var html = '<code>' + value + '</code>';
+        if (row && row.db_column_warning) {
+            html += '<br><i class="fas fa-exclamation-triangle text-danger" aria-hidden="true"></i> ' + row.db_column_warning;
+        }
+        return html;
     }
 
     function trueFalseFormatter(value) {
