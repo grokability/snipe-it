@@ -84,7 +84,38 @@ class CalendarEventsController extends Controller
         // FMCS, soft-deleted sources, etc.).
         $baseQuery = $this->buildBaseQuery($rangeStart, $rangeEnd, $eventTypes)
             ->whereIn('source_type', $viewableSourceTypes);
-        $total = (clone $baseQuery)->count();
+
+        // Count only rows whose source row still exists (and, when the
+        // source uses SoftDeletes, is not trashed). Truncating a source
+        // table skips the HasCalendarEvents deleted observer, so a
+        // reseed or manual truncate leaves orphan calendar_events rows
+        // whose source_id no longer resolves. Those orphans fall
+        // through this EXISTS filter instead of inflating the
+        // "+N more" label the frontend renders from $total.
+        $total = (clone $baseQuery)
+            ->where(function ($q) use ($viewableSourceTypes) {
+                foreach ($viewableSourceTypes as $sourceClass) {
+                    $table = (new $sourceClass)->getTable();
+                    $hasSoftDeletes = in_array(
+                        \Illuminate\Database\Eloquent\SoftDeletes::class,
+                        class_uses_recursive($sourceClass),
+                        true,
+                    );
+                    $q->orWhere(function ($or) use ($sourceClass, $table, $hasSoftDeletes) {
+                        $or->where('source_type', $sourceClass)
+                            ->whereExists(function ($sub) use ($table, $hasSoftDeletes) {
+                                $sub->selectRaw('1')
+                                    ->from($table)
+                                    ->whereColumn($table.'.id', 'calendar_events.source_id');
+                                if ($hasSoftDeletes) {
+                                    $sub->whereNull($table.'.deleted_at');
+                                }
+                            });
+                    });
+                }
+            })
+            ->count();
+
         $rows = $baseQuery->orderBy('start')->limit($limit)->get();
 
         // Now that count and fetch run against the same company-scoped
