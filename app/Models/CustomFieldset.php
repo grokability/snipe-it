@@ -78,6 +78,12 @@ class CustomFieldset extends SnipeModel
     {
         return $this->hasMany(AssetModel::class, 'fieldset_id');
     }
+    
+    public function isDeletable(): bool
+    {
+        return Gate::allows('delete', $this)
+            && (($this->models_count ?? $this->models()->count()) === 0);
+    }
 
     /**
      * Advanced-search widget definitions for the fieldsets index.

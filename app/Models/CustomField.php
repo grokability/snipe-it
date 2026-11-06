@@ -8,6 +8,7 @@ use EasySlugger\Utf8Slugger;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Watson\Validating\ValidatingTrait;
@@ -456,6 +457,12 @@ class CustomField extends Model
     public function fieldset()
     {
         return $this->belongsToMany(CustomFieldset::class);
+    }
+    
+    public function isDeletable(): bool
+    {
+        return Gate::allows('delete', $this)
+            && (($this->fieldset_count ?? $this->fieldset()->count()) === 0);
     }
 
     /**
