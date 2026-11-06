@@ -1468,6 +1468,10 @@ Radio toggle styles for permission settings and check/uncheck all
     max-width: 1400px;
   }
 }
+.modal-body {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
 .modal-xl .modal-body {
   max-height: calc(100vh - 200px);
   overflow-y: auto;
