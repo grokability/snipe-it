@@ -56,7 +56,7 @@
         <ul class="nav nav-tabs hidden-print">
 
           <li class="active">
-            <a href="#details" data-toggle="tab">
+            <a href="#details" data-toggle="tab" data-breadcrumb-label="{{ trans('admin/users/general.info') }}">
               <span class="hidden-lg hidden-md" aria-hidden="true">
               <i class="fas fa-info-circle fa-2x"></i>
               </span>
@@ -67,7 +67,7 @@
           </li>
 
           <li>
-            <a href="#assets" data-toggle="tab">
+            <a href="#assets" data-toggle="tab" data-breadcrumb-label="{{ trans('general.assets') }}">
               <span class="hidden-lg hidden-md" aria-hidden="true">
                 <x-icon type="assets" class="fa-2x" />
               </span>
@@ -79,7 +79,7 @@
           </li>
 
           <li>
-            <a href="#licenses" data-toggle="tab">
+            <a href="#licenses" data-toggle="tab" data-breadcrumb-label="{{ trans('general.licenses') }}">
             <span class="hidden-lg hidden-md">
             <i class="far fa-save fa-2x"></i>
             </span>
@@ -90,7 +90,7 @@
           </li>
 
           <li>
-            <a href="#accessories" data-toggle="tab">
+            <a href="#accessories" data-toggle="tab" data-breadcrumb-label="{{ trans('general.accessories') }}">
             <span class="hidden-lg hidden-md">
             <x-icon type="accessories" class="fa-2x" />
             </span>
@@ -101,7 +101,7 @@
           </li>
 
           <li>
-            <a href="#consumables" data-toggle="tab">
+            <a href="#consumables" data-toggle="tab" data-breadcrumb-label="{{ trans('general.consumables') }}">
             <span class="hidden-lg hidden-md" aria-hidden="true">
                 <x-icon type="consumables" class="fa-2x" />
               </span>
@@ -112,7 +112,7 @@
           </li>
 
           <li>
-            <a href="#eulas" data-toggle="tab">
+            <a href="#eulas" data-toggle="tab" data-breadcrumb-label="{{ trans('general.eula') }}">
             <span class="hidden-lg hidden-md" aria-hidden="true">
                 <x-icon type="files" class="fa-2x" />
               </span>
