@@ -128,8 +128,8 @@
             // Snipe-IT: bs-table persists column order in localStorage. When the
             // column set changes between sessions (columns added / removed /
             // renamed), saved target indices can point past the current column
-            // count, leaving col2 shorter than col1 — swapNodes then dereferences
-            // undefined.parentNode and crashes dragtable init. Guard the walk so
+            // count, leaving col2 shorter than col1 — swapNodes then de-references
+            // undefined.parentNode was crashing dragtable init.  Guard so
             // stale state degrades to "columns stay in current order" instead.
             if (from < to) {
                 for (i = from; i < to; i++) {
@@ -184,12 +184,12 @@
                 // do reorganisation asynchronous
                 // for chrome a little bit more than 1 ms because we want to force a rerender
                 _this.originalTable.endIndex = _this.sortableTable.movingRow.prevAll().length + 1;
-                // Snipe-IT: clamp the computed drop position to the non-sticky
+                // Snipe-IT: lock the computed drop position to the NON-sticky
                 // range. jQuery UI sortable's `items` filter only restricts which
                 // children can be dragged, not where a dragged item can land.
                 // Without this, a non-sticky column dropped near the edge of the
                 // overlay lands in a DOM slot before a sticky-left or after a
-                // sticky-right column, breaking the CSS nth-child pinning on
+                // sticky-right column, breaking the CSS nth-child pin on
                 // snipe-table--sticky-left-N / --sticky-right-N tables.
                 var tableClasses = _this.originalTable.el[0].className || '';
                 var leftStickyMatch = tableClasses.match(/snipe-table--sticky-left-(\d+)/);
@@ -202,7 +202,8 @@
                     var maxPos = totalCols - rightStickyCount;
                     if (_this.originalTable.endIndex < minPos) {
                         _this.originalTable.endIndex = minPos;
-                    } else if (_this.originalTable.endIndex > maxPos) {
+                    }
+                    else if (_this.originalTable.endIndex > maxPos) {
                         _this.originalTable.endIndex = maxPos;
                     }
                 }

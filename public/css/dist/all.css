@@ -22304,15 +22304,23 @@ h4 {
 thead th.css-accessory > .th-inner,
 thead th.css-accessory-alt > .th-inner,
 thead th.css-barcode > .th-inner,
+thead th.css-bell-concierge > .th-inner,
+thead th.css-clipboard-check > .th-inner,
 thead th.css-component > .th-inner,
 thead th.css-consumable > .th-inner,
 thead th.css-envelope > .th-inner,
+thead th.css-eye > .th-inner,
+thead th.css-field-encrypted > .th-inner,
+thead th.css-fingerprint > .th-inner,
 thead th.css-house-flag > .th-inner,
 thead th.css-house-laptop > .th-inner,
 thead th.css-house-user > .th-inner,
 thead th.css-license > .th-inner,
+thead th.css-list > .th-inner,
 thead th.css-location > .th-inner,
 thead th.css-maintenances > .th-inner,
+thead th.css-rotate-left > .th-inner,
+thead th.css-rotate-right > .th-inner,
 thead th.css-users > .th-inner,
 thead th.css-currency > .th-inner,
 thead th.css-child-locations > .th-inner,
@@ -22328,15 +22336,23 @@ thead th.css-location > .th-inner::before,
 thead th.css-accessory > .th-inner::before,
 thead th.css-accessory-alt > .th-inner::before,
 thead th.css-barcode > .th-inner::before,
+thead th.css-bell-concierge > .th-inner::before,
+thead th.css-clipboard-check > .th-inner::before,
 thead th.css-component > .th-inner::before,
 thead th.css-consumable > .th-inner::before,
 thead th.css-envelope > .th-inner::before,
+thead th.css-eye > .th-inner::before,
+thead th.css-field-encrypted > .th-inner::before,
+thead th.css-fingerprint > .th-inner::before,
 thead th.css-house-flag > .th-inner::before,
 thead th.css-house-laptop > .th-inner::before,
 thead th.css-house-user > .th-inner::before,
 thead th.css-license > .th-inner::before,
+thead th.css-list > .th-inner::before,
 thead th.css-location > .th-inner::before,
 thead th.css-maintenances > .th-inner::before,
+thead th.css-rotate-left > .th-inner::before,
+thead th.css-rotate-right > .th-inner::before,
 thead th.css-users > .th-inner::before,
 thead th.css-currency > .th-inner::before,
 thead th.css-child-locations > .th-inner::before,
@@ -22443,6 +22459,54 @@ thead th.css-history > .th-inner::before {
   content: "\f1da";
   font-family: "Font Awesome 5 Free";
   font-size: 19px;
+  margin-bottom: 0px;
+}
+thead th.css-list > .th-inner::before {
+  content: "\f03a";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-eye > .th-inner::before {
+  content: "\f06e";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-bell-concierge > .th-inner::before {
+  content: "\f562";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-fingerprint > .th-inner::before {
+  content: "\f577";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-clipboard-check > .th-inner::before {
+  content: "\f46c";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-rotate-right > .th-inner::before {
+  content: "\f2f9";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-rotate-left > .th-inner::before {
+  content: "\f2ea";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-field-encrypted > .th-inner::before {
+  content: "\f023";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
   margin-bottom: 0px;
 }
 .small-box .inner {
@@ -26521,15 +26585,23 @@ h4 {
 thead th.css-accessory > .th-inner,
 thead th.css-accessory-alt > .th-inner,
 thead th.css-barcode > .th-inner,
+thead th.css-bell-concierge > .th-inner,
+thead th.css-clipboard-check > .th-inner,
 thead th.css-component > .th-inner,
 thead th.css-consumable > .th-inner,
 thead th.css-envelope > .th-inner,
+thead th.css-eye > .th-inner,
+thead th.css-field-encrypted > .th-inner,
+thead th.css-fingerprint > .th-inner,
 thead th.css-house-flag > .th-inner,
 thead th.css-house-laptop > .th-inner,
 thead th.css-house-user > .th-inner,
 thead th.css-license > .th-inner,
+thead th.css-list > .th-inner,
 thead th.css-location > .th-inner,
 thead th.css-maintenances > .th-inner,
+thead th.css-rotate-left > .th-inner,
+thead th.css-rotate-right > .th-inner,
 thead th.css-users > .th-inner,
 thead th.css-currency > .th-inner,
 thead th.css-child-locations > .th-inner,
@@ -26545,15 +26617,23 @@ thead th.css-location > .th-inner::before,
 thead th.css-accessory > .th-inner::before,
 thead th.css-accessory-alt > .th-inner::before,
 thead th.css-barcode > .th-inner::before,
+thead th.css-bell-concierge > .th-inner::before,
+thead th.css-clipboard-check > .th-inner::before,
 thead th.css-component > .th-inner::before,
 thead th.css-consumable > .th-inner::before,
 thead th.css-envelope > .th-inner::before,
+thead th.css-eye > .th-inner::before,
+thead th.css-field-encrypted > .th-inner::before,
+thead th.css-fingerprint > .th-inner::before,
 thead th.css-house-flag > .th-inner::before,
 thead th.css-house-laptop > .th-inner::before,
 thead th.css-house-user > .th-inner::before,
 thead th.css-license > .th-inner::before,
+thead th.css-list > .th-inner::before,
 thead th.css-location > .th-inner::before,
 thead th.css-maintenances > .th-inner::before,
+thead th.css-rotate-left > .th-inner::before,
+thead th.css-rotate-right > .th-inner::before,
 thead th.css-users > .th-inner::before,
 thead th.css-currency > .th-inner::before,
 thead th.css-child-locations > .th-inner::before,
@@ -26660,6 +26740,54 @@ thead th.css-history > .th-inner::before {
   content: "\f1da";
   font-family: "Font Awesome 5 Free";
   font-size: 19px;
+  margin-bottom: 0px;
+}
+thead th.css-list > .th-inner::before {
+  content: "\f03a";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-eye > .th-inner::before {
+  content: "\f06e";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-bell-concierge > .th-inner::before {
+  content: "\f562";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-fingerprint > .th-inner::before {
+  content: "\f577";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-clipboard-check > .th-inner::before {
+  content: "\f46c";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-rotate-right > .th-inner::before {
+  content: "\f2f9";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-rotate-left > .th-inner::before {
+  content: "\f2ea";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-field-encrypted > .th-inner::before {
+  content: "\f023";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
   margin-bottom: 0px;
 }
 .small-box .inner {
