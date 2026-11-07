@@ -105,6 +105,19 @@ class ManagerChainCycleGuardTest extends TestCase
         $this->assertFalse($a->isValid());
     }
 
+    public function test_validator_allows_a_manager_whose_chain_has_a_legacy_cycle(): void
+    {
+        [$a, $b, $user] = User::factory()->count(3)->create();
+        DB::table('users')->where('id', $a->id)->update(['manager_id' => $b->id]);
+        DB::table('users')->where('id', $b->id)->update(['manager_id' => $a->id]);
+
+        // The cycle is between a and b. Giving user a as a manager does
+        // not put user in a cycle.
+        $user->manager_id = $a->id;
+
+        $this->assertTrue($user->isValid());
+    }
+
     public function test_eulas_endpoint_returns_safely_when_target_is_in_a_cycle(): void
     {
         // End-to-end guard. Pre-fix this request pinned the worker for
