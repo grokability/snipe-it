@@ -244,6 +244,7 @@ class ValidationServiceProvider extends ServiceProvider
             // The primary key value from the edited model
             $data_pk = array_get($data, $pk);
             $value_pk = $value;
+            $seen = [];
 
             // If we’re editing an existing model and there is a parent value set…
             while ($data_pk && $value_pk) {
@@ -252,6 +253,13 @@ class ValidationServiceProvider extends ServiceProvider
                 if ($data_pk == $value_pk) {
                     return false;
                 }
+
+                // A loop further up that doesn't include this model was already there,
+                // so this change doesn't create it
+                if (isset($seen[$value_pk])) {
+                    return true;
+                }
+                $seen[$value_pk] = true;
 
                 // Avoid accidental infinite loops
                 if (--$depth < 0) {
