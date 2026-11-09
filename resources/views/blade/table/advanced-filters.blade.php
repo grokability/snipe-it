@@ -781,7 +781,7 @@
             // open, after each pick, and after each × remove. Destroy
             // + re-init the select2 instance because its view only
             // syncs with the backing <option> set at init time.
-            function refreshPickerOptions($picker, $rowsContainer, registry) {
+            function refreshPickerOptions($picker, $rowsContainer, registry, $modal) {
                 var active = {};
                 $rowsContainer.find('.snipe-advanced-filter-row').each(function () {
                     active[$(this).attr('data-field')] = true;
@@ -811,6 +811,7 @@
                     placeholder: addFilterLabel,
                     allowClear: false,
                     width: '100%',
+                    dropdownParent: ($modal && $modal.length) ? $modal : $(document.body),
                 });
             }
 
@@ -881,7 +882,7 @@
                 });
 
                 var $picker = $pickerRow.find('.js-advanced-filter-picker');
-                refreshPickerOptions($picker, $rowsContainer, registry);
+                refreshPickerOptions($picker, $rowsContainer, registry, $modal);
 
                 $picker.off('change.snipeAdvancedFilterPicker').on('change.snipeAdvancedFilterPicker', function () {
                     var field = $(this).val();
@@ -889,14 +890,14 @@
                         return;
                     }
                     appendFilterRow($rowsContainer, field, '', $modal, registry);
-                    refreshPickerOptions($picker, $rowsContainer, registry);
+                    refreshPickerOptions($picker, $rowsContainer, registry, $modal);
                 });
 
                 $form.off('click.snipeAdvancedFilterRemove').on('click.snipeAdvancedFilterRemove', '.js-advanced-filter-row-remove', function (e) {
                     e.preventDefault();
                     var $row = $(this).closest('.snipe-advanced-filter-row');
                     removeFilterRow($row, $modal);
-                    refreshPickerOptions($picker, $rowsContainer, registry);
+                    refreshPickerOptions($picker, $rowsContainer, registry, $modal);
                 });
             });
 
