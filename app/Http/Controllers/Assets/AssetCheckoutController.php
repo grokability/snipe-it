@@ -11,6 +11,7 @@ use App\Http\Traits\CheckInOutTrait;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
 use App\Models\CheckoutRequest;
+use App\Models\Location;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -129,6 +130,18 @@ class AssetCheckoutController extends Controller
 
             $asset = $this->updateAssetLocation($asset, $target);
 
+            foreach (['location_id', 'rtd_location_id'] as $field) {
+                if (!$request->filled($field)) {
+                    continue;
+                }
+                $submittedLocation = Location::find($request->input($field));
+                if (!$submittedLocation) {
+                    return redirect()->back()->withInput()
+                        ->with('error', trans('admin/hardware/message.create.target_not_found.location'));
+                }
+                $asset->{$field} = $submittedLocation->id;
+            }
+
             $checkout_at = date('Y-m-d H:i:s');
             if (($request->filled('checkout_at')) && ($request->input('checkout_at') != date('Y-m-d'))) {
                 $checkout_at = $request->input('checkout_at');
@@ -184,7 +197,13 @@ class AssetCheckoutController extends Controller
                     return false;
                 }
 
-                return (bool) $asset->checkOut($target, $admin, $checkout_at, $expected_checkin, $request->input('note'), $request->input('name'), null, $request->boolean('sign_in_place'));
+                // Pass asset->location_id through so the admin-override set by
+                // the location_id picker (and the target-type default set by
+                // updateAssetLocation) is honored. Without this, checkOut()'s
+                // own fallback (`$target->location->id`) would clobber either
+                // value for user and asset targets. Mirrors Api\AssetsController
+                // line 1505's convention.
+                return (bool) $asset->checkOut($target, $admin, $checkout_at, $expected_checkin, $request->input('note'), $request->input('name'), $asset->location_id, $request->boolean('sign_in_place'));
             });
 
             if ($checkedOut) {

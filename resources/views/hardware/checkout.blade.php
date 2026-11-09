@@ -87,6 +87,20 @@
                     @include ('partials.forms.edit.asset-select', ['translated_name' => trans('general.select_asset'), 'fieldname' => 'assigned_asset', 'company_id' => $asset->company_id, 'unselect' => 'true', 'exclude_id' => $asset->id, 'style' => session('checkout_to_type') == 'asset' ? '' : 'display: none;'])
                     @include ('partials.forms.edit.location-select', ['translated_name' => trans('general.location'), 'fieldname' => 'assigned_location', 'company_id' => $asset->company_id, 'style' => session('checkout_to_type') == 'location' ? '' : 'display: none;'])
 
+                        <x-input.location-select
+                            :label="trans('general.location')"
+                            name="location_id"
+                            :selected="old('location_id', $asset->location_id)"
+                            :company-id="$asset->company_id"
+                        />
+
+                        <x-input.location-select
+                            :label="trans('admin/hardware/form.default_location')"
+                            name="rtd_location_id"
+                            :selected="old('rtd_location_id', $asset->rtd_location_id)"
+                            :company-id="$asset->company_id"
+                        />
+
                     <x-form.row
                         :label="trans('admin/hardware/form.checkout_date')"
                         name="checkout_at"

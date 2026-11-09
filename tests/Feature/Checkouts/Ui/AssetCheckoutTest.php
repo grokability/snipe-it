@@ -591,4 +591,96 @@ class AssetCheckoutTest extends TestCase
             'License seat must not be reassigned when the parent checkout is refused for a cross-company target.',
         );
     }
+
+    public function test_asset_location_defaults_to_target_user_location_when_override_is_empty()
+    {
+        $userLocation = Location::factory()->create();
+        $user = User::factory()->for($userLocation)->create();
+        $asset = Asset::factory()->create(['location_id' => null]);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('hardware.checkout.store', $asset), [
+                'checkout_to_type' => 'user',
+                'assigned_user' => $user->id,
+                'location_id' => '',
+                'rtd_location_id' => '',
+            ])
+            ->assertRedirect();
+
+        $this->assertSame($userLocation->id, $asset->fresh()->location_id);
+    }
+
+    public function test_pre_filled_location_picker_submits_assets_current_location_over_target()
+    {
+        $assetLocation = Location::factory()->create();
+        $userLocation = Location::factory()->create();
+        $user = User::factory()->for($userLocation)->create();
+        $asset = Asset::factory()->create(['location_id' => $assetLocation->id]);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('hardware.checkout.store', $asset), [
+                'checkout_to_type' => 'user',
+                'assigned_user' => $user->id,
+                'location_id' => $asset->location_id,
+                'rtd_location_id' => $asset->rtd_location_id,
+            ])
+            ->assertRedirect();
+
+        $this->assertSame($assetLocation->id, $asset->fresh()->location_id);
+    }
+
+    public function test_admin_can_override_asset_location_during_checkout_to_user()
+    {
+        $userLocation = Location::factory()->create();
+        $overrideLocation = Location::factory()->create();
+        $user = User::factory()->for($userLocation)->create();
+        $asset = Asset::factory()->create(['location_id' => null]);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('hardware.checkout.store', $asset), [
+                'checkout_to_type' => 'user',
+                'assigned_user' => $user->id,
+                'location_id' => $overrideLocation->id,
+            ])
+            ->assertRedirect();
+
+        $fresh = $asset->fresh();
+        $this->assertSame($overrideLocation->id, $fresh->location_id);
+        $this->assertNotSame($userLocation->id, $fresh->location_id);
+    }
+
+    public function test_admin_can_override_rtd_location_during_checkout()
+    {
+        $originalRtd = Location::factory()->create();
+        $overrideRtd = Location::factory()->create();
+        $user = User::factory()->create();
+        $asset = Asset::factory()->create(['rtd_location_id' => $originalRtd->id]);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('hardware.checkout.store', $asset), [
+                'checkout_to_type' => 'user',
+                'assigned_user' => $user->id,
+                'rtd_location_id' => $overrideRtd->id,
+            ])
+            ->assertRedirect();
+
+        $this->assertSame($overrideRtd->id, $asset->fresh()->rtd_location_id);
+    }
+
+    public function test_invalid_location_override_bounces_the_checkout()
+    {
+        $user = User::factory()->create();
+        $asset = Asset::factory()->create();
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('hardware.checkout.store', $asset), [
+                'checkout_to_type' => 'user',
+                'assigned_user' => $user->id,
+                'location_id' => 999999,
+            ])
+            ->assertSessionHas('error');
+
+        $this->assertNull($asset->fresh()->assigned_to);
+        Event::assertNotDispatched(CheckoutableCheckedOut::class);
+    }
 }
