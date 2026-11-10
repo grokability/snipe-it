@@ -22,8 +22,7 @@
                     <div class="box-body">
                         <div class="col-md-12">
 
-                            <!-- Notifications -->
-                            @include('notifications')
+                            <x-notifications />
 
                             <p class="text-muted">
                                 This application will be able to use available MCP functionality.
