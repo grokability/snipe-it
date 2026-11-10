@@ -162,7 +162,7 @@ class CustomFieldCastsTest extends TestCase
         $fieldset->fields()->attach($field, ['order' => 1, 'required' => false]);
         $asset = new class extends Asset
         {
-            public static function bootValidatesCustomFields(): void {}
+            public static function bootHasAndValidatesCustomFields(): void {}
 
             public function custom_fieldset(): Relation
             {

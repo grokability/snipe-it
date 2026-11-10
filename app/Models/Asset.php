@@ -12,7 +12,7 @@ use App\Models\Contracts\Importable;
 use App\Models\Traits\Acceptable;
 use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\HasCalendarEvents;
-use App\Models\Traits\ValidatesCustomFields;
+use App\Models\Traits\HasAndValidatesCustomFields;
 use App\Models\Traits\HasImageUpload;
 use App\Models\Traits\HasOrders;
 use App\Models\Traits\HasUploads;
@@ -69,7 +69,7 @@ class Asset extends Depreciable implements Importable
     use Requestable;
     use SoftDeletes;
     use UniqueUndeletedTrait;
-    use ValidatesCustomFields;
+    use HasAndValidatesCustomFields;
 
     public const LOCATION = 'location';
 

@@ -352,7 +352,7 @@ class BulkAssetsController extends Controller
                 foreach ($custom_field_columns as $key => $custom_field_column) {
                     $this->conditionallyAddItem($custom_field_column);
                 }
-                foreach ($custom_fields_to_null as $key => $custom_field_to_null) {
+                foreach (array_keys($custom_fields_to_null) as $key) {
                     $this->conditionallyAddItem($key);
                 }
 
@@ -496,32 +496,30 @@ class BulkAssetsController extends Controller
                  * Start all the custom fields shenanigans
                  */
 
+                if (array_key_exists('model_id', $this->update_array)) {
+                    $asset->model_id = $this->update_array['model_id'];
+                }
+
                 // Does the model have a fieldset?
                 if ($asset->custom_fieldset) {
-                    // FIXME - can we use custom_fill here? We have a nullable option which is a little weird :/
-                    foreach ($asset->custom_fieldset->fields as $field) {
+                    $customValues = array_intersect_key($this->update_array, array_flip($custom_field_columns));
+                    foreach ($custom_fields_to_null as $column => $value) {
+                        $customValues[$column] = null;
+                    }
 
-                        // null custom fields
-                        if ($custom_fields_to_null) {
-                            foreach ($custom_fields_to_null as $key => $custom_field_to_null) {
-                                if ($field->db_column == $key) {
-                                    $this->update_array[$field->db_column] = null;
-                                }
-                            }
+                    // As much as I would *love* to use custom_fill or something like it here,
+                    // we have historically checked for 'admin' permission here, and I don't want
+                    // to change that
+                    foreach ($asset->custom_fieldset->fields->where('field_encrypted', 1) as $field) {
+                        if (array_key_exists($field->db_column, $customValues) && Gate::allows('admin')) {
+                            $asset->{$field->db_column} = $customValues[$field->db_column];
                         }
+                        unset($customValues[$field->db_column]);
+                    }
 
-                        if (! array_key_exists($field->db_column, $this->update_array)) {
-                            continue;
-                        }
-
-                        if (! $field->field_encrypted || Gate::allows('admin')) {
-                            $asset->{$field->db_column} = $this->update_array[$field->db_column];
-                        }
-
-                        unset($this->update_array[$field->db_column]);
-
-                    } // endforeach
+                    $asset->custom_fill($customValues);
                 }
+                $this->update_array = array_diff_key($this->update_array, array_flip($custom_field_columns));
 
                 // Check if it passes validation, and then try to save
                 if (! $asset->update($this->update_array)) {

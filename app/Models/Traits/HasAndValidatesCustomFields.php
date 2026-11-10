@@ -5,33 +5,48 @@ namespace App\Models\Traits;
 use App\Casts\SnipeBoolean;
 use App\Casts\SnipeCrypt;
 use App\Casts\SnipeFlattenArray;
-use App\Models\CustomFieldDefault;
 use App\Models\CustomFieldset;
+use App\Models\CustomFieldDefault;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
+use ReflectionClass;
 use Watson\Validating\ValidatingTrait;
 
-trait ValidatesCustomFields
+trait HasAndValidatesCustomFields
 {
     use ValidatingTrait {
         getRules as getWatsonRules;
         getModelAttributes as protected getWatsonModelAttributes;
     }
 
-    public static function bootValidatesCustomFields(): void
+    public static function bootHasAndValidatesCustomFields(): void
     {
-        // if (method_exists(new (static::class)(), 'rules')) {
-        //     throw new \LogicException("class " . static::class . " cannot have a rules() method and use this Trait");
-        // }
-        //
-        // if (!static::class instanceof CustomFieldRelation) {
-        //     throw new \LogicException("class " . static::class . " must implement CustomFieldRelation");
-        // }
+        static::ensureWatsonValidationIsNotUsedSeparately();
         static::ensureCustomFieldRegistration(self::class);
+    }
+
+    protected static function ensureWatsonValidationIsNotUsedSeparately(): void
+    {
+        for ($class = new ReflectionClass(static::class); $class !== false; $class = $class->getParentClass()) {
+            $traits = array_values($class->getTraits());
+            while ($traits !== []) {
+                $trait = array_pop($traits);
+                if ($trait->getName() === HasAndValidatesCustomFields::class) {
+                    continue;
+                }
+
+                if ($trait->getName() === ValidatingTrait::class) {
+                    throw new \LogicException(static::class.' must use '.HasAndValidatesCustomFields::class.' without separately using '.ValidatingTrait::class.'; custom field validation already includes Watson validation.');
+                }
+
+                array_push($traits, ...array_values($trait->getTraits()));
+            }
+        }
     }
 
     /** @param class-string $modelClass */
@@ -49,31 +64,36 @@ trait ValidatesCustomFields
         return $this->getWatsonRules() + ($this->custom_fieldset?->validation_rules() ?? []);
     }
 
-    /** @return array<string, mixed> */
-    public function custom_fill(Request $request, bool $with_defaults = false, ?string $filter_field_expression = null, bool $only_present = true): array
+    /**
+     * @param  array<string, mixed>|Request  $request
+     * @return array<string, mixed>
+     */
+    public function custom_fill(array|Request $request, bool $with_defaults = false, ?string $filter_field_expression = null, bool $only_present = true): array
     {
+        $values = $request instanceof Request ? $request->input() : $request;
+
         // $filter_field_expression can be 'display_checkin', 'display_checkout', 'display_audit', etc.
         // leave it null to do 'all'
         // Check to see if any of the custom fields were included on the form and if they have any values
-        $fill_results = [];
         $fieldset = $this->custom_fieldset;
 
         if ($fieldset === null) {
-            return $fill_results;
+            return [];
         }
+        $fill_results = [];
 
         $defaultValues = $with_defaults ? $this->customFieldDefaults() : [];
 
         foreach ($fieldset->fields as $field) {
-            if ($filter_field_expression !== null && ! $field->{$filter_field_expression}) {
+            if ($filter_field_expression !== null && !$field->{$filter_field_expression}) {
                 continue;
             }
 
-            if ($only_present && ! $with_defaults && ! $request->exists($field->db_column)) {
+            if ($only_present && !$with_defaults && !Arr::has($values, $field->db_column)) {
                 continue;
             }
 
-            $value = $request->input($field->db_column);
+            $value = Arr::get($values, $field->db_column);
             if ($with_defaults && $value === null) {
                 $value = $defaultValues[$field->db_column] ?? null;
             }
@@ -142,7 +162,7 @@ trait ValidatesCustomFields
                 }
 
                 $fieldset = $this->getRelation('custom_fieldset');
-                $this->customFieldCastCache = $fieldset === null ? [] : $this->castsForCustomFieldset($fieldset);
+                $this->customFieldCastCache = $this->castsForCustomFieldset($fieldset);
                 $this->cachedCustomFieldDependencyValue = $value;
             }
 
@@ -154,22 +174,24 @@ trait ValidatesCustomFields
 
     protected function customFieldsetDependencyAttribute(): string
     {
-        $modelClass = static::class;
-        if (! array_key_exists($modelClass, static::$customFieldsetDependencies)) {
+        if (!array_key_exists(static::class, static::$customFieldsetDependencies)) {
             $relationship = Relation::noConstraints(fn () => $this->custom_fieldset());
-            static::$customFieldsetDependencies[$modelClass] = match (true) {
+            static::$customFieldsetDependencies[static::class] = match (true) {
                 $relationship instanceof HasOneThrough => $relationship->getLocalKeyName(),
                 $relationship instanceof BelongsTo && ! ($relationship instanceof MorphTo) => $relationship->getForeignKeyName(),
                 default => throw new \LogicException('Unsupported custom fieldset relationship.'),
             };
         }
 
-        return static::$customFieldsetDependencies[$modelClass];
+        return static::$customFieldsetDependencies[static::class];
     }
 
     /** @return array<string, string> */
-    protected function castsForCustomFieldset(CustomFieldset $fieldset): array
+    protected function castsForCustomFieldset(?CustomFieldset $fieldset): array
     {
+        if (!$fieldset) {
+            return [];
+        }
         $casts = [];
         foreach ($fieldset->fields as $field) {
             $casts[$field->db_column_name()] = match (true) {
