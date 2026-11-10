@@ -4,7 +4,6 @@ namespace Tests\Feature\Mcp;
 
 use App\Mcp\Tools\CreateLicenseTool;
 use App\Models\Category;
-use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\User;
 use Laravel\Mcp\Request;

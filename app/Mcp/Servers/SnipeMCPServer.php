@@ -13,11 +13,13 @@ use App\Mcp\Tools\CheckoutComponentTool;
 use App\Mcp\Tools\CheckoutLicenseTool;
 use App\Mcp\Tools\CreateAccessoryTool;
 use App\Mcp\Tools\CreateComponentTool;
+use App\Mcp\Tools\CreateDepartmentTool;
 use App\Mcp\Tools\CreateLicenseTool;
 use App\Mcp\Tools\CreateUserTool;
 use App\Mcp\Tools\DeleteAccessoryTool;
 use App\Mcp\Tools\DeleteAssetTool;
 use App\Mcp\Tools\DeleteComponentTool;
+use App\Mcp\Tools\DeleteDepartmentTool;
 use App\Mcp\Tools\DeleteLicenseTool;
 use App\Mcp\Tools\DeleteUserTool;
 use App\Mcp\Tools\ListAssetsTool;
@@ -29,6 +31,7 @@ use App\Mcp\Tools\ShowUserTool;
 use App\Mcp\Tools\UpdateAccessoryTool;
 use App\Mcp\Tools\UpdateAssetTool;
 use App\Mcp\Tools\UpdateComponentTool;
+use App\Mcp\Tools\UpdateDepartmentTool;
 use App\Mcp\Tools\UpdateLicenseTool;
 use App\Mcp\Tools\UpdateUserTool;
 use Laravel\Mcp\Server;
@@ -64,6 +67,16 @@ class SnipeMCPServer extends Server
         DeleteComponentTool::class,
         CheckoutComponentTool::class,
         CheckinComponentTool::class,
+        ListLicensesTool::class,
+        ShowLicenseTool::class,
+        CreateLicenseTool::class,
+        UpdateLicenseTool::class,
+        DeleteLicenseTool::class,
+        CheckoutLicenseTool::class,
+        CheckinLicenseTool::class,
+        CreateDepartmentTool::class,
+        UpdateDepartmentTool::class,
+        DeleteDepartmentTool::class,
     ];
 
     protected array $resources = [

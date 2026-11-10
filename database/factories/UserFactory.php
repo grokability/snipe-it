@@ -413,6 +413,16 @@ class UserFactory extends Factory
         return $this->appendPermission(['consumables.checkout' => '1']);
     }
 
+    public function createDepartments()
+    {
+        return $this->appendPermission(['departments.create' => '1']);
+    }
+
+    public function editDepartments()
+    {
+        return $this->appendPermission(['departments.edit' => '1']);
+    }
+
     public function deleteDepartments()
     {
         return $this->appendPermission(['departments.delete' => '1']);
