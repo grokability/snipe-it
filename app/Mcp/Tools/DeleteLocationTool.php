@@ -28,19 +28,19 @@ class DeleteLocationTool extends Tool
         $location = $this->resolveLocation($request);
 
         if (! $location) {
-            return Response::make(Response::error('Location not found'));
+            return Response::make(Response::error(trans('mcp.location_not_found')));
         }
 
         if (! Gate::allows('delete', $location)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($location->users()->count() > 0) {
-            return Response::make(Response::error('Location has users assigned and cannot be deleted'));
+            return Response::make(Response::error(trans('mcp.location_has_users')));
         }
 
         if ($location->children()->count() > 0) {
-            return Response::make(Response::error('Location has child locations and cannot be deleted'));
+            return Response::make(Response::error(trans('mcp.location_has_child_locations')));
         }
 
         $name = $location->name;
@@ -48,10 +48,10 @@ class DeleteLocationTool extends Tool
         $location->delete();
 
         return Response::make(
-            Response::text('Location '.$name.' deleted successfully')
+            Response::text(trans('mcp.location_deleted', ['name' => $name]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Location deleted successfully',
+            'message' => trans('mcp.location_deleted', ['name' => $name]),
             'name' => $name,
         ]);
     }

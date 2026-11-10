@@ -22,7 +22,7 @@ class CreateCompanyTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('create', Company::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -55,16 +55,16 @@ class CreateCompanyTool extends Tool
 
         if ($company->save()) {
             return Response::make(
-                Response::text('Company '.$company->name.' created successfully')
+                Response::text(trans('mcp.company_created', ['name' => $company->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Company created successfully',
+                'message' => trans('mcp.company_created', ['name' => $company->name]),
                 'id' => $company->id,
                 'name' => $company->name,
             ]);
         }
 
-        return Response::make(Response::error('Create failed: '.$company->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $company->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

@@ -41,19 +41,19 @@ class ShowUserTool extends Tool
                 ->withCount(['assets as assets_count', 'licenses as licenses_count', 'accessories as accessories_count', 'consumables as consumables_count'])
                 ->first();
         } else {
-            return Response::make(Response::error('Please provide an id, username, or email'));
+            return Response::make(Response::error(trans('mcp.id_username_or_email_required')));
         }
 
         if (! $user) {
-            return Response::make(Response::error('User not found'));
+            return Response::make(Response::error(trans('mcp.user_not_found')));
         }
 
         if (! Gate::allows('view', $user)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         return Response::make(
-            Response::text('User '.$user->username.' found')
+            Response::text(trans('mcp.user_found', ['username' => $user->username]))
         )->withStructuredContent([
             'id' => $user->id,
             'first_name' => $user->first_name,

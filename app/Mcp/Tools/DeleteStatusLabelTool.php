@@ -28,15 +28,15 @@ class DeleteStatusLabelTool extends Tool
         $label = $this->resolveStatusLabel($request);
 
         if (! $label) {
-            return Response::make(Response::error('Status label not found'));
+            return Response::make(Response::error(trans('mcp.status_label_not_found')));
         }
 
         if (! Gate::allows('delete', $label)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($label->assets()->count() > 0) {
-            return Response::make(Response::error('Status label has assets assigned and cannot be deleted'));
+            return Response::make(Response::error(trans('mcp.status_label_has_assets')));
         }
 
         $name = $label->name;
@@ -44,10 +44,10 @@ class DeleteStatusLabelTool extends Tool
         $label->delete();
 
         return Response::make(
-            Response::text('Status label '.$name.' deleted successfully')
+            Response::text(trans('mcp.status_label_deleted', ['name' => $name]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Status label deleted successfully',
+            'message' => trans('mcp.status_label_deleted', ['name' => $name]),
             'name' => $name,
         ]);
     }

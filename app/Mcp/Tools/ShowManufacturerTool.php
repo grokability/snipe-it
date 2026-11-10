@@ -29,20 +29,20 @@ class ShowManufacturerTool extends Tool
 
         if (! $manufacturer) {
             if (! $request->filled('id') && ! $request->filled('name')) {
-                return Response::make(Response::error('Please provide an id or name'));
+                return Response::make(Response::error(trans('mcp.id_or_name_required')));
             }
 
-            return Response::make(Response::error('Manufacturer not found'));
+            return Response::make(Response::error(trans('mcp.manufacturer_not_found')));
         }
 
         if (! Gate::allows('view', $manufacturer)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $manufacturer->loadCount('assets as assets_count');
 
         return Response::make(
-            Response::text('Manufacturer: '.$manufacturer->name)
+            Response::text(trans('mcp.manufacturer_found', ['name' => $manufacturer->name]))
         )->withStructuredContent([
             'id' => $manufacturer->id,
             'name' => $manufacturer->name,

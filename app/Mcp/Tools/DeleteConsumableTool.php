@@ -28,15 +28,15 @@ class DeleteConsumableTool extends Tool
         $consumable = $this->resolveConsumable($request);
 
         if (! $consumable) {
-            return Response::make(Response::error('Consumable not found'));
+            return Response::make(Response::error(trans('mcp.consumable_not_found')));
         }
 
         if (! Gate::allows('delete', $consumable)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($consumable->users()->count() > 0) {
-            return Response::make(Response::error('Consumable has items checked out and cannot be deleted'));
+            return Response::make(Response::error(trans('mcp.consumable_has_checkouts')));
         }
 
         $name = $consumable->name;
@@ -44,10 +44,10 @@ class DeleteConsumableTool extends Tool
         $consumable->delete();
 
         return Response::make(
-            Response::text('Consumable '.$name.' deleted successfully')
+            Response::text(trans('mcp.consumable_deleted', ['name' => $name]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Consumable deleted successfully',
+            'message' => trans('mcp.consumable_deleted', ['name' => $name]),
             'name' => $name,
         ]);
     }

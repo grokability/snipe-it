@@ -30,11 +30,11 @@ class UpdateDepreciationTool extends Tool
         $dep = $this->resolveDepreciation($request);
 
         if (! $dep) {
-            return Response::make(Response::error('Depreciation not found'));
+            return Response::make(Response::error(trans('mcp.depreciation_not_found')));
         }
 
         if (! Gate::allows('update', $dep)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($request->filled('new_name')) {
@@ -47,17 +47,17 @@ class UpdateDepreciationTool extends Tool
 
         if ($dep->save()) {
             return Response::make(
-                Response::text('Depreciation '.$dep->name.' updated successfully')
+                Response::text(trans('mcp.depreciation_updated', ['name' => $dep->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Depreciation updated successfully',
+                'message' => trans('mcp.depreciation_updated', ['name' => $dep->name]),
                 'id' => $dep->id,
                 'name' => $dep->name,
                 'months' => $dep->months,
             ]);
         }
 
-        return Response::make(Response::error('Update failed: '.$dep->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.update_failed', ['error' => $dep->getErrors()->first()])));
     }
 
     private function resolveDepreciation(Request $request): ?Depreciation

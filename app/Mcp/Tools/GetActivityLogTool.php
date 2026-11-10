@@ -21,7 +21,7 @@ class GetActivityLogTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('activity.view')) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -69,7 +69,7 @@ class GetActivityLogTool extends Tool
         ])->values()->all();
 
         return Response::make(
-            Response::text("Found {$total} activity log entries, returning ".count($activityData))
+            Response::text(trans('mcp.list_activity', ['total' => $total, 'count' => count($activityData)]))
         )->withStructuredContent([
             'total' => $total,
             'offset' => $offset,

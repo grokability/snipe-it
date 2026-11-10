@@ -29,34 +29,34 @@ class DeleteUserTool extends Tool
         $user = $this->resolveUser($request);
 
         if (! $user) {
-            return Response::make(Response::error('User not found'));
+            return Response::make(Response::error(trans('mcp.user_not_found')));
         }
 
         if (! Gate::allows('delete', $user)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($user->id === auth()->id()) {
-            return Response::make(Response::error('You cannot delete your own account'));
+            return Response::make(Response::error(trans('mcp.user_cannot_delete_self')));
         }
 
         if ($user->allAssignedCount() > 0) {
-            return Response::make(Response::error('User has assigned items and cannot be deleted. Check in all items first.'));
+            return Response::make(Response::error(trans('mcp.user_has_items')));
         }
 
         $username = $user->username;
 
         if ($user->delete()) {
             return Response::make(
-                Response::text('User '.$username.' deleted successfully')
+                Response::text(trans('mcp.user_deleted', ['username' => $username]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'User deleted successfully',
+                'message' => trans('mcp.user_deleted', ['username' => $username]),
                 'username' => $username,
             ]);
         }
 
-        return Response::make(Response::error('Delete failed: '.$user->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.delete_failed_error', ['error' => $user->getErrors()->first()])));
     }
 
     private function resolveUser(Request $request): ?User

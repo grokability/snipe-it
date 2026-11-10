@@ -28,11 +28,11 @@ class DeleteDepreciationTool extends Tool
         $dep = $this->resolveDepreciation($request);
 
         if (! $dep) {
-            return Response::make(Response::error('Depreciation not found'));
+            return Response::make(Response::error(trans('mcp.depreciation_not_found')));
         }
 
         if (! Gate::allows('delete', $dep)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $name = $dep->name;
@@ -40,10 +40,10 @@ class DeleteDepreciationTool extends Tool
         $dep->delete();
 
         return Response::make(
-            Response::text('Depreciation '.$name.' deleted successfully')
+            Response::text(trans('mcp.depreciation_deleted', ['name' => $name]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Depreciation deleted successfully',
+            'message' => trans('mcp.depreciation_deleted', ['name' => $name]),
             'name' => $name,
         ]);
     }

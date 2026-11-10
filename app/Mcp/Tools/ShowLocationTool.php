@@ -28,21 +28,21 @@ class ShowLocationTool extends Tool
         $location = $this->resolveLocation($request);
 
         if ($location === false) {
-            return Response::make(Response::error('Please provide an id or name'));
+            return Response::make(Response::error(trans('mcp.id_or_name_required')));
         }
 
         if (! $location) {
-            return Response::make(Response::error('Location not found'));
+            return Response::make(Response::error(trans('mcp.location_not_found')));
         }
 
         if (! Gate::allows('view', $location)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $location->loadCount('assets as assets_count', 'users as users_count', 'children as children_count');
 
         return Response::make(
-            Response::text('Location '.$location->name.' found')
+            Response::text(trans('mcp.location_found', ['name' => $location->name]))
         )->withStructuredContent([
             'id' => $location->id,
             'name' => $location->name,

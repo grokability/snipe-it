@@ -35,21 +35,21 @@ class ShowLicenseTool extends Tool
                 ->where('name', $request->get('name'))
                 ->first();
         } else {
-            return Response::make(Response::error('Please provide an id or name'));
+            return Response::make(Response::error(trans('mcp.id_or_name_required')));
         }
 
         if (! $license) {
-            return Response::make(Response::error('License not found'));
+            return Response::make(Response::error(trans('mcp.license_not_found')));
         }
 
         if (! Gate::allows('view', $license)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $assignedCount = $license->assignedCount()->count();
 
         return Response::make(
-            Response::text('License '.$license->name.' found')
+            Response::text(trans('mcp.license_found', ['name' => $license->name]))
         )->withStructuredContent([
             'id' => $license->id,
             'name' => $license->name,

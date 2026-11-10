@@ -33,17 +33,17 @@ class CheckinComponentTool extends Tool
         $componentAsset = DB::table('components_assets')->find($request->get('component_asset_id'));
 
         if (! $componentAsset) {
-            return Response::make(Response::error('Component checkout record not found'));
+            return Response::make(Response::error(trans('mcp.component_checkout_not_found')));
         }
 
         $component = Component::find($componentAsset->component_id);
 
         if (! $component) {
-            return Response::make(Response::error('Component not found'));
+            return Response::make(Response::error(trans('mcp.component_not_found')));
         }
 
         if (! Gate::allows('checkin', $component)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $maxCheckin = $componentAsset->assigned_qty ?? 1;
@@ -68,10 +68,10 @@ class CheckinComponentTool extends Tool
         event(new CheckoutableCheckedIn($component, $asset, auth()->user(), $request->get('note'), Carbon::now()));
 
         return Response::make(
-            Response::text('Component '.$component->name.' checked in successfully')
+            Response::text(trans('mcp.component_checked_in', ['name' => $component->name]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Component checked in successfully',
+            'message' => trans('mcp.component_checked_in', ['name' => $component->name]),
             'component_id' => $component->id,
             'component_name' => $component->name,
             'checkin_qty' => $checkinQty,

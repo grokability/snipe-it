@@ -59,18 +59,21 @@ use App\Mcp\Tools\GetActivityLogTool;
 use App\Mcp\Tools\GetCurrentUserTool;
 use App\Mcp\Tools\GetUserAssetsTool;
 use App\Mcp\Tools\ListAssetModelsTool;
+use App\Mcp\Tools\ListAssetNotesTool;
 use App\Mcp\Tools\ListAssetsTool;
 use App\Mcp\Tools\ListCategoriesTool;
 use App\Mcp\Tools\ListCompaniesTool;
 use App\Mcp\Tools\ListConsumablesTool;
 use App\Mcp\Tools\ListDepreciationsTool;
 use App\Mcp\Tools\ListGroupsTool;
+use App\Mcp\Tools\ListHistoryTool;
 use App\Mcp\Tools\ListLicensesTool;
 use App\Mcp\Tools\ListLocationsTool;
 use App\Mcp\Tools\ListMaintenancesTool;
 use App\Mcp\Tools\ListManufacturersTool;
 use App\Mcp\Tools\ListStatusLabelsTool;
 use App\Mcp\Tools\ListSuppliersTool;
+use App\Mcp\Tools\ListUploadsTool;
 use App\Mcp\Tools\ListUsersTool;
 use App\Mcp\Tools\Reset2FATool;
 use App\Mcp\Tools\RestoreAssetTool;
@@ -127,6 +130,11 @@ class SnipeMCPServer extends Server
         CheckinAssetTool::class,
         AuditAssetTool::class,
         AddAssetNoteTool::class,
+        ListAssetNotesTool::class,
+
+        // Cross-type tools
+        ListUploadsTool::class,
+        ListHistoryTool::class,
 
         // Users
         ListUsersTool::class,

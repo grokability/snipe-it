@@ -28,21 +28,21 @@ class ShowDepreciationTool extends Tool
         $depreciation = $this->resolveDepreciation($request);
 
         if ($depreciation === false) {
-            return Response::make(Response::error('Please provide an id or name'));
+            return Response::make(Response::error(trans('mcp.id_or_name_required')));
         }
 
         if (! $depreciation) {
-            return Response::make(Response::error('Depreciation not found'));
+            return Response::make(Response::error(trans('mcp.depreciation_not_found')));
         }
 
         if (! Gate::allows('view', $depreciation)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $depreciation->loadCount('models as models_count');
 
         return Response::make(
-            Response::text('Depreciation '.$depreciation->name.' found')
+            Response::text(trans('mcp.depreciation_found', ['name' => $depreciation->name]))
         )->withStructuredContent([
             'id' => $depreciation->id,
             'name' => $depreciation->name,

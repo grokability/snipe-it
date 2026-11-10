@@ -21,7 +21,7 @@ class ListSuppliersTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('view', Supplier::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -62,7 +62,7 @@ class ListSuppliersTool extends Tool
         ])->values()->all();
 
         return Response::make(
-            Response::text("Found {$total} suppliers, returning ".count($suppliersData))
+            Response::text(trans('mcp.list_suppliers', ['total' => $total, 'count' => count($suppliersData)]))
         )->withStructuredContent([
             'total' => $total,
             'offset' => $offset,

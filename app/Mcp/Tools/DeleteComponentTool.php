@@ -28,15 +28,15 @@ class DeleteComponentTool extends Tool
         $component = $this->resolveComponent($request);
 
         if (! $component) {
-            return Response::make(Response::error('Component not found'));
+            return Response::make(Response::error(trans('mcp.component_not_found')));
         }
 
         if (! Gate::allows('delete', $component)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($component->numCheckedOut() > 0) {
-            return Response::make(Response::error('Component has units checked out and cannot be deleted. Check them in first.'));
+            return Response::make(Response::error(trans('mcp.component_has_checkouts')));
         }
 
         $name = $component->name;
@@ -44,10 +44,10 @@ class DeleteComponentTool extends Tool
         $component->delete();
 
         return Response::make(
-            Response::text('Component '.$name.' deleted successfully')
+            Response::text(trans('mcp.component_deleted', ['name' => $name]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Component deleted successfully',
+            'message' => trans('mcp.component_deleted', ['name' => $name]),
             'name' => $name,
         ]);
     }

@@ -23,7 +23,7 @@ class CreateDepartmentTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('create', Department::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -50,16 +50,16 @@ class CreateDepartmentTool extends Tool
 
         if ($department->save()) {
             return Response::make(
-                Response::text('Department '.$department->name.' created successfully')
+                Response::text(trans('mcp.department_created', ['name' => $department->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Department created successfully',
+                'message' => trans('mcp.department_created', ['name' => $department->name]),
                 'id' => $department->id,
                 'name' => $department->name,
             ]);
         }
 
-        return Response::make(Response::error('Create failed: '.$department->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $department->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

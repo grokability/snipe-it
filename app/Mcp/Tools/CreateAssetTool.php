@@ -22,7 +22,7 @@ class CreateAssetTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('create', Asset::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -61,17 +61,17 @@ class CreateAssetTool extends Tool
 
         if ($asset->save()) {
             return Response::make(
-                Response::text('Asset '.$asset->asset_tag.' created successfully')
+                Response::text(trans('mcp.asset_created', ['asset_tag' => $asset->asset_tag]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Asset created successfully',
+                'message' => trans('mcp.asset_created', ['asset_tag' => $asset->asset_tag]),
                 'id' => $asset->id,
                 'asset_tag' => $asset->asset_tag,
                 'name' => $asset->name,
             ]);
         }
 
-        return Response::make(Response::error('Create failed: '.$asset->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $asset->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

@@ -28,15 +28,15 @@ class DeleteAccessoryTool extends Tool
         $accessory = $this->resolveAccessory($request);
 
         if (! $accessory) {
-            return Response::make(Response::error('Accessory not found'));
+            return Response::make(Response::error(trans('mcp.accessory_not_found')));
         }
 
         if (! Gate::allows('delete', $accessory)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($accessory->numCheckedOut() > 0) {
-            return Response::make(Response::error('Accessory has units checked out and cannot be deleted. Check them in first.'));
+            return Response::make(Response::error(trans('mcp.accessory_has_checkouts')));
         }
 
         $name = $accessory->name;
@@ -44,10 +44,10 @@ class DeleteAccessoryTool extends Tool
         $accessory->delete();
 
         return Response::make(
-            Response::text('Accessory '.$name.' deleted successfully')
+            Response::text(trans('mcp.accessory_deleted', ['name' => $name]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Accessory deleted successfully',
+            'message' => trans('mcp.accessory_deleted', ['name' => $name]),
             'name' => $name,
         ]);
     }

@@ -21,7 +21,7 @@ class Reset2FATool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('update', User::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -31,7 +31,7 @@ class Reset2FATool extends Tool
         $user = User::find($request->get('id'));
 
         if (! $user) {
-            return Response::make(Response::error('User not found'));
+            return Response::make(Response::error(trans('mcp.user_not_found')));
         }
 
         $user->two_factor_secret = null;
@@ -40,10 +40,10 @@ class Reset2FATool extends Tool
         $user->save();
 
         return Response::make(
-            Response::text('Two-factor authentication reset for '.$user->username)
+            Response::text(trans('mcp.two_factor_reset', ['username' => $user->username]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Two-factor authentication reset successfully',
+            'message' => trans('mcp.two_factor_reset', ['username' => $user->username]),
             'id' => $user->id,
             'username' => $user->username,
         ]);

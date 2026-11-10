@@ -31,11 +31,11 @@ class DeleteAssetTool extends Tool
         $asset = $this->resolveAsset($request);
 
         if (! $asset) {
-            return Response::make(Response::error('Asset not found'));
+            return Response::make(Response::error(trans('mcp.asset_not_found')));
         }
 
         if (! Gate::allows('delete', $asset)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $assetTag = $asset->asset_tag;
@@ -50,10 +50,10 @@ class DeleteAssetTool extends Tool
         $asset->delete();
 
         return Response::make(
-            Response::text('Asset '.$assetTag.' deleted successfully')
+            Response::text(trans('mcp.asset_deleted', ['asset_tag' => $assetTag]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Asset deleted successfully',
+            'message' => trans('mcp.asset_deleted', ['asset_tag' => $assetTag]),
             'asset_tag' => $assetTag,
         ]);
     }

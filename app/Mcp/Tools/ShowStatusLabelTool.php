@@ -29,20 +29,20 @@ class ShowStatusLabelTool extends Tool
 
         if (! $label) {
             if (! $request->filled('id') && ! $request->filled('name')) {
-                return Response::make(Response::error('Please provide an id or name'));
+                return Response::make(Response::error(trans('mcp.id_or_name_required')));
             }
 
-            return Response::make(Response::error('Status label not found'));
+            return Response::make(Response::error(trans('mcp.status_label_not_found')));
         }
 
         if (! Gate::allows('view', $label)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $label->loadCount('assets as assets_count');
 
         return Response::make(
-            Response::text('Status label: '.$label->name)
+            Response::text(trans('mcp.status_label_found', ['name' => $label->name]))
         )->withStructuredContent([
             'id' => $label->id,
             'name' => $label->name,

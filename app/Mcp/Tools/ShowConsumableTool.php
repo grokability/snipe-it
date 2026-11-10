@@ -32,21 +32,21 @@ class ShowConsumableTool extends Tool
         } elseif ($request->filled('name')) {
             $consumable = Consumable::with('company', 'category', 'manufacturer', 'supplier', 'location')->where('name', $request->get('name'))->first();
         } else {
-            return Response::make(Response::error('Either id or name is required'));
+            return Response::make(Response::error(trans('mcp.id_or_name_required')));
         }
 
         if (! $consumable) {
-            return Response::make(Response::error('Consumable not found'));
+            return Response::make(Response::error(trans('mcp.consumable_not_found')));
         }
 
         if (! Gate::allows('view', $consumable)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $usersCount = $consumable->users()->count();
 
         return Response::make(
-            Response::text('Consumable '.$consumable->name.' found')
+            Response::text(trans('mcp.consumable_found', ['name' => $consumable->name]))
         )->withStructuredContent([
             'id' => $consumable->id,
             'name' => $consumable->name,

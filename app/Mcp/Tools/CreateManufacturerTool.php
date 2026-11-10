@@ -22,7 +22,7 @@ class CreateManufacturerTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('create', Manufacturer::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -46,16 +46,16 @@ class CreateManufacturerTool extends Tool
 
         if ($manufacturer->save()) {
             return Response::make(
-                Response::text('Manufacturer '.$manufacturer->name.' created successfully')
+                Response::text(trans('mcp.manufacturer_created', ['name' => $manufacturer->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Manufacturer created successfully',
+                'message' => trans('mcp.manufacturer_created', ['name' => $manufacturer->name]),
                 'id' => $manufacturer->id,
                 'name' => $manufacturer->name,
             ]);
         }
 
-        return Response::make(Response::error('Create failed: '.$manufacturer->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $manufacturer->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

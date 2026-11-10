@@ -21,7 +21,7 @@ class ListConsumablesTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('index', Consumable::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -77,7 +77,7 @@ class ListConsumablesTool extends Tool
         ])->values()->all();
 
         return Response::make(
-            Response::text("Found {$total} consumables, returning ".count($consumablesData))
+            Response::text(trans('mcp.list_consumables', ['total' => $total, 'count' => count($consumablesData)]))
         )->withStructuredContent([
             'total' => $total,
             'offset' => $offset,

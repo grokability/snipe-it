@@ -47,11 +47,11 @@ class UpdateAssetTool extends Tool
         $asset = $this->resolveAsset($request);
 
         if (! $asset) {
-            return Response::make(Response::error('Asset not found'));
+            return Response::make(Response::error(trans('mcp.asset_not_found')));
         }
 
         if (! Gate::allows('update', $asset)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $updatable = [
@@ -78,16 +78,16 @@ class UpdateAssetTool extends Tool
 
         if ($asset->save()) {
             return Response::make(
-                Response::text('Asset '.$asset->asset_tag.' updated successfully')
+                Response::text(trans('mcp.asset_updated', ['asset_tag' => $asset->asset_tag]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Asset updated successfully',
+                'message' => trans('mcp.asset_updated', ['asset_tag' => $asset->asset_tag]),
                 'asset_tag' => $asset->asset_tag,
                 'id' => $asset->id,
             ]);
         }
 
-        return Response::make(Response::error('Update failed: '.$asset->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.update_failed', ['error' => $asset->getErrors()->first()])));
     }
 
     private function resolveAsset(Request $request): ?Asset

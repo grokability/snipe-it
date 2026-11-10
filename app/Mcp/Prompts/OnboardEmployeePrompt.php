@@ -7,13 +7,12 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Attributes\Title;
-use Laravel\Mcp\Server\Prompt;
 use Laravel\Mcp\Server\Prompts\Argument;
 
 #[Name('onboard_employee')]
 #[Title('Onboard Employee')]
 #[Description('Guide through creating a new employee account and assigning appropriate equipment and licenses')]
-class OnboardEmployeePrompt extends Prompt
+class OnboardEmployeePrompt extends SnipePrompt
 {
     public function handle(Request $request): Response
     {
@@ -48,7 +47,7 @@ class OnboardEmployeePrompt extends Prompt
         5. Summarise what was set up: the user account created, assets checked out, and licenses assigned.
         TEXT;
 
-        return Response::text(trim($prompt));
+        return Response::text(trim($prompt).$this->localeInstruction());
     }
 
     public function arguments(): array

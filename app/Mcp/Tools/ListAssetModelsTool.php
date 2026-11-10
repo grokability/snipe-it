@@ -21,7 +21,7 @@ class ListAssetModelsTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('view', AssetModel::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -69,7 +69,7 @@ class ListAssetModelsTool extends Tool
         ])->values()->all();
 
         return Response::make(
-            Response::text("Found {$total} asset models, returning ".count($modelsData))
+            Response::text(trans('mcp.list_asset_models', ['total' => $total, 'count' => count($modelsData)]))
         )->withStructuredContent([
             'total' => $total,
             'offset' => $offset,

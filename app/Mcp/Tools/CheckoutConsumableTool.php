@@ -32,21 +32,21 @@ class CheckoutConsumableTool extends Tool
         $consumable = $this->resolveConsumable($request);
 
         if (! $consumable) {
-            return Response::make(Response::error('Consumable not found'));
+            return Response::make(Response::error(trans('mcp.consumable_not_found')));
         }
 
         if (! Gate::allows('checkout', $consumable)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($consumable->numRemaining() <= 0) {
-            return Response::make(Response::error('No units remaining'));
+            return Response::make(Response::error(trans('mcp.no_units_remaining')));
         }
 
         $user = User::find($request->get('assigned_to'));
 
         if (! $user) {
-            return Response::make(Response::error('User not found'));
+            return Response::make(Response::error(trans('mcp.user_not_found')));
         }
 
         $consumable->users()->attach($consumable->id, [
@@ -66,10 +66,10 @@ class CheckoutConsumableTool extends Tool
         ));
 
         return Response::make(
-            Response::text('Consumable '.$consumable->name.' checked out to '.$user->username)
+            Response::text(trans('mcp.consumable_checked_out', ['name' => $consumable->name, 'username' => $user->username]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Consumable checked out successfully',
+            'message' => trans('mcp.consumable_checked_out', ['name' => $consumable->name, 'username' => $user->username]),
             'consumable_id' => $consumable->id,
             'consumable_name' => $consumable->name,
             'assigned_to_id' => $user->id,

@@ -22,7 +22,7 @@ class CreateLocationTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('create', Location::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -55,16 +55,16 @@ class CreateLocationTool extends Tool
 
         if ($location->save()) {
             return Response::make(
-                Response::text('Location '.$location->name.' created successfully')
+                Response::text(trans('mcp.location_created', ['name' => $location->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Location created successfully',
+                'message' => trans('mcp.location_created', ['name' => $location->name]),
                 'id' => $location->id,
                 'name' => $location->name,
             ]);
         }
 
-        return Response::make(Response::error('Create failed: '.$location->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $location->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

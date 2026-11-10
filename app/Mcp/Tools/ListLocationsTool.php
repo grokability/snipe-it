@@ -21,7 +21,7 @@ class ListLocationsTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('view', Location::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -70,7 +70,7 @@ class ListLocationsTool extends Tool
         ])->values()->all();
 
         return Response::make(
-            Response::text("Found {$total} locations, returning ".count($locationsData))
+            Response::text(trans('mcp.list_locations', ['total' => $total, 'count' => count($locationsData)]))
         )->withStructuredContent([
             'total' => $total,
             'offset' => $offset,

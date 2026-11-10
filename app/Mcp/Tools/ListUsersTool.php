@@ -21,7 +21,7 @@ class ListUsersTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('index', User::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -82,7 +82,7 @@ class ListUsersTool extends Tool
         ])->values()->all();
 
         return Response::make(
-            Response::text("Found {$total} users, returning ".count($usersData))
+            Response::text(trans('mcp.list_users', ['total' => $total, 'count' => count($usersData)]))
         )->withStructuredContent([
             'total' => $total,
             'offset' => $offset,

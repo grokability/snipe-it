@@ -29,15 +29,15 @@ class DeleteLicenseTool extends Tool
         $license = $this->resolveLicense($request);
 
         if (! $license) {
-            return Response::make(Response::error('License not found'));
+            return Response::make(Response::error(trans('mcp.license_not_found')));
         }
 
         if (! Gate::allows('delete', $license)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($license->assignedCount()->count() > 0) {
-            return Response::make(Response::error('License has seats currently assigned and cannot be deleted. Check in all seats first.'));
+            return Response::make(Response::error(trans('mcp.license_has_seats_assigned')));
         }
 
         $name = $license->name;
@@ -50,10 +50,10 @@ class DeleteLicenseTool extends Tool
         $license->delete();
 
         return Response::make(
-            Response::text('License '.$name.' deleted successfully')
+            Response::text(trans('mcp.license_deleted', ['name' => $name]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'License deleted successfully',
+            'message' => trans('mcp.license_deleted', ['name' => $name]),
             'name' => $name,
         ]);
     }

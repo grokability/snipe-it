@@ -27,24 +27,24 @@ class RestoreAssetTool extends Tool
         $asset = Asset::withTrashed()->find($request->get('id'));
 
         if (! $asset) {
-            return Response::make(Response::error('Asset not found'));
+            return Response::make(Response::error(trans('mcp.asset_not_found')));
         }
 
         if (! $asset->deleted_at) {
-            return Response::make(Response::error('Asset is not deleted'));
+            return Response::make(Response::error(trans('mcp.asset_not_deleted')));
         }
 
         if (! Gate::allows('delete', Asset::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $asset->restore();
 
         return Response::make(
-            Response::text('Asset '.$asset->asset_tag.' restored successfully')
+            Response::text(trans('mcp.asset_restored', ['asset_tag' => $asset->asset_tag]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Asset restored successfully',
+            'message' => trans('mcp.asset_restored', ['asset_tag' => $asset->asset_tag]),
             'id' => $asset->id,
             'asset_tag' => $asset->asset_tag,
         ]);

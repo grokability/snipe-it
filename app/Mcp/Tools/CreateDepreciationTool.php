@@ -22,7 +22,7 @@ class CreateDepreciationTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('create', Depreciation::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -40,17 +40,17 @@ class CreateDepreciationTool extends Tool
 
         if ($depreciation->save()) {
             return Response::make(
-                Response::text('Depreciation '.$depreciation->name.' created successfully')
+                Response::text(trans('mcp.depreciation_created', ['name' => $depreciation->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Depreciation created successfully',
+                'message' => trans('mcp.depreciation_created', ['name' => $depreciation->name]),
                 'id' => $depreciation->id,
                 'name' => $depreciation->name,
                 'months' => $depreciation->months,
             ]);
         }
 
-        return Response::make(Response::error('Create failed: '.$depreciation->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $depreciation->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

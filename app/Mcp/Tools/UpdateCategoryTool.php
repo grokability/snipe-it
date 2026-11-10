@@ -34,11 +34,11 @@ class UpdateCategoryTool extends Tool
         $category = $this->resolveCategory($request);
 
         if (! $category) {
-            return Response::make(Response::error('Category not found'));
+            return Response::make(Response::error(trans('mcp.category_not_found')));
         }
 
         if (! Gate::allows('update', $category)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($request->filled('new_name')) {
@@ -53,17 +53,17 @@ class UpdateCategoryTool extends Tool
 
         if ($category->save()) {
             return Response::make(
-                Response::text('Category '.$category->name.' updated successfully')
+                Response::text(trans('mcp.category_updated', ['name' => $category->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Category updated successfully',
+                'message' => trans('mcp.category_updated', ['name' => $category->name]),
                 'id' => $category->id,
                 'name' => $category->name,
                 'category_type' => $category->category_type,
             ]);
         }
 
-        return Response::make(Response::error('Update failed: '.$category->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.update_failed', ['error' => $category->getErrors()->first()])));
     }
 
     private function resolveCategory(Request $request): ?Category

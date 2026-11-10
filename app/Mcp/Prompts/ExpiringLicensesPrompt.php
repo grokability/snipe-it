@@ -7,13 +7,12 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Attributes\Title;
-use Laravel\Mcp\Server\Prompt;
 use Laravel\Mcp\Server\Prompts\Argument;
 
 #[Name('expiring_licenses')]
 #[Title('Expiring Licenses')]
 #[Description('Review license seat usage and flag licenses expiring within a given number of days')]
-class ExpiringLicensesPrompt extends Prompt
+class ExpiringLicensesPrompt extends SnipePrompt
 {
     public function handle(Request $request): Response
     {
@@ -32,7 +31,7 @@ class ExpiringLicensesPrompt extends Prompt
         6. Produce a prioritised action list: renewals needed urgently, over-deployments to resolve, and possible cancellations.
         TEXT;
 
-        return Response::text(trim($prompt));
+        return Response::text(trim($prompt).$this->localeInstruction());
     }
 
     public function arguments(): array

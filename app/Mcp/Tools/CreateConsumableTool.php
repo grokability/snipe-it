@@ -22,7 +22,7 @@ class CreateConsumableTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('create', Consumable::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -57,10 +57,10 @@ class CreateConsumableTool extends Tool
 
         if ($consumable->save()) {
             return Response::make(
-                Response::text('Consumable '.$consumable->name.' created successfully')
+                Response::text(trans('mcp.consumable_created', ['name' => $consumable->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Consumable created successfully',
+                'message' => trans('mcp.consumable_created', ['name' => $consumable->name]),
                 'id' => $consumable->id,
                 'name' => $consumable->name,
                 'qty' => $consumable->qty,
@@ -68,7 +68,7 @@ class CreateConsumableTool extends Tool
             ]);
         }
 
-        return Response::make(Response::error('Create failed: '.$consumable->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $consumable->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

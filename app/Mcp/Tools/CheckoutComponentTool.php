@@ -38,11 +38,11 @@ class CheckoutComponentTool extends Tool
         $component = $this->resolveComponent($request);
 
         if (! $component) {
-            return Response::make(Response::error('Component not found'));
+            return Response::make(Response::error(trans('mcp.component_not_found')));
         }
 
         if (! Gate::allows('checkout', $component)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $qty = (int) $request->get('assigned_qty', 1);
@@ -69,10 +69,10 @@ class CheckoutComponentTool extends Tool
         $component->logCheckout($request->get('note'), $asset, null, [], $qty);
 
         return Response::make(
-            Response::text('Component '.$component->name.' checked out to asset '.$asset->asset_tag)
+            Response::text(trans('mcp.component_checked_out', ['name' => $component->name, 'asset_tag' => $asset->asset_tag]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Component checked out successfully',
+            'message' => trans('mcp.component_checked_out', ['name' => $component->name, 'asset_tag' => $asset->asset_tag]),
             'component_id' => $component->id,
             'component_name' => $component->name,
             'asset_id' => $asset->id,

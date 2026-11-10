@@ -28,21 +28,21 @@ class ShowAssetModelTool extends Tool
         $model = $this->resolveModel($request);
 
         if ($model === false) {
-            return Response::make(Response::error('Please provide an id or name'));
+            return Response::make(Response::error(trans('mcp.id_or_name_required')));
         }
 
         if (! $model) {
-            return Response::make(Response::error('Asset model not found'));
+            return Response::make(Response::error(trans('mcp.asset_model_not_found')));
         }
 
         if (! Gate::allows('view', $model)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $model->loadCount('assets as assets_count');
 
         return Response::make(
-            Response::text('Asset model '.$model->name.' found')
+            Response::text(trans('mcp.asset_model_found', ['name' => $model->name]))
         )->withStructuredContent([
             'id' => $model->id,
             'name' => $model->name,

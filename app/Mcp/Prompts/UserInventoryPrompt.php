@@ -7,13 +7,12 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Attributes\Title;
-use Laravel\Mcp\Server\Prompt;
 use Laravel\Mcp\Server\Prompts\Argument;
 
 #[Name('user_inventory')]
 #[Title('User Inventory')]
 #[Description('List everything currently assigned to a specific user across all asset types')]
-class UserInventoryPrompt extends Prompt
+class UserInventoryPrompt extends SnipePrompt
 {
     public function handle(Request $request): Response
     {
@@ -33,7 +32,7 @@ class UserInventoryPrompt extends Prompt
         7. Present a clean summary grouped by item type, suitable for sharing with a manager or for an audit.
         TEXT;
 
-        return Response::text(trim($prompt));
+        return Response::text(trim($prompt).$this->localeInstruction());
     }
 
     public function arguments(): array

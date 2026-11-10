@@ -21,7 +21,7 @@ class ListStatusLabelsTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('view', Statuslabel::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -68,7 +68,7 @@ class ListStatusLabelsTool extends Tool
         ])->values()->all();
 
         return Response::make(
-            Response::text("Found {$total} status labels, returning ".count($labelsData))
+            Response::text(trans('mcp.list_status_labels', ['total' => $total, 'count' => count($labelsData)]))
         )->withStructuredContent([
             'total' => $total,
             'offset' => $offset,

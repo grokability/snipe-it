@@ -37,15 +37,15 @@ class CheckoutAssetTool extends Tool
         $asset = $this->resolveAsset($request);
 
         if (! $asset) {
-            return Response::make(Response::error('Asset not found'));
+            return Response::make(Response::error(trans('mcp.asset_not_found')));
         }
 
         if (! Gate::allows('checkout', $asset)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if (! $asset->availableForCheckout()) {
-            return Response::make(Response::error('Asset '.$asset->asset_tag.' is not available for checkout'));
+            return Response::make(Response::error(trans('mcp.asset_not_available', ['asset_tag' => $asset->asset_tag])));
         }
 
         $checkoutType = $request->get('checkout_to_type');
@@ -69,7 +69,7 @@ class CheckoutAssetTool extends Tool
         }
 
         if (! $target) {
-            return Response::make(Response::error('The specified '.$checkoutType.' was not found'));
+            return Response::make(Response::error(trans('mcp.checkout_target_not_found', ['type' => $checkoutType])));
         }
 
         $checkoutAt = $request->filled('checkout_at') ? $request->get('checkout_at') : date('Y-m-d H:i:s');
@@ -78,17 +78,17 @@ class CheckoutAssetTool extends Tool
 
         if ($asset->checkOut($target, auth()->user(), $checkoutAt, $expectedCheckin, $note, $asset->name, $asset->location_id)) {
             return Response::make(
-                Response::text('Asset '.$asset->asset_tag.' checked out successfully')
+                Response::text(trans('mcp.asset_checked_out', ['asset_tag' => $asset->asset_tag]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Asset checked out successfully',
+                'message' => trans('mcp.asset_checked_out', ['asset_tag' => $asset->asset_tag]),
                 'asset_tag' => $asset->asset_tag,
                 'checked_out_to_type' => $checkoutType,
                 'checked_out_to_id' => $target->id,
             ]);
         }
 
-        return Response::make(Response::error('Checkout failed'));
+        return Response::make(Response::error(trans('mcp.checkout_failed')));
     }
 
     private function resolveAsset(Request $request): ?Asset

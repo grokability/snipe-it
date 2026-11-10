@@ -28,11 +28,11 @@ class DeleteSupplierTool extends Tool
         $supplier = $this->resolveSupplier($request);
 
         if (! $supplier) {
-            return Response::make(Response::error('Supplier not found'));
+            return Response::make(Response::error(trans('mcp.supplier_not_found')));
         }
 
         if (! Gate::allows('delete', $supplier)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $name = $supplier->name;
@@ -40,10 +40,10 @@ class DeleteSupplierTool extends Tool
         $supplier->delete();
 
         return Response::make(
-            Response::text('Supplier '.$name.' deleted successfully')
+            Response::text(trans('mcp.supplier_deleted', ['name' => $name]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Supplier deleted successfully',
+            'message' => trans('mcp.supplier_deleted', ['name' => $name]),
             'name' => $name,
         ]);
     }

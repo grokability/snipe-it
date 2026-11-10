@@ -7,13 +7,12 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Attributes\Title;
-use Laravel\Mcp\Server\Prompt;
 use Laravel\Mcp\Server\Prompts\Argument;
 
 #[Name('offboard_employee')]
 #[Title('Offboard Employee')]
 #[Description('Guide through checking in all equipment and licenses from a departing employee and deactivating their account')]
-class OffboardEmployeePrompt extends Prompt
+class OffboardEmployeePrompt extends SnipePrompt
 {
     public function handle(Request $request): Response
     {
@@ -34,7 +33,7 @@ class OffboardEmployeePrompt extends Prompt
         If any items cannot be checked in automatically, flag them for manual follow-up.
         TEXT;
 
-        return Response::text(trim($prompt));
+        return Response::text(trim($prompt).$this->localeInstruction());
     }
 
     public function arguments(): array

@@ -7,13 +7,12 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Attributes\Title;
-use Laravel\Mcp\Server\Prompt;
 use Laravel\Mcp\Server\Prompts\Argument;
 
 #[Name('find_available_asset')]
 #[Title('Find Available Asset')]
 #[Description('Find an undeployed asset by category or model and optionally check it out to a user')]
-class FindAvailableAssetPrompt extends Prompt
+class FindAvailableAssetPrompt extends SnipePrompt
 {
     public function handle(Request $request): Response
     {
@@ -43,7 +42,7 @@ class FindAvailableAssetPrompt extends Prompt
         If no available assets match, report what was found and suggest alternatives (different models in the same category, or assets currently out for repair that may return soon).
         TEXT;
 
-        return Response::text(trim($prompt));
+        return Response::text(trim($prompt).$this->localeInstruction());
     }
 
     public function arguments(): array

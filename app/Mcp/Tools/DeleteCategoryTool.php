@@ -28,11 +28,11 @@ class DeleteCategoryTool extends Tool
         $category = $this->resolveCategory($request);
 
         if (! $category) {
-            return Response::make(Response::error('Category not found'));
+            return Response::make(Response::error(trans('mcp.category_not_found')));
         }
 
         if (! Gate::allows('delete', $category)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $name = $category->name;
@@ -40,14 +40,14 @@ class DeleteCategoryTool extends Tool
         try {
             $category->delete();
         } catch (\Exception $e) {
-            return Response::make(Response::error('Category cannot be deleted: '.$e->getMessage()));
+            return Response::make(Response::error(trans('mcp.category_delete_failed', ['error' => $e->getMessage()])));
         }
 
         return Response::make(
-            Response::text('Category '.$name.' deleted successfully')
+            Response::text(trans('mcp.category_deleted', ['name' => $name]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Category deleted successfully',
+            'message' => trans('mcp.category_deleted', ['name' => $name]),
             'name' => $name,
         ]);
     }

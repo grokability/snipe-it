@@ -21,7 +21,7 @@ class ListGroupsTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('superadmin')) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -51,7 +51,7 @@ class ListGroupsTool extends Tool
         ])->values()->all();
 
         return Response::make(
-            Response::text("Found {$total} groups, returning ".count($groupsData))
+            Response::text(trans('mcp.list_groups', ['total' => $total, 'count' => count($groupsData)]))
         )->withStructuredContent([
             'total' => $total,
             'offset' => $offset,

@@ -29,20 +29,20 @@ class ShowSupplierTool extends Tool
 
         if (! $supplier) {
             if (! $request->filled('id') && ! $request->filled('name')) {
-                return Response::make(Response::error('Please provide an id or name'));
+                return Response::make(Response::error(trans('mcp.id_or_name_required')));
             }
 
-            return Response::make(Response::error('Supplier not found'));
+            return Response::make(Response::error(trans('mcp.supplier_not_found')));
         }
 
         if (! Gate::allows('view', $supplier)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $supplier->loadCount('assets as assets_count', 'licenses as licenses_count');
 
         return Response::make(
-            Response::text('Supplier: '.$supplier->name)
+            Response::text(trans('mcp.supplier_found', ['name' => $supplier->name]))
         )->withStructuredContent([
             'id' => $supplier->id,
             'name' => $supplier->name,

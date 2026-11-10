@@ -43,11 +43,11 @@ class UpdateComponentTool extends Tool
         $component = $this->resolveComponent($request);
 
         if (! $component) {
-            return Response::make(Response::error('Component not found'));
+            return Response::make(Response::error(trans('mcp.component_not_found')));
         }
 
         if (! Gate::allows('update', $component)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $updatable = [
@@ -72,16 +72,16 @@ class UpdateComponentTool extends Tool
 
         if ($component->save()) {
             return Response::make(
-                Response::text('Component '.$component->name.' updated successfully')
+                Response::text(trans('mcp.component_updated', ['name' => $component->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Component updated successfully',
+                'message' => trans('mcp.component_updated', ['name' => $component->name]),
                 'id' => $component->id,
                 'name' => $component->name,
             ]);
         }
 
-        return Response::make(Response::error('Update failed: '.$component->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.update_failed', ['error' => $component->getErrors()->first()])));
     }
 
     private function resolveComponent(Request $request): ?Component

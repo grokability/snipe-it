@@ -28,15 +28,15 @@ class DeleteAssetModelTool extends Tool
         $model = $this->resolveModel($request);
 
         if (! $model) {
-            return Response::make(Response::error('Asset model not found'));
+            return Response::make(Response::error(trans('mcp.asset_model_not_found')));
         }
 
         if (! Gate::allows('delete', $model)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($model->assets()->count() > 0) {
-            return Response::make(Response::error('Model has assets and cannot be deleted'));
+            return Response::make(Response::error(trans('mcp.model_has_assets')));
         }
 
         $name = $model->name;
@@ -44,10 +44,10 @@ class DeleteAssetModelTool extends Tool
         $model->delete();
 
         return Response::make(
-            Response::text('Asset model '.$name.' deleted successfully')
+            Response::text(trans('mcp.asset_model_deleted', ['name' => $name]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Asset model deleted successfully',
+            'message' => trans('mcp.asset_model_deleted', ['name' => $name]),
             'name' => $name,
         ]);
     }

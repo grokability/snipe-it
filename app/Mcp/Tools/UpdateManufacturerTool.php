@@ -35,11 +35,11 @@ class UpdateManufacturerTool extends Tool
         $manufacturer = $this->resolveManufacturer($request);
 
         if (! $manufacturer) {
-            return Response::make(Response::error('Manufacturer not found'));
+            return Response::make(Response::error(trans('mcp.manufacturer_not_found')));
         }
 
         if (! Gate::allows('update', $manufacturer)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($request->filled('new_name')) {
@@ -56,16 +56,16 @@ class UpdateManufacturerTool extends Tool
 
         if ($manufacturer->save()) {
             return Response::make(
-                Response::text('Manufacturer '.$manufacturer->name.' updated successfully')
+                Response::text(trans('mcp.manufacturer_updated', ['name' => $manufacturer->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Manufacturer updated successfully',
+                'message' => trans('mcp.manufacturer_updated', ['name' => $manufacturer->name]),
                 'id' => $manufacturer->id,
                 'name' => $manufacturer->name,
             ]);
         }
 
-        return Response::make(Response::error('Update failed: '.$manufacturer->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.update_failed', ['error' => $manufacturer->getErrors()->first()])));
     }
 
     private function resolveManufacturer(Request $request): ?Manufacturer

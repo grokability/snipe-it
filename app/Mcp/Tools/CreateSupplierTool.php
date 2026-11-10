@@ -22,7 +22,7 @@ class CreateSupplierTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('create', Supplier::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -53,16 +53,16 @@ class CreateSupplierTool extends Tool
 
         if ($supplier->save()) {
             return Response::make(
-                Response::text('Supplier '.$supplier->name.' created successfully')
+                Response::text(trans('mcp.supplier_created', ['name' => $supplier->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Supplier created successfully',
+                'message' => trans('mcp.supplier_created', ['name' => $supplier->name]),
                 'id' => $supplier->id,
                 'name' => $supplier->name,
             ]);
         }
 
-        return Response::make(Response::error('Create failed: '.$supplier->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $supplier->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

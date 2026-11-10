@@ -28,15 +28,15 @@ class DeleteDepartmentTool extends Tool
         $department = $this->resolveDepartment($request);
 
         if (! $department) {
-            return Response::make(Response::error('Department not found'));
+            return Response::make(Response::error(trans('mcp.department_not_found')));
         }
 
         if (! Gate::allows('delete', $department)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($department->users->count() > 0) {
-            return Response::make(Response::error('Department has users assigned and cannot be deleted. Reassign all users first.'));
+            return Response::make(Response::error(trans('mcp.department_has_users')));
         }
 
         $name = $department->name;
@@ -44,10 +44,10 @@ class DeleteDepartmentTool extends Tool
         $department->delete();
 
         return Response::make(
-            Response::text('Department '.$name.' deleted successfully')
+            Response::text(trans('mcp.department_deleted', ['name' => $name]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Department deleted successfully',
+            'message' => trans('mcp.department_deleted', ['name' => $name]),
             'name' => $name,
         ]);
     }

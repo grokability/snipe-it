@@ -23,7 +23,7 @@ class CreateComponentTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('create', Component::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -59,10 +59,10 @@ class CreateComponentTool extends Tool
 
         if ($component->save()) {
             return Response::make(
-                Response::text('Component '.$component->name.' created successfully')
+                Response::text(trans('mcp.component_created', ['name' => $component->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Component created successfully',
+                'message' => trans('mcp.component_created', ['name' => $component->name]),
                 'id' => $component->id,
                 'name' => $component->name,
                 'qty' => $component->qty,
@@ -70,7 +70,7 @@ class CreateComponentTool extends Tool
             ]);
         }
 
-        return Response::make(Response::error('Create failed: '.$component->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $component->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

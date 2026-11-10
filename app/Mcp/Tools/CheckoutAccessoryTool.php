@@ -39,15 +39,15 @@ class CheckoutAccessoryTool extends Tool
         $accessory = $this->resolveAccessory($request);
 
         if (! $accessory) {
-            return Response::make(Response::error('Accessory not found'));
+            return Response::make(Response::error(trans('mcp.accessory_not_found')));
         }
 
         if (! Gate::allows('checkout', $accessory)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($accessory->numRemaining() < 1) {
-            return Response::make(Response::error('No units of this accessory are available for checkout'));
+            return Response::make(Response::error(trans('mcp.no_units_available')));
         }
 
         $checkoutType = $request->get('checkout_to_type');
@@ -59,7 +59,7 @@ class CheckoutAccessoryTool extends Tool
         };
 
         if (! $target) {
-            return Response::make(Response::error('The specified '.$checkoutType.' was not found'));
+            return Response::make(Response::error(trans('mcp.checkout_target_not_found', ['type' => $checkoutType])));
         }
 
         $checkout = new AccessoryCheckout([
@@ -82,10 +82,10 @@ class CheckoutAccessoryTool extends Tool
         ));
 
         return Response::make(
-            Response::text('Accessory '.$accessory->name.' checked out successfully')
+            Response::text(trans('mcp.accessory_checked_out', ['name' => $accessory->name]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Accessory checked out successfully',
+            'message' => trans('mcp.accessory_checked_out', ['name' => $accessory->name]),
             'accessory_id' => $accessory->id,
             'accessory_name' => $accessory->name,
             'checkout_id' => $checkout->id,

@@ -60,10 +60,10 @@ class UpdateProfileTool extends Tool
 
         if ($user->save()) {
             return Response::make(
-                Response::text('Profile updated successfully')
+                Response::text(trans('mcp.profile_updated'))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Profile updated successfully',
+                'message' => trans('mcp.profile_updated'),
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'phone' => $user->phone,
@@ -73,7 +73,7 @@ class UpdateProfileTool extends Tool
             ]);
         }
 
-        return Response::make(Response::error('Update failed: '.$user->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.update_failed', ['error' => $user->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

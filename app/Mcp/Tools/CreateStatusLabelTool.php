@@ -22,7 +22,7 @@ class CreateStatusLabelTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('create', Statuslabel::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -57,17 +57,17 @@ class CreateStatusLabelTool extends Tool
 
         if ($statuslabel->save()) {
             return Response::make(
-                Response::text('Status label '.$statuslabel->name.' created successfully')
+                Response::text(trans('mcp.status_label_created', ['name' => $statuslabel->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Status label created successfully',
+                'message' => trans('mcp.status_label_created', ['name' => $statuslabel->name]),
                 'id' => $statuslabel->id,
                 'name' => $statuslabel->name,
                 'type' => $statuslabel->getStatuslabelType(),
             ]);
         }
 
-        return Response::make(Response::error('Create failed: '.$statuslabel->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $statuslabel->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

@@ -23,7 +23,7 @@ class CreateAccessoryTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('create', Accessory::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -59,10 +59,10 @@ class CreateAccessoryTool extends Tool
 
         if ($accessory->save()) {
             return Response::make(
-                Response::text('Accessory '.$accessory->name.' created successfully')
+                Response::text(trans('mcp.accessory_created', ['name' => $accessory->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Accessory created successfully',
+                'message' => trans('mcp.accessory_created', ['name' => $accessory->name]),
                 'id' => $accessory->id,
                 'name' => $accessory->name,
                 'qty' => $accessory->qty,
@@ -70,7 +70,7 @@ class CreateAccessoryTool extends Tool
             ]);
         }
 
-        return Response::make(Response::error('Create failed: '.$accessory->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $accessory->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

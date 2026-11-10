@@ -22,7 +22,7 @@ class ListMaintenancesTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('view', Asset::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -59,7 +59,7 @@ class ListMaintenancesTool extends Tool
         ])->values()->all();
 
         return Response::make(
-            Response::text("Found {$total} maintenances, returning ".count($maintenancesData))
+            Response::text(trans('mcp.list_maintenances', ['total' => $total, 'count' => count($maintenancesData)]))
         )->withStructuredContent([
             'total' => $total,
             'offset' => $offset,

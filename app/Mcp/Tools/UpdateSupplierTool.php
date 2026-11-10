@@ -41,11 +41,11 @@ class UpdateSupplierTool extends Tool
         $supplier = $this->resolveSupplier($request);
 
         if (! $supplier) {
-            return Response::make(Response::error('Supplier not found'));
+            return Response::make(Response::error(trans('mcp.supplier_not_found')));
         }
 
         if (! Gate::allows('update', $supplier)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($request->filled('new_name')) {
@@ -62,16 +62,16 @@ class UpdateSupplierTool extends Tool
 
         if ($supplier->save()) {
             return Response::make(
-                Response::text('Supplier '.$supplier->name.' updated successfully')
+                Response::text(trans('mcp.supplier_updated', ['name' => $supplier->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Supplier updated successfully',
+                'message' => trans('mcp.supplier_updated', ['name' => $supplier->name]),
                 'id' => $supplier->id,
                 'name' => $supplier->name,
             ]);
         }
 
-        return Response::make(Response::error('Update failed: '.$supplier->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.update_failed', ['error' => $supplier->getErrors()->first()])));
     }
 
     private function resolveSupplier(Request $request): ?Supplier

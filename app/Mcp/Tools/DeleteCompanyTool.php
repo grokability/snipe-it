@@ -28,11 +28,11 @@ class DeleteCompanyTool extends Tool
         $company = $this->resolveCompany($request);
 
         if (! $company) {
-            return Response::make(Response::error('Company not found'));
+            return Response::make(Response::error(trans('mcp.company_not_found')));
         }
 
         if (! Gate::allows('delete', $company)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $name = $company->name;
@@ -40,10 +40,10 @@ class DeleteCompanyTool extends Tool
         $company->delete();
 
         return Response::make(
-            Response::text('Company '.$name.' deleted successfully')
+            Response::text(trans('mcp.company_deleted', ['name' => $name]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Company deleted successfully',
+            'message' => trans('mcp.company_deleted', ['name' => $name]),
             'name' => $name,
         ]);
     }

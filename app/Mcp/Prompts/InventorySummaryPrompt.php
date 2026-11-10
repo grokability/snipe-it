@@ -7,13 +7,12 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Attributes\Title;
-use Laravel\Mcp\Server\Prompt;
 use Laravel\Mcp\Server\Prompts\Argument;
 
 #[Name('inventory_summary')]
 #[Title('Inventory Summary')]
 #[Description('Produce a high-level inventory count by category, broken down by deployment status')]
-class InventorySummaryPrompt extends Prompt
+class InventorySummaryPrompt extends SnipePrompt
 {
     public function handle(Request $request): Response
     {
@@ -42,7 +41,7 @@ class InventorySummaryPrompt extends Prompt
         6. Present the results as a concise executive summary with a supporting breakdown table.
         TEXT;
 
-        return Response::text(trim($prompt));
+        return Response::text(trim($prompt).$this->localeInstruction());
     }
 
     public function arguments(): array

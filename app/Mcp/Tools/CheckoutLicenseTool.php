@@ -34,25 +34,25 @@ class CheckoutLicenseTool extends Tool
         $license = $this->resolveLicense($request);
 
         if (! $license) {
-            return Response::make(Response::error('License not found'));
+            return Response::make(Response::error(trans('mcp.license_not_found')));
         }
 
         if (! Gate::allows('checkout', $license)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($license->numRemaining() < 1) {
-            return Response::make(Response::error('No available seats for this license'));
+            return Response::make(Response::error(trans('mcp.no_available_seats')));
         }
 
         if (! $request->filled('assigned_to') && ! $request->filled('asset_id')) {
-            return Response::make(Response::error('Please provide either assigned_to (user ID) or asset_id'));
+            return Response::make(Response::error(trans('mcp.provide_user_or_asset')));
         }
 
         $seat = $license->freeSeat();
 
         if (! $seat) {
-            return Response::make(Response::error('No free seat found for this license'));
+            return Response::make(Response::error(trans('mcp.no_free_seat')));
         }
 
         $note = $request->get('note');
@@ -60,7 +60,7 @@ class CheckoutLicenseTool extends Tool
         if ($request->filled('assigned_to')) {
             $target = User::find($request->get('assigned_to'));
             if (! $target) {
-                return Response::make(Response::error('User not found'));
+                return Response::make(Response::error(trans('mcp.user_not_found')));
             }
             $seat->assigned_to = $target->id;
             $seat->notes = $note;
@@ -69,10 +69,10 @@ class CheckoutLicenseTool extends Tool
                 event(new CheckoutableCheckedOut($seat, $target, auth()->user(), $note, [], 1));
 
                 return Response::make(
-                    Response::text('License seat checked out to user '.$target->username)
+                    Response::text(trans('mcp.license_seat_checked_out_user', ['username' => $target->username]))
                 )->withStructuredContent([
                     'success' => true,
-                    'message' => 'License seat checked out successfully',
+                    'message' => trans('mcp.license_seat_checked_out_user', ['username' => $target->username]),
                     'license_id' => $license->id,
                     'license_name' => $license->name,
                     'seat_id' => $seat->id,
@@ -83,7 +83,7 @@ class CheckoutLicenseTool extends Tool
         } elseif ($request->filled('asset_id')) {
             $target = Asset::find($request->get('asset_id'));
             if (! $target) {
-                return Response::make(Response::error('Asset not found'));
+                return Response::make(Response::error(trans('mcp.asset_not_found')));
             }
             $seat->asset_id = $target->id;
             if ($target->checkedOutToUser()) {
@@ -95,10 +95,10 @@ class CheckoutLicenseTool extends Tool
                 event(new CheckoutableCheckedOut($seat, $target, auth()->user(), $note, [], 1));
 
                 return Response::make(
-                    Response::text('License seat checked out to asset '.$target->asset_tag)
+                    Response::text(trans('mcp.license_seat_checked_out_asset', ['asset_tag' => $target->asset_tag]))
                 )->withStructuredContent([
                     'success' => true,
-                    'message' => 'License seat checked out successfully',
+                    'message' => trans('mcp.license_seat_checked_out_asset', ['asset_tag' => $target->asset_tag]),
                     'license_id' => $license->id,
                     'license_name' => $license->name,
                     'seat_id' => $seat->id,
@@ -108,7 +108,7 @@ class CheckoutLicenseTool extends Tool
             }
         }
 
-        return Response::make(Response::error('Checkout failed'));
+        return Response::make(Response::error(trans('mcp.checkout_failed')));
     }
 
     private function resolveLicense(Request $request): ?License

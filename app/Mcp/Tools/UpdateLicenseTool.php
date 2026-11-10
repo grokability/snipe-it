@@ -48,11 +48,11 @@ class UpdateLicenseTool extends Tool
         $license = $this->resolveLicense($request);
 
         if (! $license) {
-            return Response::make(Response::error('License not found'));
+            return Response::make(Response::error(trans('mcp.license_not_found')));
         }
 
         if (! Gate::allows('update', $license)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $updatable = [
@@ -78,17 +78,17 @@ class UpdateLicenseTool extends Tool
 
         if ($license->save()) {
             return Response::make(
-                Response::text('License '.$license->name.' updated successfully')
+                Response::text(trans('mcp.license_updated', ['name' => $license->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'License updated successfully',
+                'message' => trans('mcp.license_updated', ['name' => $license->name]),
                 'id' => $license->id,
                 'name' => $license->name,
                 'seats' => $license->seats,
             ]);
         }
 
-        return Response::make(Response::error('Update failed: '.$license->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.update_failed', ['error' => $license->getErrors()->first()])));
     }
 
     private function resolveLicense(Request $request): ?License

@@ -21,7 +21,7 @@ class RestoreUserTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('delete', User::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -31,24 +31,24 @@ class RestoreUserTool extends Tool
         $user = User::withTrashed()->find($request->get('id'));
 
         if (! $user) {
-            return Response::make(Response::error('User not found'));
+            return Response::make(Response::error(trans('mcp.user_not_found')));
         }
 
         if (! $user->deleted_at) {
-            return Response::make(Response::error('User is not deleted'));
+            return Response::make(Response::error(trans('mcp.user_not_deleted')));
         }
 
         if (! Gate::allows('delete', User::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $user->restore();
 
         return Response::make(
-            Response::text('User '.$user->username.' restored successfully')
+            Response::text(trans('mcp.user_restored', ['username' => $user->username]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'User restored successfully',
+            'message' => trans('mcp.user_restored', ['username' => $user->username]),
             'id' => $user->id,
             'username' => $user->username,
         ]);

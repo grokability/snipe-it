@@ -55,11 +55,11 @@ class UpdateUserTool extends Tool
         $user = $this->resolveUser($request);
 
         if (! $user) {
-            return Response::make(Response::error('User not found'));
+            return Response::make(Response::error(trans('mcp.user_not_found')));
         }
 
         if (! Gate::allows('update', $user)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $updatable = [
@@ -81,7 +81,7 @@ class UpdateUserTool extends Tool
         if ($request->filled('new_username') || $request->filled('new_email') ||
             $request->filled('password') || $request->has('activated')) {
             if (! $canEditAuthFields) {
-                return Response::make(Response::error('You do not have permission to edit auth fields (username, email, password, activated) for this user'));
+                return Response::make(Response::error(trans('mcp.cannot_edit_auth_fields')));
             }
 
             if ($request->filled('new_username')) {
@@ -107,17 +107,17 @@ class UpdateUserTool extends Tool
 
         if ($user->save()) {
             return Response::make(
-                Response::text('User '.$user->username.' updated successfully')
+                Response::text(trans('mcp.user_updated', ['username' => $user->username]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'User updated successfully',
+                'message' => trans('mcp.user_updated', ['username' => $user->username]),
                 'id' => $user->id,
                 'username' => $user->username,
                 'email' => $user->email,
             ]);
         }
 
-        return Response::make(Response::error('Update failed: '.$user->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.update_failed', ['error' => $user->getErrors()->first()])));
     }
 
     private function resolveUser(Request $request): ?User

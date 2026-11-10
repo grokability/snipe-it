@@ -22,7 +22,7 @@ class CreateCategoryTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('create', Category::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -51,17 +51,17 @@ class CreateCategoryTool extends Tool
 
         if ($category->save()) {
             return Response::make(
-                Response::text('Category '.$category->name.' created successfully')
+                Response::text(trans('mcp.category_created', ['name' => $category->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Category created successfully',
+                'message' => trans('mcp.category_created', ['name' => $category->name]),
                 'id' => $category->id,
                 'name' => $category->name,
                 'category_type' => $category->category_type,
             ]);
         }
 
-        return Response::make(Response::error('Create failed: '.$category->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $category->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

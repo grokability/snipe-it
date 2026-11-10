@@ -34,11 +34,11 @@ class AuditAssetTool extends Tool
         $asset = $this->resolveAsset($request);
 
         if (! $asset) {
-            return Response::make(Response::error('Asset not found'));
+            return Response::make(Response::error(trans('mcp.asset_not_found')));
         }
 
         if (! Gate::allows('audit', $asset)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $originalValues = $asset->getRawOriginal();
@@ -64,10 +64,10 @@ class AuditAssetTool extends Tool
             $asset->logAudit($request->get('note'), $request->get('location_id'), null, $originalValues);
 
             return Response::make(
-                Response::text('Audit recorded for asset '.$asset->asset_tag)
+                Response::text(trans('mcp.asset_audited', ['asset_tag' => $asset->asset_tag]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Audit recorded successfully',
+                'message' => trans('mcp.asset_audited', ['asset_tag' => $asset->asset_tag]),
                 'asset_tag' => $asset->asset_tag,
                 'last_audit_date' => $asset->last_audit_date,
                 'next_audit_date' => $asset->next_audit_date,
@@ -75,7 +75,7 @@ class AuditAssetTool extends Tool
             ]);
         }
 
-        return Response::make(Response::error('Audit failed: '.$asset->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.audit_failed', ['error' => $asset->getErrors()->first()])));
     }
 
     private function resolveAsset(Request $request): ?Asset

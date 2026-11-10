@@ -22,11 +22,11 @@ class GetUserAssetsTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('view', User::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if (! Gate::allows('view', Asset::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -36,7 +36,7 @@ class GetUserAssetsTool extends Tool
         $user = User::find($request->get('id'));
 
         if (! $user) {
-            return Response::make(Response::error('User not found'));
+            return Response::make(Response::error(trans('mcp.user_not_found')));
         }
 
         $assets = Asset::where('assigned_to', $user->id)
@@ -54,7 +54,7 @@ class GetUserAssetsTool extends Tool
         ])->values()->all();
 
         return Response::make(
-            Response::text('Found '.count($data).' assets for user '.$user->username)
+            Response::text(trans('mcp.user_assets_found', ['count' => count($data), 'username' => $user->username]))
         )->withStructuredContent([
             'user_id' => $user->id,
             'username' => $user->username,

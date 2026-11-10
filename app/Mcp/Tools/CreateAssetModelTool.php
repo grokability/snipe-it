@@ -22,7 +22,7 @@ class CreateAssetModelTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('create', AssetModel::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -55,17 +55,17 @@ class CreateAssetModelTool extends Tool
 
         if ($assetModel->save()) {
             return Response::make(
-                Response::text('Asset model '.$assetModel->name.' created successfully')
+                Response::text(trans('mcp.asset_model_created', ['name' => $assetModel->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Asset model created successfully',
+                'message' => trans('mcp.asset_model_created', ['name' => $assetModel->name]),
                 'id' => $assetModel->id,
                 'name' => $assetModel->name,
                 'category_id' => $assetModel->category_id,
             ]);
         }
 
-        return Response::make(Response::error('Create failed: '.$assetModel->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $assetModel->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

@@ -32,22 +32,22 @@ class CheckinLicenseTool extends Tool
         $seat = LicenseSeat::with('license')->find($request->get('seat_id'));
 
         if (! $seat) {
-            return Response::make(Response::error('License seat not found'));
+            return Response::make(Response::error(trans('mcp.license_seat_not_found')));
         }
 
         if (is_null($seat->assigned_to) && is_null($seat->asset_id)) {
-            return Response::make(Response::error('This seat is not currently checked out'));
+            return Response::make(Response::error(trans('mcp.seat_not_checked_out')));
         }
 
         $license = $seat->license;
 
         if (! $license) {
-            return Response::make(Response::error('License not found'));
+            return Response::make(Response::error(trans('mcp.license_not_found')));
         }
 
         // License checkin uses the checkout gate (matching application behavior)
         if (! Gate::allows('checkout', $license)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $returnTo = null;
@@ -71,17 +71,17 @@ class CheckinLicenseTool extends Tool
             event(new CheckoutableCheckedIn($seat, $returnTo, auth()->user(), $note));
 
             return Response::make(
-                Response::text('License seat '.$seat->id.' checked in successfully')
+                Response::text(trans('mcp.license_seat_checked_in', ['id' => $seat->id]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'License seat checked in successfully',
+                'message' => trans('mcp.license_seat_checked_in', ['id' => $seat->id]),
                 'seat_id' => $seat->id,
                 'license_id' => $license->id,
                 'license_name' => $license->name,
             ]);
         }
 
-        return Response::make(Response::error('Checkin failed'));
+        return Response::make(Response::error(trans('mcp.checkin_failed')));
     }
 
     public function schema(JsonSchema $schema): array

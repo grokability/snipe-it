@@ -28,11 +28,11 @@ class DeleteManufacturerTool extends Tool
         $manufacturer = $this->resolveManufacturer($request);
 
         if (! $manufacturer) {
-            return Response::make(Response::error('Manufacturer not found'));
+            return Response::make(Response::error(trans('mcp.manufacturer_not_found')));
         }
 
         if (! Gate::allows('delete', $manufacturer)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $name = $manufacturer->name;
@@ -40,10 +40,10 @@ class DeleteManufacturerTool extends Tool
         $manufacturer->delete();
 
         return Response::make(
-            Response::text('Manufacturer '.$name.' deleted successfully')
+            Response::text(trans('mcp.manufacturer_deleted', ['name' => $name]))
         )->withStructuredContent([
             'success' => true,
-            'message' => 'Manufacturer deleted successfully',
+            'message' => trans('mcp.manufacturer_deleted', ['name' => $name]),
             'name' => $name,
         ]);
     }

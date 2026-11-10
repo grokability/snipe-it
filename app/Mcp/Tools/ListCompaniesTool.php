@@ -21,7 +21,7 @@ class ListCompaniesTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('view', Company::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -58,7 +58,7 @@ class ListCompaniesTool extends Tool
         ])->values()->all();
 
         return Response::make(
-            Response::text("Found {$total} companies, returning ".count($companiesData))
+            Response::text(trans('mcp.list_companies', ['total' => $total, 'count' => count($companiesData)]))
         )->withStructuredContent([
             'total' => $total,
             'offset' => $offset,

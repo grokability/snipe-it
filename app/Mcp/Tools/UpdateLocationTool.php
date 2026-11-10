@@ -39,11 +39,11 @@ class UpdateLocationTool extends Tool
         $location = $this->resolveLocation($request);
 
         if (! $location) {
-            return Response::make(Response::error('Location not found'));
+            return Response::make(Response::error(trans('mcp.location_not_found')));
         }
 
         if (! Gate::allows('update', $location)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($request->filled('new_name')) {
@@ -58,16 +58,16 @@ class UpdateLocationTool extends Tool
 
         if ($location->save()) {
             return Response::make(
-                Response::text('Location '.$location->name.' updated successfully')
+                Response::text(trans('mcp.location_updated', ['name' => $location->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Location updated successfully',
+                'message' => trans('mcp.location_updated', ['name' => $location->name]),
                 'id' => $location->id,
                 'name' => $location->name,
             ]);
         }
 
-        return Response::make(Response::error('Update failed: '.$location->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.update_failed', ['error' => $location->getErrors()->first()])));
     }
 
     private function resolveLocation(Request $request): ?Location

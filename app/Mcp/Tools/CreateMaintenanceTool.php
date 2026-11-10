@@ -23,7 +23,7 @@ class CreateMaintenanceTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('update', Asset::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -61,10 +61,10 @@ class CreateMaintenanceTool extends Tool
             $maintenance->load('asset');
 
             return Response::make(
-                Response::text('Maintenance '.$maintenance->name.' created successfully')
+                Response::text(trans('mcp.maintenance_created', ['name' => $maintenance->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Maintenance created successfully',
+                'message' => trans('mcp.maintenance_created', ['name' => $maintenance->name]),
                 'id' => $maintenance->id,
                 'title' => $maintenance->name,
                 'asset_id' => $maintenance->asset_id,
@@ -72,7 +72,7 @@ class CreateMaintenanceTool extends Tool
             ]);
         }
 
-        return Response::make(Response::error('Create failed: '.$maintenance->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $maintenance->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

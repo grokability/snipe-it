@@ -21,7 +21,7 @@ class ListLicensesTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('index', License::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -80,7 +80,7 @@ class ListLicensesTool extends Tool
         ])->values()->all();
 
         return Response::make(
-            Response::text("Found {$total} licenses, returning ".count($licensesData))
+            Response::text(trans('mcp.list_licenses', ['total' => $total, 'count' => count($licensesData)]))
         )->withStructuredContent([
             'total' => $total,
             'offset' => $offset,

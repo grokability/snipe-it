@@ -34,11 +34,11 @@ class UpdateStatusLabelTool extends Tool
         $label = $this->resolveStatusLabel($request);
 
         if (! $label) {
-            return Response::make(Response::error('Status label not found'));
+            return Response::make(Response::error(trans('mcp.status_label_not_found')));
         }
 
         if (! Gate::allows('update', $label)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($request->filled('new_name')) {
@@ -70,17 +70,17 @@ class UpdateStatusLabelTool extends Tool
 
         if ($label->save()) {
             return Response::make(
-                Response::text('Status label '.$label->name.' updated successfully')
+                Response::text(trans('mcp.status_label_updated', ['name' => $label->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Status label updated successfully',
+                'message' => trans('mcp.status_label_updated', ['name' => $label->name]),
                 'id' => $label->id,
                 'name' => $label->name,
                 'type' => $label->getStatuslabelType(),
             ]);
         }
 
-        return Response::make(Response::error('Update failed: '.$label->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.update_failed', ['error' => $label->getErrors()->first()])));
     }
 
     private function resolveStatusLabel(Request $request): ?Statuslabel

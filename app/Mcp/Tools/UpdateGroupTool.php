@@ -22,7 +22,7 @@ class UpdateGroupTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('superadmin')) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -41,11 +41,11 @@ class UpdateGroupTool extends Tool
         } elseif ($request->filled('name')) {
             $group = Group::where('name', $request->get('name'))->first();
         } else {
-            return Response::make(Response::error('Please provide an id or name'));
+            return Response::make(Response::error(trans('mcp.id_or_name_required')));
         }
 
         if (! $group) {
-            return Response::make(Response::error('Group not found'));
+            return Response::make(Response::error(trans('mcp.group_not_found')));
         }
 
         if ($request->filled('new_name')) {
@@ -58,16 +58,16 @@ class UpdateGroupTool extends Tool
 
         if ($group->save()) {
             return Response::make(
-                Response::text('Group '.$group->name.' updated successfully')
+                Response::text(trans('mcp.group_updated', ['name' => $group->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Group updated successfully',
+                'message' => trans('mcp.group_updated', ['name' => $group->name]),
                 'id' => $group->id,
                 'name' => $group->name,
             ]);
         }
 
-        return Response::make(Response::error('Update failed: '.$group->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.update_failed', ['error' => $group->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

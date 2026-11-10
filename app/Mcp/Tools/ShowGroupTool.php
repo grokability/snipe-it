@@ -21,7 +21,7 @@ class ShowGroupTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('superadmin')) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -36,15 +36,15 @@ class ShowGroupTool extends Tool
                 ->where('name', $request->get('name'))
                 ->first();
         } else {
-            return Response::make(Response::error('Please provide an id or name'));
+            return Response::make(Response::error(trans('mcp.id_or_name_required')));
         }
 
         if (! $group) {
-            return Response::make(Response::error('Group not found'));
+            return Response::make(Response::error(trans('mcp.group_not_found')));
         }
 
         return Response::make(
-            Response::text('Group '.$group->name.' found')
+            Response::text(trans('mcp.group_found', ['name' => $group->name]))
         )->withStructuredContent([
             'id' => $group->id,
             'name' => $group->name,

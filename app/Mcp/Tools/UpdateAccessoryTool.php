@@ -43,11 +43,11 @@ class UpdateAccessoryTool extends Tool
         $accessory = $this->resolveAccessory($request);
 
         if (! $accessory) {
-            return Response::make(Response::error('Accessory not found'));
+            return Response::make(Response::error(trans('mcp.accessory_not_found')));
         }
 
         if (! Gate::allows('update', $accessory)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $updatable = [
@@ -72,16 +72,16 @@ class UpdateAccessoryTool extends Tool
 
         if ($accessory->save()) {
             return Response::make(
-                Response::text('Accessory '.$accessory->name.' updated successfully')
+                Response::text(trans('mcp.accessory_updated', ['name' => $accessory->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Accessory updated successfully',
+                'message' => trans('mcp.accessory_updated', ['name' => $accessory->name]),
                 'id' => $accessory->id,
                 'name' => $accessory->name,
             ]);
         }
 
-        return Response::make(Response::error('Update failed: '.$accessory->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.update_failed', ['error' => $accessory->getErrors()->first()])));
     }
 
     private function resolveAccessory(Request $request): ?Accessory

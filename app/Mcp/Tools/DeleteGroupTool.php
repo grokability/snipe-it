@@ -21,7 +21,7 @@ class DeleteGroupTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('superadmin')) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -34,26 +34,26 @@ class DeleteGroupTool extends Tool
         } elseif ($request->filled('name')) {
             $group = Group::where('name', $request->get('name'))->first();
         } else {
-            return Response::make(Response::error('Please provide an id or name'));
+            return Response::make(Response::error(trans('mcp.id_or_name_required')));
         }
 
         if (! $group) {
-            return Response::make(Response::error('Group not found'));
+            return Response::make(Response::error(trans('mcp.group_not_found')));
         }
 
         $groupName = $group->name;
 
         if ($group->delete()) {
             return Response::make(
-                Response::text('Group '.$groupName.' deleted successfully')
+                Response::text(trans('mcp.group_deleted', ['name' => $groupName]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Group deleted successfully',
+                'message' => trans('mcp.group_deleted', ['name' => $groupName]),
                 'name' => $groupName,
             ]);
         }
 
-        return Response::make(Response::error('Delete failed'));
+        return Response::make(Response::error(trans('mcp.delete_failed')));
     }
 
     public function schema(JsonSchema $schema): array

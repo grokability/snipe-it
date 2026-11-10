@@ -23,7 +23,7 @@ class CreateUserTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('create', User::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -78,10 +78,10 @@ class CreateUserTool extends Tool
 
         if ($user->save()) {
             return Response::make(
-                Response::text('User '.$user->username.' created successfully')
+                Response::text(trans('mcp.user_created', ['username' => $user->username]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'User created successfully',
+                'message' => trans('mcp.user_created', ['username' => $user->username]),
                 'id' => $user->id,
                 'username' => $user->username,
                 'email' => $user->email,
@@ -90,7 +90,7 @@ class CreateUserTool extends Tool
             ]);
         }
 
-        return Response::make(Response::error('Create failed: '.$user->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $user->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

@@ -23,7 +23,7 @@ class CreateLicenseTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('create', License::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -66,10 +66,10 @@ class CreateLicenseTool extends Tool
 
         if ($license->save()) {
             return Response::make(
-                Response::text('License '.$license->name.' created successfully')
+                Response::text(trans('mcp.license_created', ['name' => $license->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'License created successfully',
+                'message' => trans('mcp.license_created', ['name' => $license->name]),
                 'id' => $license->id,
                 'name' => $license->name,
                 'seats' => $license->seats,
@@ -77,7 +77,7 @@ class CreateLicenseTool extends Tool
             ]);
         }
 
-        return Response::make(Response::error('Create failed: '.$license->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $license->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

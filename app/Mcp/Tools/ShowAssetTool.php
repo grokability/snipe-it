@@ -39,16 +39,16 @@ class ShowAssetTool extends Tool
 
         if (! $asset) {
             return Response::make(
-                Response::error('Asset not found')
+                Response::error(trans('mcp.asset_not_found'))
             );
         }
 
         if (! Gate::allows('view', $asset)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         return Response::make(
-            Response::text('Asset '.$asset->asset_tag.' found')
+            Response::text(trans('mcp.asset_found', ['asset_tag' => $asset->asset_tag]))
         )->withStructuredContent($this->formatAsset($asset));
     }
 

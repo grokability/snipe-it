@@ -29,17 +29,17 @@ class CheckinAccessoryTool extends Tool
         $checkout = AccessoryCheckout::find($request->get('checkout_id'));
 
         if (! $checkout) {
-            return Response::make(Response::error('Accessory checkout record not found'));
+            return Response::make(Response::error(trans('mcp.accessory_checkout_not_found')));
         }
 
         $accessory = Accessory::find($checkout->accessory_id);
 
         if (! $accessory) {
-            return Response::make(Response::error('Accessory not found'));
+            return Response::make(Response::error(trans('mcp.accessory_not_found')));
         }
 
         if (! Gate::allows('checkin', $accessory)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $target = $checkout->assigned_type && $checkout->assigned_to
@@ -50,16 +50,16 @@ class CheckinAccessoryTool extends Tool
 
         if ($checkout->delete()) {
             return Response::make(
-                Response::text('Accessory '.$accessory->name.' checked in successfully')
+                Response::text(trans('mcp.accessory_checked_in', ['name' => $accessory->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Accessory checked in successfully',
+                'message' => trans('mcp.accessory_checked_in', ['name' => $accessory->name]),
                 'accessory_id' => $accessory->id,
                 'accessory_name' => $accessory->name,
             ]);
         }
 
-        return Response::make(Response::error('Checkin failed'));
+        return Response::make(Response::error(trans('mcp.checkin_failed')));
     }
 
     public function schema(JsonSchema $schema): array

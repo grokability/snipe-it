@@ -21,7 +21,7 @@ class ListDepreciationsTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('view', Depreciation::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -52,7 +52,7 @@ class ListDepreciationsTool extends Tool
         ])->values()->all();
 
         return Response::make(
-            Response::text("Found {$total} depreciations, returning ".count($depreciationsData))
+            Response::text(trans('mcp.list_depreciations', ['total' => $total, 'count' => count($depreciationsData)]))
         )->withStructuredContent([
             'total' => $total,
             'offset' => $offset,

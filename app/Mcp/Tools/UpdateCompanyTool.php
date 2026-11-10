@@ -33,11 +33,11 @@ class UpdateCompanyTool extends Tool
         $company = $this->resolveCompany($request);
 
         if (! $company) {
-            return Response::make(Response::error('Company not found'));
+            return Response::make(Response::error(trans('mcp.company_not_found')));
         }
 
         if (! Gate::allows('update', $company)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($request->filled('new_name')) {
@@ -52,16 +52,16 @@ class UpdateCompanyTool extends Tool
 
         if ($company->save()) {
             return Response::make(
-                Response::text('Company '.$company->name.' updated successfully')
+                Response::text(trans('mcp.company_updated', ['name' => $company->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Company updated successfully',
+                'message' => trans('mcp.company_updated', ['name' => $company->name]),
                 'id' => $company->id,
                 'name' => $company->name,
             ]);
         }
 
-        return Response::make(Response::error('Update failed: '.$company->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.update_failed', ['error' => $company->getErrors()->first()])));
     }
 
     private function resolveCompany(Request $request): ?Company

@@ -22,7 +22,7 @@ class CreateGroupTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('superadmin')) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {
@@ -43,16 +43,16 @@ class CreateGroupTool extends Tool
 
         if ($group->save()) {
             return Response::make(
-                Response::text('Group '.$group->name.' created successfully')
+                Response::text(trans('mcp.group_created', ['name' => $group->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Group created successfully',
+                'message' => trans('mcp.group_created', ['name' => $group->name]),
                 'id' => $group->id,
                 'name' => $group->name,
             ]);
         }
 
-        return Response::make(Response::error('Create failed: '.$group->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $group->getErrors()->first()])));
     }
 
     public function schema(JsonSchema $schema): array

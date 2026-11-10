@@ -7,13 +7,12 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Attributes\Title;
-use Laravel\Mcp\Server\Prompt;
 use Laravel\Mcp\Server\Prompts\Argument;
 
 #[Name('warranty_expiring')]
 #[Title('Warranty Expiring')]
 #[Description('List assets whose warranty expires within a given number of days')]
-class WarrantyExpiringPrompt extends Prompt
+class WarrantyExpiringPrompt extends SnipePrompt
 {
     public function handle(Request $request): Response
     {
@@ -31,7 +30,7 @@ class WarrantyExpiringPrompt extends Prompt
         5. Recommend actions: extend warranty, schedule replacement, or note as acceptable risk.
         TEXT;
 
-        return Response::text(trim($prompt));
+        return Response::text(trim($prompt).$this->localeInstruction());
     }
 
     public function arguments(): array

@@ -21,7 +21,7 @@ class ListAssetsTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('index', Asset::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -97,7 +97,7 @@ class ListAssetsTool extends Tool
         ])->values()->all();
 
         return Response::make(
-            Response::text("Found {$total} assets, returning ".count($assetsData))
+            Response::text(trans('mcp.list_assets', ['total' => $total, 'count' => count($assetsData)]))
         )->withStructuredContent([
             'total' => $total,
             'offset' => $offset,

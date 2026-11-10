@@ -31,11 +31,11 @@ class AddAssetNoteTool extends Tool
         $asset = $this->resolveAsset($request);
 
         if (! $asset) {
-            return Response::make(Response::error('Asset not found'));
+            return Response::make(Response::error(trans('mcp.asset_not_found')));
         }
 
         if (! Gate::allows('update', $asset)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $logaction = new Actionlog;
@@ -46,17 +46,17 @@ class AddAssetNoteTool extends Tool
 
         if ($logaction->logaction('note added')) {
             return Response::make(
-                Response::text('Note added to asset '.$asset->asset_tag)
+                Response::text(trans('mcp.note_added_to_asset', ['asset_tag' => $asset->asset_tag]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Note added successfully',
+                'message' => trans('mcp.note_added_successfully'),
                 'asset_tag' => $asset->asset_tag,
                 'asset_id' => $asset->id,
                 'note' => $logaction->note,
             ]);
         }
 
-        return Response::make(Response::error('Failed to save note'));
+        return Response::make(Response::error(trans('mcp.note_save_failed')));
     }
 
     private function resolveAsset(Request $request): ?Asset

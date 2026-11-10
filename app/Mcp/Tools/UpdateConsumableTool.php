@@ -39,11 +39,11 @@ class UpdateConsumableTool extends Tool
         $consumable = $this->resolveConsumable($request);
 
         if (! $consumable) {
-            return Response::make(Response::error('Consumable not found'));
+            return Response::make(Response::error(trans('mcp.consumable_not_found')));
         }
 
         if (! Gate::allows('update', $consumable)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $updatable = [
@@ -63,17 +63,17 @@ class UpdateConsumableTool extends Tool
 
         if ($consumable->save()) {
             return Response::make(
-                Response::text('Consumable '.$consumable->name.' updated successfully')
+                Response::text(trans('mcp.consumable_updated', ['name' => $consumable->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Consumable updated successfully',
+                'message' => trans('mcp.consumable_updated', ['name' => $consumable->name]),
                 'id' => $consumable->id,
                 'name' => $consumable->name,
                 'qty' => $consumable->qty,
             ]);
         }
 
-        return Response::make(Response::error('Update failed: '.$consumable->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.update_failed', ['error' => $consumable->getErrors()->first()])));
     }
 
     private function resolveConsumable(Request $request): ?Consumable

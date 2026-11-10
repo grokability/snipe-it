@@ -40,19 +40,19 @@ class ShowCategoryTool extends Tool
         } elseif ($request->filled('name')) {
             $category = Category::withCount($withCounts)->where('name', $request->get('name'))->first();
         } else {
-            return Response::make(Response::error('Please provide an id or name'));
+            return Response::make(Response::error(trans('mcp.id_or_name_required')));
         }
 
         if (! $category) {
-            return Response::make(Response::error('Category not found'));
+            return Response::make(Response::error(trans('mcp.category_not_found')));
         }
 
         if (! Gate::allows('view', $category)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         return Response::make(
-            Response::text('Category '.$category->name.' found')
+            Response::text(trans('mcp.category_found', ['name' => $category->name]))
         )->withStructuredContent([
             'id' => $category->id,
             'name' => $category->name,

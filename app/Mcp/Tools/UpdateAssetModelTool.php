@@ -38,11 +38,11 @@ class UpdateAssetModelTool extends Tool
         $model = $this->resolveModel($request);
 
         if (! $model) {
-            return Response::make(Response::error('Asset model not found'));
+            return Response::make(Response::error(trans('mcp.asset_model_not_found')));
         }
 
         if (! Gate::allows('update', $model)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if ($request->filled('new_name')) {
@@ -57,16 +57,16 @@ class UpdateAssetModelTool extends Tool
 
         if ($model->save()) {
             return Response::make(
-                Response::text('Asset model '.$model->name.' updated successfully')
+                Response::text(trans('mcp.asset_model_updated', ['name' => $model->name]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Asset model updated successfully',
+                'message' => trans('mcp.asset_model_updated', ['name' => $model->name]),
                 'id' => $model->id,
                 'name' => $model->name,
             ]);
         }
 
-        return Response::make(Response::error('Update failed: '.$model->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.update_failed', ['error' => $model->getErrors()->first()])));
     }
 
     private function resolveModel(Request $request): ?AssetModel

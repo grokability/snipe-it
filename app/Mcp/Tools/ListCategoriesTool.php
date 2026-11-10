@@ -21,7 +21,7 @@ class ListCategoriesTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! Gate::allows('view', Category::class)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $request->validate([
@@ -67,7 +67,7 @@ class ListCategoriesTool extends Tool
         ])->values()->all();
 
         return Response::make(
-            Response::text("Found {$total} categories, returning ".count($categoriesData))
+            Response::text(trans('mcp.list_categories', ['total' => $total, 'count' => count($categoriesData)]))
         )->withStructuredContent([
             'total' => $total,
             'offset' => $offset,

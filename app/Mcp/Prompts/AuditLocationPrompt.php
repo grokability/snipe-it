@@ -7,13 +7,12 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Attributes\Title;
-use Laravel\Mcp\Server\Prompt;
 use Laravel\Mcp\Server\Prompts\Argument;
 
 #[Name('audit_location')]
 #[Title('Audit Location')]
 #[Description('Review all assets at a location, flag overdue audits and status anomalies')]
-class AuditLocationPrompt extends Prompt
+class AuditLocationPrompt extends SnipePrompt
 {
     public function handle(Request $request): Response
     {
@@ -34,7 +33,7 @@ class AuditLocationPrompt extends Prompt
         Present the findings clearly so they can be acted on or exported.
         TEXT;
 
-        return Response::text(trim($prompt));
+        return Response::text(trim($prompt).$this->localeInstruction());
     }
 
     public function arguments(): array

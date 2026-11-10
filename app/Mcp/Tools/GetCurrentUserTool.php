@@ -20,17 +20,17 @@ class GetCurrentUserTool extends Tool
     public function handle(Request $request): ResponseFactory
     {
         if (! auth()->check()) {
-            return Response::make(Response::error('Not authenticated'));
+            return Response::make(Response::error(trans('mcp.not_authenticated')));
         }
 
         $user = User::with('company', 'department', 'userloc')->find(auth()->id());
 
         if (! $user) {
-            return Response::make(Response::error('Not authenticated'));
+            return Response::make(Response::error(trans('mcp.not_authenticated')));
         }
 
         return Response::make(
-            Response::text('Current user: '.$user->username)
+            Response::text(trans('mcp.current_user', ['username' => $user->username]))
         )->withStructuredContent([
             'id' => $user->id,
             'username' => $user->username,

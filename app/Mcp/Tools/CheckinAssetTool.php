@@ -30,17 +30,17 @@ class CheckinAssetTool extends Tool
         $asset = $this->resolveAsset($request);
 
         if (! $asset) {
-            return Response::make(Response::error('Asset not found'));
+            return Response::make(Response::error(trans('mcp.asset_not_found')));
         }
 
         if (! Gate::allows('checkin', $asset)) {
-            return Response::make(Response::error('Unauthorized'));
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $target = $asset->assignedTo;
 
         if (is_null($target)) {
-            return Response::make(Response::error('Asset '.$asset->asset_tag.' is not currently checked out'));
+            return Response::make(Response::error(trans('mcp.asset_not_checked_out', ['asset_tag' => $asset->asset_tag])));
         }
 
         $originalValues = $asset->getRawOriginal();
@@ -56,17 +56,17 @@ class CheckinAssetTool extends Tool
             event(new CheckoutableCheckedIn($asset, $target, auth()->user(), $request->get('note'), $checkinAt, $originalValues));
 
             return Response::make(
-                Response::text('Asset '.$asset->asset_tag.' checked in successfully')
+                Response::text(trans('mcp.asset_checked_in', ['asset_tag' => $asset->asset_tag]))
             )->withStructuredContent([
                 'success' => true,
-                'message' => 'Asset checked in successfully',
+                'message' => trans('mcp.asset_checked_in', ['asset_tag' => $asset->asset_tag]),
                 'asset_tag' => $asset->asset_tag,
                 'model' => $asset->model?->name,
                 'location' => $asset->location?->name,
             ]);
         }
 
-        return Response::make(Response::error('Checkin failed: '.$asset->getErrors()->first()));
+        return Response::make(Response::error(trans('mcp.checkin_failed_error', ['error' => $asset->getErrors()->first()])));
     }
 
     private function resolveAsset(Request $request): ?Asset
