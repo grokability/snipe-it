@@ -4,6 +4,7 @@ namespace Tests\Feature\Locations\Ui;
 
 use App\Models\Location;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class ShowLocationTest extends TestCase
@@ -114,4 +115,23 @@ class ShowLocationTest extends TestCase
             $responseContent
         );
     }
+
+    public function test_print_all_assigned_lists_child_locations()
+    {
+        $parent = Location::factory()->create(['name' => 'Print Parent Location']);
+        $location = Location::factory()->create([
+            'name' => 'Print Middle Location',
+            'parent_id' => $parent->id,
+        ]);
+        Location::factory()->create(['name' => 'Print First Child Location', 'parent_id' => $location->id]);
+        Location::factory()->create(['name' => 'Print Second Child Location', 'parent_id' => $location->id]);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->get(route('locations.print_all_assigned', $location))
+            ->assertOk()
+            ->assertSee('Print Parent Location')
+            ->assertSee('Print First Child Location')
+            ->assertSee('Print Second Child Location');
+    }
+
 }

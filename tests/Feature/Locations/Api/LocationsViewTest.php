@@ -6,6 +6,7 @@ use App\Models\Asset;
 use App\Models\Location;
 use App\Models\Statuslabel;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class LocationsViewTest extends TestCase
@@ -115,5 +116,19 @@ class LocationsViewTest extends TestCase
             ->getJson(route('api.locations.show', $location->id))
             ->assertOk()
             ->assertJson(['rtd_assets_count' => 5]);
+    }
+
+    public function test_show_includes_direct_parent_and_children()
+    {
+        $grandparent = Location::factory()->create();
+        $parent = Location::factory()->create(['parent_id' => $grandparent->id]);
+        $child = Location::factory()->create(['parent_id' => $parent->id]);
+
+        $response = $this->actingAsForApi(User::factory()->superuser()->create())
+            ->getJson(route('api.locations.show', $parent->id))
+            ->assertOk()
+            ->assertJsonPath('parent.id', $grandparent->id);
+
+        $this->assertEquals([$child->id], array_column($response->json('children'), 'id'));
     }
 }

@@ -2,7 +2,9 @@
 
 namespace Tests\Unit;
 
+use App\Models\Company;
 use App\Models\Location;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class LocationTest extends TestCase
@@ -28,5 +30,15 @@ class LocationTest extends TestCase
 
         $this->assertFalse($a->isValid());
         $this->assertStringContainsString(trans('validation.non_circular', ['attribute' => 'parent id']), $a->getErrors());
+    }
+
+    public function test_effective_fmcs_company_id_inherits_from_nearest_ancestor_with_a_company()
+    {
+        $company = Company::factory()->create();
+        $grandparent = Location::factory()->create(['company_id' => $company->id]);
+        $parent = Location::factory()->create(['parent_id' => $grandparent->id]);
+        $child = Location::factory()->create(['parent_id' => $parent->id]);
+
+        $this->assertSame($company->id, $child->effectiveFmcsCompanyId());
     }
 }

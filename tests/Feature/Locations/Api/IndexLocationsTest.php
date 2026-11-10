@@ -4,6 +4,7 @@ namespace Tests\Feature\Locations\Api;
 
 use App\Models\Location;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
@@ -61,5 +62,22 @@ class IndexLocationsTest extends TestCase
 
         $this->assertContains($matchingLocation->id, $ids);
         $this->assertNotContains($otherLocation->id, $ids);
+    }
+
+    public function test_index_row_includes_direct_parent_and_children()
+    {
+        $grandparent = Location::factory()->create();
+        $parent = Location::factory()->create(['parent_id' => $grandparent->id]);
+        $child = Location::factory()->create(['parent_id' => $parent->id]);
+
+        $rows = collect($this->actingAsForApi(User::factory()->superuser()->create())
+            ->getJson(route('api.locations.index'))
+            ->assertOk()
+            ->json('rows'));
+
+        $parentRow = $rows->firstWhere('id', $parent->id);
+
+        $this->assertEquals($grandparent->id, $parentRow['parent']['id']);
+        $this->assertEquals([$child->id], array_column($parentRow['children'], 'id'));
     }
 }
