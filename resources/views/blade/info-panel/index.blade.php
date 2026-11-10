@@ -372,13 +372,7 @@
 
         @if (($infoPanelObj instanceof \App\Models\Location) && (isset($infoPanelObj->parent)) && ($infoPanelObj->parent))
             @php
-                $locationAncestors = [];
-                $ancestorCursor = $infoPanelObj->parent;
-
-                while ($ancestorCursor) {
-                    array_unshift($locationAncestors, $ancestorCursor);
-                    $ancestorCursor = $ancestorCursor->parent;
-                }
+                $locationAncestors = $infoPanelObj->ancestors()->reverse();
             @endphp
             <x-info-element icon_type="parent" title="{{ trans('admin/locations/table.parent') }}">
                 @foreach ($locationAncestors as $ancestor)
