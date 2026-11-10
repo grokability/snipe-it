@@ -80,4 +80,21 @@ class IndexLocationsTest extends TestCase
         $this->assertEquals($grandparent->id, $parentRow['parent']['id']);
         $this->assertEquals([$child->id], array_column($parentRow['children'], 'id'));
     }
+
+    public function test_index_does_not_crash_when_locations_form_a_parent_cycle()
+    {
+        $locationA = Location::factory()->create();
+        $locationB = Location::factory()->create();
+
+        DB::table('locations')->where('id', $locationA->id)->update(['parent_id' => $locationB->id]);
+        DB::table('locations')->where('id', $locationB->id)->update(['parent_id' => $locationA->id]);
+
+        $rows = collect($this->actingAsForApi(User::factory()->superuser()->create())
+            ->getJson(route('api.locations.index'))
+            ->assertOk()
+            ->json('rows'));
+
+        $this->assertNotNull($rows->firstWhere('id', $locationB->id));
+        $this->assertEquals($locationB->id, $rows->firstWhere('id', $locationA->id)['parent']['id']);
+    }
 }

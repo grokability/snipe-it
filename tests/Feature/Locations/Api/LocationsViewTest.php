@@ -131,4 +131,18 @@ class LocationsViewTest extends TestCase
 
         $this->assertEquals([$child->id], array_column($response->json('children'), 'id'));
     }
+
+    public function test_show_does_not_crash_when_location_is_in_a_parent_cycle()
+    {
+        $locationA = Location::factory()->create();
+        $locationB = Location::factory()->create();
+
+        DB::table('locations')->where('id', $locationA->id)->update(['parent_id' => $locationB->id]);
+        DB::table('locations')->where('id', $locationB->id)->update(['parent_id' => $locationA->id]);
+
+        $this->actingAsForApi(User::factory()->superuser()->create())
+            ->getJson(route('api.locations.show', $locationA->id))
+            ->assertOk()
+            ->assertJsonPath('parent.id', $locationB->id);
+    }
 }

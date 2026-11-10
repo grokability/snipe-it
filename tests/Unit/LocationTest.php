@@ -41,4 +41,15 @@ class LocationTest extends TestCase
 
         $this->assertSame($company->id, $child->effectiveFmcsCompanyId());
     }
+
+    public function test_effective_fmcs_company_id_terminates_on_a_parent_cycle()
+    {
+        $locationA = Location::factory()->create();
+        $locationB = Location::factory()->create();
+
+        DB::table('locations')->where('id', $locationA->id)->update(['parent_id' => $locationB->id]);
+        DB::table('locations')->where('id', $locationB->id)->update(['parent_id' => $locationA->id]);
+
+        $this->assertNull($locationA->fresh()->effectiveFmcsCompanyId());
+    }
 }

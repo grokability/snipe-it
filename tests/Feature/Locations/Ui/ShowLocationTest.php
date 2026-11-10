@@ -134,4 +134,30 @@ class ShowLocationTest extends TestCase
             ->assertSee('Print Second Child Location');
     }
 
+    public function test_show_page_renders_when_location_is_in_a_parent_cycle()
+    {
+        $locationA = Location::factory()->create();
+        $locationB = Location::factory()->create();
+
+        DB::table('locations')->where('id', $locationA->id)->update(['parent_id' => $locationB->id]);
+        DB::table('locations')->where('id', $locationB->id)->update(['parent_id' => $locationA->id]);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->get(route('locations.show', $locationA))
+            ->assertOk()
+            ->assertSee(route('locations.show', $locationB));
+    }
+
+    public function test_print_all_assigned_renders_when_location_is_in_a_parent_cycle()
+    {
+        $locationA = Location::factory()->create();
+        $locationB = Location::factory()->create();
+
+        DB::table('locations')->where('id', $locationA->id)->update(['parent_id' => $locationB->id]);
+        DB::table('locations')->where('id', $locationB->id)->update(['parent_id' => $locationA->id]);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->get(route('locations.print_all_assigned', $locationA))
+            ->assertOk();
+    }
 }
