@@ -34,6 +34,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Passport;
 use Rollbar\Laravel\RollbarServiceProvider;
 
 /**
@@ -67,6 +68,12 @@ class AppServiceProvider extends ServiceProvider
         if ((str_starts_with(config('app.url'), 'https://')) || config('app.force_tls')) {
             $url->forceScheme('https');
         }
+
+        Passport::enablePasswordGrant();
+
+        Passport::authorizationView(function ($parameters) {
+            return view('mcp.authorize', $parameters);
+        });
 
         if (! config('app.allow_insecure_hosts')) {  // unless you set APP_ALLOW_INSECURE_HOSTS, you should PROHIBIT forging domain parts of URL via Host: headers
             $url_parts = parse_url(config('app.url'));

@@ -37,7 +37,7 @@ class FmcsCompanyScopingTest extends TestCase
         $this->assetB = Asset::factory()->for($this->companyB)->create();
 
         $this->userInCompanyA = $this->companyA->users()->save(User::factory()->make());
-        $this->superUser      = $this->companyA->users()->save(User::factory()->superuser()->make());
+        $this->superUser = $this->companyA->users()->save(User::factory()->superuser()->make());
 
         $this->settings->enableMultipleFullCompanySupport();
     }
@@ -50,7 +50,7 @@ class FmcsCompanyScopingTest extends TestCase
 
         $response = (new UpdateAssetTool)->handle(new Request([
             'asset_tag' => $this->assetB->asset_tag,
-            'name'      => 'Should Not Apply',
+            'name' => 'Should Not Apply',
         ]));
 
         $this->assertTrue($response->responses()->first()->isError());
@@ -63,7 +63,7 @@ class FmcsCompanyScopingTest extends TestCase
 
         $content = (new UpdateAssetTool)->handle(new Request([
             'asset_tag' => $this->assetA->asset_tag,
-            'name'      => 'Updated Name',
+            'name' => 'Updated Name',
         ]))->getStructuredContent();
 
         $this->assertTrue($content['success']);
@@ -125,7 +125,7 @@ class FmcsCompanyScopingTest extends TestCase
 
     public function test_checkin_blocked_for_cross_company_asset()
     {
-        $user            = $this->companyB->users()->save(User::factory()->make());
+        $user = $this->companyB->users()->save(User::factory()->make());
         $checkedOutAsset = Asset::factory()->for($this->companyB)->assignedToUser($user)->create();
 
         $this->actingAs($this->userInCompanyA);
@@ -140,7 +140,7 @@ class FmcsCompanyScopingTest extends TestCase
 
     public function test_checkin_allowed_for_same_company_asset()
     {
-        $user  = $this->companyA->users()->save(User::factory()->make());
+        $user = $this->companyA->users()->save(User::factory()->make());
         $asset = Asset::factory()->for($this->companyA)->assignedToUser($user)->create();
 
         $this->actingAs($this->userInCompanyA);
@@ -162,9 +162,9 @@ class FmcsCompanyScopingTest extends TestCase
         $this->actingAs($this->userInCompanyA);
 
         $response = (new CheckoutAssetTool)->handle(new Request([
-            'asset_tag'        => $this->assetB->asset_tag,
+            'asset_tag' => $this->assetB->asset_tag,
             'checkout_to_type' => 'user',
-            'assigned_user'    => $user->id,
+            'assigned_user' => $user->id,
         ]));
 
         $this->assertTrue($response->responses()->first()->isError());
@@ -178,9 +178,9 @@ class FmcsCompanyScopingTest extends TestCase
         $this->actingAs($this->userInCompanyA);
 
         $content = (new CheckoutAssetTool)->handle(new Request([
-            'asset_tag'        => $this->assetA->asset_tag,
+            'asset_tag' => $this->assetA->asset_tag,
             'checkout_to_type' => 'user',
-            'assigned_user'    => $user->id,
+            'assigned_user' => $user->id,
         ]))->getStructuredContent();
 
         $this->assertTrue($content['success']);
@@ -195,7 +195,7 @@ class FmcsCompanyScopingTest extends TestCase
 
         $content = (new UpdateAssetTool)->handle(new Request([
             'asset_tag' => $this->assetB->asset_tag,
-            'name'      => 'Superuser Override',
+            'name' => 'Superuser Override',
         ]))->getStructuredContent();
 
         $this->assertTrue($content['success']);
