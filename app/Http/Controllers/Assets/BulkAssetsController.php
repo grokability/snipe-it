@@ -29,7 +29,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Context;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
@@ -497,6 +496,7 @@ class BulkAssetsController extends Controller
 
                 // Does the model have a fieldset?
                 if ($asset->model?->fieldset) {
+                    // FIXME - can we use custom_fill here? We have a nullable option which is a little weird :/
                     foreach ($asset->model->fieldset->fields as $field) {
 
                         // null custom fields
@@ -508,43 +508,15 @@ class BulkAssetsController extends Controller
                             }
                         }
 
-                        if ((array_key_exists($field->db_column, $this->update_array)) && ($field->field_encrypted == '1')) {
-                            if (Gate::allows('admin')) {
-                                $decrypted_old = Helper::gracefulDecrypt($field, $asset->{$field->db_column});
-
-                                /*
-                                 * Check if the decrypted existing value is different from one we just submitted
-                                 * and if not, pull it out of the object since it shouldn't really be updating at all.
-                                 * If we don't do this, it will try to re-encrypt it, and the same value encrypted two
-                                 * different times will have different values, so it will *look* like it was updated
-                                 * but it wasn't.
-                                 */
-                                if ($decrypted_old != $this->update_array[$field->db_column]) {
-                                    $asset->{$field->db_column} = Crypt::encrypt($this->update_array[$field->db_column]);
-                                } else {
-                                    /*
-                                     * Remove the encrypted custom field from the update_array, since nothing changed
-                                     */
-                                    unset($this->update_array[$field->db_column]);
-                                    unset($asset->{$field->db_column});
-                                }
-
-                                /*
-                                 * These custom fields aren't encrypted, just carry on as usual
-                                 */
-                            }
-                        } else {
-
-                            if ((array_key_exists($field->db_column, $this->update_array)) && ($asset->{$field->db_column} != $this->update_array[$field->db_column])) {
-
-                                // Check if this is an array, and if so, flatten it
-                                if (is_array($this->update_array[$field->db_column])) {
-                                    $asset->{$field->db_column} = implode(', ', $this->update_array[$field->db_column]);
-                                } else {
-                                    $asset->{$field->db_column} = $this->update_array[$field->db_column];
-                                }
-                            }
+                        if (! array_key_exists($field->db_column, $this->update_array)) {
+                            continue;
                         }
+
+                        if (! $field->field_encrypted || Gate::allows('admin')) {
+                            $asset->{$field->db_column} = $this->update_array[$field->db_column];
+                        }
+
+                        unset($this->update_array[$field->db_column]);
 
                     } // endforeach
                 }

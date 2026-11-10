@@ -345,7 +345,7 @@ class BulkEditAssetsTest extends TestCase
         $encrypted = CustomField::where('name', 'Test Encrypted')->first();
 
         $assets = Asset::factory()->count(10)->hasEncryptedCustomField($encrypted)->create([
-            $encrypted->db_column => Crypt::encrypt('Original Encrypted Text'),
+            $encrypted->db_column => 'Original Encrypted Text',
         ]);
 
         $id_array = $assets->pluck('id')->toArray();
@@ -356,7 +356,7 @@ class BulkEditAssetsTest extends TestCase
         ])->assertStatus(302);
 
         Asset::findMany($id_array)->each(function (Asset $asset) use ($encrypted) {
-            $this->assertEquals('New Encrypted Text', Crypt::decrypt($asset->{$encrypted->db_column}));
+            $this->assertEquals('New Encrypted Text', Crypt::decrypt($asset->getRawOriginal($encrypted->db_column)));
         });
     }
 
@@ -371,11 +371,11 @@ class BulkEditAssetsTest extends TestCase
         $encrypted = CustomField::where('name', 'Test Encrypted')->first();
 
         $admin_assets = Asset::factory()->count(5)->hasEncryptedCustomField($encrypted)->create([
-            $encrypted->db_column => Crypt::encrypt('Original Encrypted Text'),
+            $encrypted->db_column => 'Original Encrypted Text',
         ]);
 
         $standard_assets = Asset::factory()->count(5)->hasEncryptedCustomField($encrypted)->create([
-            $encrypted->db_column => Crypt::encrypt('Original Encrypted Text'),
+            $encrypted->db_column => 'Original Encrypted Text',
         ]);
 
         $admin_id_array = $admin_assets->pluck('id')->toArray();
@@ -393,11 +393,11 @@ class BulkEditAssetsTest extends TestCase
         ])->assertStatus(302);
 
         Asset::findMany($admin_id_array)->each(function (Asset $asset) use ($encrypted) {
-            $this->assertEquals('New Encrypted Text', Crypt::decrypt($asset->{$encrypted->db_column}));
+            $this->assertEquals('New Encrypted Text', Crypt::decrypt($asset->getRawOriginal($encrypted->db_column)));
         });
 
         Asset::findMany($standard_id_array)->each(function (Asset $asset) use ($encrypted) {
-            $this->assertEquals('Original Encrypted Text', Crypt::decrypt($asset->{$encrypted->db_column}));
+            $this->assertEquals('Original Encrypted Text', Crypt::decrypt($asset->getRawOriginal($encrypted->db_column)));
         });
     }
 

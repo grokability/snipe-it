@@ -34,7 +34,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
@@ -812,8 +811,8 @@ class AssetsController extends Controller
      */
     public function store(StoreAssetRequest $request): JsonResponse
     {
-        // Eager-load the fieldset chain down to the per-model pivot defaults
-        $model = AssetModel::with('fieldset.fields.defaultValues')
+        // custom_fill loads the pivot defaults together on the resolved fieldset.
+        $model = AssetModel::with('fieldset.fields')
             ->find((int) $request->input('model_id'));
 
         $asset = new Asset;
@@ -834,42 +833,7 @@ class AssetsController extends Controller
 
         // Update custom fields in the database.
         if ($model && $model->fieldset) {
-            foreach ($model->fieldset->fields as $field) {
-
-                // Set the field value based on what was sent in the request
-                $field_val = $request->input($field->db_column, null);
-
-                // If input value is null, use custom field's default value
-                if ($field_val == null) {
-                    Log::debug('Field value for '.$field->db_column.' is null');
-                    $field_val = $field->defaultValue($request->input('model_id'));
-                    Log::debug('Use the default fieldset value of '.$field_val);
-                }
-
-                // if the field is set to encrypted, make sure we encrypt the value
-                if ($field->field_encrypted == '1') {
-                    Log::debug('This model field is encrypted in this fieldset.');
-
-                    if (Gate::allows('assets.view.encrypted_custom_fields')) {
-
-                        // If input value is null, use custom field's default value
-                        if (($field_val == null) && ($request->has('model_id') != '')) {
-                            $field_val = Crypt::encrypt($field_val);
-                        } else {
-                            $field_val = Crypt::encrypt($request->input($field->db_column));
-                        }
-                    } else {
-                        continue;
-                    }
-                }
-                if ($field->element == 'checkbox') {
-                    if (is_array($field_val)) {
-                        $field_val = implode(',', $field_val);
-                    }
-                }
-
-                $asset->{$field->db_column} = $field_val;
-            }
+            $asset->custom_fill($request, true);
         }
 
         $target = $this->resolveCheckoutTargetForAssetMutation($request);
@@ -1119,33 +1083,8 @@ class AssetsController extends Controller
         $model = $asset->model;
 
         $problems_updating_encrypted_custom_fields = false;
-        if ($model && isset($model->fieldset)) {
-            foreach ($model->fieldset->fields as $field) {
-                if (! $request->has($field->db_column)) {
-                    continue;
-                }
-
-                $field_val = $request->input($field->db_column, null);
-
-                if ($field->element === 'checkbox' && is_array($field_val)) {
-                    $field_val = implode(',', $field_val);
-                }
-
-                if ($field->field_encrypted == '1') {
-                    if (Gate::allows('assets.view.encrypted_custom_fields')) {
-                        $field_val = Crypt::encrypt($field_val);
-                    } else {
-                        // Skip encrypted-field updates for callers without the
-                        // permission, but flag it so the response can nudge them.
-                        $problems_updating_encrypted_custom_fields = true;
-
-                        continue;
-                    }
-                }
-
-                $asset->{$field->db_column} = $field_val;
-            }
-        }
+        $asset->custom_fill($request);
+        $problems_updating_encrypted_custom_fields = $asset->hasSkippedEncryptedCustomFields();
 
         $target = $this->resolveCheckoutTargetForAssetMutation($request, $asset->id);
         $requestedCheckout = $request->filled('assigned_user') || $request->filled('assigned_asset') || $request->filled('assigned_location');
@@ -1901,28 +1840,7 @@ class AssetsController extends Controller
         ];
 
         if ($asset->model && $asset->model->fieldset) {
-            $payload['custom_fields'] = [];
-            foreach ($asset->model->fieldset->fields as $field) {
-                if ($field->display_audit != '1' || ! $request->has($field->db_column)) {
-                    continue;
-                }
-
-                $value = $request->input($field->db_column);
-                $stored = is_array($value) ? implode(', ', $value) : $value;
-
-                if ($field->field_encrypted == '1') {
-                    // Only writers with the encrypted-view permission can
-                    // set encrypted fields. Other callers get the payload
-                    // echo but no persisted change.
-                    if (Gate::allows('assets.view.encrypted_custom_fields')) {
-                        $asset->{$field->db_column} = Crypt::encrypt($stored);
-                    }
-                } else {
-                    $asset->{$field->db_column} = $stored;
-                }
-
-                $payload['custom_fields'][$field->db_column] = $value;
-            }
+            $payload['custom_fields'] = $asset->custom_fill($request, false, 'display_audit');
         }
         
         if ($asset->isInvalid()) {

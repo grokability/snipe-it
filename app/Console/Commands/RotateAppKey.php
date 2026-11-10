@@ -9,6 +9,7 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 
 class RotateAppKey extends Command
 {
@@ -97,7 +98,7 @@ class RotateAppKey extends Command
 
                 foreach ($assets as $asset) {
                     try {
-                        $asset->{$field->db_column} = $oldEncrypter->decrypt($asset->{$field->db_column});
+                        $plaintext = $oldEncrypter->decrypt($asset->getRawOriginal($field->db_column));
                         $this->line('DECRYPTED: '.$field->db_column);
                     } catch (DecryptException $e) {
                         $this->line('Could not decrypt '.$field->db_column.' using "old key" - skipping...');
@@ -107,9 +108,10 @@ class RotateAppKey extends Command
                         $this->error('Error decrypting '.$field->db_column.', reason: '.$e->getMessage().'. Aborting key rotation');
                         throw $e;
                     }
-                    $asset->{$field->db_column} = $newEncrypter->encrypt($asset->{$field->db_column});
+                    // Attribute casts use the current app key, so rotate the stored ciphertext directly.
+                    $ciphertext = $newEncrypter->encrypt($plaintext);
                     $this->line('ENCRYPTED: '.$field->db_column);
-                    $asset->save();
+                    DB::table($asset->getTable())->where($asset->getKeyName(), $asset->getKey())->update([$field->db_column => $ciphertext]);
                 }
             }
 

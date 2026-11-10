@@ -44,7 +44,7 @@
                   <x-input.select
                       :name="$field->db_column_name()"
                       :options="$field->formatFieldValuesAsArray()"
-                      :selected="old($field->db_column_name(), (isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : ''))"
+                      :selected="old($field->db_column_name(), (isset($item) ? $item->{$field->db_column_name()} : ''))"
                       :include-empty="true"
                       class="format form-control"
                   />
@@ -54,7 +54,7 @@
                     <input type="text" class="form-control" disabled value="{{ trans('/admin/hardware/form.bulk_update_custom_field_unique') }}">
                 @endif
                 @if(!$field->is_unique)
-                    <textarea class="col-md-6 form-control" id="{{ $field->db_column_name() }}" name="{{ $field->db_column_name() }}">{{ old($field->db_column_name(), (isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : '')) }}</textarea>
+                    <textarea class="col-md-6 form-control" id="{{ $field->db_column_name() }}" name="{{ $field->db_column_name() }}">{{ old($field->db_column_name(), (isset($item) ? $item->{$field->db_column_name()} : '')) }}</textarea>
                 @endif
               @elseif ($field->element=='checkbox')
                     <!-- Checkboxes -->
@@ -103,7 +103,7 @@
                     <x-input.datepicker
                         id="{{ $field->db_column_name() }}"
                         name="{{ $field->db_column_name() }}"
-                        :value="old($field->db_column_name(), isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : '')"
+                        :value="old($field->db_column_name(), isset($item) ? $item->{$field->db_column_name()} : '')"
                     />
                 </div>
 
@@ -112,7 +112,7 @@
                     <x-input.datetimepicker
                         id="{{ $field->db_column_name() }}"
                         name="{{ $field->db_column_name() }}"
-                        :value="old($field->db_column_name(), isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : '')"
+                        :value="old($field->db_column_name(), isset($item) ? $item->{$field->db_column_name()} : '')"
                         :default_now="false"
                     />
                 </div>
@@ -127,7 +127,7 @@
                 <x-input.datepicker
                     id="{{ $field->db_column_name() }}"
                     name="{{ $field->db_column_name() }}"
-                    :value="old($field->db_column_name(), isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : '')"
+                    :value="old($field->db_column_name(), isset($item) ? $item->{$field->db_column_name()} : '')"
                 />
             </div>
 
@@ -142,7 +142,7 @@
                         <x-input.datetimepicker
                             id="{{ $field->db_column_name() }}"
                             name="{{ $field->db_column_name() }}"
-                            :value="old($field->db_column_name(), isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : '')"
+                            :value="old($field->db_column_name(), isset($item) ? $item->{$field->db_column_name()} : '')"
                             :default_now="false"
                         />
                     </div>
@@ -156,7 +156,7 @@
                             @endif
                             @if(!$field->is_unique)
                                 <input type="text"
-                                       value="{{ old($field->db_column_name(),(isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : '')) }}"
+                                       value="{{ old($field->db_column_name(),(isset($item) ? $item->{$field->db_column_name()} : '')) }}"
                                        id="{{ $field->db_column_name() }}"
                                        class="form-control{{ strtoupper($field->format) === 'MAC' ? ' mac-address-input' : '' }}"
                                        name="{{ $field->db_column_name() }}"

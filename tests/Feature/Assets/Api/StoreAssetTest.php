@@ -782,8 +782,8 @@ class StoreAssetTest extends TestCase
         // lazy-loaded `$this->defaultValues` which is
         // `belongsToMany(AssetModel::class, 'models_custom_fields')`, firing
         // one `SELECT models.*  INNER JOIN models_custom_fields` per field.
-        // The fix eager-loads `fieldset.fields.defaultValues` on the model
-        // fetch, so that pivot walk fires once up front.
+        // custom_fill loads the defaults together on the resolved fieldset,
+        // so that pivot walk fires once.
         $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
 
         $status = Statuslabel::factory()->readyToDeploy()->create();
@@ -823,7 +823,7 @@ class StoreAssetTest extends TestCase
         // Count queries that walk the models_custom_fields pivot from the
         // CustomField::defaultValue() side. Pre-fix fired once per custom
         // field (three times here). Post-fix fires once, from the eager
-        // load on the AssetModel::with(...) call. Threshold is one, more
+        // load in custom_fill. Threshold is one, more
         // than that means the lazy-load pattern crept back in.
         $pivotWalks = collect($queries)
             ->filter(fn ($q) => str_contains($q['query'], '`models`')
@@ -858,7 +858,7 @@ class StoreAssetTest extends TestCase
             ->json();
 
         $asset = Asset::findOrFail($response['payload']['id']);
-        $this->assertEquals('This is encrypted field', Crypt::decrypt($asset->{$field->db_column_name()}));
+        $this->assertEquals('This is encrypted field', Crypt::decrypt($asset->getRawOriginal($field->db_column_name())));
     }
 
     public function test_encrypted_custom_field_validation_passes()
@@ -887,9 +887,9 @@ class StoreAssetTest extends TestCase
             ->json();
 
         $asset = Asset::findOrFail($response['payload']['id']);
-        $this->assertEquals('Thisisencryptedfield', Crypt::decrypt($asset->{$alphaField->db_column_name()}));
-        $this->assertEquals('1234567890', Crypt::decrypt($asset->{$numericField->db_column_name()}));
-        $this->assertEquals('poop@poop.com', Crypt::decrypt($asset->{$emailField->db_column_name()}));
+        $this->assertEquals('Thisisencryptedfield', Crypt::decrypt($asset->getRawOriginal($alphaField->db_column_name())));
+        $this->assertEquals('1234567890', Crypt::decrypt($asset->getRawOriginal($numericField->db_column_name())));
+        $this->assertEquals('poop@poop.com', Crypt::decrypt($asset->getRawOriginal($emailField->db_column_name())));
     }
 
     public function test_encrypted_custom_field_validation_fails()
@@ -942,7 +942,7 @@ class StoreAssetTest extends TestCase
             ->json();
 
         $asset = Asset::findOrFail($response['payload']['id']);
-        $this->assertEquals('This is encrypted field', Crypt::decrypt($asset->{$field->db_column_name()}));
+        $this->assertEquals('This is encrypted field', Crypt::decrypt($asset->getRawOriginal($field->db_column_name())));
     }
 
     public function test_base64_asset_images()

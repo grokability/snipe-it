@@ -26,7 +26,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
@@ -233,25 +232,7 @@ class AssetsController extends Controller
                 // Update custom fields in the database.
                 // Validation for these fields is handled through the AssetRequest form request
 
-                if (($model) && ($model->fieldset)) {
-                    foreach ($model->fieldset->fields as $field) {
-                        if ($field->field_encrypted == '1') {
-                            if (Gate::allows('assets.view.encrypted_custom_fields')) {
-                                if (is_array($request->input($field->db_column))) {
-                                    $asset->{$field->db_column} = Crypt::encrypt(implode(', ', $request->input($field->db_column)));
-                                } else {
-                                    $asset->{$field->db_column} = Crypt::encrypt($request->input($field->db_column));
-                                }
-                            }
-                        } else {
-                            if (is_array($request->input($field->db_column))) {
-                                $asset->{$field->db_column} = implode(', ', $request->input($field->db_column));
-                            } else {
-                                $asset->{$field->db_column} = $request->input($field->db_column);
-                            }
-                        }
-                    }
-                }
+                $asset->custom_fill($request, only_present: false);
 
                 // Validate the asset before saving
                 // Note - it can be tempting to instead want to call saveOrFail(), to automatically throw when an object
@@ -415,8 +396,8 @@ class AssetsController extends Controller
         $total_cost_for_asset = $asset->purchase_cost + $total_maintenance_cost + $total_asset_cost + $total_license_cost + $total_accessory_cost + $total_component_cost;
 
         $audit_custom_field_columns = [];
-        if ($asset->model && $asset->model->fieldset) {
-            $audit_custom_field_columns = $asset->model->fieldset->fields
+        if ($asset->custom_fieldset) {
+            $audit_custom_field_columns = $asset->custom_fieldset->fields
                 ->where('display_audit', '1')
                 ->map(fn ($field) => [
                     'field' => $field->db_column,
@@ -546,30 +527,7 @@ class AssetsController extends Controller
         // FIXME: No idea why this is returning a Builder error on db_column_name.
         // Need to investigate and fix. Using static method for now.
         $model = AssetModel::find($request->input('model_id'));
-        if (($model) && ($model->fieldset)) {
-            foreach ($model->fieldset->fields as $field) {
-                if ($field->element == 'checkbox' && ! $request->has($field->db_column)) {
-                    $asset->{$field->db_column} = null;
-                }
-                if ($request->has($field->db_column)) {
-                    if ($field->field_encrypted == '1') {
-                        if (Gate::allows('assets.view.encrypted_custom_fields')) {
-                            if (is_array($request->input($field->db_column))) {
-                                $asset->{$field->db_column} = Crypt::encrypt(implode(', ', $request->input($field->db_column)));
-                            } else {
-                                $asset->{$field->db_column} = Crypt::encrypt($request->input($field->db_column));
-                            }
-                        }
-                    } else {
-                        if (is_array($request->input($field->db_column))) {
-                            $asset->{$field->db_column} = implode(', ', $request->input($field->db_column));
-                        } else {
-                            $asset->{$field->db_column} = $request->input($field->db_column);
-                        }
-                    }
-                }
-            }
-        }
+        $asset->custom_fill($request, only_present: false);
         session()->put([
             'redirect_option' => $request->input('redirect_option'),
             'checkout_to_type' => $request->input('checkout_to_type'),
@@ -929,29 +887,7 @@ class AssetsController extends Controller
             $asset->location_id = $request->input('location_id');
         }
 
-        //FIXME - use setCustomFieldsForPurpose('display_audit')?
-        // Update custom fields in the database
-        if (($asset->model) && ($asset->model->fieldset)) {
-            foreach ($asset->model->fieldset->fields as $field) {
-                if (($field->display_audit == '1') && ($request->has($field->db_column))) {
-                    if ($field->field_encrypted == '1') {
-                        if (Gate::allows('assets.view.encrypted_custom_fields')) {
-                            if (is_array($request->input($field->db_column))) {
-                                $asset->{$field->db_column} = Crypt::encrypt(implode(', ', $request->input($field->db_column)));
-                            } else {
-                                $asset->{$field->db_column} = Crypt::encrypt($request->input($field->db_column));
-                            }
-                        }
-                    } else {
-                        if (is_array($request->input($field->db_column))) {
-                            $asset->{$field->db_column} = implode(', ', $request->input($field->db_column));
-                        } else {
-                            $asset->{$field->db_column} = $request->input($field->db_column);
-                        }
-                    }
-                }
-            }
-        }
+        $asset->custom_fill($request, false, 'display_audit');
 
         // Validate the rest of the data before we turn off the event dispatcher
         if ($asset->isInvalid()) {

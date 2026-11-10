@@ -264,9 +264,9 @@ class AcceptanceController extends Controller
         ];
 
         // Include asset custom fields that are explicitly allowed in outbound emails/PDFs.
-        if ($item instanceof Asset && $item->model && $item->model->fieldset) {
+        if ($item instanceof Asset && $item->custom_fieldset) {
             $customFields = [];
-            $fields = $item->model->fieldset->fields
+            $fields = $item->custom_fieldset->fields
                 ->where('show_in_email', true)
                 ->where('field_encrypted', false);
 

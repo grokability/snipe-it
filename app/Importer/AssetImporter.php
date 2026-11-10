@@ -6,7 +6,6 @@ use App\Events\CheckoutableCheckedIn;
 use App\Models\Asset;
 use App\Models\Statuslabel;
 use App\Models\User;
-use Illuminate\Support\Facades\Crypt;
 
 class AssetImporter extends ItemImporter
 {
@@ -166,8 +165,8 @@ class AssetImporter extends ItemImporter
 
                 if (! is_null($customFieldValue)) {
                     if ($customField->field_encrypted == 1) {
-                        $this->item['custom_fields'][$customField->db_column_name()] = Crypt::encrypt($customFieldValue);
-                        $this->log('Custom Field '.$customField->name.': '.Crypt::encrypt($customFieldValue));
+                        $this->item['custom_fields'][$customField->db_column_name()] = $customFieldValue;
+                        $this->log('Custom Field '.$customField->name.': [encrypted]');
                     } else {
                         $this->item['custom_fields'][$customField->db_column_name()] = $customFieldValue;
                         $this->log('Custom Field '.$customField->name.': '.$customFieldValue);

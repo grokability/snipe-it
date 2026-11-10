@@ -141,7 +141,7 @@ class AssetCheckinController extends Controller
         }
 
         // Add any custom fields that should be included in the checkout
-        $asset->setCustomFieldsForPurpose('display_checkin', $request);
+        $asset->custom_fill($request, false, 'display_checkin');
 
         $this->migrateLegacyLocations($asset);
 
@@ -209,7 +209,7 @@ class AssetCheckinController extends Controller
         session()->put('redirect_option', $request->input('redirect_option'));
 
         // Add any custom fields that should be included in the checkout
-        $asset->setCustomFieldsForPurpose('display_checkin', $request);
+        $asset->custom_fill($request, false, 'display_checkin');
 
         if ($asset->save()) {
             // Update the location of any child assets

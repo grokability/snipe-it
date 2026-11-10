@@ -521,7 +521,7 @@ class HelperTest extends TestCase
         // because CustomField columns are added at runtime and are not in
         // Asset's $fillable, so `new Asset([...])` would silently drop them.
         $asset = new \App\Models\Asset;
-        $asset->{$field->db_column} = \Illuminate\Support\Facades\Crypt::encrypt('very-secret-value');
+        $asset->{$field->db_column} = 'very-secret-value';
 
         $model = \App\Models\AssetModel::factory()->make();
 
@@ -539,7 +539,7 @@ class HelperTest extends TestCase
         $field = \App\Models\CustomField::where('name', 'Test Encrypted')->first();
 
         $asset = new \App\Models\Asset;
-        $asset->{$field->db_column} = \Illuminate\Support\Facades\Crypt::encrypt('very-secret-value');
+        $asset->{$field->db_column} = 'very-secret-value';
 
         $model = \App\Models\AssetModel::factory()->make();
 

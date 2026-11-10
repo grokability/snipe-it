@@ -1250,8 +1250,8 @@ class ReportsController extends Controller
                                 ? $asset->$column_name
                                 : null;
 
-                            if ($value !== null && $customfield->field_encrypted == '1' && Gate::allows('assets.view.encrypted_custom_fields')) {
-                                $value = Helper::gracefulDecrypt($customfield, $value);
+                            if ($customfield->field_encrypted && ! Gate::allows('assets.view.encrypted_custom_fields')) {
+                                $value = strtoupper(trans('admin/custom_fields/general.encrypted'));
                             }
 
                             $row[] = $value;

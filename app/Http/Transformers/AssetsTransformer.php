@@ -146,10 +146,9 @@ class AssetsTransformer
         if (($asset->model) && ($asset->model->fieldset) && ($asset->model->fieldset->fields->count() > 0)) {
             $fields_array = [];
 
-            foreach ($asset->model->fieldset->fields as $field) {
+            foreach ($asset->model->fieldset->fields as $field) { // TODO - what about this one?
                 if ($field->isFieldDecryptable($asset->{$field->db_column})) {
-                    $decrypted = Helper::gracefulDecrypt($field, $asset->{$field->db_column});
-                    $value = (Gate::allows('assets.view.encrypted_custom_fields')) ? $decrypted : strtoupper(trans('admin/custom_fields/general.encrypted'));
+                    $value = (Gate::allows('assets.view.encrypted_custom_fields')) ? $asset->{$field->db_column} : strtoupper(trans('admin/custom_fields/general.encrypted'));
 
                     if ($field->format == 'DATE' || $field->format == 'DATETIME') {
                         if (Gate::allows('assets.view.encrypted_custom_fields')) {
@@ -342,7 +341,7 @@ class AssetsTransformer
         if (($asset->model) && ($asset->model->fieldset) && ($asset->model->fieldset->fields->count() > 0)) {
             $fields_array = [];
 
-            foreach ($asset->model->fieldset->fields as $field) {
+            foreach ($asset->model->fieldset->fields as $field) { //Hrm? TODO
 
                 // Only display this if it's allowed via the custom field setting
                 if (($field->field_encrypted == '0') && ($field->show_in_requestable_list == '1')) {

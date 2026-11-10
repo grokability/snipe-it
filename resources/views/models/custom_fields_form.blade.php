@@ -163,11 +163,11 @@
                         @endphp
                         @if ($format_icon)
                             <div class="input-group">
-                                <input type="text" value="{{ old($field->db_column_name(),(isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : $field->defaultValue($model->id))) }}" id="{{ $field->db_column_name() }}" class="form-control{{ $macClass }}" name="{{ $field->db_column_name() }}" placeholder="{{ $placeholder }}"{!! $macAttrs !!}{{ ($field->pivot->required=='1') ? ' required' : '' }}>
+                                <input type="text" value="{{ old($field->db_column_name(),(isset($item) ? $item->{$field->db_column_name()} : $field->defaultValue($model->id))) }}" id="{{ $field->db_column_name() }}" class="form-control{{ $macClass }}" name="{{ $field->db_column_name() }}" placeholder="{{ $placeholder }}"{!! $macAttrs !!}{{ ($field->pivot->required=='1') ? ' required' : '' }}>
                                 <span class="input-group-addon"><x-icon :type="$format_icon" /></span>
                             </div>
                         @else
-                            <input type="text" value="{{ old($field->db_column_name(),(isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : $field->defaultValue($model->id))) }}" id="{{ $field->db_column_name() }}" class="form-control{{ $macClass }}" name="{{ $field->db_column_name() }}" placeholder="{{ $placeholder }}"{!! $macAttrs !!}{{ ($field->pivot->required=='1') ? ' required' : '' }}>
+                            <input type="text" value="{{ old($field->db_column_name(),(isset($item) ? $item->{$field->db_column_name()} : $field->defaultValue($model->id))) }}" id="{{ $field->db_column_name() }}" class="form-control{{ $macClass }}" name="{{ $field->db_column_name() }}" placeholder="{{ $placeholder }}"{!! $macAttrs !!}{{ ($field->pivot->required=='1') ? ' required' : '' }}>
                         @endif
                     @else
                         <input type="text" value="{{ strtoupper(trans('admin/custom_fields/general.encrypted')) }}" class="form-control disabled" disabled>

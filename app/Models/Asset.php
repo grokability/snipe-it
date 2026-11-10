@@ -28,7 +28,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
@@ -93,7 +92,12 @@ class Asset extends Depreciable implements Importable
             'id', // custom_fieldsets.id
             'model_id', // assets.model_id
             'fieldset_id', // models.fieldset_id
-        );
+        )->withTrashedParents();
+    }
+
+    protected function customFieldDefaultValue(CustomField $field): mixed
+    {
+        return $field->defaultValue($this->attributes['model_id'] ?? null);
     }
 
     /**

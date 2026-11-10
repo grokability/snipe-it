@@ -176,12 +176,14 @@ trait Loggable
             if ($asset = Asset::find($log->item_id)) {
 
                 // add the custom fields that were changed
-                if ($asset->model->fieldset) {
+                if ($asset->custom_fieldset) {
                     $fields_array = [];
-                    foreach ($asset->model->fieldset->fields as $field) {
-                        if ($field->display_checkout == 1) {
-                            $fields_array[$field->db_column] = $asset->{$field->db_column};
-                        }
+                    /**
+                     * Keep logging values in their current raw storage form. Property access
+                     * can decrypt or mask encrypted fields; getRawOriginal() can miss pending changes.
+                     */
+                    foreach ($asset->custom_fieldset->fields->where('display_checkout', '1') as $field) {
+                        $fields_array[$field->db_column] = $asset->getAttributes()[$field->db_column] ?? null;
                     }
                 }
             }
@@ -299,9 +301,13 @@ trait Loggable
                     // add the custom fields that were changed
                     if ($asset->model->fieldset) {
                         $fields_array = [];
-                        foreach ($asset->model->fieldset->fields as $field) {
+                        /**
+                         * Keep logging values in their current raw storage form. Property access
+                         * can decrypt or mask encrypted fields; getRawOriginal() can miss pending changes.
+                         */
+                        foreach ($asset->custom_fieldset->fields->where('display_checkin', 1) as $field) {
                             if ($field->display_checkin == 1) {
-                                $fields_array[$field->db_column] = $asset->{$field->db_column};
+                                $fields_array[$field->db_column] = $asset->getAttributes()[$field->db_column] ?? null;
                             }
                         }
                     }
@@ -389,10 +395,13 @@ trait Loggable
 
         $fields_array = [];
         if (static::class == Asset::class && $this->model && $this->model->fieldset) {
-            foreach ($this->model->fieldset->fields as $field) {
-                if ($field->display_audit == 1) {
-                    $fields_array[$field->db_column] = $this->{$field->db_column};
-                }
+            /**
+             * Keep ciphertext in the audit snapshot; decryption and permission checks happen
+             * when displaying history. Use current raw attributes so pending changes are included,
+             * rather than cast property values or the older values from getRawOriginal().
+             */
+            foreach ($this->custom_fieldset->fields->where('display_audit', '1') as $field) {
+                $fields_array[$field->db_column] = $this->getAttributes()[$field->db_column] ?? null;
             }
         }
 

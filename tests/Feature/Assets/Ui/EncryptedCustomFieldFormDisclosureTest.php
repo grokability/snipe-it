@@ -7,7 +7,6 @@ use App\Models\AssetModel;
 use App\Models\CustomField;
 use App\Models\CustomFieldset;
 use App\Models\User;
-use Illuminate\Support\Facades\Crypt;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -186,7 +185,7 @@ class EncryptedCustomFieldFormDisclosureTest extends TestCase
 
         $assetFactory = Asset::factory()->state([
             'model_id' => $model->id,
-            $field->db_column => Crypt::encrypt($secret),
+            $field->db_column => $secret,
         ]);
 
         if ($factoryState) {

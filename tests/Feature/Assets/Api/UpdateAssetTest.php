@@ -382,7 +382,7 @@ class UpdateAssetTest extends TestCase
             ->assertOk();
 
         $asset->refresh();
-        $this->assertEquals('This is encrypted field', Crypt::decrypt($asset->{$field->db_column_name()}));
+        $this->assertEquals('This is encrypted field', Crypt::decrypt($asset->getRawOriginal($field->db_column_name())));
     }
 
     public function test_permission_needed_to_update_encrypted_field()
@@ -393,7 +393,7 @@ class UpdateAssetTest extends TestCase
         $asset = Asset::factory()->hasEncryptedCustomField($field)->create();
         $normal_user = User::factory()->editAssets()->create();
 
-        $asset->{$field->db_column_name()} = Crypt::encrypt('encrypted value should not change');
+        $asset->{$field->db_column_name()} = 'encrypted value should not change';
         $asset->save();
 
         // test that a 'normal' user *cannot* change the encrypted custom field
@@ -403,10 +403,11 @@ class UpdateAssetTest extends TestCase
             ])
             ->assertStatusMessageIs('success')
             ->assertOk()
-            ->assertMessagesAre('Asset updated successfully, but encrypted custom fields were not due to permissions');
+            ->assertMessagesAre('Asset updated successfully, but encrypted custom fields were not due to permissions')
+            ->assertDontSee('encrypted value should not change', false);
 
         $asset->refresh();
-        $this->assertEquals('encrypted value should not change', Crypt::decrypt($asset->{$field->db_column_name()}));
+        $this->assertEquals('encrypted value should not change', Crypt::decrypt($asset->getRawOriginal($field->db_column_name())));
     }
 
     public function test_checkout_to_user_on_asset_update()

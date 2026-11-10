@@ -15,11 +15,9 @@ use App\Models\Setting;
 use App\Models\Statuslabel;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
@@ -1323,33 +1321,6 @@ class Helper
     }
 
     /**
-     * Gracefully handle decrypting encrypted fields (custom fields, etc).
-     *
-     * @todo allow this to handle more than just strings (arrays, etc)
-     *
-     * @author A. Gianotto
-     *
-     * @since 3.6
-     *
-     * @param  string  $string
-     * @return string
-     */
-    public static function gracefulDecrypt(CustomField $field, $string)
-    {
-        if ($field->isFieldDecryptable($string)) {
-            try {
-                Crypt::decrypt($string);
-
-                return Crypt::decrypt($string);
-            } catch (DecryptException $e) {
-                return 'Error Decrypting: '.$e->getMessage();
-            }
-        }
-
-        return $string;
-    }
-
-    /**
      * Resolves the value to render in a custom-field form input for the current
      * request. Encapsulates the "encrypted + no view.encrypted_custom_fields
      * gate" branch so every element type in custom_fields_form.blade.php
@@ -1368,7 +1339,7 @@ class Helper
         }
 
         $value = isset($item)
-            ? self::gracefulDecrypt($field, $item->{$field->db_column_name()})
+            ? $item->{$field->db_column_name()}
             : $field->defaultValue($model->id);
 
         // DATE / DATETIME custom fields can hold non-YYYY-MM-DD strings

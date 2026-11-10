@@ -169,7 +169,7 @@ class AssetCheckoutController extends Controller
             }
 
             // Add any custom fields that should be included in the checkout
-            $asset->setCustomFieldsForPurpose('display_checkout', $request);
+            $asset->custom_fill($request, false, 'display_checkout');
 
             session()->put([
                 'redirect_option' => $request->input('redirect_option'),
