@@ -16,7 +16,7 @@ class UpdateUserToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->editUsers()->create());
     }
 
     private function handle(array $args): ResponseFactory
@@ -221,5 +221,16 @@ class UpdateUserToolTest extends TestCase
 
         $this->assertTrue($content['success']);
         $this->assertDatabaseHas('users', ['id' => $admin->id, 'jobtitle' => 'New Title']);
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $this->actingAs(User::factory()->create());
+        $user = User::factory()->create();
+
+        $this->assertTrue($this->handle([
+            'id' => $user->id,
+            'first_name' => 'Should Not Update',
+        ])->responses()->first()->isError());
     }
 }

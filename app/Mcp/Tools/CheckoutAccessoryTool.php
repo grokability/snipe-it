@@ -10,6 +10,7 @@ use App\Models\Location;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -39,6 +40,10 @@ class CheckoutAccessoryTool extends Tool
 
         if (! $accessory) {
             return Response::make(Response::error('Accessory not found'));
+        }
+
+        if (! Gate::allows('checkout', $accessory)) {
+            return Response::make(Response::error('Unauthorized'));
         }
 
         if ($accessory->numRemaining() < 1) {

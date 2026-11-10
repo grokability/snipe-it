@@ -16,7 +16,7 @@ class UpdateAssetToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->editAssets()->create());
     }
 
     private function handle(array $args): ResponseFactory
@@ -129,5 +129,16 @@ class UpdateAssetToolTest extends TestCase
 
         $this->assertEquals($asset->asset_tag, $content['asset_tag']);
         $this->assertEquals($asset->id, $content['id']);
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $this->actingAs(User::factory()->create());
+        $asset = Asset::factory()->create();
+
+        $this->assertTrue($this->handle([
+            'asset_tag' => $asset->asset_tag,
+            'name' => 'Should Not Update',
+        ])->responses()->first()->isError());
     }
 }

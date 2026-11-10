@@ -5,6 +5,7 @@ namespace App\Mcp\Tools;
 use App\Models\Accessory;
 use App\Models\AccessoryCheckout;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -35,6 +36,10 @@ class CheckinAccessoryTool extends Tool
 
         if (! $accessory) {
             return Response::make(Response::error('Accessory not found'));
+        }
+
+        if (! Gate::allows('checkin', $accessory)) {
+            return Response::make(Response::error('Unauthorized'));
         }
 
         $target = $checkout->assigned_type && $checkout->assigned_to

@@ -6,6 +6,7 @@ use App\Models\Asset;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -37,6 +38,10 @@ class CheckoutAssetTool extends Tool
 
         if (! $asset) {
             return Response::make(Response::error('Asset not found'));
+        }
+
+        if (! Gate::allows('checkout', $asset)) {
+            return Response::make(Response::error('Unauthorized'));
         }
 
         if (! $asset->availableForCheckout()) {

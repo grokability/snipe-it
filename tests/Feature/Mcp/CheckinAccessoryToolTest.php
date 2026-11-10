@@ -16,7 +16,7 @@ class CheckinAccessoryToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->checkoutAccessories()->checkinAccessories()->create());
     }
 
     private function handle(array $args): ResponseFactory
@@ -92,5 +92,17 @@ class CheckinAccessoryToolTest extends TestCase
 
         $this->assertTrue($content['success']);
         $this->assertDatabaseMissing('accessories_checkout', ['id' => $checkout->id]);
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $user = User::factory()->create();
+        $accessory = Accessory::factory()->checkedOutToUser($user)->create();
+        $checkout = AccessoryCheckout::where('accessory_id', $accessory->id)->first();
+
+        $this->actingAs(User::factory()->create());
+
+        $this->assertTrue($this->handle(['checkout_id' => $checkout->id])->responses()->first()->isError());
+        $this->assertDatabaseHas('accessories_checkout', ['id' => $checkout->id]);
     }
 }

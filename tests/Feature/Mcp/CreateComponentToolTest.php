@@ -15,7 +15,7 @@ class CreateComponentToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->createComponents()->create());
     }
 
     private function handle(array $args): ResponseFactory
@@ -116,6 +116,18 @@ class CreateComponentToolTest extends TestCase
             'name' => 'Bad Category',
             'category_id' => 999999,
             'qty' => 5,
+        ])->responses()->first()->isError());
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $this->actingAs(User::factory()->create());
+        $category = Category::factory()->create(['category_type' => 'component']);
+
+        $this->assertTrue($this->handle([
+            'name' => 'Blocked Component',
+            'category_id' => $category->id,
+            'qty' => 1,
         ])->responses()->first()->isError());
     }
 }

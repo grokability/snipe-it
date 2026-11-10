@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -19,6 +20,10 @@ class ListAssetsTool extends Tool
 {
     public function handle(Request $request): ResponseFactory
     {
+        if (! Gate::allows('index', Asset::class)) {
+            return Response::make(Response::error('Unauthorized'));
+        }
+
         $request->validate([
             'search' => 'nullable|string|max:255',
             'status_type' => 'nullable|string|in:RTD,Deployed,Archived,Pending,Undeployable',

@@ -12,6 +12,12 @@ use Tests\TestCase;
 
 class ShowAssetToolTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->actingAs(User::factory()->viewAssets()->create());
+    }
+
     private function handle(array $args): ResponseFactory
     {
         return (new ShowAssetTool)->handle(new Request($args));
@@ -125,5 +131,13 @@ class ShowAssetToolTest extends TestCase
 
         $this->assertNull($content['assigned_to_id']);
         $this->assertNull($content['assigned_to_type']);
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $this->actingAs(User::factory()->create());
+        $asset = Asset::factory()->create();
+
+        $this->assertTrue($this->handle(['asset_tag' => $asset->asset_tag])->responses()->first()->isError());
     }
 }

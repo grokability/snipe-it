@@ -6,6 +6,7 @@ use App\Models\Asset;
 use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -34,6 +35,10 @@ class AuditAssetTool extends Tool
 
         if (! $asset) {
             return Response::make(Response::error('Asset not found'));
+        }
+
+        if (! Gate::allows('audit', $asset)) {
+            return Response::make(Response::error('Unauthorized'));
         }
 
         $originalValues = $asset->getRawOriginal();

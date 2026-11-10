@@ -5,6 +5,7 @@ namespace App\Mcp\Tools;
 use App\Events\CheckoutableCheckedIn;
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -30,6 +31,10 @@ class CheckinAssetTool extends Tool
 
         if (! $asset) {
             return Response::make(Response::error('Asset not found'));
+        }
+
+        if (! Gate::allows('checkin', $asset)) {
+            return Response::make(Response::error('Unauthorized'));
         }
 
         $target = $asset->assignedTo;

@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Models\Component;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -28,6 +29,10 @@ class DeleteComponentTool extends Tool
 
         if (! $component) {
             return Response::make(Response::error('Component not found'));
+        }
+
+        if (! Gate::allows('delete', $component)) {
+            return Response::make(Response::error('Unauthorized'));
         }
 
         if ($component->numCheckedOut() > 0) {

@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -19,6 +20,10 @@ class ListUsersTool extends Tool
 {
     public function handle(Request $request): ResponseFactory
     {
+        if (! Gate::allows('index', User::class)) {
+            return Response::make(Response::error('Unauthorized'));
+        }
+
         $request->validate([
             'search' => 'nullable|string|max:255',
             'company_id' => 'nullable|integer',

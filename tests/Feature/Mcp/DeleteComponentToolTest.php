@@ -15,7 +15,7 @@ class DeleteComponentToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->deleteComponents()->create());
     }
 
     private function handle(array $args): ResponseFactory
@@ -65,6 +65,15 @@ class DeleteComponentToolTest extends TestCase
         $response = $this->handle(['id' => $component->id]);
 
         $this->assertTrue($response->responses()->first()->isError());
+        $this->assertNotSoftDeleted('components', ['id' => $component->id]);
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $this->actingAs(User::factory()->create());
+        $component = Component::factory()->create();
+
+        $this->assertTrue($this->handle(['id' => $component->id])->responses()->first()->isError());
         $this->assertNotSoftDeleted('components', ['id' => $component->id]);
     }
 }

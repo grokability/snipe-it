@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -29,6 +30,10 @@ class DeleteUserTool extends Tool
 
         if (! $user) {
             return Response::make(Response::error('User not found'));
+        }
+
+        if (! Gate::allows('delete', $user)) {
+            return Response::make(Response::error('Unauthorized'));
         }
 
         if ($user->id === auth()->id()) {

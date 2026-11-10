@@ -13,6 +13,12 @@ use Tests\TestCase;
 
 class ListAssetsToolTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->actingAs(User::factory()->viewAssets()->create());
+    }
+
     private function handle(array $args = []): ResponseFactory
     {
         return (new ListAssetsTool)->handle(new Request($args));
@@ -143,5 +149,12 @@ class ListAssetsToolTest extends TestCase
 
         $this->assertContains($matchingAsset->id, $ids);
         $this->assertNotContains($otherAsset->id, $ids);
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $this->actingAs(User::factory()->create());
+
+        $this->assertTrue($this->handle()->responses()->first()->isError());
     }
 }

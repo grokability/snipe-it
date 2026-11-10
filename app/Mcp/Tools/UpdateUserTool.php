@@ -58,6 +58,10 @@ class UpdateUserTool extends Tool
             return Response::make(Response::error('User not found'));
         }
 
+        if (! Gate::allows('update', $user)) {
+            return Response::make(Response::error('Unauthorized'));
+        }
+
         $updatable = [
             'first_name', 'last_name', 'employee_num', 'jobtitle',
             'phone', 'mobile', 'department_id', 'location_id', 'manager_id',

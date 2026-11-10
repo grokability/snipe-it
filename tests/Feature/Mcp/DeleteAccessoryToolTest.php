@@ -14,7 +14,7 @@ class DeleteAccessoryToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->deleteAccessories()->create());
     }
 
     private function handle(array $args): ResponseFactory
@@ -64,6 +64,15 @@ class DeleteAccessoryToolTest extends TestCase
         $response = $this->handle(['id' => $accessory->id]);
 
         $this->assertTrue($response->responses()->first()->isError());
+        $this->assertNotSoftDeleted('accessories', ['id' => $accessory->id]);
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $this->actingAs(User::factory()->create());
+        $accessory = Accessory::factory()->create();
+
+        $this->assertTrue($this->handle(['id' => $accessory->id])->responses()->first()->isError());
         $this->assertNotSoftDeleted('accessories', ['id' => $accessory->id]);
     }
 }

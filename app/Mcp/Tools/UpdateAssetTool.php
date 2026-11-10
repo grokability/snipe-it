@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -47,6 +48,10 @@ class UpdateAssetTool extends Tool
 
         if (! $asset) {
             return Response::make(Response::error('Asset not found'));
+        }
+
+        if (! Gate::allows('update', $asset)) {
+            return Response::make(Response::error('Unauthorized'));
         }
 
         $updatable = [

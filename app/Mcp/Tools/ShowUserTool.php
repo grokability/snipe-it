@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -45,6 +46,10 @@ class ShowUserTool extends Tool
 
         if (! $user) {
             return Response::make(Response::error('User not found'));
+        }
+
+        if (! Gate::allows('view', $user)) {
+            return Response::make(Response::error('Unauthorized'));
         }
 
         return Response::make(

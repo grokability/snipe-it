@@ -16,7 +16,7 @@ class UpdateAccessoryToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->editAccessories()->create());
     }
 
     private function handle(array $args): ResponseFactory
@@ -114,5 +114,16 @@ class UpdateAccessoryToolTest extends TestCase
 
         $this->assertEquals($accessory->id, $content['id']);
         $this->assertEquals('Response Accessory', $content['name']);
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $this->actingAs(User::factory()->create());
+        $accessory = Accessory::factory()->create(['name' => 'Locked Accessory']);
+
+        $this->assertTrue($this->handle([
+            'id' => $accessory->id,
+            'qty' => 5,
+        ])->responses()->first()->isError());
     }
 }

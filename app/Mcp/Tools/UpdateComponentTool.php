@@ -5,6 +5,7 @@ namespace App\Mcp\Tools;
 use App\Models\Company;
 use App\Models\Component;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -43,6 +44,10 @@ class UpdateComponentTool extends Tool
 
         if (! $component) {
             return Response::make(Response::error('Component not found'));
+        }
+
+        if (! Gate::allows('update', $component)) {
+            return Response::make(Response::error('Unauthorized'));
         }
 
         $updatable = [

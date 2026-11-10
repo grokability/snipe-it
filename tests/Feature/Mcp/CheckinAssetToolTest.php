@@ -17,7 +17,7 @@ class CheckinAssetToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->checkinAssets()->create());
     }
 
     private function handle(array $args): ResponseFactory
@@ -115,5 +115,15 @@ class CheckinAssetToolTest extends TestCase
         $this->assertEquals($asset->asset_tag, $content['asset_tag']);
         $this->assertArrayHasKey('model', $content);
         $this->assertArrayHasKey('location', $content);
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $this->actingAs(User::factory()->create());
+        $user = User::factory()->create();
+        $asset = Asset::factory()->assignedToUser($user)->create();
+
+        $this->assertTrue($this->handle(['asset_tag' => $asset->asset_tag])->responses()->first()->isError());
+        $this->assertDatabaseHas('assets', ['id' => $asset->id, 'assigned_to' => $user->id]);
     }
 }

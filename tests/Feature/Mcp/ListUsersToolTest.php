@@ -16,7 +16,7 @@ class ListUsersToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->viewUsers()->create());
     }
 
     private function handle(array $args = []): ResponseFactory
@@ -128,5 +128,12 @@ class ListUsersToolTest extends TestCase
         $this->assertEquals(5, $content['limit']);
         $this->assertEquals(0, $content['offset']);
         $this->assertArrayHasKey('total', $content);
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $this->actingAs(User::factory()->create());
+
+        $this->assertTrue($this->handle()->responses()->first()->isError());
     }
 }

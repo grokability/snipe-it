@@ -36,7 +36,9 @@ class FmcsCompanyScopingTest extends TestCase
         $this->assetA = Asset::factory()->for($this->companyA)->create();
         $this->assetB = Asset::factory()->for($this->companyB)->create();
 
-        $this->userInCompanyA = $this->companyA->users()->save(User::factory()->make());
+        $this->userInCompanyA = $this->companyA->users()->save(
+            User::factory()->editAssets()->deleteAssets()->auditAssets()->checkinAssets()->checkoutAssets()->make()
+        );
         $this->superUser = $this->companyA->users()->save(User::factory()->superuser()->make());
 
         $this->settings->enableMultipleFullCompanySupport();

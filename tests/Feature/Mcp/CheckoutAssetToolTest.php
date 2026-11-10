@@ -15,7 +15,7 @@ class CheckoutAssetToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->checkoutAssets()->create());
     }
 
     private function handle(array $args): ResponseFactory
@@ -157,5 +157,18 @@ class CheckoutAssetToolTest extends TestCase
         $this->assertEquals($asset->asset_tag, $content['asset_tag']);
         $this->assertEquals('user', $content['checked_out_to_type']);
         $this->assertEquals($user->id, $content['checked_out_to_id']);
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $this->actingAs(User::factory()->create());
+        $asset = Asset::factory()->create();
+        $user = User::factory()->create();
+
+        $this->assertTrue($this->handle([
+            'asset_tag' => $asset->asset_tag,
+            'checkout_to_type' => 'user',
+            'assigned_user' => $user->id,
+        ])->responses()->first()->isError());
     }
 }

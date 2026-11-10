@@ -6,6 +6,7 @@ use App\Models\Asset;
 use App\Models\Component;
 use Carbon\Carbon;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -38,6 +39,10 @@ class CheckoutComponentTool extends Tool
 
         if (! $component) {
             return Response::make(Response::error('Component not found'));
+        }
+
+        if (! Gate::allows('checkout', $component)) {
+            return Response::make(Response::error('Unauthorized'));
         }
 
         $qty = (int) $request->get('assigned_qty', 1);

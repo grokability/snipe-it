@@ -16,7 +16,7 @@ class DeleteAssetToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->deleteAssets()->create());
     }
 
     private function handle(array $args): ResponseFactory
@@ -94,5 +94,14 @@ class DeleteAssetToolTest extends TestCase
         $content = $this->handle(['asset_tag' => 'TAG-DEL-001'])->getStructuredContent();
 
         $this->assertEquals('TAG-DEL-001', $content['asset_tag']);
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $this->actingAs(User::factory()->create());
+        $asset = Asset::factory()->create();
+
+        $this->assertTrue($this->handle(['asset_tag' => $asset->asset_tag])->responses()->first()->isError());
+        $this->assertNotSoftDeleted($asset);
     }
 }

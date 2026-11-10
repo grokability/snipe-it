@@ -15,7 +15,7 @@ class AuditAssetToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->auditAssets()->create());
     }
 
     private function handle(array $args): ResponseFactory
@@ -134,5 +134,16 @@ class AuditAssetToolTest extends TestCase
             'item_id' => $asset->id,
             'action_type' => 'audit',
         ]);
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $this->actingAs(User::factory()->create());
+        $asset = Asset::factory()->create();
+
+        $response = $this->handle(['asset_tag' => $asset->asset_tag]);
+
+        $this->assertTrue($response->responses()->first()->isError());
+        $this->assertNull($asset->fresh()->last_audit_date);
     }
 }

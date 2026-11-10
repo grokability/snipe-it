@@ -15,7 +15,7 @@ class CreateAccessoryToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->createAccessories()->create());
     }
 
     private function handle(array $args): ResponseFactory
@@ -100,6 +100,17 @@ class CreateAccessoryToolTest extends TestCase
         $this->assertTrue($this->handle([
             'name' => 'Bad Category',
             'category_id' => 999999,
+        ])->responses()->first()->isError());
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $this->actingAs(User::factory()->create());
+        $category = Category::factory()->create(['category_type' => 'accessory']);
+
+        $this->assertTrue($this->handle([
+            'name' => 'Blocked Accessory',
+            'category_id' => $category->id,
         ])->responses()->first()->isError());
     }
 }

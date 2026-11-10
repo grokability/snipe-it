@@ -13,7 +13,7 @@ class ShowUserToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->viewUsers()->create());
     }
 
     private function handle(array $args): ResponseFactory
@@ -101,5 +101,13 @@ class ShowUserToolTest extends TestCase
         $this->assertArrayHasKey('company', $content);
         $this->assertArrayHasKey('department', $content);
         $this->assertArrayHasKey('location', $content);
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $this->actingAs(User::factory()->create());
+        $user = User::factory()->create();
+
+        $this->assertTrue($this->handle(['id' => $user->id])->responses()->first()->isError());
     }
 }

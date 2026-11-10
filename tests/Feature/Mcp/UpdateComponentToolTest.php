@@ -16,7 +16,7 @@ class UpdateComponentToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->editComponents()->create());
     }
 
     private function handle(array $args): ResponseFactory
@@ -114,5 +114,16 @@ class UpdateComponentToolTest extends TestCase
 
         $this->assertEquals($component->id, $content['id']);
         $this->assertEquals('Response Component', $content['name']);
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $this->actingAs(User::factory()->create());
+        $component = Component::factory()->create();
+
+        $this->assertTrue($this->handle([
+            'id' => $component->id,
+            'qty' => 5,
+        ])->responses()->first()->isError());
     }
 }

@@ -15,7 +15,7 @@ class CheckoutComponentToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->checkoutComponents()->create());
     }
 
     private function handle(array $args): ResponseFactory
@@ -132,6 +132,18 @@ class CheckoutComponentToolTest extends TestCase
         $this->assertTrue($this->handle([
             'id' => $component->id,
             'asset_id' => 999999,
+        ])->responses()->first()->isError());
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $this->actingAs(User::factory()->create());
+        $component = Component::factory()->create(['qty' => 5]);
+        $asset = Asset::factory()->create();
+
+        $this->assertTrue($this->handle([
+            'id' => $component->id,
+            'asset_id' => $asset->id,
         ])->responses()->first()->isError());
     }
 }

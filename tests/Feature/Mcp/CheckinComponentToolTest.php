@@ -19,7 +19,7 @@ class CheckinComponentToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->checkoutComponents()->checkinComponents()->create());
     }
 
     private function handle(array $args): ResponseFactory
@@ -140,5 +140,17 @@ class CheckinComponentToolTest extends TestCase
 
         $this->assertTrue($content['success']);
         $this->assertDatabaseMissing('components_assets', ['id' => $record->id]);
+    }
+
+    public function test_returns_error_when_user_lacks_permission()
+    {
+        $component = Component::factory()->create(['qty' => 5]);
+        $asset = Asset::factory()->create();
+        $componentAssetId = $this->checkoutToAsset($component, $asset);
+
+        $this->actingAs(User::factory()->create());
+
+        $this->assertTrue($this->handle(['component_asset_id' => $componentAssetId])->responses()->first()->isError());
+        $this->assertDatabaseHas('components_assets', ['id' => $componentAssetId]);
     }
 }

@@ -6,6 +6,7 @@ use App\Events\CheckoutableCheckedIn;
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -31,6 +32,10 @@ class DeleteAssetTool extends Tool
 
         if (! $asset) {
             return Response::make(Response::error('Asset not found'));
+        }
+
+        if (! Gate::allows('delete', $asset)) {
+            return Response::make(Response::error('Unauthorized'));
         }
 
         $assetTag = $asset->asset_tag;

@@ -5,6 +5,7 @@ namespace App\Mcp\Tools;
 use App\Models\Accessory;
 use App\Models\Company;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -21,6 +22,10 @@ class CreateAccessoryTool extends Tool
 {
     public function handle(Request $request): ResponseFactory
     {
+        if (! Gate::allows('create', Accessory::class)) {
+            return Response::make(Response::error('Unauthorized'));
+        }
+
         try {
             $request->validate([
                 'name' => 'required|string|max:255',

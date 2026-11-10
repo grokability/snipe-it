@@ -5,6 +5,7 @@ namespace App\Mcp\Tools;
 use App\Models\Accessory;
 use App\Models\Company;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -43,6 +44,10 @@ class UpdateAccessoryTool extends Tool
 
         if (! $accessory) {
             return Response::make(Response::error('Accessory not found'));
+        }
+
+        if (! Gate::allows('update', $accessory)) {
+            return Response::make(Response::error('Unauthorized'));
         }
 
         $updatable = [
