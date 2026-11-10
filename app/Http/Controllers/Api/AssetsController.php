@@ -1924,11 +1924,7 @@ class AssetsController extends Controller
                 $payload['custom_fields'][$field->db_column] = $value;
             }
         }
-
-        // Merge the model-level base rules with the custom-field rules so
-        // uploaded audit data is checked before we bypass the observer below.
-        $asset->setRules($asset->getRules() + $asset->customFieldValidationRules());
-
+        
         if ($asset->isInvalid()) {
             return [
                 'success' => false,

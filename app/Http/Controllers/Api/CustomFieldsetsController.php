@@ -209,10 +209,9 @@ class CustomFieldsetsController extends Controller
         $this->authorize('delete', CustomField::class);
         $fieldset = CustomFieldset::findOrFail($id);
 
-        $modelsCount = $fieldset->models->count();
         $fieldsCount = $fieldset->fields->count();
 
-        if (($modelsCount > 0) || ($fieldsCount > 0)) {
+        if (! $fieldset->isDeletable() || ($fieldsCount > 0)) {
             return response()->json(Helper::formatStandardApiResponse('error', null, 'Fieldset is in use.'));
         }
 

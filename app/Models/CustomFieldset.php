@@ -35,6 +35,11 @@ class CustomFieldset extends SnipeModel
 
     protected $guarded = ['id'];
 
+    public const FIELDSET_ASSIGNMENT_MODELS = [
+        Asset::class => [AssetModel::class => 'fieldset_id'],
+        // License::class, once it stores a fieldset assignment.
+    ];
+
     /**
      * Validation rules
      *
@@ -74,6 +79,7 @@ class CustomFieldset extends SnipeModel
      *
      * @return Relation
      */
+    // TODO - there needs to be a better way to do this. Not all custom fieldsets will have 'models'
     public function models()
     {
         return $this->hasMany(AssetModel::class, 'fieldset_id');
@@ -81,8 +87,23 @@ class CustomFieldset extends SnipeModel
 
     public function isDeletable(): bool
     {
-        return Gate::allows('delete', $this)
-            && (($this->models_count ?? $this->models()->count()) === 0);
+        if (!Gate::allows('delete', $this)) {
+            return false;
+        }
+
+        foreach (static::FIELDSET_ASSIGNMENT_MODELS as $assignments) {
+            foreach ($assignments as $fieldsetOwnerClass => $fieldsetFieldName) {
+                $isInUse = $fieldsetOwnerClass::withoutGlobalScopes()
+                    ->where($fieldsetFieldName, $this->getKey())
+                    ->exists();
+
+                if ($isInUse) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**

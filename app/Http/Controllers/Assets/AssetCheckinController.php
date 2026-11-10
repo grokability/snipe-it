@@ -43,9 +43,6 @@ class AssetCheckinController extends Controller
             return redirect()->route('hardware.show', $asset->id)->with('error', trans('admin/hardware/general.model_invalid_fix'));
         }
 
-        // Invoke the validation to see if the audit will complete successfully
-        $asset->setRules($asset->getRules() + $asset->customFieldValidationRules());
-
         if ($asset->isInvalid()) {
             // Also flash the specific error messages so they surface
             // in the top alert on the edit page. Without this, model-
@@ -144,7 +141,7 @@ class AssetCheckinController extends Controller
         }
 
         // Add any custom fields that should be included in the checkout
-        $asset->customFieldsForCheckinCheckout('display_checkin');
+        $asset->setCustomFieldsForPurpose('display_checkin', $request);
 
         $this->migrateLegacyLocations($asset);
 
@@ -212,7 +209,7 @@ class AssetCheckinController extends Controller
         session()->put('redirect_option', $request->input('redirect_option'));
 
         // Add any custom fields that should be included in the checkout
-        $asset->customFieldsForCheckinCheckout('display_checkin');
+        $asset->setCustomFieldsForPurpose('display_checkin', $request);
 
         if ($asset->save()) {
             // Update the location of any child assets

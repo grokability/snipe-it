@@ -896,9 +896,6 @@ class AssetsController extends Controller
         $this->authorize('audit', $asset);
         $settings = Setting::getSettings();
 
-        // Invoke the validation to see if the audit will complete successfully
-        $asset->setRules($asset->getRules() + $asset->customFieldValidationRules());
-
         if ($asset->isInvalid()) {
             return redirect()->route('hardware.edit', $asset)->withErrors($asset->getErrors());
         }
@@ -932,6 +929,7 @@ class AssetsController extends Controller
             $asset->location_id = $request->input('location_id');
         }
 
+        //FIXME - use setCustomFieldsForPurpose('display_audit')?
         // Update custom fields in the database
         if (($asset->model) && ($asset->model->fieldset)) {
             foreach ($asset->model->fieldset->fields as $field) {
@@ -954,9 +952,6 @@ class AssetsController extends Controller
                 }
             }
         }
-
-        // Invoke the validation to see if the audit will complete successfully
-        $asset->setRules($asset->getRules() + $asset->customFieldValidationRules());
 
         // Validate the rest of the data before we turn off the event dispatcher
         if ($asset->isInvalid()) {

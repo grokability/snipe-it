@@ -43,9 +43,6 @@ class AssetCheckoutController extends Controller
                 ->with('error', trans('admin/hardware/general.model_invalid_fix'));
         }
 
-        // Invoke the validation to see if the audit will complete successfully
-        $asset->setRules($asset->getRules() + $asset->customFieldValidationRules());
-
         if ($asset->isInvalid()) {
             // Also flash the specific validation messages via
             // multi_error_messages so they surface in the top alert
@@ -172,7 +169,7 @@ class AssetCheckoutController extends Controller
             }
 
             // Add any custom fields that should be included in the checkout
-            $asset->customFieldsForCheckinCheckout('display_checkout');
+            $asset->setCustomFieldsForPurpose('display_checkout', $request);
 
             session()->put([
                 'redirect_option' => $request->input('redirect_option'),

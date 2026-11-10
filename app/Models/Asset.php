@@ -12,6 +12,7 @@ use App\Models\Contracts\Importable;
 use App\Models\Traits\Acceptable;
 use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\HasCalendarEvents;
+use App\Models\Traits\ValidatesCustomFields;
 use App\Models\Traits\HasImageUpload;
 use App\Models\Traits\HasOrders;
 use App\Models\Traits\HasUploads;
@@ -68,7 +69,7 @@ class Asset extends Depreciable implements Importable
     use Requestable;
     use SoftDeletes;
     use UniqueUndeletedTrait;
-    use ValidatingTrait;
+    use ValidatesCustomFields;
 
     public const LOCATION = 'location';
 
@@ -81,6 +82,18 @@ class Asset extends Depreciable implements Importable
     public static function fileStorage(): FileStorage
     {
         return FileStorage::Assets;
+    }
+
+    public function custom_fieldset(): Relation
+    {
+        return $this->hasOneThrough(
+            CustomFieldset::class,
+            AssetModel::class,
+            'id', // models.id
+            'id', // custom_fieldsets.id
+            'model_id', // assets.model_id
+            'fieldset_id', // models.fieldset_id
+        );
     }
 
     /**
@@ -104,7 +117,7 @@ class Asset extends Depreciable implements Importable
     protected $table = 'assets';
 
     /**
-     * Whether the model should inject it's identifier to the unique
+     * Whether the model should inject its identifier to the unique
      * validation rules before attempting validation. If this property
      * is not set in the model it will default to true.
      *
@@ -897,40 +910,10 @@ class Asset extends Depreciable implements Importable
         $this->attributes['expected_checkin'] = $value;
     }
 
-    public function customFieldValidationRules()
-    {
-
-        $customFieldValidationRules = [];
-
-        if (($this->model) && ($this->model->fieldset)) {
-
-            foreach ($this->model->fieldset->fields as $field) {
-
-                // this just casts booleans that may come through as strings to an actual boolean type
-                // adding !$field->field_encrypted because when the encrypted value comes through it
-                // screws things up for the encrypted validation rules (and the encrypted string
-                // is not a valid boolean type)
-                if ($field->format == 'BOOLEAN' && ! $field->field_encrypted) {
-                    $this->{$field->db_column} = filter_var($this->{$field->db_column}, FILTER_VALIDATE_BOOLEAN);
-                }
-            }
-
-            $customFieldValidationRules += $this->model->fieldset->validation_rules();
-        }
-
-        return $customFieldValidationRules;
-
-    }
-
-    /**
-     * This handles the custom field validation for assets
-     *
-     * @var array
-     */
     public function save(array $params = [])
     {
-        $this->rules += $this->customFieldValidationRules();
-
+        //FIXME - this mangles the rules object in a way that might not be compatible with what we do
+        // elsewhere...
         if ($this->model_id && $this->model && (string) $this->model->require_serial === '1') {
             $this->rules['serial'] = array_merge(
                 array_filter($this->rules['serial'] ?? [], fn ($r) => $r !== 'nullable'),
@@ -1296,54 +1279,6 @@ class Asset extends Depreciable implements Importable
         }
 
         return $this->asset_tag.' - '.$this->name.' ('.$user_name.') '.($this->model) ? $this->model->name : '';
-    }
-
-    /**
-     * Pulls in the validation rules
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     *
-     * @since  [v3.0]
-     *
-     * @return array
-     */
-    public function validationRules()
-    {
-        return $this->rules;
-    }
-
-    public function customFieldsForCheckinCheckout($checkin_checkout)
-    {
-        // Check to see if any of the custom fields were included on the form and if they have any values
-        if (($this->model) && ($this->model->fieldset) && ($this->model->fieldset->fields)) {
-
-            foreach ($this->model->fieldset->fields as $field) {
-
-                if (($field->{$checkin_checkout} == 1) && (request()->has($field->db_column))) {
-
-                    if ($field->field_encrypted == '1') {
-
-                        if (Gate::allows('assets.view.encrypted_custom_fields')) {
-                            if (is_array(request()->input($field->db_column))) {
-                                $this->{$field->db_column} = Crypt::encrypt(implode(', ', request()->input($field->db_column)));
-                            } else {
-                                $this->{$field->db_column} = Crypt::encrypt(request()->input($field->db_column));
-                            }
-                        }
-
-                    } else {
-
-                        if (is_array(request()->input($field->db_column))) {
-                            $this->{$field->db_column} = implode(', ', request()->input($field->db_column));
-                        } else {
-                            $this->{$field->db_column} = request()->input($field->db_column);
-                        }
-
-                    }
-                }
-            }
-        }
-
     }
 
     public function manufacturer()
