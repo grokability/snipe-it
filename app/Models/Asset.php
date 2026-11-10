@@ -96,13 +96,6 @@ class Asset extends Depreciable implements Importable
         )->withTrashedParents();
     }
 
-    /** @return array<string, mixed> */
-    public function customFieldDefaults(): array
-    {
-        return $this->model()->with('defaultValues')->first()?->defaultValues
-            ->pluck('pivot.default_value', 'db_column')->all() ?? [];
-    }
-
     /**
      * Run after the checkout acceptance was declined by the user
      *

@@ -15,6 +15,7 @@ use App\Presenters\AssetModelPresenter;
 use App\Presenters\Presentable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Gate;
@@ -454,11 +455,11 @@ class AssetModel extends SnipeModel implements Importable
      *
      * @since  [v4.3]
      *
-     * @return Relation
+     * @return BelongsToMany<CustomField, $this, CustomFieldDefault>
      */
-    public function defaultValues()
+    public function defaultValues(): BelongsToMany
     {
-        return $this->belongsToMany(CustomField::class, 'models_custom_fields')->withPivot('default_value');
+        return $this->belongsToMany(CustomField::class, CustomFieldDefault::class)->using(CustomFieldDefault::class)->withPivot('id', 'default_value');
     }
 
     /**

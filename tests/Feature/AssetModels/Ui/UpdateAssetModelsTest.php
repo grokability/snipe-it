@@ -11,6 +11,32 @@ use Tests\TestCase;
 
 class UpdateAssetModelsTest extends TestCase
 {
+    public function test_invalid_custom_field_defaults_redirect_back_and_preserve_existing_defaults(): void
+    {
+        $field = CustomField::factory()->create(['format' => 'email']);
+        $model = AssetModel::factory()->hasMultipleCustomFields([$field])->create();
+        $model->defaultValues()->attach($field, ['default_value' => 'existing@example.org']);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->from(route('models.edit', $model))
+            ->put(route('models.update', $model), [
+                'name' => $model->name,
+                'category_id' => $model->category_id,
+                'fieldset_id' => $model->fieldset_id,
+                'add_default_values' => '1',
+                'default_values' => [$field->id => 'invalid-email'],
+            ])
+            ->assertRedirect(route('models.edit', $model))
+            ->assertSessionHasErrors([$field->db_column])
+            ->assertSessionHasInput('default_values.'.$field->id, 'invalid-email');
+
+        $this->assertDatabaseHas('models_custom_fields', [
+            'asset_model_id' => $model->id,
+            'custom_field_id' => $field->id,
+            'default_value' => 'existing@example.org',
+        ]);
+    }
+
     public function test_permission_required_to_update_asset_model()
     {
         $this->actingAs(User::factory()->create())

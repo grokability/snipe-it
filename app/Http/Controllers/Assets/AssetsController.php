@@ -14,6 +14,7 @@ use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\CheckoutRequest;
 use App\Models\Company;
+use App\Models\CustomFieldDefault;
 use App\Models\CustomFieldset;
 use App\Models\Location;
 use App\Models\Setting;
@@ -1035,7 +1036,7 @@ class AssetsController extends Controller
         return [
             'selected_model' => $model,
             'fieldset' => CustomFieldset::with('fields')->find($model?->fieldset_id),
-            'defaultValues' => $model?->defaultValues->pluck('pivot.default_value', 'db_column')->all() ?? [],
+            'defaultValues' => CustomFieldDefault::valuesFor($model),
         ];
     }
 

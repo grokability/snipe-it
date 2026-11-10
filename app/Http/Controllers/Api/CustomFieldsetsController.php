@@ -252,10 +252,9 @@ class CustomFieldsetsController extends Controller
         $this->authorize('view', CustomField::class);
         $set = CustomFieldset::findOrFail($fieldsetId);
 
-        // Constrain the eager load to only the one models_custom_fields pivot
-        // row that matches this specific model
+        // Constrain the eager load to defaults belonging to this specific model.
         $fields = $set->fields()
-            ->with(['defaultValues' => fn ($q) => $q->wherePivot('asset_model_id', $modelId)])
+            ->with(['defaultValues' => fn ($q) => $q->whereKey($modelId)])
             ->get();
 
         return (new CustomFieldsTransformer)->transformCustomFieldsWithDefaultValues($fields, $modelId, $fields->count());

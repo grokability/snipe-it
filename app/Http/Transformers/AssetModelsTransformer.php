@@ -6,6 +6,7 @@ use App\Enums\FileStorage;
 use App\Helpers\Helper;
 use App\Models\Asset;
 use App\Models\AssetModel;
+use App\Models\CustomFieldDefault;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
@@ -28,16 +29,16 @@ class AssetModelsTransformer
     {
         $fieldset = $assetmodel->custom_fieldset;
         $default_field_values = [];
-        $defaults = $assetmodel->defaultValues->pluck('pivot.default_value', 'id');
+        $defaults = CustomFieldDefault::valuesFor($assetmodel);
 
-        // Reach into the custom fields and models_custom_fields pivot table to find the default values for this model
+        // Include the defaults belonging to this model for each field in its fieldset.
         if ($fieldset) {
             foreach ($fieldset->fields as $field) {
-                $defaultValue = $defaults->get($field->id);
+                $defaultValue = $defaults[$field->db_column] ?? null;
                 $default_field_values[] = [
                     'name' => e($field->name),
                     'db_column_name' => e($field->db_column_name()),
-                    'default_value' => $defaultValue ? e($defaultValue) : null,
+                    'default_value' => $defaultValue !== null ? e($defaultValue) : null,
                     'format' => e($field->format),
                     'required' => ($field->pivot->required == '1') ? true : false,
                 ];

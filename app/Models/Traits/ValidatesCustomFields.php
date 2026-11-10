@@ -5,6 +5,7 @@ namespace App\Models\Traits;
 use App\Casts\SnipeBoolean;
 use App\Casts\SnipeCrypt;
 use App\Casts\SnipeFlattenArray;
+use App\Models\CustomFieldDefault;
 use App\Models\CustomFieldset;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
@@ -93,7 +94,9 @@ trait ValidatesCustomFields
     /** @return array<string, mixed> */
     public function customFieldDefaults(): array
     {
-        return [];
+        $owner = CustomFieldDefault::ownerFor($this, $this->custom_fieldset());
+
+        return CustomFieldDefault::valuesFor($owner);
     }
 
     protected bool $encryptedCustomFieldUpdateSkipped = false;

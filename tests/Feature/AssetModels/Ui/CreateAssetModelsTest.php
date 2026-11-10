@@ -4,11 +4,35 @@ namespace Tests\Feature\AssetModels\Ui;
 
 use App\Models\AssetModel;
 use App\Models\Category;
+use App\Models\CustomField;
+use App\Models\CustomFieldset;
 use App\Models\User;
 use Tests\TestCase;
 
 class CreateAssetModelsTest extends TestCase
 {
+    public function test_invalid_custom_field_defaults_redirect_back_with_errors_and_input(): void
+    {
+        $field = CustomField::factory()->create(['format' => 'email']);
+        $fieldset = CustomFieldset::factory()->create();
+        $fieldset->fields()->attach($field, ['order' => 1, 'required' => false]);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->from(route('models.create'))
+            ->post(route('models.store'), [
+                'name' => 'Model With Invalid Default',
+                'category_id' => Category::factory()->create()->id,
+                'fieldset_id' => $fieldset->id,
+                'add_default_values' => '1',
+                'default_values' => [$field->id => 'invalid-email'],
+            ])
+            ->assertRedirect(route('models.create'))
+            ->assertSessionHasErrors([$field->db_column])
+            ->assertSessionHasInput('default_values.'.$field->id, 'invalid-email');
+
+        $this->assertDatabaseMissing('models_custom_fields', ['custom_field_id' => $field->id]);
+    }
+
     public function test_permission_required_to_create_asset_model()
     {
         $this->actingAs(User::factory()->create())
