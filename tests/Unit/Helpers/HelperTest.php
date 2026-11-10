@@ -529,7 +529,7 @@ class HelperTest extends TestCase
 
         $this->assertSame(
             strtoupper(trans('admin/custom_fields/general.encrypted')),
-            Helper::customFieldFormValue($field, $asset, $model)
+            Helper::customFieldFormValue($field, $asset)
         );
     }
 
@@ -547,7 +547,7 @@ class HelperTest extends TestCase
 
         $this->assertSame(
             'very-secret-value',
-            Helper::customFieldFormValue($field, $asset, $model)
+            Helper::customFieldFormValue($field, $asset)
         );
     }
 
@@ -564,7 +564,7 @@ class HelperTest extends TestCase
 
         $model = \App\Models\AssetModel::factory()->make();
 
-        $this->assertSame('16', Helper::customFieldFormValue($field, $asset, $model));
+        $this->assertSame('16', Helper::customFieldFormValue($field, $asset));
     }
 
     public function test_custom_field_form_value_returns_default_when_item_is_null(): void
@@ -577,7 +577,7 @@ class HelperTest extends TestCase
 
         $this->assertSame(
             $field->defaultValue($model->id),
-            Helper::customFieldFormValue($field, null, $model)
+            Helper::customFieldFormValue($field, null, $field->defaultValue($model->id))
         );
     }
 
@@ -594,7 +594,7 @@ class HelperTest extends TestCase
 
         $this->assertSame(
             strtoupper(trans('admin/custom_fields/general.encrypted')),
-            Helper::customFieldFormValue($field, null, $model)
+            Helper::customFieldFormValue($field, null, $field->defaultValue($model->id))
         );
     }
 
@@ -620,7 +620,7 @@ class HelperTest extends TestCase
         $asset->{$field->db_column} = '3/28/2025';
         $model = \App\Models\AssetModel::factory()->make();
 
-        $this->assertSame('2025-03-28', Helper::customFieldFormValue($field, $asset, $model));
+        $this->assertSame('2025-03-28', Helper::customFieldFormValue($field, $asset));
     }
 
     public function test_custom_field_form_value_normalizes_us_formatted_datetime_to_ymd_his(): void
@@ -635,7 +635,7 @@ class HelperTest extends TestCase
         $asset->{$field->db_column} = '3/28/2025 09:15:00';
         $model = \App\Models\AssetModel::factory()->make();
 
-        $this->assertSame('2025-03-28 09:15:00', Helper::customFieldFormValue($field, $asset, $model));
+        $this->assertSame('2025-03-28 09:15:00', Helper::customFieldFormValue($field, $asset));
     }
 
     public function test_custom_field_form_value_leaves_already_normalized_date_untouched(): void
@@ -650,7 +650,7 @@ class HelperTest extends TestCase
         $asset->{$field->db_column} = '2026-08-20';
         $model = \App\Models\AssetModel::factory()->make();
 
-        $this->assertSame('2026-08-20', Helper::customFieldFormValue($field, $asset, $model));
+        $this->assertSame('2026-08-20', Helper::customFieldFormValue($field, $asset));
     }
 
     public function test_custom_field_form_value_leaves_unparseable_date_value_untouched(): void
@@ -670,6 +670,6 @@ class HelperTest extends TestCase
         $asset->{$field->db_column} = '2028 1st Qtr';
         $model = \App\Models\AssetModel::factory()->make();
 
-        $this->assertSame('2028 1st Qtr', Helper::customFieldFormValue($field, $asset, $model));
+        $this->assertSame('2028 1st Qtr', Helper::customFieldFormValue($field, $asset));
     }
 }

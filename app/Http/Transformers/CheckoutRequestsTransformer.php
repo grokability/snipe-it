@@ -306,12 +306,12 @@ class CheckoutRequestsTransformer
      */
     private static function customFieldsFor($item): array|\stdClass
     {
-        if (! $item instanceof Asset || ! $item->model || ! $item->model->fieldset) {
+        if (! $item instanceof Asset || ! $item->custom_fieldset) {
             return new \stdClass;
         }
 
         $values = [];
-        foreach ($item->model->fieldset->fields as $field) {
+        foreach ($item->custom_fieldset->fields as $field) {
             if ($field->field_encrypted == '1' || $field->show_in_requestable_list != '1') {
                 continue;
             }

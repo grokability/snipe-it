@@ -650,7 +650,6 @@ namespace App\Models{
  * @property-read mixed $expires_diff_for_humans
  * @property-read mixed $expires_diff_in_days
  * @property-read mixed $expires_formatted_date
- * @property-read \App\Models\CustomFieldset|null $fieldset
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Actionlog> $history
  * @property-read int|null $history_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Actionlog> $log

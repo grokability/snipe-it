@@ -81,7 +81,7 @@ class UpdateAssetModelsTest extends TestCase
         $customFieldset->fields()->attach($customFieldOne, ['order' => 1, 'required' => false]);
         $customFieldset->fields()->attach($customFieldTwo, ['order' => 2, 'required' => false]);
 
-        $assetModel->fieldset()->associate($customFieldset);
+        $assetModel->fieldset_id = $customFieldset->id;
 
         $assetModel->defaultValues()->attach($customFieldOne, ['default_value' => 'first default value']);
         $assetModel->defaultValues()->attach($customFieldTwo, ['default_value' => 'second default value']);
@@ -114,7 +114,7 @@ class UpdateAssetModelsTest extends TestCase
         $customFieldset->fields()->attach($customFieldOne, ['order' => 1, 'required' => false]);
         $customFieldset->fields()->attach($customFieldTwo, ['order' => 2, 'required' => false]);
 
-        $assetModel->fieldset()->associate($customFieldset);
+        $assetModel->fieldset_id = $customFieldset->id;
 
         $assetModel->defaultValues()->attach($customFieldOne, ['default_value' => 'first default value']);
         $assetModel->defaultValues()->attach($customFieldTwo, ['default_value' => 'second default value']);

@@ -1,5 +1,6 @@
 @props([
     'infoPanelObj' => null,
+    'fieldset' => null,
     'img_path' => null,
     'qr_code_url' => null,
     'snipeSettings' => \App\Models\Setting::getSettings()
@@ -359,9 +360,9 @@
         @endif
 
 
-        @if ($infoPanelObj->fieldset)
+        @if ($fieldset)
             <x-info-element icon_type="fieldset" title="{{ trans('admin/custom_fields/general.fieldset_name') }}">
-                {!!  $infoPanelObj->fieldset->present()->nameUrl !!}
+                {!!  $fieldset->present()->nameUrl !!}
             </x-info-element>
         @endif
 

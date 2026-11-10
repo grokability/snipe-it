@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
@@ -95,9 +96,11 @@ class Asset extends Depreciable implements Importable
         )->withTrashedParents();
     }
 
-    protected function customFieldDefaultValue(CustomField $field): mixed
+    /** @return array<string, mixed> */
+    public function customFieldDefaults(): array
     {
-        return $field->defaultValue($this->attributes['model_id'] ?? null);
+        return $this->model()->with('defaultValues')->first()?->defaultValues
+            ->pluck('pivot.default_value', 'db_column')->all() ?? [];
     }
 
     /**
@@ -1664,9 +1667,9 @@ class Asset extends Depreciable implements Importable
      *
      * @since  [v1.0]
      *
-     * @return Relation
+     * @return BelongsTo<AssetModel, $this>
      */
-    public function model()
+    public function model(): BelongsTo
     {
         return $this->belongsTo(AssetModel::class, 'model_id')->withTrashed();
     }

@@ -299,7 +299,7 @@ trait Loggable
                     $asset->increment('checkin_counter', 1);
 
                     // add the custom fields that were changed
-                    if ($asset->model->fieldset) {
+                    if ($asset->custom_fieldset) {
                         $fields_array = [];
                         /**
                          * Keep logging values in their current raw storage form. Property access
@@ -394,7 +394,7 @@ trait Loggable
         $log = new Actionlog;
 
         $fields_array = [];
-        if (static::class == Asset::class && $this->model && $this->model->fieldset) {
+        if ($this instanceof Asset && $this->custom_fieldset) {
             /**
              * Keep ciphertext in the audit snapshot; decryption and permission checks happen
              * when displaying history. Use current raw attributes so pending changes are included,

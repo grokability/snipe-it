@@ -172,7 +172,7 @@ class AssetsController extends Controller
                 'model.depreciation',
                 'model.category',
                 'model.manufacturer',
-                'model.fieldset',
+                'custom_fieldset',
                 'model.depreciation',
                 'supplier',
                 'externalSource',
@@ -641,7 +641,7 @@ class AssetsController extends Controller
             'location',
             'model.category',
             'model.depreciation',
-            'model.fieldset',
+            'custom_fieldset',
             'model.manufacturer',
             'supplier',
         ]);
@@ -811,9 +811,8 @@ class AssetsController extends Controller
      */
     public function store(StoreAssetRequest $request): JsonResponse
     {
-        // custom_fill loads the pivot defaults together on the resolved fieldset.
-        $model = AssetModel::with('fieldset.fields')
-            ->find((int) $request->input('model_id'));
+        // custom_fill resolves defaults together before filling the custom fields.
+        $model = AssetModel::find((int) $request->input('model_id'));
 
         $asset = new Asset;
         $asset->model()->associate($model);
@@ -829,12 +828,10 @@ class AssetsController extends Controller
             $request->offsetSet('image', $request->offsetGet('image_source'));
         }
 
-        $asset = $request->handleImages($asset);
+        $request->handleImages($asset);
 
         // Update custom fields in the database.
-        if ($model && $model->fieldset) {
-            $asset->custom_fill($request, true);
-        }
+        $asset->custom_fill($request, true);
 
         $target = $this->resolveCheckoutTargetForAssetMutation($request);
         $requestedCheckout = $request->filled('assigned_user') || $request->filled('assigned_asset') || $request->filled('assigned_location');
@@ -1079,8 +1076,7 @@ class AssetsController extends Controller
             $request->offsetSet('image', $request->offsetGet('image_source'));
         }
 
-        $asset = $request->handleImages($asset);
-        $model = $asset->model;
+        $request->handleImages($asset);
 
         $problems_updating_encrypted_custom_fields = false;
         $asset->custom_fill($request);
@@ -1839,7 +1835,7 @@ class AssetsController extends Controller
             'next_audit_date' => Helper::getFormattedDateObject($asset->next_audit_date),
         ];
 
-        if ($asset->model && $asset->model->fieldset) {
+        if ($asset->custom_fieldset) {
             $payload['custom_fields'] = $asset->custom_fill($request, false, 'display_audit');
         }
         
@@ -2034,7 +2030,7 @@ class AssetsController extends Controller
                 'assignedTo',
                 'model.category',
                 'model.manufacturer',
-                'model.fieldset',
+                'custom_fieldset',
                 'supplier',
                 'requests'
             );

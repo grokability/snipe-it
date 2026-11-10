@@ -11,6 +11,7 @@ use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\CheckoutRequest;
 use App\Models\CustomField;
+use App\Models\CustomFieldset;
 use App\Models\SnipeModel;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -279,7 +280,7 @@ class AssetModelsController extends Controller
     {
         $this->authorize('view', AssetModel::class);
 
-        return view('models/view', compact('model'));
+        return view('models/view', ['model' => $model, 'fieldset' => CustomFieldset::find($model->fieldset_id)]);
     }
 
     /**
@@ -319,7 +320,7 @@ class AssetModelsController extends Controller
      *
      * @param  int  $modelId
      */
-    public function getCustomFields($modelId): View
+    public function getCustomFields(int|string $modelId): View
     {
         // Endpoint fires from the asset create/edit form's model-select
         // change handler (hardware/edit.blade.php's fetchCustomFields
@@ -340,7 +341,12 @@ class AssetModelsController extends Controller
             abort(403);
         }
 
-        return view('models.custom_fields_form')->with('model', AssetModel::find($modelId));
+        $model = AssetModel::with('defaultValues')->find($modelId);
+
+        return view('models.custom_fields_form', [
+            'fieldset' => CustomFieldset::with('fields')->find($model?->fieldset_id),
+            'defaultValues' => $model?->defaultValues->pluck('pivot.default_value', 'db_column')->all() ?? [],
+        ]);
     }
 
     /**
@@ -483,7 +489,7 @@ class AssetModelsController extends Controller
      *
      * @param  AssetModel  $model
      */
-    private function assignCustomFieldsDefaultValues(AssetModel|SnipeModel $model, array $defaultValues): bool
+    protected function assignCustomFieldsDefaultValues(AssetModel $model, array $defaultValues): bool
     {
         $data = [];
         foreach ($defaultValues as $customFieldId => $defaultValue) {
@@ -492,7 +498,11 @@ class AssetModelsController extends Controller
             $data[$customField->db_column] = $defaultValue;
         }
 
-        $allRules = $model->fieldset->validation_rules();
+        $fieldset = CustomFieldset::with('fields')->find($model->fieldset_id);
+        if ($fieldset === null) {
+            return false;
+        }
+        $allRules = $fieldset->validation_rules();
         $rules = [];
 
         foreach ($allRules as $field => $validation) {
@@ -506,7 +516,7 @@ class AssetModelsController extends Controller
         }
 
         $attributes = [];
-        foreach ($model->fieldset->fields as $field) {
+        foreach ($fieldset->fields as $field) {
             $attributes[$field->db_column] = trim(preg_replace('/_+|snipeit|\d+/', ' ', $field->db_column));
         }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\AssetModels\MergeAssetModelsAction;
 use App\Helpers\Helper;
 use App\Models\AssetModel;
+use App\Models\CustomFieldset;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -26,7 +27,7 @@ class BulkAssetModelsController extends Controller
         // Make sure some IDs have been selected
         if ((is_array($models_raw_array)) && (count($models_raw_array) > 0)) {
             $models = AssetModel::whereIn('id', $models_raw_array)
-                ->with('manufacturer', 'category', 'fieldset')
+                ->with('manufacturer', 'category')
                 ->withCount('assets as assets_count')
                 ->orderBy('assets_count', 'ASC')
                 ->get();
@@ -64,7 +65,10 @@ class BulkAssetModelsController extends Controller
                         ->with('error', trans('admin/models/message.merge.min_two'));
                 }
 
-                return view('models/confirm-merge', compact('models'));
+                return view('models/confirm-merge', [
+                    'models' => $models,
+                    'fieldsets' => CustomFieldset::whereIn('id', $models->pluck('fieldset_id')->filter())->get()->keyBy('id'),
+                ]);
 
                 // Otherwise display the bulk edit screen
             }

@@ -39,7 +39,7 @@ class ViewAssetsController extends Controller
     {
         $fieldArray = [];
         foreach ($user->assets as $asset) {
-            if ($asset->model && $asset->model->fieldset) {
+            if ($asset->custom_fieldset) {
                 foreach ($asset->custom_fieldset->fields->where('display_in_user_view', 1) as $field) {
                     $fieldArray[$field->db_column] = $field->name;
                 }
@@ -118,7 +118,7 @@ class ViewAssetsController extends Controller
         $userToView = User::with([
             'assets',
             'assets.model',
-            'assets.model.fieldset.fields',
+            'assets.custom_fieldset.fields',
             'consumables',
             'accessories',
             'licenses',

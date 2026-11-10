@@ -14,6 +14,7 @@ use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\CheckoutRequest;
 use App\Models\Company;
+use App\Models\CustomFieldset;
 use App\Models\Location;
 use App\Models\Setting;
 use App\Models\Statuslabel;
@@ -88,10 +89,7 @@ class AssetsController extends Controller
             ->with('item', new Asset)
             ->with('statuslabel_types', Helper::statusTypeList());
 
-        if ($request->filled('model_id')) {
-            $selected_model = AssetModel::find($request->input('model_id'));
-            $view->with('selected_model', $selected_model);
-        }
+        $view->with($this->customFieldFormData(old('model_id', $request->input('model_id'))));
 
         return $view;
     }
@@ -226,7 +224,7 @@ class AssetsController extends Controller
                     }
 
                 } else {
-                    $asset = $request->handleImages($asset);
+                    $request->handleImages($asset);
                 }
 
                 // Update custom fields in the database.
@@ -341,6 +339,7 @@ class AssetsController extends Controller
         }
 
         return view('hardware/edit')
+            ->with($this->customFieldFormData(old('model_id', $asset->model_id)))
             ->with('item', $asset)
             ->with('statuslabel_list', Helper::statusLabelList())
             ->with('statuslabel_types', Helper::statusTypeList());
@@ -521,7 +520,7 @@ class AssetsController extends Controller
 
         $asset->notes = $request->input('notes');
 
-        $asset = $request->handleImages($asset);
+        $request->handleImages($asset);
 
         // Update custom fields in the database.
         // FIXME: No idea why this is returning a Builder error on db_column_name.
@@ -754,7 +753,7 @@ class AssetsController extends Controller
      *
      * @return View
      */
-    public function getClone(Asset $asset)
+    public function getClone(Asset $asset): View
     {
         $this->authorize('clone', $asset);
         $cloned = clone $asset;
@@ -766,6 +765,7 @@ class AssetsController extends Controller
         $cloned->deleted_at = '';
 
         return view('hardware/edit')
+            ->with($this->customFieldFormData(old('model_id', $asset->model_id)))
             ->with('statuslabel_list', Helper::statusLabelList())
             ->with('statuslabel_types', Helper::statusTypeList())
             ->with('cloned_model', $cloned_model)
@@ -1025,4 +1025,18 @@ class AssetsController extends Controller
         return redirect()->route('requests.index')
             ->with('success', trans('admin/hardware/message.requests.canceled'));
     }
+    /** @return array{selected_model: ?AssetModel, fieldset: ?CustomFieldset, defaultValues: array<string, mixed>} */
+    protected function customFieldFormData(mixed $modelId): array
+    {
+        $model = is_numeric($modelId)
+            ? AssetModel::withTrashed()->with('defaultValues')->find((int) $modelId)
+            : null;
+
+        return [
+            'selected_model' => $model,
+            'fieldset' => CustomFieldset::with('fields')->find($model?->fieldset_id),
+            'defaultValues' => $model?->defaultValues->pluck('pivot.default_value', 'db_column')->all() ?? [],
+        ];
+    }
+
 }

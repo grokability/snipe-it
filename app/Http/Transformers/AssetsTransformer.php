@@ -143,10 +143,10 @@ class AssetsTransformer
             'last_seen' => ($asset->externalSource?->last_seen) ? Helper::getFormattedDateObject($asset->externalSource->last_seen, 'datetime') : null,
         ];
 
-        if (($asset->model) && ($asset->model->fieldset) && ($asset->model->fieldset->fields->count() > 0)) {
+        if (($asset->custom_fieldset) && ($asset->custom_fieldset->fields->count() > 0)) {
             $fields_array = [];
 
-            foreach ($asset->model->fieldset->fields as $field) { // TODO - what about this one?
+            foreach ($asset->custom_fieldset->fields as $field) { // TODO - what about this one?
                 if ($field->isFieldDecryptable($asset->{$field->db_column})) {
                     $value = (Gate::allows('assets.view.encrypted_custom_fields')) ? $asset->{$field->db_column} : strtoupper(trans('admin/custom_fields/general.encrypted'));
 
@@ -338,10 +338,10 @@ class AssetsTransformer
             'assigned_to_self' => ($asset->assigned_to == auth()->id()),
         ];
 
-        if (($asset->model) && ($asset->model->fieldset) && ($asset->model->fieldset->fields->count() > 0)) {
+        if (($asset->custom_fieldset) && ($asset->custom_fieldset->fields->count() > 0)) {
             $fields_array = [];
 
-            foreach ($asset->model->fieldset->fields as $field) { //Hrm? TODO
+            foreach ($asset->custom_fieldset->fields as $field) { //Hrm? TODO
 
                 // Only display this if it's allowed via the custom field setting
                 if (($field->field_encrypted == '0') && ($field->show_in_requestable_list == '1')) {

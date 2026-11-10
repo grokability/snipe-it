@@ -782,7 +782,7 @@ class StoreAssetTest extends TestCase
         // lazy-loaded `$this->defaultValues` which is
         // `belongsToMany(AssetModel::class, 'models_custom_fields')`, firing
         // one `SELECT models.*  INNER JOIN models_custom_fields` per field.
-        // custom_fill loads the defaults together on the resolved fieldset,
+        // custom_fill resolves the defaults together as a column/value map,
         // so that pivot walk fires once.
         $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
 
@@ -826,8 +826,7 @@ class StoreAssetTest extends TestCase
         // load in custom_fill. Threshold is one, more
         // than that means the lazy-load pattern crept back in.
         $pivotWalks = collect($queries)
-            ->filter(fn ($q) => str_contains($q['query'], '`models`')
-                && str_contains($q['query'], 'inner join `models_custom_fields`'))
+            ->filter(fn ($q) => str_contains($q['query'], 'models_custom_fields'))
             ->count();
 
         $this->assertLessThanOrEqual(

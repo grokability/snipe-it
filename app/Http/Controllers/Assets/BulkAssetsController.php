@@ -25,6 +25,7 @@ use App\View\Label;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -237,7 +238,8 @@ class BulkAssetsController extends Controller
                     return view('hardware/bulk')
                         ->with('assets', $asset_ids)
                         ->with('statuslabel_list', Helper::statusLabelList())
-                        ->with('models', $models->pluck(['model']))
+                        ->with('fieldsets', $models->pluck('custom_fieldset')->filter()->unique('id'))
+                        ->with('fieldLabels', $this->customFieldLabels($models))
                         ->with('modelNames', $modelNames);
             }
         }
@@ -495,9 +497,9 @@ class BulkAssetsController extends Controller
                  */
 
                 // Does the model have a fieldset?
-                if ($asset->model?->fieldset) {
+                if ($asset->custom_fieldset) {
                     // FIXME - can we use custom_fill here? We have a nullable option which is a little weird :/
-                    foreach ($asset->model->fieldset->fields as $field) {
+                    foreach ($asset->custom_fieldset->fields as $field) {
 
                         // null custom fields
                         if ($custom_fields_to_null) {
@@ -1217,7 +1219,27 @@ class BulkAssetsController extends Controller
         return view('hardware/bulk')
             ->with('assets', $asset_ids)
             ->with('statuslabel_list', Helper::statusLabelList())
-            ->with('models', $models->pluck(['model']))
+            ->with('fieldsets', $models->pluck('custom_fieldset')->filter()->unique('id'))
+            ->with('fieldLabels', $this->customFieldLabels($models))
             ->with('modelNames', $modelNames);
+    }
+    /**
+     * @param  Collection<int, Asset>  $assets
+     * @return array<int, list<string>>
+     */
+    protected function customFieldLabels(Collection $assets): array
+    {
+        $labels = [];
+
+        foreach ($assets as $asset) {
+            foreach ($asset->custom_fieldset->fields ?? [] as $field) {
+                $name = $asset->model?->name;
+                if ($name !== null && !in_array($name, $labels[$field->id] ?? [], true)) {
+                    $labels[$field->id][] = $name;
+                }
+            }
+        }
+
+        return $labels;
     }
 }

@@ -12,28 +12,32 @@ use Illuminate\Support\Facades\Storage;
 
 class AssetModelsTransformer
 {
-    public function transformAssetModels(Collection $assetmodels, $total)
+    /** @param Collection<int, AssetModel> $assetmodels */
+    public function transformAssetModels(Collection $assetmodels, int $total): array
     {
         $array = [];
+        $assetmodels->loadMissing(['custom_fieldset.fields', 'defaultValues']);
         foreach ($assetmodels as $assetmodel) {
-            $array[] = self::transformAssetModel($assetmodel);
+            $array[] = $this->transformAssetModel($assetmodel);
         }
 
         return (new DatatablesTransformer)->transformDatatables($array, $total);
     }
 
-    public function transformAssetModel(AssetModel $assetmodel)
+    public function transformAssetModel(AssetModel $assetmodel): array
     {
-
+        $fieldset = $assetmodel->custom_fieldset;
         $default_field_values = [];
+        $defaults = $assetmodel->defaultValues->pluck('pivot.default_value', 'id');
 
         // Reach into the custom fields and models_custom_fields pivot table to find the default values for this model
-        if ($assetmodel->fieldset) {
-            foreach ($assetmodel->fieldset->fields as $field) {
+        if ($fieldset) {
+            foreach ($fieldset->fields as $field) {
+                $defaultValue = $defaults->get($field->id);
                 $default_field_values[] = [
                     'name' => e($field->name),
                     'db_column_name' => e($field->db_column_name()),
-                    'default_value' => ($field->defaultValue($assetmodel->id)) ? e($field->defaultValue($assetmodel->id)) : null,
+                    'default_value' => $defaultValue ? e($defaultValue) : null,
                     'format' => e($field->format),
                     'required' => ($field->pivot->required == '1') ? true : false,
                 ];
@@ -72,9 +76,9 @@ class AssetModelsTransformer
                 'name' => e($assetmodel->category->name),
                 'tag_color' => ($assetmodel->category->tag_color) ? e($assetmodel->category->tag_color) : null,
             ] : null,
-            'fieldset' => ($assetmodel->fieldset) ? [
-                'id' => (int) $assetmodel->fieldset->id,
-                'name' => e($assetmodel->fieldset->name),
+            'fieldset' => ($fieldset) ? [
+                'id' => (int) $fieldset->id,
+                'name' => e($fieldset->name),
             ] : null,
             'default_fieldset_values' => $default_field_values,
             'eol' => ($assetmodel->eol > 0) ? $assetmodel->eol.' months' : 'None',

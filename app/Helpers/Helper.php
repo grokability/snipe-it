@@ -1329,10 +1329,10 @@ class Helper
      *
      * Returns the shared masked-value string when the field is encrypted and
      * the caller cannot view encrypted custom fields. Otherwise returns the
-     * decrypted stored value for the given $item, or the model-scoped default
+     * decrypted stored value for the given $item, or the supplied default
      * value when no $item is present (create form path).
      */
-    public static function customFieldFormValue(CustomField $field, $item, $model)
+    public static function customFieldFormValue(CustomField $field, ?\Illuminate\Database\Eloquent\Model $item, mixed $defaultValue = null): mixed
     {
         if ($field->field_encrypted && ! Gate::allows('assets.view.encrypted_custom_fields')) {
             return strtoupper(trans('admin/custom_fields/general.encrypted'));
@@ -1340,7 +1340,7 @@ class Helper
 
         $value = isset($item)
             ? $item->{$field->db_column_name()}
-            : $field->defaultValue($model->id);
+            : $defaultValue;
 
         // DATE / DATETIME custom fields can hold non-YYYY-MM-DD strings
         // in the DB (e.g. `3/28/2025` from a historic CSV import that

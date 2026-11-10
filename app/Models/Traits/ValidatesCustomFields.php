@@ -5,7 +5,6 @@ namespace App\Models\Traits;
 use App\Casts\SnipeBoolean;
 use App\Casts\SnipeCrypt;
 use App\Casts\SnipeFlattenArray;
-use App\Models\CustomField;
 use App\Models\CustomFieldset;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
@@ -62,9 +61,7 @@ trait ValidatesCustomFields
             return $fill_results;
         }
 
-        if ($with_defaults) {
-            $fieldset->fields->loadMissing('defaultValues');
-        }
+        $defaultValues = $with_defaults ? $this->customFieldDefaults() : [];
 
         foreach ($fieldset->fields as $field) {
             if ($filter_field_expression !== null && ! $field->{$filter_field_expression}) {
@@ -77,7 +74,7 @@ trait ValidatesCustomFields
 
             $value = $request->input($field->db_column);
             if ($with_defaults && $value === null) {
-                $value = $this->customFieldDefaultValue($field);
+                $value = $defaultValues[$field->db_column] ?? null;
             }
 
             $fill_results[$field->db_column] = $value;
@@ -93,9 +90,10 @@ trait ValidatesCustomFields
         return $fill_results;
     }
 
-    protected function customFieldDefaultValue(CustomField $field): mixed
+    /** @return array<string, mixed> */
+    public function customFieldDefaults(): array
     {
-        return null;
+        return [];
     }
 
     protected bool $encryptedCustomFieldUpdateSkipped = false;

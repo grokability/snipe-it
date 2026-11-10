@@ -89,12 +89,12 @@ class ProfileTransformer
      */
     private function transformAssetCustomFields(Asset $asset): object|array
     {
-        if (!$asset->model || !$asset->model->fieldset) {
+        if (!$asset->custom_fieldset) {
             return new \stdClass;
         }
 
         $fields_array = [];
-        foreach ($asset->model->fieldset->fields as $field) {
+        foreach ($asset->custom_fieldset->fields as $field) {
             if ($field->field_encrypted) {
                 continue;
             }
