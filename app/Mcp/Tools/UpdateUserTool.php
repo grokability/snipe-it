@@ -7,6 +7,7 @@ use App\Models\Group;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -22,37 +23,15 @@ class UpdateUserTool extends Tool
 {
     public function handle(Request $request): ResponseFactory
     {
-        $request->validate([
-            'id' => 'nullable|integer',
-            'username' => 'nullable|string|max:191',
-            'email' => 'nullable|string|max:191',
-            'new_username' => 'nullable|string|max:191',
-            'new_email' => 'nullable|email|max:191',
-            'first_name' => 'nullable|string|max:191',
-            'last_name' => 'nullable|string|max:191',
-            'password' => 'nullable|string|min:8',
-            'employee_num' => 'nullable|string|max:191',
-            'jobtitle' => 'nullable|string|max:191',
-            'phone' => 'nullable|string|max:35',
-            'mobile' => 'nullable|string|max:35',
-            'company_id' => 'nullable|integer|exists:companies,id',
-            'department_id' => 'nullable|integer|exists:departments,id',
-            'location_id' => 'nullable|integer|exists:locations,id',
-            'manager_id' => 'nullable|integer|exists:users,id',
-            'activated' => 'nullable|boolean',
-            'notes' => 'nullable|string',
-            'start_date' => 'nullable|date_format:Y-m-d',
-            'end_date' => 'nullable|date_format:Y-m-d',
-            'vip' => 'nullable|boolean',
-            'remote' => 'nullable|boolean',
-            'website' => 'nullable|url|max:191',
-            'address' => 'nullable|string|max:191',
-            'city' => 'nullable|string|max:191',
-            'state' => 'nullable|string|max:191',
-            'country' => 'nullable|string|max:191',
-            'zip' => 'nullable|string|max:10',
-            'group_ids' => 'nullable|array',
-        ]);
+        try {
+            $request->validate([
+                'id' => 'nullable|integer',
+                'username' => 'nullable|string|max:191',
+                'email' => 'nullable|string|max:191',
+            ]);
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
         $user = $this->resolveUser($request);
 

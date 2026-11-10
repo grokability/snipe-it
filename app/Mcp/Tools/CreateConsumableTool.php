@@ -5,7 +5,6 @@ namespace App\Mcp\Tools;
 use App\Models\Consumable;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -23,28 +22,6 @@ class CreateConsumableTool extends Tool
     {
         if (! Gate::allows('create', Consumable::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'qty' => 'required|integer|min:0',
-                'category_id' => 'required|integer|exists:categories,id',
-                'company_id' => 'nullable|integer',
-                'location_id' => 'nullable|integer|exists:locations,id',
-                'manufacturer_id' => 'nullable|integer|exists:manufacturers,id',
-                'supplier_id' => 'nullable|integer|exists:suppliers,id',
-                'item_no' => 'nullable|string|max:255',
-                'order_number' => 'nullable|string|max:255',
-                'model_number' => 'nullable|string|max:255',
-                'purchase_cost' => 'nullable|numeric|min:0',
-                'purchase_date' => 'nullable|date_format:Y-m-d',
-                'min_amt' => 'nullable|integer|min:0',
-                'requestable' => 'nullable|boolean',
-                'notes' => 'nullable|string',
-            ]);
-        } catch (ValidationException $e) {
-            return Response::make(Response::error($e->validator->errors()->first()));
         }
 
         $consumable = new Consumable;

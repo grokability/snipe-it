@@ -5,7 +5,6 @@ namespace App\Mcp\Tools;
 use App\Models\Company;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -23,18 +22,6 @@ class CreateCompanyTool extends Tool
     {
         if (! Gate::allows('create', Company::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'phone' => 'nullable|string',
-                'fax' => 'nullable|string',
-                'email' => 'nullable|string',
-                'notes' => 'nullable|string',
-            ]);
-        } catch (ValidationException $e) {
-            return Response::make(Response::error($e->validator->errors()->first()));
         }
 
         $company = new Company;

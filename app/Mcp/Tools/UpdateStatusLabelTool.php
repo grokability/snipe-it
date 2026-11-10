@@ -5,6 +5,7 @@ namespace App\Mcp\Tools;
 use App\Models\Statuslabel;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -20,16 +21,14 @@ class UpdateStatusLabelTool extends Tool
 {
     public function handle(Request $request): ResponseFactory
     {
-        $request->validate([
-            'id' => 'nullable|integer',
-            'name' => 'nullable|string|max:255',
-            'new_name' => 'nullable|string|max:255',
-            'type' => 'nullable|string|in:deployable,pending,archived,undeployable',
-            'color' => 'nullable|string',
-            'notes' => 'nullable|string',
-            'default_label' => 'nullable|boolean',
-            'show_in_nav' => 'nullable|boolean',
-        ]);
+        try {
+            $request->validate([
+                'id' => 'nullable|integer',
+                'name' => 'nullable|string|max:255',
+            ]);
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
         $label = $this->resolveStatusLabel($request);
 

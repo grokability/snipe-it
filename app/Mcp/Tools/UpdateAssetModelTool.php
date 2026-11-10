@@ -5,6 +5,7 @@ namespace App\Mcp\Tools;
 use App\Models\AssetModel;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -20,20 +21,14 @@ class UpdateAssetModelTool extends Tool
 {
     public function handle(Request $request): ResponseFactory
     {
-        $request->validate([
-            'id' => 'nullable|integer',
-            'name' => 'nullable|string|max:255',
-            'new_name' => 'nullable|string|max:255',
-            'category_id' => 'nullable|integer|exists:categories,id',
-            'manufacturer_id' => 'nullable|integer|exists:manufacturers,id',
-            'depreciation_id' => 'nullable|integer|exists:depreciations,id',
-            'model_number' => 'nullable|string|max:255',
-            'eol' => 'nullable|integer|min:0|max:240',
-            'min_amt' => 'nullable|integer|min:0',
-            'notes' => 'nullable|string',
-            'requestable' => 'nullable|boolean',
-            'require_serial' => 'nullable|boolean',
-        ]);
+        try {
+            $request->validate([
+                'id' => 'nullable|integer',
+                'name' => 'nullable|string|max:255',
+            ]);
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
         $model = $this->resolveModel($request);
 

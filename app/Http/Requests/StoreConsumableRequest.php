@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Helpers\Helper;
 use App\Models\Category;
-use App\Models\Consumable;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Gate;
 

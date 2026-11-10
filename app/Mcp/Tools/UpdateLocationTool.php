@@ -5,6 +5,7 @@ namespace App\Mcp\Tools;
 use App\Models\Location;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -20,21 +21,14 @@ class UpdateLocationTool extends Tool
 {
     public function handle(Request $request): ResponseFactory
     {
-        $request->validate([
-            'id' => 'nullable|integer',
-            'name' => 'nullable|string|max:255',
-            'new_name' => 'nullable|string|max:255',
-            'address' => 'nullable|string',
-            'city' => 'nullable|string',
-            'state' => 'nullable|string',
-            'country' => 'nullable|string',
-            'zip' => 'nullable|string',
-            'phone' => 'nullable|string',
-            'fax' => 'nullable|string',
-            'currency' => 'nullable|string',
-            'parent_id' => 'nullable|integer|exists:locations,id',
-            'manager_id' => 'nullable|integer|exists:users,id',
-        ]);
+        try {
+            $request->validate([
+                'id' => 'nullable|integer',
+                'name' => 'nullable|string|max:255',
+            ]);
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
         $location = $this->resolveLocation($request);
 

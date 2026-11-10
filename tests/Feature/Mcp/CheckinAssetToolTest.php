@@ -22,7 +22,7 @@ class CheckinAssetToolTest extends TestCase
 
     private function handle(array $args): ResponseFactory
     {
-        return (new CheckinAssetTool)->handle(new Request($args));
+        return resolve(CheckinAssetTool::class)->handle(new Request($args));
     }
 
     public function test_checks_in_asset_by_asset_tag()

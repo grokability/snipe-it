@@ -5,7 +5,6 @@ namespace App\Mcp\Tools;
 use App\Models\Depreciation;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -23,15 +22,6 @@ class CreateDepreciationTool extends Tool
     {
         if (! Gate::allows('create', Depreciation::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'months' => 'required|integer|min:1|max:3600',
-            ]);
-        } catch (ValidationException $e) {
-            return Response::make(Response::error($e->validator->errors()->first()));
         }
 
         $depreciation = new Depreciation;

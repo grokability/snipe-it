@@ -20,7 +20,7 @@ class CheckoutAssetToolTest extends TestCase
 
     private function handle(array $args): ResponseFactory
     {
-        return (new CheckoutAssetTool)->handle(new Request($args));
+        return resolve(CheckoutAssetTool::class)->handle(new Request($args));
     }
 
     public function test_checks_out_asset_to_user_by_asset_tag()

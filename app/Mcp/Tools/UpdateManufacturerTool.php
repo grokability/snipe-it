@@ -5,6 +5,7 @@ namespace App\Mcp\Tools;
 use App\Models\Manufacturer;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -20,17 +21,14 @@ class UpdateManufacturerTool extends Tool
 {
     public function handle(Request $request): ResponseFactory
     {
-        $request->validate([
-            'id' => 'nullable|integer',
-            'name' => 'nullable|string|max:255',
-            'new_name' => 'nullable|string|max:255',
-            'url' => 'nullable|string|max:255',
-            'support_url' => 'nullable|string|max:255',
-            'support_email' => 'nullable|email|max:191',
-            'support_phone' => 'nullable|string|max:191',
-            'warranty_lookup_url' => 'nullable|string|max:255',
-            'notes' => 'nullable|string',
-        ]);
+        try {
+            $request->validate([
+                'id' => 'nullable|integer',
+                'name' => 'nullable|string|max:255',
+            ]);
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
         $manufacturer = $this->resolveManufacturer($request);
 

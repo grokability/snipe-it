@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\AssetModel;
 use App\Models\Category;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Gate;

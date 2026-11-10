@@ -29,9 +29,6 @@ class UpdateGroupTool extends Tool
             $request->validate([
                 'id' => 'nullable|integer',
                 'name' => 'nullable|string|max:255',
-                'new_name' => 'nullable|string|max:255',
-                'permissions' => 'nullable|string',
-                'notes' => 'nullable|string',
             ]);
         } catch (ValidationException $e) {
             return Response::make(Response::error($e->validator->errors()->first()));

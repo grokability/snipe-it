@@ -5,6 +5,7 @@ namespace App\Mcp\Tools;
 use App\Models\Company;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -20,15 +21,14 @@ class UpdateCompanyTool extends Tool
 {
     public function handle(Request $request): ResponseFactory
     {
-        $request->validate([
-            'id' => 'nullable|integer',
-            'name' => 'nullable|string|max:255',
-            'new_name' => 'nullable|string|max:255',
-            'phone' => 'nullable|string',
-            'fax' => 'nullable|string',
-            'email' => 'nullable|string',
-            'notes' => 'nullable|string',
-        ]);
+        try {
+            $request->validate([
+                'id' => 'nullable|integer',
+                'name' => 'nullable|string|max:255',
+            ]);
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
         $company = $this->resolveCompany($request);
 

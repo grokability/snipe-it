@@ -5,7 +5,6 @@ namespace App\Mcp\Tools;
 use App\Models\Category;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -23,19 +22,6 @@ class CreateCategoryTool extends Tool
     {
         if (! Gate::allows('create', Category::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'category_type' => 'required|string|in:asset,accessory,consumable,component,license',
-                'checkin_email' => 'nullable|boolean',
-                'require_acceptance' => 'nullable|boolean',
-                'use_default_eula' => 'nullable|boolean',
-                'notes' => 'nullable|string',
-            ]);
-        } catch (ValidationException $e) {
-            return Response::make(Response::error($e->validator->errors()->first()));
         }
 
         $category = new Category;

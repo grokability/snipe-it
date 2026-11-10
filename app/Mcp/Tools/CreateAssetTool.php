@@ -5,7 +5,6 @@ namespace App\Mcp\Tools;
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -23,28 +22,6 @@ class CreateAssetTool extends Tool
     {
         if (! Gate::allows('create', Asset::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
-        try {
-            $request->validate([
-                'model_id' => 'required|integer|exists:models,id',
-                'status_id' => 'required|integer|exists:status_labels,id',
-                'asset_tag' => 'required|string|max:255',
-                'name' => 'nullable|string|max:255',
-                'serial' => 'nullable|string',
-                'company_id' => 'nullable|integer',
-                'location_id' => 'nullable|integer|exists:locations,id',
-                'rtd_location_id' => 'nullable|integer|exists:locations,id',
-                'supplier_id' => 'nullable|integer|exists:suppliers,id',
-                'purchase_date' => 'nullable|date_format:Y-m-d',
-                'purchase_cost' => 'nullable|numeric',
-                'order_number' => 'nullable|string|max:191',
-                'warranty_months' => 'nullable|integer|min:0|max:240',
-                'requestable' => 'nullable|boolean',
-                'notes' => 'nullable|string|max:65535',
-            ]);
-        } catch (ValidationException $e) {
-            return Response::make(Response::error($e->validator->errors()->first()));
         }
 
         $asset = new Asset;

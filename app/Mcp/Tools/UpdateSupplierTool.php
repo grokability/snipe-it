@@ -5,6 +5,7 @@ namespace App\Mcp\Tools;
 use App\Models\Supplier;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -20,23 +21,14 @@ class UpdateSupplierTool extends Tool
 {
     public function handle(Request $request): ResponseFactory
     {
-        $request->validate([
-            'id' => 'nullable|integer',
-            'name' => 'nullable|string|max:255',
-            'new_name' => 'nullable|string|max:255',
-            'address' => 'nullable|string',
-            'address2' => 'nullable|string',
-            'city' => 'nullable|string',
-            'state' => 'nullable|string',
-            'country' => 'nullable|string',
-            'zip' => 'nullable|string',
-            'phone' => 'nullable|string',
-            'fax' => 'nullable|string',
-            'email' => 'nullable|email',
-            'url' => 'nullable|string',
-            'contact' => 'nullable|string',
-            'notes' => 'nullable|string',
-        ]);
+        try {
+            $request->validate([
+                'id' => 'nullable|integer',
+                'name' => 'nullable|string|max:255',
+            ]);
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
         $supplier = $this->resolveSupplier($request);
 

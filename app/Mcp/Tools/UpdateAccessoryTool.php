@@ -6,6 +6,7 @@ use App\Models\Accessory;
 use App\Models\Company;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -21,24 +22,14 @@ class UpdateAccessoryTool extends Tool
 {
     public function handle(Request $request): ResponseFactory
     {
-        $request->validate([
-            'id' => 'nullable|integer',
-            'name' => 'nullable|string|max:255',
-            'new_name' => 'nullable|string|max:255',
-            'category_id' => 'nullable|integer|exists:categories,id',
-            'qty' => 'nullable|integer|min:0',
-            'model_number' => 'nullable|string|max:255',
-            'manufacturer_id' => 'nullable|integer|exists:manufacturers,id',
-            'supplier_id' => 'nullable|integer|exists:suppliers,id',
-            'location_id' => 'nullable|integer|exists:locations,id',
-            'company_id' => 'nullable|integer|exists:companies,id',
-            'order_number' => 'nullable|string|max:255',
-            'purchase_cost' => 'nullable|numeric|min:0',
-            'purchase_date' => 'nullable|date_format:Y-m-d',
-            'min_amt' => 'nullable|integer|min:0',
-            'requestable' => 'nullable|boolean',
-            'notes' => 'nullable|string',
-        ]);
+        try {
+            $request->validate([
+                'id' => 'nullable|integer',
+                'name' => 'nullable|string|max:255',
+            ]);
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
         $accessory = $this->resolveAccessory($request);
 

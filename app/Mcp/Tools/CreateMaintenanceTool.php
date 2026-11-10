@@ -29,15 +29,6 @@ class CreateMaintenanceTool extends Tool
         try {
             $request->validate([
                 'asset_id' => 'required|integer|exists:assets,id',
-                'title' => 'required|string|max:255',
-                'asset_maintenance_type' => 'nullable|string|max:255',
-                'supplier_id' => 'nullable|integer|exists:suppliers,id',
-                'is_warranty' => 'nullable|boolean',
-                'cost' => 'nullable|numeric|min:0',
-                'start_date' => 'nullable|date_format:Y-m-d',
-                'completion_date' => 'nullable|date_format:Y-m-d',
-                'notes' => 'nullable|string',
-                'user_id' => 'nullable|integer|exists:users,id',
             ]);
         } catch (ValidationException $e) {
             return Response::make(Response::error($e->validator->errors()->first()));

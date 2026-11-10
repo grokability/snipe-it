@@ -6,6 +6,7 @@ use App\Models\Company;
 use App\Models\License;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -21,29 +22,14 @@ class UpdateLicenseTool extends Tool
 {
     public function handle(Request $request): ResponseFactory
     {
-        $request->validate([
-            'id' => 'nullable|integer',
-            'name' => 'nullable|string|max:255',
-            'new_name' => 'nullable|string|max:255',
-            'seats' => 'nullable|integer|min:1',
-            'serial' => 'nullable|string|max:255',
-            'category_id' => 'nullable|integer|exists:categories,id',
-            'manufacturer_id' => 'nullable|integer|exists:manufacturers,id',
-            'supplier_id' => 'nullable|integer|exists:suppliers,id',
-            'company_id' => 'nullable|integer|exists:companies,id',
-            'purchase_date' => 'nullable|date_format:Y-m-d',
-            'purchase_cost' => 'nullable|numeric|min:0',
-            'purchase_order' => 'nullable|string|max:255',
-            'order_number' => 'nullable|string|max:255',
-            'expiration_date' => 'nullable|date_format:Y-m-d',
-            'termination_date' => 'nullable|date_format:Y-m-d',
-            'license_name' => 'nullable|string|max:255',
-            'license_email' => 'nullable|email|max:255',
-            'maintained' => 'nullable|boolean',
-            'reassignable' => 'nullable|boolean',
-            'notes' => 'nullable|string',
-            'min_amt' => 'nullable|integer|min:0',
-        ]);
+        try {
+            $request->validate([
+                'id' => 'nullable|integer',
+                'name' => 'nullable|string|max:255',
+            ]);
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
         $license = $this->resolveLicense($request);
 

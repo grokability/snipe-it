@@ -5,7 +5,6 @@ namespace App\Mcp\Tools;
 use App\Models\Manufacturer;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -23,20 +22,6 @@ class CreateManufacturerTool extends Tool
     {
         if (! Gate::allows('create', Manufacturer::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'url' => 'nullable|string|max:255',
-                'support_url' => 'nullable|string|max:255',
-                'support_email' => 'nullable|email|max:191',
-                'support_phone' => 'nullable|string|max:191',
-                'warranty_lookup_url' => 'nullable|string|max:255',
-                'notes' => 'nullable|string',
-            ]);
-        } catch (ValidationException $e) {
-            return Response::make(Response::error($e->validator->errors()->first()));
         }
 
         $manufacturer = new Manufacturer;

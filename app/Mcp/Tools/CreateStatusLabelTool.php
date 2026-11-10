@@ -27,12 +27,7 @@ class CreateStatusLabelTool extends Tool
 
         try {
             $request->validate([
-                'name' => 'required|string|max:255',
                 'type' => 'required|string|in:deployable,pending,archived,undeployable',
-                'color' => 'nullable|string',
-                'notes' => 'nullable|string',
-                'default_label' => 'nullable|boolean',
-                'show_in_nav' => 'nullable|boolean',
             ]);
         } catch (ValidationException $e) {
             return Response::make(Response::error($e->validator->errors()->first()));

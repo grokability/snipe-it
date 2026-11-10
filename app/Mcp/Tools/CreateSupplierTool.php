@@ -5,7 +5,6 @@ namespace App\Mcp\Tools;
 use App\Models\Supplier;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -23,26 +22,6 @@ class CreateSupplierTool extends Tool
     {
         if (! Gate::allows('create', Supplier::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'address' => 'nullable|string',
-                'address2' => 'nullable|string',
-                'city' => 'nullable|string',
-                'state' => 'nullable|string',
-                'country' => 'nullable|string',
-                'zip' => 'nullable|string',
-                'phone' => 'nullable|string',
-                'fax' => 'nullable|string',
-                'email' => 'nullable|email',
-                'url' => 'nullable|string',
-                'contact' => 'nullable|string',
-                'notes' => 'nullable|string',
-            ]);
-        } catch (ValidationException $e) {
-            return Response::make(Response::error($e->validator->errors()->first()));
         }
 
         $supplier = new Supplier;

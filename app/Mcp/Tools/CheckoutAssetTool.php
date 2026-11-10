@@ -5,6 +5,7 @@ namespace App\Mcp\Tools;
 use App\Models\Asset;
 use App\Models\Location;
 use App\Models\User;
+use App\Services\AssetCheckoutService;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
@@ -20,6 +21,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check out a Snipe-IT asset to a user, location, or another asset')]
 class CheckoutAssetTool extends Tool
 {
+    public function __construct(private readonly AssetCheckoutService $checkoutService) {}
+
     public function handle(Request $request): ResponseFactory
     {
         $request->validate([
@@ -49,34 +52,25 @@ class CheckoutAssetTool extends Tool
         }
 
         $checkoutType = $request->get('checkout_to_type');
-        $target = null;
 
-        if ($checkoutType === 'user') {
-            $target = User::find($request->get('assigned_user'));
-            if ($target) {
-                $asset->location_id = $target->location_id ?? $asset->location_id;
-            }
-        } elseif ($checkoutType === 'location') {
-            $target = Location::find($request->get('assigned_location'));
-            if ($target) {
-                $asset->location_id = $target->id;
-            }
-        } elseif ($checkoutType === 'asset') {
-            $target = Asset::where('id', '!=', $asset->id)->find($request->get('assigned_asset'));
-            if ($target) {
-                $asset->location_id = $target->location_id ?? $asset->location_id;
-            }
-        }
+        $target = match ($checkoutType) {
+            'user' => User::find($request->get('assigned_user')),
+            'location' => Location::find($request->get('assigned_location')),
+            'asset' => Asset::where('id', '!=', $asset->id)->find($request->get('assigned_asset')),
+        };
 
         if (! $target) {
             return Response::make(Response::error(trans('mcp.checkout_target_not_found', ['type' => $checkoutType])));
         }
 
-        $checkoutAt = $request->filled('checkout_at') ? $request->get('checkout_at') : date('Y-m-d H:i:s');
-        $expectedCheckin = $request->filled('expected_checkin') ? $request->get('expected_checkin') : null;
-        $note = $request->filled('note') ? $request->get('note') : null;
-
-        if ($asset->checkOut($target, auth()->user(), $checkoutAt, $expectedCheckin, $note, $asset->name, $asset->location_id)) {
+        if ($this->checkoutService->checkout(
+            $asset,
+            $target,
+            auth()->user(),
+            checkoutAt: $request->filled('checkout_at') ? $request->get('checkout_at') : null,
+            expectedCheckin: $request->filled('expected_checkin') ? $request->get('expected_checkin') : null,
+            note: $request->filled('note') ? $request->get('note') : null,
+        )) {
             return Response::make(
                 Response::text(trans('mcp.asset_checked_out', ['asset_tag' => $asset->asset_tag]))
             )->withStructuredContent([

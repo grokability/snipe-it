@@ -132,7 +132,7 @@ class FmcsCompanyScopingTest extends TestCase
 
         $this->actingAs($this->userInCompanyA);
 
-        $response = (new CheckinAssetTool)->handle(new Request([
+        $response = resolve(CheckinAssetTool::class)->handle(new Request([
             'asset_tag' => $checkedOutAsset->asset_tag,
         ]));
 
@@ -147,7 +147,7 @@ class FmcsCompanyScopingTest extends TestCase
 
         $this->actingAs($this->userInCompanyA);
 
-        $content = (new CheckinAssetTool)->handle(new Request([
+        $content = resolve(CheckinAssetTool::class)->handle(new Request([
             'asset_tag' => $asset->asset_tag,
         ]))->getStructuredContent();
 
@@ -163,7 +163,7 @@ class FmcsCompanyScopingTest extends TestCase
 
         $this->actingAs($this->userInCompanyA);
 
-        $response = (new CheckoutAssetTool)->handle(new Request([
+        $response = resolve(CheckoutAssetTool::class)->handle(new Request([
             'asset_tag' => $this->assetB->asset_tag,
             'checkout_to_type' => 'user',
             'assigned_user' => $user->id,
@@ -179,7 +179,7 @@ class FmcsCompanyScopingTest extends TestCase
 
         $this->actingAs($this->userInCompanyA);
 
-        $content = (new CheckoutAssetTool)->handle(new Request([
+        $content = resolve(CheckoutAssetTool::class)->handle(new Request([
             'asset_tag' => $this->assetA->asset_tag,
             'checkout_to_type' => 'user',
             'assigned_user' => $user->id,

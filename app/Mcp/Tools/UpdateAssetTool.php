@@ -20,29 +20,15 @@ class UpdateAssetTool extends Tool
 {
     public function handle(Request $request): ResponseFactory
     {
-        $request->validate([
-            'asset_tag' => 'nullable|max:100',
-            'serial' => 'nullable|string|max:255',
-            'id' => 'nullable|integer',
-            'name' => 'nullable|string|max:255',
-            'new_asset_tag' => 'nullable|string|max:255',
-            'new_serial' => 'nullable|string|max:255',
-            'status_id' => 'nullable|integer|exists:status_labels,id',
-            'model_id' => 'nullable|integer|exists:models,id',
-            'notes' => 'nullable|string|max:65535',
-            'order_number' => 'nullable|string|max:255',
-            'purchase_date' => 'nullable|date',
-            'purchase_cost' => 'nullable|numeric',
-            'warranty_months' => 'nullable|integer',
-            'location_id' => 'nullable|integer|exists:locations,id',
-            'rtd_location_id' => 'nullable|integer|exists:locations,id',
-            'supplier_id' => 'nullable|integer|exists:suppliers,id',
-            'requestable' => 'nullable|boolean',
-            'byod' => 'nullable|boolean',
-            'asset_eol_date' => 'nullable|date',
-            'expected_checkin' => 'nullable|date',
-            'next_audit_date' => 'nullable|date',
-        ]);
+        try {
+            $request->validate([
+                'asset_tag' => 'nullable|max:255',
+                'serial' => 'nullable|max:255',
+                'id' => 'nullable|integer',
+            ]);
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
         $asset = $this->resolveAsset($request);
 

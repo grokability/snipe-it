@@ -6,7 +6,6 @@ use App\Models\Company;
 use App\Models\Component;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -24,27 +23,6 @@ class CreateComponentTool extends Tool
     {
         if (! Gate::allows('create', Component::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
-        try {
-            $request->validate([
-                'name' => 'required|string|max:191',
-                'category_id' => 'required|integer|exists:categories,id',
-                'qty' => 'required|integer|min:1',
-                'serial' => 'nullable|string|max:255',
-                'model_number' => 'nullable|string|max:255',
-                'manufacturer_id' => 'nullable|integer|exists:manufacturers,id',
-                'supplier_id' => 'nullable|integer|exists:suppliers,id',
-                'location_id' => 'nullable|integer|exists:locations,id',
-                'company_id' => 'nullable|integer|exists:companies,id',
-                'order_number' => 'nullable|string|max:255',
-                'purchase_cost' => 'nullable|numeric|min:0',
-                'purchase_date' => 'nullable|date_format:Y-m-d',
-                'min_amt' => 'nullable|integer|min:0',
-                'notes' => 'nullable|string',
-            ]);
-        } catch (ValidationException $e) {
-            return Response::make(Response::error($e->validator->errors()->first()));
         }
 
         $component = new Component;

@@ -6,7 +6,6 @@ use App\Models\Company;
 use App\Models\Department;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -24,20 +23,6 @@ class CreateDepartmentTool extends Tool
     {
         if (! Gate::allows('create', Department::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'location_id' => 'nullable|integer|exists:locations,id',
-                'company_id' => 'nullable|integer|exists:companies,id',
-                'manager_id' => 'nullable|integer|exists:users,id',
-                'phone' => 'nullable|string|max:255',
-                'fax' => 'nullable|string|max:255',
-                'notes' => 'nullable|string|max:255',
-            ]);
-        } catch (ValidationException $e) {
-            return Response::make(Response::error($e->validator->errors()->first()));
         }
 
         $department = new Department;

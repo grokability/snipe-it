@@ -5,7 +5,6 @@ namespace App\Mcp\Tools;
 use App\Models\Location;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -23,25 +22,6 @@ class CreateLocationTool extends Tool
     {
         if (! Gate::allows('create', Location::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'address' => 'nullable|string',
-                'address2' => 'nullable|string',
-                'city' => 'nullable|string',
-                'state' => 'nullable|string',
-                'country' => 'nullable|string',
-                'zip' => 'nullable|string',
-                'phone' => 'nullable|string|max:255',
-                'fax' => 'nullable|string|max:255',
-                'currency' => 'nullable|string',
-                'parent_id' => 'nullable|integer|exists:locations,id',
-                'manager_id' => 'nullable|integer|exists:users,id',
-            ]);
-        } catch (ValidationException $e) {
-            return Response::make(Response::error($e->validator->errors()->first()));
         }
 
         $location = new Location;
