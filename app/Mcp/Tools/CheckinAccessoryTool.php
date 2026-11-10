@@ -4,7 +4,6 @@ namespace App\Mcp\Tools;
 
 use App\Models\Accessory;
 use App\Models\AccessoryCheckout;
-use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
