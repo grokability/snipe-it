@@ -3,6 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Models\Company;
+use App\Models\Group;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -53,9 +54,14 @@ class CreateUserTool extends Tool
                 'state' => 'nullable|string|max:191',
                 'country' => 'nullable|string|max:191',
                 'zip' => 'nullable|string|max:10',
+                'group_ids' => 'nullable|array',
             ]);
         } catch (ValidationException $e) {
             return Response::make(Response::error($e->validator->errors()->first()));
+        }
+
+        if (User::where('username', $request->get('username'))->exists()) {
+            return Response::make(Response::error(trans('mcp.username_taken', ['username' => $request->get('username')])));
         }
 
         $user = new User;
@@ -77,6 +83,14 @@ class CreateUserTool extends Tool
         }
 
         if ($user->save()) {
+            $groupIds = [];
+            if ($request->filled('group_ids') && auth()->user()->isSuperUser()) {
+                $groupIds = Group::whereIn('id', $request->get('group_ids'))->pluck('id')->all();
+                $user->groups()->sync($groupIds);
+            } elseif ($request->filled('group_ids')) {
+                return Response::make(Response::error(trans('mcp.superadmin_required_for_groups')));
+            }
+
             return Response::make(
                 Response::text(trans('mcp.user_created', ['username' => $user->username]))
             )->withStructuredContent([
@@ -87,6 +101,7 @@ class CreateUserTool extends Tool
                 'email' => $user->email,
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
+                'group_ids' => $groupIds,
             ]);
         }
 
@@ -121,6 +136,7 @@ class CreateUserTool extends Tool
             'state' => $schema->string()->description('State/province'),
             'country' => $schema->string()->description('Country'),
             'zip' => $schema->string()->description('Postal/ZIP code'),
+            'group_ids' => $schema->array()->description('Array of permission group IDs to assign (requires superadmin). Example: [1, 3]'),
         ];
     }
 

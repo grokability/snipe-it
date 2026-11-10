@@ -78,6 +78,7 @@ use App\Mcp\Tools\ListUsersTool;
 use App\Mcp\Tools\Reset2FATool;
 use App\Mcp\Tools\RestoreAssetTool;
 use App\Mcp\Tools\RestoreUserTool;
+use App\Mcp\Tools\SendPasswordResetTool;
 use App\Mcp\Tools\ShowAssetModelTool;
 use App\Mcp\Tools\ShowAssetTool;
 use App\Mcp\Tools\ShowCategoryTool;
@@ -147,6 +148,7 @@ class SnipeMCPServer extends Server
         UpdateProfileTool::class,
         GetUserAssetsTool::class,
         Reset2FATool::class,
+        SendPasswordResetTool::class,
 
         // Accessories
         CreateAccessoryTool::class,

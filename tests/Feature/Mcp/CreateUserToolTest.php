@@ -4,6 +4,7 @@ namespace Tests\Feature\Mcp;
 
 use App\Mcp\Tools\CreateUserTool;
 use App\Models\Department;
+use App\Models\Group;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -167,5 +168,35 @@ class CreateUserToolTest extends TestCase
             'username' => 'blocked.user.mcp',
         ])->responses()->first()->isError());
         $this->assertDatabaseMissing('users', ['username' => 'blocked.user.mcp']);
+    }
+
+    public function test_superadmin_can_assign_group_ids()
+    {
+        $this->actingAs(User::factory()->superuser()->create());
+        $group = Group::factory()->create();
+
+        $content = $this->handle([
+            'first_name' => 'GroupedUser',
+            'username' => 'grouped.user.mcp',
+            'group_ids' => [$group->id],
+        ])->getStructuredContent();
+
+        $this->assertTrue($content['success']);
+        $user = User::where('username', 'grouped.user.mcp')->first();
+        $this->assertNotNull($user);
+        $this->assertTrue($user->groups->contains($group->id));
+    }
+
+    public function test_non_superadmin_cannot_assign_group_ids()
+    {
+        $group = Group::factory()->create();
+
+        $response = $this->handle([
+            'first_name' => 'Denied',
+            'username' => 'denied.groups.mcp',
+            'group_ids' => [$group->id],
+        ]);
+
+        $this->assertTrue($response->responses()->first()->isError());
     }
 }

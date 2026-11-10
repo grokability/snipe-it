@@ -3,6 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Models\Company;
+use App\Models\Group;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -50,6 +51,7 @@ class UpdateUserTool extends Tool
             'state' => 'nullable|string|max:191',
             'country' => 'nullable|string|max:191',
             'zip' => 'nullable|string|max:10',
+            'group_ids' => 'nullable|array',
         ]);
 
         $user = $this->resolveUser($request);
@@ -106,15 +108,28 @@ class UpdateUserTool extends Tool
         }
 
         if ($user->save()) {
-            return Response::make(
-                Response::text(trans('mcp.user_updated', ['username' => $user->username]))
-            )->withStructuredContent([
+            $groupIds = null;
+            if ($request->filled('group_ids') && auth()->user()->isSuperUser()) {
+                $groupIds = Group::whereIn('id', $request->get('group_ids'))->pluck('id')->all();
+                $user->groups()->sync($groupIds);
+            } elseif ($request->filled('group_ids')) {
+                return Response::make(Response::error(trans('mcp.superadmin_required_for_groups')));
+            }
+
+            $content = [
                 'success' => true,
                 'message' => trans('mcp.user_updated', ['username' => $user->username]),
                 'id' => $user->id,
                 'username' => $user->username,
                 'email' => $user->email,
-            ]);
+            ];
+            if ($groupIds !== null) {
+                $content['group_ids'] = $groupIds;
+            }
+
+            return Response::make(
+                Response::text(trans('mcp.user_updated', ['username' => $user->username]))
+            )->withStructuredContent($content);
         }
 
         return Response::make(Response::error(trans('mcp.update_failed', ['error' => $user->getErrors()->first()])));
@@ -166,6 +181,7 @@ class UpdateUserTool extends Tool
             'state' => $schema->string()->description('State/province'),
             'country' => $schema->string()->description('Country'),
             'zip' => $schema->string()->description('Postal/ZIP code'),
+            'group_ids' => $schema->array()->description('Array of permission group IDs to assign (requires superadmin). Replaces all existing group memberships. Example: [1, 3]'),
         ];
     }
 

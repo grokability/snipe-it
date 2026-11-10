@@ -47,7 +47,7 @@ Add the server to your `claude_desktop_config.json`:
 {
   "mcpServers": {
     "snipe-it": {
-      "url": "https://your-snipeit-domain.com/mcp/snipe-it"
+      "url": "https://your-snipeit-domain/mcp/snipe-it"
     }
   }
 }

@@ -4,6 +4,7 @@ namespace Tests\Feature\Mcp;
 
 use App\Mcp\Tools\UpdateUserTool;
 use App\Models\Department;
+use App\Models\Group;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -232,5 +233,53 @@ class UpdateUserToolTest extends TestCase
             'id' => $user->id,
             'first_name' => 'Should Not Update',
         ])->responses()->first()->isError());
+    }
+
+    public function test_superadmin_can_assign_group_ids()
+    {
+        $this->actingAs(User::factory()->superuser()->create());
+        $user = User::factory()->create();
+        $group = Group::factory()->create();
+
+        $content = $this->handle([
+            'id' => $user->id,
+            'group_ids' => [$group->id],
+        ])->getStructuredContent();
+
+        $this->assertTrue($content['success']);
+        $this->assertContains($group->id, $content['group_ids']);
+        $this->assertTrue($user->fresh()->groups->contains($group->id));
+    }
+
+    public function test_non_superadmin_cannot_assign_group_ids()
+    {
+        $user = User::factory()->create();
+        $group = Group::factory()->create();
+
+        $response = $this->handle([
+            'id' => $user->id,
+            'group_ids' => [$group->id],
+        ]);
+
+        $this->assertTrue($response->responses()->first()->isError());
+        $this->assertFalse($user->fresh()->groups->contains($group->id));
+    }
+
+    public function test_group_ids_replaces_existing_groups()
+    {
+        $this->actingAs(User::factory()->superuser()->create());
+        $user = User::factory()->create();
+        $oldGroup = Group::factory()->create();
+        $newGroup = Group::factory()->create();
+        $user->groups()->sync([$oldGroup->id]);
+
+        $this->handle([
+            'id' => $user->id,
+            'group_ids' => [$newGroup->id],
+        ]);
+
+        $freshGroups = $user->fresh()->groups->pluck('id');
+        $this->assertContains($newGroup->id, $freshGroups);
+        $this->assertNotContains($oldGroup->id, $freshGroups);
     }
 }
