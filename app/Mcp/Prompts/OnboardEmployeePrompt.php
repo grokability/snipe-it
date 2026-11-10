@@ -40,12 +40,15 @@ class OnboardEmployeePrompt extends SnipePrompt
 
         Please complete the following onboarding steps using the available tools:
 
-        1. Create a new user account using first_name "{$firstName}" and last_name "{$lastName}" along with the details provided above. Ask for any missing required fields (username and, optionally, email address) before proceeding. Do not ask for a password — one will be set automatically.
+        1. Create a new user account using first_name "{$firstName}" and last_name "{$lastName}" along with the details provided above. Ask for any missing required fields (username and, optionally, email address) before proceeding. Do not ask for a password, one will be set automatically.
         2. If the new account has an email address, ask whether you should send them a password reset link so they can set their own password. Use send_password_reset if the answer is yes.
-        3. Search for available (undeployed) assets suitable for their role — typically a laptop and any other standard equipment for their department or location.
+        3. Search for available (undeployed) assets suitable for their role, typically a laptop and any other standard equipment for their department or location.
         4. Check out the selected assets to the new user.
         5. Check whether any software license seats are available that should be assigned (e.g. productivity suites, VPN, etc.) and assign them.
-        6. Summarise what was set up: the user account created, whether a password reset email was sent, assets checked out, and licenses assigned.
+        6. Verify onboarding completed cleanly by re-running the user lookup from step 1. Confirm the user account exists and is active, every intended asset is now assigned to them, and every intended license seat is now assigned to them. If anything is missing or still unassigned, report it clearly instead of claiming success.
+        7. Summarise what was set up: the user account created, whether a password reset email was sent, assets checked out, licenses assigned, and the verification result from step 6.
+
+        If any assets or license seats cannot be checked out automatically, flag them for manual follow-up and include them explicitly in the verification report.
         TEXT;
 
         return Response::text(trim($prompt).$this->localeInstruction());

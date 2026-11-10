@@ -55,7 +55,7 @@ class CreateAccessoryTool extends Tool
     {
         return [
             'name' => $schema->string()->description('Accessory name (required)'),
-            'category_id' => $schema->number()->description('Category ID — must be an accessory category (required)'),
+            'category_id' => $schema->number()->description('Category ID, must be an accessory category (required)'),
             'qty' => $schema->number()->description('Total quantity in stock'),
             'model_number' => $schema->string()->description('Model number'),
             'manufacturer_id' => $schema->number()->description('Manufacturer ID'),

@@ -55,7 +55,7 @@ class CreateComponentTool extends Tool
     {
         return [
             'name' => $schema->string()->description('Component name (required)'),
-            'category_id' => $schema->number()->description('Category ID — must be a component category (required)'),
+            'category_id' => $schema->number()->description('Category ID, must be a component category (required)'),
             'qty' => $schema->number()->description('Total quantity in stock (required, min 1)'),
             'serial' => $schema->string()->description('Serial number'),
             'model_number' => $schema->string()->description('Model number'),

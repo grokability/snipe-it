@@ -58,7 +58,7 @@ class CreateLicenseTool extends Tool
         return [
             'name' => $schema->string()->description('License name (required)'),
             'seats' => $schema->number()->description('Number of seats (required, min 1)'),
-            'category_id' => $schema->number()->description('Category ID — must be a license category (required)'),
+            'category_id' => $schema->number()->description('Category ID, must be a license category (required)'),
             'serial' => $schema->string()->description('Product key / serial number'),
             'manufacturer_id' => $schema->number()->description('Manufacturer ID'),
             'supplier_id' => $schema->number()->description('Supplier ID'),

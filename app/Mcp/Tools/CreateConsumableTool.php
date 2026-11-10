@@ -53,7 +53,7 @@ class CreateConsumableTool extends Tool
         return [
             'name' => $schema->string()->description('Consumable name (required)'),
             'qty' => $schema->number()->description('Total quantity in stock (required)'),
-            'category_id' => $schema->number()->description('Category ID — must be a consumable category (required)'),
+            'category_id' => $schema->number()->description('Category ID, must be a consumable category (required)'),
             'company_id' => $schema->number()->description('Company ID'),
             'location_id' => $schema->number()->description('Location ID'),
             'manufacturer_id' => $schema->number()->description('Manufacturer ID'),

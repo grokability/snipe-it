@@ -1,6 +1,6 @@
 # Snipe-IT MCP Server
 
-This directory contains the Model Context Protocol (MCP) server implementation for Snipe-IT. It exposes the Snipe-IT asset management database to AI assistants through a standard interface, allowing them to look up assets, manage users, process checkouts and check-ins, and run common IT workflows — all in plain language.
+This directory contains the Model Context Protocol (MCP) server implementation for Snipe-IT. It exposes the Snipe-IT asset management database to AI assistants through a standard interface, allowing them to look up assets, manage users, process checkouts and check-ins, and run common IT workflows, all in plain language.
 
 ## Table of Contents
 
@@ -82,7 +82,7 @@ The server uses **OAuth 2.0 with dynamic client registration**. Clients that sup
 3. The user is redirected to Snipe-IT's login page to authorise access
 4. The client receives a bearer token and uses it for all subsequent requests
 
-The authenticated user's Snipe-IT permissions apply — a user without `delete assets` permission cannot call `delete_asset`, for example.
+The authenticated user's Snipe-IT permissions apply. A user without `delete assets` permission cannot call `delete_asset`, for example.
 
 ---
 
@@ -237,7 +237,7 @@ Shows assets, accessories, license seats, and consumables assigned to the user, 
 
 ## Tools Reference
 
-Tools are individual actions the AI can call directly. They can also be combined freely in conversation without using a prompt — just describe what you want in plain language.
+Tools are individual actions the AI can call directly. They can also be combined freely in conversation without using a prompt, just describe what you want in plain language.
 
 > "Find the MacBook Pro with serial C02XL0AAJGH5 and check it in."
 

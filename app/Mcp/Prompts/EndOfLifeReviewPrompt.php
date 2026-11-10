@@ -38,7 +38,7 @@ class EndOfLifeReviewPrompt extends SnipePrompt
         3. For each identified asset, show: asset tag, name, model, assigned user or location, EOL date, purchase date, and current status.
         4. Group findings by category for easier review.
         5. Recommend disposition for each group: retire and replace, redeploy to a lower-demand role, send for repair, or archive.
-        6. Provide a cost summary if purchase cost data is available — total value of end-of-life assets.
+        6. Provide a cost summary if purchase cost data is available, total value of end-of-life assets.
         TEXT;
 
         return Response::text(trim($prompt).$this->localeInstruction());

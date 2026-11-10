@@ -37,7 +37,7 @@ class InventorySummaryPrompt extends SnipePrompt
         2. Break the deployed count down by asset category (laptops, monitors, phones, etc.).
         3. List the top 5 models by total quantity.
         4. Show total purchase value of the inventory if cost data is available.
-        5. Highlight any categories with zero available (Ready to Deploy) assets — potential stock-out risk.
+        5. Highlight any categories with zero available (Ready to Deploy) assets, potential stock-out risk.
         6. Present the results as a concise executive summary with a supporting breakdown table.
         TEXT;
 
