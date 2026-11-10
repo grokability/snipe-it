@@ -3,15 +3,20 @@
 namespace App\Mcp\Servers;
 
 use App\Mcp\Tools\AuditAssetTool;
+use App\Mcp\Tools\CheckinAccessoryTool;
 use App\Mcp\Tools\CheckinAssetTool;
+use App\Mcp\Tools\CheckoutAccessoryTool;
 use App\Mcp\Tools\CheckoutAssetTool;
+use App\Mcp\Tools\CreateAccessoryTool;
 use App\Mcp\Tools\CreateUserTool;
+use App\Mcp\Tools\DeleteAccessoryTool;
 use App\Mcp\Tools\DeleteAssetTool;
 use App\Mcp\Tools\DeleteUserTool;
 use App\Mcp\Tools\ListAssetsTool;
 use App\Mcp\Tools\ListUsersTool;
 use App\Mcp\Tools\ShowAssetTool;
 use App\Mcp\Tools\ShowUserTool;
+use App\Mcp\Tools\UpdateAccessoryTool;
 use App\Mcp\Tools\UpdateAssetTool;
 use App\Mcp\Tools\UpdateUserTool;
 use Laravel\Mcp\Server;
@@ -37,6 +42,11 @@ class SnipeMCPServer extends Server
         CreateUserTool::class,
         UpdateUserTool::class,
         DeleteUserTool::class,
+        CreateAccessoryTool::class,
+        UpdateAccessoryTool::class,
+        DeleteAccessoryTool::class,
+        CheckoutAccessoryTool::class,
+        CheckinAccessoryTool::class,
     ];
 
     protected array $resources = [

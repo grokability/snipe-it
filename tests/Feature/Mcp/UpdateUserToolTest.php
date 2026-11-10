@@ -209,7 +209,7 @@ class UpdateUserToolTest extends TestCase
         $this->assertDatabaseHas('users', ['id' => $target->id, 'email' => 'superchanged@example.com']);
     }
 
-    public function test_non_auth_fields_are_still_updated_even_without_canEditAuthFields()
+    public function test_non_auth_fields_are_still_updated_even_without_can_edit_auth_fields()
     {
         // A non-admin updating an admin's non-sensitive fields (jobtitle etc.) should still work
         $admin = User::factory()->admin()->create(['jobtitle' => 'Old Title']);
