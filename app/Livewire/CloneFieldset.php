@@ -47,7 +47,7 @@ class CloneFieldset extends Component
         return sprintf(
             '%s: %s',
             trans('admin/custom_fields/general.clone_fieldset'),
-            $this->sourceName !== '' ? $this->sourceName : (CustomFieldset::find($this->id)?->name ?? '')
+            $this->sourceName !== '' ? $this->sourceName : (CustomFieldset::find($this->id)->name ?? '')
         );
     }
 
