@@ -157,4 +157,63 @@ class ListAssetsToolTest extends TestCase
 
         $this->assertTrue($this->handle()->responses()->first()->isError());
     }
+
+    public function test_filters_by_rtd_location_id()
+    {
+        $rtdLocation = Location::factory()->create();
+        $elsewhere = Location::factory()->create();
+        $matching = Asset::factory()->create(['rtd_location_id' => $rtdLocation->id, 'location_id' => $elsewhere->id]);
+        $other = Asset::factory()->create(['rtd_location_id' => $elsewhere->id]);
+
+        $content = $this->handle(['rtd_location_id' => $rtdLocation->id])->getStructuredContent();
+        $ids = array_column($content['assets'], 'id');
+
+        $this->assertContains($matching->id, $ids);
+        $this->assertNotContains($other->id, $ids);
+    }
+
+    public function test_filters_by_supplier_id()
+    {
+        $supplier = \App\Models\Supplier::factory()->create();
+        $matching = Asset::factory()->create(['supplier_id' => $supplier->id]);
+        $other = Asset::factory()->create();
+
+        $content = $this->handle(['supplier_id' => $supplier->id])->getStructuredContent();
+        $ids = array_column($content['assets'], 'id');
+
+        $this->assertContains($matching->id, $ids);
+        $this->assertNotContains($other->id, $ids);
+    }
+
+    public function test_filter_payload_forwards_to_text_search()
+    {
+        $match = Asset::factory()->create(['name' => 'Executive MacBook Pro']);
+        Asset::factory()->create(['name' => 'Generic Laptop']);
+
+        $content = $this->handle(['filter' => ['name' => 'Executive']])->getStructuredContent();
+        $ids = array_column($content['assets'], 'id');
+
+        $this->assertContains($match->id, $ids);
+    }
+
+    public function test_response_includes_lifecycle_fields_and_child_counts()
+    {
+        $asset = Asset::factory()->create([
+            'warranty_months' => 36,
+            'purchase_date' => '2026-01-15',
+        ]);
+
+        $content = $this->handle(['limit' => 500])->getStructuredContent();
+        $row = collect($content['assets'])->firstWhere('id', $asset->id);
+
+        $this->assertNotNull($row);
+        $this->assertArrayHasKey('purchase_date', $row);
+        $this->assertArrayHasKey('warranty_months', $row);
+        $this->assertArrayHasKey('warranty_expires', $row);
+        $this->assertArrayHasKey('asset_eol_date', $row);
+        $this->assertArrayHasKey('licenses_count', $row);
+        $this->assertArrayHasKey('components_count', $row);
+        $this->assertArrayHasKey('maintenances_count', $row);
+        $this->assertArrayHasKey('notes', $row);
+    }
 }

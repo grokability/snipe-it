@@ -136,4 +136,60 @@ class ListUsersToolTest extends TestCase
 
         $this->assertTrue($this->handle()->responses()->first()->isError());
     }
+
+    public function test_excludes_soft_deleted_users_by_default()
+    {
+        User::factory()->create(['username' => 'active-one']);
+        $deleted = User::factory()->create(['username' => 'deleted-one']);
+        $deleted->delete();
+
+        $content = $this->handle(['limit' => 500])->getStructuredContent();
+        $usernames = array_column($content['users'], 'username');
+
+        $this->assertContains('active-one', $usernames);
+        $this->assertNotContains('deleted-one', $usernames);
+    }
+
+    public function test_include_deleted_returns_both_active_and_soft_deleted()
+    {
+        User::factory()->create(['username' => 'active-one']);
+        $deleted = User::factory()->create(['username' => 'deleted-one']);
+        $deleted->delete();
+
+        $content = $this->handle(['include_deleted' => true, 'limit' => 500])->getStructuredContent();
+        $usernames = array_column($content['users'], 'username');
+
+        $this->assertContains('active-one', $usernames);
+        $this->assertContains('deleted-one', $usernames);
+    }
+
+    public function test_only_deleted_returns_soft_deleted_only()
+    {
+        User::factory()->create(['username' => 'active-one']);
+        $deleted = User::factory()->create(['username' => 'deleted-one']);
+        $deleted->delete();
+
+        $content = $this->handle(['only_deleted' => true, 'limit' => 500])->getStructuredContent();
+        $usernames = array_column($content['users'], 'username');
+
+        $this->assertContains('deleted-one', $usernames);
+        $this->assertNotContains('active-one', $usernames);
+    }
+
+    public function test_response_includes_deleted_at_and_child_counts()
+    {
+        User::factory()->create(['username' => 'marker-user']);
+
+        $content = $this->handle(['limit' => 500])->getStructuredContent();
+        $row = collect($content['users'])->firstWhere('username', 'marker-user');
+
+        $this->assertNotNull($row);
+        $this->assertArrayHasKey('deleted_at', $row);
+        $this->assertArrayHasKey('last_login', $row);
+        $this->assertArrayHasKey('assets_count', $row);
+        $this->assertArrayHasKey('licenses_count', $row);
+        $this->assertArrayHasKey('accessories_count', $row);
+        $this->assertArrayHasKey('consumables_count', $row);
+        $this->assertArrayHasKey('notes', $row);
+    }
 }

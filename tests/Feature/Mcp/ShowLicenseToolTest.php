@@ -61,6 +61,11 @@ class ShowLicenseToolTest extends TestCase
 
     public function test_response_includes_key_fields()
     {
+        // License::serial is masked (--------) unless the acting user
+        // has the licenses.keys gate. The default viewLicenses() helper
+        // used in setUp doesn't include it, so this test adds it.
+        $this->actingAs(User::factory()->viewLicenses()->viewKeysLicenses()->create());
+
         $license = License::factory()->create([
             'name' => 'Full Details License',
             'serial' => 'SN-12345',

@@ -79,4 +79,42 @@ class ListConsumablesToolTest extends TestCase
 
         $this->assertTrue($this->handle()->responses()->first()->isError());
     }
+
+    public function test_low_stock_only_returns_only_rows_at_or_below_min_amt()
+    {
+        $healthy = Consumable::factory()->create(['name' => 'Plenty', 'qty' => 100, 'min_amt' => 10]);
+        $low = Consumable::factory()->create(['name' => 'Low', 'qty' => 2, 'min_amt' => 5]);
+
+        $content = $this->handle(['low_stock_only' => true])->getStructuredContent();
+        $names = array_column($content['consumables'], 'name');
+
+        $this->assertContains('Low', $names);
+        $this->assertNotContains('Plenty', $names);
+    }
+
+    public function test_filter_payload_forwards_to_text_search()
+    {
+        $match = Consumable::factory()->create(['name' => 'Toner Cartridge Cyan']);
+        Consumable::factory()->create(['name' => 'Unrelated Item']);
+
+        $content = $this->handle(['filter' => ['name' => 'Toner']])->getStructuredContent();
+        $names = array_column($content['consumables'], 'name');
+
+        $this->assertContains('Toner Cartridge Cyan', $names);
+    }
+
+    public function test_response_includes_qty_min_amt_remaining_and_notes()
+    {
+        Consumable::factory()->create(['name' => 'Response Field Check', 'qty' => 50, 'min_amt' => 5]);
+
+        $content = $this->handle(['limit' => 500])->getStructuredContent();
+        $row = collect($content['consumables'])->firstWhere('name', 'Response Field Check');
+
+        $this->assertNotNull($row);
+        $this->assertSame(50, $row['qty']);
+        $this->assertSame(5, $row['min_amt']);
+        $this->assertArrayHasKey('remaining', $row);
+        $this->assertArrayHasKey('supplier', $row);
+        $this->assertArrayHasKey('notes', $row);
+    }
 }

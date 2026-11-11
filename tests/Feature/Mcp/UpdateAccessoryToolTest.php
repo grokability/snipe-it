@@ -70,12 +70,15 @@ class UpdateAccessoryToolTest extends TestCase
         $location = Location::factory()->create();
         $category = Category::factory()->forAccessories()->create();
 
+        // order_number moved to the Orders table. Swapping it out for
+        // default_purchase_cost here to cover the forwarded legacy
+        // purchase_cost input path.
         $this->handle([
             'id' => $accessory->id,
             'qty' => 20,
             'location_id' => $location->id,
             'category_id' => $category->id,
-            'order_number' => 'ORD-999',
+            'purchase_cost' => 42.50,
             'notes' => 'Updated note',
         ]);
 
@@ -84,7 +87,7 @@ class UpdateAccessoryToolTest extends TestCase
             'qty' => 20,
             'location_id' => $location->id,
             'category_id' => $category->id,
-            'order_number' => 'ORD-999',
+            'default_purchase_cost' => 42.50,
         ]);
     }
 

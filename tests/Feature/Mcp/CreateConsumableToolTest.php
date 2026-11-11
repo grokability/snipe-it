@@ -61,14 +61,14 @@ class CreateConsumableToolTest extends TestCase
         $category = Category::factory()->create(['category_type' => 'consumable']);
         $location = Location::factory()->create();
 
+        // Per-acquisition fields (order_number, purchase_date) moved to
+        // the Orders table. purchase_cost aliases default_purchase_cost.
         $this->handle([
             'name' => 'Full Consumable',
             'qty' => 20,
             'category_id' => $category->id,
             'location_id' => $location->id,
-            'order_number' => 'ORD-CONS-001',
             'purchase_cost' => 9.99,
-            'purchase_date' => '2024-06-01',
             'min_amt' => 5,
             'notes' => 'Test consumable notes',
         ]);
@@ -77,7 +77,7 @@ class CreateConsumableToolTest extends TestCase
             'name' => 'Full Consumable',
             'qty' => 20,
             'location_id' => $location->id,
-            'order_number' => 'ORD-CONS-001',
+            'default_purchase_cost' => 9.99,
             'min_amt' => 5,
         ]);
     }

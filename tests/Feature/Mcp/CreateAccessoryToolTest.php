@@ -54,6 +54,11 @@ class CreateAccessoryToolTest extends TestCase
 
     public function test_creates_accessory_with_optional_fields()
     {
+        // Per-acquisition data (order_number, purchase_date) now lives
+        // on the Orders table rather than the Accessory row, so this
+        // test only covers the fields that still land on accessories.
+        // supplier_id / purchase_cost are accepted as input aliases
+        // that map to default_supplier_id / default_purchase_cost.
         $category = Category::factory()->forAccessories()->create();
         $location = Location::factory()->create();
 
@@ -63,9 +68,7 @@ class CreateAccessoryToolTest extends TestCase
             'qty' => 10,
             'model_number' => 'MN-1234',
             'location_id' => $location->id,
-            'order_number' => 'ORD-001',
             'purchase_cost' => 29.99,
-            'purchase_date' => '2024-01-15',
             'min_amt' => 2,
             'notes' => 'Test notes',
         ]);
@@ -74,7 +77,7 @@ class CreateAccessoryToolTest extends TestCase
             'name' => 'Full Accessory',
             'model_number' => 'MN-1234',
             'location_id' => $location->id,
-            'order_number' => 'ORD-001',
+            'default_purchase_cost' => 29.99,
             'min_amt' => 2,
         ]);
     }

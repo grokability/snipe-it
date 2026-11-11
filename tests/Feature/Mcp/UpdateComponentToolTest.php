@@ -70,12 +70,14 @@ class UpdateComponentToolTest extends TestCase
         $location = Location::factory()->create();
         $category = Category::factory()->forComponents()->create();
 
+        // order_number moved to the Orders table. Covering the
+        // forwarded legacy purchase_cost input path instead.
         $this->handle([
             'id' => $component->id,
             'qty' => 25,
             'location_id' => $location->id,
             'category_id' => $category->id,
-            'order_number' => 'ORD-COMP-999',
+            'purchase_cost' => 123.45,
             'notes' => 'Updated component note',
         ]);
 
@@ -84,7 +86,7 @@ class UpdateComponentToolTest extends TestCase
             'qty' => 25,
             'location_id' => $location->id,
             'category_id' => $category->id,
-            'order_number' => 'ORD-COMP-999',
+            'default_purchase_cost' => 123.45,
         ]);
     }
 

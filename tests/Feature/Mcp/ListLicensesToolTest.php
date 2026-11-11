@@ -117,4 +117,44 @@ class ListLicensesToolTest extends TestCase
 
         $this->assertTrue($this->handle()->responses()->first()->isError());
     }
+
+    public function test_expiring_within_days_filters_to_license_window()
+    {
+        $soon = License::factory()->create(['name' => 'Soon', 'expiration_date' => now()->addDays(10)->toDateString()]);
+        $later = License::factory()->create(['name' => 'Later', 'expiration_date' => now()->addDays(90)->toDateString()]);
+
+        $content = $this->handle(['expiring_within_days' => 30])->getStructuredContent();
+        $names = array_column($content['licenses'], 'name');
+
+        $this->assertContains('Soon', $names);
+        $this->assertNotContains('Later', $names);
+    }
+
+    public function test_filter_payload_forwards_to_text_search()
+    {
+        $match = License::factory()->create(['name' => 'Office Enterprise 365']);
+        License::factory()->create(['name' => 'Unrelated License']);
+
+        $content = $this->handle(['filter' => ['name' => 'Office']])->getStructuredContent();
+        $names = array_column($content['licenses'], 'name');
+
+        $this->assertContains('Office Enterprise 365', $names);
+    }
+
+    public function test_response_includes_lifecycle_fields_and_notes()
+    {
+        $license = License::factory()->create(['name' => 'Marker License', 'seats' => 25]);
+
+        $content = $this->handle(['limit' => 500])->getStructuredContent();
+        $row = collect($content['licenses'])->firstWhere('name', 'Marker License');
+
+        $this->assertNotNull($row);
+        $this->assertArrayHasKey('seats', $row);
+        $this->assertArrayHasKey('free_seats', $row);
+        $this->assertArrayHasKey('expiration_date', $row);
+        $this->assertArrayHasKey('termination_date', $row);
+        $this->assertArrayHasKey('maintained', $row);
+        $this->assertArrayHasKey('reassignable', $row);
+        $this->assertArrayHasKey('notes', $row);
+    }
 }

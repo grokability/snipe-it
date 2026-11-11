@@ -58,6 +58,10 @@ class CreateComponentToolTest extends TestCase
         $category = Category::factory()->forComponents()->create();
         $location = Location::factory()->create();
 
+        // Per-acquisition fields (order_number, purchase_date) moved to
+        // the Orders table and no longer land on the components row.
+        // purchase_cost is accepted as an input alias mapping to
+        // default_purchase_cost on the parent.
         $this->handle([
             'name' => 'Full Component',
             'category_id' => $category->id,
@@ -65,9 +69,7 @@ class CreateComponentToolTest extends TestCase
             'serial' => 'SN-COMP-001',
             'model_number' => 'MN-5678',
             'location_id' => $location->id,
-            'order_number' => 'ORD-COMP-001',
             'purchase_cost' => 49.99,
-            'purchase_date' => '2024-03-01',
             'min_amt' => 3,
             'notes' => 'Component notes',
         ]);
@@ -77,7 +79,7 @@ class CreateComponentToolTest extends TestCase
             'serial' => 'SN-COMP-001',
             'model_number' => 'MN-5678',
             'location_id' => $location->id,
-            'order_number' => 'ORD-COMP-001',
+            'default_purchase_cost' => 49.99,
             'min_amt' => 3,
         ]);
     }
