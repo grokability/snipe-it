@@ -94,8 +94,8 @@ class CustomFieldCastsTest extends TestCase
         $this->assertTrue($asset->hasSkippedEncryptedCustomFields());
         $this->assertSame($original, $asset->getAttributes()[$column]);
         $this->assertFalse($asset->isDirty($column));
-        $this->assertSame('********', $asset->{$column});
-        $this->assertSame('********', $asset->toArray()[$column]);
+        $this->assertSame('original secret', $asset->{$column});
+        $this->assertSame('original secret', $asset->toArray()[$column]);
     }
 
     public function test_changing_the_assignment_rebuilds_the_casts_and_fieldset(): void

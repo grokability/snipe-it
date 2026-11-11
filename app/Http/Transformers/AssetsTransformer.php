@@ -17,6 +17,27 @@ use Illuminate\Support\Facades\Storage;
 
 class AssetsTransformer
 {
+    /**
+     * Preserve the flat create/update payload while enforcing encrypted-field visibility.
+     *
+     * @return array<string, mixed>
+     */
+    public function transformAssetForWrite(Asset $asset): array
+    {
+        $attributes = $asset->toArray();
+        if (Gate::allows('assets.view.encrypted_custom_fields')) {
+            return $attributes;
+        }
+
+        foreach ($asset->custom_fieldset->fields ?? [] as $field) {
+            if ($field->isFieldDecryptable($attributes[$field->db_column] ?? null)) {
+                $attributes[$field->db_column] = strtoupper(trans('admin/custom_fields/general.encrypted'));
+            }
+        }
+
+        return $attributes;
+    }
+
     public function transformAssets(Collection $assets, $total)
     {
         $array = [];

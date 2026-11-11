@@ -853,6 +853,7 @@ class StoreAssetTest extends TestCase
                 'asset_tag' => '1234',
             ])
             ->assertStatusMessageIs('success')
+            ->assertJsonPath('payload.'.$field->db_column_name(), 'This is encrypted field')
             ->assertOk()
             ->json();
 
@@ -902,7 +903,6 @@ class StoreAssetTest extends TestCase
         $fields = [$alphaField, $numericField, $emailField];
         $superuser = User::factory()->superuser()->create();
         $assetData = Asset::factory()->hasMultipleCustomFields($fields)->make();
-        $cleaned_name = trim(preg_replace('/_+|snipeit|\d+/', ' ', $alphaField->db_column_name()));
 
         $response = $this->actingAsForApi($superuser)
             ->postJson(route('api.assets.store'), [
@@ -912,7 +912,7 @@ class StoreAssetTest extends TestCase
                 'asset_tag' => '1234',
             ])
             ->assertStatusMessageIs('error')
-            ->assertJsonPath('messages.'.$alphaField->db_column_name(), [trans('validation.alpha', ['attribute' => $cleaned_name])])
+            ->assertJsonPath('messages.'.$alphaField->db_column_name(), [trans('validation.alpha', ['attribute' => $alphaField->name])])
             ->assertOk()
             ->json();
     }

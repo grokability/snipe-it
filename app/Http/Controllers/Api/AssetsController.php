@@ -884,7 +884,7 @@ class AssetsController extends Controller
                 ? trans('admin/hardware/message.create.success_no_checkout')
                 : trans('admin/hardware/message.create.success');
 
-            return response()->json(Helper::formatStandardApiResponse('success', $asset, $message));
+            return response()->json(Helper::formatStandardApiResponse('success', (new AssetsTransformer)->transformAssetForWrite($asset), $message));
 
             // below is what we want the _eventual_ return to look like - in a more standardized format.
             // return response()->json(Helper::formatStandardApiResponse('success', (new AssetsTransformer)->transformAsset($asset), trans('admin/hardware/message.create.success')));
@@ -1015,7 +1015,7 @@ class AssetsController extends Controller
      * response body. Used by update() (default shape) and by buildRowResult()
      * to shape each row of a bulk response.
      *
-     * Kept as a flat asset payload (not through AssetsTransformer) so the
+     * Kept as a flat asset payload through AssetsTransformer so the
      * response continues to match the shape existing integrations rely on.
      */
     private function formatSingleAssetResponse(array $result): array
@@ -1028,7 +1028,7 @@ class AssetsController extends Controller
             return Helper::formatStandardApiResponse('error', null, $result['errors']);
         }
 
-        return Helper::formatStandardApiResponse('success', $result['asset'], trans($result['message']));
+        return Helper::formatStandardApiResponse('success', (new AssetsTransformer)->transformAssetForWrite($result['asset']), trans($result['message']));
     }
 
     /**

@@ -62,7 +62,7 @@ class CustomFieldCompositionDirectModel extends CustomFieldCompositionModel
 {
     use HasAndValidatesCustomFields, ValidatingTrait {
         HasAndValidatesCustomFields::getRules insteadof ValidatingTrait;
-        HasAndValidatesCustomFields::getModelAttributes insteadof ValidatingTrait;
+        HasAndValidatesCustomFields::getValidationAttributeNames insteadof ValidatingTrait;
     }
 }
 
@@ -75,7 +75,7 @@ class CustomFieldCompositionWrappedModel extends CustomFieldCompositionModel
 {
     use HasAndValidatesCustomFields, SeparateWatsonValidation {
         HasAndValidatesCustomFields::getRules insteadof SeparateWatsonValidation;
-        HasAndValidatesCustomFields::getModelAttributes insteadof SeparateWatsonValidation;
+        HasAndValidatesCustomFields::getValidationAttributeNames insteadof SeparateWatsonValidation;
     }
 }
 

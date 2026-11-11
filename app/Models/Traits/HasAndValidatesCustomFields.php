@@ -5,8 +5,8 @@ namespace App\Models\Traits;
 use App\Casts\SnipeBoolean;
 use App\Casts\SnipeCrypt;
 use App\Casts\SnipeFlattenArray;
-use App\Models\CustomFieldset;
 use App\Models\CustomFieldDefault;
+use App\Models\CustomFieldset;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -21,7 +21,7 @@ trait HasAndValidatesCustomFields
 {
     use ValidatingTrait {
         getRules as getWatsonRules;
-        getModelAttributes as protected getWatsonModelAttributes;
+        getValidationAttributeNames as protected getWatsonValidationAttributeNames;
     }
 
     public static function bootHasAndValidatesCustomFields(): void
@@ -61,7 +61,9 @@ trait HasAndValidatesCustomFields
 
     public function getRules(): array
     {
-        return $this->getWatsonRules() + ($this->custom_fieldset?->validation_rules() ?? []);
+        $rules = $this->getWatsonRules();
+
+        return array_merge($rules, $this->custom_fieldset?->validation_rules($this) ?? []);
     }
 
     /**
@@ -134,39 +136,37 @@ trait HasAndValidatesCustomFields
     /** @var array<string, string>|null */
     protected ?array $customFieldCastCache = null;
 
-    protected ?string $cachedCustomFieldDependencyValue = null;
+    protected int|string|null $cachedCustomFieldDependencyValue = null;
 
     /** @return array<string, string> */
     public function getCasts(): array
     {
-        $casts = parent::getCasts();
         if ($this->resolvingCustomFieldCasts) {
-            return $casts;
+            return parent::getCasts();
         }
-
-        $this->resolvingCustomFieldCasts = true;
-
         try {
-            $attribute = $this->customFieldsetDependencyAttribute();
-            $rawValue = $this->attributes[$attribute] ?? null;
-            $value = $rawValue === null ? null : (string) $rawValue;
+            // we *have* to start this variable _here_ because the customFieldsetDependencyAttribute might do a recursive getCasts()
+            $this->resolvingCustomFieldCasts = true;
+            $value = $this->attributes[$this->customFieldsetDependencyAttribute()] ?? null;
 
-            if ($this->customFieldCastCache === null || $value !== $this->cachedCustomFieldDependencyValue) {
-                if ($this->customFieldCastCache !== null) {
-                    $this->unsetRelation('custom_fieldset');
-                }
-
-                if (! $this->relationLoaded('custom_fieldset')) {
-                    $fieldset = $value === null ? null : $this->custom_fieldset()->with('fields')->first();
-                    $this->setRelation('custom_fieldset', $fieldset);
-                }
-
-                $fieldset = $this->getRelation('custom_fieldset');
-                $this->customFieldCastCache = $this->castsForCustomFieldset($fieldset);
-                $this->cachedCustomFieldDependencyValue = $value;
+            if ($this->customFieldCastCache !== null && $value === $this->cachedCustomFieldDependencyValue) {
+                return parent::getCasts() + $this->customFieldCastCache;
             }
 
-            return array_merge($casts, $this->customFieldCastCache);
+            if ($this->customFieldCastCache === null && $this->relationLoaded('custom_fieldset')) {
+                // "First-Run" - if the relation is preloaded, and the customFieldCastCache is *null*,
+                // then read the fieldset directly off of the relation
+                $fieldset = $this->getRelation('custom_fieldset');
+            } else {
+                // we can *only* do a lookup when the fieldset-discriminator isn't null
+                $fieldset = is_null($value) ? null : $this->custom_fieldset()->with('fields')->first();
+                $this->setRelation('custom_fieldset', $fieldset);
+            }
+
+            $this->customFieldCastCache = $this->castsForCustomFieldset($fieldset);
+            $this->cachedCustomFieldDependencyValue = $value;
+
+            return parent::getCasts() + $this->customFieldCastCache;
         } finally {
             $this->resolvingCustomFieldCasts = false;
         }
@@ -204,16 +204,14 @@ trait HasAndValidatesCustomFields
         return $casts;
     }
 
-    /** @return array<string, mixed> */
-    public function getModelAttributes(): array
+    /** @return array<string, string> */
+    public function getValidationAttributeNames(): array
     {
-        $attributes = $this->getWatsonModelAttributes();
-        foreach ($this->getCasts() as $key => $cast) {
-            if ($cast === SnipeCrypt::class && array_key_exists($key, $this->attributes)) {
-                $attributes[$key] = $this->attributes[$key];
-            }
+        $attributeNames = $this->getWatsonValidationAttributeNames();
+        foreach ($this->custom_fieldset->fields ?? [] as $field) {
+            $attributeNames[$field->db_column] ??= $field->name;
         }
 
-        return $attributes;
+        return $attributeNames;
     }
 }

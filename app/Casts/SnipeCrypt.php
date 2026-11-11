@@ -4,9 +4,7 @@ namespace App\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Gate;
 
 class SnipeCrypt implements CastsAttributes
 {
@@ -22,10 +20,6 @@ class SnipeCrypt implements CastsAttributes
     {
         if ($value === null || $value === '') {
             return $value;
-        }
-
-        if (Auth::check() && Gate::denies('assets.view.encrypted_custom_fields')) {
-            return '********';
         }
 
         try {
