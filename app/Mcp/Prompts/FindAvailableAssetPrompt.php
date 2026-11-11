@@ -32,7 +32,7 @@ class FindAvailableAssetPrompt extends SnipePrompt
         $prompt = <<<TEXT
         You need to find an available (undeployed) asset matching {$assetDescription}.
 
-        Please complete the following steps using the available tools:
+        Steps:
 
         1. Search for assets with a Ready-to-Deploy status that match the requested {$assetDescription}.
         2. If multiple options are available, list them with their asset tags, serial numbers, and any relevant details so the best one can be selected.

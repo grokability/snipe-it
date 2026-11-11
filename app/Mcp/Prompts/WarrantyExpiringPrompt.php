@@ -21,7 +21,7 @@ class WarrantyExpiringPrompt extends SnipePrompt
         $prompt = <<<TEXT
         You are reviewing assets whose warranty is expiring soon. Focus on assets expiring within {$days} days.
 
-        Please complete the following steps using the available tools:
+        Steps:
 
         1. List assets and filter for those whose warranty expiration date (calculated from purchase_date + warranty_months) falls within the next {$days} days.
         2. For each asset, show: asset tag, name, model, assigned user or location, purchase date, warranty months, and calculated warranty end date.

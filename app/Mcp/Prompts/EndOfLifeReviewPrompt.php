@@ -31,7 +31,7 @@ class EndOfLifeReviewPrompt extends SnipePrompt
         $prompt = <<<TEXT
         You are conducting an end-of-life and depreciation review. {$scopeLine}
 
-        Please complete the following steps using the available tools:
+        Steps:
 
         1. List assets that have passed their asset_eol_date (end-of-life date is in the past).
         2. List assets that are fully depreciated based on their depreciation schedule and purchase date.

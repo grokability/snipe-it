@@ -31,7 +31,7 @@ class InventorySummaryPrompt extends SnipePrompt
         $prompt = <<<TEXT
         You are generating an inventory summary report. {$scopeLine}
 
-        Please complete the following steps using the available tools:
+        Steps:
 
         1. List assets (filtered by the scope above if provided) and tally counts by status: Deployed, Ready to Deploy, Archived, Pending, Out for Repair.
         2. Break the deployed count down by asset category (laptops, monitors, phones, etc.).

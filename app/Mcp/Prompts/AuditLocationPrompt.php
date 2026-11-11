@@ -21,7 +21,7 @@ class AuditLocationPrompt extends SnipePrompt
         $prompt = <<<TEXT
         You are conducting an asset audit for location: {$location}.
 
-        Please complete the following steps using the available tools:
+        Steps:
 
         1. Find the location record for "{$location}" (search by name if needed).
         2. List all assets currently assigned to or located at that location.

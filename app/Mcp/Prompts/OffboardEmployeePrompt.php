@@ -21,18 +21,15 @@ class OffboardEmployeePrompt extends SnipePrompt
         $prompt = <<<TEXT
         You are helping offboard a departing employee with username: {$username}.
 
-        Please complete the following offboarding steps using the available tools:
+        Offboarding is a destructive, multi-step operation. The offboard_user tool executes the whole flow atomically so you do NOT need to invoke checkin / update tools one by one. Follow this sequence:
 
-        1. Look up the user account for {$username} and display a summary of everything currently assigned to them (assets, licenses, accessories, consumables), plus any users or locations that list this user as their manager.
-        2. Check in all assigned assets from this user.
-        3. Check in all assigned accessories from this user.
-        4. Revoke or check in any license seats assigned to this user.
-        5. For every user that lists {$username} as their manager, clear the manager reference (set manager_id to null). Do the same for every location that lists {$username} as its manager. Leaving these pointers in place would orphan references to a deactivated account.
-        6. Deactivate the user account.
-        7. Verify offboarding completed cleanly by re-running the lookups from step 1. Confirm the user has no remaining assigned assets, accessories, license seats, or consumables, and that no users or locations still reference them as manager. If anything is still assigned or still references them, report it clearly instead of claiming success.
-        8. Provide a final summary of all items that were checked in, all users and locations that had their manager cleared, the verification result from step 7, and confirmation that the account has been deactivated.
+        1. Call the offboard_user tool with username="{$username}" and dry_run=true. This returns a preview of every asset, accessory, license seat, managed user, and managed location that would change, plus confirmation that the user account will be soft-deleted.
+        2. If the tool returns ambiguous_user instead of a preview (more than one user matches a provided name), present the match list to the admin and ask them which user to proceed with. Call the tool again with that user's exact username.
+        3. Present the preview to the admin in plain language. Walk them through what will be checked in, what manager references will be cleared, and that the account will be soft-deleted (removed from active user lists while preserving history). Ask them to explicitly confirm before proceeding.
+        4. If the admin confirms, call the offboard_user tool again with the same username and dry_run=false. The tool wraps every change in a single DB transaction, so partial failures roll back cleanly.
+        5. Relay the completion summary to the admin. If the tool reports any failures, surface them exactly as returned so the admin can follow up manually.
 
-        If any items cannot be checked in automatically or any manager references cannot be cleared, flag them for manual follow-up and include them explicitly in the verification report.
+        Do not attempt to orchestrate the individual checkins yourself even if the tool fails, the atomic tool is the single supported entry point and a manual half-finished run would be harder to recover from.
         TEXT;
 
         return Response::text(trim($prompt).$this->localeInstruction());

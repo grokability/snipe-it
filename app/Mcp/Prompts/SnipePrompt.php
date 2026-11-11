@@ -19,6 +19,6 @@ abstract class SnipePrompt extends Prompt
             return '';
         }
 
-        return "\n\nPlease respond in the language that corresponds to locale: {$locale}.";
+        return "\n\nRespond in the language that corresponds to locale: {$locale}.";
     }
 }

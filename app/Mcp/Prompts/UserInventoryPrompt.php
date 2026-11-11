@@ -21,7 +21,7 @@ class UserInventoryPrompt extends SnipePrompt
         $prompt = <<<TEXT
         You are pulling a complete inventory of everything assigned to the user: {$username}.
 
-        Please complete the following steps using the available tools:
+        Steps:
 
         1. Look up the user account for {$username} and display their basic info (name, department, location, job title).
         2. List all assets currently checked out to this user (asset tag, name, model, serial, status).

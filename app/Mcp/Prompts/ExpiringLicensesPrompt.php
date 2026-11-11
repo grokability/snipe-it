@@ -21,7 +21,7 @@ class ExpiringLicensesPrompt extends SnipePrompt
         $prompt = <<<TEXT
         You are reviewing software license health across the organisation. Focus on licenses expiring within {$days} days.
 
-        Please complete the following steps using the available tools:
+        Steps:
 
         1. List all licenses in the system.
         2. Identify licenses whose expiration date falls within the next {$days} days.

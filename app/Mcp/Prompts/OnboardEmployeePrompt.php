@@ -22,8 +22,6 @@ class OnboardEmployeePrompt extends SnipePrompt
         $location = $request->get('location');
         $title = $request->get('title');
 
-        $fullName = trim("{$firstName} {$lastName}");
-
         $context = collect([
             $department ? "Department: {$department}" : null,
             $location ? "Location: {$location}" : null,
@@ -38,15 +36,17 @@ class OnboardEmployeePrompt extends SnipePrompt
         - Last name: {$lastName}
         {$context}
 
-        Please complete the following onboarding steps using the available tools:
+        Onboarding steps:
 
-        1. Create a new user account using first_name "{$firstName}" and last_name "{$lastName}" along with the details provided above. Ask for any missing required fields (username and, optionally, email address) before proceeding. Do not ask for a password, one will be set automatically.
-        2. If the new account has an email address, ask whether you should send them a password reset link so they can set their own password. Use send_password_reset if the answer is yes.
-        3. Search for available (undeployed) assets suitable for their role, typically a laptop and any other standard equipment for their department or location.
-        4. Check out the selected assets to the new user.
-        5. Check whether any software license seats are available that should be assigned (e.g. productivity suites, VPN, etc.) and assign them.
-        6. Verify onboarding completed cleanly by re-running the user lookup from step 1. Confirm the user account exists and is active, every intended asset is now assigned to them, and every intended license seat is now assigned to them. If anything is missing or still unassigned, report it clearly instead of claiming success.
-        7. Summarise what was set up: the user account created, whether a password reset email was sent, assets checked out, licenses assigned, and the verification result from step 6.
+        1. Determine a username for the new account. First call list_users with a limit of 5 and look at the existing username patterns (firstname.lastname, firstinitial+last, employee number, email-style, etc). Propose a username that matches the dominant convention in this install. Confirm it with the admin before creating the account. If they want something different, use what they say.
+        2. Ask the admin for an email address if one was not supplied, and ask whether a password reset link should be sent to it after the account is created.
+        3. Create the user account using the confirmed username, first_name "{$firstName}", last_name "{$lastName}", and any other details provided above. Do not ask for a password, one will be set automatically. If create_user reports a conflict on the username, propose a disambiguated variant (append an initial, a number, etc) and confirm again before retrying.
+        4. If the admin said yes in step 2 and the account has an email address, call send_password_reset.
+        5. Search for available (undeployed) assets suitable for their role, typically a laptop and any other standard equipment for their department or location.
+        6. Check out the selected assets to the new user.
+        7. Check whether any software license seats are available that should be assigned (e.g. productivity suites, VPN, etc.) and assign them.
+        8. Verify onboarding completed cleanly by re-running the user lookup from step 3. Confirm the user account exists (not soft-deleted), every intended asset is now assigned to them, and every intended license seat is now assigned to them. Do not confuse the `activated` flag with employment status, it only controls login access and many orgs never set it. If anything is missing or still unassigned, report it clearly instead of claiming success.
+        9. Summarise what was set up: the user account created, whether a password reset email was sent, assets checked out, licenses assigned, and the verification result from step 8.
 
         If any assets or license seats cannot be checked out automatically, flag them for manual follow-up and include them explicitly in the verification report.
         TEXT;
