@@ -164,48 +164,7 @@ class AssetsTransformer
             'last_seen' => ($asset->externalSource?->last_seen) ? Helper::getFormattedDateObject($asset->externalSource->last_seen, 'datetime') : null,
         ];
 
-        if (($asset->custom_fieldset) && ($asset->custom_fieldset->fields->count() > 0)) {
-            $fields_array = [];
-
-            foreach ($asset->custom_fieldset->fields as $field) { // TODO - what about this one?
-                if ($field->isFieldDecryptable($asset->{$field->db_column})) {
-                    $value = (Gate::allows('assets.view.encrypted_custom_fields')) ? $asset->{$field->db_column} : strtoupper(trans('admin/custom_fields/general.encrypted'));
-
-                    if ($field->format == 'DATE' || $field->format == 'DATETIME') {
-                        if (Gate::allows('assets.view.encrypted_custom_fields')) {
-                            $value = Helper::getFormattedDateObject($value, $field->format == 'DATETIME' ? 'datetime' : 'date', false);
-                        } else {
-                            $value = strtoupper(trans('admin/custom_fields/general.encrypted'));
-                        }
-                    }
-
-                    $fields_array[$field->name] = [
-                        'field' => e($field->db_column),
-                        'value' => ($field->element == 'markdown-textarea' && Gate::allows('assets.view.encrypted_custom_fields')) ? Helper::renderMarkdown($value) : e($value),
-                        'field_format' => $field->format,
-                        'element' => $field->element,
-                    ];
-
-                } else {
-                    $value = $asset->{$field->db_column};
-
-                    if ((in_array($field->format, ['DATE', 'DATETIME'])) && (! is_null($value)) && ($value != '')) {
-                        $value = Helper::getFormattedDateObject($value, $field->format == 'DATETIME' ? 'datetime' : 'date', false);
-                    }
-
-                    $fields_array[$field->name] = [
-                        'field' => e($field->db_column),
-                        'value' => ($field->element == 'markdown-textarea') ? Helper::renderMarkdown($value) : e($value),
-                        'field_format' => $field->format,
-                        'element' => $field->element,
-                    ];
-                }
-
-                $array['custom_fields'] = $fields_array;
-            }
-        } else {
-            $array['custom_fields'] = new \stdClass; // HACK to force generation of empty object instead of empty list
-        }
+        $array['custom_fields'] = (new CustomFieldValuesTransformer)->transform($asset) ?: new \stdClass; // HACK to force generation of empty object instead of empty list
 
         $permissions_array['available_actions'] = [
             'checkout' => ($asset->deleted_at == '' && Gate::allows('checkout', $asset)) ? true : false,
@@ -359,24 +318,13 @@ class AssetsTransformer
             'assigned_to_self' => ($asset->assigned_to == auth()->id()),
         ];
 
-        if (($asset->custom_fieldset) && ($asset->custom_fieldset->fields->count() > 0)) {
-            $fields_array = [];
-
-            foreach ($asset->custom_fieldset->fields as $field) { //Hrm? TODO
-
-                // Only display this if it's allowed via the custom field setting
-                if (($field->field_encrypted == '0') && ($field->show_in_requestable_list == '1')) {
-
-                    $value = $asset->{$field->db_column};
-                    if ((in_array($field->format, ['DATE', 'DATETIME'])) && (! is_null($value)) && ($value != '')) {
-                        $value = Helper::getFormattedDateObject($value, $field->format == 'DATETIME' ? 'datetime' : 'date', false);
-                    }
-
-                    $fields_array[$field->db_column] = ($field->element == 'markdown-textarea') ? Helper::renderMarkdown($value) : e($value);
-                }
-
-                $array['custom_fields'] = $fields_array;
-            }
+        if ($asset->custom_fieldset && $asset->custom_fieldset->fields->isNotEmpty()) {
+            $array['custom_fields'] = (new CustomFieldValuesTransformer)->transform(
+                $asset,
+                includeEncrypted: false,
+                filterFieldExpression: 'show_in_requestable_list',
+                valuesOnly: true,
+            );
         } else {
             $array['custom_fields'] = new \stdClass; // HACK to force generation of empty object instead of empty list
         }

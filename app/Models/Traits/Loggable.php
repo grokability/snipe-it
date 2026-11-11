@@ -17,6 +17,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -172,21 +173,10 @@ trait Loggable
             $log->location_id = $target->location_id;
         }
 
-        if (static::class == Asset::class) {
-            if ($asset = Asset::find($log->item_id)) {
-
-                // add the custom fields that were changed
-                if ($asset->custom_fieldset) {
-                    $fields_array = [];
-                    /**
-                     * Keep logging values in their current raw storage form. Property access
-                     * can decrypt or mask encrypted fields; getRawOriginal() can miss pending changes.
-                     */
-                    foreach ($asset->custom_fieldset->fields->where('display_checkout', '1') as $field) {
-                        $fields_array[$field->db_column] = $asset->getAttributes()[$field->db_column] ?? null;
-                    }
-                }
-            }
+        if (in_array(HasAndValidatesCustomFields::class, class_uses_recursive(static::class), true)) {
+            $item = static::whereKey($log->item_id)->first();
+            // add the custom fields that were changed
+            $fields_array = $this->customFieldValuesForLog($item, 'display_checkout');
         }
 
         $log->note = $note;
@@ -294,23 +284,15 @@ trait Loggable
             $log->item_type = static::class;
             $log->item_id = $this->id;
 
-            if (static::class == Asset::class) {
-                if ($asset = Asset::find($log->item_id)) {
-                    $asset->increment('checkin_counter', 1);
+            if (in_array(HasAndValidatesCustomFields::class, class_uses_recursive(static::class), true)) {
+                $item = static::whereKey($log->item_id)->first();
+                if ($item !== null) {
+                    if (static::class == Asset::class) {
+                        $item->increment('checkin_counter', 1);
+                    }
 
                     // add the custom fields that were changed
-                    if ($asset->custom_fieldset) {
-                        $fields_array = [];
-                        /**
-                         * Keep logging values in their current raw storage form. Property access
-                         * can decrypt or mask encrypted fields; getRawOriginal() can miss pending changes.
-                         */
-                        foreach ($asset->custom_fieldset->fields->where('display_checkin', 1) as $field) {
-                            if ($field->display_checkin == 1) {
-                                $fields_array[$field->db_column] = $asset->getAttributes()[$field->db_column] ?? null;
-                            }
-                        }
-                    }
+                    $fields_array = $this->customFieldValuesForLog($item, 'display_checkin');
                 }
             }
         }
@@ -381,6 +363,24 @@ trait Loggable
         return $log;
     }
 
+    /** @return array<string, mixed> */
+    protected function customFieldValuesForLog(?Model $item, string $filter): array
+    {
+        if ($item === null || ! in_array(HasAndValidatesCustomFields::class, class_uses_recursive($item), true)) {
+            return [];
+        }
+
+        $values = [];
+        $attributes = $item->getAttributes();
+        foreach ($item->custom_fieldset->fields ?? [] as $field) {
+            if ($field->{$filter}) {
+                $values[$field->db_column] = $attributes[$field->db_column] ?? null;
+            }
+        }
+
+        return $values;
+    }
+
     /**
      * @author A. Gianotto <snipe@snipe.net>
      *
@@ -393,17 +393,7 @@ trait Loggable
 
         $log = new Actionlog;
 
-        $fields_array = [];
-        if ($this instanceof Asset && $this->custom_fieldset) {
-            /**
-             * Keep ciphertext in the audit snapshot; decryption and permission checks happen
-             * when displaying history. Use current raw attributes so pending changes are included,
-             * rather than cast property values or the older values from getRawOriginal().
-             */
-            foreach ($this->custom_fieldset->fields->where('display_audit', '1') as $field) {
-                $fields_array[$field->db_column] = $this->getAttributes()[$field->db_column] ?? null;
-            }
-        }
+        $fields_array = $this->customFieldValuesForLog($this, 'display_audit');
 
         $changed = [];
 
