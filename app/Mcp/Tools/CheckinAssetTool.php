@@ -2,8 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Http\Requests\AssetCheckinRequest;
 use App\Models\Asset;
-use App\Services\AssetCheckinService;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
@@ -19,15 +19,21 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check a currently checked-out Snipe-IT asset back in')]
 class CheckinAssetTool extends Tool
 {
-    public function __construct(private readonly AssetCheckinService $checkinService) {}
-
     public function handle(Request $request): ResponseFactory
     {
-        $request->validate([
-            'asset_tag' => 'nullable|max:100',
-            'id' => 'nullable|integer',
-            'note' => 'nullable|string|max:1000',
-        ]);
+        // Shared checkin rules come from AssetCheckinRequest::rulesArray()
+        // so the require_checkinout_notes setting (and any future rule
+        // additions) stay in sync between HTTP and MCP paths. Catch
+        // validation failures and convert to an MCP error response.
+        try {
+            $request->validate(array_merge(AssetCheckinRequest::rulesArray(), [
+                'asset_tag' => 'nullable|max:100',
+                'id' => 'nullable|integer',
+                'note' => 'nullable|string|max:1000',
+            ]));
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
         $asset = $this->resolveAsset($request);
 
@@ -43,7 +49,7 @@ class CheckinAssetTool extends Tool
             return Response::make(Response::error(trans('mcp.asset_not_checked_out', ['asset_tag' => $asset->asset_tag])));
         }
 
-        if ($this->checkinService->checkin($asset, auth()->user(), note: $request->get('note'))) {
+        if ($asset->checkIn(auth()->user(), $request->get('note'))) {
             return Response::make(
                 Response::text(trans('mcp.asset_checked_in', ['asset_tag' => $asset->asset_tag]))
             )->withStructuredContent([

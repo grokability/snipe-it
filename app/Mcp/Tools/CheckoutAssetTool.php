@@ -2,6 +2,7 @@
 
 namespace App\Mcp\Tools;
 
+use App\Http\Requests\AssetCheckoutRequest;
 use App\Models\Asset;
 use App\Models\Location;
 use App\Models\User;
@@ -25,17 +26,24 @@ class CheckoutAssetTool extends Tool
 
     public function handle(Request $request): ResponseFactory
     {
-        $request->validate([
-            'asset_tag' => 'nullable|max:100',
-            'id' => 'nullable|integer',
-            'checkout_to_type' => 'required|string|in:user,location,asset',
-            'assigned_user' => 'nullable|integer',
-            'assigned_location' => 'nullable|integer',
-            'assigned_asset' => 'nullable|integer',
-            'note' => 'nullable|string|max:1000',
-            'checkout_at' => 'nullable|date',
-            'expected_checkin' => 'nullable|date',
-        ]);
+        // Shared checkout rules come from AssetCheckoutRequest::rulesArray()
+        // so any rule change (new field, tightened validation, settings-
+        // driven required_note) stays in sync for the HTTP form, the API
+        // endpoint, and this MCP tool. Lookup-only fields (asset_tag,
+        // id) are MCP-specific and stay inline.
+        //
+        // Catch and convert validation failures to an MCP error response
+        // so callers see a structured error instead of an uncaught
+        // ValidationException. The HTTP form already renders its own
+        // response for the same rules via FormRequest.
+        try {
+            $request->validate(array_merge(AssetCheckoutRequest::rulesArray(), [
+                'asset_tag' => 'nullable|max:100',
+                'id' => 'nullable|integer',
+            ]));
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
         $asset = $this->resolveAsset($request);
 

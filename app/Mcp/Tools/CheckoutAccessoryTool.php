@@ -3,6 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Events\CheckoutableCheckedOut;
+use App\Http\Requests\AccessoryCheckoutRequest;
 use App\Models\Accessory;
 use App\Models\AccessoryCheckout;
 use App\Models\Asset;
@@ -26,15 +27,21 @@ class CheckoutAccessoryTool extends Tool
 {
     public function handle(Request $request): ResponseFactory
     {
-        $request->validate([
-            'id' => 'nullable|integer',
-            'name' => 'nullable|string|max:255',
-            'checkout_to_type' => 'required|in:user,location,asset',
-            'assigned_user' => 'nullable|integer',
-            'assigned_location' => 'nullable|integer',
-            'assigned_asset' => 'nullable|integer',
-            'note' => 'nullable|string|max:65535',
-        ]);
+        // Shared targeting rules come from AccessoryCheckoutRequest::rulesArray()
+        // so exists_undeleted + prohibits + required_without_all stay in
+        // sync. Lookup fields (id, name) and the MCP-specific
+        // checkout_to_type / note stay inline. Catch validation
+        // failures and convert to an MCP error response.
+        try {
+            $request->validate(array_merge(AccessoryCheckoutRequest::rulesArray(), [
+                'id' => 'nullable|integer',
+                'name' => 'nullable|string|max:255',
+                'checkout_to_type' => 'required|in:user,location,asset',
+                'note' => 'nullable|string|max:65535',
+            ]));
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
         $accessory = $this->resolveAccessory($request);
 
