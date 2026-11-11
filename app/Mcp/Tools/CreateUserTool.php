@@ -64,7 +64,7 @@ class CreateUserTool extends Tool
         }
 
         $user->fill(array_merge($input, $validated));
-        $user->activated = $request->filled('activated') ? (bool) $request->get('activated') : true;
+        $user->activated = $request->filled('activated') ? (int) $request->boolean('activated') : 1;
         $user->created_by = auth()->id();
 
         if ($user->save()) {

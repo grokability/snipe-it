@@ -4,8 +4,8 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Laravel\Passport\AccessToken;
 use Laravel\Passport\Passport;
-use Laravel\Passport\Token;
 use Tests\TestCase;
 
 /**
@@ -63,13 +63,17 @@ class ApiLogoutTest extends TestCase
 
     private function actAsUserWithAccessToken(User $user, string $accessTokenId): void
     {
-        // Passport::actingAs stubs a fresh (unsaved) Token onto the
-        // user, which would leave $token->id null in the controller.
-        // Overwrite the stub with a real Token pointing at the row we
-        // just seeded so revocation targets an actual DB record.
+        // Passport::actingAs stubs a fresh (unsaved) AccessToken onto
+        // the user, which would leave token()->id null in the
+        // controller. Build an AccessToken pointing at the seeded row
+        // so revocation targets an actual DB record (AccessToken::__get
+        // resolves properties through the underlying Token model).
         Passport::actingAs($user);
-        $realToken = Token::find($accessTokenId);
-        auth('api')->user()->withAccessToken($realToken);
+        auth('api')->user()->withAccessToken(new AccessToken([
+            'oauth_access_token_id' => $accessTokenId,
+            'oauth_user_id' => $user->getAuthIdentifier(),
+            'oauth_scopes' => [],
+        ]));
     }
 
     public function test_logout_revokes_the_bearer_access_token(): void

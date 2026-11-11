@@ -77,7 +77,7 @@ class ListUploadsTool extends Tool
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
-        $limit = $request->filled('limit') ? (int) $request->get('limit') : 25;
+        $limit = $request->filled('limit') ? max(1, min(config('app.max_results'), (int) $request->get('limit'))) : 25;
         $offset = $request->filled('offset') ? (int) $request->get('offset') : 0;
 
         $query = $object->uploads()->with('adminuser');

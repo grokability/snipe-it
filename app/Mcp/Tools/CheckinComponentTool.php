@@ -38,10 +38,17 @@ class CheckinComponentTool extends Tool
             'note' => 'nullable|string|max:65535',
         ]);
 
+        // DB::table()->find() returns stdClass|null at runtime but
+        // the query-builder signature types it as object|array|null.
+        // Narrow via is_object() so property access on $componentAsset
+        // is typed cleanly below.
         $componentAsset = DB::table('components_assets')->find($request->get('component_asset_id'));
-        $component = $componentAsset ? Component::find($componentAsset->component_id) : null;
+        if (! is_object($componentAsset)) {
+            return Response::make(Response::error(trans('mcp.unauthorized')));
+        }
 
-        if (! $componentAsset || ! $component || ! Gate::allows('checkin', $component)) {
+        $component = Component::find($componentAsset->component_id);
+        if (! $component || ! Gate::allows('checkin', $component)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 

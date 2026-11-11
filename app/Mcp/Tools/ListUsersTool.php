@@ -92,7 +92,7 @@ class ListUsersTool extends Tool
         $users->orderBy('users.last_name', 'asc')->orderBy('users.first_name', 'asc');
 
         $total = $users->count();
-        $limit = $request->filled('limit') ? (int) $request->get('limit') : 25;
+        $limit = $request->filled('limit') ? max(1, min(config('app.max_results'), (int) $request->get('limit'))) : 25;
         $offset = $request->filled('offset') ? (int) $request->get('offset') : 0;
 
         $results = $users->skip($offset)->take($limit)->get();
@@ -109,7 +109,7 @@ class ListUsersTool extends Tool
             // parent-company feature. Prefer the pivot. Fall back to the
             // legacy relationship so sites mid-migration still see
             // something.
-            'company' => $user->companies->first()?->name ?? $user->company?->name,
+            'company' => ($user->companies->first() ?? $user->company)?->name,
             'company_ids' => $user->companies->pluck('id')->all(),
             'department' => $user->department?->name,
             'department_id' => $user->department_id,

@@ -73,7 +73,7 @@ class ListHistoryTool extends Tool
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
-        $limit = $request->filled('limit') ? (int) $request->get('limit') : 25;
+        $limit = $request->filled('limit') ? max(1, min(config('app.max_results'), (int) $request->get('limit'))) : 25;
         $offset = $request->filled('offset') ? (int) $request->get('offset') : 0;
 
         $modelClass = get_class($object);
@@ -114,7 +114,8 @@ class ListHistoryTool extends Tool
             'target' => $log->target ? [
                 'id' => $log->target->getKey(),
                 'type' => class_basename($log->target_type),
-                'name' => $log->target->present()->name() ?? null,
+                /** @phpstan-ignore property.notFound (polymorphic target is base Model to PHPStan, but every logged model extends SnipeModel which defines display_name) */
+                'name' => $log->target->display_name,
             ] : null,
         ])->values()->all();
 

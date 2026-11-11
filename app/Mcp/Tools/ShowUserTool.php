@@ -97,7 +97,12 @@ class ShowUserTool extends Tool
             'licenses_count' => $user->licenses_count,
             'accessories_count' => $user->accessories_count,
             'consumables_count' => $user->consumables_count,
-            'last_login' => $user->last_login?->toDateTimeString(),
+            // last_login is stored as a datetime string on users. The
+            // column has no Eloquent cast, so a non-null value comes
+            // back as string and a direct ->toDateTimeString() call
+            // fatals. Parse through Carbon the same way start_date /
+            // end_date do above.
+            'last_login' => $user->last_login ? Carbon::parse($user->last_login)->toDateTimeString() : null,
             'created_at' => $user->created_at?->toDateTimeString(),
             'updated_at' => $user->updated_at?->toDateTimeString(),
         ]);

@@ -19,6 +19,7 @@ use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Attributes\Title;
 use Laravel\Mcp\Server\Tool;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -112,7 +113,15 @@ class OffboardUserTool extends Tool
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
-        $assets = $user->assets()->get();
+        // Query Asset directly instead of via $user->assets() so the
+        // collection is typed as Collection<int, Asset> for the
+        // downstream loop. The relation method on User has no return
+        // type and loses Asset narrowing.
+        $assets = Asset::where('assigned_type', User::class)
+            ->where('assigned_to', $user->id)
+            ->withTrashed()
+            ->orderBy('id')
+            ->get();
         $accessoryCheckouts = AccessoryCheckout::with('accessory')
             ->where('assigned_type', User::class)
             ->where('assigned_to', $user->id)
@@ -207,7 +216,7 @@ class OffboardUserTool extends Tool
                 }
 
                 if (! empty($failures)) {
-                    throw new Throwable('offboard partial failure');
+                    throw new RuntimeException('offboard partial failure');
                 }
             });
         } catch (Throwable $e) {

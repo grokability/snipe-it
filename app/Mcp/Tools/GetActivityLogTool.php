@@ -84,7 +84,7 @@ class GetActivityLogTool extends Tool
         }
 
         $total = $logs->count();
-        $limit = $request->filled('limit') ? (int) $request->get('limit') : 25;
+        $limit = $request->filled('limit') ? max(1, min(config('app.max_results'), (int) $request->get('limit'))) : 25;
         $offset = $request->filled('offset') ? (int) $request->get('offset') : 0;
 
         $results = $logs->skip($offset)->take($limit)->get();

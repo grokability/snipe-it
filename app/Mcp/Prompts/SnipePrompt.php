@@ -13,7 +13,7 @@ abstract class SnipePrompt extends Prompt
      */
     protected function localeInstruction(): string
     {
-        $locale = auth()->user()?->locale ?? app()->getLocale();
+        $locale = auth()->user()->locale ?? app()->getLocale();
 
         if (str_starts_with($locale, 'en')) {
             return '';

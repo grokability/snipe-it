@@ -117,11 +117,15 @@ class UploadAssetImageTool extends Tool
             $imageRequest = new ImageUploadRequest;
             $imageRequest->files->set('image', $uploadedFile);
 
-            $asset = $imageRequest->handleImages($asset);
+            // handleImages() returns the same instance it was handed
+            // (SnipeModel on the base-class signature, Asset in
+            // practice). Ignoring the return keeps $asset narrowed to
+            // Asset so the downstream property access stays typed.
+            $imageRequest->handleImages($asset);
 
             if (! $asset->save()) {
                 return Response::make(Response::error(trans('mcp.upload_image_save_failed', [
-                    'error' => $asset->getErrors()->first() ?? trans('general.error'),
+                    'error' => $asset->getErrors()->first(),
                 ])));
             }
         } catch (Throwable $e) {

@@ -92,7 +92,7 @@ class ListAssetsTool extends Tool
         }
 
         if ($request->filled('model_id')) {
-            $assets->inModels([$request->get('model_id')]);
+            $assets->where('assets.model_id', '=', $request->get('model_id'));
         }
 
         if ($request->filled('manufacturer_id')) {
@@ -106,7 +106,7 @@ class ListAssetsTool extends Tool
         $assets->orderBy('assets.created_at', 'desc');
 
         $total = $assets->count();
-        $limit = $request->filled('limit') ? (int) $request->get('limit') : 25;
+        $limit = $request->filled('limit') ? max(1, min(config('app.max_results'), (int) $request->get('limit'))) : 25;
         $offset = $request->filled('offset') ? (int) $request->get('offset') : 0;
 
         $results = $assets->skip($offset)->take($limit)->get();

@@ -19,6 +19,7 @@ use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Attributes\Title;
 use Laravel\Mcp\Server\Tool;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -85,7 +86,15 @@ class TransferAssetsTool extends Tool
             return Response::make(Response::error(trans('mcp.transfer_same_user')));
         }
 
-        $assets = $from->assets()->get();
+        // Query Asset directly instead of via $from->assets() so
+        // the collection is typed as Collection<int, Asset> for the
+        // downstream loop. The relation method on User has no return
+        // type and loses Asset narrowing.
+        $assets = Asset::where('assigned_type', User::class)
+            ->where('assigned_to', $from->id)
+            ->withTrashed()
+            ->orderBy('id')
+            ->get();
         $accessoryCheckouts = AccessoryCheckout::with('accessory')
             ->where('assigned_type', User::class)
             ->where('assigned_to', $from->id)
@@ -178,7 +187,7 @@ class TransferAssetsTool extends Tool
                 }
 
                 if (! empty($failures)) {
-                    throw new Throwable('transfer partial failure');
+                    throw new RuntimeException('transfer partial failure');
                 }
             });
         } catch (Throwable $e) {

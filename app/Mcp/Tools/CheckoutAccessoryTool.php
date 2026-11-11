@@ -75,6 +75,7 @@ class CheckoutAccessoryTool extends Tool
             'user' => User::find($request->get('assigned_user')),
             'location' => Location::find($request->get('assigned_location')),
             'asset' => Asset::find($request->get('assigned_asset')),
+            default => null,
         };
 
         if (! $target) {

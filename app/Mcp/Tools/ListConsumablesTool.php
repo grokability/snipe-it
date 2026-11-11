@@ -100,7 +100,7 @@ class ListConsumablesTool extends Tool
         }
 
         $total = $consumables->count();
-        $limit = $request->filled('limit') ? (int) $request->get('limit') : 25;
+        $limit = $request->filled('limit') ? max(1, min(config('app.max_results'), (int) $request->get('limit'))) : 25;
         $offset = $request->filled('offset') ? (int) $request->get('offset') : 0;
 
         $results = $consumables->orderBy('consumables.created_at', 'desc')->skip($offset)->take($limit)->get();
@@ -124,8 +124,9 @@ class ListConsumablesTool extends Tool
             'company_id' => $consumable->company_id,
             'location' => $consumable->location?->name,
             'location_id' => $consumable->location_id,
-            'purchase_cost' => $consumable->purchase_cost,
-            'purchase_date' => $consumable->purchase_date?->format('Y-m-d'),
+            // Per-acquisition purchase data moved to the Orders table.
+            // default_purchase_cost is the template value on the parent.
+            'default_purchase_cost' => $consumable->default_purchase_cost,
             'archived' => (bool) $consumable->archived,
             'notes' => $consumable->notes,
         ])->values()->all();

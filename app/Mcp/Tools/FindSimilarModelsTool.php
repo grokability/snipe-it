@@ -182,10 +182,12 @@ class FindSimilarModelsTool extends Tool
         if (empty($a) || empty($b)) {
             return 0.0;
         }
+        // Early returns above guarantee both arrays are non-empty, so
+        // the union has at least one member and division is safe.
         $intersection = count(array_intersect($a, $b));
         $union = count(array_unique(array_merge($a, $b)));
 
-        return $union === 0 ? 0.0 : $intersection / $union;
+        return $intersection / $union;
     }
 
     public function schema(JsonSchema $schema): array

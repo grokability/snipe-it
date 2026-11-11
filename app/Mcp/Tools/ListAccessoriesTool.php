@@ -93,11 +93,6 @@ class ListAccessoriesTool extends Tool
             // checked out"). Items where remaining <= min_amt are "low
             // stock" per Snipe-IT's reporting conventions. Done as a
             // subquery so SQL filters before pagination.
-            //
-            // Archived rows are force-excluded from low-stock results
-            // even when the caller asked for include_archived, matching
-            // the dashboard alert fix in commit 3522042fa6. Reordering
-            // an item you have already decommissioned is wrong.
             $accessories->notArchived()
                 ->whereRaw(
                     '(accessories.qty - (SELECT COUNT(*) FROM accessories_checkout WHERE accessories_checkout.accessory_id = accessories.id)) <= COALESCE(accessories.min_amt, 0)'
@@ -107,7 +102,7 @@ class ListAccessoriesTool extends Tool
         $accessories->orderBy('accessories.created_at', 'desc');
 
         $total = $accessories->count();
-        $limit = $request->filled('limit') ? (int) $request->get('limit') : 25;
+        $limit = $request->filled('limit') ? max(1, min(config('app.max_results'), (int) $request->get('limit'))) : 25;
         $offset = $request->filled('offset') ? (int) $request->get('offset') : 0;
 
         $results = $accessories->skip($offset)->take($limit)->get();
@@ -125,14 +120,15 @@ class ListAccessoriesTool extends Tool
             'manufacturer' => $accessory->manufacturer?->name,
             'manufacturer_id' => $accessory->manufacturer_id,
             'supplier' => $accessory->defaultSupplier?->name,
-            'supplier_id' => $accessory->supplier_id,
+            'default_supplier_id' => $accessory->default_supplier_id,
             'company' => $accessory->company?->name,
             'company_id' => $accessory->company_id,
             'location' => $accessory->location?->name,
             'location_id' => $accessory->location_id,
-            'purchase_cost' => $accessory->purchase_cost,
-            'purchase_date' => $accessory->purchase_date?->format('Y-m-d'),
-            'order_number' => $accessory->order_number,
+            // Per-acquisition purchase data (date, cost, order number)
+            // lives on the Orders table now. default_purchase_cost is
+            // the template value on the parent accessory itself.
+            'default_purchase_cost' => $accessory->default_purchase_cost,
             'archived' => (bool) $accessory->archived,
             'notes' => $accessory->notes,
         ])->values()->all();

@@ -49,12 +49,17 @@ class EnforceMcpScopeHandshake
     {
         $user = $request->user();
 
-        if (! $user || ! method_exists($user, 'currentAccessToken')) {
+        if ($user === null) {
             return $next($request);
         }
 
-        $token = $user->currentAccessToken();
-        if ($token === null) {
+        // currentAccessToken() comes from Passport's HasApiTokens trait
+        // on the User model. For a real auth:api request it returns the
+        // active token. For a plain actingAs() test context (no
+        // TokenGuard, no attached token) it returns null, and we treat
+        // that as "skip scope enforcement" so the existing MCP suite
+        // keeps working without a token-issuance step per test.
+        if ($user->currentAccessToken() === null) {
             return $next($request);
         }
 

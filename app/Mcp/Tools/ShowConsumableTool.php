@@ -65,9 +65,10 @@ class ShowConsumableTool extends Tool
             'company' => $consumable->company?->name,
             'location_id' => $consumable->location_id,
             'location' => $consumable->location?->name,
-            'purchase_cost' => $consumable->purchase_cost,
-            'purchase_date' => $consumable->purchase_date?->format('Y-m-d'),
-            'order_number' => $consumable->order_number,
+            // Per-acquisition purchase data (date, cost, order number)
+            // moved to the Orders table. default_purchase_cost is the
+            // template value on the parent consumable itself.
+            'default_purchase_cost' => $consumable->default_purchase_cost,
             'model_number' => $consumable->model_number,
             'archived' => (bool) $consumable->archived,
             'requestable' => (bool) $consumable->requestable,
@@ -101,8 +102,7 @@ class ShowConsumableTool extends Tool
             'company' => $schema->string()->description('Company name'),
             'location_id' => $schema->number()->description('Location ID'),
             'location' => $schema->string()->description('Location name'),
-            'purchase_cost' => $schema->string()->description('Purchase cost'),
-            'purchase_date' => $schema->string()->description('Purchase date (YYYY-MM-DD)'),
+            'default_purchase_cost' => $schema->string()->description('Default (template) purchase cost. Per-acquisition cost lives on the Orders table.'),
             'order_number' => $schema->string()->description('Order number'),
             'model_number' => $schema->string()->description('Model number'),
             'archived' => $schema->boolean()->description('Whether the consumable is archived. Archived consumables are hidden from the default list, cannot be checked out, and are excluded from low-stock alerts.'),
