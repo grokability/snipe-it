@@ -53,7 +53,8 @@ Add the server to your `claude_desktop_config.json`:
 }
 ```
 
-Claude Desktop will initiate the OAuth flow on first connection. Once authorised, you can use tools and prompts directly in conversation:
+Claude Desktop will initiate the OAuth flow on first connection. Once authorized, you can use tools and prompts directly
+in conversation:
 
 > "Check out asset LAPTOP-0042 to jsmith."
 
@@ -64,7 +65,7 @@ Claude Desktop will initiate the OAuth flow on first connection. Once authorised
 The [MCP Inspector](https://laravel.com/docs/12.x/mcp#mcp-inspector) is useful for exploring and testing tools before
 integrating with a client:
 
-1. Run `php artisan mcp:inspector SnipeITMcpServer` in your terminal
+1. Run `php artisan mcp:inspector mcp/snipe-it` in your terminal
 2. Open the provided URL in your browser
 
 ### Cursor / VS Code / Other MCP Clients
@@ -79,7 +80,7 @@ The server uses **OAuth 2.0 with dynamic client registration**. Clients that sup
 
 1. The client discovers the OAuth server via `/.well-known/oauth-authorization-server`
 2. It registers itself dynamically via `/oauth/register`
-3. The user is redirected to Snipe-IT's login page to authorise access
+3. The user is redirected to Snipe-IT's login page to authorize access
 4. The client receives a bearer token and uses it for all subsequent requests
 
 The authenticated user's Snipe-IT permissions apply. A user without `delete assets` permission cannot call `delete_asset`, for example.
@@ -96,7 +97,21 @@ Prompts are pre-built conversation starters for common multi-step workflows. In 
 
 **Guide through creating a new employee account and assigning appropriate equipment and licenses.**
 
-Creates the user account, finds available assets suitable for their role, checks equipment out to them, and assigns any relevant license seats.
+Walks the AI through a nine-step onboarding flow:
+
+1. Inspect existing users to infer the install's username convention (firstname.lastname, firstinitial+last, employee
+   number, email-style, etc) and propose a matching username for the admin to confirm.
+2. Ask for an email address if one was not supplied and whether to send a password reset link.
+3. Create the user account with the confirmed username. On username conflict, propose a disambiguated variant and retry
+   after re-confirmation.
+4. Send the password reset email if the admin asked for one.
+5. Search for available (undeployed) assets suitable for the role.
+6. Check the selected assets out to the new user.
+7. Check for license seats that should be assigned and assign them.
+8. Verify by re-running the user lookup: account exists (not soft-deleted), every intended asset is assigned, every
+   intended license seat is assigned. The `activated` flag is explicitly NOT a "still with the company" signal since
+   many installs never set it on real users.
+9. Summarise what was set up, including the verification result.
 
 | Argument | Required | Description |
 |----------|----------|-------------|
@@ -106,6 +121,9 @@ Creates the user account, finds available assets suitable for their role, checks
 | `location` | No | Primary office location |
 | `title` | No | Job title |
 
+Username is intentionally NOT a prompt argument. It is negotiated conversationally in step 1 so the AI can match the
+install's existing pattern and the admin stays in control of the final value.
+
 **Example usage in Claude:**
 > Use the `onboard_employee` prompt → first_name: "Marcus", last_name: "Webb", department: "Engineering", location: "Austin HQ"
 
@@ -113,9 +131,13 @@ Creates the user account, finds available assets suitable for their role, checks
 
 ### `offboard_employee`
 
-**Check in all equipment and licenses from a departing employee and deactivate their account.**
+**Check in all equipment and licenses from a departing employee, clear downstream manager references, and soft-delete
+their account.**
 
-Looks up everything assigned to the user, checks in all assets and accessories, revokes license seats, and deactivates the account.
+Thin wrapper around the atomic `offboard_user` tool. The AI calls the tool with `dry_run=true` first, presents the
+preview (every asset, accessory, license seat, managed user, managed location that would change, plus the soft-delete),
+waits for admin confirmation, then calls the tool again with `dry_run=false` to execute everything in a single DB
+transaction.
 
 | Argument | Required | Description |
 |----------|----------|-------------|
@@ -123,6 +145,25 @@ Looks up everything assigned to the user, checks in all assets and accessories, 
 
 **Example usage in Claude:**
 > Use the `offboard_employee` prompt → username: "marcus.webb"
+
+---
+
+### `transfer_employee_assets`
+
+**Transfer every asset, accessory, and license seat from one employee to another.**
+
+Thin wrapper around the atomic `transfer_user_assets` tool. Common when an employee changes teams or roles. The AI calls
+the tool with `dry_run=true` first, presents the preview of what would move, waits for admin confirmation, then calls it
+again with `dry_run=false` to execute the whole transfer in a single DB transaction. Consumables are not transferred
+because consumable checkouts are one-way (they do not return to stock).
+
+| Argument        | Required | Description                     |
+|-----------------|----------|---------------------------------|
+| `from_username` | Yes      | Username of the source employee |
+| `to_username`   | Yes      | Username of the target employee |
+
+**Example usage in Claude:**
+> Use the `transfer_employee_assets` prompt → from_username: "marcus.webb", to_username: "sarah.chen"
 
 ---
 
@@ -235,6 +276,127 @@ Shows assets, accessories, license seats, and consumables assigned to the user, 
 
 ---
 
+### `bulk_asset_replacement`
+
+**Find every current holder of a given asset model and propose a per-user replacement plan.**
+
+Planning-only. Lists every deployed unit of a model, shows available replacement inventory, computes the gap, and
+proposes per-user replacement assignments prioritised by EOL / out-of-warranty first. Does not execute any check-ins or
+check-outs.
+
+| Argument    | Required | Description                                      |
+|-------------|----------|--------------------------------------------------|
+| `old_model` | Yes      | Name or ID of the asset model being replaced     |
+| `new_model` | No       | Replacement model, if a specific one is targeted |
+
+**Example usage in Claude:**
+> Use the `bulk_asset_replacement` prompt → old_model: "MacBook Pro 13-inch 2020", new_model: "MacBook Pro 14-inch 2024"
+
+---
+
+### `location_shutdown`
+
+**Plan the shutdown of a physical location by inventorying every asset and user tied to it.**
+
+Planning-only. Lists assets whose current or default location is the closing site, lists users at that location,
+surfaces any child locations in the hierarchy, and proposes a disposition plan per asset / user. Does not update any
+records.
+
+| Argument   | Required | Description                                |
+|------------|----------|--------------------------------------------|
+| `location` | Yes      | Name or ID of the location being shut down |
+
+**Example usage in Claude:**
+> Use the `location_shutdown` prompt → location: "London Office"
+
+---
+
+### `report_lost_stolen`
+
+**Document circumstances of a lost or stolen asset, update its status, and note the last known assignee.**
+
+Captures the current assignee (or most recent one from history), records the circumstances as an asset note, updates the
+status label to Lost or Stolen, and produces an insurance / security summary. The assignment is intentionally left in
+place so accountability stays visible in the history.
+
+| Argument        | Required | Description                           |
+|-----------------|----------|---------------------------------------|
+| `asset_tag`     | Yes      | Asset tag of the lost or stolen asset |
+| `disposition`   | No       | Either "lost" or "stolen"             |
+| `circumstances` | No       | Short description of what happened    |
+
+**Example usage in Claude:**
+> Use the `report_lost_stolen` prompt → asset_tag: "AST-00142", disposition: "stolen", circumstances: "Taken from car in
+> parking garage, police report filed"
+
+---
+
+### `capacity_check`
+
+**Check whether current Ready-to-Deploy inventory can cover a projected demand.**
+
+Planning-only. Counts available inventory in the requested category or model, compares to projected demand, reports the
+gap, and suggests reorder candidates based on historical suppliers.
+
+| Argument   | Required | Description                             |
+|------------|----------|-----------------------------------------|
+| `count`    | Yes      | Number of units needed                  |
+| `category` | No       | Asset category to check (e.g. "Laptop") |
+| `model`    | No       | Specific asset model to check           |
+
+**Example usage in Claude:**
+> Use the `capacity_check` prompt → count: 10, category: "Laptop"
+
+---
+
+### `low_stock_alert`
+
+**List accessories and consumables at or below their configured minimum quantity.**
+
+Planning-only. Enumerates items whose current remaining quantity is at or below `min_amt`, groups by supplier for easier
+reordering, and suggests a reorder quantity. Items at zero stock are flagged as urgent.
+
+No arguments.
+
+**Example usage in Claude:**
+> Use the `low_stock_alert` prompt
+
+---
+
+### `data_quality_audit`
+
+**Scan the database for common data quality problems across assets, users, and licenses.**
+
+Read-only report. Runs thirteen integrity checks (missing or duplicate serials, missing purchase data,
+status-vs-assignee mismatches, orphan assignments, soft-deleted users with assigned seats, etc), groups findings by
+severity, and suggests remediation steps. Does not modify any records.
+
+No arguments.
+
+**Example usage in Claude:**
+> Use the `data_quality_audit` prompt
+
+---
+
+### `vendor_summary`
+
+**Produce a procurement-focused summary of everything acquired from a given supplier or manufacturer.**
+
+Read-only report. Aggregates assets, licenses, consumables, accessories, and maintenance history tied to one vendor.
+Reports inventory counts (with status breakdown), total spend across all asset types, warranty coverage for deployed
+assets, open vs completed service tickets, and flags low-stock / fully-consumed / expiring items that may need
+attention.
+
+| Argument      | Required | Description                                             |
+|---------------|----------|---------------------------------------------------------|
+| `vendor_name` | Yes      | Name of the supplier or manufacturer to summarise       |
+| `vendor_type` | No       | Either "supplier" or "manufacturer" (default: supplier) |
+
+**Example usage in Claude:**
+> Use the `vendor_summary` prompt → vendor_name: "Dell", vendor_type: "manufacturer"
+
+---
+
 ## Tools Reference
 
 Tools are individual actions the AI can call directly. They can also be combined freely in conversation without using a prompt, just describe what you want in plain language.
@@ -259,19 +421,27 @@ Look up a single asset by asset tag, serial number, or numeric ID.
 | `id` | number | No | Numeric ID |
 
 #### `list_assets`
-Search and list assets with optional filters.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `search` | string | No | Keyword search across tag, serial, name, model |
-| `status_type` | string | No | `RTD`, `Deployed`, `Archived`, `Pending`, or `Undeployable` |
-| `company_id` | number | No | Filter by company |
-| `location_id` | number | No | Filter by location |
-| `category_id` | number | No | Filter by category |
-| `model_id` | number | No | Filter by model |
-| `manufacturer_id` | number | No | Filter by manufacturer |
-| `limit` | number | No | Results to return (default: 25, max: 500) |
-| `offset` | number | No | Results to skip for pagination |
+Search and list assets with optional filters. When `filter` and `search` are both provided, `filter` wins.
+
+| Parameter         | Type   | Required | Description                                                                                                                                                                                          |
+|-------------------|--------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `search`          | string | No       | Free-text keyword across tag, serial, name, model                                                                                                                                                    |
+| `filter`          | object | No       | Structured advanced-search payload (same shape the UI Advanced Search modal posts). Supports date ranges, enum lists, custom-field filters by db_column, and any column in `Asset::$allowed_columns` |
+| `status_type`     | string | No       | `RTD`, `Deployed`, `Archived`, `Pending`, or `Undeployable`                                                                                                                                          |
+| `company_id`      | number | No       | Filter by company                                                                                                                                                                                    |
+| `location_id`     | number | No       | Filter by current location                                                                                                                                                                           |
+| `rtd_location_id` | number | No       | Filter by default (Ready to Deploy) location                                                                                                                                                         |
+| `category_id`     | number | No       | Filter by category                                                                                                                                                                                   |
+| `model_id`        | number | No       | Filter by model                                                                                                                                                                                      |
+| `manufacturer_id` | number | No       | Filter by manufacturer                                                                                                                                                                               |
+| `supplier_id`     | number | No       | Filter by supplier                                                                                                                                                                                   |
+| `limit`           | number | No       | Results to return (default: 25, max: 500)                                                                                                                                                            |
+| `offset`          | number | No       | Results to skip for pagination                                                                                                                                                                       |
+
+Response rows include lifecycle fields (`purchase_date`, `purchase_cost`, `warranty_months`, `warranty_expires`,
+`asset_eol_date`), last-* timestamps (`last_checkout`, `last_checkin`, `last_audit_date`, `next_audit_date`), child-item
+counts (`licenses_count`, `components_count`, `maintenances_count`, `assigned_assets_count`), and `notes`.
 
 #### `create_asset`
 Create a new asset.
@@ -388,17 +558,24 @@ Add a manual note to an asset. The note is recorded in the asset's activity log.
 ### Users
 
 #### `list_users`
-Search and list users.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `search` | string | No | Keyword search across name, username, email, employee number |
-| `company_id` | number | No | Filter by company |
-| `department_id` | number | No | Filter by department |
-| `location_id` | number | No | Filter by location |
-| `activated` | boolean | No | Filter by account activated status |
-| `limit` | number | No | Results to return (default: 25, max: 500) |
-| `offset` | number | No | Results to skip for pagination |
+Search and list users. When `filter` and `search` are both provided, `filter` wins.
+
+| Parameter         | Type    | Required | Description                                                                                                                                |
+|-------------------|---------|----------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| `search`          | string  | No       | Free-text keyword across name, username, email, employee number                                                                            |
+| `filter`          | object  | No       | Structured advanced-search filter payload                                                                                                  |
+| `company_id`      | number  | No       | Filter by company                                                                                                                          |
+| `department_id`   | number  | No       | Filter by department                                                                                                                       |
+| `location_id`     | number  | No       | Filter by location                                                                                                                         |
+| `activated`       | boolean | No       | Filter by the login-access flag. Not a reliable "still with the company" signal since many orgs never set it. Use `only_deleted` for that. |
+| `include_deleted` | boolean | No       | Include soft-deleted users in results (default: false)                                                                                     |
+| `only_deleted`    | boolean | No       | Return ONLY soft-deleted users. Takes precedence over `include_deleted`.                                                                   |
+| `limit`           | number  | No       | Results to return (default: 25, max: 500)                                                                                                  |
+| `offset`          | number  | No       | Results to skip for pagination                                                                                                             |
+
+Response rows include `employee_num`, `deleted_at`, `last_login`, `start_date`, `end_date`, child-item counts
+(`assets_count`, `licenses_count`, `accessories_count`, `consumables_count`), and `notes`.
 
 #### `show_user`
 Look up a single user by numeric ID, username, or email address.
@@ -408,6 +585,26 @@ Look up a single user by numeric ID, username, or email address.
 | `id` | number | No | Numeric user ID |
 | `username` | string | No | Username |
 | `email` | string | No | Email address |
+
+#### `show_user_permissions`
+Return the effective permission set for a user, merging their individual grants and denials with permissions inherited from group membership. Omit all identifiers to query the currently authenticated user. Self-lookups bypass the `users.view` gate. Querying another user's permissions requires `users.view` on the target.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | number | No | Numeric user ID (omit to query the acting user) |
+| `username` | string | No | Username |
+| `email` | string | No | Email address |
+
+Response structure:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | number | Numeric user ID |
+| `username` | string | Username |
+| `is_superuser` | boolean | True when the user holds the superuser permission (implicitly passes every authorization check) |
+| `groups` | array | Permission groups the user belongs to (`id`, `name`) |
+| `allowed_permissions` | array | Flat list of permission keys the user can perform (e.g. `assets.view`, `licenses.checkout`) after merging individual + group grants and denials |
+| `permissions_by_section` | object | Permissions grouped by section. Each row carries `status` (allowed/denied), `source` (individual/group/superuser), and the group names that contributed the grant or denial |
 
 #### `create_user`
 Create a new user account.
@@ -512,9 +709,60 @@ Reset two-factor authentication for a user (requires admin permission).
 |-----------|------|----------|-------------|
 | `id` | number | **Yes** | Numeric user ID |
 
+#### `offboard_user`
+
+Atomic offboarding for a single user. Previews or executes check-in of every assigned asset, accessory, and license
+seat, clears manager references on dependent users and locations, and soft-deletes the account. Defaults to
+`dry_run=true` so no changes are made without explicit confirmation. All writes happen inside one DB transaction so
+partial failures roll back.
+
+| Parameter    | Type    | Required | Description                                                                                                                                            |
+|--------------|---------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `username`   | string  | No       | Username of the user to offboard (preferred because unique). One of `username` or `first_name`+`last_name` is required.                                |
+| `first_name` | string  | No       | First name. Combine with `last_name` when username is unknown. If multiple users match, the tool returns the match set for the caller to disambiguate. |
+| `last_name`  | string  | No       | Last name.                                                                                                                                             |
+| `dry_run`    | boolean | No       | When `true` (default) return the preview without making changes. Set `false` to execute.                                                               |
+| `note`       | string  | No       | Optional note recorded on each asset checkin.                                                                                                          |
+
+#### `transfer_user_assets`
+
+Atomic user-to-user transfer of every asset, accessory, and license seat. Defaults to `dry_run=true`. Executes all moves
+in a single DB transaction. Consumables are not transferred (consumable checkouts are one-way).
+
+| Parameter         | Type    | Required | Description                                                                                            |
+|-------------------|---------|----------|--------------------------------------------------------------------------------------------------------|
+| `from_username`   | string  | No       | Username of the source user. One of `from_username` or `from_first_name`+`from_last_name` is required. |
+| `from_first_name` | string  | No       | First name of the source user.                                                                         |
+| `from_last_name`  | string  | No       | Last name of the source user.                                                                          |
+| `to_username`     | string  | No       | Username of the target user. Same rules as `from_username`.                                            |
+| `to_first_name`   | string  | No       | First name of the target user.                                                                         |
+| `to_last_name`    | string  | No       | Last name of the target user.                                                                          |
+| `dry_run`         | boolean | No       | When `true` (default) return the preview without making changes. Set `false` to execute.               |
+| `note`            | string  | No       | Optional note recorded on each asset checkin and checkout.                                             |
+
 ---
 
 ### Accessories
+
+#### `list_accessories`
+
+Search and list accessories. When `filter` and `search` are both provided, `filter` wins.
+
+| Parameter         | Type    | Required | Description                                                                                         |
+|-------------------|---------|----------|-----------------------------------------------------------------------------------------------------|
+| `search`          | string  | No       | Free-text keyword across accessory name and model number                                            |
+| `filter`          | object  | No       | Structured advanced-search filter payload                                                           |
+| `company_id`      | number  | No       | Filter by company                                                                                   |
+| `category_id`     | number  | No       | Filter by category                                                                                  |
+| `manufacturer_id` | number  | No       | Filter by manufacturer                                                                              |
+| `supplier_id`     | number  | No       | Filter by supplier                                                                                  |
+| `location_id`     | number  | No       | Filter by location                                                                                  |
+| `low_stock_only`  | boolean | No       | Return only accessories whose remaining quantity is at or below `min_amt`. Use for reorder reports. |
+| `limit`           | number  | No       | Results to return (default: 25, max: 500)                                                           |
+| `offset`          | number  | No       | Results to skip for pagination                                                                      |
+
+Response rows include `qty`, `min_amt`, `remaining` (computed), `supplier`, `purchase_cost`, `purchase_date`,
+`order_number`, and `notes`.
 
 #### `create_accessory`
 
@@ -613,15 +861,21 @@ The component must have no units checked out to assets. Identify by `id` or `nam
 
 #### `list_consumables`
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `search` | string | No | Keyword search |
-| `company_id` | number | No | Filter by company |
-| `category_id` | number | No | Filter by category |
-| `manufacturer_id` | number | No | Filter by manufacturer |
-| `location_id` | number | No | Filter by location |
-| `limit` | number | No | Results to return (default: 25, max: 500) |
-| `offset` | number | No | Results to skip |
+Search and list consumables. When `filter` and `search` are both provided, `filter` wins.
+
+| Parameter         | Type    | Required | Description                                                                                         |
+|-------------------|---------|----------|-----------------------------------------------------------------------------------------------------|
+| `search`          | string  | No       | Free-text keyword                                                                                   |
+| `filter`          | object  | No       | Structured advanced-search filter payload                                                           |
+| `company_id`      | number  | No       | Filter by company                                                                                   |
+| `category_id`     | number  | No       | Filter by category                                                                                  |
+| `manufacturer_id` | number  | No       | Filter by manufacturer                                                                              |
+| `location_id`     | number  | No       | Filter by location                                                                                  |
+| `low_stock_only`  | boolean | No       | Return only consumables whose remaining quantity is at or below `min_amt`. Use for reorder reports. |
+| `limit`           | number  | No       | Results to return (default: 25, max: 500)                                                           |
+| `offset`          | number  | No       | Results to skip                                                                                     |
+
+Response rows include `qty`, `min_amt`, `remaining` (computed), `supplier`, `model_number`, `item_no`, and `notes`.
 
 #### `show_consumable`
 Look up by `id` or `name`.
@@ -667,15 +921,24 @@ The consumable must have no units currently checked out. Identify by `id` or `na
 
 #### `list_licenses`
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `search` | string | No | Keyword search across name, serial, notes, order number |
-| `company_id` | number | No | Filter by company |
-| `category_id` | number | No | Filter by category |
-| `manufacturer_id` | number | No | Filter by manufacturer |
-| `supplier_id` | number | No | Filter by supplier |
-| `limit` | number | No | Results to return (default: 25, max: 500) |
-| `offset` | number | No | Results to skip |
+Search and list licenses. When `filter` and `search` are both provided, `filter` wins.
+
+| Parameter              | Type    | Required | Description                                                                                                      |
+|------------------------|---------|----------|------------------------------------------------------------------------------------------------------------------|
+| `search`               | string  | No       | Free-text keyword across name, serial, notes, order number                                                       |
+| `filter`               | object  | No       | Structured advanced-search filter payload                                                                        |
+| `company_id`           | number  | No       | Filter by company                                                                                                |
+| `category_id`          | number  | No       | Filter by category                                                                                               |
+| `manufacturer_id`      | number  | No       | Filter by manufacturer                                                                                           |
+| `supplier_id`          | number  | No       | Filter by supplier                                                                                               |
+| `depreciation_id`      | number  | No       | Filter by depreciation schedule                                                                                  |
+| `expiring_within_days` | number  | No       | Return only licenses whose `expiration_date` is between today and (today + N days). Use for renewal-due reports. |
+| `fully_consumed_only`  | boolean | No       | Return only licenses with zero free seats remaining.                                                             |
+| `limit`                | number  | No       | Results to return (default: 25, max: 500)                                                                        |
+| `offset`               | number  | No       | Results to skip                                                                                                  |
+
+Response rows include `seats`, `free_seats`, `depreciation`, `license_name`, `license_email`, `maintained`,
+`reassignable`, `expiration_date`, `termination_date`, `purchase_cost`, `min_amt`, and `notes`.
 
 #### `show_license`
 Look up by `id` or `name`. Returns seat counts.
@@ -1027,28 +1290,85 @@ The group must have no users assigned. Identify by `id` or `name`.
 
 ### Maintenance
 
+The maintenances table is polymorphic (`item_id` + `item_type`). Today only assets carry maintenances but the shape
+allows other entity types in the future. The tools below write and read using the native columns, with legacy
+`asset_id` / `completion_date` accepted as input aliases for backward compat with older integrations.
+
 #### `list_maintenances`
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `asset_id` | number | No | Filter by asset ID |
-| `limit` | number | No | Results to return (default: 25, max: 500) |
-| `offset` | number | No | Results to skip |
+Search and list maintenances with status, warranty, supplier, and date-range filters.
+
+| Parameter              | Type    | Required | Description                                                                                      |
+|------------------------|---------|----------|--------------------------------------------------------------------------------------------------|
+| `asset_id`             | number  | No       | Filter by numeric asset ID. Translated to `item_id` + `item_type=Asset` server-side.             |
+| `asset_tag`            | string  | No       | Filter by asset tag. Resolved to the matching asset server-side.                                 |
+| `supplier_id`          | number  | No       | Filter by the supplier that performed the maintenance                                            |
+| `status`               | string  | No       | `open` (`completed_at` is null), `completed` (`completed_at` is set), or `all` (default)         |
+| `is_warranty`          | boolean | No       | Filter to warranty vs non-warranty maintenances                                                  |
+| `start_date_from`      | string  | No       | Return maintenances whose `start_date` is on or after this date (YYYY-MM-DD)                     |
+| `start_date_to`        | string  | No       | Return maintenances whose `start_date` is on or before this date (YYYY-MM-DD)                    |
+| `completion_date_from` | string  | No       | Return maintenances whose actual `completed_at` timestamp is on or after this date (YYYY-MM-DD)  |
+| `completion_date_to`   | string  | No       | Return maintenances whose actual `completed_at` timestamp is on or before this date (YYYY-MM-DD) |
+| `sort`                 | string  | No       | `recent` (default), `oldest`, `start_date`, or `completion_date`                                 |
+| `limit`                | number  | No       | Results to return (default: 25, max: 500)                                                        |
+| `offset`               | number  | No       | Results to skip                                                                                  |
+
+Response rows include `name`, `item_type`, `item_id`, `asset_tag` (when the item is an Asset), `is_warranty`, `cost`,
+`start_date`, `expected_completion_date` (planned), `completed_at` (actual), `supplier`, `supplier_id`,
+`maintenance_type_id`, and `notes`.
 
 #### `create_maintenance`
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `asset_id` | number | **Yes** | Asset ID the maintenance is for |
-| `title` | string | **Yes** | Maintenance title |
-| `asset_maintenance_type` | string | No | Type (e.g. `maintenance`, `repair`, `upgrade`) |
-| `supplier_id` | number | No | Supplier ID |
-| `is_warranty` | boolean | No | Whether this is a warranty repair |
-| `cost` | number | No | Cost of the maintenance |
-| `start_date` | string | No | Start date (YYYY-MM-DD, defaults to today) |
-| `completion_date` | string | No | Completion date (YYYY-MM-DD) |
-| `notes` | string | No | Notes |
-| `user_id` | number | No | Technician user ID |
+Create a maintenance record attached to an asset. Writes to the polymorphic `item_id` + `item_type` columns directly,
+not through the legacy `asset_id` mutator.
+
+Before calling this tool, use `list_maintenance_types` to find the right `maintenance_type_id`. Create a new one via
+`create_maintenance_type` only if nothing matching exists, to avoid taxonomy sprawl.
+
+| Parameter                  | Type    | Required | Description                                                                                                                                          |
+|----------------------------|---------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `asset_id`                 | number  | No       | Numeric ID of the asset. One of `asset_id` or `asset_tag` is required.                                                                               |
+| `asset_tag`                | string  | No       | Asset tag of the asset. One of `asset_id` or `asset_tag` is required.                                                                                |
+| `title`                    | string  | **Yes**  | Maintenance name/title                                                                                                                               |
+| `maintenance_type_id`      | number  | **Yes**  | `maintenance_types.id` row identifying the type of work. Look up via `list_maintenance_types`.                                                       |
+| `supplier_id`              | number  | No       | Supplier who performed or will perform the work                                                                                                      |
+| `is_warranty`              | boolean | No       | Whether this is covered by warranty (defaults to false)                                                                                              |
+| `cost`                     | number  | No       | Cost in the install's currency                                                                                                                       |
+| `start_date`               | string  | No       | Work start date (YYYY-MM-DD, defaults to today)                                                                                                      |
+| `expected_completion_date` | string  | No       | Planned completion date (YYYY-MM-DD). Use when the maintenance is still open.                                                                        |
+| `completion_date`          | string  | No       | Alias for `expected_completion_date` kept for backward compat                                                                                        |
+| `completed_at`             | string  | No       | Actual completion timestamp (YYYY-MM-DD or YYYY-MM-DD HH:MM:SS). Set this to mark the maintenance done. Also sets `completed_by` to the acting user. |
+| `notes`                    | string  | No       | Free-form notes                                                                                                                                      |
+| `responsible_party_id`     | number  | No       | Technician user ID responsible for the work                                                                                                          |
+
+Response includes `id`, `name`, `item_type`, `item_id`, and `asset_tag`.
+
+#### `list_maintenance_types`
+
+List the maintenance type taxonomy. Call this before `create_maintenance` to discover the right `maintenance_type_id`
+and before `create_maintenance_type` to check that the type you want to add doesn't already exist in some variant.
+
+| Parameter | Type   | Required | Description                                                                                                                     |
+|-----------|--------|----------|---------------------------------------------------------------------------------------------------------------------------------|
+| `search`  | string | No       | Keyword search across name and tag_color. Use to probe for close matches ("repair", "upgrade", etc) before creating a new type. |
+| `limit`   | number | No       | Results to return (default: 25, max: 500)                                                                                       |
+| `offset`  | number | No       | Results to skip                                                                                                                 |
+
+Response rows include `id`, `name`, and `tag_color`. Results are ordered alphabetically by name.
+
+#### `create_maintenance_type`
+
+Add a new maintenance type to the taxonomy. Requires `assets.edit` permission. Only use this after
+`list_maintenance_types` confirms nothing matching already exists. The underlying unique-name constraint on the table
+will reject duplicates with an error if you try to create one anyway.
+
+| Parameter   | Type   | Required | Description                                                                                                         |
+|-------------|--------|----------|---------------------------------------------------------------------------------------------------------------------|
+| `name`      | string | **Yes**  | Name of the new type (must be unique). Examples: "Repair", "Preventive Maintenance", "Upgrade", "Warranty Service". |
+| `tag_color` | string | No       | Optional hex color (e.g. `#ff9900`) used by the UI to color-code rows of this type.                                 |
+
+Response includes `id`, `name`, and `tag_color`. The `id` is what you pass as `maintenance_type_id` on the next
+`create_maintenance` call.
 
 ---
 
