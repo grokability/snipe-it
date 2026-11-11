@@ -8,8 +8,8 @@ return [
     'not_authenticated' => 'Not authenticated',
     'unauthorized' => 'Unauthorized',
     'id_or_name_required' => 'Either id or name is required',
-    'id_username_or_email_required' => 'Please provide an id, username, or email',
-    'provide_user_or_asset' => 'Please provide either assigned_to (user ID) or asset_id',
+    'id_username_or_email_required' => 'Provide an id, username, or email',
+    'provide_user_or_asset' => 'Provide either assigned_to (user ID) or asset_id',
 
     // -----------------------------------------------------------------
     // "Not found" errors
@@ -46,7 +46,7 @@ return [
     'user_cannot_delete_self' => 'You cannot delete your own account',
     'user_has_items' => 'User has assigned items and cannot be deleted. Check in all items first.',
     'cannot_edit_auth_fields' => 'You do not have permission to edit auth fields (username, email, password, activated) for this user',
-    'username_taken' => 'Username :username is already taken. Please choose a different username.',
+    'username_taken' => 'Username :username is already taken. Choose a different username.',
     'password_reset_sent' => 'Password reset link sent to :email',
     'password_reset_user_inactive' => 'User :username is inactive and cannot receive a password reset email',
     'password_reset_no_email' => 'User :username has no email address on file',
@@ -109,6 +109,7 @@ return [
     'user_restored' => 'User :username restored successfully',
     'two_factor_reset' => 'Two-factor authentication reset for :username',
     'user_assets_found' => 'Found :count assets for user :username',
+    'user_permissions_found' => 'User :username has :count effective permissions',
     'profile_updated' => 'Profile updated successfully',
 
     // -----------------------------------------------------------------
@@ -252,8 +253,46 @@ return [
     'list_groups' => 'Found :total groups, returning :count',
     'list_maintenances' => 'Found :total maintenances, returning :count',
     'list_activity' => 'Found :total activity log entries, returning :count',
+    'list_accessories' => 'Found :total accessories, returning :count',
+    'list_maintenance_types' => 'Found :total maintenance types, returning :count',
+    'maintenance_type_created' => 'Maintenance type :name created.',
+    'find_similar_models_identifier_required' => 'Provide either model_id or model_name to identify the source AssetModel.',
+    'find_similar_models_summary' => 'Scored :total candidates similar to :source, returning top :count.',
+
+    // -----------------------------------------------------------------
+    // Upload tools
+    // -----------------------------------------------------------------
+    'id_or_asset_tag_required' => 'Either id or asset_tag is required to identify the asset.',
+    'upload_image_decode_failed' => 'The provided image_base64 could not be decoded. Verify the string is valid base64.',
+    'upload_image_tempfile_failed' => 'Failed to stage the uploaded image to a temporary file on the server.',
+    'upload_image_save_failed' => 'Failed to attach the image. Reason: :error',
+    'upload_image_success' => 'Image attached to asset :asset_tag.',
     'list_asset_notes' => 'Found :total notes for asset :asset_tag, returning :count',
     'list_uploads' => 'Found :total uploaded files for :type, returning :count',
     'list_history' => 'Found :total history entries for :type, returning :count',
+
+    // -----------------------------------------------------------------
+    // Offboard user tool
+    // -----------------------------------------------------------------
+    'offboard_identifier_required' => 'Provide either username or first_name plus last_name to identify the user to offboard.',
+    'offboard_ambiguous_user' => 'More than one user matched the provided name. Ask the admin which user to offboard and call this tool again with their username.',
+    'offboard_dry_run_message' => 'Preview only. No changes have been made. Call this tool again with dry_run=false to execute.',
+    'offboard_dry_run_summary' => 'Offboard preview for :username: :assets assets, :accessories accessories, :seats license seats would be released.',
+    'offboard_completed_message' => 'Offboarding complete for :username. User account has been soft-deleted.',
+    'offboard_completed_summary' => 'Offboarded :username: :assets assets, :accessories accessories, :seats license seats released, user soft-deleted.',
+    'offboard_failed' => 'Offboarding failed, rolled back. Reason: :failures',
+
+    // -----------------------------------------------------------------
+    // Transfer user assets tool
+    // -----------------------------------------------------------------
+    'transfer_identifier_required' => 'Provide either username or first_name plus last_name for the :side user.',
+    'transfer_user_not_found' => 'No user matched the identifiers given for the :side user.',
+    'transfer_ambiguous_user' => 'More than one user matched the :side identifiers. Ask the admin which user to use and call this tool again with their username.',
+    'transfer_same_user' => 'Source and target users must be different.',
+    'transfer_dry_run_message' => 'Preview only. No changes have been made. Call this tool again with dry_run=false to execute.',
+    'transfer_dry_run_summary' => 'Transfer preview from :from to :to: :assets assets, :accessories accessories, :seats license seats would move.',
+    'transfer_completed_message' => 'Transfer complete from :from to :to.',
+    'transfer_completed_summary' => 'Transferred from :from to :to: :assets assets, :accessories accessories, :seats license seats moved.',
+    'transfer_failed' => 'Transfer failed, rolled back. Reason: :failures',
 
 ];
