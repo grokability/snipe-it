@@ -612,32 +612,6 @@ class CustomField extends Model
     }
 
     /**
-     * Establishes the customfield -> default values relationship
-     *
-     * @author Hannah Tinkler
-     *
-     * @since  [v3.0]
-     *
-     * @return BelongsToMany<AssetModel, $this, CustomFieldDefault>
-     */
-    public function defaultValues(): BelongsToMany
-    {
-        return $this->belongsToMany(AssetModel::class, CustomFieldDefault::class)->using(CustomFieldDefault::class)->withPivot('id', 'default_value');
-    }
-
-    /**
-     * Returns the default value for a given model using the defaultValues
-     * relationship
-     *
-     * @param  int  $modelId
-     * @return mixed
-     */
-    public function defaultValue(int|string|null $modelId): mixed
-    {
-        return CustomFieldDefault::valueForField($this, $modelId);
-    }
-
-    /**
      * Checks the format of the attribute
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]

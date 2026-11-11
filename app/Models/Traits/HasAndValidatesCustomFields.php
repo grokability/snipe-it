@@ -84,7 +84,7 @@ trait HasAndValidatesCustomFields
         }
         $fill_results = [];
 
-        $defaultValues = $with_defaults ? $this->customFieldDefaults() : [];
+        $defaultValues = $with_defaults ? CustomFieldDefault::valuesFor($this) : [];
 
         foreach ($fieldset->fields as $field) {
             if ($filter_field_expression !== null && !$field->{$filter_field_expression}) {
@@ -111,14 +111,6 @@ trait HasAndValidatesCustomFields
         }
 
         return $fill_results;
-    }
-
-    /** @return array<string, mixed> */
-    public function customFieldDefaults(): array
-    {
-        $owner = CustomFieldDefault::ownerFor($this, $this->custom_fieldset());
-
-        return CustomFieldDefault::valuesFor($owner);
     }
 
     protected bool $encryptedCustomFieldUpdateSkipped = false;

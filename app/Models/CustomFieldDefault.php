@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasAndValidatesCustomFields;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -43,49 +44,54 @@ class CustomFieldDefault extends Pivot
         return $this->belongsTo(CustomField::class, 'custom_field_id');
     }
 
-    public static function ownerFor(Model $item, Relation $relationship): ?Model
-    {
-        if ($relationship instanceof HasOneThrough) {
-            $value = $item->getAttribute($relationship->getLocalKeyName());
-            if ($value === null) {
-                return null;
-            }
-
-            $query = $relationship->getParent()->newQuery();
-            if ($relationship->throughParentSoftDeletes()
-                && in_array('SoftDeletableHasManyThrough', $relationship->getQuery()->removedScopes(), true)) {
-                $query->withoutGlobalScope(SoftDeletingScope::class);
-            }
-
-            return $query->where($relationship->getFirstKeyName(), $value)->first();
-        }
-
-        if ($relationship instanceof BelongsTo && ! ($relationship instanceof MorphTo)) {
-            return $item;
-        }
-
-        throw new \LogicException('Unsupported custom fieldset relationship.');
-    }
-
     /** @return array<string, mixed> */
-    public static function valuesFor(?Model $owner): array
+    public static function valuesFor(?Model $subject): array
     {
-        if (! ($owner instanceof AssetModel) || ! $owner->exists) {
+        if ($subject === null) {
             return [];
+        }
+
+        $owner = $subject;
+        if (! ($subject instanceof AssetModel)) {
+            if (! method_exists($subject, 'custom_fieldset')
+                || ! in_array(HasAndValidatesCustomFields::class, class_uses_recursive($subject), true)) {
+                throw new \LogicException($subject::class.' does not support custom field defaults.');
+            }
+
+            $relationship = Relation::noConstraints(fn () => $subject->custom_fieldset());
+            if ($relationship instanceof HasOneThrough) {
+                $value = $subject->getAttributes()[$relationship->getLocalKeyName()] ?? null;
+                if ($value === null) {
+                    return [];
+                }
+
+                $query = $relationship->getParent()->newQuery();
+                if ($relationship->throughParentSoftDeletes()
+                    && in_array('SoftDeletableHasManyThrough', $relationship->getQuery()->removedScopes(), true)) {
+                    $query->withoutGlobalScope(SoftDeletingScope::class);
+                }
+
+                $owner = $query->where($relationship->getFirstKeyName(), $value)->first();
+            } elseif (! ($relationship instanceof BelongsTo) || $relationship instanceof MorphTo) {
+                throw new \LogicException('Unsupported custom fieldset relationship.');
+            }
+        }
+
+        if ($owner === null || ! $owner->exists) {
+            return [];
+        }
+
+        if (! ($owner instanceof AssetModel)) {
+            throw new \LogicException($owner::class.' does not support custom field defaults storage.');
         }
 
         return $owner->defaultValues->pluck('pivot.default_value', 'db_column')->all();
     }
 
-    public static function valueForField(CustomField $field, int|string|null $ownerId): mixed
-    {
-        return $field->defaultValues->where('id', $ownerId)->pluck('pivot.default_value')->first();
-    }
-
     /**
      * Replace defaults only after every supplied field and value has been validated.
      *
-     * @param array<int, mixed> $values Values keyed by custom field ID.
+     * @param  array<int, mixed>  $values  Values keyed by custom field ID.
      *
      * @throws ValidationException
      */

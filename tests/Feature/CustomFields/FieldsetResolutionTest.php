@@ -6,6 +6,7 @@ use App\Http\Transformers\AssetModelsTransformer;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\CustomField;
+use App\Models\CustomFieldDefault;
 use App\Models\CustomFieldset;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -59,7 +60,7 @@ class FieldsetResolutionTest extends TestCase
         $model->defaultValues()->attach($field, ['default_value' => '0']);
         $asset = Asset::factory()->create(['model_id' => $model->id]);
 
-        $this->assertSame([$field->db_column_name() => '0'], $asset->customFieldDefaults());
+        $this->assertSame([$field->db_column_name() => '0'], CustomFieldDefault::valuesFor($asset));
     }
 
     public function test_model_search_still_matches_fieldset_names_and_structured_filters(): void

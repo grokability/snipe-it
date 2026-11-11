@@ -54,7 +54,7 @@ class CustomFieldsTransformerLineEndingsTest extends TestCase
         $fieldset->fields()->attach($field, ['order' => 1, 'required' => false]);
         $model = AssetModel::factory()->create(['fieldset_id' => $fieldset->id]);
 
-        $result = (new CustomFieldsTransformer)->transformCustomFieldWithDefaultValue($field, $model->id);
+        $result = (new CustomFieldsTransformer)->transformCustomField($field, $model);
 
         $this->assertSame(['Red', 'Green', 'Blue'], $result['field_values_array']);
     }
@@ -69,5 +69,39 @@ class CustomFieldsTransformerLineEndingsTest extends TestCase
         $result = (new CustomFieldsTransformer)->transformCustomField($field);
 
         $this->assertNull($result['field_values_array']);
+    }
+
+    public function test_field_metadata_is_preserved_when_an_owner_adds_a_default_value(): void
+    {
+        $field = CustomField::factory()->create(['name' => 'Support <email>', 'field_values' => null]);
+        $owner = AssetModel::factory()->hasMultipleCustomFields([$field])->create();
+        $owner->defaultValues()->attach($field, ['default_value' => 'reply@example.org']);
+        $transformer = new CustomFieldsTransformer;
+
+        $withoutDefault = $transformer->transformCustomField($field);
+        $withDefault = $transformer->transformCustomField($field, $owner);
+
+        $this->assertSame('Support &lt;email&gt;', $withoutDefault['name']);
+        $this->assertArrayNotHasKey('default_value', $withoutDefault);
+        $this->assertSame($withoutDefault + ['default_value' => 'reply@example.org'], $withDefault);
+    }
+
+    public function test_lists_with_and_without_defaults_return_sequential_rows_for_keyed_collections(): void
+    {
+        $this->app->instance('api_current_page', 1);
+        $this->app->instance('api_limit_value', 50);
+        $fields = CustomField::factory()->count(2)->create()->keyBy('id');
+        $owner = AssetModel::factory()->hasMultipleCustomFields($fields->all())->create();
+        $transformer = new CustomFieldsTransformer;
+
+        $withoutDefaults = $transformer->transformCustomFields($fields, 2);
+        $withDefaults = $transformer->transformCustomFields($fields, 2, $owner);
+
+        $this->assertSame([0, 1], array_keys($withoutDefaults['rows']));
+        $this->assertSame([0, 1], array_keys($withDefaults['rows']));
+        $this->assertArrayNotHasKey('default_value', $withoutDefaults['rows'][0]);
+        $this->assertArrayHasKey('available_actions', $withDefaults['rows'][0]);
+        $this->assertArrayHasKey('default_value', $withDefaults['rows'][0]);
+        $this->assertNull($withDefaults['rows'][0]['default_value']);
     }
 }

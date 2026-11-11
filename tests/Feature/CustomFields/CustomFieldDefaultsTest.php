@@ -11,13 +11,14 @@ use App\Models\CustomFieldDefault;
 use App\Models\CustomFieldset;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 class CustomFieldDefaultsTest extends TestCase
 {
-    public function test_defaults_are_eloquent_models_that_work_through_both_existing_relationships(): void
+    public function test_defaults_are_eloquent_models_that_work_through_the_owner_relationship(): void
     {
         $default = CustomFieldDefault::factory()->create(['default_value' => '0']);
         $owner = $default->owner;
@@ -34,12 +35,9 @@ class CustomFieldDefaultsTest extends TestCase
         $this->assertTrue($relatedField->pivot->save());
         $this->assertSame('updated', $default->fresh()->default_value);
         $this->assertSame(1, CustomFieldDefault::query()->count());
-        $inverse = $field->defaultValues()->firstOrFail();
-        $this->assertInstanceOf(CustomFieldDefault::class, $inverse->pivot);
-        $this->assertSame('updated', $inverse->pivot->default_value);
     }
 
-    public function test_the_trait_discovers_the_owner_using_the_relationship_keys(): void
+    public function test_the_defaults_reader_discovers_the_owner_using_the_relationship_keys(): void
     {
         $field = CustomField::factory()->ram()->create();
         $owner = AssetModel::factory()->hasMultipleCustomFields([$field])->create();
@@ -47,12 +45,12 @@ class CustomFieldDefaultsTest extends TestCase
         $item = new DefaultsThroughAsset;
         $item->setRawAttributes(['alternate_model_id' => $owner->id]);
 
-        $this->assertSame([$field->db_column => '16'], $item->customFieldDefaults());
+        $this->assertSame([$field->db_column => '16'], CustomFieldDefault::valuesFor($item));
         $item->alternate_model_id = null;
-        $this->assertSame([], $item->customFieldDefaults());
+        $this->assertSame([], CustomFieldDefault::valuesFor($item));
     }
 
-    public function test_defaults_follow_owner_changes_without_a_cache(): void
+    public function test_defaults_follow_owner_changes(): void
     {
         $field = CustomField::factory()->ram()->create();
         $first = AssetModel::factory()->hasMultipleCustomFields([$field])->create();
@@ -61,9 +59,9 @@ class CustomFieldDefaultsTest extends TestCase
         $second->defaultValues()->attach($field, ['default_value' => '32']);
         $asset = new Asset(['model_id' => $first->id]);
 
-        $this->assertSame([$field->db_column => '16'], $asset->customFieldDefaults());
+        $this->assertSame([$field->db_column => '16'], CustomFieldDefault::valuesFor($asset));
         $asset->model_id = $second->id;
-        $this->assertSame([$field->db_column => '32'], $asset->customFieldDefaults());
+        $this->assertSame([$field->db_column => '32'], CustomFieldDefault::valuesFor($asset));
     }
 
     public function test_defaults_can_be_read_for_a_soft_deleted_through_owner(): void
@@ -74,18 +72,17 @@ class CustomFieldDefaultsTest extends TestCase
         $owner->delete();
         $asset = new Asset(['model_id' => $owner->id]);
 
-        $this->assertSame([$field->db_column => '16'], $asset->customFieldDefaults());
+        $this->assertSame([$field->db_column => '16'], CustomFieldDefault::valuesFor($asset));
     }
 
-    public function test_a_direct_relationship_uses_the_consuming_object_as_owner(): void
+    public function test_an_unsaved_direct_consumer_has_no_defaults(): void
     {
         $item = new DefaultsDirectAsset;
 
-        $this->assertSame($item, CustomFieldDefault::ownerFor($item, $item->custom_fieldset()));
-        $this->assertSame([], $item->customFieldDefaults());
+        $this->assertSame([], CustomFieldDefault::valuesFor($item));
     }
 
-    public function test_an_unknown_through_owner_returns_no_defaults_even_with_a_colliding_id(): void
+    public function test_unsupported_models_are_rejected_even_with_a_colliding_owner_id(): void
     {
         $field = CustomField::factory()->ram()->create();
         $owner = AssetModel::factory()->hasMultipleCustomFields([$field])->create();
@@ -94,7 +91,71 @@ class CustomFieldDefaultsTest extends TestCase
         $otherOwner->id = $owner->id;
         $otherOwner->exists = true;
 
-        $this->assertSame([], CustomFieldDefault::valuesFor($otherOwner));
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage(User::class.' does not support custom field defaults.');
+        CustomFieldDefault::valuesFor($otherOwner);
+    }
+
+    public function test_assets_and_owners_return_the_same_defaults_map(): void
+    {
+        [$first, $second] = CustomField::factory()->count(2)->create();
+        $owner = AssetModel::factory()->hasMultipleCustomFields([$first, $second])->create();
+        $owner->defaultValues()->attach([$first->id => ['default_value' => '0'], $second->id => ['default_value' => '32']]);
+        $asset = new Asset(['model_id' => $owner->id]);
+        $expected = [$first->db_column => '0', $second->db_column => '32'];
+
+        $this->assertSame($expected, CustomFieldDefault::valuesFor($asset));
+        $this->assertSame($expected, CustomFieldDefault::valuesFor($owner));
+        $this->assertSame($expected, CustomFieldDefault::valuesFor($owner->fresh()));
+    }
+
+    public function test_assets_and_owners_without_defaults_return_empty_maps(): void
+    {
+        $field = CustomField::factory()->create();
+        $owner = AssetModel::factory()->hasMultipleCustomFields([$field])->create();
+        $asset = new Asset(['model_id' => $owner->id]);
+
+        $this->assertSame([], CustomFieldDefault::valuesFor($asset));
+        $this->assertSame([], CustomFieldDefault::valuesFor($owner));
+    }
+
+    public function test_assets_read_updated_defaults_without_a_shared_cache(): void
+    {
+        $field = CustomField::factory()->create();
+        $owner = AssetModel::factory()->hasMultipleCustomFields([$field])->create();
+        $owner->defaultValues()->attach($field, ['default_value' => 'original']);
+        $asset = new Asset(['model_id' => $owner->id]);
+        $this->assertSame([$field->db_column => 'original'], CustomFieldDefault::valuesFor($asset));
+
+        DB::table('models_custom_fields')->where('asset_model_id', $owner->id)->update(['default_value' => 'updated']);
+
+        $this->assertSame([$field->db_column => 'updated'], CustomFieldDefault::valuesFor($asset));
+        $this->assertSame([$field->db_column => 'updated'], CustomFieldDefault::valuesFor($owner->fresh()));
+    }
+
+    public function test_saving_defaults_updates_the_owner_and_its_consumers(): void
+    {
+        $field = CustomField::factory()->create();
+        $owner = AssetModel::factory()->hasMultipleCustomFields([$field])->create();
+        $owner->defaultValues()->attach($field, ['default_value' => 'original']);
+        $asset = new Asset(['model_id' => $owner->id]);
+        $this->assertSame([$field->db_column => 'original'], CustomFieldDefault::valuesFor($owner));
+        $fieldset = CustomFieldset::findOrFail($owner->fieldset_id);
+
+        CustomFieldDefault::saveFor($owner, $fieldset, [$field->id => 'updated']);
+        $this->assertSame([$field->db_column => 'updated'], CustomFieldDefault::valuesFor($owner));
+        $this->assertSame([$field->db_column => 'updated'], CustomFieldDefault::valuesFor($asset));
+
+        CustomFieldDefault::saveFor($owner, $fieldset, []);
+        $this->assertSame([], CustomFieldDefault::valuesFor($owner));
+        $this->assertSame([], CustomFieldDefault::valuesFor($asset));
+    }
+
+    public function test_null_unassigned_consumers_and_unsaved_owners_have_no_defaults(): void
+    {
+        foreach ([null, new Asset, new AssetModel] as $subject) {
+            $this->assertSame([], CustomFieldDefault::valuesFor($subject));
+        }
     }
 
     public function test_saving_defaults_preserves_zero_and_flattens_checkbox_values(): void

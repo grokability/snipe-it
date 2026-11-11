@@ -6,6 +6,7 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\CustomFieldsetsTransformer;
 use App\Http\Transformers\CustomFieldsTransformer;
+use App\Models\AssetModel;
 use App\Models\CustomField;
 use App\Models\CustomFieldset;
 use Illuminate\Http\JsonResponse;
@@ -252,11 +253,9 @@ class CustomFieldsetsController extends Controller
         $this->authorize('view', CustomField::class);
         $set = CustomFieldset::findOrFail($fieldsetId);
 
-        // Constrain the eager load to defaults belonging to this specific model.
-        $fields = $set->fields()
-            ->with(['defaultValues' => fn ($q) => $q->whereKey($modelId)])
-            ->get();
+        $fields = $set->fields;
+        $owner = AssetModel::with('defaultValues')->find($modelId);
 
-        return (new CustomFieldsTransformer)->transformCustomFieldsWithDefaultValues($fields, $modelId, $fields->count());
+        return (new CustomFieldsTransformer)->transformCustomFields($fields, $fields->count(), $owner);
     }
 }

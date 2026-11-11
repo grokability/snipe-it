@@ -573,11 +573,13 @@ class HelperTest extends TestCase
         // model-scoped default value for the field.
         \App\Models\CustomField::factory()->ram()->create();
         $field = \App\Models\CustomField::where('name', 'RAM')->first();
-        $model = \App\Models\AssetModel::factory()->create();
+        $model = \App\Models\AssetModel::factory()->hasMultipleCustomFields([$field])->create();
+        $model->defaultValues()->attach($field, ['default_value' => '16']);
+        $defaults = \App\Models\CustomFieldDefault::valuesFor($model);
 
         $this->assertSame(
-            $field->defaultValue($model->id),
-            Helper::customFieldFormValue($field, null, $field->defaultValue($model->id))
+            '16',
+            Helper::customFieldFormValue($field, null, $defaults[$field->db_column] ?? null)
         );
     }
 
@@ -588,13 +590,15 @@ class HelperTest extends TestCase
         // so the mask should win over the default-value fallback.
         \App\Models\CustomField::factory()->testEncrypted()->create();
         $field = \App\Models\CustomField::where('name', 'Test Encrypted')->first();
-        $model = \App\Models\AssetModel::factory()->create();
+        $model = \App\Models\AssetModel::factory()->hasMultipleCustomFields([$field])->create();
+        $model->defaultValues()->attach($field, ['default_value' => 'default secret']);
+        $defaults = \App\Models\CustomFieldDefault::valuesFor($model);
 
         $this->actingAs(\App\Models\User::factory()->editAssets()->create());
 
         $this->assertSame(
             strtoupper(trans('admin/custom_fields/general.encrypted')),
-            Helper::customFieldFormValue($field, null, $field->defaultValue($model->id))
+            Helper::customFieldFormValue($field, null, $defaults[$field->db_column] ?? null)
         );
     }
 

@@ -132,7 +132,7 @@
                     <!-- Custom fields -->
                     @include('models/custom_fields_form', [
                         'fieldset' => $asset->custom_fieldset,
-                        'defaultValues' => $asset->customFieldDefaults(),
+                        'defaultValues' => \App\Models\CustomFieldDefault::valuesFor($asset),
                         'show_custom_fields_type' => 'checkout',
                     ])
 
