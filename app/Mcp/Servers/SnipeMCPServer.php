@@ -3,13 +3,21 @@
 namespace App\Mcp\Servers;
 
 use App\Mcp\Prompts\AuditLocationPrompt;
+use App\Mcp\Prompts\BulkAssetReplacementPrompt;
+use App\Mcp\Prompts\CapacityCheckPrompt;
+use App\Mcp\Prompts\DataQualityAuditPrompt;
 use App\Mcp\Prompts\EndOfLifeReviewPrompt;
 use App\Mcp\Prompts\ExpiringLicensesPrompt;
 use App\Mcp\Prompts\FindAvailableAssetPrompt;
 use App\Mcp\Prompts\InventorySummaryPrompt;
+use App\Mcp\Prompts\LocationShutdownPrompt;
+use App\Mcp\Prompts\LowStockAlertPrompt;
 use App\Mcp\Prompts\OffboardEmployeePrompt;
 use App\Mcp\Prompts\OnboardEmployeePrompt;
+use App\Mcp\Prompts\ReportLostStolenPrompt;
+use App\Mcp\Prompts\TransferEmployeeAssetsPrompt;
 use App\Mcp\Prompts\UserInventoryPrompt;
+use App\Mcp\Prompts\VendorSummaryPrompt;
 use App\Mcp\Prompts\WarrantyExpiringPrompt;
 use App\Mcp\Tools\AddAssetNoteTool;
 use App\Mcp\Tools\AuditAssetTool;
@@ -35,6 +43,7 @@ use App\Mcp\Tools\CreateGroupTool;
 use App\Mcp\Tools\CreateLicenseTool;
 use App\Mcp\Tools\CreateLocationTool;
 use App\Mcp\Tools\CreateMaintenanceTool;
+use App\Mcp\Tools\CreateMaintenanceTypeTool;
 use App\Mcp\Tools\CreateManufacturerTool;
 use App\Mcp\Tools\CreateStatusLabelTool;
 use App\Mcp\Tools\CreateSupplierTool;
@@ -55,9 +64,11 @@ use App\Mcp\Tools\DeleteManufacturerTool;
 use App\Mcp\Tools\DeleteStatusLabelTool;
 use App\Mcp\Tools\DeleteSupplierTool;
 use App\Mcp\Tools\DeleteUserTool;
+use App\Mcp\Tools\FindSimilarModelsTool;
 use App\Mcp\Tools\GetActivityLogTool;
 use App\Mcp\Tools\GetCurrentUserTool;
 use App\Mcp\Tools\GetUserAssetsTool;
+use App\Mcp\Tools\ListAccessoriesTool;
 use App\Mcp\Tools\ListAssetModelsTool;
 use App\Mcp\Tools\ListAssetNotesTool;
 use App\Mcp\Tools\ListAssetsTool;
@@ -70,11 +81,13 @@ use App\Mcp\Tools\ListHistoryTool;
 use App\Mcp\Tools\ListLicensesTool;
 use App\Mcp\Tools\ListLocationsTool;
 use App\Mcp\Tools\ListMaintenancesTool;
+use App\Mcp\Tools\ListMaintenanceTypesTool;
 use App\Mcp\Tools\ListManufacturersTool;
 use App\Mcp\Tools\ListStatusLabelsTool;
 use App\Mcp\Tools\ListSuppliersTool;
 use App\Mcp\Tools\ListUploadsTool;
 use App\Mcp\Tools\ListUsersTool;
+use App\Mcp\Tools\OffboardUserTool;
 use App\Mcp\Tools\Reset2FATool;
 use App\Mcp\Tools\RestoreAssetTool;
 use App\Mcp\Tools\RestoreUserTool;
@@ -91,7 +104,9 @@ use App\Mcp\Tools\ShowLocationTool;
 use App\Mcp\Tools\ShowManufacturerTool;
 use App\Mcp\Tools\ShowStatusLabelTool;
 use App\Mcp\Tools\ShowSupplierTool;
+use App\Mcp\Tools\ShowUserPermissionsTool;
 use App\Mcp\Tools\ShowUserTool;
+use App\Mcp\Tools\TransferAssetsTool;
 use App\Mcp\Tools\UpdateAccessoryTool;
 use App\Mcp\Tools\UpdateAssetModelTool;
 use App\Mcp\Tools\UpdateAssetTool;
@@ -109,6 +124,7 @@ use App\Mcp\Tools\UpdateProfileTool;
 use App\Mcp\Tools\UpdateStatusLabelTool;
 use App\Mcp\Tools\UpdateSupplierTool;
 use App\Mcp\Tools\UpdateUserTool;
+use App\Mcp\Tools\UploadAssetImageTool;
 use Laravel\Mcp\Server;
 use Laravel\Mcp\Server\Attributes\Instructions;
 use Laravel\Mcp\Server\Attributes\Name;
@@ -132,6 +148,7 @@ class SnipeMCPServer extends Server
         AuditAssetTool::class,
         AddAssetNoteTool::class,
         ListAssetNotesTool::class,
+        UploadAssetImageTool::class,
 
         // Cross-type tools
         ListUploadsTool::class,
@@ -140,6 +157,7 @@ class SnipeMCPServer extends Server
         // Users
         ListUsersTool::class,
         ShowUserTool::class,
+        ShowUserPermissionsTool::class,
         CreateUserTool::class,
         UpdateUserTool::class,
         DeleteUserTool::class,
@@ -149,8 +167,11 @@ class SnipeMCPServer extends Server
         GetUserAssetsTool::class,
         Reset2FATool::class,
         SendPasswordResetTool::class,
+        OffboardUserTool::class,
+        TransferAssetsTool::class,
 
         // Accessories
+        ListAccessoriesTool::class,
         CreateAccessoryTool::class,
         UpdateAccessoryTool::class,
         DeleteAccessoryTool::class,
@@ -234,6 +255,7 @@ class SnipeMCPServer extends Server
         CreateAssetModelTool::class,
         UpdateAssetModelTool::class,
         DeleteAssetModelTool::class,
+        FindSimilarModelsTool::class,
 
         // Depreciations
         ListDepreciationsTool::class,
@@ -252,6 +274,8 @@ class SnipeMCPServer extends Server
         // Maintenance
         ListMaintenancesTool::class,
         CreateMaintenanceTool::class,
+        ListMaintenanceTypesTool::class,
+        CreateMaintenanceTypeTool::class,
 
         // Activity Log
         GetActivityLogTool::class,
@@ -264,12 +288,20 @@ class SnipeMCPServer extends Server
     protected array $prompts = [
         OnboardEmployeePrompt::class,
         OffboardEmployeePrompt::class,
+        TransferEmployeeAssetsPrompt::class,
         AuditLocationPrompt::class,
         FindAvailableAssetPrompt::class,
+        BulkAssetReplacementPrompt::class,
+        LocationShutdownPrompt::class,
+        ReportLostStolenPrompt::class,
+        CapacityCheckPrompt::class,
         ExpiringLicensesPrompt::class,
         EndOfLifeReviewPrompt::class,
         WarrantyExpiringPrompt::class,
+        LowStockAlertPrompt::class,
         InventorySummaryPrompt::class,
+        VendorSummaryPrompt::class,
+        DataQualityAuditPrompt::class,
         UserInventoryPrompt::class,
     ];
 }
