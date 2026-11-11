@@ -1197,7 +1197,7 @@ $(function () {
 		}
 	});
 	
-	$(".select2-hidden-accessible").on('select2:closing', function (e) {
+	$("select.js-data-ajax, select[data-endpoint]").on('select2:closing', function (e) {
 		var element = $(this);
 		var value = getSelect2Value(element);
 		var noForceAjax = false;
@@ -1207,9 +1207,12 @@ $(function () {
 		
 		if(value && !noForceAjax && !isMouseUp) {
 			var endpoint = element.data("endpoint");
+			if (!endpoint) { return; }
             var statusType = element.data("asset-status-type");
-			$.ajax({
-                url: baseUrl + 'api/v1/' + endpoint + '/selectlist?search=' + value + '&page=1' + (statusType ? '&statusType=' + statusType : ''),
+			var previous = element.data('selectlist-request');
+			if (previous && previous.readyState !== 4) { previous.abort(); }
+			var request = $.ajax({
+                url: baseUrl + 'api/v1/' + endpoint + '/selectlist?search=' + encodeURIComponent(value) + '&page=1' + (statusType ? '&statusType=' + statusType : ''),
 				dataType: 'json',
 				headers: {
 					"X-Requested-With": 'XMLHttpRequest',
@@ -1249,6 +1252,8 @@ $(function () {
 					});
 				}
 			});
+
+			element.data('selectlist-request', request);
 		}
 	});
 
