@@ -23,7 +23,7 @@
                 <p>{{ trans('account/general.api_base_url') }}<br>
                     <code>{{ url('/api/v1') }}{!! trans('account/general.api_base_url_endpoint') !!}</code></p>
 
-                <p>{{ trans('account/general.mcp_url') }}<br>
+                <p>{{ trans('account/general.mcp_url') }} <span class="label label-warning">beta</span><br>
                     <code>{{ url('/mcp/snipe-it') }}</code></p>
 
                 <p>{{ trans('account/general.api_token_expiration_time') }}
