@@ -2,9 +2,12 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Category;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -19,8 +22,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT category identified by numeric ID or name')]
 class UpdateCategoryTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         try {
             $request->validate([
                 'id' => 'nullable|integer',
@@ -32,23 +41,23 @@ class UpdateCategoryTool extends Tool
 
         $category = $this->resolveCategory($request);
 
-        if (! $category) {
-            return Response::make(Response::error(trans('mcp.category_not_found')));
+        if (! $category || ! Gate::allows('update', $category)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.category')])));
         }
 
-        if (! Gate::allows('update', $category)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
+        $input = $request->all();
         if ($request->filled('new_name')) {
-            $category->name = $request->get('new_name');
+            $input['name'] = $request->get('new_name');
         }
 
-        foreach (['category_type', 'notes', 'checkin_email', 'require_acceptance', 'use_default_eula'] as $field) {
-            if ($request->filled($field)) {
-                $category->{$field} = $request->get($field);
-            }
+        $rules = array_intersect_key($category->getPreparedRules(), $input);
+        try {
+            $validated = Validator::make($input, $rules)->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
         }
+
+        $category->fill(array_merge($input, $validated));
 
         if ($category->save()) {
             return Response::make(

@@ -2,7 +2,9 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
 use App\Events\CheckoutableCheckedIn;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use App\Models\License;
 use App\Models\LicenseSeat;
@@ -22,32 +24,31 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check in a Snipe-IT license seat by its seat ID, returning it to the available pool')]
 class CheckinLicenseTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Checkin)) {
+            return $denied;
+        }
+
         $request->validate([
             'seat_id' => 'required|integer',
             'note' => 'nullable|string|max:65535',
         ]);
 
         $seat = LicenseSeat::with('license')->find($request->get('seat_id'));
+        $license = $seat?->license;
 
-        if (! $seat) {
-            return Response::make(Response::error(trans('mcp.license_seat_not_found')));
+        // License checkin reuses the checkout gate. Collapse the three
+        // "no" cases so seat state can't be probed by an unauthorized
+        // caller.
+        if (! $seat || ! $license || ! Gate::allows('checkout', $license)) {
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         if (is_null($seat->assigned_to) && is_null($seat->asset_id)) {
             return Response::make(Response::error(trans('mcp.seat_not_checked_out')));
-        }
-
-        $license = $seat->license;
-
-        if (! $license) {
-            return Response::make(Response::error(trans('mcp.license_not_found')));
-        }
-
-        // License checkin uses the checkout gate (matching application behavior)
-        if (! Gate::allows('checkout', $license)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $returnTo = null;

@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
@@ -17,8 +19,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Return information about the currently authenticated Snipe-IT user')]
 class GetCurrentUserTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
+        }
+
         if (! auth()->check()) {
             return Response::make(Response::error(trans('mcp.not_authenticated')));
         }

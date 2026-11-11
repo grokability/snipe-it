@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\AssetModel;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -18,8 +20,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Look up a single Snipe-IT asset model by numeric ID or name and return its full details')]
 class ShowAssetModelTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
+        }
+
         $request->validate([
             'id' => 'nullable|integer',
             'name' => 'nullable|string|max:255',
@@ -31,12 +39,8 @@ class ShowAssetModelTool extends Tool
             return Response::make(Response::error(trans('mcp.id_or_name_required')));
         }
 
-        if (! $model) {
-            return Response::make(Response::error(trans('mcp.asset_model_not_found')));
-        }
-
-        if (! Gate::allows('view', $model)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $model || ! Gate::allows('view', $model)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset_model')])));
         }
 
         $model->loadCount('assets as assets_count');

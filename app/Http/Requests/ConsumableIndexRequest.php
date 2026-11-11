@@ -32,7 +32,15 @@ class ConsumableIndexRequest extends FormRequest
             'location_id' => 'nullable|integer|exists:locations,id',
             // Returns rows where (qty - active checkouts) <= min_amt.
             // SQL-side filter so pagination remains correct at scale.
+            // Archived rows are always excluded from low-stock results
+            // regardless of include_archived, matching the dashboard
+            // alert fix in commit 3522042fa6.
             'low_stock_only' => 'nullable|boolean',
+            // Default archived scoping mirrors consumablesForShow().
+            // The admin's show_archived_in_list setting can flip default
+            // to "show archived." Explicit opt-ins override.
+            'include_archived' => 'nullable|boolean',
+            'archived_only' => 'nullable|boolean',
         ];
     }
 }

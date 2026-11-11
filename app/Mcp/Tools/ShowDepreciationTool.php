@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Depreciation;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -18,8 +20,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Look up a single Snipe-IT depreciation schedule by numeric ID or name and return its full details')]
 class ShowDepreciationTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
+        }
+
         $request->validate([
             'id' => 'nullable|integer',
             'name' => 'nullable|string|max:255',
@@ -31,12 +39,8 @@ class ShowDepreciationTool extends Tool
             return Response::make(Response::error(trans('mcp.id_or_name_required')));
         }
 
-        if (! $depreciation) {
-            return Response::make(Response::error(trans('mcp.depreciation_not_found')));
-        }
-
-        if (! Gate::allows('view', $depreciation)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $depreciation || ! Gate::allows('view', $depreciation)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.depreciation')])));
         }
 
         $depreciation->loadCount('models as models_count');

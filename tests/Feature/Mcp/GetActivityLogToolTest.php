@@ -79,10 +79,17 @@ class GetActivityLogToolTest extends TestCase
         }
     }
 
-    public function test_returns_error_when_user_lacks_permission()
+    public function test_user_without_activity_view_or_type_view_gets_empty_feed()
     {
+        // Mirrors Api\DashboardController::activity: callers without
+        // activity.view AND without any type-level view permission
+        // get an empty feed, not a hard error. The dashboard treats
+        // this the same way.
         $this->actingAs(User::factory()->create());
 
-        $this->assertTrue($this->handle()->responses()->first()->isError());
+        $content = $this->handle()->getStructuredContent();
+
+        $this->assertSame(0, $content['total']);
+        $this->assertSame([], $content['activity']);
     }
 }

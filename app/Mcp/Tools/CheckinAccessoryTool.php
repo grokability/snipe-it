@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Accessory;
 use App\Models\AccessoryCheckout;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -19,26 +21,23 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check in a Snipe-IT accessory checkout record by its checkout ID')]
 class CheckinAccessoryTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Checkin)) {
+            return $denied;
+        }
+
         $request->validate([
             'checkout_id' => 'required|integer',
             'note' => 'nullable|string|max:65535',
         ]);
 
         $checkout = AccessoryCheckout::find($request->get('checkout_id'));
+        $accessory = $checkout ? Accessory::find($checkout->accessory_id) : null;
 
-        if (! $checkout) {
-            return Response::make(Response::error(trans('mcp.accessory_checkout_not_found')));
-        }
-
-        $accessory = Accessory::find($checkout->accessory_id);
-
-        if (! $accessory) {
-            return Response::make(Response::error(trans('mcp.accessory_not_found')));
-        }
-
-        if (! Gate::allows('checkin', $accessory)) {
+        if (! $checkout || ! $accessory || ! Gate::allows('checkin', $accessory)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 

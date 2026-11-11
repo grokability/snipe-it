@@ -2,10 +2,13 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Accessory;
 use App\Models\Company;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -20,8 +23,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT accessory identified by numeric ID or name')]
 class UpdateAccessoryTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         try {
             $request->validate([
                 'id' => 'nullable|integer',
@@ -33,38 +42,33 @@ class UpdateAccessoryTool extends Tool
 
         $accessory = $this->resolveAccessory($request);
 
-        if (! $accessory) {
-            return Response::make(Response::error(trans('mcp.accessory_not_found')));
+        if (! $accessory || ! Gate::allows('update', $accessory)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.accessory')])));
         }
 
-        if (! Gate::allows('update', $accessory)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
-        // supplier_id / purchase_cost map forward to default_*.
-        // order_number / purchase_date have moved to the Orders table.
-        $updatable = [
-            'category_id', 'qty', 'model_number', 'manufacturer_id',
-            'location_id', 'min_amt', 'requestable', 'notes',
-            'default_supplier_id', 'default_purchase_cost',
-        ];
-
-        foreach ($updatable as $field) {
-            if ($request->filled($field)) {
-                $accessory->{$field} = $request->get($field);
-            }
-        }
-
+        // Build input with aliases mapped: supplier_id / purchase_cost
+        // forward to default_*, new_name renames via name. Then intersect
+        // with model rules so partial updates only validate fields the
+        // caller actually sent (no spurious "required" failures).
+        $input = $request->all();
         if ($request->filled('supplier_id') && ! $request->filled('default_supplier_id')) {
-            $accessory->default_supplier_id = $request->get('supplier_id');
+            $input['default_supplier_id'] = $request->get('supplier_id');
         }
         if ($request->filled('purchase_cost') && ! $request->filled('default_purchase_cost')) {
-            $accessory->default_purchase_cost = $request->get('purchase_cost');
+            $input['default_purchase_cost'] = $request->get('purchase_cost');
+        }
+        if ($request->filled('new_name')) {
+            $input['name'] = $request->get('new_name');
         }
 
-        if ($request->filled('new_name')) {
-            $accessory->name = $request->get('new_name');
+        $rules = array_intersect_key($accessory->getPreparedRules(), $input);
+        try {
+            $validated = Validator::make($input, $rules)->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
         }
+
+        $accessory->fill(array_merge($input, $validated));
 
         if ($request->filled('company_id')) {
             $accessory->company_id = Company::getIdForCurrentUser($request->get('company_id'));
@@ -113,7 +117,8 @@ class UpdateAccessoryTool extends Tool
             'purchase_cost' => $schema->number()->description('Purchase cost per unit'),
             'purchase_date' => $schema->string()->description('Purchase date (YYYY-MM-DD)'),
             'min_amt' => $schema->number()->description('Minimum quantity alert threshold'),
-            'requestable' => $schema->boolean()->description('Whether users can request this accessory'),
+            'requestable' => $schema->boolean()->description('Whether users can request this accessory. Mutually exclusive with archived.'),
+            'archived' => $schema->boolean()->description('Set true to archive, false to unarchive. Archived accessories cannot be checked out and are hidden from the default list. Cannot be archived while units are still checked out.'),
             'notes' => $schema->string()->description('Notes'),
         ];
     }

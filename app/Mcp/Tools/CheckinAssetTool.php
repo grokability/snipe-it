@@ -2,7 +2,9 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
 use App\Http\Requests\AssetCheckinRequest;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -19,8 +21,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check a currently checked-out Snipe-IT asset back in')]
 class CheckinAssetTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Checkin)) {
+            return $denied;
+        }
+
         // Shared checkin rules come from AssetCheckinRequest::rulesArray()
         // so the require_checkinout_notes setting (and any future rule
         // additions) stay in sync between HTTP and MCP paths. Catch

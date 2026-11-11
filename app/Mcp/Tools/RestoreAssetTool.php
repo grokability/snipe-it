@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -18,8 +20,18 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Restore a soft-deleted Snipe-IT asset')]
 class RestoreAssetTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Delete)) {
+            return $denied;
+        }
+
+        if (! Gate::allows('delete', Asset::class)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset')])));
+        }
+
         $request->validate([
             'id' => 'required|integer',
         ]);
@@ -27,15 +39,11 @@ class RestoreAssetTool extends Tool
         $asset = Asset::withTrashed()->find($request->get('id'));
 
         if (! $asset) {
-            return Response::make(Response::error(trans('mcp.asset_not_found')));
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset')])));
         }
 
         if (! $asset->deleted_at) {
             return Response::make(Response::error(trans('mcp.asset_not_deleted')));
-        }
-
-        if (! Gate::allows('delete', Asset::class)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $asset->restore();

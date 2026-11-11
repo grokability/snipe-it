@@ -2,10 +2,14 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use App\Models\MaintenanceType;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -19,8 +23,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Add a new maintenance type to the taxonomy. Only do this after list_maintenance_types confirms the name does not already exist in some variant. Taxonomy sprawl ("Repair" vs "repair" vs "Repairs") makes future reporting painful.')]
 class CreateMaintenanceTypeTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         // No maintenances.create permission exists in Snipe-IT. Maintenance
         // types are created in the context of asset maintenance work, so
         // this gates on assets.edit (the same permission MaintenancePolicy
@@ -29,22 +39,15 @@ class CreateMaintenanceTypeTool extends Tool
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
+        $type = new MaintenanceType;
         try {
-            $request->validate([
-                'name' => 'required|string|max:100',
-                'tag_color' => 'nullable|string|max:191',
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+            $validated = Validator::make($request->all(), $type->getPreparedRules())->validate();
+        } catch (ValidationException $e) {
             return Response::make(Response::error($e->validator->errors()->first()));
         }
 
-        $type = new MaintenanceType;
-        $type->name = $request->get('name');
+        $type->fill(array_merge($request->all(), $validated));
         $type->created_by = auth()->id();
-
-        if ($request->filled('tag_color')) {
-            $type->tag_color = $request->get('tag_color');
-        }
 
         if ($type->save()) {
             return Response::make(

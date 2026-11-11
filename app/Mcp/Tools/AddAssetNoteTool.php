@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Actionlog;
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -19,8 +21,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Add a manual note to a Snipe-IT asset identified by asset tag, serial number, or numeric ID')]
 class AddAssetNoteTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         $request->validate([
             'asset_tag' => 'nullable|string|max:100',
             'serial' => 'nullable|string|max:255',
@@ -30,12 +38,8 @@ class AddAssetNoteTool extends Tool
 
         $asset = $this->resolveAsset($request);
 
-        if (! $asset) {
-            return Response::make(Response::error(trans('mcp.asset_not_found')));
-        }
-
-        if (! Gate::allows('update', $asset)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $asset || ! Gate::allows('update', $asset)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset')])));
         }
 
         $logaction = new Actionlog;

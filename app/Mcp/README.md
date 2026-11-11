@@ -80,10 +80,45 @@ The server uses **OAuth 2.0 with dynamic client registration**. Clients that sup
 
 1. The client discovers the OAuth server via `/.well-known/oauth-authorization-server`
 2. It registers itself dynamically via `/oauth/register`
-3. The user is redirected to Snipe-IT's login page to authorize access
+3. The user is redirected to Snipe-IT's login page to authorize access, including which capability scopes to grant
 4. The client receives a bearer token and uses it for all subsequent requests
 
 The authenticated user's Snipe-IT permissions apply. A user without `delete assets` permission cannot call `delete_asset`, for example.
+
+### Scopes
+
+Every MCP tool declares a single required Passport scope. The acting token must carry that exact scope or the call is refused with a `scope_denied` error, regardless of the user's Snipe-IT permissions. This lets an administrator issue, say, a read-only AI connector token to a user who otherwise has full write permissions in the system.
+
+| Scope | What it unlocks |
+|---|---|
+| `mcp:read` | All `list_*`, `show_*`, `get_current_user`, `get_user_assets`, `show_user_permissions`, `find_similar_models`, `list_history`, `list_uploads`, `list_asset_notes`, `list_maintenances`, `list_maintenance_types` |
+| `mcp:write` | All `create_*`, `update_*`, `update_profile`, `audit_asset`, `add_asset_note`, `upload_asset_image`, `reset_2fa`, `send_password_reset` |
+| `mcp:delete` | All `delete_*`, `restore_asset`, `restore_user` |
+| `mcp:checkout` | `checkout_asset`, `checkout_accessory`, `checkout_component`, `checkout_consumable`, `checkout_license`, `offboard_user`, `transfer_user_assets` |
+| `mcp:checkin` | `checkin_asset`, `checkin_accessory`, `checkin_component`, `checkin_license` |
+| `mcp:superadmin` | All group management (`list_groups`, `show_group`, `create_group`, `update_group`, `delete_group`) |
+
+Semantics:
+
+- **Exact match.** A token with `mcp:write` cannot call a read tool, and vice versa. There is no superset relationship between scopes. A token with `mcp:superadmin` does NOT implicitly grant any other scope.
+- **Both layers enforce.** The scope check runs first. If it passes, the tool's existing Snipe-IT permission check (via `Gate::allows`) still runs. Both must pass for the tool to execute.
+- **Grant what's needed.** During OAuth consent, grant only the scopes the client will use. For a read-only reporting assistant that's just `mcp:read`. For a full-capability admin tool it may be the whole set.
+
+Scope errors return the generic `scope_denied` message and do not reveal which scope was missing to the extent a wrong-scope diff would otherwise fingerprint the caller's capability set.
+
+### Route middleware chain
+
+Every request to `/mcp/snipe-it` passes through this chain, in order:
+
+| Middleware | Response on failure | Purpose |
+|---|---|---|
+| `auth:api` | HTTP 401 | Validates the Passport bearer token. Attaches the user to the request. Without a valid token, the request is rejected here. |
+| `CheckUserIsActivated` | HTTP 401 | Rejects deactivated users whose tokens would otherwise keep working. Matches the REST API's behavior so an admin deactivating a user terminates both their web session AND their MCP session. |
+| `EnforceApiTwoFactorEnrollment` | HTTP 403 | On installs that require 2FA (`two_factor_enabled=2`), rejects users who have not enrolled. Prevents 2FA-required orgs from being bypassed via MCP. |
+| `mcp.scope.handshake` | HTTP 401 + `WWW-Authenticate: Bearer error="insufficient_scope", scope="..."` | Rejects tokens that carry zero `mcp:*` scopes. The WWW-Authenticate header advertises all available MCP scopes so OAuth-compliant clients can re-initiate authorization. This is the gate pre-scope tokens (issued before this release) hit. |
+| `api-throttle:api` | HTTP 429 | Rate limiting plus JSON response-header setup. |
+
+Per-tool scope checks (via `HasMcpScope`) run **inside** the MCP tool handler, so their errors come back as JSON-RPC-level tool errors inside an HTTP 200 response. Session-level failures (the four middleware above) short-circuit at the HTTP layer with the appropriate status + headers, which is what compliant OAuth clients need to trigger a reauthorization flow.
 
 ---
 
@@ -757,12 +792,14 @@ Search and list accessories. When `filter` and `search` are both provided, `filt
 | `manufacturer_id` | number  | No       | Filter by manufacturer                                                                              |
 | `supplier_id`     | number  | No       | Filter by supplier                                                                                  |
 | `location_id`     | number  | No       | Filter by location                                                                                  |
-| `low_stock_only`  | boolean | No       | Return only accessories whose remaining quantity is at or below `min_amt`. Use for reorder reports. |
+| `low_stock_only`  | boolean | No       | Return only accessories whose remaining quantity is at or below `min_amt`. Archived accessories are always excluded from this filter.  |
+| `include_archived`| boolean | No       | Include archived accessories in results. Default matches `accessoriesForShow()`: archived rows are hidden unless `show_archived_in_list` is on. |
+| `archived_only`   | boolean | No       | Return ONLY archived accessories. Overrides `include_archived`.                                     |
 | `limit`           | number  | No       | Results to return (default: 25, max: 500)                                                           |
 | `offset`          | number  | No       | Results to skip for pagination                                                                      |
 
 Response rows include `qty`, `min_amt`, `remaining` (computed), `supplier`, `purchase_cost`, `purchase_date`,
-`order_number`, and `notes`.
+`order_number`, `archived`, and `notes`.
 
 #### `create_accessory`
 
@@ -780,16 +817,18 @@ Response rows include `qty`, `min_amt`, `remaining` (computed), `supplier`, `pur
 | `purchase_cost` | number | No | Purchase cost per unit |
 | `purchase_date` | string | No | Purchase date (YYYY-MM-DD) |
 | `min_amt` | number | No | Minimum quantity alert threshold |
-| `requestable` | boolean | No | User-requestable flag |
+| `requestable` | boolean | No | User-requestable flag. Mutually exclusive with `archived`. |
+| `archived` | boolean | No | Archive flag. Archived accessories cannot be checked out, are hidden from the default list, and are excluded from low-stock alerts. Mutually exclusive with `requestable`. |
 | `notes` | string | No | Notes |
 
 #### `update_accessory`
-Identify by `id` or `name`. Use `new_name` to rename.
+Identify by `id` or `name`. Use `new_name` to rename. Pass `archived=true` to archive (fails if units are still checked out) or `archived=false` to unarchive.
 
 #### `delete_accessory`
 The accessory must have no units currently checked out. Identify by `id` or `name`.
 
 #### `checkout_accessory`
+Refuses to check out archived accessories. Unarchive via `update_accessory` first.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -829,15 +868,17 @@ The accessory must have no units currently checked out. Identify by `id` or `nam
 | `purchase_cost` | number | No | Purchase cost per unit |
 | `purchase_date` | string | No | Purchase date (YYYY-MM-DD) |
 | `min_amt` | number | No | Minimum quantity alert threshold |
+| `archived` | boolean | No | Archive flag. Archived components cannot be checked out and are hidden from the default list. Cannot be archived while units are checked out. |
 | `notes` | string | No | Notes |
 
 #### `update_component`
-Identify by `id` or `name`. Use `new_name` to rename.
+Identify by `id` or `name`. Use `new_name` to rename. Pass `archived=true` to archive (fails if units are still checked out to assets) or `archived=false` to unarchive.
 
 #### `delete_component`
 The component must have no units checked out to assets. Identify by `id` or `name`.
 
 #### `checkout_component`
+Refuses to check out archived components. Unarchive via `update_component` first.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -871,14 +912,16 @@ Search and list consumables. When `filter` and `search` are both provided, `filt
 | `category_id`     | number  | No       | Filter by category                                                                                  |
 | `manufacturer_id` | number  | No       | Filter by manufacturer                                                                              |
 | `location_id`     | number  | No       | Filter by location                                                                                  |
-| `low_stock_only`  | boolean | No       | Return only consumables whose remaining quantity is at or below `min_amt`. Use for reorder reports. |
+| `low_stock_only`  | boolean | No       | Return only consumables whose remaining quantity is at or below `min_amt`. Archived consumables are always excluded from this filter. |
+| `include_archived`| boolean | No       | Include archived consumables in results. Default matches `consumablesForShow()`: archived rows are hidden unless `show_archived_in_list` is on. |
+| `archived_only`   | boolean | No       | Return ONLY archived consumables. Overrides `include_archived`.                                     |
 | `limit`           | number  | No       | Results to return (default: 25, max: 500)                                                           |
 | `offset`          | number  | No       | Results to skip                                                                                     |
 
-Response rows include `qty`, `min_amt`, `remaining` (computed), `supplier`, `model_number`, `item_no`, and `notes`.
+Response rows include `qty`, `min_amt`, `remaining` (computed), `supplier`, `model_number`, `item_no`, `archived`, and `notes`.
 
 #### `show_consumable`
-Look up by `id` or `name`.
+Look up by `id` or `name`. Response includes `archived` and `requestable` flags.
 
 #### `create_consumable`
 
@@ -897,16 +940,18 @@ Look up by `id` or `name`.
 | `purchase_cost` | number | No | Purchase cost per unit |
 | `purchase_date` | string | No | Purchase date (YYYY-MM-DD) |
 | `min_amt` | number | No | Minimum quantity alert threshold |
-| `requestable` | boolean | No | User-requestable flag |
+| `requestable` | boolean | No | User-requestable flag. Mutually exclusive with `archived`. |
+| `archived` | boolean | No | Archive flag. Archived consumables cannot be checked out, are hidden from the default list, and are excluded from low-stock alerts. Mutually exclusive with `requestable`. |
 | `notes` | string | No | Notes |
 
 #### `update_consumable`
-Identify by `id` or `name`. Use `new_name` to rename.
+Identify by `id` or `name`. Use `new_name` to rename. Pass `archived=true` to archive (fails if outstanding distributions remain) or `archived=false` to unarchive.
 
 #### `delete_consumable`
 The consumable must have no units currently checked out. Identify by `id` or `name`.
 
 #### `checkout_consumable`
+Refuses to check out archived consumables. Unarchive via `update_consumable` first.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|

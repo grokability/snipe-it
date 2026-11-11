@@ -2,7 +2,9 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
 use App\Events\CheckoutableCheckedOut;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Consumable;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -20,8 +22,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check out a Snipe-IT consumable to a user')]
 class CheckoutConsumableTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Checkout)) {
+            return $denied;
+        }
+
         $request->validate([
             'id' => 'nullable|integer',
             'name' => 'nullable|string|max:255',
@@ -37,6 +45,10 @@ class CheckoutConsumableTool extends Tool
 
         if (! Gate::allows('checkout', $consumable)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
+        }
+
+        if ($consumable->archived) {
+            return Response::make(Response::error(trans('general.cannot_checkout_archived', ['item_type' => strtolower(trans('general.consumable'))])));
         }
 
         if ($consumable->numRemaining() <= 0) {

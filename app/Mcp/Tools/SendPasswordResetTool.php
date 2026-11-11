@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -19,8 +21,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Send a password reset link to a Snipe-IT user identified by numeric ID, username, or email address. The user must be active, have an email address, and not be an LDAP-imported account.')]
 class SendPasswordResetTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         $request->validate([
             'id' => 'nullable|integer',
             'username' => 'nullable|string|max:191',
@@ -29,12 +37,8 @@ class SendPasswordResetTool extends Tool
 
         $user = $this->resolveUser($request);
 
-        if (! $user) {
-            return Response::make(Response::error(trans('mcp.user_not_found')));
-        }
-
-        if (! Gate::allows('view', $user)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $user || ! Gate::allows('view', $user)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.user')])));
         }
 
         if (! $user->activated) {

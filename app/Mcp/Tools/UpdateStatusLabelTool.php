@@ -2,9 +2,14 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Enums\StatusLabelType;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Statuslabel;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -19,8 +24,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT status label identified by numeric ID or name')]
 class UpdateStatusLabelTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         try {
             $request->validate([
                 'id' => 'nullable|integer',
@@ -32,32 +43,38 @@ class UpdateStatusLabelTool extends Tool
 
         $label = $this->resolveStatusLabel($request);
 
-        if (! $label) {
-            return Response::make(Response::error(trans('mcp.status_label_not_found')));
+        if (! $label || ! Gate::allows('update', $label)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.status_label')])));
         }
 
-        if (! Gate::allows('update', $label)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
+        $input = $request->all();
         if ($request->filled('new_name')) {
-            $label->name = $request->get('new_name');
+            $input['name'] = $request->get('new_name');
         }
 
+        // Translate the semantic `type` to the three deployable /
+        // pending / archived boolean columns the model stores. Needs
+        // to happen before validation so the model-level rules see
+        // the columns populated.
         if ($request->filled('type')) {
-            $statusType = Statuslabel::getStatuslabelTypesForDB($request->get('type'));
-            $label->deployable = $statusType['deployable'];
-            $label->pending = $statusType['pending'];
-            $label->archived = $statusType['archived'];
+            try {
+                $typeValidated = Validator::make($request->all(), [
+                    'type' => ['required', 'string', Rule::enum(StatusLabelType::class)],
+                ])->validate();
+            } catch (ValidationException $e) {
+                return Response::make(Response::error($e->validator->errors()->first()));
+            }
+            $input = array_merge($input, StatusLabelType::from($typeValidated['type'])->toDbColumns());
         }
 
-        if ($request->filled('color')) {
-            $label->color = $request->get('color');
+        $rules = array_intersect_key($label->getPreparedRules(), $input);
+        try {
+            $validated = Validator::make($input, $rules)->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
         }
 
-        if ($request->filled('notes')) {
-            $label->notes = $request->get('notes');
-        }
+        $label->fill(array_merge($input, $validated));
 
         if ($request->has('default_label')) {
             $label->default_label = $request->get('default_label');
@@ -100,7 +117,7 @@ class UpdateStatusLabelTool extends Tool
             'id' => $schema->number()->description('Numeric ID to identify the status label'),
             'name' => $schema->string()->description('Name to identify the status label'),
             'new_name' => $schema->string()->description('New name (renames the status label)'),
-            'type' => $schema->string()->description('New type: deployable, pending, archived, or undeployable'),
+            'type' => $schema->string()->description('New type. One of: '.implode(', ', StatusLabelType::values())),
             'color' => $schema->string()->description('Display color in #RRGGBB format'),
             'notes' => $schema->string()->description('Notes'),
             'default_label' => $schema->boolean()->description('Whether this is the default label'),

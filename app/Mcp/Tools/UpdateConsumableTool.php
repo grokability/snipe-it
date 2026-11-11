@@ -2,9 +2,12 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Consumable;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -19,8 +22,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT consumable identified by numeric ID or name')]
 class UpdateConsumableTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         try {
             $request->validate([
                 'id' => 'nullable|integer',
@@ -32,38 +41,32 @@ class UpdateConsumableTool extends Tool
 
         $consumable = $this->resolveConsumable($request);
 
-        if (! $consumable) {
-            return Response::make(Response::error(trans('mcp.consumable_not_found')));
+        if (! $consumable || ! Gate::allows('update', $consumable)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.consumable')])));
         }
 
-        if (! Gate::allows('update', $consumable)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
-        // supplier_id / purchase_cost map forward to default_*.
-        // purchase_date moved to the Orders table.
-        $updatable = [
-            'qty', 'category_id', 'company_id', 'location_id', 'manufacturer_id',
-            'min_amt', 'notes',
-            'default_supplier_id', 'default_purchase_cost',
-        ];
-
-        foreach ($updatable as $field) {
-            if ($request->filled($field)) {
-                $consumable->{$field} = $request->get($field);
-            }
-        }
-
+        // supplier_id / purchase_cost forward to default_*, new_name
+        // renames via name. Intersect with model rules so partial
+        // updates only validate fields the caller actually sent.
+        $input = $request->all();
         if ($request->filled('supplier_id') && ! $request->filled('default_supplier_id')) {
-            $consumable->default_supplier_id = $request->get('supplier_id');
+            $input['default_supplier_id'] = $request->get('supplier_id');
         }
         if ($request->filled('purchase_cost') && ! $request->filled('default_purchase_cost')) {
-            $consumable->default_purchase_cost = $request->get('purchase_cost');
+            $input['default_purchase_cost'] = $request->get('purchase_cost');
+        }
+        if ($request->filled('new_name')) {
+            $input['name'] = $request->get('new_name');
         }
 
-        if ($request->filled('new_name')) {
-            $consumable->name = $request->get('new_name');
+        $rules = array_intersect_key($consumable->getPreparedRules(), $input);
+        try {
+            $validated = Validator::make($input, $rules)->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
         }
+
+        $consumable->fill(array_merge($input, $validated));
 
         if ($consumable->save()) {
             return Response::make(
@@ -107,6 +110,8 @@ class UpdateConsumableTool extends Tool
             'purchase_cost' => $schema->number()->description('Purchase cost per unit'),
             'purchase_date' => $schema->string()->description('Purchase date (YYYY-MM-DD)'),
             'min_amt' => $schema->number()->description('Minimum quantity alert threshold'),
+            'requestable' => $schema->boolean()->description('Whether users can request this consumable. Mutually exclusive with archived.'),
+            'archived' => $schema->boolean()->description('Set true to archive, false to unarchive. Archived consumables cannot be checked out and are hidden from the default list. Cannot be archived while outstanding distributions remain.'),
             'notes' => $schema->string()->description('Notes'),
         ];
     }

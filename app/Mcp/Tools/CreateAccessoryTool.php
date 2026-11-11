@@ -2,10 +2,14 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Accessory;
 use App\Models\Company;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -19,8 +23,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT accessory')]
 class CreateAccessoryTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         if (! Gate::allows('create', Accessory::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
@@ -30,21 +40,28 @@ class CreateAccessoryTool extends Tool
         // living on the Orders table. Map legacy input names forward so
         // older callers that still send supplier_id / purchase_cost keep
         // working.
-        $input = $request->only([
-            'name', 'category_id', 'qty', 'model_number', 'manufacturer_id',
-            'location_id', 'min_amt', 'requestable', 'notes',
-            'default_supplier_id', 'default_purchase_cost',
-        ]);
-        if ($request->filled('supplier_id') && ! isset($input['default_supplier_id'])) {
+        $input = $request->all();
+        if ($request->filled('supplier_id') && ! $request->filled('default_supplier_id')) {
             $input['default_supplier_id'] = $request->get('supplier_id');
         }
-        if ($request->filled('purchase_cost') && ! isset($input['default_purchase_cost'])) {
+        if ($request->filled('purchase_cost') && ! $request->filled('default_purchase_cost')) {
             $input['default_purchase_cost'] = $request->get('purchase_cost');
         }
 
+        // Model-level rules are the single source of truth (Watson).
+        // Not every fillable field has a rule (e.g. notes, model_number
+        // carry no constraints), so we overlay validated values on top
+        // of the raw input and let the model's $fillable list gate what
+        // fill() persists. Validation still catches bad values for
+        // every field that does have a rule.
         $accessory = new Accessory;
-        $accessory->fill($input);
+        try {
+            $validated = Validator::make($input, $accessory->getPreparedRules())->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
+        $accessory->fill(array_merge($input, $validated));
         $accessory->company_id = Company::getIdForCurrentUser($request->get('company_id'));
         $accessory->created_by = auth()->id();
 
@@ -79,7 +96,8 @@ class CreateAccessoryTool extends Tool
             'purchase_cost' => $schema->number()->description('Purchase cost per unit'),
             'purchase_date' => $schema->string()->description('Purchase date (YYYY-MM-DD)'),
             'min_amt' => $schema->number()->description('Minimum quantity threshold for alerts'),
-            'requestable' => $schema->boolean()->description('Whether users can request this accessory'),
+            'requestable' => $schema->boolean()->description('Whether users can request this accessory. Mutually exclusive with archived.'),
+            'archived' => $schema->boolean()->description('Whether the accessory is archived. Archived accessories are hidden from the default list, cannot be checked out, and are excluded from low-stock alerts. Mutually exclusive with requestable, and cannot be set while units are still checked out.'),
             'notes' => $schema->string()->description('Notes'),
         ];
     }

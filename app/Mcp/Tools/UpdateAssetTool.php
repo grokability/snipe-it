@@ -2,9 +2,13 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -18,8 +22,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT asset identified by asset tag, serial, or numeric ID')]
 class UpdateAssetTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         try {
             $request->validate([
                 'asset_tag' => 'nullable|max:255',
@@ -32,35 +42,32 @@ class UpdateAssetTool extends Tool
 
         $asset = $this->resolveAsset($request);
 
-        if (! $asset) {
-            return Response::make(Response::error(trans('mcp.asset_not_found')));
+        if (! $asset || ! Gate::allows('update', $asset)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset')])));
         }
 
-        if (! Gate::allows('update', $asset)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
-        $updatable = [
-            'name', 'status_id', 'model_id', 'notes', 'order_number',
-            'purchase_date', 'purchase_cost', 'warranty_months',
-            'location_id', 'rtd_location_id', 'supplier_id',
-            'requestable', 'byod', 'asset_eol_date', 'expected_checkin', 'next_audit_date',
-        ];
-
-        foreach ($updatable as $field) {
-            if ($request->filled($field)) {
-                $asset->{$field} = $request->get($field);
-            }
-        }
-
-        // new_asset_tag / new_serial let callers change the identifiers without
-        // conflicting with the asset_tag/serial used to look up the asset
+        // new_asset_tag / new_serial let callers change the identifiers
+        // without conflicting with the asset_tag/serial used to look up
+        // the asset. Map them to the model columns first so the
+        // validator sees them, then intersect with the model's rules so
+        // partial updates only validate what the caller actually sent.
+        $input = $request->all();
+        unset($input['asset_tag'], $input['serial']);
         if ($request->filled('new_asset_tag')) {
-            $asset->asset_tag = $request->get('new_asset_tag');
+            $input['asset_tag'] = $request->get('new_asset_tag');
         }
         if ($request->filled('new_serial')) {
-            $asset->serial = $request->get('new_serial');
+            $input['serial'] = $request->get('new_serial');
         }
+
+        $rules = array_intersect_key($asset->getPreparedRules(), $input);
+        try {
+            $validated = Validator::make($input, $rules)->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
+
+        $asset->fill(array_merge($input, $validated));
 
         if ($asset->save()) {
             return Response::make(

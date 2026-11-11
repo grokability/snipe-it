@@ -2,11 +2,15 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Company;
 use App\Models\Group;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -20,8 +24,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT user account')]
 class CreateUserTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         if (! Gate::allows('create', User::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
@@ -31,21 +41,31 @@ class CreateUserTool extends Tool
         }
 
         $user = new User;
-        $user->fill($request->only([
-            'first_name', 'last_name', 'username', 'email', 'employee_num',
-            'jobtitle', 'phone', 'mobile', 'department_id', 'location_id',
-            'manager_id', 'notes', 'start_date', 'end_date', 'vip', 'remote',
-            'website', 'address', 'city', 'state', 'country', 'zip',
-        ]));
 
-        $user->activated = $request->filled('activated') ? (bool) $request->get('activated') : true;
-        $user->created_by = auth()->id();
+        // User's $rules marks password as required|min:8. The MCP tool
+        // allows callers to omit password (account gets the noPassword
+        // sentinel so it still passes model validation on save). Pre-
+        // populate password in $input so Validator::make catches short
+        // plaintexts before we hash, then overwrite the validated value
+        // with the bcrypt hash after validation passes.
+        $input = $request->all();
+        if (! $request->filled('password')) {
+            $input['password'] = $user->noPassword();
+        }
+
+        try {
+            $validated = Validator::make($input, $user->getPreparedRules())->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
         if ($request->filled('password')) {
-            $user->password = bcrypt($request->get('password'));
-        } else {
-            $user->password = $user->noPassword();
+            $validated['password'] = bcrypt($validated['password']);
         }
+
+        $user->fill(array_merge($input, $validated));
+        $user->activated = $request->filled('activated') ? (bool) $request->get('activated') : true;
+        $user->created_by = auth()->id();
 
         if ($user->save()) {
             // Company membership is pivot-based (company_user) after the

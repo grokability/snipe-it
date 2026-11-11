@@ -2,9 +2,14 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Enums\StatusLabelType;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Statuslabel;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -19,34 +24,44 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT status label')]
 class CreateStatusLabelTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         if (! Gate::allows('create', Statuslabel::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
+        $statuslabel = new Statuslabel;
+
+        // Validate the semantic `type` up front against the
+        // StatusLabelType enum, then translate it to the three
+        // deployable/pending/archived boolean columns before running
+        // the model-level validator (whose rules require all three).
         try {
-            $request->validate([
-                'type' => 'required|string|in:deployable,pending,archived,undeployable',
-            ]);
+            $typeValidated = Validator::make($request->all(), [
+                'type' => ['required', 'string', Rule::enum(StatusLabelType::class)],
+            ])->validate();
         } catch (ValidationException $e) {
             return Response::make(Response::error($e->validator->errors()->first()));
         }
 
-        $statuslabel = new Statuslabel;
-        $statuslabel->name = $request->get('name');
+        $input = array_merge(
+            $request->all(),
+            StatusLabelType::from($typeValidated['type'])->toDbColumns(),
+        );
 
-        $statusType = Statuslabel::getStatuslabelTypesForDB($request->get('type'));
-        $statuslabel->deployable = $statusType['deployable'];
-        $statuslabel->pending = $statusType['pending'];
-        $statuslabel->archived = $statusType['archived'];
+        try {
+            $validated = Validator::make($input, $statuslabel->getPreparedRules())->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
-        if ($request->filled('color')) {
-            $statuslabel->color = $request->get('color');
-        }
-        if ($request->filled('notes')) {
-            $statuslabel->notes = $request->get('notes');
-        }
+        $statuslabel->fill(array_merge($input, $validated));
         $statuslabel->default_label = $request->get('default_label', 0);
         $statuslabel->show_in_nav = $request->get('show_in_nav', 0);
 
@@ -69,7 +84,7 @@ class CreateStatusLabelTool extends Tool
     {
         return [
             'name' => $schema->string()->description('Status label name (required)'),
-            'type' => $schema->string()->description('Status label type: deployable, pending, archived, or undeployable (required)'),
+            'type' => $schema->string()->description('Status label type (required). One of: '.implode(', ', StatusLabelType::values())),
             'color' => $schema->string()->description('Display color in #RRGGBB format'),
             'notes' => $schema->string()->description('Notes'),
             'default_label' => $schema->boolean()->description('Whether this is the default label'),

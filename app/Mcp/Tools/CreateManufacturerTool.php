@@ -2,9 +2,13 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Manufacturer;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -18,16 +22,26 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT manufacturer')]
 class CreateManufacturerTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         if (! Gate::allows('create', Manufacturer::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $manufacturer = new Manufacturer;
-        $manufacturer->fill($request->only([
-            'name', 'url', 'support_url', 'support_email', 'support_phone', 'warranty_lookup_url', 'notes',
-        ]));
+        try {
+            $validated = Validator::make($request->all(), $manufacturer->getPreparedRules())->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
+
+        $manufacturer->fill(array_merge($request->all(), $validated));
 
         if ($manufacturer->save()) {
             return Response::make(

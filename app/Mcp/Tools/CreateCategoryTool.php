@@ -2,9 +2,13 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Category;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -18,22 +22,27 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT category')]
 class CreateCategoryTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         if (! Gate::allows('create', Category::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $category = new Category;
-        $category->name = $request->get('name');
-        $category->category_type = $request->get('category_type');
-        $category->created_by = auth()->id();
-
-        foreach (['checkin_email', 'require_acceptance', 'use_default_eula', 'notes'] as $field) {
-            if ($request->filled($field)) {
-                $category->{$field} = $request->get($field);
-            }
+        try {
+            $validated = Validator::make($request->all(), $category->getPreparedRules())->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
         }
+
+        $category->fill(array_merge($request->all(), $validated));
+        $category->created_by = auth()->id();
 
         if ($category->save()) {
             return Response::make(

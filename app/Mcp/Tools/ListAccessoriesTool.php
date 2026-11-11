@@ -2,7 +2,9 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
 use App\Http\Requests\AccessoryIndexRequest;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Accessory;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,8 +22,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Search and list Snipe-IT accessories with optional filtering by keyword, company, category, manufacturer, location, and low-stock status')]
 class ListAccessoriesTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
+        }
+
         if (! Gate::allows('index', Accessory::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
@@ -67,15 +75,33 @@ class ListAccessoriesTool extends Tool
             $accessories->where('location_id', $request->get('location_id'));
         }
 
+        // Archived scoping uses the same builder scopes the UI does.
+        //   archived_only=true  -> archived() (archived rows only)
+        //   include_archived=true -> no filter (active + archived)
+        //   default -> accessoriesForShow() (hides archived unless the
+        //              show_archived_in_list admin setting is on, so
+        //              MCP list output tracks the UI's visible set).
+        if ($request->boolean('archived_only')) {
+            $accessories->archived();
+        } elseif (! $request->boolean('include_archived')) {
+            $accessories->accessoriesForShow();
+        }
+
         if ($request->boolean('low_stock_only')) {
             // Current remaining = qty minus active checkouts (checkouts
             // are deleted on checkin, so a row present means "still
             // checked out"). Items where remaining <= min_amt are "low
             // stock" per Snipe-IT's reporting conventions. Done as a
             // subquery so SQL filters before pagination.
-            $accessories->whereRaw(
-                '(accessories.qty - (SELECT COUNT(*) FROM accessories_checkout WHERE accessories_checkout.accessory_id = accessories.id)) <= COALESCE(accessories.min_amt, 0)'
-            );
+            //
+            // Archived rows are force-excluded from low-stock results
+            // even when the caller asked for include_archived, matching
+            // the dashboard alert fix in commit 3522042fa6. Reordering
+            // an item you have already decommissioned is wrong.
+            $accessories->notArchived()
+                ->whereRaw(
+                    '(accessories.qty - (SELECT COUNT(*) FROM accessories_checkout WHERE accessories_checkout.accessory_id = accessories.id)) <= COALESCE(accessories.min_amt, 0)'
+                );
         }
 
         $accessories->orderBy('accessories.created_at', 'desc');
@@ -107,6 +133,7 @@ class ListAccessoriesTool extends Tool
             'purchase_cost' => $accessory->purchase_cost,
             'purchase_date' => $accessory->purchase_date?->format('Y-m-d'),
             'order_number' => $accessory->order_number,
+            'archived' => (bool) $accessory->archived,
             'notes' => $accessory->notes,
         ])->values()->all();
 
@@ -130,7 +157,9 @@ class ListAccessoriesTool extends Tool
             'manufacturer_id' => $schema->number()->description('Filter by manufacturer ID'),
             'supplier_id' => $schema->number()->description('Filter by supplier ID'),
             'location_id' => $schema->number()->description('Filter by location ID'),
-            'low_stock_only' => $schema->boolean()->description('When true, return only accessories whose remaining quantity is at or below their configured min_amt threshold. Use for reorder reports.'),
+            'low_stock_only' => $schema->boolean()->description('When true, return only accessories whose remaining quantity is at or below their configured min_amt threshold. Use for reorder reports. Archived accessories are always excluded from this filter.'),
+            'include_archived' => $schema->boolean()->description('When true, include archived accessories in the results. Default matches the UI\'s accessoriesForShow() scope: archived rows are hidden unless the admin has flipped the show_archived_in_list setting on.'),
+            'archived_only' => $schema->boolean()->description('When true, return ONLY archived accessories. Overrides include_archived.'),
             'limit' => $schema->number()->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()->description('Number of results to skip for pagination (default: 0)'),
         ];

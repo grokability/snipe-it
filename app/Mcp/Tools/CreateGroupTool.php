@@ -2,9 +2,13 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Group;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -18,8 +22,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT permission group. Requires superadmin. Permissions are a JSON object mapping permission keys to 1 (grant) or -1 (deny).')]
 class CreateGroupTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Superadmin)) {
+            return $denied;
+        }
+
         if (! Gate::allows('superadmin')) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
@@ -34,12 +44,15 @@ class CreateGroupTool extends Tool
         }
 
         $group = new Group;
-        $group->name = $request->get('name');
+        try {
+            $validated = Validator::make($request->all(), $group->getPreparedRules())->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
+
+        $group->fill(array_merge($request->all(), $validated));
         if ($permissions !== null) {
             $group->permissions = json_encode($permissions);
-        }
-        if ($request->filled('notes')) {
-            $group->notes = $request->get('notes');
         }
         $group->created_by = auth()->id();
 

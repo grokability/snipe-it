@@ -2,9 +2,12 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Supplier;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -19,8 +22,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT supplier identified by numeric ID or name')]
 class UpdateSupplierTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         try {
             $request->validate([
                 'id' => 'nullable|integer',
@@ -32,25 +41,23 @@ class UpdateSupplierTool extends Tool
 
         $supplier = $this->resolveSupplier($request);
 
-        if (! $supplier) {
-            return Response::make(Response::error(trans('mcp.supplier_not_found')));
+        if (! $supplier || ! Gate::allows('update', $supplier)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.supplier')])));
         }
 
-        if (! Gate::allows('update', $supplier)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
+        $input = $request->all();
         if ($request->filled('new_name')) {
-            $supplier->name = $request->get('new_name');
+            $input['name'] = $request->get('new_name');
         }
 
-        $updatable = ['address', 'address2', 'city', 'state', 'country', 'zip', 'phone', 'fax', 'email', 'url', 'contact', 'notes'];
-
-        foreach ($updatable as $field) {
-            if ($request->filled($field)) {
-                $supplier->{$field} = $request->get($field);
-            }
+        $rules = array_intersect_key($supplier->getPreparedRules(), $input);
+        try {
+            $validated = Validator::make($input, $rules)->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
         }
+
+        $supplier->fill(array_merge($input, $validated));
 
         if ($supplier->save()) {
             return Response::make(

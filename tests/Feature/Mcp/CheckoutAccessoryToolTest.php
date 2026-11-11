@@ -176,4 +176,22 @@ class CheckoutAccessoryToolTest extends TestCase
             'assigned_user' => $user->id,
         ])->responses()->first()->isError());
     }
+
+    public function test_refuses_to_check_out_archived_accessory()
+    {
+        $accessory = Accessory::factory()->archived()->create(['qty' => 5]);
+        $user = User::factory()->create();
+
+        $response = $this->handle([
+            'id' => $accessory->id,
+            'checkout_to_type' => 'user',
+            'assigned_user' => $user->id,
+        ]);
+
+        $this->assertTrue($response->responses()->first()->isError());
+        $this->assertDatabaseMissing('accessories_checkout', [
+            'accessory_id' => $accessory->id,
+            'assigned_to' => $user->id,
+        ]);
+    }
 }

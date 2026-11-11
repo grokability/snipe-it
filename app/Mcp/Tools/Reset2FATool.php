@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -18,8 +20,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Reset two-factor authentication for a Snipe-IT user')]
 class Reset2FATool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         if (! Gate::allows('update', User::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
@@ -31,7 +39,7 @@ class Reset2FATool extends Tool
         $user = User::find($request->get('id'));
 
         if (! $user) {
-            return Response::make(Response::error(trans('mcp.user_not_found')));
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.user')])));
         }
 
         $user->two_factor_secret = null;

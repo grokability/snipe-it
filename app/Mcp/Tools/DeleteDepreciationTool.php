@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Depreciation;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -18,8 +20,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Soft-delete a Snipe-IT depreciation schedule by numeric ID or name')]
 class DeleteDepreciationTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Delete)) {
+            return $denied;
+        }
+
         $request->validate([
             'id' => 'nullable|integer',
             'name' => 'nullable|string|max:255',
@@ -27,12 +35,8 @@ class DeleteDepreciationTool extends Tool
 
         $dep = $this->resolveDepreciation($request);
 
-        if (! $dep) {
-            return Response::make(Response::error(trans('mcp.depreciation_not_found')));
-        }
-
-        if (! Gate::allows('delete', $dep)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $dep || ! Gate::allows('delete', $dep)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.depreciation')])));
         }
 
         $name = $dep->name;

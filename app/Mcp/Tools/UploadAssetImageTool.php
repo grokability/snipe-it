@@ -2,7 +2,9 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
 use App\Http\Requests\ImageUploadRequest;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Http\UploadedFile;
@@ -35,6 +37,8 @@ use Throwable;
 #[Description('Attach an image to a Snipe-IT asset. The image is accepted as base64-encoded bytes plus a MIME type. The same sanitization path as the HTTP upload endpoint is used (resize, re-encode, EXIF strip, SVG scrub). Replaces any existing image on the asset.')]
 class UploadAssetImageTool extends Tool
 {
+    use HasMcpScope;
+
     private const MAX_BASE64_BYTES = 5_000_000;
 
     private const ALLOWED_MIME_TYPES = [
@@ -50,6 +54,10 @@ class UploadAssetImageTool extends Tool
 
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         $request->validate([
             'asset_tag' => 'nullable|string|max:191',
             'id' => 'nullable|integer',
@@ -66,12 +74,8 @@ class UploadAssetImageTool extends Tool
             ? Asset::where('asset_tag', $request->get('asset_tag'))->first()
             : Asset::find($request->get('id'));
 
-        if (! $asset) {
-            return Response::make(Response::error(trans('mcp.asset_not_found')));
-        }
-
-        if (! Gate::allows('update', $asset)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $asset || ! Gate::allows('update', $asset)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset')])));
         }
 
         $decoded = base64_decode($request->get('image_base64'), true);

@@ -2,7 +2,9 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
 use App\Http\Requests\AssetCheckoutRequest;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use App\Models\Location;
 use App\Models\User;
@@ -22,10 +24,16 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check out a Snipe-IT asset to a user, location, or another asset')]
 class CheckoutAssetTool extends Tool
 {
+    use HasMcpScope;
+
     public function __construct(private readonly AssetCheckoutService $checkoutService) {}
 
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Checkout)) {
+            return $denied;
+        }
+
         // Shared checkout rules come from AssetCheckoutRequest::rulesArray()
         // so any rule change (new field, tightened validation, settings-
         // driven required_note) stays in sync for the HTTP form, the API

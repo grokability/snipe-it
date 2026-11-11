@@ -2,10 +2,13 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Company;
 use App\Models\Component;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -20,8 +23,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT component identified by numeric ID or name')]
 class UpdateComponentTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         try {
             $request->validate([
                 'id' => 'nullable|integer',
@@ -33,38 +42,32 @@ class UpdateComponentTool extends Tool
 
         $component = $this->resolveComponent($request);
 
-        if (! $component) {
-            return Response::make(Response::error(trans('mcp.component_not_found')));
+        if (! $component || ! Gate::allows('update', $component)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.component')])));
         }
 
-        if (! Gate::allows('update', $component)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
-        // supplier_id / purchase_cost map forward to default_*.
-        // order_number / purchase_date moved to the Orders table.
-        $updatable = [
-            'category_id', 'qty', 'serial', 'model_number', 'manufacturer_id',
-            'location_id', 'min_amt', 'notes',
-            'default_supplier_id', 'default_purchase_cost',
-        ];
-
-        foreach ($updatable as $field) {
-            if ($request->filled($field)) {
-                $component->{$field} = $request->get($field);
-            }
-        }
-
+        // supplier_id / purchase_cost forward to default_*, new_name
+        // renames via name. Intersect with model rules so partial
+        // updates only validate fields the caller actually sent.
+        $input = $request->all();
         if ($request->filled('supplier_id') && ! $request->filled('default_supplier_id')) {
-            $component->default_supplier_id = $request->get('supplier_id');
+            $input['default_supplier_id'] = $request->get('supplier_id');
         }
         if ($request->filled('purchase_cost') && ! $request->filled('default_purchase_cost')) {
-            $component->default_purchase_cost = $request->get('purchase_cost');
+            $input['default_purchase_cost'] = $request->get('purchase_cost');
+        }
+        if ($request->filled('new_name')) {
+            $input['name'] = $request->get('new_name');
         }
 
-        if ($request->filled('new_name')) {
-            $component->name = $request->get('new_name');
+        $rules = array_intersect_key($component->getPreparedRules(), $input);
+        try {
+            $validated = Validator::make($input, $rules)->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
         }
+
+        $component->fill(array_merge($input, $validated));
 
         if ($request->filled('company_id')) {
             $component->company_id = Company::getIdForCurrentUser($request->get('company_id'));
@@ -114,6 +117,7 @@ class UpdateComponentTool extends Tool
             'purchase_cost' => $schema->number()->description('Purchase cost per unit'),
             'purchase_date' => $schema->string()->description('Purchase date (YYYY-MM-DD)'),
             'min_amt' => $schema->number()->description('Minimum quantity alert threshold'),
+            'archived' => $schema->boolean()->description('Set true to archive, false to unarchive. Archived components cannot be checked out and are hidden from the default list. Cannot be archived while units are still checked out.'),
             'notes' => $schema->string()->description('Notes'),
         ];
     }

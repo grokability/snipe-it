@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -18,10 +20,16 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Restore a soft-deleted Snipe-IT user')]
 class RestoreUserTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Delete)) {
+            return $denied;
+        }
+
         if (! Gate::allows('delete', User::class)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.user')])));
         }
 
         $request->validate([
@@ -31,15 +39,11 @@ class RestoreUserTool extends Tool
         $user = User::withTrashed()->find($request->get('id'));
 
         if (! $user) {
-            return Response::make(Response::error(trans('mcp.user_not_found')));
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.user')])));
         }
 
         if (! $user->deleted_at) {
             return Response::make(Response::error(trans('mcp.user_not_deleted')));
-        }
-
-        if (! Gate::allows('delete', User::class)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $user->restore();

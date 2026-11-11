@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -18,8 +20,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Soft-delete a Snipe-IT user. The user must have no assets, licenses, accessories, or consumables assigned.')]
 class DeleteUserTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Delete)) {
+            return $denied;
+        }
+
         $request->validate([
             'id' => 'nullable|integer',
             'username' => 'nullable|string|max:191',
@@ -28,12 +36,8 @@ class DeleteUserTool extends Tool
 
         $user = $this->resolveUser($request);
 
-        if (! $user) {
-            return Response::make(Response::error(trans('mcp.user_not_found')));
-        }
-
-        if (! Gate::allows('delete', $user)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $user || ! Gate::allows('delete', $user)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.user')])));
         }
 
         if ($user->id === auth()->id()) {

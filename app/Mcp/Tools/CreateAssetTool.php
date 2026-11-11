@@ -2,9 +2,13 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -18,23 +22,27 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT asset')]
 class CreateAssetTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         if (! Gate::allows('create', Asset::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $asset = new Asset;
-        $asset->model_id = $request->get('model_id');
-        $asset->status_id = $request->get('status_id');
-        $asset->asset_tag = $request->get('asset_tag');
-        $asset->created_by = auth()->id();
-
-        foreach (['name', 'serial', 'company_id', 'location_id', 'rtd_location_id', 'supplier_id', 'purchase_date', 'purchase_cost', 'order_number', 'warranty_months', 'requestable', 'notes'] as $field) {
-            if ($request->filled($field)) {
-                $asset->{$field} = $request->get($field);
-            }
+        try {
+            $validated = Validator::make($request->all(), $asset->getPreparedRules())->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
         }
+
+        $asset->fill(array_merge($request->all(), $validated));
+        $asset->created_by = auth()->id();
 
         if ($asset->save()) {
             return Response::make(

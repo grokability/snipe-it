@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Category;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -18,8 +20,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Soft-delete a Snipe-IT category. The category must have no items assigned to it.')]
 class DeleteCategoryTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Delete)) {
+            return $denied;
+        }
+
         $request->validate([
             'id' => 'nullable|integer',
             'name' => 'nullable|string|max:255',
@@ -27,12 +35,8 @@ class DeleteCategoryTool extends Tool
 
         $category = $this->resolveCategory($request);
 
-        if (! $category) {
-            return Response::make(Response::error(trans('mcp.category_not_found')));
-        }
-
-        if (! Gate::allows('delete', $category)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $category || ! Gate::allows('delete', $category)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.category')])));
         }
 
         $name = $category->name;

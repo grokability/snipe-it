@@ -2,10 +2,14 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Company;
 use App\Models\License;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -19,21 +23,26 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT software license')]
 class CreateLicenseTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         if (! Gate::allows('create', License::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $license = new License;
-        $license->fill($request->only([
-            'name', 'seats', 'category_id', 'serial', 'manufacturer_id',
-            'supplier_id', 'purchase_date', 'purchase_cost', 'purchase_order',
-            'order_number', 'expiration_date', 'termination_date',
-            'license_name', 'license_email', 'maintained', 'reassignable',
-            'notes', 'min_amt',
-        ]));
+        try {
+            $validated = Validator::make($request->all(), $license->getPreparedRules())->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
+        $license->fill(array_merge($request->all(), $validated));
         $license->company_id = Company::getIdForCurrentUser($request->get('company_id'));
         $license->created_by = auth()->id();
 

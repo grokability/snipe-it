@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Component;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -18,8 +20,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Soft-delete a Snipe-IT component. The component must have no units currently checked out to assets.')]
 class DeleteComponentTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Delete)) {
+            return $denied;
+        }
+
         $request->validate([
             'id' => 'nullable|integer',
             'name' => 'nullable|string|max:191',
@@ -27,12 +35,8 @@ class DeleteComponentTool extends Tool
 
         $component = $this->resolveComponent($request);
 
-        if (! $component) {
-            return Response::make(Response::error(trans('mcp.component_not_found')));
-        }
-
-        if (! Gate::allows('delete', $component)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $component || ! Gate::allows('delete', $component)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.component')])));
         }
 
         if ($component->numCheckedOut() > 0) {

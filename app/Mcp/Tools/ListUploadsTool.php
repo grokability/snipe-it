@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Accessory;
 use App\Models\Asset;
 use App\Models\AssetModel;
@@ -30,6 +32,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('List files uploaded to a Snipe-IT object. Supported types: accessories, assets, companies, components, consumables, departments, licenses, locations, maintenances, models, suppliers, users')]
 class ListUploadsTool extends Tool
 {
+    use HasMcpScope;
+
     private const TYPE_MAP = [
         'accessories' => Accessory::class,
         'assets' => Asset::class,
@@ -47,6 +51,10 @@ class ListUploadsTool extends Tool
 
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
+        }
+
         $validTypes = implode(',', array_keys(self::TYPE_MAP));
 
         $request->validate([

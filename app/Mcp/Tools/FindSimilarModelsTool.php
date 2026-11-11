@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -34,8 +36,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Find AssetModel candidates similar to a given source model, ranked by category / manufacturer / name-token overlap and stock availability. Use for bulk replacement planning.')]
 class FindSimilarModelsTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
+        }
+
         if (! Gate::allows('index', AssetModel::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }

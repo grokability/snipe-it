@@ -2,9 +2,12 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\AssetModel;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -19,8 +22,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT asset model identified by numeric ID or name')]
 class UpdateAssetModelTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         try {
             $request->validate([
                 'id' => 'nullable|integer',
@@ -32,23 +41,23 @@ class UpdateAssetModelTool extends Tool
 
         $model = $this->resolveModel($request);
 
-        if (! $model) {
-            return Response::make(Response::error(trans('mcp.asset_model_not_found')));
+        if (! $model || ! Gate::allows('update', $model)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset_model')])));
         }
 
-        if (! Gate::allows('update', $model)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
+        $input = $request->all();
         if ($request->filled('new_name')) {
-            $model->name = $request->get('new_name');
+            $input['name'] = $request->get('new_name');
         }
 
-        foreach (['category_id', 'manufacturer_id', 'depreciation_id', 'model_number', 'eol', 'min_amt', 'notes', 'requestable', 'require_serial'] as $field) {
-            if ($request->filled($field)) {
-                $model->{$field} = $request->get($field);
-            }
+        $rules = array_intersect_key($model->getPreparedRules(), $input);
+        try {
+            $validated = Validator::make($input, $rules)->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
         }
+
+        $model->fill(array_merge($input, $validated));
 
         if ($model->save()) {
             return Response::make(

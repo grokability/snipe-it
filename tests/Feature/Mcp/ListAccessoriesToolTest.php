@@ -107,6 +107,71 @@ class ListAccessoriesToolTest extends TestCase
         $this->assertContains('Checked Out Low', $names);
     }
 
+    public function test_default_hides_archived_accessories()
+    {
+        Accessory::factory()->create(['name' => 'Active Accessory']);
+        Accessory::factory()->archived()->create(['name' => 'Retired Accessory']);
+
+        $content = $this->handle()->getStructuredContent();
+
+        $names = array_column($content['accessories'], 'name');
+        $this->assertContains('Active Accessory', $names);
+        $this->assertNotContains('Retired Accessory', $names);
+    }
+
+    public function test_include_archived_returns_both()
+    {
+        Accessory::factory()->create(['name' => 'Active Accessory']);
+        Accessory::factory()->archived()->create(['name' => 'Retired Accessory']);
+
+        $content = $this->handle(['include_archived' => true])->getStructuredContent();
+
+        $names = array_column($content['accessories'], 'name');
+        $this->assertContains('Active Accessory', $names);
+        $this->assertContains('Retired Accessory', $names);
+    }
+
+    public function test_archived_only_returns_archived_rows_only()
+    {
+        Accessory::factory()->create(['name' => 'Active Accessory']);
+        Accessory::factory()->archived()->create(['name' => 'Retired Accessory']);
+
+        $content = $this->handle(['archived_only' => true])->getStructuredContent();
+
+        $names = array_column($content['accessories'], 'name');
+        $this->assertNotContains('Active Accessory', $names);
+        $this->assertContains('Retired Accessory', $names);
+    }
+
+    public function test_each_accessory_row_includes_archived_flag()
+    {
+        Accessory::factory()->archived()->create(['name' => 'Retired']);
+
+        $content = $this->handle(['archived_only' => true])->getStructuredContent();
+
+        $row = collect($content['accessories'])->firstWhere('name', 'Retired');
+        $this->assertNotNull($row);
+        $this->assertArrayHasKey('archived', $row);
+        $this->assertTrue($row['archived']);
+    }
+
+    public function test_low_stock_excludes_archived_even_when_include_archived_true()
+    {
+        Accessory::factory()->archived()->create([
+            'name' => 'Archived Low Stock',
+            'qty' => 1,
+            'min_amt' => 5,
+        ]);
+
+        $content = $this->handle([
+            'low_stock_only' => true,
+            'include_archived' => true,
+        ])->getStructuredContent();
+
+        $names = array_column($content['accessories'], 'name');
+        $this->assertNotContains('Archived Low Stock', $names);
+    }
+
     public function test_limit_controls_results()
     {
         Accessory::factory()->count(5)->create();

@@ -2,7 +2,9 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
 use App\Http\Requests\ConsumableIndexRequest;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Consumable;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,8 +22,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Search and list Snipe-IT consumables with optional filtering by keyword, company, category, manufacturer, location, and pagination')]
 class ListConsumablesTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
+        }
+
         if (! Gate::allows('index', Consumable::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
@@ -64,14 +72,31 @@ class ListConsumablesTool extends Tool
             $consumables->where('location_id', $request->get('location_id'));
         }
 
+        // Archived scoping uses the same builder scopes the UI does.
+        //   archived_only=true  -> archived() (archived rows only)
+        //   include_archived=true -> no filter (active + archived)
+        //   default -> consumablesForShow() (hides archived unless the
+        //              show_archived_in_list admin setting is on, so
+        //              MCP list output tracks the UI's visible set).
+        if ($request->boolean('archived_only')) {
+            $consumables->archived();
+        } elseif (! $request->boolean('include_archived')) {
+            $consumables->consumablesForShow();
+        }
+
         if ($request->boolean('low_stock_only')) {
             // Current remaining = qty minus checkouts (consumables_users rows
             // where consumed_at is null). Items where remaining <= min_amt
             // are "low stock" per Snipe-IT's reporting conventions. Done as
             // a subquery so the SQL side filters the set before pagination.
-            $consumables->whereRaw(
-                '(consumables.qty - (SELECT COUNT(*) FROM consumables_users WHERE consumables_users.consumable_id = consumables.id AND consumables_users.consumed_at IS NULL)) <= COALESCE(consumables.min_amt, 0)'
-            );
+            //
+            // Archived rows are force-excluded from low-stock results
+            // even when the caller asked for include_archived, matching
+            // the dashboard alert fix in commit 3522042fa6.
+            $consumables->notArchived()
+                ->whereRaw(
+                    '(consumables.qty - (SELECT COUNT(*) FROM consumables_users WHERE consumables_users.consumable_id = consumables.id AND consumables_users.consumed_at IS NULL)) <= COALESCE(consumables.min_amt, 0)'
+                );
         }
 
         $total = $consumables->count();
@@ -101,6 +126,7 @@ class ListConsumablesTool extends Tool
             'location_id' => $consumable->location_id,
             'purchase_cost' => $consumable->purchase_cost,
             'purchase_date' => $consumable->purchase_date?->format('Y-m-d'),
+            'archived' => (bool) $consumable->archived,
             'notes' => $consumable->notes,
         ])->values()->all();
 
@@ -123,7 +149,9 @@ class ListConsumablesTool extends Tool
             'category_id' => $schema->number()->description('Filter by category ID'),
             'manufacturer_id' => $schema->number()->description('Filter by manufacturer ID'),
             'location_id' => $schema->number()->description('Filter by location ID'),
-            'low_stock_only' => $schema->boolean()->description('When true, return only consumables whose remaining quantity is at or below their configured min_amt threshold. Use for reorder reports.'),
+            'low_stock_only' => $schema->boolean()->description('When true, return only consumables whose remaining quantity is at or below their configured min_amt threshold. Use for reorder reports. Archived consumables are always excluded from this filter.'),
+            'include_archived' => $schema->boolean()->description('When true, include archived consumables in the results. Default matches the UI\'s consumablesForShow() scope: archived rows are hidden unless the admin has flipped the show_archived_in_list setting on.'),
+            'archived_only' => $schema->boolean()->description('When true, return ONLY archived consumables. Overrides include_archived.'),
             'limit' => $schema->number()->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()->description('Number of results to skip for pagination (default: 0)'),
         ];

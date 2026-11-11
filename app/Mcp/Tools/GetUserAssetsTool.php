@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -19,8 +21,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Return all assets currently checked out to a Snipe-IT user')]
 class GetUserAssetsTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
+        }
+
         if (! Gate::allows('view', User::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
@@ -36,7 +44,7 @@ class GetUserAssetsTool extends Tool
         $user = User::find($request->get('id'));
 
         if (! $user) {
-            return Response::make(Response::error(trans('mcp.user_not_found')));
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.user')])));
         }
 
         $assets = Asset::where('assigned_to', $user->id)

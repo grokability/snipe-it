@@ -2,7 +2,9 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
 use App\Events\CheckoutableCheckedIn;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
@@ -20,8 +22,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Soft-delete a Snipe-IT asset. If the asset is currently checked out it will be checked in first.')]
 class DeleteAssetTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Delete)) {
+            return $denied;
+        }
+
         $request->validate([
             'asset_tag' => 'nullable|max:100',
             'serial' => 'nullable|string|max:255',
@@ -30,12 +38,8 @@ class DeleteAssetTool extends Tool
 
         $asset = $this->resolveAsset($request);
 
-        if (! $asset) {
-            return Response::make(Response::error(trans('mcp.asset_not_found')));
-        }
-
-        if (! Gate::allows('delete', $asset)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $asset || ! Gate::allows('delete', $asset)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset')])));
         }
 
         $assetTag = $asset->asset_tag;

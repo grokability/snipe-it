@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Group;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -18,8 +20,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Delete a Snipe-IT permission group by ID or name. The group must have no users assigned.')]
 class DeleteGroupTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Superadmin)) {
+            return $denied;
+        }
+
         if (! Gate::allows('superadmin')) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
@@ -38,7 +46,7 @@ class DeleteGroupTool extends Tool
         }
 
         if (! $group) {
-            return Response::make(Response::error(trans('mcp.group_not_found')));
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.group')])));
         }
 
         $groupName = $group->name;

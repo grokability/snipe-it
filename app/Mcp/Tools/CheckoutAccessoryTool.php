@@ -2,8 +2,10 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
 use App\Events\CheckoutableCheckedOut;
 use App\Http\Requests\AccessoryCheckoutRequest;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Accessory;
 use App\Models\AccessoryCheckout;
 use App\Models\Asset;
@@ -25,8 +27,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check out a Snipe-IT accessory to a user, location, or asset')]
 class CheckoutAccessoryTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Checkout)) {
+            return $denied;
+        }
+
         // Shared targeting rules come from AccessoryCheckoutRequest::rulesArray()
         // so exists_undeleted + prohibits + required_without_all stay in
         // sync. Lookup fields (id, name) and the MCP-specific
@@ -51,6 +59,10 @@ class CheckoutAccessoryTool extends Tool
 
         if (! Gate::allows('checkout', $accessory)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
+        }
+
+        if ($accessory->archived) {
+            return Response::make(Response::error(trans('general.cannot_checkout_archived', ['item_type' => strtolower(trans('general.accessory'))])));
         }
 
         if ($accessory->numRemaining() < 1) {

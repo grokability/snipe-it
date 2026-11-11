@@ -82,6 +82,38 @@ class ShowUserToolTest extends TestCase
         }
     }
 
+    /**
+     * User::$end_date is stored as a Y-m-d string with no model cast.
+     * Pinning the explicit-value path so ShowUserTool can't regress to
+     * calling `->toDateString()` directly on the raw string (fatal
+     * when end_date is non-null, which the factory rolls at ~10%).
+     */
+    public function test_start_and_end_dates_render_as_y_m_d_strings()
+    {
+        $user = User::factory()->create([
+            'start_date' => '2025-01-15',
+            'end_date' => '2026-06-30',
+        ]);
+
+        $content = $this->handle(['id' => $user->id])->getStructuredContent();
+
+        $this->assertSame('2025-01-15', $content['start_date']);
+        $this->assertSame('2026-06-30', $content['end_date']);
+    }
+
+    public function test_start_and_end_dates_render_as_null_when_absent()
+    {
+        $user = User::factory()->create([
+            'start_date' => null,
+            'end_date' => null,
+        ]);
+
+        $content = $this->handle(['id' => $user->id])->getStructuredContent();
+
+        $this->assertNull($content['start_date']);
+        $this->assertNull($content['end_date']);
+    }
+
     public function test_response_includes_asset_and_license_counts()
     {
         $user = User::factory()->create();

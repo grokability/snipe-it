@@ -2,11 +2,14 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Company;
 use App\Models\Group;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -21,8 +24,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT user identified by numeric ID, username, or email address')]
 class UpdateUserTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         try {
             $request->validate([
                 'id' => 'nullable|integer',
@@ -35,52 +44,50 @@ class UpdateUserTool extends Tool
 
         $user = $this->resolveUser($request);
 
-        if (! $user) {
-            return Response::make(Response::error(trans('mcp.user_not_found')));
+        if (! $user || ! Gate::allows('update', $user)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.user')])));
         }
 
-        if (! Gate::allows('update', $user)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
-        $updatable = [
-            'first_name', 'last_name', 'employee_num', 'jobtitle',
-            'phone', 'mobile', 'department_id', 'location_id', 'manager_id',
-            'notes', 'start_date', 'end_date',
-            'vip', 'remote', 'website', 'address', 'city', 'state', 'country', 'zip',
-        ];
-
-        foreach ($updatable as $field) {
-            if ($request->filled($field)) {
-                $user->{$field} = $request->get($field);
-            }
-        }
-
-        // Sensitive auth fields require elevated permission over the target user
+        // Gate auth-field edits BEFORE building input, so an attempt to
+        // change username/email/password/activated without permission
+        // fails cleanly rather than silently dropping the fields.
         $canEditAuthFields = Gate::allows('canEditAuthFields', $user);
+        $wantsAuthEdit = $request->filled('new_username') || $request->filled('new_email')
+            || $request->filled('password') || $request->has('activated');
 
-        if ($request->filled('new_username') || $request->filled('new_email') ||
-            $request->filled('password') || $request->has('activated')) {
-            if (! $canEditAuthFields) {
-                return Response::make(Response::error(trans('mcp.cannot_edit_auth_fields')));
-            }
-
-            if ($request->filled('new_username')) {
-                $user->username = $request->get('new_username');
-            }
-
-            if ($request->filled('new_email')) {
-                $user->email = $request->get('new_email');
-            }
-
-            if ($request->filled('password')) {
-                $user->password = bcrypt($request->get('password'));
-            }
-
-            if ($request->has('activated')) {
-                $user->activated = $request->get('activated');
-            }
+        if ($wantsAuthEdit && ! $canEditAuthFields) {
+            return Response::make(Response::error(trans('mcp.cannot_edit_auth_fields')));
         }
+
+        // Map aliases (new_username -> username, new_email -> email) and
+        // strip the lookup fields so they don't get validated as updates.
+        $input = $request->all();
+        unset($input['new_username'], $input['new_email'], $input['username'], $input['email']);
+        if ($request->filled('new_username')) {
+            $input['username'] = $request->get('new_username');
+        }
+        if ($request->filled('new_email')) {
+            $input['email'] = $request->get('new_email');
+        }
+
+        // Intersect with model rules so partial updates only validate
+        // what the caller actually sent. Watson's getPreparedRules
+        // injects the user's id for unique_undeleted so the user can
+        // keep their own username / email through the update.
+        $rules = array_intersect_key($user->getPreparedRules(), $input);
+        try {
+            $validated = Validator::make($input, $rules)->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
+
+        // Hash the validated plaintext password before fill. Everything
+        // else in $validated flows straight through.
+        if (isset($validated['password'])) {
+            $validated['password'] = bcrypt($validated['password']);
+        }
+
+        $user->fill(array_merge($input, $validated));
 
         if ($request->filled('company_id')) {
             $user->company_id = Company::getIdForCurrentUser($request->get('company_id'));

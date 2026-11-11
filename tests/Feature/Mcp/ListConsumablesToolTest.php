@@ -117,4 +117,69 @@ class ListConsumablesToolTest extends TestCase
         $this->assertArrayHasKey('supplier', $row);
         $this->assertArrayHasKey('notes', $row);
     }
+
+    public function test_default_hides_archived_consumables()
+    {
+        Consumable::factory()->create(['name' => 'Active Consumable']);
+        Consumable::factory()->archived()->create(['name' => 'Retired Consumable']);
+
+        $content = $this->handle()->getStructuredContent();
+
+        $names = array_column($content['consumables'], 'name');
+        $this->assertContains('Active Consumable', $names);
+        $this->assertNotContains('Retired Consumable', $names);
+    }
+
+    public function test_include_archived_returns_both()
+    {
+        Consumable::factory()->create(['name' => 'Active Consumable']);
+        Consumable::factory()->archived()->create(['name' => 'Retired Consumable']);
+
+        $content = $this->handle(['include_archived' => true])->getStructuredContent();
+
+        $names = array_column($content['consumables'], 'name');
+        $this->assertContains('Active Consumable', $names);
+        $this->assertContains('Retired Consumable', $names);
+    }
+
+    public function test_archived_only_returns_archived_rows_only()
+    {
+        Consumable::factory()->create(['name' => 'Active Consumable']);
+        Consumable::factory()->archived()->create(['name' => 'Retired Consumable']);
+
+        $content = $this->handle(['archived_only' => true])->getStructuredContent();
+
+        $names = array_column($content['consumables'], 'name');
+        $this->assertNotContains('Active Consumable', $names);
+        $this->assertContains('Retired Consumable', $names);
+    }
+
+    public function test_each_row_includes_archived_flag()
+    {
+        Consumable::factory()->archived()->create(['name' => 'Retired']);
+
+        $content = $this->handle(['archived_only' => true])->getStructuredContent();
+
+        $row = collect($content['consumables'])->firstWhere('name', 'Retired');
+        $this->assertNotNull($row);
+        $this->assertArrayHasKey('archived', $row);
+        $this->assertTrue($row['archived']);
+    }
+
+    public function test_low_stock_excludes_archived_even_when_include_archived_true()
+    {
+        Consumable::factory()->archived()->create([
+            'name' => 'Archived Low Stock',
+            'qty' => 1,
+            'min_amt' => 5,
+        ]);
+
+        $content = $this->handle([
+            'low_stock_only' => true,
+            'include_archived' => true,
+        ])->getStructuredContent();
+
+        $names = array_column($content['consumables'], 'name');
+        $this->assertNotContains('Archived Low Stock', $names);
+    }
 }

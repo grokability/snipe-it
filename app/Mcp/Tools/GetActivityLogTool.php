@@ -2,7 +2,13 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
+use App\Models\Accessory;
 use App\Models\Actionlog;
+use App\Models\CalendarEvent;
+use App\Models\Component;
+use App\Models\Consumable;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
@@ -18,10 +24,12 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Retrieve the Snipe-IT activity log with optional filtering by item type, item ID, user, and action type')]
 class GetActivityLogTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
-        if (! Gate::allows('activity.view')) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
         }
 
         $request->validate([
@@ -34,6 +42,30 @@ class GetActivityLogTool extends Tool
         ]);
 
         $logs = Actionlog::with('user', 'item')->orderBy('created_at', 'desc');
+
+        // Mirrors Api\DashboardController::activity. Callers with
+        // activity.view (reports / admin users) get the full feed.
+        // Callers without it get a feed restricted to item_type /
+        // target_type they can view at the class level, which
+        // matches what they would see on the dashboard activity
+        // widget. HasCalendarEvents sources plus the three non-
+        // calendar checkoutables cover every polymorphic subject
+        // the activity log attaches to.
+        if (! Gate::allows('activity.view')) {
+            $candidateTypes = array_merge(
+                CalendarEvent::sourceModels(),
+                [Accessory::class, Consumable::class, Component::class],
+            );
+            $viewableTypes = array_values(array_filter(
+                $candidateTypes,
+                fn ($class) => Gate::allows('view', $class),
+            ));
+
+            $logs->where(function ($sub) use ($viewableTypes) {
+                $sub->whereIn('item_type', $viewableTypes)
+                    ->orWhereIn('target_type', $viewableTypes);
+            });
+        }
 
         if ($request->filled('item_type')) {
             $logs->where('item_type', $request->get('item_type'));

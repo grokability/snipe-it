@@ -2,9 +2,13 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Location;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -18,20 +22,26 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT location')]
 class CreateLocationTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         if (! Gate::allows('create', Location::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $location = new Location;
-        $location->name = $request->get('name');
-
-        foreach (['address', 'address2', 'city', 'state', 'country', 'zip', 'phone', 'fax', 'currency', 'parent_id', 'manager_id'] as $field) {
-            if ($request->filled($field)) {
-                $location->{$field} = $request->get($field);
-            }
+        try {
+            $validated = Validator::make($request->all(), $location->getPreparedRules())->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
         }
+
+        $location->fill(array_merge($request->all(), $validated));
 
         if ($location->save()) {
             return Response::make(

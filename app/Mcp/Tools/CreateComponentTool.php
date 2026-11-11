@@ -2,10 +2,14 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Company;
 use App\Models\Component;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -19,31 +23,41 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT component')]
 class CreateComponentTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         if (! Gate::allows('create', Component::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         // supplier_id and purchase_cost moved from per-row columns to
         // "default_*" templates on the parent, with per-acquisition data
-        // on the Orders table. Accept the legacy input names and map
-        // them forward.
-        $input = $request->only([
-            'name', 'category_id', 'qty', 'serial', 'model_number',
-            'manufacturer_id', 'location_id', 'min_amt', 'notes',
-            'default_supplier_id', 'default_purchase_cost',
-        ]);
-        if ($request->filled('supplier_id') && ! isset($input['default_supplier_id'])) {
+        // on the Orders table. Map legacy input names forward.
+        $input = $request->all();
+        if ($request->filled('supplier_id') && ! $request->filled('default_supplier_id')) {
             $input['default_supplier_id'] = $request->get('supplier_id');
         }
-        if ($request->filled('purchase_cost') && ! isset($input['default_purchase_cost'])) {
+        if ($request->filled('purchase_cost') && ! $request->filled('default_purchase_cost')) {
             $input['default_purchase_cost'] = $request->get('purchase_cost');
         }
 
+        // Model-level rules (Watson) are the single source of truth.
+        // Fields in $fillable without an explicit rule (notes,
+        // model_number, etc.) pass through via the array_merge, and
+        // $fillable gates what fill() persists.
         $component = new Component;
-        $component->fill($input);
+        try {
+            $validated = Validator::make($input, $component->getPreparedRules())->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
+        $component->fill(array_merge($input, $validated));
         $component->company_id = Company::getIdForCurrentUser($request->get('company_id'));
         $component->created_by = auth()->id();
 
@@ -79,6 +93,7 @@ class CreateComponentTool extends Tool
             'purchase_cost' => $schema->number()->description('Purchase cost per unit'),
             'purchase_date' => $schema->string()->description('Purchase date (YYYY-MM-DD)'),
             'min_amt' => $schema->number()->description('Minimum quantity threshold for alerts'),
+            'archived' => $schema->boolean()->description('Whether the component is archived. Archived components are hidden from the default list, cannot be checked out, and are excluded from low-stock alerts. Cannot be set while units are still checked out.'),
             'notes' => $schema->string()->description('Notes'),
         ];
     }

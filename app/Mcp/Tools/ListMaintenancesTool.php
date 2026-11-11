@@ -2,7 +2,9 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
 use App\Http\Requests\MaintenanceIndexRequest;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use App\Models\Maintenance;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -20,8 +22,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('List asset maintenances with optional filtering by asset and pagination')]
 class ListMaintenancesTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
+        }
+
         if (! Gate::allows('view', Asset::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }

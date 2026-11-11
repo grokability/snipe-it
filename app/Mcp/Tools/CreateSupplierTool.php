@@ -2,9 +2,13 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Supplier;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -18,17 +22,26 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT supplier')]
 class CreateSupplierTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         if (! Gate::allows('create', Supplier::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $supplier = new Supplier;
-        $supplier->fill($request->only([
-            'name', 'address', 'address2', 'city', 'state', 'country', 'zip',
-            'phone', 'fax', 'email', 'url', 'contact', 'notes',
-        ]));
+        try {
+            $validated = Validator::make($request->all(), $supplier->getPreparedRules())->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
+
+        $supplier->fill(array_merge($request->all(), $validated));
 
         if ($supplier->save()) {
             return Response::make(

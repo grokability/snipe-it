@@ -2,9 +2,13 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Setting;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -18,44 +22,59 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update the authenticated user\'s own profile information')]
 class UpdateProfileTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
-        $request->validate([
-            'first_name' => 'nullable|string|max:255',
-            'last_name' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:35',
-            'website' => 'nullable|url|max:255',
-            'gravatar' => 'nullable|string|max:255',
-            'locale' => 'nullable|string|max:10',
-            'two_factor_optin' => 'nullable|boolean',
-            'location_id' => 'nullable|integer|exists:locations,id',
-        ]);
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
+        // Profile has a narrow allow-list that does NOT share shape with
+        // User::getRules() (no password, no username, no email, etc.).
+        // Keep the rules local here so the tool's attack surface is
+        // visible in one place. Per-field permission gates below decide
+        // which validated values actually get applied.
+        try {
+            $data = Validator::make($request->all(), [
+                'first_name' => 'nullable|string|max:255',
+                'last_name' => 'nullable|string|max:255',
+                'phone' => 'nullable|string|max:35',
+                'website' => 'nullable|url|max:255',
+                'gravatar' => 'nullable|string|max:255',
+                'locale' => 'nullable|string|max:10',
+                'two_factor_optin' => 'nullable|boolean',
+                'location_id' => 'nullable|integer|exists:locations,id',
+            ])->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
         $user = auth()->user();
 
         if (Gate::allows('self.profile') && ! config('app.lock_passwords')) {
             foreach (['first_name', 'last_name', 'phone', 'website', 'gravatar'] as $field) {
-                if ($request->filled($field)) {
-                    $user->{$field} = $request->get($field);
+                if (isset($data[$field])) {
+                    $user->{$field} = $data[$field];
                 }
             }
         }
 
-        if ($request->filled('locale')) {
-            $user->locale = $request->get('locale');
+        if (isset($data['locale'])) {
+            $user->locale = $data['locale'];
         }
 
         if (
-            $request->filled('two_factor_optin') &&
+            isset($data['two_factor_optin']) &&
             Gate::allows('self.two_factor') &&
             Setting::getSettings()->two_factor_enabled == '1' &&
             ! config('app.lock_passwords')
         ) {
-            $user->two_factor_optin = $request->get('two_factor_optin');
+            $user->two_factor_optin = $data['two_factor_optin'];
         }
 
-        if ($request->filled('location_id') && Gate::allows('self.edit_location') && ! config('app.lock_passwords')) {
-            $user->location_id = $request->get('location_id');
+        if (isset($data['location_id']) && Gate::allows('self.edit_location') && ! config('app.lock_passwords')) {
+            $user->location_id = $data['location_id'];
         }
 
         if ($user->save()) {

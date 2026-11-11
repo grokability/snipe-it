@@ -2,10 +2,13 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use App\Models\Maintenance;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -20,28 +23,25 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new maintenance record attached to an asset')]
 class CreateMaintenanceTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         if (! Gate::allows('update', Asset::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
+        // MCP-specific lookup: asset_id OR asset_tag. These aren't
+        // persisted so they stay as an inline pre-validation step.
         try {
-            $request->validate([
+            Validator::make($request->all(), [
                 'asset_id' => 'required_without:asset_tag|nullable|integer|exists:assets,id',
                 'asset_tag' => 'required_without:asset_id|nullable|string|max:191',
-                'title' => 'required|string|max:100',
-                'maintenance_type_id' => 'required|integer|exists:maintenance_types,id',
-                'supplier_id' => 'nullable|integer|exists:suppliers,id',
-                'is_warranty' => 'nullable|boolean',
-                'cost' => 'nullable|numeric|min:0',
-                'start_date' => 'nullable|date',
-                'expected_completion_date' => 'nullable|date',
-                'completion_date' => 'nullable|date',
-                'completed_at' => 'nullable|date',
-                'notes' => 'nullable|string',
-                'responsible_party_id' => 'nullable|integer|exists:users,id',
-            ]);
+            ])->validate();
         } catch (ValidationException $e) {
             return Response::make(Response::error($e->validator->errors()->first()));
         }
@@ -58,49 +58,40 @@ class CreateMaintenanceTool extends Tool
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
-        // Write to the polymorphic native columns directly instead of
-        // going through the legacy asset_id mutator. Snipe-IT's
-        // maintenances table went polymorphic so maintenances can attach
-        // to any checkoutable item type. Pinning item_type to Asset here
-        // matches the tool's current surface, which is asset-scoped.
+        // Build input with MCP aliases mapped to model column names.
+        // The maintenances table went polymorphic so maintenances can
+        // attach to any checkoutable item type. Pinning item_type to
+        // Asset here matches the tool's current surface, which is
+        // asset-scoped.
+        $input = array_merge($request->all(), [
+            'item_id' => $asset->id,
+            'item_type' => Asset::class,
+            // `title` is the MCP-facing name for `name`. `completion_date`
+            // is a back-compat alias for `expected_completion_date`.
+            'name' => $request->get('title', $request->get('name')),
+            'expected_completion_date' => $request->get('expected_completion_date', $request->get('completion_date')),
+            'start_date' => $request->filled('start_date') ? $request->get('start_date') : now()->format('Y-m-d'),
+            // is_warranty is a NOT NULL boolean column on the table.
+            // Default absent inputs to false so fill() lands an explicit
+            // bool instead of leaving it null at insert time.
+            'is_warranty' => $request->boolean('is_warranty'),
+        ]);
+
         $maintenance = new Maintenance;
-        $maintenance->item_id = $asset->id;
-        $maintenance->item_type = Asset::class;
-        $maintenance->name = $request->get('title');
-        $maintenance->maintenance_type_id = $request->get('maintenance_type_id');
-        $maintenance->start_date = $request->filled('start_date') ? $request->get('start_date') : now()->format('Y-m-d');
-        $maintenance->is_warranty = $request->boolean('is_warranty');
+        try {
+            $validated = Validator::make($input, $maintenance->getPreparedRules())->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
+
+        $maintenance->fill(array_merge($input, $validated));
         $maintenance->created_by = auth()->id();
 
-        if ($request->filled('supplier_id')) {
-            $maintenance->supplier_id = $request->get('supplier_id');
-        }
-        if ($request->filled('cost')) {
-            $maintenance->cost = $request->get('cost');
-        }
-        if ($request->filled('notes')) {
-            $maintenance->notes = $request->get('notes');
-        }
-
-        // Planned completion date. expected_completion_date is the native
-        // column name. completion_date is accepted as an alias for
-        // compatibility with callers that still use the old name.
-        $expected = $request->filled('expected_completion_date')
-            ? $request->get('expected_completion_date')
-            : $request->get('completion_date');
-        if ($expected !== null) {
-            $maintenance->expected_completion_date = $expected;
-        }
-
-        // Actual completion marks the maintenance as done. Separate from
-        // expected_completion_date, which is just the plan.
+        // Actual completion marks the maintenance as done. Snipe-IT
+        // stamps completed_by to the acting user any time completed_at
+        // is set, so the audit trail attributes the close-out.
         if ($request->filled('completed_at')) {
-            $maintenance->completed_at = $request->get('completed_at');
             $maintenance->completed_by = auth()->id();
-        }
-
-        if ($request->filled('responsible_party_id')) {
-            $maintenance->responsible_party_id = $request->get('responsible_party_id');
         }
 
         if ($maintenance->save()) {

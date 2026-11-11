@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use App\Models\Setting;
 use Carbon\Carbon;
@@ -20,8 +22,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Record an audit for a Snipe-IT asset, updating the last audit date and optionally the location')]
 class AuditAssetTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         $request->validate([
             'asset_tag' => 'nullable|max:100',
             'serial' => 'nullable|string|max:255',
@@ -33,12 +41,8 @@ class AuditAssetTool extends Tool
 
         $asset = $this->resolveAsset($request);
 
-        if (! $asset) {
-            return Response::make(Response::error(trans('mcp.asset_not_found')));
-        }
-
-        if (! Gate::allows('audit', $asset)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $asset || ! Gate::allows('audit', $asset)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset')])));
         }
 
         $originalValues = $asset->getRawOriginal();

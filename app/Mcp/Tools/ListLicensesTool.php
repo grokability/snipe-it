@@ -2,7 +2,9 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
 use App\Http\Requests\LicenseIndexRequest;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\License;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,8 +22,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Search and list Snipe-IT licenses with optional filtering by keyword, company, category, and manufacturer')]
 class ListLicensesTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
+        }
+
         if (! Gate::allows('index', License::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }

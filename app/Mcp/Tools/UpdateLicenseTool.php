@@ -2,10 +2,13 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Company;
 use App\Models\License;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -20,8 +23,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT license identified by numeric ID or name')]
 class UpdateLicenseTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         try {
             $request->validate([
                 'id' => 'nullable|integer',
@@ -33,30 +42,23 @@ class UpdateLicenseTool extends Tool
 
         $license = $this->resolveLicense($request);
 
-        if (! $license) {
-            return Response::make(Response::error(trans('mcp.license_not_found')));
+        if (! $license || ! Gate::allows('update', $license)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.license')])));
         }
 
-        if (! Gate::allows('update', $license)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
-        $updatable = [
-            'seats', 'serial', 'category_id', 'manufacturer_id', 'supplier_id',
-            'purchase_date', 'purchase_cost', 'purchase_order', 'order_number',
-            'expiration_date', 'termination_date', 'license_name', 'license_email',
-            'maintained', 'reassignable', 'notes', 'min_amt',
-        ];
-
-        foreach ($updatable as $field) {
-            if ($request->filled($field)) {
-                $license->{$field} = $request->get($field);
-            }
-        }
-
+        $input = $request->all();
         if ($request->filled('new_name')) {
-            $license->name = $request->get('new_name');
+            $input['name'] = $request->get('new_name');
         }
+
+        $rules = array_intersect_key($license->getPreparedRules(), $input);
+        try {
+            $validated = Validator::make($input, $rules)->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
+
+        $license->fill(array_merge($input, $validated));
 
         if ($request->filled('company_id')) {
             $license->company_id = Company::getIdForCurrentUser($request->get('company_id'));

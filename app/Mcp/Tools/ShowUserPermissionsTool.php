@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -18,8 +20,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Return the effective permission set for a user, merging their individual grants/denials with inherited group permissions. Omit all identifiers to query the currently authenticated user.')]
 class ShowUserPermissionsTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
+        }
+
         $request->validate([
             'id' => 'nullable|integer',
             'username' => 'nullable|string|max:191',
@@ -38,15 +46,13 @@ class ShowUserPermissionsTool extends Tool
             $user = auth()->check() ? User::with($with)->find(auth()->id()) : null;
         }
 
-        if (! $user) {
-            return Response::make(Response::error(trans('mcp.user_not_found')));
-        }
-
-        // Permissions expose authorization internals, so self-queries
-        // are always allowed, but querying another user's permissions
-        // requires the standard user-view gate.
-        if ($user->id !== auth()->id() && ! Gate::allows('view', $user)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        // Self-queries are always allowed. Querying another user's
+        // permissions requires the standard user-view gate. Collapse
+        // missing-user and gate-refused into the same response so an
+        // unauthorized caller can't probe user IDs by diffing errors.
+        $isSelf = $user && $user->id === auth()->id();
+        if (! $user || (! $isSelf && ! Gate::allows('view', $user))) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.user')])));
         }
 
         $effectiveBySection = $user->getEffectivePermissionsBySection();

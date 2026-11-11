@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\License;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -18,8 +20,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Look up a single Snipe-IT license by numeric ID or name and return its full details including seat counts')]
 class ShowLicenseTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
+        }
+
         $request->validate([
             'id' => 'nullable|integer',
             'name' => 'nullable|string|max:255',
@@ -38,12 +46,8 @@ class ShowLicenseTool extends Tool
             return Response::make(Response::error(trans('mcp.id_or_name_required')));
         }
 
-        if (! $license) {
-            return Response::make(Response::error(trans('mcp.license_not_found')));
-        }
-
-        if (! Gate::allows('view', $license)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $license || ! Gate::allows('view', $license)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.license')])));
         }
 
         $assignedCount = $license->assignedCount()->count();

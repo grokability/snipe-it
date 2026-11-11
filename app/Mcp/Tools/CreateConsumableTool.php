@@ -2,9 +2,13 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Consumable;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -18,8 +22,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT consumable')]
 class CreateConsumableTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         if (! Gate::allows('create', Consumable::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
@@ -27,20 +37,25 @@ class CreateConsumableTool extends Tool
         // supplier_id and purchase_cost moved to default_* templates.
         // Per-acquisition data (order_number, purchase_date) lives on
         // the Orders table. Legacy input names map forward.
-        $input = $request->only([
-            'name', 'qty', 'category_id', 'company_id', 'location_id', 'manufacturer_id',
-            'item_no', 'model_number', 'min_amt', 'requestable', 'notes',
-            'default_supplier_id', 'default_purchase_cost',
-        ]);
-        if ($request->filled('supplier_id') && ! isset($input['default_supplier_id'])) {
+        $input = $request->all();
+        if ($request->filled('supplier_id') && ! $request->filled('default_supplier_id')) {
             $input['default_supplier_id'] = $request->get('supplier_id');
         }
-        if ($request->filled('purchase_cost') && ! isset($input['default_purchase_cost'])) {
+        if ($request->filled('purchase_cost') && ! $request->filled('default_purchase_cost')) {
             $input['default_purchase_cost'] = $request->get('purchase_cost');
         }
 
+        // Model-level rules (Watson) are the single source of truth.
+        // Unruled fillable fields pass through via array_merge and are
+        // gated by the model's $fillable list at fill() time.
         $consumable = new Consumable;
-        $consumable->fill($input);
+        try {
+            $validated = Validator::make($input, $consumable->getPreparedRules())->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
+
+        $consumable->fill(array_merge($input, $validated));
         $consumable->created_by = auth()->id();
 
         if ($consumable->save()) {
@@ -75,7 +90,8 @@ class CreateConsumableTool extends Tool
             'purchase_cost' => $schema->number()->description('Purchase cost per unit'),
             'purchase_date' => $schema->string()->description('Purchase date (YYYY-MM-DD)'),
             'min_amt' => $schema->number()->description('Minimum quantity threshold for alerts'),
-            'requestable' => $schema->boolean()->description('Whether users can request this consumable'),
+            'requestable' => $schema->boolean()->description('Whether users can request this consumable. Mutually exclusive with archived.'),
+            'archived' => $schema->boolean()->description('Whether the consumable is archived. Archived consumables are hidden from the default list, cannot be checked out, and are excluded from low-stock alerts. Mutually exclusive with requestable, and cannot be set while outstanding distributions remain.'),
             'notes' => $schema->string()->description('Notes'),
         ];
     }

@@ -2,7 +2,10 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
@@ -18,8 +21,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Look up a single Snipe-IT user by numeric ID, username, or email address')]
 class ShowUserTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
+        }
+
         $request->validate([
             'id' => 'nullable|integer',
             'username' => 'nullable|string|max:191',
@@ -44,12 +53,8 @@ class ShowUserTool extends Tool
             return Response::make(Response::error(trans('mcp.id_username_or_email_required')));
         }
 
-        if (! $user) {
-            return Response::make(Response::error(trans('mcp.user_not_found')));
-        }
-
-        if (! Gate::allows('view', $user)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $user || ! Gate::allows('view', $user)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.user')])));
         }
 
         return Response::make(
@@ -74,8 +79,12 @@ class ShowUserTool extends Tool
             'manager_id' => $user->manager_id,
             'activated' => (bool) $user->activated,
             'notes' => $user->notes,
-            'start_date' => $user->start_date?->toDateString(),
-            'end_date' => $user->end_date?->toDateString(),
+            // User::$start_date / $end_date are stored as Y-m-d strings
+            // (date column, no model cast). Parse through Carbon so the
+            // output stays Y-m-d even if a future model cast returns
+            // Carbon instances directly.
+            'start_date' => $user->start_date ? Carbon::parse($user->start_date)->toDateString() : null,
+            'end_date' => $user->end_date ? Carbon::parse($user->end_date)->toDateString() : null,
             'vip' => (bool) $user->vip,
             'remote' => (bool) $user->remote,
             'website' => $user->website,

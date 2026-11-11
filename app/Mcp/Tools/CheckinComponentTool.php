@@ -2,7 +2,9 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
 use App\Events\CheckoutableCheckedIn;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use App\Models\Component;
 use Carbon\Carbon;
@@ -22,8 +24,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check in one or more units of a Snipe-IT component from an asset using the checkout record ID')]
 class CheckinComponentTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Checkin)) {
+            return $denied;
+        }
+
         $request->validate([
             'component_asset_id' => 'required|integer',
             'checkin_qty' => 'nullable|integer|min:1',
@@ -31,18 +39,9 @@ class CheckinComponentTool extends Tool
         ]);
 
         $componentAsset = DB::table('components_assets')->find($request->get('component_asset_id'));
+        $component = $componentAsset ? Component::find($componentAsset->component_id) : null;
 
-        if (! $componentAsset) {
-            return Response::make(Response::error(trans('mcp.component_checkout_not_found')));
-        }
-
-        $component = Component::find($componentAsset->component_id);
-
-        if (! $component) {
-            return Response::make(Response::error(trans('mcp.component_not_found')));
-        }
-
-        if (! Gate::allows('checkin', $component)) {
+        if (! $componentAsset || ! $component || ! Gate::allows('checkin', $component)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 

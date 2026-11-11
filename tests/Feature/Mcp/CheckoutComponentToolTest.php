@@ -146,4 +146,21 @@ class CheckoutComponentToolTest extends TestCase
             'asset_id' => $asset->id,
         ])->responses()->first()->isError());
     }
+
+    public function test_refuses_to_check_out_archived_component()
+    {
+        $component = Component::factory()->archived()->create(['qty' => 5]);
+        $asset = Asset::factory()->create();
+
+        $response = $this->handle([
+            'id' => $component->id,
+            'asset_id' => $asset->id,
+        ]);
+
+        $this->assertTrue($response->responses()->first()->isError());
+        $this->assertDatabaseMissing('components_assets', [
+            'component_id' => $component->id,
+            'asset_id' => $asset->id,
+        ]);
+    }
 }

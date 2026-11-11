@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Statuslabel;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -18,8 +20,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Show details of a Snipe-IT status label identified by numeric ID or name')]
 class ShowStatusLabelTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
+        }
+
         $request->validate([
             'id' => 'nullable|integer',
             'name' => 'nullable|string|max:255',
@@ -27,16 +35,12 @@ class ShowStatusLabelTool extends Tool
 
         $label = $this->resolveStatusLabel($request);
 
-        if (! $label) {
-            if (! $request->filled('id') && ! $request->filled('name')) {
-                return Response::make(Response::error(trans('mcp.id_or_name_required')));
-            }
-
-            return Response::make(Response::error(trans('mcp.status_label_not_found')));
+        if (! $label && ! $request->filled('id') && ! $request->filled('name')) {
+            return Response::make(Response::error(trans('mcp.id_or_name_required')));
         }
 
-        if (! Gate::allows('view', $label)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $label || ! Gate::allows('view', $label)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.status_label')])));
         }
 
         $label->loadCount('assets as assets_count');

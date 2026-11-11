@@ -2,9 +2,12 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Company;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -19,8 +22,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT company identified by numeric ID or name')]
 class UpdateCompanyTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         try {
             $request->validate([
                 'id' => 'nullable|integer',
@@ -32,23 +41,23 @@ class UpdateCompanyTool extends Tool
 
         $company = $this->resolveCompany($request);
 
-        if (! $company) {
-            return Response::make(Response::error(trans('mcp.company_not_found')));
+        if (! $company || ! Gate::allows('update', $company)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.company')])));
         }
 
-        if (! Gate::allows('update', $company)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
+        $input = $request->all();
         if ($request->filled('new_name')) {
-            $company->name = $request->get('new_name');
+            $input['name'] = $request->get('new_name');
         }
 
-        foreach (['phone', 'fax', 'email', 'notes'] as $field) {
-            if ($request->filled($field)) {
-                $company->{$field} = $request->get($field);
-            }
+        $rules = array_intersect_key($company->getPreparedRules(), $input);
+        try {
+            $validated = Validator::make($input, $rules)->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
         }
+
+        $company->fill(array_merge($input, $validated));
 
         if ($company->save()) {
             return Response::make(

@@ -2,9 +2,13 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Depreciation;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -18,15 +22,26 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT depreciation schedule')]
 class CreateDepreciationTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         if (! Gate::allows('create', Depreciation::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $depreciation = new Depreciation;
-        $depreciation->name = $request->get('name');
-        $depreciation->months = $request->get('months');
+        try {
+            $validated = Validator::make($request->all(), $depreciation->getPreparedRules())->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
+
+        $depreciation->fill(array_merge($request->all(), $validated));
 
         if ($depreciation->save()) {
             return Response::make(

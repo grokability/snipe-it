@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Accessory;
 use App\Models\Actionlog;
 use App\Models\Asset;
@@ -27,6 +29,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('List the activity history for a Snipe-IT object. Supported types: accessory, asset, asset_model, component, consumable, license, location, maintenance, user')]
 class ListHistoryTool extends Tool
 {
+    use HasMcpScope;
+
     private const TYPE_MAP = [
         'accessory' => Accessory::class,
         'asset' => Asset::class,
@@ -41,6 +45,10 @@ class ListHistoryTool extends Tool
 
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
+        }
+
         $validTypes = implode(',', array_keys(self::TYPE_MAP));
 
         $request->validate([

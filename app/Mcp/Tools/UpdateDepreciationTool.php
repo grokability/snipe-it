@@ -2,9 +2,12 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Depreciation;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -19,8 +22,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT depreciation schedule identified by numeric ID or name')]
 class UpdateDepreciationTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Write)) {
+            return $denied;
+        }
+
         try {
             $request->validate([
                 'id' => 'nullable|integer',
@@ -32,21 +41,23 @@ class UpdateDepreciationTool extends Tool
 
         $dep = $this->resolveDepreciation($request);
 
-        if (! $dep) {
-            return Response::make(Response::error(trans('mcp.depreciation_not_found')));
+        if (! $dep || ! Gate::allows('update', $dep)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.depreciation')])));
         }
 
-        if (! Gate::allows('update', $dep)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
+        $input = $request->all();
         if ($request->filled('new_name')) {
-            $dep->name = $request->get('new_name');
+            $input['name'] = $request->get('new_name');
         }
 
-        if ($request->filled('months')) {
-            $dep->months = $request->get('months');
+        $rules = array_intersect_key($dep->getPreparedRules(), $input);
+        try {
+            $validated = Validator::make($input, $rules)->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
         }
+
+        $dep->fill(array_merge($input, $validated));
 
         if ($dep->save()) {
             return Response::make(

@@ -2,9 +2,12 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Group;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -19,8 +22,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update an existing Snipe-IT permission group by ID or name. Requires superadmin. Supplying permissions replaces the group\'s entire permission set.')]
 class UpdateGroupTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Superadmin)) {
+            return $denied;
+        }
+
         if (! Gate::allows('superadmin')) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
@@ -43,16 +52,22 @@ class UpdateGroupTool extends Tool
         }
 
         if (! $group) {
-            return Response::make(Response::error(trans('mcp.group_not_found')));
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.group')])));
         }
 
+        $input = $request->all();
         if ($request->filled('new_name')) {
-            $group->name = $request->get('new_name');
+            $input['name'] = $request->get('new_name');
         }
 
-        if ($request->filled('notes')) {
-            $group->notes = $request->get('notes');
+        $rules = array_intersect_key($group->getPreparedRules(), $input);
+        try {
+            $validated = Validator::make($input, $rules)->validate();
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
         }
+
+        $group->fill(array_merge($input, $validated));
 
         if ($request->filled('permissions')) {
             $result = $this->parseAndValidatePermissions($request->get('permissions'));

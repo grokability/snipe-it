@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Tools;
 
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use App\Models\Component;
 use Carbon\Carbon;
@@ -21,8 +23,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check out one or more units of a Snipe-IT component to an asset')]
 class CheckoutComponentTool extends Tool
 {
+    use HasMcpScope;
+
     public function handle(Request $request): ResponseFactory
     {
+        if ($denied = $this->scopeDenied(McpScope::Checkout)) {
+            return $denied;
+        }
+
         try {
             $request->validate([
                 'id' => 'nullable|integer',
@@ -43,6 +51,10 @@ class CheckoutComponentTool extends Tool
 
         if (! Gate::allows('checkout', $component)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
+        }
+
+        if ($component->archived) {
+            return Response::make(Response::error(trans('general.cannot_checkout_archived', ['item_type' => strtolower(trans('general.component'))])));
         }
 
         $qty = (int) $request->get('assigned_qty', 1);

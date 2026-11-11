@@ -83,4 +83,21 @@ class CheckoutConsumableToolTest extends TestCase
             'assigned_to' => $user->id,
         ])->responses()->first()->isError());
     }
+
+    public function test_refuses_to_check_out_archived_consumable()
+    {
+        $consumable = Consumable::factory()->archived()->create(['qty' => 5]);
+        $user = User::factory()->create();
+
+        $response = $this->handle([
+            'id' => $consumable->id,
+            'assigned_to' => $user->id,
+        ]);
+
+        $this->assertTrue($response->responses()->first()->isError());
+        $this->assertDatabaseMissing('consumables_users', [
+            'consumable_id' => $consumable->id,
+            'assigned_to' => $user->id,
+        ]);
+    }
 }
