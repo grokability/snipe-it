@@ -93,6 +93,13 @@ do
   [ ! -d "/var/lib/snipeit/$dir" ] && mkdir -p "/var/lib/snipeit/$dir"
 done
 
+# seed the bundled default avatar into the uploads volume on first start
+# (public/uploads is symlinked to the volume), but never overwrite a
+# default that an admin already uploaded
+if [ ! -f /var/lib/snipeit/data/uploads/default.png ]; then
+  cp /var/www/html/public/img/default.png /var/lib/snipeit/data/uploads/default.png
+fi
+
 chown -R docker:root /var/lib/snipeit/data/*
 chown -R docker:root /var/lib/snipeit/dumps
 chown -R docker:root /var/lib/snipeit/keys
