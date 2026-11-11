@@ -87,24 +87,27 @@ The authenticated user's Snipe-IT permissions apply. A user without `delete asse
 
 ### Scopes
 
-Every MCP tool declares a single required Passport scope. The acting token must carry that exact scope or the call is refused with a `scope_denied` error, regardless of the user's Snipe-IT permissions. This lets an administrator issue, say, a read-only AI connector token to a user who otherwise has full write permissions in the system.
+Every MCP session needs the `mcp:use` session scope to connect. Every MCP tool additionally declares a single required capability scope. The acting token must carry both `mcp:use` AND the tool's exact capability scope, or the call is refused. This lets an administrator issue, say, a read-only AI connector token to a user who otherwise has full write permissions in the system.
 
-| Scope | What it unlocks |
-|---|---|
-| `mcp:read` | All `list_*`, `show_*`, `get_current_user`, `get_user_assets`, `show_user_permissions`, `find_similar_models`, `list_history`, `list_uploads`, `list_asset_notes`, `list_maintenances`, `list_maintenance_types` |
-| `mcp:write` | All `create_*`, `update_*`, `update_profile`, `audit_asset`, `add_asset_note`, `upload_asset_image`, `reset_2fa`, `send_password_reset` |
-| `mcp:delete` | All `delete_*`, `restore_asset`, `restore_user` |
-| `mcp:checkout` | `checkout_asset`, `checkout_accessory`, `checkout_component`, `checkout_consumable`, `checkout_license`, `offboard_user`, `transfer_user_assets` |
-| `mcp:checkin` | `checkin_asset`, `checkin_accessory`, `checkin_component`, `checkin_license` |
-| `mcp:superadmin` | All group management (`list_groups`, `show_group`, `create_group`, `update_group`, `delete_group`) |
+| Scope | Layer | What it unlocks |
+|---|---|---|
+| `mcp:use` | Session | Permission to open an MCP session at all. The route's `mcp.scope.handshake` middleware rejects tokens without it at HTTP 401. A token carrying ONLY `mcp:use` passes the handshake but cannot call any tool. |
+| `mcp:read` | Capability | All `list_*`, `show_*`, `get_current_user`, `get_user_assets`, `show_user_permissions`, `find_similar_models`, `list_history`, `list_uploads`, `list_asset_notes`, `list_maintenances`, `list_maintenance_types` |
+| `mcp:write` | Capability | All `create_*`, `update_*`, `update_profile`, `audit_asset`, `add_asset_note`, `upload_asset_image`, `reset_2fa`, `send_password_reset` |
+| `mcp:delete` | Capability | All `delete_*`, `restore_asset`, `restore_user` |
+| `mcp:checkout` | Capability | `checkout_asset`, `checkout_accessory`, `checkout_component`, `checkout_consumable`, `checkout_license`, `offboard_user`, `transfer_user_assets` |
+| `mcp:checkin` | Capability | `checkin_asset`, `checkin_accessory`, `checkin_component`, `checkin_license` |
+| `mcp:superadmin` | Capability | All group management (`list_groups`, `show_group`, `create_group`, `update_group`, `delete_group`) |
 
 Semantics:
 
-- **Exact match.** A token with `mcp:write` cannot call a read tool, and vice versa. There is no superset relationship between scopes. A token with `mcp:superadmin` does NOT implicitly grant any other scope.
+- **Session gate is separate.** `mcp:use` only gets the token past the connection handshake. On its own it calls nothing. Tokens issued pre-scope (before this release) hit the handshake gate and reauthorize from there.
+- **Exact capability match.** A token with `mcp:write` cannot call a read tool, and vice versa. There is no superset relationship between capability scopes. A token with `mcp:superadmin` does NOT implicitly grant any other capability.
 - **Both layers enforce.** The scope check runs first. If it passes, the tool's existing Snipe-IT permission check (via `Gate::allows`) still runs. Both must pass for the tool to execute.
-- **Grant what's needed.** During OAuth consent, grant only the scopes the client will use. For a read-only reporting assistant that's just `mcp:read`. For a full-capability admin tool it may be the whole set.
+- **Grant what's needed.** During OAuth consent, grant `mcp:use` plus only the capability scopes the client will use. For a read-only reporting assistant that's `mcp:use` + `mcp:read`. For a full-capability admin tool it may be the whole set.
+- **Why the split.** Some MCP clients (notably ChatGPT's connector) only request a single hardcoded scope. `mcp:use` is what those clients request, which is why it exists as a session-only gate rather than being collapsed into the capability scopes.
 
-Scope errors return the generic `scope_denied` message and do not reveal which scope was missing to the extent a wrong-scope diff would otherwise fingerprint the caller's capability set.
+Scope errors return the generic `scope_denied` message and do not reveal which scope was missing, to the extent a wrong-scope diff would otherwise fingerprint the caller's capability set.
 
 ### Route middleware chain
 
