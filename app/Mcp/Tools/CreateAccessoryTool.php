@@ -25,12 +25,25 @@ class CreateAccessoryTool extends Tool
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
-        $accessory = new Accessory;
-        $accessory->fill($request->only([
+        // supplier_id and purchase_cost moved from per-row columns to
+        // "default_*" templates on the parent, with per-acquisition data
+        // living on the Orders table. Map legacy input names forward so
+        // older callers that still send supplier_id / purchase_cost keep
+        // working.
+        $input = $request->only([
             'name', 'category_id', 'qty', 'model_number', 'manufacturer_id',
-            'supplier_id', 'location_id', 'order_number', 'purchase_cost',
-            'purchase_date', 'min_amt', 'requestable', 'notes',
-        ]));
+            'location_id', 'min_amt', 'requestable', 'notes',
+            'default_supplier_id', 'default_purchase_cost',
+        ]);
+        if ($request->filled('supplier_id') && ! isset($input['default_supplier_id'])) {
+            $input['default_supplier_id'] = $request->get('supplier_id');
+        }
+        if ($request->filled('purchase_cost') && ! isset($input['default_purchase_cost'])) {
+            $input['default_purchase_cost'] = $request->get('purchase_cost');
+        }
+
+        $accessory = new Accessory;
+        $accessory->fill($input);
 
         $accessory->company_id = Company::getIdForCurrentUser($request->get('company_id'));
         $accessory->created_by = auth()->id();

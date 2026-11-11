@@ -26,7 +26,7 @@ class ListSuppliersTool extends Tool
 
         $request->validate([
             'search' => 'nullable|string|max:255',
-            'limit' => 'nullable|integer|min:1|max:500',
+            'limit' => 'nullable|integer|min:1|max:'.config('app.max_results'),
             'offset' => 'nullable|integer|min:0',
         ]);
 
@@ -75,7 +75,7 @@ class ListSuppliersTool extends Tool
     {
         return [
             'search' => $schema->string()->description('Keyword to search across supplier fields'),
-            'limit' => $schema->number()->description('Number of results to return (default: 25, max: 500)'),
+            'limit' => $schema->number()->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()->description('Number of results to skip for pagination (default: 0)'),
         ];
     }

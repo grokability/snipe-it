@@ -27,7 +27,7 @@ class ListCategoriesTool extends Tool
         $request->validate([
             'search' => 'nullable|string|max:255',
             'category_type' => 'nullable|string|in:asset,accessory,consumable,component,license',
-            'limit' => 'nullable|integer|min:1|max:500',
+            'limit' => 'nullable|integer|min:1|max:'.config('app.max_results'),
             'offset' => 'nullable|integer|min:0',
         ]);
 
@@ -81,7 +81,7 @@ class ListCategoriesTool extends Tool
         return [
             'search' => $schema->string()->description('Keyword to search across category name, type, notes'),
             'category_type' => $schema->string()->description('Filter by type: asset, accessory, consumable, component, or license'),
-            'limit' => $schema->number()->description('Number of results to return (default: 25, max: 500)'),
+            'limit' => $schema->number()->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()->description('Number of results to skip for pagination (default: 0)'),
         ];
     }

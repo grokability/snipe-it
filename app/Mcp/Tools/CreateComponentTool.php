@@ -25,12 +25,24 @@ class CreateComponentTool extends Tool
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
-        $component = new Component;
-        $component->fill($request->only([
+        // supplier_id and purchase_cost moved from per-row columns to
+        // "default_*" templates on the parent, with per-acquisition data
+        // on the Orders table. Accept the legacy input names and map
+        // them forward.
+        $input = $request->only([
             'name', 'category_id', 'qty', 'serial', 'model_number',
-            'manufacturer_id', 'supplier_id', 'location_id',
-            'order_number', 'purchase_cost', 'purchase_date', 'min_amt', 'notes',
-        ]));
+            'manufacturer_id', 'location_id', 'min_amt', 'notes',
+            'default_supplier_id', 'default_purchase_cost',
+        ]);
+        if ($request->filled('supplier_id') && ! isset($input['default_supplier_id'])) {
+            $input['default_supplier_id'] = $request->get('supplier_id');
+        }
+        if ($request->filled('purchase_cost') && ! isset($input['default_purchase_cost'])) {
+            $input['default_purchase_cost'] = $request->get('purchase_cost');
+        }
+
+        $component = new Component;
+        $component->fill($input);
 
         $component->company_id = Company::getIdForCurrentUser($request->get('company_id'));
         $component->created_by = auth()->id();

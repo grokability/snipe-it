@@ -39,7 +39,6 @@ class CreateUserTool extends Tool
         ]));
 
         $user->activated = $request->filled('activated') ? (bool) $request->get('activated') : true;
-        $user->company_id = Company::getIdForCurrentUser($request->get('company_id'));
         $user->created_by = auth()->id();
 
         if ($request->filled('password')) {
@@ -49,6 +48,17 @@ class CreateUserTool extends Tool
         }
 
         if ($user->save()) {
+            // Company membership is pivot-based (company_user) after the
+            // parent-company feature landed. users.company_id was renamed
+            // to legacy_company_id as a non-authoritative mirror. Attach
+            // the resolved company via the pivot, then sync the legacy
+            // mirror so FMCS checks that still read either can agree.
+            $companyId = Company::getIdForCurrentUser($request->get('company_id'));
+            if ($companyId !== null) {
+                $user->companies()->syncWithoutDetaching([$companyId]);
+                $user->syncLegacyCompanyIdMirror();
+            }
+
             $groupIds = [];
             if ($request->filled('group_ids') && auth()->user()->isSuperUser()) {
                 $groupIds = Group::whereIn('id', $request->get('group_ids'))->pluck('id')->all();

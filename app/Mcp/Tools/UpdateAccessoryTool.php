@@ -41,16 +41,25 @@ class UpdateAccessoryTool extends Tool
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
+        // supplier_id / purchase_cost map forward to default_*.
+        // order_number / purchase_date have moved to the Orders table.
         $updatable = [
             'category_id', 'qty', 'model_number', 'manufacturer_id',
-            'supplier_id', 'location_id', 'order_number', 'purchase_cost',
-            'purchase_date', 'min_amt', 'requestable', 'notes',
+            'location_id', 'min_amt', 'requestable', 'notes',
+            'default_supplier_id', 'default_purchase_cost',
         ];
 
         foreach ($updatable as $field) {
             if ($request->filled($field)) {
                 $accessory->{$field} = $request->get($field);
             }
+        }
+
+        if ($request->filled('supplier_id') && ! $request->filled('default_supplier_id')) {
+            $accessory->default_supplier_id = $request->get('supplier_id');
+        }
+        if ($request->filled('purchase_cost') && ! $request->filled('default_purchase_cost')) {
+            $accessory->default_purchase_cost = $request->get('purchase_cost');
         }
 
         if ($request->filled('new_name')) {

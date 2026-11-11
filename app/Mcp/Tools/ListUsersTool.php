@@ -2,9 +2,11 @@
 
 namespace App\Mcp\Tools;
 
+use App\Http\Requests\UserIndexRequest;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -24,25 +26,47 @@ class ListUsersTool extends Tool
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
-        $request->validate([
-            'search' => 'nullable|string|max:255',
-            'company_id' => 'nullable|integer',
-            'department_id' => 'nullable|integer',
-            'location_id' => 'nullable|integer',
-            'activated' => 'nullable|boolean',
-            'limit' => 'nullable|integer|min:1|max:500',
-            'offset' => 'nullable|integer|min:0',
-        ]);
+        // Shared filter rules live on UserIndexRequest::rulesArray()
+        // so any future rule change stays in sync for both the MCP tool
+        // and the HTTP API endpoint once it adopts the FormRequest.
+        // MCP-specific pagination stays inline.
+        try {
+            $request->validate(array_merge(UserIndexRequest::rulesArray(), [
+                'limit' => 'nullable|integer|min:1|max:'.config('app.max_results'),
+                'offset' => 'nullable|integer|min:0',
+            ]));
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
-        $users = User::with('company', 'department', 'userloc', 'manager')
-            ->withCount(['assets as assets_count', 'licenses as licenses_count']);
+        $users = User::with('companies', 'department', 'userloc', 'manager')
+            ->withCount([
+                'assets as assets_count',
+                'licenses as licenses_count',
+                'accessories as accessories_count',
+                'consumables as consumables_count',
+            ]);
 
-        if ($request->filled('search')) {
+        if ($request->boolean('only_deleted')) {
+            $users->onlyTrashed();
+        } elseif ($request->boolean('include_deleted')) {
+            $users->withTrashed();
+        }
+
+        // filter wins when both are present, matching the HTTP API contract.
+        if ($request->filled('filter')) {
+            $users->TextSearch($request->get('filter'));
+        } elseif ($request->filled('search')) {
             $users->TextSearch($request->get('search'));
         }
 
         if ($request->filled('company_id')) {
-            $users->where('users.company_id', '=', $request->get('company_id'));
+            // Company membership for users is pivot-based (company_user)
+            // after the parent-company feature landed. users.company_id
+            // was renamed to legacy_company_id and is no longer the
+            // authoritative source. Filter via the pivot relationship.
+            $companyId = $request->get('company_id');
+            $users->whereHas('companies', fn ($q) => $q->where('companies.id', $companyId));
         }
 
         if ($request->filled('department_id')) {
@@ -71,14 +95,30 @@ class ListUsersTool extends Tool
             'last_name' => $user->last_name,
             'username' => $user->username,
             'email' => $user->email,
+            'employee_num' => $user->employee_num,
             'jobtitle' => $user->jobtitle,
-            'company' => $user->company?->name,
+            // Company membership is pivot-based (company_user) after the
+            // parent-company feature. Prefer the pivot. Fall back to the
+            // legacy relationship so sites mid-migration still see
+            // something.
+            'company' => $user->companies->first()?->name ?? $user->company?->name,
+            'company_ids' => $user->companies->pluck('id')->all(),
             'department' => $user->department?->name,
+            'department_id' => $user->department_id,
             'location' => $user->userloc?->name,
+            'location_id' => $user->location_id,
             'manager' => $user->manager ? trim($user->manager->first_name.' '.$user->manager->last_name) : null,
+            'manager_id' => $user->manager_id,
             'activated' => (bool) $user->activated,
+            'deleted_at' => optional($user->deleted_at)->toDateTimeString(),
+            'last_login' => optional($user->last_login)->toDateTimeString(),
+            'start_date' => $user->start_date,
+            'end_date' => $user->end_date,
             'assets_count' => $user->assets_count,
             'licenses_count' => $user->licenses_count,
+            'accessories_count' => $user->accessories_count,
+            'consumables_count' => $user->consumables_count,
+            'notes' => $user->notes,
         ])->values()->all();
 
         return Response::make(
@@ -94,12 +134,15 @@ class ListUsersTool extends Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'search' => $schema->string()->description('Keyword to search across name, username, email, and employee number'),
+            'search' => $schema->string()->description('Free-text keyword to search across name, username, email, and employee number. Mutually exclusive with filter: when both are supplied, filter wins.'),
+            'filter' => $schema->object()->description('Structured advanced-search filter payload. Same shape the UI Advanced Search modal posts. Supports date ranges ("start - end"), enum lists, and any column listed in User searchable fields.'),
             'company_id' => $schema->number()->description('Filter by company ID'),
             'department_id' => $schema->number()->description('Filter by department ID'),
             'location_id' => $schema->number()->description('Filter by location ID'),
-            'activated' => $schema->boolean()->description('Filter by account activated status'),
-            'limit' => $schema->number()->description('Number of results to return (default: 25, max: 500)'),
+            'activated' => $schema->boolean()->description('Filter by the `activated` login-access flag. Note: many orgs never set this on real users (asset tracking only), so this is not a reliable "still with the company" signal. Use include_deleted / only_deleted for that.'),
+            'include_deleted' => $schema->boolean()->description('When true, include soft-deleted users in the results (default: false)'),
+            'only_deleted' => $schema->boolean()->description('When true, return ONLY soft-deleted users. Takes precedence over include_deleted.'),
+            'limit' => $schema->number()->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()->description('Number of results to skip for pagination (default: 0)'),
         ];
     }
@@ -110,6 +153,7 @@ class ListUsersTool extends Tool
             'total' => $schema->number()->description('Total number of matching users')->required(),
             'offset' => $schema->number()->description('Current pagination offset')->required(),
             'limit' => $schema->number()->description('Results per page')->required(),
+            'users' => $schema->array()->description('Matched user rows including activated, deleted_at, last_login, and child-item counts (assets, licenses, accessories, consumables).'),
         ];
     }
 }

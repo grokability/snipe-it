@@ -24,12 +24,23 @@ class CreateConsumableTool extends Tool
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
-        $consumable = new Consumable;
-        $consumable->fill($request->only([
+        // supplier_id and purchase_cost moved to default_* templates.
+        // Per-acquisition data (order_number, purchase_date) lives on
+        // the Orders table. Legacy input names map forward.
+        $input = $request->only([
             'name', 'qty', 'category_id', 'company_id', 'location_id', 'manufacturer_id',
-            'supplier_id', 'item_no', 'order_number', 'model_number', 'purchase_cost',
-            'purchase_date', 'min_amt', 'requestable', 'notes',
-        ]));
+            'item_no', 'model_number', 'min_amt', 'requestable', 'notes',
+            'default_supplier_id', 'default_purchase_cost',
+        ]);
+        if ($request->filled('supplier_id') && ! isset($input['default_supplier_id'])) {
+            $input['default_supplier_id'] = $request->get('supplier_id');
+        }
+        if ($request->filled('purchase_cost') && ! isset($input['default_purchase_cost'])) {
+            $input['default_purchase_cost'] = $request->get('purchase_cost');
+        }
+
+        $consumable = new Consumable;
+        $consumable->fill($input);
         $consumable->created_by = auth()->id();
 
         if ($consumable->save()) {

@@ -41,16 +41,25 @@ class UpdateComponentTool extends Tool
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
+        // supplier_id / purchase_cost map forward to default_*.
+        // order_number / purchase_date moved to the Orders table.
         $updatable = [
             'category_id', 'qty', 'serial', 'model_number', 'manufacturer_id',
-            'supplier_id', 'location_id', 'order_number',
-            'purchase_cost', 'purchase_date', 'min_amt', 'notes',
+            'location_id', 'min_amt', 'notes',
+            'default_supplier_id', 'default_purchase_cost',
         ];
 
         foreach ($updatable as $field) {
             if ($request->filled($field)) {
                 $component->{$field} = $request->get($field);
             }
+        }
+
+        if ($request->filled('supplier_id') && ! $request->filled('default_supplier_id')) {
+            $component->default_supplier_id = $request->get('supplier_id');
+        }
+        if ($request->filled('purchase_cost') && ! $request->filled('default_purchase_cost')) {
+            $component->default_purchase_cost = $request->get('purchase_cost');
         }
 
         if ($request->filled('new_name')) {

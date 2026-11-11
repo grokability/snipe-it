@@ -52,7 +52,7 @@ class ListUploadsTool extends Tool
         $request->validate([
             'object_type' => 'required|string|in:'.$validTypes,
             'id' => 'required|integer|min:1',
-            'limit' => 'nullable|integer|min:1|max:500',
+            'limit' => 'nullable|integer|min:1|max:'.config('app.max_results'),
             'offset' => 'nullable|integer|min:0',
         ]);
 
@@ -111,7 +111,7 @@ class ListUploadsTool extends Tool
         return [
             'object_type' => $schema->string()->description('Type of object: accessories, assets, companies, components, consumables, departments, licenses, locations, maintenances, models, suppliers, users'),
             'id' => $schema->number()->description('Numeric ID of the object'),
-            'limit' => $schema->number()->description('Number of results to return (default: 25, max: 500)'),
+            'limit' => $schema->number()->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()->description('Number of results to skip for pagination (default: 0)'),
         ];
     }

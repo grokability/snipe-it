@@ -25,7 +25,7 @@ class ListAssetNotesTool extends Tool
             'asset_tag' => 'nullable|string|max:100',
             'serial' => 'nullable|string|max:255',
             'id' => 'nullable|integer',
-            'limit' => 'nullable|integer|min:1|max:500',
+            'limit' => 'nullable|integer|min:1|max:'.config('app.max_results'),
             'offset' => 'nullable|integer|min:0',
         ]);
 
@@ -97,7 +97,7 @@ class ListAssetNotesTool extends Tool
             'asset_tag' => $schema->string()->description('Asset tag of the asset'),
             'serial' => $schema->string()->description('Serial number of the asset'),
             'id' => $schema->number()->description('Numeric ID of the asset'),
-            'limit' => $schema->number()->description('Number of notes to return (default: 25, max: 500)'),
+            'limit' => $schema->number()->description('Number of notes to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()->description('Number of notes to skip for pagination (default: 0)'),
         ];
     }

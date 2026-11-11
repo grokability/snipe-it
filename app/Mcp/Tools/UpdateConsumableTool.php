@@ -40,15 +40,25 @@ class UpdateConsumableTool extends Tool
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
+        // supplier_id / purchase_cost map forward to default_*.
+        // purchase_date moved to the Orders table.
         $updatable = [
             'qty', 'category_id', 'company_id', 'location_id', 'manufacturer_id',
-            'supplier_id', 'purchase_cost', 'purchase_date', 'min_amt', 'notes',
+            'min_amt', 'notes',
+            'default_supplier_id', 'default_purchase_cost',
         ];
 
         foreach ($updatable as $field) {
             if ($request->filled($field)) {
                 $consumable->{$field} = $request->get($field);
             }
+        }
+
+        if ($request->filled('supplier_id') && ! $request->filled('default_supplier_id')) {
+            $consumable->default_supplier_id = $request->get('supplier_id');
+        }
+        if ($request->filled('purchase_cost') && ! $request->filled('default_purchase_cost')) {
+            $consumable->default_purchase_cost = $request->get('purchase_cost');
         }
 
         if ($request->filled('new_name')) {

@@ -28,7 +28,7 @@ class ListAssetModelsTool extends Tool
             'search' => 'nullable|string|max:255',
             'category_id' => 'nullable|integer',
             'manufacturer_id' => 'nullable|integer',
-            'limit' => 'nullable|integer|min:1|max:500',
+            'limit' => 'nullable|integer|min:1|max:'.config('app.max_results'),
             'offset' => 'nullable|integer|min:0',
         ]);
 
@@ -84,7 +84,7 @@ class ListAssetModelsTool extends Tool
             'search' => $schema->string()->description('Keyword to search across model name, model number'),
             'category_id' => $schema->number()->description('Filter by category ID'),
             'manufacturer_id' => $schema->number()->description('Filter by manufacturer ID'),
-            'limit' => $schema->number()->description('Number of results to return (default: 25, max: 500)'),
+            'limit' => $schema->number()->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()->description('Number of results to skip for pagination (default: 0)'),
         ];
     }

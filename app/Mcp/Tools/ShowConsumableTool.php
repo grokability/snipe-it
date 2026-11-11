@@ -28,9 +28,9 @@ class ShowConsumableTool extends Tool
         $consumable = null;
 
         if ($request->filled('id')) {
-            $consumable = Consumable::with('company', 'category', 'manufacturer', 'supplier', 'location')->find($request->get('id'));
+            $consumable = Consumable::with('company', 'category', 'manufacturer', 'defaultSupplier', 'location')->find($request->get('id'));
         } elseif ($request->filled('name')) {
-            $consumable = Consumable::with('company', 'category', 'manufacturer', 'supplier', 'location')->where('name', $request->get('name'))->first();
+            $consumable = Consumable::with('company', 'category', 'manufacturer', 'defaultSupplier', 'location')->where('name', $request->get('name'))->first();
         } else {
             return Response::make(Response::error(trans('mcp.id_or_name_required')));
         }

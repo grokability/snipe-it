@@ -48,7 +48,7 @@ class ListHistoryTool extends Tool
             'id' => 'required|integer|min:1',
             'search' => 'nullable|string|max:255',
             'action_type' => 'nullable|string|max:100',
-            'limit' => 'nullable|integer|min:1|max:500',
+            'limit' => 'nullable|integer|min:1|max:'.config('app.max_results'),
             'offset' => 'nullable|integer|min:0',
         ]);
 
@@ -133,7 +133,7 @@ class ListHistoryTool extends Tool
             'id' => $schema->number()->description('Numeric ID of the object'),
             'search' => $schema->string()->description('Filter history by keyword'),
             'action_type' => $schema->string()->description('Filter by action type (e.g. checkout, checkin, update, note added, uploaded)'),
-            'limit' => $schema->number()->description('Number of results to return (default: 25, max: 500)'),
+            'limit' => $schema->number()->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()->description('Number of results to skip for pagination (default: 0)'),
         ];
     }

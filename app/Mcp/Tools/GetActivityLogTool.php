@@ -29,7 +29,7 @@ class GetActivityLogTool extends Tool
             'item_id' => 'nullable|integer',
             'user_id' => 'nullable|integer',
             'action_type' => 'nullable|string|max:255',
-            'limit' => 'nullable|integer|min:1|max:500',
+            'limit' => 'nullable|integer|min:1|max:'.config('app.max_results'),
             'offset' => 'nullable|integer|min:0',
         ]);
 
@@ -85,7 +85,7 @@ class GetActivityLogTool extends Tool
             'item_id' => $schema->number()->description('Filter by item ID'),
             'user_id' => $schema->number()->description('Filter by user ID'),
             'action_type' => $schema->string()->description('Filter by action type (e.g. checkout, checkin, update)'),
-            'limit' => $schema->number()->description('Number of results to return (default: 25, max: 500)'),
+            'limit' => $schema->number()->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()->description('Number of results to skip for pagination (default: 0)'),
         ];
     }

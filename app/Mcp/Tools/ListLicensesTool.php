@@ -2,9 +2,11 @@
 
 namespace App\Mcp\Tools;
 
+use App\Http\Requests\LicenseIndexRequest;
 use App\Models\License;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -24,20 +26,25 @@ class ListLicensesTool extends Tool
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
-        $request->validate([
-            'search' => 'nullable|string|max:255',
-            'company_id' => 'nullable|integer',
-            'category_id' => 'nullable|integer',
-            'manufacturer_id' => 'nullable|integer',
-            'supplier_id' => 'nullable|integer',
-            'limit' => 'nullable|integer|min:1|max:500',
-            'offset' => 'nullable|integer|min:0',
-        ]);
+        // Shared filter rules live on LicenseIndexRequest::rulesArray().
+        // MCP-specific pagination stays inline. Max limit tracks the API's
+        // config('app.max_results') so both surfaces honor the same env.
+        try {
+            $request->validate(array_merge(LicenseIndexRequest::rulesArray(), [
+                'limit' => 'nullable|integer|min:1|max:'.config('app.max_results'),
+                'offset' => 'nullable|integer|min:0',
+            ]));
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
 
-        $licenses = License::with('company', 'manufacturer', 'supplier', 'category')
+        $licenses = License::with('company', 'manufacturer', 'supplier', 'category', 'depreciation')
             ->withCount('freeSeats as free_seats_count');
 
-        if ($request->filled('search')) {
+        // filter wins when both are present, matching the HTTP API contract.
+        if ($request->filled('filter')) {
+            $licenses->TextSearch($request->get('filter'));
+        } elseif ($request->filled('search')) {
             $licenses->TextSearch($request->get('search'));
         }
 
@@ -57,6 +64,22 @@ class ListLicensesTool extends Tool
             $licenses->where('supplier_id', '=', $request->get('supplier_id'));
         }
 
+        if ($request->filled('depreciation_id')) {
+            $licenses->where('depreciation_id', '=', $request->get('depreciation_id'));
+        }
+
+        if ($request->filled('expiring_within_days')) {
+            $days = (int) $request->get('expiring_within_days');
+            $licenses->whereNotNull('expiration_date')
+                ->whereBetween('expiration_date', [now()->toDateString(), now()->addDays($days)->toDateString()]);
+        }
+
+        if ($request->boolean('fully_consumed_only')) {
+            // Licenses with zero free seats remaining. Uses a HAVING on the
+            // free_seats_count that was already withCount'd above.
+            $licenses->having('free_seats_count', '=', 0);
+        }
+
         $licenses->orderBy('licenses.created_at', 'desc');
 
         $total = $licenses->count();
@@ -72,11 +95,26 @@ class ListLicensesTool extends Tool
             'seats' => $license->seats,
             'free_seats' => $license->free_seats_count,
             'category' => $license->category?->name,
+            'category_id' => $license->category_id,
             'manufacturer' => $license->manufacturer?->name,
+            'manufacturer_id' => $license->manufacturer_id,
             'company' => $license->company?->name,
+            'company_id' => $license->company_id,
             'supplier' => $license->supplier?->name,
+            'supplier_id' => $license->supplier_id,
+            'depreciation' => $license->depreciation?->name,
+            'depreciation_id' => $license->depreciation_id,
+            'order_number' => $license->order_number,
+            'license_name' => $license->license_name,
+            'license_email' => $license->license_email,
+            'maintained' => (bool) $license->maintained,
+            'reassignable' => (bool) $license->reassignable,
             'expiration_date' => $license->expiration_date?->format('Y-m-d'),
+            'termination_date' => $license->termination_date?->format('Y-m-d'),
             'purchase_date' => $license->purchase_date?->format('Y-m-d'),
+            'purchase_cost' => $license->purchase_cost,
+            'min_amt' => $license->min_amt,
+            'notes' => $license->notes,
         ])->values()->all();
 
         return Response::make(
@@ -92,12 +130,16 @@ class ListLicensesTool extends Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'search' => $schema->string()->description('Keyword to search across name, serial, notes, and order number'),
+            'search' => $schema->string()->description('Free-text keyword. Mutually exclusive with filter: when both are supplied, filter wins.'),
+            'filter' => $schema->object()->description('Structured advanced-search filter payload. Same shape the UI Advanced Search modal posts.'),
             'company_id' => $schema->number()->description('Filter by company ID'),
             'category_id' => $schema->number()->description('Filter by category ID'),
             'manufacturer_id' => $schema->number()->description('Filter by manufacturer ID'),
             'supplier_id' => $schema->number()->description('Filter by supplier ID'),
-            'limit' => $schema->number()->description('Number of results to return (default: 25, max: 500)'),
+            'depreciation_id' => $schema->number()->description('Filter by depreciation schedule ID'),
+            'expiring_within_days' => $schema->number()->description('Return only licenses whose expiration_date is between today and (today + N days). Use for renewal-due reports.'),
+            'fully_consumed_only' => $schema->boolean()->description('Return only licenses with zero free seats remaining.'),
+            'limit' => $schema->number()->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()->description('Number of results to skip for pagination (default: 0)'),
         ];
     }
@@ -108,6 +150,7 @@ class ListLicensesTool extends Tool
             'total' => $schema->number()->description('Total number of matching licenses')->required(),
             'offset' => $schema->number()->description('Current pagination offset')->required(),
             'limit' => $schema->number()->description('Results per page')->required(),
+            'licenses' => $schema->array()->description('Matched license rows including seat counts, expiration/termination dates, purchase_cost, maintained/reassignable flags, and notes.'),
         ];
     }
 }
