@@ -140,4 +140,36 @@ class ShowAssetToolTest extends TestCase
 
         $this->assertTrue($this->handle(['asset_tag' => $asset->asset_tag])->responses()->first()->isError());
     }
+
+    public function test_custom_fields_is_empty_when_model_has_no_fieldset()
+    {
+        $asset = Asset::factory()->create();
+
+        $content = $this->handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
+
+        $this->assertArrayHasKey('custom_fields', $content);
+        $this->assertSame([], $content['custom_fields']);
+    }
+
+    public function test_custom_fields_surfaces_cpu_and_ram_from_fieldset()
+    {
+        // Asset model has a fieldset with CPU + RAM fields.
+        // The tool should emit them under custom_fields keyed by field name.
+        $asset = Asset::factory()->hasMultipleCustomFields()->create();
+
+        $cpuField = \App\Models\CustomField::where('name', 'CPU')->first();
+        $ramField = \App\Models\CustomField::where('name', 'RAM')->first();
+        $asset->{$cpuField->db_column_name()} = 'Apple M3 Max';
+        $asset->{$ramField->db_column_name()} = '64';
+        $asset->save();
+
+        $content = $this->handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
+
+        $this->assertArrayHasKey('CPU', $content['custom_fields']);
+        $this->assertSame('Apple M3 Max', $content['custom_fields']['CPU']['value']);
+        $this->assertSame($cpuField->db_column_name(), $content['custom_fields']['CPU']['field']);
+
+        $this->assertArrayHasKey('RAM', $content['custom_fields']);
+        $this->assertSame('64', $content['custom_fields']['RAM']['value']);
+    }
 }

@@ -517,6 +517,8 @@ Look up a single asset by asset tag, serial number, or numeric ID.
 | `serial` | string | No | Serial number |
 | `id` | number | No | Numeric ID |
 
+Response includes a `custom_fields` object that mirrors the HTTP API shape. Keys are field names (e.g. `CPU`, `RAM GB`, `GPU`) from the asset model's fieldset. Each value is `{field, value, field_format, element}`. Encrypted fields respect the `assets.view.encrypted_custom_fields` permission. This is how "what CPU is in server AST-001" questions get answered without extra tool calls.
+
 #### `list_assets`
 
 Search and list assets with optional filters. When `filter` and `search` are both provided, `filter` wins.

@@ -35,7 +35,7 @@ class ShowAssetTool extends Tool
             'id' => 'nullable|integer',
         ]);
 
-        $with = ['status', 'model.category', 'model.manufacturer', 'location', 'defaultLoc', 'company', 'supplier', 'adminuser'];
+        $with = ['status', 'model.category', 'model.manufacturer', 'model.fieldset.fields', 'location', 'defaultLoc', 'company', 'supplier', 'adminuser'];
         $asset = null;
 
         if ($request->filled('asset_tag')) {
@@ -85,7 +85,69 @@ class ShowAssetTool extends Tool
             'last_audit_date' => $asset->last_audit_date,
             'created_at' => $asset->created_at?->format('Y-m-d H:i:s'),
             'updated_at' => $asset->updated_at?->format('Y-m-d H:i:s'),
+            'custom_fields' => $this->buildCustomFields($asset),
         ];
+    }
+
+    /**
+     * Mirrors AssetsTransformer's custom_fields emission so the MCP shape
+     * matches the HTTP API. Encrypted fields respect
+     * assets.view.encrypted_custom_fields. Date / datetime fields are
+     * formatted through Helper::getFormattedDateObject. Markdown fields
+     * are rendered the same way the HTTP transformer renders them.
+     *
+     * Returns an empty array when the asset's model has no fieldset.
+     *
+     * @return array<string, array{field: string, value: string, field_format: string, element: string}>
+     */
+    private function buildCustomFields(Asset $asset): array
+    {
+        $fieldset = $asset->model?->fieldset;
+        if (! $fieldset || $fieldset->fields->isEmpty()) {
+            return [];
+        }
+
+        $fields = [];
+
+        foreach ($fieldset->fields as $field) {
+            $raw = $asset->{$field->db_column};
+
+            if ($field->isFieldDecryptable($raw)) {
+                $decrypted = Helper::gracefulDecrypt($field, $raw);
+                $value = Gate::allows('assets.view.encrypted_custom_fields')
+                    ? $decrypted
+                    : strtoupper(trans('admin/custom_fields/general.encrypted'));
+
+                if ($field->format == 'DATE' || $field->format == 'DATETIME') {
+                    $value = Gate::allows('assets.view.encrypted_custom_fields')
+                        ? Helper::getFormattedDateObject($value, $field->format == 'DATETIME' ? 'datetime' : 'date', false)
+                        : strtoupper(trans('admin/custom_fields/general.encrypted'));
+                }
+
+                $rendered = ($field->element == 'markdown-textarea' && Gate::allows('assets.view.encrypted_custom_fields'))
+                    ? Helper::renderMarkdown($value)
+                    : e($value);
+            } else {
+                $value = $raw;
+
+                if (in_array($field->format, ['DATE', 'DATETIME']) && ! is_null($value) && $value != '') {
+                    $value = Helper::getFormattedDateObject($value, $field->format == 'DATETIME' ? 'datetime' : 'date', false);
+                }
+
+                $rendered = ($field->element == 'markdown-textarea')
+                    ? Helper::renderMarkdown($value)
+                    : e($value);
+            }
+
+            $fields[$field->name] = [
+                'field' => e($field->db_column),
+                'value' => $rendered,
+                'field_format' => $field->format,
+                'element' => $field->element,
+            ];
+        }
+
+        return $fields;
     }
 
     public function schema(JsonSchema $schema): array
@@ -122,6 +184,7 @@ class ShowAssetTool extends Tool
             'purchase_cost' => $schema->string()->description('Purchase cost'),
             'last_checkout' => $schema->string()->description('Date of last checkout'),
             'last_checkin' => $schema->string()->description('Date of last checkin'),
+            'custom_fields' => $schema->object()->description('Per-field custom data defined on the asset model\'s fieldset. Keys are field names (e.g. "CPU", "RAM GB"). Each value is `{field, value, field_format, element}`. Empty object when the model has no fieldset. Mirrors the HTTP API shape.'),
         ];
     }
 }
