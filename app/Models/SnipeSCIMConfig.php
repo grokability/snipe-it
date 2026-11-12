@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use ArieTimmerman\Laravel\SCIMServer\Attribute\Attribute;
+use ArieTimmerman\Laravel\SCIMServer\Attribute\AttributeValue;
 use ArieTimmerman\Laravel\SCIMServer\Attribute\Collection;
 use ArieTimmerman\Laravel\SCIMServer\Attribute\Complex;
 use ArieTimmerman\Laravel\SCIMServer\Attribute\Constant;
@@ -347,6 +348,21 @@ class SnipeMutableCollection extends MutableCollection
             ->pluck('users.id')
             ->map(fn ($id) => ['value' => (string) $id, '$ref' => $ref_prefix.$id, 'display' => null])
             ->all();
+    }
+
+    // The upstream library never applies ?excludedAttributes= (it's a TODO
+    // there). Entra ID fetches groups with excludedAttributes=members, and
+    // when members come back anyway it removes and re-adds every member on
+    // each sync cycle. See #20046.
+    public function read(&$object, array $attributes = []): ?AttributeValue
+    {
+        $excluded = array_map('trim', explode(',', strtolower((string) request()->query('excludedAttributes'))));
+
+        if (array_intersect([strtolower($this->name), strtolower($this->getFullKey())], $excluded)) {
+            return null;
+        }
+
+        return parent::read($object, $attributes);
     }
 
     public function replace($value, Model &$object, ?Path $path = null)
