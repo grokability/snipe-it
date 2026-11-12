@@ -24,6 +24,7 @@ use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -35,13 +36,14 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
 use Watson\Validating\ValidatingTrait;
 
 /**
  * @mixin IdeHelperUser
  */
-class User extends SnipeModel implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, HasLocalePreference, Importable
+class User extends SnipeModel implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, HasLocalePreference, Importable, OAuthenticatable
 {
     use CompanyableTrait;
     use HasCalendarEvents;
@@ -1145,7 +1147,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
      * the legacy_company_id mirror, which is kept in sync with the pivot but is
      * not authoritative and may be dropped in a future release.
      */
-    public function company()
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class, 'legacy_company_id');
     }
@@ -1746,19 +1748,15 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
      * @author J. Vinsmoke
      *
      * @since  [v6.1]
-     *
-     * @return Relation
      */
-    public function allAssignedCount()
+    public function allAssignedCount(): int
     {
         $assetsCount = $this->assets()->count();
         $licensesCount = $this->licenses()->count();
         $accessoriesCount = $this->accessories()->count();
         $consumablesCount = $this->consumables()->count();
 
-        $totalCount = $assetsCount + $licensesCount + $accessoriesCount + $consumablesCount;
-
-        return (int) $totalCount;
+        return $assetsCount + $licensesCount + $accessoriesCount + $consumablesCount;
     }
 
     /**
@@ -1855,10 +1853,8 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
      * @author A. Gianotto <snipe@snipe.net>
      *
      * @since  [v1.0]
-     *
-     * @return Relation
      */
-    public function groups()
+    public function groups(): BelongsToMany
     {
         return $this->belongsToMany(Group::class, 'users_groups');
     }

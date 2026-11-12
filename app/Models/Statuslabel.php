@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StatusLabelType;
 use App\Http\Traits\UniqueUndeletedTrait;
 use App\Models\Builders\StatuslabelQueryBuilder;
 use App\Models\Traits\Searchable;
@@ -242,57 +243,36 @@ class Statuslabel extends SnipeModel
     }
 
     /**
-     * Gets the status label type
-     *
-     * @author A. Gianotto <snipe@snipe.net>
-     *
-     * @since  [v1.0]
+     * Gets the status label type as its canonical string value.
+     * Delegates to the StatusLabelType enum to keep the semantic
+     * mapping in one place. Returns string for back-compat with
+     * callers that concatenate / compare against string literals.
      *
      * @return string
      */
     public function getStatuslabelType()
     {
-        if (($this->pending == '1') && ($this->archived == '0') && ($this->deployable == '0')) {
-            return 'pending';
-        } elseif (($this->pending == '0') && ($this->archived == '1') && ($this->deployable == '0')) {
-            return 'archived';
-        } elseif (($this->pending == '0') && ($this->archived == '0') && ($this->deployable == '0')) {
-            return 'undeployable';
-        }
-
-        return 'deployable';
+        return StatusLabelType::fromModel($this)->value;
     }
 
     /**
-     * Helper function to determine type attributes
+     * Accepts a semantic type (enum or string) and returns the three
+     * deployable/pending/archived boolean columns the DB stores.
+     * String overload stays for back-compat with existing callers
+     * that read `$request->input('statuslabel_types')` unchanged.
      *
-     * @author A. Gianotto <snipe@snipe.net>
-     *
-     * @since  [v1.0]
-     *
-     * @return string
+     * @param  StatusLabelType|string  $type
+     * @return array{deployable: int, pending: int, archived: int}
      */
     public static function getStatuslabelTypesForDB($type)
     {
-        $statustype['pending'] = 0;
-        $statustype['deployable'] = 0;
-        $statustype['archived'] = 0;
+        $enum = $type instanceof StatusLabelType
+            ? $type
+            : StatusLabelType::tryFrom((string) $type);
 
-        if ($type == 'pending') {
-            $statustype['pending'] = 1;
-            $statustype['deployable'] = 0;
-            $statustype['archived'] = 0;
-        } elseif ($type == 'deployable') {
-            $statustype['pending'] = 0;
-            $statustype['deployable'] = 1;
-            $statustype['archived'] = 0;
-        } elseif ($type == 'archived') {
-            $statustype['pending'] = 0;
-            $statustype['deployable'] = 0;
-            $statustype['archived'] = 1;
-        }
-
-        return $statustype;
+        // Unknown strings land here as "none of the above" so existing
+        // callers see the same all-zeros row they did before the enum.
+        return $enum?->toDbColumns() ?? ['deployable' => 0, 'pending' => 0, 'archived' => 0];
     }
 
     public function newEloquentBuilder($query): StatuslabelQueryBuilder

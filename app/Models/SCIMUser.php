@@ -21,7 +21,7 @@ class SCIMUser extends User
 
     // Have to re-define this here because Eloquent will try to 'guess' a foreign key of s_c_i_m_user_id
     // from SCIMUser
-    public function groups()
+    public function groups(): BelongsToMany
     {
         return $this->belongsToMany(\App\Models\Group::class, 'users_groups', 'user_id', 'group_id');
     }

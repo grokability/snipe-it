@@ -16,6 +16,7 @@
                         <th scope="col" data-field="name" data-sortable="true">{{ trans('general.name') }}</th>
                         <th scope="col" data-field="user" data-sortable="true">{{ trans('general.created_by') }}</th>
                         <th scope="col" data-field="client" data-sortable="true">{{ trans('admin/settings/general.oauth_client') }}</th>
+                        <th scope="col" data-field="scopes">{{ trans('account/general.pat_scopes_column') }}</th>
                         <th scope="col" data-field="status" data-sortable="true">{{ trans('general.status') }}</th>
                         <th scope="col" data-field="created_at" data-sortable="true">{{ trans('general.created_at') }}</th>
                         <th scope="col" data-field="expires_at" data-sortable="true">{{ trans('general.expires') }}</th>
@@ -48,6 +49,28 @@
                                 @endif
                             </td>
                             <td>{{ $token->client_name }}</td>
+                            <td>
+                                @php
+                                    // oauth_access_tokens.scopes is a text column
+                                    // holding a JSON-encoded array. Decode defensively:
+                                    // older rows might be null, empty string, or a
+                                    // malformed serialization from an unrelated tool.
+                                    $scopeList = [];
+                                    if (! empty($token->scopes)) {
+                                        $decoded = json_decode((string) $token->scopes, true);
+                                        if (is_array($decoded)) {
+                                            $scopeList = $decoded;
+                                        }
+                                    }
+                                @endphp
+                                @forelse($scopeList as $scope)
+                                    <span class="label label-info" style="margin-right: 4px;">{{ $scope }}</span>
+                                @empty
+                                    <span class="label label-default" data-tooltip="true" title="{{ trans('account/general.pat_no_scopes_tooltip') }}">
+                                        {{ trans('account/general.pat_no_scopes') }}
+                                    </span>
+                                @endforelse
+                            </td>
                             <td>
                                 @if($isRevoked)
                                     <span class="label label-danger">

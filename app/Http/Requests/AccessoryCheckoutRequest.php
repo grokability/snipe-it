@@ -47,26 +47,37 @@ class AccessoryCheckoutRequest extends ImageUploadRequest
      */
     public function rules(): array
     {
-
-        return array_merge(
-            [
-                'assigned_user' => 'required_without_all:assigned_asset,assigned_location|prohibits:assigned_asset,assigned_location|nullable|exists_undeleted:users,id',
-                'assigned_asset' => 'required_without_all:assigned_user,assigned_location|prohibits:assigned_user,assigned_location|nullable|exists_undeleted:assets,id',
-                'assigned_location' => 'required_without_all:assigned_user,assigned_asset|prohibits:assigned_user,assigned_asset|nullable|exists_undeleted:locations,id',
-
-                'number_remaining_after_checkout' => [
-                    'min:0',
-                    'required',
-                    'integer',
-                ],
-
-                'checkout_qty' => [
-                    'integer',
-                    'lte:number_currently_remaining',
-                    'min:1',
-                ],
+        return array_merge(static::rulesArray(), [
+            // Qty rules depend on data computed in prepareForValidation()
+            // (number_currently_remaining, number_remaining_after_checkout)
+            // which only this FormRequest produces, so they are kept
+            // instance-local and not part of the shared rulesArray().
+            'number_remaining_after_checkout' => [
+                'min:0',
+                'required',
+                'integer',
             ],
-        );
+            'checkout_qty' => [
+                'integer',
+                'lte:number_currently_remaining',
+                'min:1',
+            ],
+        ]);
+    }
+
+    /**
+     * Statically-callable rules array of the target-selection rules shared
+     * between this FormRequest and the MCP CheckoutAccessoryTool. Qty
+     * rules stay in the instance rules() because they depend on request-
+     * level state the MCP tool does not produce.
+     */
+    public static function rulesArray(): array
+    {
+        return [
+            'assigned_user' => 'required_without_all:assigned_asset,assigned_location|prohibits:assigned_asset,assigned_location|nullable|exists_undeleted:users,id',
+            'assigned_asset' => 'required_without_all:assigned_user,assigned_location|prohibits:assigned_user,assigned_location|nullable|exists_undeleted:assets,id',
+            'assigned_location' => 'required_without_all:assigned_user,assigned_asset|prohibits:assigned_user,assigned_asset|nullable|exists_undeleted:locations,id',
+        ];
     }
 
     public function messages(): array

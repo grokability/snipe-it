@@ -428,7 +428,7 @@ class Maintenance extends SnipeModel implements CompanyableChild
      * backward-compat alias that returns the parent only when it IS
      * an Asset (returns null for other item_types).
      */
-    public function item()
+    public function item(): \Illuminate\Database\Eloquent\Relations\MorphTo
     {
         return $this->morphTo()->withTrashed();
     }

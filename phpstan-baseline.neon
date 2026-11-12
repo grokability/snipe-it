@@ -7,18 +7,6 @@ parameters:
 			path: app/Actions/Acceptances/RegenerateAcceptancesAction.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Relations\\Pivot\:\:\$(required|order)\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/FieldsetFieldPicker.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\CustomField\:\:\$pivot\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/FieldsetFieldPicker.php
-
-		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Category\>\:\:requiresAcceptance\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -151,12 +139,6 @@ parameters:
 			path: app/Console/Commands/CleanOldCheckoutRequests.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\Relation\:\:attach\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Console/Commands/CreateAdmin.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\Accessory\:\:\$first_name\.$#'
 			identifier: property.notFound
 			count: 2
@@ -213,12 +195,6 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\Setting\:\:\$ldap_base_dn\.$#'
 			identifier: property.notFound
-			count: 1
-			path: app/Console/Commands/LdapSync.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\Relation\:\:attach\(\)\.$#'
-			identifier: method.notFound
 			count: 1
 			path: app/Console/Commands/LdapSync.php
 
@@ -1273,18 +1249,6 @@ parameters:
 			path: app/Http/Controllers/Api/ProfileController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$client\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/ProfileController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$revoked\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/ProfileController.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -1300,24 +1264,6 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Pagination\\LengthAwarePaginator\<int, App\\Models\\Statuslabel\>\:\:\$use_text\.$#'
 			identifier: property.notFound
 			count: 1
-			path: app/Http/Controllers/Api/StatuslabelsController.php
-
-		-
-			message: '#^Offset ''archived'' does not exist on string\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: app/Http/Controllers/Api/StatuslabelsController.php
-
-		-
-			message: '#^Offset ''deployable'' does not exist on string\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: app/Http/Controllers/Api/StatuslabelsController.php
-
-		-
-			message: '#^Offset ''pending'' does not exist on string\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
 			path: app/Http/Controllers/Api/StatuslabelsController.php
 
 		-
@@ -1897,12 +1843,6 @@ parameters:
 			path: app/Http/Controllers/CustomFieldsetsController.php
 
 		-
-			message: '#^Variable \$field_ids might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: app/Http/Controllers/CustomFieldsetsController.php
-
-		-
 			message: '#^Call to an undefined method App\\Models\\SnipeModel\:\:getErrors\(\)\.$#'
 			identifier: method.notFound
 			count: 2
@@ -2357,24 +2297,6 @@ parameters:
 			identifier: return.phpDocType
 			count: 1
 			path: app/Http/Controllers/SetupController.php
-
-		-
-			message: '#^Offset ''archived'' does not exist on string\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: app/Http/Controllers/StatuslabelsController.php
-
-		-
-			message: '#^Offset ''deployable'' does not exist on string\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: app/Http/Controllers/StatuslabelsController.php
-
-		-
-			message: '#^Offset ''pending'' does not exist on string\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: app/Http/Controllers/StatuslabelsController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Supplier\:\:\$asset_maintenances_count\.$#'
@@ -3241,6 +3163,12 @@ parameters:
 			path: app/Livewire/CloneFieldset.php
 
 		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/CloneFieldset.php
+
+		-
 			message: '#^Access to an undefined property App\\Livewire\\CustomFieldEditor\:\:\$allowedElementKeys\.$#'
 			identifier: property.notFound
 			count: 1
@@ -3319,6 +3247,12 @@ parameters:
 			path: app/Livewire/CustomFieldSetDefaultValuesForModel.php
 
 		-
+			message: '#^Access to an undefined property App\\Models\\CustomField\:\:\$pivot\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Livewire/FieldsetFieldPicker.php
+
+		-
 			message: '#^Access to an undefined property App\\Livewire\\Importer\:\:\$activeFile\.$#'
 			identifier: property.notFound
 			count: 4
@@ -3335,24 +3269,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Importer.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/OauthClients.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/OauthClients.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/OauthClients.php
 
 		-
 			message: '#^Access to an undefined property Laravel\\Passport\\Client\:\:\$created_by\.$#'
@@ -4161,7 +4077,7 @@ parameters:
 		-
 			message: '#^Call to function is_int\(\) with App\\Models\\User\|null will always evaluate to false\.$#'
 			identifier: function.impossibleType
-			count: 1
+			count: 2
 			path: app/Models/Asset.php
 
 		-
@@ -4237,6 +4153,12 @@ parameters:
 			path: app/Models/Asset.php
 
 		-
+			message: '#^Method Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<Illuminate\\Database\\Eloquent\\Model,Illuminate\\Database\\Eloquent\\Model\>\:\:disassociate\(\) invoked with 1 parameter, 0 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: app/Models/Asset.php
+
+		-
 			message: '#^Offset class\-string\<static\(App\\Models\\Asset\)\> on array\{App\\Models\\Accessory\: ''accessories\.fulfill…'', App\\Models\\Consumable\: ''consumables\.fulfill…'', App\\Models\\Component\: ''components\.fulfill…'', App\\Models\\License\: ''licenses\.fulfill…'', App\\Models\\AssetModel\: ''models\.fulfill…''\} on left side of \?\? does not exist\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -4245,6 +4167,12 @@ parameters:
 		-
 			message: '#^PHPDoc tag @var above a method has no effect\.$#'
 			identifier: varTag.misplaced
+			count: 1
+			path: app/Models/Asset.php
+
+		-
+			message: '#^Property App\\Models\\Asset\:\:\$location_id \(int\|null\) does not accept string\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: app/Models/Asset.php
 
@@ -4274,6 +4202,12 @@ parameters:
 
 		-
 			message: '#^Property App\\Models\\IdeHelperAsset\:\:\$expected_checkin \(Illuminate\\Support\\Carbon\|null\) does not accept Carbon\\Carbon\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Models/Asset.php
+
+		-
+			message: '#^Property App\\Models\\IdeHelperAsset\:\:\$rtd_location_id \(int\|null\) does not accept string\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: app/Models/Asset.php
@@ -6223,12 +6157,6 @@ parameters:
 			path: app/Models/Labels/Tapes/Generic/Tape_53mm.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\Relation\:\:attach\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Models/Ldap.php
-
-		-
 			message: '#^Method App\\Models\\Ldap\:\:findLdapUsers\(\) should return array\|bool but returns Illuminate\\Http\\RedirectResponse\.$#'
 			identifier: return.type
 			count: 1
@@ -7189,12 +7117,6 @@ parameters:
 			path: app/Models/Statuslabel.php
 
 		-
-			message: '#^Method App\\Models\\Statuslabel\:\:getStatuslabelTypesForDB\(\) should return string but returns array\<string, int\>\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Models/Statuslabel.php
-
-		-
 			message: '#^Property App\\Models\\Statuslabel\:\:\$searchableAttributes \(array\) on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.property
 			count: 1
@@ -7465,18 +7387,6 @@ parameters:
 			path: app/Models/User.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\Relation\:\:detach\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\Relation\:\:sync\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Models/User.php
-
-		-
 			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
 			identifier: function.impossibleType
 			count: 2
@@ -7515,12 +7425,6 @@ parameters:
 		-
 			message: '#^Comparison operation "\>" between 0 and 0 is always false\.$#'
 			identifier: greater.alwaysFalse
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: '#^Method App\\Models\\User\:\:allAssignedCount\(\) should return Illuminate\\Database\\Eloquent\\Relations\\Relation but returns int\<0, max\>\.$#'
-			identifier: return.type
 			count: 1
 			path: app/Models/User.php
 
@@ -8741,12 +8645,6 @@ parameters:
 			identifier: throws.notThrowable
 			count: 1
 			path: app/Services/Saml.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/SyncAdapters/MappingTargets.php
 
 		-
 			message: '#^Strict comparison using \=\=\= between non\-empty\-string and null will always evaluate to false\.$#'

@@ -118,6 +118,7 @@ class Kernel extends HttpKernel
         'guest' => RedirectIfAuthenticated::class,
         'throttle' => ThrottleRequests::class,
         'api-throttle' => SetAPIResponseHeaders::class,
+        'mcp.scope.handshake' => \App\Http\Middleware\EnforceMcpScopeHandshake::class,
         'health' => null,
     ];
 }

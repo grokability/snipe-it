@@ -413,6 +413,16 @@ class UserFactory extends Factory
         return $this->appendPermission(['consumables.checkout' => '1']);
     }
 
+    public function createDepartments()
+    {
+        return $this->appendPermission(['departments.create' => '1']);
+    }
+
+    public function editDepartments()
+    {
+        return $this->appendPermission(['departments.edit' => '1']);
+    }
+
     public function deleteDepartments()
     {
         return $this->appendPermission(['departments.delete' => '1']);
@@ -821,5 +831,70 @@ class UserFactory extends Factory
     public function deleted(): self
     {
         return $this->state(['deleted_at' => $this->faker->dateTime()]);
+    }
+
+    public function viewCategories()
+    {
+        return $this->appendPermission(['categories.view' => '1']);
+    }
+
+    public function createCategories()
+    {
+        return $this->appendPermission(['categories.create' => '1']);
+    }
+
+    public function editCategories()
+    {
+        return $this->appendPermission(['categories.edit' => '1']);
+    }
+
+    public function viewDepreciations()
+    {
+        return $this->appendPermission(['depreciations.view' => '1']);
+    }
+
+    public function createDepreciations()
+    {
+        return $this->appendPermission(['depreciations.create' => '1']);
+    }
+
+    public function editDepreciations()
+    {
+        return $this->appendPermission(['depreciations.edit' => '1']);
+    }
+
+    public function viewManufacturers()
+    {
+        return $this->appendPermission(['manufacturers.view' => '1']);
+    }
+
+    public function createManufacturers()
+    {
+        return $this->appendPermission(['manufacturers.create' => '1']);
+    }
+
+    public function editManufacturers()
+    {
+        return $this->appendPermission(['manufacturers.edit' => '1']);
+    }
+
+    public function viewStatusLabels()
+    {
+        return $this->appendPermission(['statuslabels.view' => '1']);
+    }
+
+    public function viewSuppliers()
+    {
+        return $this->appendPermission(['suppliers.view' => '1']);
+    }
+
+    public function createSuppliers()
+    {
+        return $this->appendPermission(['suppliers.create' => '1']);
+    }
+
+    public function editSuppliers()
+    {
+        return $this->appendPermission(['suppliers.edit' => '1']);
     }
 }
