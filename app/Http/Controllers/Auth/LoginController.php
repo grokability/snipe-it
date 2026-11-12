@@ -119,7 +119,6 @@ class LoginController extends Controller
 
             try {
 
-                $user = $saml->samlLogin($samlData);
                 $notValidAfter = new \Carbon\Carbon(@$samlData['assertionNotOnOrAfter']);
                 if (\Carbon::now()->greaterThanOrEqualTo($notValidAfter)) {
                     abort(400, 'Expired SAML Assertion');
@@ -133,6 +132,8 @@ class LoginController extends Controller
                     \Log::error($e);
                     abort(400, 'Assertion has already been used.');
                 }
+                // Look up (or auto-create) the user only once the assertion is known fresh and unused.
+                $user = $saml->samlLogin($samlData);
                 if (! is_null($user)) {
                     Auth::login($user);
                 } else {
