@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Validator;
 use Watson\Validating\ValidatingTrait;
 
 /**
@@ -908,18 +909,18 @@ class Asset extends Depreciable implements Importable
         $this->attributes['expected_checkin'] = $value;
     }
 
-    public function save(array $params = [])
+    /**
+     * FormRequests reuse getRules() without running this hook, so an omitted
+     * serial can pass request validation and still fail model validation on save.
+     * This requirement belongs to each validator, not the model's stored rules.
+     */
+    protected function withValidator(Validator $validator): void
     {
-        //FIXME - this mangles the rules object in a way that might not be compatible with what we do
-        // elsewhere...
-        if ($this->model_id && $this->model && (string) $this->model->require_serial === '1') {
-            $this->rules['serial'] = array_merge(
-                array_filter($this->rules['serial'] ?? [], fn ($r) => $r !== 'nullable'),
-                ['required'],
-            );
-        }
-
-        return parent::save($params);
+        $validator->sometimes(
+            'serial',
+            'required',
+            fn () => (string) $this->model?->require_serial === '1',
+        );
     }
 
     public function getDisplayNameAttribute()
