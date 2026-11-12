@@ -4,7 +4,10 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\ResolvesForeignKeyByName;
 use App\Models\AssetModel;
+use App\Models\Category;
+use App\Models\Manufacturer;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
@@ -21,6 +24,7 @@ use Laravel\Mcp\Server\Tool;
 class ListAssetModelsTool extends Tool
 {
     use HasMcpScope;
+    use ResolvesForeignKeyByName;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -39,6 +43,25 @@ class ListAssetModelsTool extends Tool
             'limit' => 'nullable|integer|min:1|max:'.config('app.max_results'),
             'offset' => 'nullable|integer|min:0',
         ]);
+
+        // Resolve *_name filters to IDs and merge back onto the request
+        // so the existing filled() reads below keep working unchanged.
+        $fkMap = [
+            ['category_id', 'category_name', Category::class],
+            ['manufacturer_id', 'manufacturer_name', Manufacturer::class],
+        ];
+
+        $resolvedFks = [];
+        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
+            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
+            if ($this->fkResolutionFailed($resolved)) {
+                return Response::make(Response::error($this->fkErrorMessage($resolved)));
+            }
+            if ($resolved !== null) {
+                $resolvedFks[$idField] = $resolved;
+            }
+        }
+        $request->merge($resolvedFks);
 
         $models = AssetModel::with('category', 'manufacturer', 'depreciation')
             ->withCount('assets as assets_count');
@@ -90,8 +113,10 @@ class ListAssetModelsTool extends Tool
     {
         return [
             'search' => $schema->string()->description('Keyword to search across model name, model number'),
-            'category_id' => $schema->number()->description('Filter by category ID'),
-            'manufacturer_id' => $schema->number()->description('Filter by manufacturer ID'),
+            'category_id' => $schema->number()->description('Filter by category ID. Alternative: category_name.'),
+            'category_name' => $schema->string()->description('Filter by category name. Resolved to an ID server-side.'),
+            'manufacturer_id' => $schema->number()->description('Filter by manufacturer ID. Alternative: manufacturer_name.'),
+            'manufacturer_name' => $schema->string()->description('Filter by manufacturer name. Resolved to an ID server-side.'),
             'limit' => $schema->number()->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()->description('Number of results to skip for pagination (default: 0)'),
         ];

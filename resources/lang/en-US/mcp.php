@@ -290,6 +290,9 @@ return [
     'offboard_completed_message' => 'Offboarding complete for :username. User account has been soft-deleted.',
     'offboard_completed_summary' => 'Offboarded :username: :assets assets, :accessories accessories, :seats license seats released, user soft-deleted.',
     'offboard_failed' => 'Offboarding failed, rolled back. Reason: :failures',
+    'offboard_cross_company_blocked' => 'Cannot offboard :username because they belong to one or more companies you do not have access to. A superuser must offboard this user to avoid orphaning cross-company assignments.',
+    'fk_not_found' => 'No record found matching :field = ":value". Pass the correct name, or use :field\'s _id variant with a numeric ID.',
+    'fk_ambiguous' => 'More than one record matches :field = ":value". Pass the numeric :id_field instead to disambiguate.',
 
     // -----------------------------------------------------------------
     // Transfer user assets tool

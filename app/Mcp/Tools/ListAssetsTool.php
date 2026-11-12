@@ -5,7 +5,14 @@ namespace App\Mcp\Tools;
 use App\Enums\McpScope;
 use App\Http\Requests\AssetIndexRequest;
 use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\ResolvesForeignKeyByName;
 use App\Models\Asset;
+use App\Models\AssetModel;
+use App\Models\Category;
+use App\Models\Company;
+use App\Models\Location;
+use App\Models\Manufacturer;
+use App\Models\Supplier;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
@@ -23,6 +30,7 @@ use Laravel\Mcp\Server\Tool;
 class ListAssetsTool extends Tool
 {
     use HasMcpScope;
+    use ResolvesForeignKeyByName;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -46,6 +54,30 @@ class ListAssetsTool extends Tool
         } catch (ValidationException $e) {
             return Response::make(Response::error($e->validator->errors()->first()));
         }
+
+        // Resolve *_name filters to IDs and merge back onto the request
+        // so the existing filled() reads below keep working unchanged.
+        $fkMap = [
+            ['company_id', 'company_name', Company::class],
+            ['location_id', 'location_name', Location::class],
+            ['rtd_location_id', 'rtd_location_name', Location::class],
+            ['category_id', 'category_name', Category::class],
+            ['model_id', 'model_name', AssetModel::class],
+            ['manufacturer_id', 'manufacturer_name', Manufacturer::class],
+            ['supplier_id', 'supplier_name', Supplier::class],
+        ];
+
+        $resolvedFks = [];
+        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
+            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
+            if ($this->fkResolutionFailed($resolved)) {
+                return Response::make(Response::error($this->fkErrorMessage($resolved)));
+            }
+            if ($resolved !== null) {
+                $resolvedFks[$idField] = $resolved;
+            }
+        }
+        $request->merge($resolvedFks);
 
         $assets = Asset::select('assets.*')
             ->with('status', 'assignedTo', 'model.category', 'model.manufacturer', 'location', 'defaultLoc', 'company', 'supplier')
@@ -173,19 +205,33 @@ class ListAssetsTool extends Tool
             'status_type' => $schema->string()
                 ->description('Filter by status type: RTD (ready to deploy), Deployed, Archived, Pending, or Undeployable'),
             'company_id' => $schema->number()
-                ->description('Filter by company ID'),
+                ->description('Filter by company ID. Alternative: company_name.'),
+            'company_name' => $schema->string()
+                ->description('Filter by company name. Resolved to an ID server-side.'),
             'location_id' => $schema->number()
-                ->description('Filter by current location ID (where the asset physically is right now)'),
+                ->description('Filter by current location ID (where the asset physically is right now). Alternative: location_name.'),
+            'location_name' => $schema->string()
+                ->description('Filter by current location name. Resolved to an ID server-side.'),
             'rtd_location_id' => $schema->number()
-                ->description('Filter by default (Ready to Deploy) location ID. Use this when looking for assets whose home base is a given location, regardless of where they are checked out to right now.'),
+                ->description('Filter by default (Ready to Deploy) location ID. Use this when looking for assets whose home base is a given location, regardless of where they are checked out to right now. Alternative: rtd_location_name.'),
+            'rtd_location_name' => $schema->string()
+                ->description('Filter by default (RTD) location name. Resolved to an ID server-side.'),
             'category_id' => $schema->number()
-                ->description('Filter by category ID'),
+                ->description('Filter by category ID. Alternative: category_name.'),
+            'category_name' => $schema->string()
+                ->description('Filter by category name. Resolved to an ID server-side.'),
             'model_id' => $schema->number()
-                ->description('Filter by model ID'),
+                ->description('Filter by model ID. Alternative: model_name.'),
+            'model_name' => $schema->string()
+                ->description('Filter by asset model name. Resolved to an ID server-side.'),
             'manufacturer_id' => $schema->number()
-                ->description('Filter by manufacturer ID'),
+                ->description('Filter by manufacturer ID. Alternative: manufacturer_name.'),
+            'manufacturer_name' => $schema->string()
+                ->description('Filter by manufacturer name. Resolved to an ID server-side.'),
             'supplier_id' => $schema->number()
-                ->description('Filter by supplier ID'),
+                ->description('Filter by supplier ID. Alternative: supplier_name.'),
+            'supplier_name' => $schema->string()
+                ->description('Filter by supplier name. Resolved to an ID server-side.'),
             'limit' => $schema->number()
                 ->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()

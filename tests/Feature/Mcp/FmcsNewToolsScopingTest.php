@@ -99,6 +99,52 @@ class FmcsNewToolsScopingTest extends TestCase
         $this->assertNotNull(User::withTrashed()->find($targetInA->id)->deleted_at);
     }
 
+    public function test_strict_offboard_blocks_target_with_unreachable_pivot_company()
+    {
+        // Multi-company user case: target belongs to BOTH the actor's
+        // company AND a company the actor cannot reach. The scoped
+        // User::where query DOES find them (shared Company A pivot
+        // row), and the Gate::allows('update') check passes, but
+        // offboarding would check in only the actor-visible items via
+        // FMCS-scoped queries and then soft-delete the whole user,
+        // orphaning the Company B assignments. The tool must refuse.
+        $this->settings->enableMultipleFullCompanySupport();
+        // Use ->save(make()) to avoid the User factory's auto-attach a
+        // fresh company behavior in create(), which would add a third
+        // unreachable pivot row and muddy the "both companies, nothing
+        // extra" setup this test is pinning down.
+        $targetBoth = $this->companyA->users()->save(User::factory()->make(['username' => 'leaver']));
+        $this->companyB->users()->attach($targetBoth);
+
+        $this->actingAs($this->userInA);
+        $response = (new OffboardUserTool)->handle(new Request([
+            'username' => 'leaver',
+            'dry_run' => false,
+        ]));
+
+        $this->assertTrue($response->responses()->first()->isError());
+        $this->assertNull($targetBoth->fresh()->deleted_at);
+    }
+
+    public function test_superuser_offboard_allows_target_with_unreachable_pivot_company()
+    {
+        // Superusers bypass the cross-company guard: they can reach
+        // every company, so there is no "unreachable pivot row" case
+        // for them to protect against.
+        $this->settings->enableMultipleFullCompanySupport();
+        $targetBoth = $this->companyA->users()->save(User::factory()->make(['username' => 'leaver']));
+        $this->companyB->users()->attach($targetBoth);
+
+        $this->actingAs(User::factory()->superuser()->create());
+        $content = (new OffboardUserTool)->handle(new Request([
+            'username' => 'leaver',
+            'dry_run' => false,
+        ]))->getStructuredContent();
+
+        $this->assertTrue($content['success']);
+        $this->assertNotNull(User::withTrashed()->find($targetBoth->id)->deleted_at);
+    }
+
     // --- TransferAssetsTool ---
 
     public function test_strict_transfer_blocks_cross_company_source()

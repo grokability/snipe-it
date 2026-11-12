@@ -4,8 +4,11 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\ResolvesForeignKeyByName;
 use App\Models\Company;
+use App\Models\Department;
 use App\Models\Group;
+use App\Models\Location;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -25,6 +28,7 @@ use Laravel\Mcp\Server\Tool;
 class UpdateUserTool extends Tool
 {
     use HasMcpScope;
+    use ResolvesForeignKeyByName;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -59,9 +63,26 @@ class UpdateUserTool extends Tool
             return Response::make(Response::error(trans('mcp.cannot_edit_auth_fields')));
         }
 
+        $fkMap = [
+            ['company_id', 'company_name', Company::class],
+            ['department_id', 'department_name', Department::class],
+            ['location_id', 'location_name', Location::class],
+        ];
+
+        $resolvedFks = [];
+        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
+            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
+            if ($this->fkResolutionFailed($resolved)) {
+                return Response::make(Response::error($this->fkErrorMessage($resolved)));
+            }
+            if ($resolved !== null) {
+                $resolvedFks[$idField] = $resolved;
+            }
+        }
+
         // Map aliases (new_username -> username, new_email -> email) and
         // strip the lookup fields so they don't get validated as updates.
-        $input = $request->all();
+        $input = array_merge($request->all(), $resolvedFks);
         unset($input['new_username'], $input['new_email'], $input['username'], $input['email']);
         if ($request->filled('new_username')) {
             $input['username'] = $request->get('new_username');
@@ -89,8 +110,8 @@ class UpdateUserTool extends Tool
 
         $user->fill(array_merge($input, $validated));
 
-        if ($request->filled('company_id')) {
-            $user->company_id = Company::getIdForCurrentUser($request->get('company_id'));
+        if (! empty($input['company_id'])) {
+            $user->company_id = Company::getIdForCurrentUser($input['company_id']);
         }
 
         if ($user->save()) {
@@ -151,9 +172,12 @@ class UpdateUserTool extends Tool
             'jobtitle' => $schema->string()->description('Job title'),
             'phone' => $schema->string()->description('Phone number'),
             'mobile' => $schema->string()->description('Mobile number'),
-            'company_id' => $schema->number()->description('Company ID'),
-            'department_id' => $schema->number()->description('Department ID'),
-            'location_id' => $schema->number()->description('Location ID'),
+            'company_id' => $schema->number()->description('Company ID. Alternative: company_name.'),
+            'company_name' => $schema->string()->description('Company name. Resolved to an ID server-side.'),
+            'department_id' => $schema->number()->description('Department ID. Alternative: department_name.'),
+            'department_name' => $schema->string()->description('Department name. Resolved to an ID server-side.'),
+            'location_id' => $schema->number()->description('Location ID. Alternative: location_name.'),
+            'location_name' => $schema->string()->description('Location name. Resolved to an ID server-side.'),
             'manager_id' => $schema->number()->description('Manager user ID'),
             'activated' => $schema->boolean()->description('Whether the account is active'),
             'notes' => $schema->string()->description('Notes'),

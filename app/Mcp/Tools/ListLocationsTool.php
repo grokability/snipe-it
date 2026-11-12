@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\ResolvesForeignKeyByName;
 use App\Models\Location;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -21,6 +22,7 @@ use Laravel\Mcp\Server\Tool;
 class ListLocationsTool extends Tool
 {
     use HasMcpScope;
+    use ResolvesForeignKeyByName;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -38,6 +40,25 @@ class ListLocationsTool extends Tool
             'limit' => 'nullable|integer|min:1|max:'.config('app.max_results'),
             'offset' => 'nullable|integer|min:0',
         ]);
+
+        // Resolve parent_name to parent_id (self-referential FK) and
+        // merge back onto the request so the existing filled() reads
+        // below keep working unchanged.
+        $fkMap = [
+            ['parent_id', 'parent_name', Location::class],
+        ];
+
+        $resolvedFks = [];
+        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
+            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
+            if ($this->fkResolutionFailed($resolved)) {
+                return Response::make(Response::error($this->fkErrorMessage($resolved)));
+            }
+            if ($resolved !== null) {
+                $resolvedFks[$idField] = $resolved;
+            }
+        }
+        $request->merge($resolvedFks);
 
         $locations = Location::with('parent')->withCount(
             'assets as assets_count',
@@ -91,7 +112,8 @@ class ListLocationsTool extends Tool
     {
         return [
             'search' => $schema->string()->description('Keyword to search across location name, city, state, country'),
-            'parent_id' => $schema->number()->description('Filter by parent location ID'),
+            'parent_id' => $schema->number()->description('Filter by parent location ID. Alternative: parent_name.'),
+            'parent_name' => $schema->string()->description('Filter by parent location name. Resolved to an ID server-side.'),
             'limit' => $schema->number()->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()->description('Number of results to skip for pagination (default: 0)'),
         ];

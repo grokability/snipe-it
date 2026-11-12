@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\ResolvesForeignKeyByName;
 use App\Models\Location;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -23,6 +24,7 @@ use Laravel\Mcp\Server\Tool;
 class CreateLocationTool extends Tool
 {
     use HasMcpScope;
+    use ResolvesForeignKeyByName;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -34,14 +36,37 @@ class CreateLocationTool extends Tool
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
+        // Resolve name-based FK inputs to numeric IDs before validation
+        // so the downstream rules + fill see a consistent shape.
+        // Lookups run through the model's normal global scopes, so a
+        // non-superuser in a locked-down FMCS install gets a not-found
+        // error for a name that only exists in a tenant they cannot
+        // see, matching the UI's "that record does not exist" posture.
+        $fkMap = [
+            ['parent_id', 'parent_name', Location::class],
+        ];
+
+        $resolvedFks = [];
+        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
+            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
+            if ($this->fkResolutionFailed($resolved)) {
+                return Response::make(Response::error($this->fkErrorMessage($resolved)));
+            }
+            if ($resolved !== null) {
+                $resolvedFks[$idField] = $resolved;
+            }
+        }
+
+        $input = array_merge($request->all(), $resolvedFks);
+
         $location = new Location;
         try {
-            $validated = Validator::make($request->all(), $location->getPreparedRules())->validate();
+            $validated = Validator::make($input, $location->getPreparedRules())->validate();
         } catch (ValidationException $e) {
             return Response::make(Response::error($e->validator->errors()->first()));
         }
 
-        $location->fill(array_merge($request->all(), $validated));
+        $location->fill(array_merge($input, $validated));
 
         if ($location->save()) {
             return Response::make(
@@ -70,7 +95,8 @@ class CreateLocationTool extends Tool
             'phone' => $schema->string()->description('Phone number'),
             'fax' => $schema->string()->description('Fax number'),
             'currency' => $schema->string()->description('Currency code'),
-            'parent_id' => $schema->number()->description('Parent location ID'),
+            'parent_id' => $schema->number()->description('Parent location ID. Alternative: parent_name.'),
+            'parent_name' => $schema->string()->description('Parent location name. Resolved to an ID server-side.'),
             'manager_id' => $schema->number()->description('Manager user ID'),
         ];
     }

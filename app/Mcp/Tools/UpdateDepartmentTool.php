@@ -4,8 +4,10 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\ResolvesForeignKeyByName;
 use App\Models\Company;
 use App\Models\Department;
+use App\Models\Location;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
@@ -24,6 +26,7 @@ use Laravel\Mcp\Server\Tool;
 class UpdateDepartmentTool extends Tool
 {
     use HasMcpScope;
+    use ResolvesForeignKeyByName;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -46,7 +49,23 @@ class UpdateDepartmentTool extends Tool
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.department')])));
         }
 
-        $input = $request->all();
+        $fkMap = [
+            ['location_id', 'location_name', Location::class],
+            ['company_id', 'company_name', Company::class],
+        ];
+
+        $resolvedFks = [];
+        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
+            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
+            if ($this->fkResolutionFailed($resolved)) {
+                return Response::make(Response::error($this->fkErrorMessage($resolved)));
+            }
+            if ($resolved !== null) {
+                $resolvedFks[$idField] = $resolved;
+            }
+        }
+
+        $input = array_merge($request->all(), $resolvedFks);
         if ($request->filled('new_name')) {
             $input['name'] = $request->get('new_name');
         }
@@ -60,8 +79,8 @@ class UpdateDepartmentTool extends Tool
 
         $department->fill(array_merge($input, $validated));
 
-        if ($request->filled('company_id')) {
-            $department->company_id = Company::getIdForCurrentUser($request->get('company_id'));
+        if (! empty($input['company_id'])) {
+            $department->company_id = Company::getIdForCurrentUser($input['company_id']);
         }
 
         if ($department->save()) {
@@ -96,8 +115,10 @@ class UpdateDepartmentTool extends Tool
             'id' => $schema->number()->description('Numeric ID to identify the department'),
             'name' => $schema->string()->description('Name to identify the department'),
             'new_name' => $schema->string()->description('New name (renames the department)'),
-            'location_id' => $schema->number()->description('Location ID'),
-            'company_id' => $schema->number()->description('Company ID'),
+            'location_id' => $schema->number()->description('Location ID. Alternative: location_name.'),
+            'location_name' => $schema->string()->description('Location name. Resolved to an ID server-side.'),
+            'company_id' => $schema->number()->description('Company ID. Alternative: company_name.'),
+            'company_name' => $schema->string()->description('Company name. Resolved to an ID server-side.'),
             'manager_id' => $schema->number()->description('User ID of the department manager'),
             'phone' => $schema->string()->description('Department phone number'),
             'fax' => $schema->string()->description('Department fax number'),

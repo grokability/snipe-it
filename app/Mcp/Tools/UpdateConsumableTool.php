@@ -4,7 +4,13 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Models\Category;
+use App\Models\Company;
 use App\Models\Consumable;
+use App\Models\Location;
+use App\Models\Manufacturer;
+use App\Models\Supplier;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
@@ -23,6 +29,7 @@ use Laravel\Mcp\Server\Tool;
 class UpdateConsumableTool extends Tool
 {
     use HasMcpScope;
+    use ResolvesForeignKeyByName;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -45,12 +52,31 @@ class UpdateConsumableTool extends Tool
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.consumable')])));
         }
 
+        $fkMap = [
+            ['category_id', 'category_name', Category::class],
+            ['company_id', 'company_name', Company::class],
+            ['location_id', 'location_name', Location::class],
+            ['manufacturer_id', 'manufacturer_name', Manufacturer::class],
+            ['supplier_id', 'supplier_name', Supplier::class],
+        ];
+
+        $resolvedFks = [];
+        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
+            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
+            if ($this->fkResolutionFailed($resolved)) {
+                return Response::make(Response::error($this->fkErrorMessage($resolved)));
+            }
+            if ($resolved !== null) {
+                $resolvedFks[$idField] = $resolved;
+            }
+        }
+
         // supplier_id / purchase_cost forward to default_*, new_name
         // renames via name. Intersect with model rules so partial
         // updates only validate fields the caller actually sent.
-        $input = $request->all();
-        if ($request->filled('supplier_id') && ! $request->filled('default_supplier_id')) {
-            $input['default_supplier_id'] = $request->get('supplier_id');
+        $input = array_merge($request->all(), $resolvedFks);
+        if (! empty($input['supplier_id']) && ! $request->filled('default_supplier_id')) {
+            $input['default_supplier_id'] = $input['supplier_id'];
         }
         if ($request->filled('purchase_cost') && ! $request->filled('default_purchase_cost')) {
             $input['default_purchase_cost'] = $request->get('purchase_cost');
@@ -102,11 +128,16 @@ class UpdateConsumableTool extends Tool
             'name' => $schema->string()->description('Name to identify the consumable'),
             'new_name' => $schema->string()->description('New name (renames the consumable)'),
             'qty' => $schema->number()->description('Total quantity in stock'),
-            'category_id' => $schema->number()->description('Category ID'),
-            'company_id' => $schema->number()->description('Company ID'),
-            'location_id' => $schema->number()->description('Location ID'),
-            'manufacturer_id' => $schema->number()->description('Manufacturer ID'),
-            'supplier_id' => $schema->number()->description('Supplier ID'),
+            'category_id' => $schema->number()->description('Category ID. Alternative: category_name.'),
+            'category_name' => $schema->string()->description('Category name. Resolved to an ID server-side.'),
+            'company_id' => $schema->number()->description('Company ID. Alternative: company_name.'),
+            'company_name' => $schema->string()->description('Company name. Resolved to an ID server-side.'),
+            'location_id' => $schema->number()->description('Location ID. Alternative: location_name.'),
+            'location_name' => $schema->string()->description('Location name. Resolved to an ID server-side.'),
+            'manufacturer_id' => $schema->number()->description('Manufacturer ID. Alternative: manufacturer_name.'),
+            'manufacturer_name' => $schema->string()->description('Manufacturer name. Resolved to an ID server-side.'),
+            'supplier_id' => $schema->number()->description('Supplier ID. Alternative: supplier_name.'),
+            'supplier_name' => $schema->string()->description('Supplier name. Resolved to an ID server-side.'),
             'purchase_cost' => $schema->number()->description('Purchase cost per unit'),
             'purchase_date' => $schema->string()->description('Purchase date (YYYY-MM-DD)'),
             'min_amt' => $schema->number()->description('Minimum quantity alert threshold'),

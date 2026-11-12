@@ -5,8 +5,10 @@ namespace App\Mcp\Tools;
 use App\Enums\McpScope;
 use App\Http\Requests\MaintenanceIndexRequest;
 use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\ResolvesForeignKeyByName;
 use App\Models\Asset;
 use App\Models\Maintenance;
+use App\Models\Supplier;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
@@ -23,6 +25,7 @@ use Laravel\Mcp\Server\Tool;
 class ListMaintenancesTool extends Tool
 {
     use HasMcpScope;
+    use ResolvesForeignKeyByName;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -49,6 +52,26 @@ class ListMaintenancesTool extends Tool
         } catch (\Illuminate\Validation\ValidationException $e) {
             return Response::make(Response::error($e->validator->errors()->first()));
         }
+
+        // Resolve supplier_name to supplier_id and merge back onto the
+        // request so the existing filled() read below keeps working
+        // unchanged. asset_id / asset_tag already have a name path and
+        // are handled in their own block below.
+        $fkMap = [
+            ['supplier_id', 'supplier_name', Supplier::class],
+        ];
+
+        $resolvedFks = [];
+        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
+            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
+            if ($this->fkResolutionFailed($resolved)) {
+                return Response::make(Response::error($this->fkErrorMessage($resolved)));
+            }
+            if ($resolved !== null) {
+                $resolvedFks[$idField] = $resolved;
+            }
+        }
+        $request->merge($resolvedFks);
 
         // The maintenances table went polymorphic after this tool was
         // first written: `asset_id` + `completion_date` were renamed to
@@ -147,7 +170,8 @@ class ListMaintenancesTool extends Tool
         return [
             'asset_id' => $schema->number()->description('Filter by numeric asset ID'),
             'asset_tag' => $schema->string()->description('Filter by asset tag. Resolved to the matching asset_id server-side.'),
-            'supplier_id' => $schema->number()->description('Filter by the supplier that performed the maintenance'),
+            'supplier_id' => $schema->number()->description('Filter by the supplier that performed the maintenance. Alternative: supplier_name.'),
+            'supplier_name' => $schema->string()->description('Filter by the supplier name. Resolved to an ID server-side.'),
             'status' => $schema->string()->description('Filter by completion status: "open" (completed_at is null), "completed" (completed_at is set), or "all" (default)'),
             'is_warranty' => $schema->boolean()->description('Filter to warranty vs non-warranty maintenances'),
             'start_date_from' => $schema->string()->description('Return maintenances whose start_date is on or after this date (YYYY-MM-DD)'),

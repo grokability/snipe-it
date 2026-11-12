@@ -5,7 +5,13 @@ namespace App\Mcp\Tools;
 use App\Enums\McpScope;
 use App\Http\Requests\LicenseIndexRequest;
 use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Models\Category;
+use App\Models\Company;
+use App\Models\Depreciation;
 use App\Models\License;
+use App\Models\Manufacturer;
+use App\Models\Supplier;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
@@ -23,6 +29,7 @@ use Laravel\Mcp\Server\Tool;
 class ListLicensesTool extends Tool
 {
     use HasMcpScope;
+    use ResolvesForeignKeyByName;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -45,6 +52,28 @@ class ListLicensesTool extends Tool
         } catch (ValidationException $e) {
             return Response::make(Response::error($e->validator->errors()->first()));
         }
+
+        // Resolve *_name filters to IDs and merge back onto the request
+        // so the existing filled() reads below keep working unchanged.
+        $fkMap = [
+            ['company_id', 'company_name', Company::class],
+            ['category_id', 'category_name', Category::class],
+            ['manufacturer_id', 'manufacturer_name', Manufacturer::class],
+            ['supplier_id', 'supplier_name', Supplier::class],
+            ['depreciation_id', 'depreciation_name', Depreciation::class],
+        ];
+
+        $resolvedFks = [];
+        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
+            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
+            if ($this->fkResolutionFailed($resolved)) {
+                return Response::make(Response::error($this->fkErrorMessage($resolved)));
+            }
+            if ($resolved !== null) {
+                $resolvedFks[$idField] = $resolved;
+            }
+        }
+        $request->merge($resolvedFks);
 
         $licenses = License::with('company', 'manufacturer', 'supplier', 'category', 'depreciation')
             ->withCount('freeSeats as free_seats_count');
@@ -140,11 +169,16 @@ class ListLicensesTool extends Tool
         return [
             'search' => $schema->string()->description('Free-text keyword. Mutually exclusive with filter: when both are supplied, filter wins.'),
             'filter' => $schema->object()->description('Structured advanced-search filter payload. Same shape the UI Advanced Search modal posts.'),
-            'company_id' => $schema->number()->description('Filter by company ID'),
-            'category_id' => $schema->number()->description('Filter by category ID'),
-            'manufacturer_id' => $schema->number()->description('Filter by manufacturer ID'),
-            'supplier_id' => $schema->number()->description('Filter by supplier ID'),
-            'depreciation_id' => $schema->number()->description('Filter by depreciation schedule ID'),
+            'company_id' => $schema->number()->description('Filter by company ID. Alternative: company_name.'),
+            'company_name' => $schema->string()->description('Filter by company name. Resolved to an ID server-side.'),
+            'category_id' => $schema->number()->description('Filter by category ID. Alternative: category_name.'),
+            'category_name' => $schema->string()->description('Filter by category name. Resolved to an ID server-side.'),
+            'manufacturer_id' => $schema->number()->description('Filter by manufacturer ID. Alternative: manufacturer_name.'),
+            'manufacturer_name' => $schema->string()->description('Filter by manufacturer name. Resolved to an ID server-side.'),
+            'supplier_id' => $schema->number()->description('Filter by supplier ID. Alternative: supplier_name.'),
+            'supplier_name' => $schema->string()->description('Filter by supplier name. Resolved to an ID server-side.'),
+            'depreciation_id' => $schema->number()->description('Filter by depreciation schedule ID. Alternative: depreciation_name.'),
+            'depreciation_name' => $schema->string()->description('Filter by depreciation schedule name. Resolved to an ID server-side.'),
             'expiring_within_days' => $schema->number()->description('Return only licenses whose expiration_date is between today and (today + N days). Use for renewal-due reports.'),
             'fully_consumed_only' => $schema->boolean()->description('Return only licenses with zero free seats remaining.'),
             'limit' => $schema->number()->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),

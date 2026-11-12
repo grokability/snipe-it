@@ -4,6 +4,8 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Models\Location;
 use App\Models\Setting;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -23,6 +25,7 @@ use Laravel\Mcp\Server\Tool;
 class UpdateProfileTool extends Tool
 {
     use HasMcpScope;
+    use ResolvesForeignKeyByName;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -30,13 +33,30 @@ class UpdateProfileTool extends Tool
             return $denied;
         }
 
+        $fkMap = [
+            ['location_id', 'location_name', Location::class],
+        ];
+
+        $resolvedFks = [];
+        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
+            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
+            if ($this->fkResolutionFailed($resolved)) {
+                return Response::make(Response::error($this->fkErrorMessage($resolved)));
+            }
+            if ($resolved !== null) {
+                $resolvedFks[$idField] = $resolved;
+            }
+        }
+
+        $input = array_merge($request->all(), $resolvedFks);
+
         // Profile has a narrow allow-list that does NOT share shape with
         // User::getRules() (no password, no username, no email, etc.).
         // Keep the rules local here so the tool's attack surface is
         // visible in one place. Per-field permission gates below decide
         // which validated values actually get applied.
         try {
-            $data = Validator::make($request->all(), [
+            $data = Validator::make($input, [
                 'first_name' => 'nullable|string|max:255',
                 'last_name' => 'nullable|string|max:255',
                 'phone' => 'nullable|string|max:35',
@@ -105,7 +125,8 @@ class UpdateProfileTool extends Tool
             'gravatar' => $schema->string()->description('Gravatar email or hash'),
             'locale' => $schema->string()->description('Locale/language code (e.g. en-US)'),
             'two_factor_optin' => $schema->boolean()->description('Opt in to two-factor authentication (requires self.two_factor permission and 2FA enabled in settings)'),
-            'location_id' => $schema->number()->description('Default location ID (requires self.edit_location permission)'),
+            'location_id' => $schema->number()->description('Default location ID (requires self.edit_location permission). Alternative: location_name.'),
+            'location_name' => $schema->string()->description('Default location name. Resolved to an ID server-side.'),
         ];
     }
 

@@ -6,6 +6,7 @@ use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
 use App\Models\AccessoryCheckout;
 use App\Models\Asset;
+use App\Models\Company;
 use App\Models\LicenseSeat;
 use App\Models\Location;
 use App\Models\User;
@@ -111,6 +112,38 @@ class OffboardUserTool extends Tool
 
         if (! Gate::allows('update', $user)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
+        }
+
+        // Cross-company guard. The target user resolution + Gate check
+        // above already blocks a non-superuser from offboarding a user
+        // whose companies are entirely disjoint from the actor's, but a
+        // user with pivot rows in BOTH the actor's companies AND
+        // companies the actor cannot reach still slips through. Letting
+        // the tool proceed would check in only the actor-visible items
+        // via FMCS-scoped queries, then soft-delete the whole user and
+        // leave the other companies' assignments pointing at a deleted
+        // row. Refuse so a superuser can handle it.
+        //
+        // Reads the company_user pivot directly on both sides. Going
+        // through $user->companies() would apply the companies-table
+        // CompanyableScope and quietly hide the exact rows this guard
+        // is trying to detect.
+        if (Company::isFullMultipleCompanySupportEnabled() && ! auth()->user()->isSuperUser()) {
+            $actorCompanyIds = DB::table('company_user')
+                ->where('user_id', auth()->id())
+                ->pluck('company_id')
+                ->all();
+            $targetCompanyIds = DB::table('company_user')
+                ->where('user_id', $user->id)
+                ->pluck('company_id')
+                ->all();
+            $unreachableCompanyIds = array_diff($targetCompanyIds, $actorCompanyIds);
+
+            if (! empty($unreachableCompanyIds)) {
+                return Response::make(Response::error(trans('mcp.offboard_cross_company_blocked', [
+                    'username' => $user->username,
+                ])));
+            }
         }
 
         // Query Asset directly instead of via $user->assets() so the

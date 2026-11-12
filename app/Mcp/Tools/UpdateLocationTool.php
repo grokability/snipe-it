@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\ResolvesForeignKeyByName;
 use App\Models\Location;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -23,6 +24,7 @@ use Laravel\Mcp\Server\Tool;
 class UpdateLocationTool extends Tool
 {
     use HasMcpScope;
+    use ResolvesForeignKeyByName;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -45,7 +47,22 @@ class UpdateLocationTool extends Tool
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.location')])));
         }
 
-        $input = $request->all();
+        $fkMap = [
+            ['parent_id', 'parent_name', Location::class],
+        ];
+
+        $resolvedFks = [];
+        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
+            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
+            if ($this->fkResolutionFailed($resolved)) {
+                return Response::make(Response::error($this->fkErrorMessage($resolved)));
+            }
+            if ($resolved !== null) {
+                $resolvedFks[$idField] = $resolved;
+            }
+        }
+
+        $input = array_merge($request->all(), $resolvedFks);
         if ($request->filled('new_name')) {
             $input['name'] = $request->get('new_name');
         }
@@ -99,7 +116,8 @@ class UpdateLocationTool extends Tool
             'phone' => $schema->string()->description('Phone number'),
             'fax' => $schema->string()->description('Fax number'),
             'currency' => $schema->string()->description('Currency code'),
-            'parent_id' => $schema->number()->description('Parent location ID'),
+            'parent_id' => $schema->number()->description('Parent location ID. Alternative: parent_name.'),
+            'parent_name' => $schema->string()->description('Parent location name. Resolved to an ID server-side.'),
             'manager_id' => $schema->number()->description('Manager user ID'),
         ];
     }

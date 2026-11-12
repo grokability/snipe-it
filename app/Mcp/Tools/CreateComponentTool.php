@@ -4,8 +4,13 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Models\Category;
 use App\Models\Company;
 use App\Models\Component;
+use App\Models\Location;
+use App\Models\Manufacturer;
+use App\Models\Supplier;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
@@ -24,6 +29,7 @@ use Laravel\Mcp\Server\Tool;
 class CreateComponentTool extends Tool
 {
     use HasMcpScope;
+    use ResolvesForeignKeyByName;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -35,10 +41,35 @@ class CreateComponentTool extends Tool
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
+        // Resolve name-based FK inputs to numeric IDs before validation
+        // so the downstream rules + fill see a consistent shape.
+        // Lookups run through the model's normal global scopes, so a
+        // non-superuser in a locked-down FMCS install gets a not-found
+        // error for a name that only exists in a tenant they cannot
+        // see, matching the UI's "that record does not exist" posture.
+        $fkMap = [
+            ['category_id', 'category_name', Category::class],
+            ['manufacturer_id', 'manufacturer_name', Manufacturer::class],
+            ['supplier_id', 'supplier_name', Supplier::class],
+            ['location_id', 'location_name', Location::class],
+            ['company_id', 'company_name', Company::class],
+        ];
+
+        $resolvedFks = [];
+        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
+            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
+            if ($this->fkResolutionFailed($resolved)) {
+                return Response::make(Response::error($this->fkErrorMessage($resolved)));
+            }
+            if ($resolved !== null) {
+                $resolvedFks[$idField] = $resolved;
+            }
+        }
+
         // supplier_id and purchase_cost moved from per-row columns to
         // "default_*" templates on the parent, with per-acquisition data
         // on the Orders table. Map legacy input names forward.
-        $input = $request->all();
+        $input = array_merge($request->all(), $resolvedFks);
         if ($request->filled('supplier_id') && ! $request->filled('default_supplier_id')) {
             $input['default_supplier_id'] = $request->get('supplier_id');
         }
@@ -58,7 +89,7 @@ class CreateComponentTool extends Tool
         }
 
         $component->fill(array_merge($input, $validated));
-        $component->company_id = Company::getIdForCurrentUser($request->get('company_id'));
+        $component->company_id = Company::getIdForCurrentUser($input['company_id'] ?? null);
         $component->created_by = auth()->id();
 
         if ($component->save()) {
@@ -81,14 +112,19 @@ class CreateComponentTool extends Tool
     {
         return [
             'name' => $schema->string()->description('Component name (required)'),
-            'category_id' => $schema->number()->description('Category ID, must be a component category (required)'),
+            'category_id' => $schema->number()->description('Category ID, must be a component category (required). Alternative: category_name.'),
+            'category_name' => $schema->string()->description('Category name. Resolved to an ID server-side.'),
             'qty' => $schema->number()->description('Total quantity in stock (required, min 1)'),
             'serial' => $schema->string()->description('Serial number'),
             'model_number' => $schema->string()->description('Model number'),
-            'manufacturer_id' => $schema->number()->description('Manufacturer ID'),
-            'supplier_id' => $schema->number()->description('Supplier ID'),
-            'location_id' => $schema->number()->description('Location ID'),
-            'company_id' => $schema->number()->description('Company ID (defaults to the authenticated user\'s company)'),
+            'manufacturer_id' => $schema->number()->description('Manufacturer ID. Alternative: manufacturer_name.'),
+            'manufacturer_name' => $schema->string()->description('Manufacturer name. Resolved to an ID server-side.'),
+            'supplier_id' => $schema->number()->description('Supplier ID. Alternative: supplier_name.'),
+            'supplier_name' => $schema->string()->description('Supplier name. Resolved to an ID server-side.'),
+            'location_id' => $schema->number()->description('Location ID. Alternative: location_name.'),
+            'location_name' => $schema->string()->description('Location name. Resolved to an ID server-side.'),
+            'company_id' => $schema->number()->description('Company ID (defaults to the authenticated user\'s company). Alternative: company_name.'),
+            'company_name' => $schema->string()->description('Company name. Resolved to an ID server-side.'),
             'order_number' => $schema->string()->description('Order number'),
             'purchase_cost' => $schema->number()->description('Purchase cost per unit'),
             'purchase_date' => $schema->string()->description('Purchase date (YYYY-MM-DD)'),

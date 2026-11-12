@@ -4,8 +4,11 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\ResolvesForeignKeyByName;
 use App\Models\Company;
+use App\Models\Department;
 use App\Models\Group;
+use App\Models\Location;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -25,6 +28,7 @@ use Laravel\Mcp\Server\Tool;
 class CreateUserTool extends Tool
 {
     use HasMcpScope;
+    use ResolvesForeignKeyByName;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -40,6 +44,29 @@ class CreateUserTool extends Tool
             return Response::make(Response::error(trans('mcp.username_taken', ['username' => $request->get('username')])));
         }
 
+        // Resolve name-based FK inputs to numeric IDs before validation
+        // so the downstream rules + fill see a consistent shape.
+        // Lookups run through the model's normal global scopes, so a
+        // non-superuser in a locked-down FMCS install gets a not-found
+        // error for a name that only exists in a tenant they cannot
+        // see, matching the UI's "that record does not exist" posture.
+        $fkMap = [
+            ['company_id', 'company_name', Company::class],
+            ['department_id', 'department_name', Department::class],
+            ['location_id', 'location_name', Location::class],
+        ];
+
+        $resolvedFks = [];
+        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
+            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
+            if ($this->fkResolutionFailed($resolved)) {
+                return Response::make(Response::error($this->fkErrorMessage($resolved)));
+            }
+            if ($resolved !== null) {
+                $resolvedFks[$idField] = $resolved;
+            }
+        }
+
         $user = new User;
 
         // User's $rules marks password as required|min:8. The MCP tool
@@ -48,7 +75,7 @@ class CreateUserTool extends Tool
         // populate password in $input so Validator::make catches short
         // plaintexts before we hash, then overwrite the validated value
         // with the bcrypt hash after validation passes.
-        $input = $request->all();
+        $input = array_merge($request->all(), $resolvedFks);
         if (! $request->filled('password')) {
             $input['password'] = $user->noPassword();
         }
@@ -73,7 +100,7 @@ class CreateUserTool extends Tool
             // to legacy_company_id as a non-authoritative mirror. Attach
             // the resolved company via the pivot, then sync the legacy
             // mirror so FMCS checks that still read either can agree.
-            $companyId = Company::getIdForCurrentUser($request->get('company_id'));
+            $companyId = Company::getIdForCurrentUser($input['company_id'] ?? null);
             if ($companyId !== null) {
                 $user->companies()->syncWithoutDetaching([$companyId]);
                 $user->syncLegacyCompanyIdMirror();
@@ -116,9 +143,12 @@ class CreateUserTool extends Tool
             'jobtitle' => $schema->string()->description('Job title'),
             'phone' => $schema->string()->description('Phone number'),
             'mobile' => $schema->string()->description('Mobile number'),
-            'company_id' => $schema->number()->description('Company ID (defaults to the authenticated user\'s company)'),
-            'department_id' => $schema->number()->description('Department ID'),
-            'location_id' => $schema->number()->description('Location ID'),
+            'company_id' => $schema->number()->description('Company ID (defaults to the authenticated user\'s company). Alternative: company_name.'),
+            'company_name' => $schema->string()->description('Company name. Resolved to an ID server-side.'),
+            'department_id' => $schema->number()->description('Department ID. Alternative: department_name.'),
+            'department_name' => $schema->string()->description('Department name. Resolved to an ID server-side.'),
+            'location_id' => $schema->number()->description('Location ID. Alternative: location_name.'),
+            'location_name' => $schema->string()->description('Location name. Resolved to an ID server-side.'),
             'manager_id' => $schema->number()->description('Manager user ID'),
             'activated' => $schema->boolean()->description('Whether the account is active (default: true)'),
             'notes' => $schema->string()->description('Notes'),

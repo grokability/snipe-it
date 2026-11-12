@@ -4,8 +4,11 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\ResolvesForeignKeyByName;
 use App\Models\Asset;
 use App\Models\Maintenance;
+use App\Models\MaintenanceType;
+use App\Models\Supplier;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
@@ -24,6 +27,7 @@ use Laravel\Mcp\Server\Tool;
 class CreateMaintenanceTool extends Tool
 {
     use HasMcpScope;
+    use ResolvesForeignKeyByName;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -33,6 +37,28 @@ class CreateMaintenanceTool extends Tool
 
         if (! Gate::allows('update', Asset::class)) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
+        }
+
+        // Resolve name-based FK inputs to numeric IDs before validation
+        // so the downstream rules + fill see a consistent shape.
+        // Lookups run through the model's normal global scopes, so a
+        // non-superuser in a locked-down FMCS install gets a not-found
+        // error for a name that only exists in a tenant they cannot
+        // see, matching the UI's "that record does not exist" posture.
+        $fkMap = [
+            ['maintenance_type_id', 'maintenance_type_name', MaintenanceType::class],
+            ['supplier_id', 'supplier_name', Supplier::class],
+        ];
+
+        $resolvedFks = [];
+        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
+            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
+            if ($this->fkResolutionFailed($resolved)) {
+                return Response::make(Response::error($this->fkErrorMessage($resolved)));
+            }
+            if ($resolved !== null) {
+                $resolvedFks[$idField] = $resolved;
+            }
         }
 
         // MCP-specific lookup: asset_id OR asset_tag. These aren't
@@ -63,7 +89,7 @@ class CreateMaintenanceTool extends Tool
         // attach to any checkoutable item type. Pinning item_type to
         // Asset here matches the tool's current surface, which is
         // asset-scoped.
-        $input = array_merge($request->all(), [
+        $input = array_merge($request->all(), $resolvedFks, [
             'item_id' => $asset->id,
             'item_type' => Asset::class,
             // `title` is the MCP-facing name for `name`. `completion_date`
@@ -117,8 +143,10 @@ class CreateMaintenanceTool extends Tool
             'asset_id' => $schema->number()->description('Numeric ID of the asset the maintenance is for. One of asset_id or asset_tag is required.'),
             'asset_tag' => $schema->string()->description('Asset tag of the asset the maintenance is for. One of asset_id or asset_tag is required.'),
             'title' => $schema->string()->description('Maintenance title/name (required)'),
-            'maintenance_type_id' => $schema->number()->description('maintenance_types.id row identifying the type of work (required). Use list-style tools to discover available types.'),
-            'supplier_id' => $schema->number()->description('Supplier who performed or will perform the work'),
+            'maintenance_type_id' => $schema->number()->description('maintenance_types.id row identifying the type of work (required). Use list-style tools to discover available types. Alternative: maintenance_type_name.'),
+            'maintenance_type_name' => $schema->string()->description('Maintenance type name. Resolved to an ID server-side.'),
+            'supplier_id' => $schema->number()->description('Supplier who performed or will perform the work. Alternative: supplier_name.'),
+            'supplier_name' => $schema->string()->description('Supplier name. Resolved to an ID server-side.'),
             'is_warranty' => $schema->boolean()->description('Whether this is covered by warranty (defaults to false)'),
             'cost' => $schema->number()->description('Cost in the installs currency'),
             'start_date' => $schema->string()->description('Work start date (YYYY-MM-DD, defaults to today)'),

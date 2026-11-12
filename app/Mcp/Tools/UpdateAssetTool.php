@@ -4,7 +4,12 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\ResolvesForeignKeyByName;
 use App\Models\Asset;
+use App\Models\AssetModel;
+use App\Models\Location;
+use App\Models\Statuslabel;
+use App\Models\Supplier;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
@@ -23,6 +28,7 @@ use Laravel\Mcp\Server\Tool;
 class UpdateAssetTool extends Tool
 {
     use HasMcpScope;
+    use ResolvesForeignKeyByName;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -46,12 +52,31 @@ class UpdateAssetTool extends Tool
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset')])));
         }
 
+        $fkMap = [
+            ['model_id', 'model_name', AssetModel::class],
+            ['status_id', 'status_name', Statuslabel::class],
+            ['location_id', 'location_name', Location::class],
+            ['rtd_location_id', 'rtd_location_name', Location::class],
+            ['supplier_id', 'supplier_name', Supplier::class],
+        ];
+
+        $resolvedFks = [];
+        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
+            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
+            if ($this->fkResolutionFailed($resolved)) {
+                return Response::make(Response::error($this->fkErrorMessage($resolved)));
+            }
+            if ($resolved !== null) {
+                $resolvedFks[$idField] = $resolved;
+            }
+        }
+
         // new_asset_tag / new_serial let callers change the identifiers
         // without conflicting with the asset_tag/serial used to look up
         // the asset. Map them to the model columns first so the
         // validator sees them, then intersect with the model's rules so
         // partial updates only validate what the caller actually sent.
-        $input = $request->all();
+        $input = array_merge($request->all(), $resolvedFks);
         unset($input['asset_tag'], $input['serial']);
         if ($request->filled('new_asset_tag')) {
             $input['asset_tag'] = $request->get('new_asset_tag');
@@ -107,16 +132,21 @@ class UpdateAssetTool extends Tool
             'name' => $schema->string()->description('New display name'),
             'new_asset_tag' => $schema->string()->description('New asset tag (renames the asset tag itself)'),
             'new_serial' => $schema->string()->description('New serial number'),
-            'status_id' => $schema->number()->description('Status label ID'),
-            'model_id' => $schema->number()->description('Model ID'),
+            'status_id' => $schema->number()->description('Status label ID. Alternative: status_name.'),
+            'status_name' => $schema->string()->description('Status label name. Resolved to an ID server-side.'),
+            'model_id' => $schema->number()->description('Model ID. Alternative: model_name.'),
+            'model_name' => $schema->string()->description('Asset model name. Resolved to an ID server-side.'),
             'notes' => $schema->string()->description('Notes'),
             'order_number' => $schema->string()->description('Order number'),
             'purchase_date' => $schema->string()->description('Purchase date (YYYY-MM-DD)'),
             'purchase_cost' => $schema->number()->description('Purchase cost'),
             'warranty_months' => $schema->number()->description('Warranty length in months'),
-            'location_id' => $schema->number()->description('Current location ID'),
-            'rtd_location_id' => $schema->number()->description('Default RTD location ID'),
-            'supplier_id' => $schema->number()->description('Supplier ID'),
+            'location_id' => $schema->number()->description('Current location ID. Alternative: location_name.'),
+            'location_name' => $schema->string()->description('Current location name. Resolved to an ID server-side.'),
+            'rtd_location_id' => $schema->number()->description('Default RTD location ID. Alternative: rtd_location_name.'),
+            'rtd_location_name' => $schema->string()->description('Default RTD location name. Resolved to an ID server-side.'),
+            'supplier_id' => $schema->number()->description('Supplier ID. Alternative: supplier_name.'),
+            'supplier_name' => $schema->string()->description('Supplier name. Resolved to an ID server-side.'),
             'requestable' => $schema->boolean()->description('Whether the asset is user-requestable'),
             'byod' => $schema->boolean()->description('Bring-your-own-device flag'),
             'asset_eol_date' => $schema->string()->description('Asset end-of-life date (YYYY-MM-DD)'),

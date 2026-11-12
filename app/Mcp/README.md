@@ -445,6 +445,24 @@ Tools are individual actions the AI can call directly. They can also be combined
 
 > "List all licenses expiring before the end of the year."
 
+### Foreign keys by name or by ID
+
+Every tool that accepts a foreign-key field (category, manufacturer, supplier, location, company, status label, model, department, depreciation schedule, parent location, maintenance type) accepts **either** the numeric ID **or** the name. For each `thing_id` field in a schema, a sibling `thing_name` field exists. For example:
+
+- `category_id: 7` passes a numeric category ID
+- `category_name: "Laptop"` passes the name, resolved to an ID server-side
+
+Rules:
+
+- `*_id` wins when both are provided.
+- Name match is case-insensitive and exact (no partial / `LIKE` matching).
+- If a name matches more than one row, the tool returns an error asking for the numeric ID to disambiguate. The duplicate rows themselves are not listed in the error, to avoid leaking data in FMCS installs.
+- If a name matches zero rows (including rows hidden by FMCS scoping for the acting user), the tool returns a not-found error. Same posture as the web UI's "that record does not exist."
+
+This applies uniformly across `create_*`, `update_*`, and `list_*` tools. The per-tool parameter tables below only list `*_id` for brevity, but every one of them has a `*_name` sibling.
+
+User foreign keys (`manager_id`, `assigned_to`, `responsible_party_id`) are an exception: users are identified by `username`, not display name, so these stay ID-only. The `offboard_user` and `transfer_user_assets` tools expose name-based resolution for the target user separately via their own `username` / `first_name` / `last_name` parameters.
+
 ---
 
 ### Assets
@@ -590,6 +608,28 @@ Add a manual note to an asset. The note is recorded in the asset's activity log.
 | `serial` | string | No | Identify by serial number |
 | `id` | number | No | Identify by numeric ID |
 | `note` | string | **Yes** | Note text to add |
+
+#### `list_asset_notes`
+List manual notes previously added to an asset.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `asset_tag` | string | No | Identify by asset tag |
+| `serial` | string | No | Identify by serial number |
+| `id` | number | No | Identify by numeric ID |
+| `limit` | number | No | Results to return (default: 25, max: 500) |
+| `offset` | number | No | Results to skip for pagination |
+
+#### `upload_asset_image`
+Attach an image to an asset. The image is accepted as base64-encoded bytes plus a MIME type. The same sanitization path as the HTTP upload endpoint is used (resize, re-encode, EXIF strip, SVG scrub). Replaces any existing image.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `asset_tag` | string | No | Identify by asset tag |
+| `id` | number | No | Identify by numeric ID |
+| `image_base64` | string | **Yes** | Base64-encoded image bytes. Max ~5MB base64 (~3.75MB decoded). |
+| `mime_type` | string | **Yes** | Allowed: `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/avif`, `image/svg+xml`, `image/vnd.microsoft.icon`, `image/x-icon` |
+| `filename` | string | No | Optional original filename (used for MIME detection help) |
 
 ---
 
@@ -746,6 +786,15 @@ Reset two-factor authentication for a user (requires admin permission).
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `id` | number | **Yes** | Numeric user ID |
+
+#### `send_password_reset`
+Send a password reset link to a user. The user must be active, have an email address, and not be an LDAP-imported account.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | number | No | Numeric user ID |
+| `username` | string | No | Username |
+| `email` | string | No | Email address |
 
 #### `offboard_user`
 
@@ -1288,6 +1337,18 @@ Identify by `id` or `name`. Use `new_name` to rename.
 #### `delete_asset_model`
 Identify by `id` or `name`.
 
+#### `find_similar_models`
+Find asset model candidates similar to a given source model, ranked by category / manufacturer / name-token overlap and current stock availability. Useful for bulk replacement planning.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `model_id` | number | No | Numeric ID of the source model. One of `model_id` or `model_name` is required. |
+| `model_name` | string | No | Exact name of the source model. One of `model_id` or `model_name` is required. |
+| `require_available_inventory` | boolean | No | When true, only return candidates with at least one unassigned asset in stock |
+| `limit` | number | No | Max candidates to return (default: 10, max: 50) |
+
+Response includes the source model, total candidates scored, and ranked candidates with per-candidate similarity reasons and inventory counts.
+
 ---
 
 ### Depreciations
@@ -1430,5 +1491,27 @@ Response includes `id`, `name`, and `tag_color`. The `id` is what you pass as `m
 | `item_id` | number | No | Filter by item ID |
 | `user_id` | number | No | Filter by user ID |
 | `action_type` | string | No | Filter by action (e.g. `checkout`, `checkin`, `update`) |
+| `limit` | number | No | Results to return (default: 25, max: 500) |
+| `offset` | number | No | Results to skip |
+
+#### `list_history`
+List the activity history for a specific Snipe-IT object. Narrower + object-centric alternative to `get_activity_log`, which is cross-object. The acting user must have `history` permission on the target object.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `object_type` | string | **Yes** | `accessory`, `asset`, `asset_model`, `component`, `consumable`, `license`, `location`, `maintenance`, or `user` |
+| `id` | number | **Yes** | Numeric ID of the object |
+| `search` | string | No | Keyword filter across history entries |
+| `action_type` | string | No | Filter by action (e.g. `checkout`, `update`, `note added`, `uploaded`) |
+| `limit` | number | No | Results to return (default: 25, max: 500) |
+| `offset` | number | No | Results to skip |
+
+#### `list_uploads`
+List files attached to a Snipe-IT object. The acting user must have view access to the target object.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `object_type` | string | **Yes** | `accessories`, `assets`, `companies`, `components`, `consumables`, `departments`, `licenses`, `locations`, `maintenances`, `models`, `suppliers`, or `users` |
+| `id` | number | **Yes** | Numeric ID of the object |
 | `limit` | number | No | Results to return (default: 25, max: 500) |
 | `offset` | number | No | Results to skip |
