@@ -155,6 +155,9 @@
     "optimize-autoloader": true,
     "discard-changes": true,
     "process-timeout": 3000,
+    "platform": {
+      "php": "8.2"
+    },
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true
     }

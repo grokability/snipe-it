@@ -3,6 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
+use App\Helpers\Helper;
 use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
