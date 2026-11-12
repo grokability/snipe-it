@@ -12,6 +12,7 @@ use App\Models\Traits\Loggable;
 use App\Models\Traits\Searchable;
 use App\Presenters\LocationPresenter;
 use App\Presenters\Presentable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -346,8 +347,7 @@ class Location extends SnipeModel implements Importable
      */
     public function parent()
     {
-        return $this->belongsTo(self::class, 'parent_id', 'id')
-            ->with('parent');
+        return $this->belongsTo(self::class, 'parent_id', 'id');
     }
 
     /**
@@ -361,11 +361,15 @@ class Location extends SnipeModel implements Importable
             return (int) $this->company_id;
         }
 
+        $visitedIds = [$this->id => true];
         $ancestor = $this->parent()->withoutGlobalScopes()->first();
-        while ($ancestor) {
+
+        while ($ancestor && ! isset($visitedIds[$ancestor->id])) {
             if ($ancestor->company_id) {
                 return (int) $ancestor->company_id;
             }
+
+            $visitedIds[$ancestor->id] = true;
             $ancestor = $ancestor->parent()->withoutGlobalScopes()->first();
         }
 
@@ -411,8 +415,30 @@ class Location extends SnipeModel implements Importable
      */
     public function children()
     {
-        return $this->hasMany(self::class, 'parent_id')
-            ->with('children');
+        return $this->hasMany(self::class, 'parent_id');
+    }
+
+    /**
+     * Walk up the parent chain, nearest ancestor first. Stops at the first
+     * location already seen so legacy parent_id cycles can't loop forever.
+     *
+     * @return Collection<int, Location>
+     */
+    public function ancestors(): Collection
+    {
+        $ancestors = new Collection;
+
+        $visitedIds = [$this->id => true];
+
+        $cursor = $this->parent;
+
+        while ($cursor && ! isset($visitedIds[$cursor->id])) {
+            $ancestors->push($cursor);
+            $visitedIds[$cursor->id] = true;
+            $cursor = $cursor->parent;
+        }
+
+        return $ancestors;
     }
 
     /**
