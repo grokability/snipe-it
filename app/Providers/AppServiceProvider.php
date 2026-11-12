@@ -14,13 +14,7 @@ use App\Models\Maintenance;
 use App\Models\Setting;
 use App\Models\SnipeSCIMConfig;
 use App\Models\User;
-use App\Observers\AccessoryObserver;
-use App\Observers\AssetModelObserver;
 use App\Observers\AssetObserver;
-use App\Observers\ComponentObserver;
-use App\Observers\ConsumableObserver;
-use App\Observers\LicenseObserver;
-use App\Observers\LocationObserver;
 use App\Observers\MaintenanceObserver;
 use App\Observers\SettingObserver;
 use App\Observers\UserObserver;
@@ -90,16 +84,10 @@ class AppServiceProvider extends ServiceProvider
         View::composer('partials.impersonation-banner', ImpersonationBannerComposer::class);
 
         Schema::defaultStringLength(191);
-        Accessory::observe(AccessoryObserver::class);
+
         Asset::observe(AssetObserver::class);
-        AssetModel::observe(AssetModelObserver::class);
-        Component::observe(ComponentObserver::class);
-        Consumable::observe(ConsumableObserver::class);
-        License::observe(LicenseObserver::class);
-        Location::observe(LocationObserver::class);
         Maintenance::observe(MaintenanceObserver::class);
         Setting::observe(SettingObserver::class);
-        User::observe(UserObserver::class);
 
         // Defense against sync-adapter base URLs pointing at the vendor's
         // web console instead of their API. A wrong URL commonly returns

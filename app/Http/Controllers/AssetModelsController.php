@@ -249,7 +249,7 @@ class AssetModelsController extends Controller
 
             if ($model->restore()) {
                 // The `restore` action_log entry is written by
-                // AssetModelObserver::restoring, no manual write here.
+                // Loggable during restore, no manual write here.
 
                 // Redirect them to the deleted page if there are more, otherwise the section index
                 $deleted_models = AssetModel::onlyTrashed()->count();

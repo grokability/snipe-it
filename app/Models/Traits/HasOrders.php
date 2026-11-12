@@ -2,7 +2,6 @@
 
 namespace App\Models\Traits;
 
-use App\Models\Actionlog;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Setting;
@@ -27,6 +26,11 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  */
 trait HasOrders
 {
+    protected static function shouldAutoCreateInventory(): bool
+    {
+        return true;
+    }
+
     /**
      * Hook a model lifecycle listener so that force-deleting an
      * inventory row (Accessory / Consumable / Component / Asset /
@@ -39,8 +43,8 @@ trait HasOrders
      */
     protected static function bootHasOrders(): void
     {
-        static::deleting(function ($model) {
-            if (! method_exists($model, 'isForceDeleting') || ! $model->isForceDeleting()) {
+        static::deleting(function (self $model) {
+            if (! $model->isForceDeleting()) {
                 return;
             }
 
@@ -48,6 +52,41 @@ trait HasOrders
                 ->where('item_id', $model->id)
                 ->delete();
         });
+
+        if (static::shouldAutoCreateInventory()) {
+            static::created(function (self $model): void {
+                $initialQty = (int) ($model->getAttributes()['qty'] ?? 0);
+
+                if ($initialQty <= 0) {
+                    return;
+                }
+
+                $currency = $model->location?->currency ?: Setting::getSettings()?->default_currency;
+
+                $order = new Order([
+                    'order_number' => null,
+                    'supplier_id' => null,
+                    'company_id' => $model->company_id,
+                    'purchase_date' => null,
+                    'currency' => $currency,
+                ]);
+                $order->created_by = $model->created_by ?? auth()->id();
+                $order->save();
+
+                $orderItem = new OrderItem([
+                    'order_id' => $order->id,
+                    'item_type' => static::class,
+                    'item_id' => $model->id,
+                    'qty' => $initialQty,
+                    'price' => null,
+                ]);
+                $orderItem->created_by = $model->created_by ?? auth()->id();
+                $orderItem->save();
+
+                // Note: all 'HasOrders' objects are also 'Loggable' - so this is OK
+                $model->setOrderItem($orderItem);
+            });
+        }
     }
 
     public function orderItems(): MorphMany
@@ -103,7 +142,7 @@ trait HasOrders
      * Mirrors the filters applied by OrderItemsController::index,
      * which excludes OrderItems whose parent Order has no order
      * number. Those are the initial-inventory anchors written by
-     * writeInitialOrderIfStocked and shouldn't surface as "orders"
+     * this trait's created hook and shouldn't surface as "orders"
      * in the admin UI alongside real acquisition records.
      */
     public function orderItemsCount(): int
@@ -466,79 +505,5 @@ trait HasOrders
             ->filter()
             ->unique()
             ->count() <= 1;
-    }
-
-    /**
-     * Called from the inventory observer's `created` event. When the row
-     * lands with qty > 0, write a placeholder Order + OrderItem to
-     * represent the initial acquisition. Transaction metadata
-     * (supplier_id, purchase_date, purchase_cost, currency, order_number)
-     * only lives on Orders / OrderItems now, form-driven creates enrich
-     * the placeholder via the controller's enrichInitialOrderFromRequest,
-     * and factory / seeder paths fill it via an afterCreating hook.
-     *
-     * qty=0/null is container-only: a bare inventory row with no initial
-     * acquisition. The Order + OrderItem write is skipped entirely,
-     * later adjust-quantity events write their own when stock actually
-     * arrives.
-     *
-     * The create action_log always writes, linked to the OrderItem when
-     * one exists and unlinked (order_item_id = null) for container-only
-     * creates. quantity captures the initial on-hand count so auditors
-     * get a "started with N units" anchor, subsequent QuantityAdjust
-     * logs record deltas rather than running totals.
-     */
-    public function writeInitialInventoryCreate(): void
-    {
-        $initialQty = (int) ($this->getAttributes()['qty'] ?? 0);
-        $orderItem = $this->writeInitialOrderIfStocked($initialQty);
-
-        $log = new Actionlog;
-        $log->item_type = static::class;
-        $log->item_id = $this->id;
-        $log->created_at = date('Y-m-d H:i:s');
-        // See AssetModelObserver::created for the seeder-friendly
-        // auth fallback rationale.
-        $log->created_by = auth()->id() ?? $this->created_by;
-        $log->quantity = $initialQty;
-        $log->order_item_id = $orderItem?->id;
-        if ($this->imported) {
-            $log->setActionSource('importer');
-        }
-        $log->logaction('create');
-    }
-
-    private function writeInitialOrderIfStocked(int $initialQty): ?OrderItem
-    {
-        if ($initialQty <= 0) {
-            return null;
-        }
-
-        $locationCurrency = $this->location?->currency;
-        $currency = ($locationCurrency !== '' && $locationCurrency !== null)
-            ? $locationCurrency
-            : Setting::getSettings()?->default_currency;
-
-        $order = new Order([
-            'order_number' => null,
-            'supplier_id' => null,
-            'company_id' => $this->company_id,
-            'purchase_date' => null,
-            'currency' => $currency,
-        ]);
-        $order->created_by = $this->created_by ?? auth()->id();
-        $order->save();
-
-        $orderItem = new OrderItem([
-            'order_id' => $order->id,
-            'item_type' => static::class,
-            'item_id' => $this->id,
-            'qty' => $initialQty,
-            'price' => null,
-        ]);
-        $orderItem->created_by = $this->created_by ?? auth()->id();
-        $orderItem->save();
-
-        return $orderItem;
     }
 }

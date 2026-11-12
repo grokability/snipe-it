@@ -79,6 +79,14 @@ class Asset extends Depreciable implements Importable
 
     use Acceptable;
 
+    /**
+     * Tells HasOrders not to add the initial inventory record automatically.
+     */
+    protected static function shouldAutoCreateInventory(): bool
+    {
+        return false;
+    }
+
     public static function fileStorage(): FileStorage
     {
         return FileStorage::Assets;

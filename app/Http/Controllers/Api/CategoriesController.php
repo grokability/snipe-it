@@ -210,7 +210,7 @@ class CategoriesController extends Controller
         // Don't allow the user to change the category_type once it's been created
         if (($request->filled('category_type')) && ($category->category_type != $request->input('category_type'))) {
             return response()->json(
-                Helper::formatStandardApiResponse('error', null, ['category_type' => trans('admin/categories/message.update.cannot_change_category_type')], 422)
+                Helper::formatStandardApiResponse('error', null, ['category_type' => trans('admin/categories/message.update.cannot_change_category_type')])
             );
         }
         $category->fill($request->all());
