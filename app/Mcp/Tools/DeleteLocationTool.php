@@ -6,7 +6,6 @@ use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
 use App\Models\Location;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -35,16 +34,12 @@ class DeleteLocationTool extends Tool
 
         $location = $this->resolveLocation($request);
 
-        if (! $location || ! Gate::allows('delete', $location)) {
+        if (! $location) {
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.location')])));
         }
 
-        if ($location->users()->count() > 0) {
-            return Response::make(Response::error(trans('mcp.location_has_users')));
-        }
-
-        if ($location->children()->count() > 0) {
-            return Response::make(Response::error(trans('mcp.location_has_child_locations')));
+        if (! $location->isDeletable()) {
+            return Response::make(Response::error(trans('admin/locations/message.assoc_users')));
         }
 
         $name = $location->name;

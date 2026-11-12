@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Watson\Validating\ValidatingTrait;
@@ -511,7 +512,8 @@ class Accessory extends SnipeModel implements Importable
 
     public function isDeletable()
     {
-        return $this->checkouts_count === 0;
+        return Gate::allows('delete', $this)
+            && (($this->checkouts_count ?? $this->checkouts()->count()) === 0);
     }
 
     /**

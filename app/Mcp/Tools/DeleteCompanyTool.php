@@ -6,7 +6,6 @@ use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
 use App\Models\Company;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -35,8 +34,12 @@ class DeleteCompanyTool extends Tool
 
         $company = $this->resolveCompany($request);
 
-        if (! $company || ! Gate::allows('delete', $company)) {
+        if (! $company) {
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.company')])));
+        }
+
+        if (! $company->isDeletable()) {
+            return Response::make(Response::error(trans('admin/companies/message.assoc_users')));
         }
 
         $name = $company->name;

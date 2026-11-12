@@ -102,7 +102,7 @@ class OffboardUserTool extends Tool
                 'matches' => $matches->map(fn (User $u) => [
                     'id' => $u->id,
                     'username' => $u->username,
-                    'full_name' => trim($u->first_name.' '.$u->last_name),
+                    'full_name' => $u->full_name,
                     'email' => $u->email,
                 ])->all(),
             ]);
@@ -167,7 +167,7 @@ class OffboardUserTool extends Tool
             'user' => [
                 'id' => $user->id,
                 'username' => $user->username,
-                'full_name' => trim($user->first_name.' '.$user->last_name),
+                'full_name' => $user->full_name,
             ],
             'assets_to_checkin' => $assets->map(fn (Asset $a) => [
                 'id' => $a->id,

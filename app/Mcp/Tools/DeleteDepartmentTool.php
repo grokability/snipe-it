@@ -6,7 +6,6 @@ use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
 use App\Models\Department;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -35,12 +34,12 @@ class DeleteDepartmentTool extends Tool
 
         $department = $this->resolveDepartment($request);
 
-        if (! $department || ! Gate::allows('delete', $department)) {
+        if (! $department) {
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.department')])));
         }
 
-        if ($department->users->count() > 0) {
-            return Response::make(Response::error(trans('mcp.department_has_users')));
+        if (! $department->isDeletable()) {
+            return Response::make(Response::error(trans('admin/departments/message.assoc_users')));
         }
 
         $name = $department->name;

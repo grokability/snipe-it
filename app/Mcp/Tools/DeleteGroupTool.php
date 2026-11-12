@@ -49,6 +49,13 @@ class DeleteGroupTool extends Tool
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.group')])));
         }
 
+        if (! $group->isDeletable()) {
+            return Response::make(Response::error(trans('mcp.cannot_delete_has_dependents', [
+                'model' => trans('general.group'),
+                'name' => $group->name,
+            ])));
+        }
+
         $groupName = $group->name;
 
         if ($group->delete()) {

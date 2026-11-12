@@ -7,7 +7,6 @@ use App\Mcp\Traits\HasMcpScope;
 use App\Models\License;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -36,12 +35,12 @@ class DeleteLicenseTool extends Tool
 
         $license = $this->resolveLicense($request);
 
-        if (! $license || ! Gate::allows('delete', $license)) {
+        if (! $license) {
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.license')])));
         }
 
-        if ($license->assignedCount()->count() > 0) {
-            return Response::make(Response::error(trans('mcp.license_has_seats_assigned')));
+        if (! $license->isDeletable()) {
+            return Response::make(Response::error(trans('admin/licenses/message.delete.bulk_checkout_warning', ['license_name' => $license->name])));
         }
 
         $name = $license->name;
@@ -64,11 +63,13 @@ class DeleteLicenseTool extends Tool
 
     private function resolveLicense(Request $request): ?License
     {
+        $query = License::withCount('freeSeats as free_seats_count');
+
         if ($request->filled('id')) {
-            return License::find($request->get('id'));
+            return $query->find($request->get('id'));
         }
         if ($request->filled('name')) {
-            return License::where('name', $request->get('name'))->first();
+            return $query->where('name', $request->get('name'))->first();
         }
 
         return null;

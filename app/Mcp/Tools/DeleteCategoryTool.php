@@ -6,7 +6,6 @@ use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
 use App\Models\Category;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -35,8 +34,12 @@ class DeleteCategoryTool extends Tool
 
         $category = $this->resolveCategory($request);
 
-        if (! $category || ! Gate::allows('delete', $category)) {
+        if (! $category) {
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.category')])));
+        }
+
+        if (! $category->isDeletable()) {
+            return Response::make(Response::error(trans('admin/categories/message.assoc_models')));
         }
 
         $name = $category->name;

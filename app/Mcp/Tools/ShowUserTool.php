@@ -75,7 +75,7 @@ class ShowUserTool extends Tool
             'department_id' => $user->department_id,
             'location' => $user->userloc?->name,
             'location_id' => $user->location_id,
-            'manager' => $user->manager ? trim($user->manager->first_name.' '.$user->manager->last_name) : null,
+            'manager' => $user->manager?->full_name,
             'manager_id' => $user->manager_id,
             'activated' => (bool) $user->activated,
             'notes' => $user->notes,

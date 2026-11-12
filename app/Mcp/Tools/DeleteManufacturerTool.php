@@ -6,7 +6,6 @@ use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
 use App\Models\Manufacturer;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -35,8 +34,12 @@ class DeleteManufacturerTool extends Tool
 
         $manufacturer = $this->resolveManufacturer($request);
 
-        if (! $manufacturer || ! Gate::allows('delete', $manufacturer)) {
+        if (! $manufacturer) {
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.manufacturer')])));
+        }
+
+        if (! $manufacturer->isDeletable()) {
+            return Response::make(Response::error(trans('admin/manufacturers/message.assoc_users')));
         }
 
         $name = $manufacturer->name;

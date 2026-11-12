@@ -6,7 +6,6 @@ use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -36,7 +35,7 @@ class DeleteUserTool extends Tool
 
         $user = $this->resolveUser($request);
 
-        if (! $user || ! Gate::allows('delete', $user)) {
+        if (! $user) {
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.user')])));
         }
 
@@ -44,8 +43,11 @@ class DeleteUserTool extends Tool
             return Response::make(Response::error(trans('mcp.user_cannot_delete_self')));
         }
 
-        if ($user->allAssignedCount() > 0) {
-            return Response::make(Response::error(trans('mcp.user_has_items')));
+        if (! $user->isDeletable()) {
+            return Response::make(Response::error(trans('mcp.cannot_delete_has_dependents', [
+                'model' => trans('general.user'),
+                'name' => $user->username,
+            ])));
         }
 
         $username = $user->username;

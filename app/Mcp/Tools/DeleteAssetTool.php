@@ -8,7 +8,6 @@ use App\Mcp\Traits\HasMcpScope;
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -38,8 +37,12 @@ class DeleteAssetTool extends Tool
 
         $asset = $this->resolveAsset($request);
 
-        if (! $asset || ! Gate::allows('delete', $asset)) {
+        if (! $asset) {
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset')])));
+        }
+
+        if (! $asset->isDeletable()) {
+            return Response::make(Response::error(trans('admin/hardware/message.assoc_users')));
         }
 
         $assetTag = $asset->asset_tag;

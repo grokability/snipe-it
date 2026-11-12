@@ -6,7 +6,6 @@ use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
 use App\Models\Accessory;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -35,12 +34,14 @@ class DeleteAccessoryTool extends Tool
 
         $accessory = $this->resolveAccessory($request);
 
-        if (! $accessory || ! Gate::allows('delete', $accessory)) {
+        if (! $accessory) {
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.accessory')])));
         }
 
-        if ($accessory->numCheckedOut() > 0) {
-            return Response::make(Response::error(trans('mcp.accessory_has_checkouts')));
+        if (! $accessory->isDeletable()) {
+            return Response::make(Response::error(trans('admin/accessories/message.assoc_users', [
+                'count' => $accessory->checkouts()->count(),
+            ])));
         }
 
         $name = $accessory->name;
@@ -59,10 +60,10 @@ class DeleteAccessoryTool extends Tool
     private function resolveAccessory(Request $request): ?Accessory
     {
         if ($request->filled('id')) {
-            return Accessory::withCount('checkouts as checkouts_count')->find($request->get('id'));
+            return Accessory::find($request->get('id'));
         }
         if ($request->filled('name')) {
-            return Accessory::withCount('checkouts as checkouts_count')->where('name', $request->get('name'))->first();
+            return Accessory::where('name', $request->get('name'))->first();
         }
 
         return null;

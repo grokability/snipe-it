@@ -6,7 +6,6 @@ use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
 use App\Models\Supplier;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -35,8 +34,12 @@ class DeleteSupplierTool extends Tool
 
         $supplier = $this->resolveSupplier($request);
 
-        if (! $supplier || ! Gate::allows('delete', $supplier)) {
+        if (! $supplier) {
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.supplier')])));
+        }
+
+        if (! $supplier->isDeletable()) {
+            return Response::make(Response::error(trans('admin/hardware/message.assoc_users')));
         }
 
         $name = $supplier->name;

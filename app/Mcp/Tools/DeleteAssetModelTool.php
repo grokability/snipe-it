@@ -6,7 +6,6 @@ use App\Enums\McpScope;
 use App\Mcp\Traits\HasMcpScope;
 use App\Models\AssetModel;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
@@ -35,12 +34,12 @@ class DeleteAssetModelTool extends Tool
 
         $model = $this->resolveModel($request);
 
-        if (! $model || ! Gate::allows('delete', $model)) {
+        if (! $model) {
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset_model')])));
         }
 
-        if ($model->assets()->count() > 0) {
-            return Response::make(Response::error(trans('mcp.model_has_assets')));
+        if (! $model->isDeletable()) {
+            return Response::make(Response::error(trans('admin/models/message.assoc_users')));
         }
 
         $name = $model->name;

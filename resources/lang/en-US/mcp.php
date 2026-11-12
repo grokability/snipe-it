@@ -79,6 +79,7 @@ return [
     'location_has_users' => 'Location has users assigned and cannot be deleted',
     'status_label_has_assets' => 'Status label has assets assigned and cannot be deleted',
     'model_has_assets' => 'Model has assets and cannot be deleted',
+    'cannot_delete_has_dependents' => 'Cannot delete :model ":name" because it has related items (child records, assigned items, or dependents). Remove or reassign those first.',
 
     // -----------------------------------------------------------------
     // Operation failures
