@@ -50,10 +50,7 @@ class DeleteGroupTool extends Tool
         }
 
         if (! $group->isDeletable()) {
-            return Response::make(Response::error(trans('mcp.cannot_delete_has_dependents', [
-                'model' => trans('general.group'),
-                'name' => $group->name,
-            ])));
+            return Response::make(Response::error(trans('admin/groups/message.assoc_users')));
         }
 
         $groupName = $group->name;

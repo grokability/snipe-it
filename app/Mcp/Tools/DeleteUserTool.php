@@ -190,10 +190,7 @@ class DeleteUserTool extends Tool
         }
 
         if (! $user->isDeletable()) {
-            return Response::make(Response::error(trans('mcp.cannot_delete_has_dependents', [
-                'model' => trans('general.user'),
-                'name' => $user->username,
-            ])));
+            return Response::make(Response::error(trans('mcp.user_has_items')));
         }
 
         $username = $user->username;
@@ -296,10 +293,7 @@ class DeleteUserTool extends Tool
         $undeletableMatches = $undeletable->take(10)->map(fn (User $u) => [
             'id' => $u->id,
             'display_name' => $u->username,
-            'reason' => trans('mcp.cannot_delete_has_dependents', [
-                'model' => trans('general.user'),
-                'name' => $u->username,
-            ]),
+            'reason' => trans('mcp.user_has_items'),
         ])->values()->all();
 
         return Response::make(

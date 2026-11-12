@@ -45,6 +45,8 @@ class ListUsersTool extends Tool
         // MCP-specific pagination stays inline.
         try {
             $request->validate(array_merge(UserIndexRequest::rulesArray(), [
+                'created_before' => 'nullable|date',
+                'created_after' => 'nullable|date',
                 'limit' => 'nullable|integer|min:1|max:'.config('app.max_results'),
                 'offset' => 'nullable|integer|min:0',
             ]));
@@ -115,6 +117,14 @@ class ListUsersTool extends Tool
             $users->where('users.activated', '=', $request->get('activated'));
         }
 
+        if ($request->filled('created_before')) {
+            $users->where('users.created_at', '<=', $request->get('created_before'));
+        }
+
+        if ($request->filled('created_after')) {
+            $users->where('users.created_at', '>=', $request->get('created_after'));
+        }
+
         $users->orderBy('users.last_name', 'asc')->orderBy('users.first_name', 'asc');
 
         $total = $users->count();
@@ -179,6 +189,8 @@ class ListUsersTool extends Tool
             'activated' => $schema->boolean()->description('Filter by the `activated` login-access flag. Note: many orgs never set this on real users (asset tracking only), so this is not a reliable "still with the company" signal. Use include_deleted / only_deleted for that.'),
             'include_deleted' => $schema->boolean()->description('When true, include soft-deleted users in the results (default: false)'),
             'only_deleted' => $schema->boolean()->description('When true, return ONLY soft-deleted users. Takes precedence over include_deleted.'),
+            'created_before' => $schema->string()->description('Only return records created on or before this date (YYYY-MM-DD).'),
+            'created_after' => $schema->string()->description('Only return records created on or after this date (YYYY-MM-DD).'),
             'limit' => $schema->number()->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()->description('Number of results to skip for pagination (default: 0)'),
         ];

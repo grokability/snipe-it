@@ -45,6 +45,8 @@ class ListConsumablesTool extends Tool
         // config('app.max_results') so both surfaces honor the same env.
         try {
             $request->validate(array_merge(ConsumableIndexRequest::rulesArray(), [
+                'created_before' => 'nullable|date',
+                'created_after' => 'nullable|date',
                 'limit' => 'nullable|integer|min:1|max:'.config('app.max_results'),
                 'offset' => 'nullable|integer|min:0',
             ]));
@@ -97,6 +99,14 @@ class ListConsumablesTool extends Tool
 
         if ($request->filled('location_id')) {
             $consumables->where('location_id', $request->get('location_id'));
+        }
+
+        if ($request->filled('created_before')) {
+            $consumables->where('consumables.created_at', '<=', $request->get('created_before'));
+        }
+
+        if ($request->filled('created_after')) {
+            $consumables->where('consumables.created_at', '>=', $request->get('created_after'));
         }
 
         // Archived scoping uses the same builder scopes the UI does.
@@ -184,6 +194,8 @@ class ListConsumablesTool extends Tool
             'low_stock_only' => $schema->boolean()->description('When true, return only consumables whose remaining quantity is at or below their configured min_amt threshold. Use for reorder reports. Archived consumables are always excluded from this filter.'),
             'include_archived' => $schema->boolean()->description('When true, include archived consumables in the results. Default matches the UI\'s consumablesForShow() scope: archived rows are hidden unless the admin has flipped the show_archived_in_list setting on.'),
             'archived_only' => $schema->boolean()->description('When true, return ONLY archived consumables. Overrides include_archived.'),
+            'created_before' => $schema->string()->description('Only return records created on or before this date (YYYY-MM-DD).'),
+            'created_after' => $schema->string()->description('Only return records created on or after this date (YYYY-MM-DD).'),
             'limit' => $schema->number()->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()->description('Number of results to skip for pagination (default: 0)'),
         ];

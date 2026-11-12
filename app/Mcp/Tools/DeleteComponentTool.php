@@ -188,10 +188,7 @@ class DeleteComponentTool extends Tool
         }
 
         if (! $component->isDeletable()) {
-            return Response::make(Response::error(trans('mcp.cannot_delete_has_dependents', [
-                'model' => trans('general.component'),
-                'name' => $component->name,
-            ])));
+            return Response::make(Response::error(trans('mcp.component_has_checkouts')));
         }
 
         $name = $component->name;
@@ -283,10 +280,7 @@ class DeleteComponentTool extends Tool
         $undeletableMatches = $undeletable->take(10)->map(fn (Component $c) => [
             'id' => $c->id,
             'display_name' => $c->name,
-            'reason' => trans('mcp.cannot_delete_has_dependents', [
-                'model' => trans('general.component'),
-                'name' => $c->name,
-            ]),
+            'reason' => trans('mcp.component_has_checkouts'),
         ])->values()->all();
 
         return Response::make(

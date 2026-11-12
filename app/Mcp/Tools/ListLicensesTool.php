@@ -46,6 +46,8 @@ class ListLicensesTool extends Tool
         // config('app.max_results') so both surfaces honor the same env.
         try {
             $request->validate(array_merge(LicenseIndexRequest::rulesArray(), [
+                'created_before' => 'nullable|date',
+                'created_after' => 'nullable|date',
                 'limit' => 'nullable|integer|min:1|max:'.config('app.max_results'),
                 'offset' => 'nullable|integer|min:0',
             ]));
@@ -117,6 +119,14 @@ class ListLicensesTool extends Tool
             $licenses->having('free_seats_count', '=', 0);
         }
 
+        if ($request->filled('created_before')) {
+            $licenses->where('licenses.created_at', '<=', $request->get('created_before'));
+        }
+
+        if ($request->filled('created_after')) {
+            $licenses->where('licenses.created_at', '>=', $request->get('created_after'));
+        }
+
         $licenses->orderBy('licenses.created_at', 'desc');
 
         $total = $licenses->count();
@@ -181,6 +191,8 @@ class ListLicensesTool extends Tool
             'depreciation_name' => $schema->string()->description('Filter by depreciation schedule name. Resolved to an ID server-side.'),
             'expiring_within_days' => $schema->number()->description('Return only licenses whose expiration_date is between today and (today + N days). Use for renewal-due reports.'),
             'fully_consumed_only' => $schema->boolean()->description('Return only licenses with zero free seats remaining.'),
+            'created_before' => $schema->string()->description('Only return records created on or before this date (YYYY-MM-DD).'),
+            'created_after' => $schema->string()->description('Only return records created on or after this date (YYYY-MM-DD).'),
             'limit' => $schema->number()->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()->description('Number of results to skip for pagination (default: 0)'),
         ];

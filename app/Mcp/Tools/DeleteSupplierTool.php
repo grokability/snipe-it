@@ -39,7 +39,7 @@ class DeleteSupplierTool extends Tool
         }
 
         if (! $supplier->isDeletable()) {
-            return Response::make(Response::error(trans('admin/hardware/message.assoc_users')));
+            return Response::make(Response::error(trans('admin/suppliers/message.assoc_items')));
         }
 
         $name = $supplier->name;

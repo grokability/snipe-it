@@ -48,6 +48,8 @@ class ListAssetsTool extends Tool
         // MCP-specific pagination stays inline.
         try {
             $request->validate(array_merge(AssetIndexRequest::rulesArray(), [
+                'created_before' => 'nullable|date',
+                'created_after' => 'nullable|date',
                 'limit' => 'nullable|integer|min:1|max:'.config('app.max_results'),
                 'offset' => 'nullable|integer|min:0',
             ]));
@@ -133,6 +135,14 @@ class ListAssetsTool extends Tool
 
         if ($request->filled('supplier_id')) {
             $assets->where('assets.supplier_id', '=', $request->get('supplier_id'));
+        }
+
+        if ($request->filled('created_before')) {
+            $assets->where('assets.created_at', '<=', $request->get('created_before'));
+        }
+
+        if ($request->filled('created_after')) {
+            $assets->where('assets.created_at', '>=', $request->get('created_after'));
         }
 
         $assets->orderBy('assets.created_at', 'desc');
@@ -232,6 +242,10 @@ class ListAssetsTool extends Tool
                 ->description('Filter by supplier ID. Alternative: supplier_name.'),
             'supplier_name' => $schema->string()
                 ->description('Filter by supplier name. Resolved to an ID server-side.'),
+            'created_before' => $schema->string()
+                ->description('Only return records created on or before this date (YYYY-MM-DD).'),
+            'created_after' => $schema->string()
+                ->description('Only return records created on or after this date (YYYY-MM-DD).'),
             'limit' => $schema->number()
                 ->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
             'offset' => $schema->number()

@@ -179,10 +179,7 @@ class DeleteConsumableTool extends Tool
         }
 
         if (! $consumable->isDeletable()) {
-            return Response::make(Response::error(trans('mcp.cannot_delete_has_dependents', [
-                'model' => trans('general.consumable'),
-                'name' => $consumable->name,
-            ])));
+            return Response::make(Response::error(trans('mcp.consumable_has_checkouts')));
         }
 
         $name = $consumable->name;
@@ -275,10 +272,7 @@ class DeleteConsumableTool extends Tool
         $undeletableMatches = $undeletable->take(10)->map(fn (Consumable $c) => [
             'id' => $c->id,
             'display_name' => $c->name,
-            'reason' => trans('mcp.cannot_delete_has_dependents', [
-                'model' => trans('general.consumable'),
-                'name' => $c->name,
-            ]),
+            'reason' => trans('mcp.consumable_has_checkouts'),
         ])->values()->all();
 
         return Response::make(
