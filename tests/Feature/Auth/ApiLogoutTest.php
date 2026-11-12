@@ -21,9 +21,11 @@ use Tests\TestCase;
  */
 class ApiLogoutTest extends TestCase
 {
-    private function seedOAuthClient(): int
+    private function seedOAuthClient(): string
     {
-        return DB::table('oauth_clients')->insertGetId([
+        $clientId = (string) \Illuminate\Support\Str::uuid();
+        DB::table('oauth_clients')->insert([
+            'id' => $clientId,
             'user_id' => null,
             'name' => 'Test OAuth Client',
             'secret' => 'secret',
@@ -34,9 +36,11 @@ class ApiLogoutTest extends TestCase
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        return $clientId;
     }
 
-    private function seedAccessToken(string $id, User $user, int $clientId): void
+    private function seedAccessToken(string $id, User $user, string $clientId): void
     {
         DB::table('oauth_access_tokens')->insert([
             'id' => $id,

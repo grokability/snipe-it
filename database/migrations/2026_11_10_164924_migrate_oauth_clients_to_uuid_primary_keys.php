@@ -21,10 +21,15 @@ use Illuminate\Support\Str;
  * aware and falls back to those shapes when redirect_uris and
  * grant_types do not exist.
  *
- * Driver gating: the column-type swaps use MariaDB/MySQL-specific
- * CHANGE/MODIFY syntax, so the whole migration is a no-op on other
- * drivers. SQLite is dynamically typed and accepts UUID strings into
- * INT columns at runtime, so the test suite never needs this.
+ * Driver gating: MariaDB/MySQL uses the in-place CHANGE/MODIFY flow
+ * below to preserve data on live installs. SQLite can't ALTER COLUMN
+ * TYPE in-place, and its `INTEGER PRIMARY KEY` is a strict rowid
+ * alias that rejects UUID strings, so the SQLite path does a
+ * drop-and-recreate on the four tables. That is safe because SQLite
+ * is only used by the test suite (fresh DB per run) and not for
+ * production Snipe-IT installs. Postgres isn't officially supported
+ * by Passport's Snipe-IT fork but is covered by a drop-and-recreate
+ * path for symmetry with SQLite.
  *
  * Idempotency: MySQL DDL is not transactional, so a prior partial run
  * can leave shadow columns in place. Every Schema add is guarded by a
@@ -44,7 +49,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (DB::getDriverName() !== 'mysql') {
+        $driver = DB::getDriverName();
+
+        if ($driver === 'sqlite' || $driver === 'pgsql') {
+            $this->upSqliteOrPostgres();
+
+            return;
+        }
+
+        if ($driver !== 'mysql') {
             return;
         }
 
@@ -126,6 +139,89 @@ return new class extends Migration
                 $table->dropColumn('client_id');
             });
             DB::statement("ALTER TABLE {$prefix}oauth_personal_access_clients CHANGE client_id_uuid client_id CHAR(36) NOT NULL");
+        }
+    }
+
+    /**
+     * SQLite / Postgres path: drop and recreate the four tables with
+     * the UUID shape. SQLite can't ALTER a PRIMARY KEY column type
+     * in-place (its INTEGER PRIMARY KEY is a rowid alias), so an
+     * in-place migration like the MySQL path above is not possible.
+     *
+     * Safe because SQLite is only used by the test suite, which
+     * seeds a fresh DB per run. Postgres isn't officially supported
+     * for Snipe-IT production installs.
+     */
+    private function upSqliteOrPostgres(): void
+    {
+        // Carry over any existing rows the base migrations may have
+        // seeded (none in the normal test boot, but this keeps the
+        // migration idempotent on installs that ran passport:install
+        // before this migration landed).
+        $existingClients = DB::table('oauth_clients')->get();
+        $idMap = [];
+        foreach ($existingClients as $client) {
+            $idMap[(string) $client->id] = (string) Str::orderedUuid();
+        }
+
+        Schema::dropIfExists('oauth_personal_access_clients');
+        Schema::dropIfExists('oauth_auth_codes');
+        Schema::dropIfExists('oauth_access_tokens');
+        Schema::dropIfExists('oauth_clients');
+
+        Schema::create('oauth_clients', function (Blueprint $table) {
+            $table->char('id', 36)->primary();
+            $table->unsignedBigInteger('user_id')->nullable()->index();
+            $table->string('name');
+            $table->string('secret', 100)->nullable();
+            $table->string('provider')->nullable();
+            $table->text('redirect');
+            $table->boolean('personal_access_client');
+            $table->boolean('password_client');
+            $table->boolean('revoked');
+            $table->timestamps();
+        });
+
+        Schema::create('oauth_access_tokens', function (Blueprint $table) {
+            $table->string('id', 100)->primary();
+            $table->unsignedBigInteger('user_id')->nullable()->index();
+            $table->char('client_id', 36);
+            $table->string('name')->nullable();
+            $table->text('scopes')->nullable();
+            $table->boolean('revoked');
+            $table->timestamps();
+            $table->dateTime('expires_at')->nullable();
+        });
+
+        Schema::create('oauth_auth_codes', function (Blueprint $table) {
+            $table->string('id', 100)->primary();
+            $table->unsignedBigInteger('user_id')->index();
+            $table->char('client_id', 36);
+            $table->text('scopes')->nullable();
+            $table->boolean('revoked');
+            $table->dateTime('expires_at')->nullable();
+        });
+
+        Schema::create('oauth_personal_access_clients', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->char('client_id', 36);
+            $table->timestamps();
+        });
+
+        foreach ($existingClients as $client) {
+            DB::table('oauth_clients')->insert([
+                'id' => $idMap[(string) $client->id],
+                'user_id' => $client->user_id ?? null,
+                'name' => $client->name,
+                'secret' => $client->secret ?? null,
+                'provider' => $client->provider ?? null,
+                'redirect' => $client->redirect,
+                'personal_access_client' => $client->personal_access_client,
+                'password_client' => $client->password_client,
+                'revoked' => $client->revoked,
+                'created_at' => $client->created_at,
+                'updated_at' => $client->updated_at,
+            ]);
         }
     }
 

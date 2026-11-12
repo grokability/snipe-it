@@ -160,7 +160,7 @@ class OauthClients extends Component
         }
     }
 
-    public function deleteAuthorizedApplication(int $clientId): void
+    public function deleteAuthorizedApplication(string $clientId): void
     {
         // Only revoke tokens the caller actually owns. Superusers may revoke
         // any authorized-application entry (matches their admin-surface
