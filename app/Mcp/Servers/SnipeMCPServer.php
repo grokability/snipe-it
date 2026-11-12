@@ -4,6 +4,7 @@ namespace App\Mcp\Servers;
 
 use App\Mcp\Prompts\AuditLocationPrompt;
 use App\Mcp\Prompts\BulkAssetReplacementPrompt;
+use App\Mcp\Prompts\BulkCleanupPrompt;
 use App\Mcp\Prompts\CapacityCheckPrompt;
 use App\Mcp\Prompts\DataQualityAuditPrompt;
 use App\Mcp\Prompts\EndOfLifeReviewPrompt;
@@ -292,6 +293,7 @@ class SnipeMCPServer extends Server
         AuditLocationPrompt::class,
         FindAvailableAssetPrompt::class,
         BulkAssetReplacementPrompt::class,
+        BulkCleanupPrompt::class,
         LocationShutdownPrompt::class,
         ReportLostStolenPrompt::class,
         CapacityCheckPrompt::class,

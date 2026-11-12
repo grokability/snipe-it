@@ -8,6 +8,7 @@ This directory contains the Model Context Protocol (MCP) server implementation f
 - [Authentication](#authentication)
 - [Prompts](#prompts)
 - [Tools Reference](#tools-reference)
+  - [Bulk delete (array or filter)](#bulk-delete-array-or-filter)
   - [Assets](#assets)
   - [Users](#users)
   - [Accessories](#accessories)
@@ -332,6 +333,23 @@ check-outs.
 
 ---
 
+### `bulk_cleanup`
+
+**Safely delete multiple records matching a filter, with preview, admin confirmation, and committed deletion in a single DB transaction.**
+
+Wraps the widened `delete_<entity>` tools' bulk mode in a prescribed six-step flow: translate the admin's plain-English filter description, call the tool with `dry_run=true`, surface the preview, wait for explicit confirmation naming the count, then commit with the exact `confirm_count` value. Guards against concurrent writes between preview and commit. Supports assets, users, accessories, consumables, components, and licenses.
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `entity_type` | Yes | `asset`, `user`, `accessory`, `consumable`, `component`, or `license` |
+| `filter_description` | Yes | Plain-English description of what to delete (e.g. "assets created before 2020 still in RTD status") |
+| `reason` | No | Why this cleanup is happening. Recorded on each deleted row's action log. |
+
+**Example usage in Claude:**
+> Use the `bulk_cleanup` prompt → entity_type: "asset", filter_description: "assets with asset_tag starting with TEST- that were created last week during the import trial", reason: "removing test-import fixtures"
+
+---
+
 ### `location_shutdown`
 
 **Plan the shutdown of a physical location by inventorying every asset and user tied to it.**
@@ -462,6 +480,29 @@ Rules:
 This applies uniformly across `create_*`, `update_*`, and `list_*` tools. The per-tool parameter tables below only list `*_id` for brevity, but every one of them has a `*_name` sibling.
 
 User foreign keys (`manager_id`, `assigned_to`, `responsible_party_id`) are an exception: users are identified by `username`, not display name, so these stay ID-only. The `offboard_user` and `transfer_user_assets` tools expose name-based resolution for the target user separately via their own `username` / `first_name` / `last_name` parameters.
+
+### Bulk delete (array or filter)
+
+Six `delete_*` tools support three input shapes, selected automatically from which parameters are present:
+
+- **Single identifier** (`id`, `asset_tag`, `serial`, `username`, `email`, or `name`) deletes one row. `dry_run` defaults to **false**. Same behavior pre-existed for all delete tools.
+- **Array of identifiers** (`ids`, `asset_tags`, `serials`, `usernames`, `emails`, or `names`) deletes N rows explicitly named by the caller. `dry_run` defaults to **true**.
+- **Filter** (same filter params as the matching `list_*` tool, e.g. `search`, `status_type`, `company_id`, `category_id`, `created_before`, `created_after`) deletes every matching row. `dry_run` defaults to **true**, and `confirm_count` is required to commit.
+
+Applies to `delete_asset`, `delete_user`, `delete_accessory`, `delete_consumable`, `delete_component`, `delete_license`. The other 10 delete tools stay single-identifier only (categories, companies, departments, groups, locations, manufacturers, suppliers, status labels, asset models, depreciations).
+
+Bulk-mode shared parameters:
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `dry_run` | boolean | No | varies by shape (see above) | When true, return a preview with `total_matched`, `will_delete`, `undeletable_count`, `sample_rows`, and `undeletable_matches`. No rows are modified. |
+| `confirm_count` | number | Yes when `dry_run=false` AND filter-shape | n/a | Must equal `total_matched` from the preview. The tool refuses to commit if the actual row count has drifted (concurrent writes). Not required for array shape (the array is self-confirming) or single shape (one row). |
+| `skip_undeletable` | boolean | No | `false` | When true, drop rows that fail `isDeletable()` from the batch and delete the rest. Default aborts the whole batch when any row is undeletable. |
+| `reason` | string | No | n/a | Recorded on each deleted row's action log entry. |
+
+All multi-row commits run inside one DB transaction. Each deleted row still goes through its own policy check (`Gate::allows('delete', $row)`) via `isDeletable()`, so FMCS scoping and per-row permissions apply exactly like the single-identifier path.
+
+Snipe-IT's soft-deletes have no retention cap: `restore_*` stays available on every row until an admin manually purges it. See the `bulk_cleanup` prompt below for a guided version of this flow.
 
 ---
 

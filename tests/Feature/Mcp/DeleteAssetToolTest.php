@@ -104,4 +104,130 @@ class DeleteAssetToolTest extends TestCase
         $this->assertTrue($this->handle(['asset_tag' => $asset->asset_tag])->responses()->first()->isError());
         $this->assertNotSoftDeleted($asset);
     }
+
+    // --- Bulk delete: array-identifier shape ---
+
+    public function test_array_shape_defaults_to_dry_run_and_does_not_delete()
+    {
+        $a = Asset::factory()->create();
+        $b = Asset::factory()->create();
+
+        $content = $this->handle(['ids' => [$a->id, $b->id]])->getStructuredContent();
+
+        $this->assertTrue($content['dry_run']);
+        $this->assertSame(2, $content['total_matched']);
+        $this->assertSame(2, $content['will_delete']);
+        $this->assertNotSoftDeleted($a);
+        $this->assertNotSoftDeleted($b);
+    }
+
+    public function test_array_shape_commits_when_dry_run_false()
+    {
+        $a = Asset::factory()->create();
+        $b = Asset::factory()->create();
+
+        $content = $this->handle([
+            'ids' => [$a->id, $b->id],
+            'dry_run' => false,
+        ])->getStructuredContent();
+
+        $this->assertTrue($content['success']);
+        $this->assertFalse($content['dry_run']);
+        $this->assertSame(2, $content['deleted_count']);
+        $this->assertSoftDeleted('assets', ['id' => $a->id]);
+        $this->assertSoftDeleted('assets', ['id' => $b->id]);
+    }
+
+    public function test_array_shape_accepts_asset_tags()
+    {
+        $a = Asset::factory()->create(['asset_tag' => 'BULK-A']);
+        $b = Asset::factory()->create(['asset_tag' => 'BULK-B']);
+
+        $this->handle([
+            'asset_tags' => ['BULK-A', 'BULK-B'],
+            'dry_run' => false,
+        ]);
+
+        $this->assertSoftDeleted('assets', ['id' => $a->id]);
+        $this->assertSoftDeleted('assets', ['id' => $b->id]);
+    }
+
+    // --- Bulk delete: filter shape ---
+
+    public function test_filter_shape_defaults_to_dry_run()
+    {
+        $a = Asset::factory()->create();
+        $b = Asset::factory()->create();
+
+        $content = $this->handle([
+            'created_before' => now()->addDay()->toDateString(),
+        ])->getStructuredContent();
+
+        $this->assertTrue($content['dry_run']);
+        $this->assertGreaterThanOrEqual(2, $content['total_matched']);
+        $this->assertNotSoftDeleted($a);
+        $this->assertNotSoftDeleted($b);
+    }
+
+    public function test_filter_shape_requires_confirm_count_on_commit()
+    {
+        Asset::factory()->create();
+
+        $response = $this->handle([
+            'created_before' => now()->addDay()->toDateString(),
+            'dry_run' => false,
+        ]);
+
+        $this->assertTrue($response->responses()->first()->isError());
+    }
+
+    public function test_filter_shape_rejects_mismatched_confirm_count()
+    {
+        $existingCount = Asset::count();
+        Asset::factory()->count(3)->create();
+
+        $response = $this->handle([
+            'created_before' => now()->addDay()->toDateString(),
+            'dry_run' => false,
+            'confirm_count' => $existingCount + 999,
+        ]);
+
+        $this->assertTrue($response->responses()->first()->isError());
+        $this->assertSame($existingCount + 3, Asset::count());
+    }
+
+    public function test_filter_shape_commits_when_confirm_count_matches()
+    {
+        // Use a filter narrow enough to only match our seeded rows.
+        $tagPrefix = 'BULK-FILT-';
+        $assets = Asset::factory()->count(3)->sequence(
+            ['asset_tag' => $tagPrefix.'1'],
+            ['asset_tag' => $tagPrefix.'2'],
+            ['asset_tag' => $tagPrefix.'3'],
+        )->create();
+
+        $content = $this->handle([
+            'search' => $tagPrefix,
+            'dry_run' => false,
+            'confirm_count' => 3,
+        ])->getStructuredContent();
+
+        $this->assertTrue($content['success']);
+        $this->assertSame(3, $content['deleted_count']);
+        foreach ($assets as $asset) {
+            $this->assertSoftDeleted('assets', ['id' => $asset->id]);
+        }
+    }
+
+    public function test_filter_shape_resolves_company_name_to_id()
+    {
+        $company = \App\Models\Company::factory()->create(['name' => 'BulkCo']);
+        Asset::factory()->create(['company_id' => $company->id]);
+        Asset::factory()->create();
+
+        $content = $this->handle(['company_name' => 'BulkCo'])->getStructuredContent();
+
+        $this->assertTrue($content['dry_run']);
+        $this->assertSame(1, $content['total_matched']);
+    }
 }

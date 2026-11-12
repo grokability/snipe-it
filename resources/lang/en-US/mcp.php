@@ -80,6 +80,12 @@ return [
     'status_label_has_assets' => 'Status label has assets assigned and cannot be deleted',
     'model_has_assets' => 'Model has assets and cannot be deleted',
     'cannot_delete_has_dependents' => 'Cannot delete :model ":name" because it has related items (child records, assigned items, or dependents). Remove or reassign those first.',
+    'bulk_confirm_count_required' => 'confirm_count is required when deleting by filter. Preview the batch with dry_run=true first, then re-call with the exact total_matched value as confirm_count.',
+    'bulk_confirm_count_mismatch' => 'confirm_count :expected does not match the actual row count :actual. The filter result may have changed since the preview. Re-run with dry_run=true and try again.',
+    'bulk_batch_has_undeletable' => 'Batch includes :count row(s) that cannot be deleted (checked out, has children, etc). Pass skip_undeletable=true to drop them and delete the rest, or remove the blockers and retry.',
+    'bulk_dry_run_summary' => 'Preview: :total row(s) matched, :deletable will delete on commit. No changes made.',
+    'bulk_delete_completed' => 'Bulk delete complete. :count row(s) removed.',
+    'bulk_delete_failed' => 'Bulk delete failed and was rolled back. Reason: :failures',
 
     // -----------------------------------------------------------------
     // Operation failures
