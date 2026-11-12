@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Http\Traits\UniqueUndeletedTrait;
+use App\Models\Builders\CustomFieldQueryBuilder;
 use App\Models\Traits\HasCachedNameMap;
 use EasySlugger\Utf8Slugger;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -811,5 +812,10 @@ class CustomField extends Model
         }
 
         return $this->format;
+    }
+
+    public function newEloquentBuilder($query): CustomFieldQueryBuilder
+    {
+        return new CustomFieldQueryBuilder($query);
     }
 }

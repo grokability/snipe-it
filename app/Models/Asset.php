@@ -519,9 +519,7 @@ class Asset extends Depreciable implements Importable
     protected static function customFieldFilterableWidgets(): array
     {
         $widgets = [];
-        $fields = CustomField::whereHas('fieldset', function ($query) {
-            $query->whereHas('models');
-        })->get();
+        $fields = CustomField::assignedToInUseFieldsets()->get();
 
         foreach ($fields as $field) {
             $type = match ($field->element) {
