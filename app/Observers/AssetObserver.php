@@ -28,11 +28,6 @@ class AssetObserver
         $same_requests_counter = false;
         $restoring_or_deleting = false;
 
-        // This is a gross hack to prevent the double logging when restoring an asset
-        if (array_key_exists('deleted_at', $attributes) && array_key_exists('deleted_at', $attributesOriginal)) {
-            $restoring_or_deleting = (($attributes['deleted_at'] != $attributesOriginal['deleted_at']));
-        }
-
         if (array_key_exists('checkout_counter', $attributes) && array_key_exists('checkout_counter', $attributesOriginal)) {
             $same_checkout_counter = (($attributes['checkout_counter'] == $attributesOriginal['checkout_counter']));
         }
@@ -41,43 +36,10 @@ class AssetObserver
             $same_checkin_counter = (($attributes['checkin_counter'] == $attributesOriginal['checkin_counter']));
         }
 
-        // requests_counter is a denorm bump fired by CreateCheckoutRequestAction /
-        // CancelCheckoutRequestAction. The `requested` and `request canceled`
-        // actionlogs those actions write already cover the user-visible history;
-        // this gate keeps the counter save from adding a redundant `update` row
-        // for the same event.
+        // Loggable::log_lifecycle_events() now handles suppression of update
+        // logs during request-counter changes.
         if (array_key_exists('requests_counter', $attributes) && array_key_exists('requests_counter', $attributesOriginal)) {
             $same_requests_counter = (($attributes['requests_counter'] == $attributesOriginal['requests_counter']));
-        }
-
-        // If the asset isn't being checked out, log the update.
-        // (Checkout/checkin/audit actions already create their own log entries; the audit
-        // path uses unsetEventDispatcher() so it never reaches this observer.)
-        if (array_key_exists('assigned_to', $attributes) && array_key_exists('assigned_to', $attributesOriginal)
-            && ($attributes['assigned_to'] == $attributesOriginal['assigned_to'])
-            && ($same_checkout_counter) && ($same_checkin_counter) && ($same_requests_counter)
-            && ($attributes['last_checkout'] == $attributesOriginal['last_checkout']) && (! $restoring_or_deleting)) {
-            $changed = [];
-
-            foreach ($asset->getRawOriginal() as $key => $value) {
-                if ((array_key_exists($key, $asset->getAttributes())) && ($asset->getRawOriginal()[$key] != $asset->getAttributes()[$key])) {
-                    $changed[$key]['old'] = $asset->getRawOriginal()[$key];
-                    $changed[$key]['new'] = $asset->getAttributes()[$key];
-                }
-            }
-
-            if (empty($changed)) {
-                return;
-            }
-
-            $logAction = new Actionlog;
-            $logAction->item_type = Asset::class;
-            $logAction->item_id = $asset->id;
-            $logAction->action_date = date('Y-m-d H:i:s');
-            $logAction->created_at = date('Y-m-d H:i:s');
-            $logAction->created_by = auth()->id();
-            $logAction->log_meta = json_encode($changed);
-            $logAction->logaction('update');
         }
     }
 
@@ -133,19 +95,6 @@ class AssetObserver
                 Setting::where('id', $settings->id)->increment('next_auto_tag_base');
             }
         }
-
-        $logAction = new Actionlog;
-        $logAction->item_type = Asset::class; // can we instead say $logAction->item = $asset ?
-        $logAction->item_id = $asset->id;
-        $logAction->action_date = date('Y-m-d H:i:s');
-        $logAction->created_at = date('Y-m-d H:i:s');
-        // See AssetModelObserver::created for the seeder-friendly
-        // auth fallback rationale.
-        $logAction->created_by = auth()->id() ?? $asset->created_by;
-        if ($asset->imported) {
-            $logAction->setActionSource('importer');
-        }
-        $logAction->logaction('create');
 
         // Every new asset is a transaction: supplier, price, currency,
         // date. Record it as Order + OrderItem regardless of whether
@@ -288,18 +237,6 @@ class AssetObserver
      */
     public function deleting(Asset $asset)
     {
-        $logAction = new Actionlog;
-        $logAction->item_type = Asset::class;
-        $logAction->item_id = $asset->id;
-        $logAction->created_at = date('Y-m-d H:i:s');
-        $logAction->action_date = date('Y-m-d H:i:s');
-        $logAction->created_by = auth()->id();
-        $logAction->logaction('delete');
-
-        $this->reservationCalendarEventsFor($asset)
-            ->whereNull('deleted_at')
-            ->delete();
-
         // Sync-adapter identity rows would otherwise become orphans
         // that violate the unique(source, external_id) constraint on
         // the next sync run when the vendor keeps reporting the same
@@ -309,20 +246,12 @@ class AssetObserver
     }
 
     /**
-     * Listen to the Asset deleting event.
+     * Restore reservation calendar events when the asset is restored.
      *
      * @return void
      */
     public function restoring(Asset $asset)
     {
-        $logAction = new Actionlog;
-        $logAction->item_type = Asset::class;
-        $logAction->item_id = $asset->id;
-        $logAction->action_date = date('Y-m-d H:i:s');
-        $logAction->created_at = date('Y-m-d H:i:s');
-        $logAction->created_by = auth()->id();
-        $logAction->logaction('restore');
-
         $this->reservationCalendarEventsFor($asset)
             ->whereNotNull('deleted_at')
             ->restore();
@@ -368,10 +297,12 @@ class AssetObserver
 
     private function reservationCalendarEventsFor(Asset $asset)
     {
+        // we need this because this is an _intersection_ of two different traits -
+        // Requestable, and HasCalendarEvents
         $requestIds = CheckoutRequest::withTrashed()
             ->where('requestable_type', Asset::class)
             ->where('requestable_id', $asset->id)
-            ->pluck('id');
+            ->select('id');
 
         return CalendarEvent::withTrashed()
             ->where('source_type', CheckoutRequest::class)

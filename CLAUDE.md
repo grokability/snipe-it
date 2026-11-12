@@ -108,8 +108,7 @@ herd coverage
 
 ## Foundational Context
 
-This application is a Laravel application running on PHP 8.2 - 8.5. Always use the APIs that match the installed major
-version of each package — do not assume a version.
+This application is a Laravel application that MUST run on PHP 8.2 through 8.5. `composer.json` requires `"php": "^8.2"` and `config.platform.php = "8.2"` keeps the lockfile 8.2-compatible, so never use syntax or APIs that require PHP 8.3+. Always use the APIs that match the installed major version of each package. Do not assume a newer version just because your local PHP is newer.
 
 Before relying on a package's API, confirm its installed version:
 - PHP packages: run `composer show --direct` to list direct dependencies with versions, or `composer show <vendor/package>` for a single package.
@@ -136,7 +135,7 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 ## Frontend Bundling
 
-- If the user doesn't see a frontend change reflected in the UI, it could mean they need to run `npm run build`, `npm run dev`, or `composer run dev`. Ask them.
+- If a frontend change doesn't show in the UI or you get a "Unable to locate file in Vite manifest" error, run `npm run build` or ask the user to run `npm run dev`.
 
 ## Documentation Files
 
@@ -170,11 +169,7 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 ## Project Rules
 
-- This project contains committed, area-grouped rules in `.ai/rules` when that directory exists, including path-scoped
-  framework guidelines under `.ai/rules/boost`. Before you enter plan mode or create/edit any file, you MUST first: open
-  @.ai/rules/index.md (it maps file globs to rule files), read every rule file whose globs cover the path(s) in scope,
-  and run `grep -rin 'keyword' .ai/rules` to catch what a path match alone misses. Do not write code until you have read
-  and are following every matching rule. If `.ai/rules` does not exist, continue without it.
+- This project contains committed, area-grouped rules in `.ai/rules` when that directory exists, including path-scoped framework guidelines under `.ai/rules/boost`. Before you enter plan mode or create/edit any file, you MUST first: open @.ai/rules/index.md (it maps file globs to rule files), read every rule file whose globs cover the path(s) in scope, and run `grep -rin 'keyword' .ai/rules` to catch what a path match alone misses. Do not write code until you have read and are following every matching rule. If `.ai/rules` does not exist, continue without it.
 
 ## Artisan
 

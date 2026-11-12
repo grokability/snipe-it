@@ -33,7 +33,6 @@ git \
 cron \
 mariadb-client \
 supervisor \
-cron \
 gcc \
 make \
 autoconf \
