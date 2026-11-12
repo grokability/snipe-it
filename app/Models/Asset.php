@@ -8,11 +8,12 @@ use App\Exceptions\CheckoutNotAllowed;
 use App\Helpers\Helper;
 use App\Http\Traits\UniqueUndeletedTrait;
 use App\Models\Builders\AssetQueryBuilder;
+use App\Models\Contracts\HasCustomFields;
 use App\Models\Contracts\Importable;
 use App\Models\Traits\Acceptable;
 use App\Models\Traits\CompanyableTrait;
-use App\Models\Traits\HasCalendarEvents;
 use App\Models\Traits\HasAndValidatesCustomFields;
+use App\Models\Traits\HasCalendarEvents;
 use App\Models\Traits\HasImageUpload;
 use App\Models\Traits\HasOrders;
 use App\Models\Traits\HasUploads;
@@ -25,8 +26,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
@@ -34,7 +35,6 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Validator;
-use Watson\Validating\ValidatingTrait;
 
 /**
  * Model for Assets.
@@ -53,13 +53,14 @@ use Watson\Validating\ValidatingTrait;
  *
  * @mixin IdeHelperAsset
  */
-class Asset extends Depreciable implements Importable
+class Asset extends Depreciable implements HasCustomFields, Importable
 {
     protected $presenter = AssetPresenter::class;
 
     // protected $with = ['model', 'adminuser', 'location', 'company'];
 
     use CompanyableTrait;
+    use HasAndValidatesCustomFields;
     use HasCalendarEvents;
     use HasFactory;
     use HasImageUpload;
@@ -70,7 +71,6 @@ class Asset extends Depreciable implements Importable
     use Requestable;
     use SoftDeletes;
     use UniqueUndeletedTrait;
-    use HasAndValidatesCustomFields;
 
     public const LOCATION = 'location';
 

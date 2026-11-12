@@ -3,7 +3,7 @@
 namespace App\Http\Transformers;
 
 use App\Helpers\Helper;
-use App\Models\Traits\HasAndValidatesCustomFields;
+use App\Models\Contracts\HasCustomFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
 
@@ -14,7 +14,7 @@ class CustomFieldValuesTransformer
      */
     public function transform(Model $item, bool $includeEncrypted = true, bool $renderMarkdown = true, ?string $filterFieldExpression = null, bool $valuesOnly = false): array
     {
-        if (! in_array(HasAndValidatesCustomFields::class, class_uses_recursive($item), true)) {
+        if (! ($item instanceof HasCustomFields)) {
             return [];
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Contracts\HasCustomFields;
 use App\Presenters\CustomFieldsetPresenter;
 use App\Presenters\Presentable;
 use App\Rules\DecryptableAttribute;
@@ -77,7 +78,7 @@ class CustomFieldset extends SnipeModel
 
     public function isDeletable(): bool
     {
-        if (!Gate::allows('delete', $this)) {
+        if (! Gate::allows('delete', $this)) {
             return false;
         }
 
@@ -172,7 +173,7 @@ class CustomFieldset extends SnipeModel
      *
      * @since  [v3.0]
      */
-    public function validation_rules(?Model $model = null): array
+    public function validation_rules((Model&HasCustomFields)|null $model = null): array
     {
         $rules = [];
         foreach ($this->fields as $field) {

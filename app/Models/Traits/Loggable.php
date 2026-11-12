@@ -7,6 +7,7 @@ use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\CompanyableScope;
 use App\Models\Contracts\CompanyableChild;
+use App\Models\Contracts\HasCustomFields;
 use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\Location;
@@ -173,7 +174,7 @@ trait Loggable
             $log->location_id = $target->location_id;
         }
 
-        if (in_array(HasAndValidatesCustomFields::class, class_uses_recursive(static::class), true)) {
+        if ($this instanceof HasCustomFields) {
             $item = static::whereKey($log->item_id)->first();
             // add the custom fields that were changed
             $fields_array = $this->customFieldValuesForLog($item, 'display_checkout');
@@ -284,7 +285,7 @@ trait Loggable
             $log->item_type = static::class;
             $log->item_id = $this->id;
 
-            if (in_array(HasAndValidatesCustomFields::class, class_uses_recursive(static::class), true)) {
+            if ($this instanceof HasCustomFields) {
                 $item = static::whereKey($log->item_id)->first();
                 if ($item !== null) {
                     if (static::class == Asset::class) {
@@ -366,7 +367,7 @@ trait Loggable
     /** @return array<string, mixed> */
     protected function customFieldValuesForLog(?Model $item, string $filter): array
     {
-        if ($item === null || ! in_array(HasAndValidatesCustomFields::class, class_uses_recursive($item), true)) {
+        if (! ($item instanceof HasCustomFields)) {
             return [];
         }
 

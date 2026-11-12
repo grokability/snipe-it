@@ -5,6 +5,7 @@ namespace App\Models\Traits;
 use App\Casts\SnipeBoolean;
 use App\Casts\SnipeCrypt;
 use App\Casts\SnipeFlattenArray;
+use App\Models\Contracts\HasCustomFields;
 use App\Models\CustomFieldDefault;
 use App\Models\CustomFieldset;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,6 +27,11 @@ trait HasAndValidatesCustomFields
 
     public static function bootHasAndValidatesCustomFields(): void
     {
+        // @phpstan-ignore function.alreadyNarrowedType (Runtime guard for models that omit the interface.)
+        if (!is_a(static::class, HasCustomFields::class, true)) {
+            throw new \LogicException(static::class . ' must implement ' . HasCustomFields::class . ' to use ' . HasAndValidatesCustomFields::class . '.');
+        }
+
         static::ensureWatsonValidationIsNotUsedSeparately();
         static::ensureCustomFieldRegistration(self::class);
     }
@@ -104,6 +110,7 @@ trait HasAndValidatesCustomFields
 
             if ($field->field_encrypted && ! Gate::allows('assets.view.encrypted_custom_fields')) {
                 $this->encryptedCustomFieldUpdateSkipped = true;
+
                 continue;
             }
 

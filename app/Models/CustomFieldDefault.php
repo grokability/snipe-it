@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Traits\HasAndValidatesCustomFields;
+use App\Models\Contracts\HasCustomFields;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -53,8 +53,7 @@ class CustomFieldDefault extends Pivot
 
         $owner = $subject;
         if (! ($subject instanceof AssetModel)) {
-            if (! method_exists($subject, 'custom_fieldset')
-                || ! in_array(HasAndValidatesCustomFields::class, class_uses_recursive($subject), true)) {
+            if (! ($subject instanceof HasCustomFields)) {
                 throw new \LogicException($subject::class.' does not support custom field defaults.');
             }
 

@@ -3,6 +3,7 @@
 namespace Tests\Feature\CustomFields;
 
 use App\Models\Asset;
+use App\Models\Contracts\HasCustomFields;
 use App\Models\CustomFieldset;
 use App\Models\Traits\HasAndValidatesCustomFields;
 use Illuminate\Database\Eloquent\Model;
@@ -21,6 +22,16 @@ class CustomFieldTraitCompositionTest extends TestCase
 
         $this->assertTrue($asset->getValidating());
         $this->assertTrue($inherited->getValidating());
+        $this->assertInstanceOf(HasCustomFields::class, $asset);
+        $this->assertInstanceOf(HasCustomFields::class, $inherited);
+    }
+
+    public function test_using_the_trait_without_the_interface_is_rejected_at_boot(): void
+    {
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage(CustomFieldCompositionMissingInterface::class.' must implement '.HasCustomFields::class);
+
+        new CustomFieldCompositionMissingInterface;
     }
 
     /** @return array<string, array{class-string<Model>}> */
@@ -58,7 +69,7 @@ abstract class CustomFieldCompositionModel extends Model
  * Resolve PHP's method conflicts so model boot can exercise the additional guard.
  * Without these adaptations, PHP rejects the declaration before Laravel boots.
  */
-class CustomFieldCompositionDirectModel extends CustomFieldCompositionModel
+class CustomFieldCompositionDirectModel extends CustomFieldCompositionModel implements HasCustomFields
 {
     use HasAndValidatesCustomFields, ValidatingTrait {
         HasAndValidatesCustomFields::getRules insteadof ValidatingTrait;
@@ -71,7 +82,7 @@ trait SeparateWatsonValidation
     use ValidatingTrait;
 }
 
-class CustomFieldCompositionWrappedModel extends CustomFieldCompositionModel
+class CustomFieldCompositionWrappedModel extends CustomFieldCompositionModel implements HasCustomFields
 {
     use HasAndValidatesCustomFields, SeparateWatsonValidation {
         HasAndValidatesCustomFields::getRules insteadof SeparateWatsonValidation;
@@ -84,7 +95,12 @@ class CustomFieldCompositionWatsonParent extends CustomFieldCompositionModel
     use ValidatingTrait;
 }
 
-class CustomFieldCompositionChildModel extends CustomFieldCompositionWatsonParent
+class CustomFieldCompositionChildModel extends CustomFieldCompositionWatsonParent implements HasCustomFields
+{
+    use HasAndValidatesCustomFields;
+}
+
+class CustomFieldCompositionMissingInterface extends CustomFieldCompositionModel
 {
     use HasAndValidatesCustomFields;
 }

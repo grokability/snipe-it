@@ -6,6 +6,7 @@ use App\Http\Transformers\ComponentsAssetsTransformer;
 use App\Http\Transformers\CustomFieldValuesTransformer;
 use App\Models\Asset;
 use App\Models\AssetModel;
+use App\Models\Contracts\HasCustomFields;
 use App\Models\CustomField;
 use App\Models\CustomFieldset;
 use App\Models\SnipeModel;
@@ -233,7 +234,7 @@ class CustomFieldValuesTest extends TestCase
 }
 
 /** Exercise the traits on an independent model using an existing table without schema changes. */
-class GenericCustomFieldItem extends SnipeModel
+class GenericCustomFieldItem extends SnipeModel implements HasCustomFields
 {
     use HasAndValidatesCustomFields;
     use Loggable;
