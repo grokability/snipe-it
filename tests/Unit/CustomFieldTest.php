@@ -18,6 +18,76 @@ class CustomFieldTest extends TestCase
         $this->assertEquals($customfield->format, 'IP');
     }
 
+    public function test_link_for_value_replaces_placeholder_with_value()
+    {
+        $customfield = CustomField::factory()->make(['link_template' => 'anydesk:{VALUE}']);
+
+        $this->assertEquals('anydesk:123456789', $customfield->linkForValue('123456789'));
+    }
+
+    public function test_link_for_value_strips_whitespace_from_value()
+    {
+        $customfield = CustomField::factory()->make(['link_template' => 'anydesk:{VALUE}']);
+
+        $this->assertEquals('anydesk:1234567890', $customfield->linkForValue(' 1 234 567 890 '));
+    }
+
+    public function test_link_for_value_returns_null_for_whitespace_only_value()
+    {
+        $customfield = CustomField::factory()->make(['link_template' => 'anydesk:{VALUE}']);
+
+        $this->assertNull($customfield->linkForValue('   '));
+    }
+
+    public function test_link_for_value_url_encodes_value_but_keeps_at_sign()
+    {
+        $customfield = CustomField::factory()->make(['link_template' => 'rustdesk://{VALUE}']);
+
+        $this->assertEquals('rustdesk://config%2Fabc%3Fx%3D1', $customfield->linkForValue('config/abc?x=1'));
+        $this->assertEquals('rustdesk://pc@server', $customfield->linkForValue('pc@server'));
+    }
+
+    public function test_link_for_value_returns_null_without_template_or_value()
+    {
+        $this->assertNull(CustomField::factory()->make()->linkForValue('123456789'));
+        $this->assertNull(CustomField::factory()->make(['link_template' => 'anydesk:{VALUE}'])->linkForValue(''));
+        $this->assertNull(CustomField::factory()->make(['link_template' => 'anydesk:{VALUE}'])->linkForValue(null));
+    }
+
+    public function test_link_for_value_returns_null_for_unsupported_element()
+    {
+        $customfield = CustomField::factory()->make([
+            'element' => 'textarea',
+            'link_template' => 'anydesk:{VALUE}',
+        ]);
+
+        $this->assertNull($customfield->linkForValue('123456789'));
+    }
+
+    public function test_link_for_value_returns_null_for_unsafe_template()
+    {
+        // Validation rejects this on save; guard the render path anyway for
+        // values written to the database by other means.
+        $customfield = CustomField::factory()->make(['link_template' => 'javascript:alert({VALUE})']);
+
+        $this->assertNull($customfield->linkForValue('1'));
+    }
+
+    public function test_link_template_validity()
+    {
+        $this->assertTrue(CustomField::isValidLinkTemplate('anydesk:{VALUE}'));
+        $this->assertTrue(CustomField::isValidLinkTemplate('rustdesk://{VALUE}'));
+        $this->assertTrue(CustomField::isValidLinkTemplate('https://intranet.example.com/pc/{VALUE}'));
+
+        $this->assertFalse(CustomField::isValidLinkTemplate('anydesk:'));
+        $this->assertFalse(CustomField::isValidLinkTemplate('{VALUE}'));
+        $this->assertFalse(CustomField::isValidLinkTemplate(' anydesk:{VALUE}'));
+        $this->assertFalse(CustomField::isValidLinkTemplate('JavaScript:alert({VALUE})'));
+        $this->assertFalse(CustomField::isValidLinkTemplate("java\tscript:alert({VALUE})"));
+        $this->assertFalse(CustomField::isValidLinkTemplate('data:text/html,{VALUE}'));
+        $this->assertFalse(CustomField::isValidLinkTemplate('vbscript:{VALUE}'));
+    }
+
     public function test_db_name_ascii()
     {
         $customfield = new CustomField;

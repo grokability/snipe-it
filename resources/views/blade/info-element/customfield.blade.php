@@ -26,11 +26,18 @@
 @if ($field->isFieldDecryptable($item->{$field->db_column_name()} ))
     @can('assets.view.encrypted_custom_fields')
         @php
-            $fieldSize = strlen(\App\Helpers\Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}))
+            $fieldSize = strlen(\App\Helpers\Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}));
+            $decryptedLink = $field->linkForValue(\App\Helpers\Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}));
         @endphp
         @if ($fieldSize > 0)
             <span id="text-{{ $field->id }}-to-hide" style="font-size: 20px;vertical-align:middle;">***********</span>
-            @if (($field->format=='URL') && ($item->{$field->db_column_name()}!=''))
+            @if ($decryptedLink)
+                <span class="js-copy-{{ $field->id }} hidden-print"
+                      id="text-{{ $field->id }}-to-show"
+                      style="font-size: 0;">
+                <a href="{{ $decryptedLink }}">{{ Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) }}</a>
+            </span>
+            @elseif (($field->format=='URL') && ($item->{$field->db_column_name()}!=''))
                 <span class="js-copy-{{ $field->id }} hidden-print"
                       id="text-{{ $field->id }}-to-show"
                       style="font-size: 0;">
@@ -63,6 +70,8 @@
 @else
     @if (($field->format=='BOOLEAN') && ($item->{$field->db_column_name()}!=''))
         {!! ($item->{$field->db_column_name()} == 1) ? "<span class='fas fa-check-circle' style='color:green' />" : "<span class='fas fa-times-circle' style='color:red' />" !!}
+    @elseif ($field->linkForValue($item->{$field->db_column_name()}))
+        <a href="{{ $field->linkForValue($item->{$field->db_column_name()}) }}">{{ $item->{$field->db_column_name()} }}</a>
     @elseif (($field->format=='URL') && ($item->{$field->db_column_name()}!=''))
         <a href="{{ $item->{$field->db_column_name()} }}" target="_new">{{ $item->{$field->db_column_name()} }}</a>
     @elseif (($field->format=='DATE') && ($item->{$field->db_column_name()}!=''))

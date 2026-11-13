@@ -170,6 +170,26 @@
                         </x-slot:input>
                     </x-form.row>
 
+                    @if ($this->showLinkTemplate)
+                        <x-form.row
+                            :label="trans('admin/custom_fields/general.link_template')"
+                            name="link_template"
+                            help_html="{!! trans('admin/custom_fields/general.link_template_help') !!}"
+                        >
+                            <x-slot:input>
+                                <input
+                                    type="text"
+                                    id="link_template"
+                                    class="form-control"
+                                    maxlength="191"
+                                    placeholder="anydesk:{VALUE}"
+                                    wire:model.live="link_template"
+                                    aria-label="link_template"
+                                >
+                            </x-slot:input>
+                        </x-form.row>
+                    @endif
+
                     @if (! $isEdit)
                         <x-form.checkbox-row
                             name="field_encrypted"
@@ -286,6 +306,7 @@
                         :format="$format"
                         :help-text="$help_text"
                         :field-values="$field_values"
+                        :link-template="$link_template"
                     />
                 </x-box>
 
