@@ -1,0 +1,115 @@
+<?php
+
+namespace App\Mcp\Tools;
+
+use App\Enums\McpScope;
+use App\Mcp\Traits\HasMcpScope;
+use App\Models\Consumable;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
+use Laravel\Mcp\ResponseFactory;
+use Laravel\Mcp\Server\Attributes\Description;
+use Laravel\Mcp\Server\Attributes\Name;
+use Laravel\Mcp\Server\Attributes\Title;
+use Laravel\Mcp\Server\Tool;
+
+#[Name('show_consumable')]
+#[Title('Show Consumable Details')]
+#[Description('Look up a single Snipe-IT consumable by numeric ID or name and return its full details')]
+class ShowConsumableTool extends Tool
+{
+    use HasMcpScope;
+
+    public function handle(Request $request): ResponseFactory
+    {
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
+        }
+
+        $request->validate([
+            'id' => 'nullable|integer',
+            'name' => 'nullable|string|max:255',
+        ]);
+
+        $consumable = null;
+
+        if ($request->filled('id')) {
+            $consumable = Consumable::with('company', 'category', 'manufacturer', 'defaultSupplier', 'location')->find($request->get('id'));
+        } elseif ($request->filled('name')) {
+            $consumable = Consumable::with('company', 'category', 'manufacturer', 'defaultSupplier', 'location')->where('name', $request->get('name'))->first();
+        } else {
+            return Response::make(Response::error(trans('mcp.id_or_name_required')));
+        }
+
+        if (! $consumable || ! Gate::allows('view', $consumable)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.consumable')])));
+        }
+
+        $usersCount = $consumable->users()->count();
+
+        return Response::make(
+            Response::text(trans('mcp.consumable_found', ['name' => $consumable->name]))
+        )->withStructuredContent([
+            'id' => $consumable->id,
+            'name' => $consumable->name,
+            'qty' => $consumable->qty,
+            'users_count' => $usersCount,
+            'min_amt' => $consumable->min_amt,
+            'category_id' => $consumable->category_id,
+            'category' => $consumable->category?->name,
+            'manufacturer_id' => $consumable->manufacturer_id,
+            'manufacturer' => $consumable->manufacturer?->name,
+            'company_id' => $consumable->company_id,
+            'company' => $consumable->company?->name,
+            'location_id' => $consumable->location_id,
+            'location' => $consumable->location?->name,
+            // Per-acquisition purchase data (date, cost, order number)
+            // moved to the Orders table. default_purchase_cost is the
+            // template value on the parent consumable itself.
+            'default_purchase_cost' => $consumable->default_purchase_cost,
+            'model_number' => $consumable->model_number,
+            'archived' => (bool) $consumable->archived,
+            'requestable' => (bool) $consumable->requestable,
+            'notes' => $consumable->notes,
+            'created_at' => $consumable->created_at?->format('Y-m-d H:i:s'),
+            'updated_at' => $consumable->updated_at?->format('Y-m-d H:i:s'),
+        ]);
+    }
+
+    public function schema(JsonSchema $schema): array
+    {
+        return [
+            'id' => $schema->number()->description('Numeric ID of the consumable to look up'),
+            'name' => $schema->string()->description('Name of the consumable to look up'),
+        ];
+    }
+
+    public function outputSchema(JsonSchema $schema): array
+    {
+        return [
+            'id' => $schema->number()->description('Numeric consumable ID'),
+            'name' => $schema->string()->description('Consumable name'),
+            'qty' => $schema->number()->description('Total quantity in stock'),
+            'users_count' => $schema->number()->description('Number of units checked out'),
+            'min_amt' => $schema->number()->description('Minimum quantity alert threshold'),
+            'category_id' => $schema->number()->description('Category ID'),
+            'category' => $schema->string()->description('Category name'),
+            'manufacturer_id' => $schema->number()->description('Manufacturer ID'),
+            'manufacturer' => $schema->string()->description('Manufacturer name'),
+            'company_id' => $schema->number()->description('Company ID'),
+            'company' => $schema->string()->description('Company name'),
+            'location_id' => $schema->number()->description('Location ID'),
+            'location' => $schema->string()->description('Location name'),
+            'default_purchase_cost' => $schema->string()->description('Default (template) purchase cost. Per-acquisition cost lives on the Orders table.'),
+            'order_number' => $schema->string()->description('Order number'),
+            'model_number' => $schema->string()->description('Model number'),
+            'archived' => $schema->boolean()->description('Whether the consumable is archived. Archived consumables are hidden from the default list, cannot be checked out, and are excluded from low-stock alerts.'),
+            'requestable' => $schema->boolean()->description('Whether users can request this consumable. Mutually exclusive with archived.'),
+            'notes' => $schema->string()->description('Notes'),
+            'created_at' => $schema->string()->description('Creation timestamp'),
+            'updated_at' => $schema->string()->description('Last updated timestamp'),
+        ];
+    }
+}

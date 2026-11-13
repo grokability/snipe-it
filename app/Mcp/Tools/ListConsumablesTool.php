@@ -1,0 +1,213 @@
+<?php
+
+namespace App\Mcp\Tools;
+
+use App\Enums\McpScope;
+use App\Http\Requests\ConsumableIndexRequest;
+use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Models\Category;
+use App\Models\Company;
+use App\Models\Consumable;
+use App\Models\Location;
+use App\Models\Manufacturer;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
+use Laravel\Mcp\ResponseFactory;
+use Laravel\Mcp\Server\Attributes\Description;
+use Laravel\Mcp\Server\Attributes\Name;
+use Laravel\Mcp\Server\Attributes\Title;
+use Laravel\Mcp\Server\Tool;
+
+#[Name('list_consumables')]
+#[Title('List Consumables')]
+#[Description('Search and list Snipe-IT consumables with optional filtering by keyword, company, category, manufacturer, location, and pagination')]
+class ListConsumablesTool extends Tool
+{
+    use HasMcpScope;
+    use ResolvesForeignKeyByName;
+
+    public function handle(Request $request): ResponseFactory
+    {
+        if ($denied = $this->scopeDenied(McpScope::Read)) {
+            return $denied;
+        }
+
+        if (! Gate::allows('index', Consumable::class)) {
+            return Response::make(Response::error(trans('mcp.unauthorized')));
+        }
+
+        // Shared filter rules live on ConsumableIndexRequest::rulesArray().
+        // MCP-specific pagination stays inline. Max limit tracks the API's
+        // config('app.max_results') so both surfaces honor the same env.
+        try {
+            $request->validate(array_merge(ConsumableIndexRequest::rulesArray(), [
+                'created_before' => 'nullable|date',
+                'created_after' => 'nullable|date',
+                'limit' => 'nullable|integer|min:1|max:'.config('app.max_results'),
+                'offset' => 'nullable|integer|min:0',
+            ]));
+        } catch (ValidationException $e) {
+            return Response::make(Response::error($e->validator->errors()->first()));
+        }
+
+        // Resolve *_name filters to IDs and merge back onto the request
+        // so the existing filled() reads below keep working unchanged.
+        $fkMap = [
+            ['company_id', 'company_name', Company::class],
+            ['category_id', 'category_name', Category::class],
+            ['manufacturer_id', 'manufacturer_name', Manufacturer::class],
+            ['location_id', 'location_name', Location::class],
+        ];
+
+        $resolvedFks = [];
+        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
+            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
+            if ($this->fkResolutionFailed($resolved)) {
+                return Response::make(Response::error($this->fkErrorMessage($resolved)));
+            }
+            if ($resolved !== null) {
+                $resolvedFks[$idField] = $resolved;
+            }
+        }
+        $request->merge($resolvedFks);
+
+        $consumables = Consumable::with('company', 'category', 'manufacturer', 'defaultSupplier', 'location')
+            ->withCount('users as users_count');
+
+        // filter wins when both are present, matching the HTTP API contract.
+        if ($request->filled('filter')) {
+            $consumables->TextSearch($request->get('filter'));
+        } elseif ($request->filled('search')) {
+            $consumables->TextSearch($request->get('search'));
+        }
+
+        if ($request->filled('company_id')) {
+            $consumables->where('consumables.company_id', $request->get('company_id'));
+        }
+
+        if ($request->filled('category_id')) {
+            $consumables->where('category_id', $request->get('category_id'));
+        }
+
+        if ($request->filled('manufacturer_id')) {
+            $consumables->where('manufacturer_id', $request->get('manufacturer_id'));
+        }
+
+        if ($request->filled('location_id')) {
+            $consumables->where('location_id', $request->get('location_id'));
+        }
+
+        if ($request->filled('created_before')) {
+            $consumables->where('consumables.created_at', '<=', $request->get('created_before'));
+        }
+
+        if ($request->filled('created_after')) {
+            $consumables->where('consumables.created_at', '>=', $request->get('created_after'));
+        }
+
+        // Archived scoping uses the same builder scopes the UI does.
+        //   archived_only=true  -> archived() (archived rows only)
+        //   include_archived=true -> no filter (active + archived)
+        //   default -> consumablesForShow() (hides archived unless the
+        //              show_archived_in_list admin setting is on, so
+        //              MCP list output tracks the UI's visible set).
+        if ($request->boolean('archived_only')) {
+            $consumables->archived();
+        } elseif (! $request->boolean('include_archived')) {
+            $consumables->consumablesForShow();
+        }
+
+        if ($request->boolean('low_stock_only')) {
+            // Current remaining = qty minus checkouts (consumables_users rows
+            // where consumed_at is null). Items where remaining <= min_amt
+            // are "low stock" per Snipe-IT's reporting conventions. Done as
+            // a subquery so the SQL side filters the set before pagination.
+            //
+            // Archived rows are force-excluded from low-stock results
+            // even when the caller asked for include_archived, matching
+            // the dashboard alert fix in commit 3522042fa6.
+            $consumables->notArchived()
+                ->whereRaw(
+                    '(consumables.qty - (SELECT COUNT(*) FROM consumables_users WHERE consumables_users.consumable_id = consumables.id AND consumables_users.consumed_at IS NULL)) <= COALESCE(consumables.min_amt, 0)'
+                );
+        }
+
+        $total = $consumables->count();
+        $limit = $request->filled('limit') ? max(1, min(config('app.max_results'), (int) $request->get('limit'))) : 25;
+        $offset = $request->filled('offset') ? (int) $request->get('offset') : 0;
+
+        $results = $consumables->orderBy('consumables.created_at', 'desc')->skip($offset)->take($limit)->get();
+
+        $consumablesData = $results->map(fn (Consumable $consumable) => [
+            'id' => $consumable->id,
+            'name' => $consumable->name,
+            'model_number' => $consumable->model_number,
+            'item_no' => $consumable->item_no,
+            'qty' => $consumable->qty,
+            'min_amt' => $consumable->min_amt,
+            'remaining' => $consumable->numRemaining(),
+            'users_count' => $consumable->users_count,
+            'category' => $consumable->category?->name,
+            'category_id' => $consumable->category_id,
+            'manufacturer' => $consumable->manufacturer?->name,
+            'manufacturer_id' => $consumable->manufacturer_id,
+            'supplier' => $consumable->defaultSupplier?->name,
+            'default_supplier_id' => $consumable->default_supplier_id,
+            'company' => $consumable->company?->name,
+            'company_id' => $consumable->company_id,
+            'location' => $consumable->location?->name,
+            'location_id' => $consumable->location_id,
+            // Per-acquisition purchase data moved to the Orders table.
+            // default_purchase_cost is the template value on the parent.
+            'default_purchase_cost' => $consumable->default_purchase_cost,
+            'archived' => (bool) $consumable->archived,
+            'notes' => $consumable->notes,
+        ])->values()->all();
+
+        return Response::make(
+            Response::text(trans('mcp.list_consumables', ['total' => $total, 'count' => count($consumablesData)]))
+        )->withStructuredContent([
+            'total' => $total,
+            'offset' => $offset,
+            'limit' => $limit,
+            'consumables' => $consumablesData,
+        ]);
+    }
+
+    public function schema(JsonSchema $schema): array
+    {
+        return [
+            'search' => $schema->string()->description('Free-text keyword. Mutually exclusive with filter: when both are supplied, filter wins.'),
+            'filter' => $schema->object()->description('Structured advanced-search filter payload. Same shape the UI Advanced Search modal posts.'),
+            'company_id' => $schema->number()->description('Filter by company ID. Alternative: company_name.'),
+            'company_name' => $schema->string()->description('Filter by company name. Resolved to an ID server-side.'),
+            'category_id' => $schema->number()->description('Filter by category ID. Alternative: category_name.'),
+            'category_name' => $schema->string()->description('Filter by category name. Resolved to an ID server-side.'),
+            'manufacturer_id' => $schema->number()->description('Filter by manufacturer ID. Alternative: manufacturer_name.'),
+            'manufacturer_name' => $schema->string()->description('Filter by manufacturer name. Resolved to an ID server-side.'),
+            'location_id' => $schema->number()->description('Filter by location ID. Alternative: location_name.'),
+            'location_name' => $schema->string()->description('Filter by location name. Resolved to an ID server-side.'),
+            'low_stock_only' => $schema->boolean()->description('When true, return only consumables whose remaining quantity is at or below their configured min_amt threshold. Use for reorder reports. Archived consumables are always excluded from this filter.'),
+            'include_archived' => $schema->boolean()->description('When true, include archived consumables in the results. Default matches the UI\'s consumablesForShow() scope: archived rows are hidden unless the admin has flipped the show_archived_in_list setting on.'),
+            'archived_only' => $schema->boolean()->description('When true, return ONLY archived consumables. Overrides include_archived.'),
+            'created_before' => $schema->string()->description('Only return records created on or before this date (YYYY-MM-DD).'),
+            'created_after' => $schema->string()->description('Only return records created on or after this date (YYYY-MM-DD).'),
+            'limit' => $schema->number()->description('Number of results to return (default: 25, max: '.config('app.max_results').')'),
+            'offset' => $schema->number()->description('Number of results to skip for pagination (default: 0)'),
+        ];
+    }
+
+    public function outputSchema(JsonSchema $schema): array
+    {
+        return [
+            'total' => $schema->number()->description('Total number of matching consumables')->required(),
+            'offset' => $schema->number()->description('Current pagination offset')->required(),
+            'limit' => $schema->number()->description('Results per page')->required(),
+            'consumables' => $schema->array()->description('Matched consumable rows including qty, min_amt, remaining (computed), supplier, and notes.'),
+        ];
+    }
+}

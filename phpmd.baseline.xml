@@ -35,6 +35,9 @@
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Listeners/RegenerateIdeHelperAfterMigrate.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Livewire/Importer.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Livewire/LdapSettings.php"/>
+  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Mcp/Prompts/DataQualityAuditPrompt.php"/>
+  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Mcp/Prompts/LowStockAlertPrompt.php"/>
+  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Mcp/Tools/GetCurrentUserTool.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/Accessory.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/AccessoryCheckout.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/Actionlog.php"/>

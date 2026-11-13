@@ -23,7 +23,9 @@ class PersonalAccessTokenTwoFactorGuardTest extends TestCase
         // client to exist. The migration that ships with this app doesn't
         // seed one for tests, so create + register it before each test that
         // calls Passport::createToken (the happy-path cases).
-        $clientId = DB::table('oauth_clients')->insertGetId([
+        $clientId = (string) \Illuminate\Support\Str::uuid();
+        DB::table('oauth_clients')->insert([
+            'id' => $clientId,
             'user_id' => null,
             'name' => 'Test Personal Client',
             'secret' => 'secret',
