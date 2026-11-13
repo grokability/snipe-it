@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Gate;
@@ -589,9 +590,9 @@ class Actionlog extends SnipeModel
      *
      * @since  [v3.0]
      *
-     * @return Relation
+     * @return MorphTo<Model, $this>
      */
-    public function target()
+    public function target(): MorphTo
     {
         return $this->morphTo('target')->withTrashed();
     }

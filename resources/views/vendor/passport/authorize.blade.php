@@ -52,11 +52,16 @@
                         <!-- Scope List -->
                         @if (count($scopes) > 0)
                             <div class="scopes">
-                                    <p><strong>This application will be able to:</strong></p>
+                                    <p><strong>This application is requesting the following scopes:</strong></p>
 
                                     <ul>
                                         @foreach ($scopes as $scope)
-                                            <li>{{ $scope->description }}</li>
+                                            <li>
+                                                <code>{{ $scope->id }}</code>
+                                                @if ($scope->description && $scope->description !== $scope->id)
+                                                    : {{ $scope->description }}
+                                                @endif
+                                            </li>
                                         @endforeach
                                     </ul>
                             </div>

@@ -1432,8 +1432,9 @@ class AssetsController extends Controller
         } elseif (request('checkout_to_type') == 'asset') {
             // Resolve unscoped target first so FMCS mismatch can be handled explicitly.
             $target = Asset::withoutGlobalScopes()->where('id', '!=', $asset_id)->find(request('assigned_asset'));
-            // Override with the asset's location_id if it has one
-            $asset->location_id = (($target) && (isset($target->location_id))) ? $target->location_id : '';
+            // Prefer the target's current location, fall back to its RTD (home) location
+            // when the target has no current location. Matches AssetCheckoutService::checkout.
+            $asset->location_id = $target ? ($target->location_id ?: $target->rtd_location_id) : '';
             $error_payload['target_id'] = $request->input('assigned_asset');
             $error_payload['target_type'] = 'asset';
         } elseif (request('checkout_to_type') == 'user') {

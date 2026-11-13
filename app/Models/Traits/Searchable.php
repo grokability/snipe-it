@@ -43,7 +43,7 @@ trait Searchable
      *
      * @var array<string, string>|null
      */
-    private static ?array $customFieldFilterMapCache = null;
+    protected static ?array $customFieldFilterMapCache = null;
 
     /**
      * Performs a search on the model, using the provided search terms

@@ -75,6 +75,7 @@ jobs:
           php artisan migrate --force
           php artisan passport:install --no-interaction
           chmod -R 777 storage bootstrap/cache
+          chmod 600 storage/oauth-private.key storage/oauth-public.key
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit
         env:

@@ -229,6 +229,7 @@ return [
     'file_upload' => 'File Upload',
     'first_checkout' => '1<sup>st</sup> Checkout',
     'generate_labels' => 'Generate Labels',
+    'group' => 'Group',
     'groups' => 'Groups',
     'gravatar_email' => 'Gravatar Email Address',
     'gravatar_url' => '<a href="http://gravatar.com"><small>Change your avatar at Gravatar.com</small></a>.',

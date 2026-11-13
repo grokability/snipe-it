@@ -7,18 +7,6 @@ parameters:
 			path: app/Actions/Acceptances/RegenerateAcceptancesAction.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Relations\\Pivot\:\:\$(required|order)\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Livewire/FieldsetFieldPicker.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\CustomField\:\:\$pivot\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/FieldsetFieldPicker.php
-
-		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Category\>\:\:requiresAcceptance\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -151,12 +139,6 @@ parameters:
 			path: app/Console/Commands/CleanOldCheckoutRequests.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\Relation\:\:attach\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Console/Commands/CreateAdmin.php
-
-		-
 			message: '#^Access to an undefined property App\\Models\\Accessory\:\:\$first_name\.$#'
 			identifier: property.notFound
 			count: 2
@@ -213,12 +195,6 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\Setting\:\:\$ldap_base_dn\.$#'
 			identifier: property.notFound
-			count: 1
-			path: app/Console/Commands/LdapSync.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\Relation\:\:attach\(\)\.$#'
-			identifier: method.notFound
 			count: 1
 			path: app/Console/Commands/LdapSync.php
 
@@ -877,12 +853,6 @@ parameters:
 			path: app/Http/Controllers/Api/CategoriesController.php
 
 		-
-			message: '#^Static method App\\Helpers\\Helper\:\:formatStandardApiResponse\(\) invoked with 4 parameters, 1\-3 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: app/Http/Controllers/Api/CategoriesController.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
@@ -1273,18 +1243,6 @@ parameters:
 			path: app/Http/Controllers/Api/ProfileController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$client\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/ProfileController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$revoked\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/ProfileController.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -1300,24 +1258,6 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Pagination\\LengthAwarePaginator\<int, App\\Models\\Statuslabel\>\:\:\$use_text\.$#'
 			identifier: property.notFound
 			count: 1
-			path: app/Http/Controllers/Api/StatuslabelsController.php
-
-		-
-			message: '#^Offset ''archived'' does not exist on string\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: app/Http/Controllers/Api/StatuslabelsController.php
-
-		-
-			message: '#^Offset ''deployable'' does not exist on string\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: app/Http/Controllers/Api/StatuslabelsController.php
-
-		-
-			message: '#^Offset ''pending'' does not exist on string\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
 			path: app/Http/Controllers/Api/StatuslabelsController.php
 
 		-
@@ -1897,12 +1837,6 @@ parameters:
 			path: app/Http/Controllers/CustomFieldsetsController.php
 
 		-
-			message: '#^Variable \$field_ids might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: app/Http/Controllers/CustomFieldsetsController.php
-
-		-
 			message: '#^Call to an undefined method App\\Models\\SnipeModel\:\:getErrors\(\)\.$#'
 			identifier: method.notFound
 			count: 2
@@ -2357,24 +2291,6 @@ parameters:
 			identifier: return.phpDocType
 			count: 1
 			path: app/Http/Controllers/SetupController.php
-
-		-
-			message: '#^Offset ''archived'' does not exist on string\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: app/Http/Controllers/StatuslabelsController.php
-
-		-
-			message: '#^Offset ''deployable'' does not exist on string\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: app/Http/Controllers/StatuslabelsController.php
-
-		-
-			message: '#^Offset ''pending'' does not exist on string\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: app/Http/Controllers/StatuslabelsController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\Supplier\:\:\$asset_maintenances_count\.$#'
@@ -3241,6 +3157,12 @@ parameters:
 			path: app/Livewire/CloneFieldset.php
 
 		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/CloneFieldset.php
+
+		-
 			message: '#^Access to an undefined property App\\Livewire\\CustomFieldEditor\:\:\$allowedElementKeys\.$#'
 			identifier: property.notFound
 			count: 1
@@ -3319,6 +3241,12 @@ parameters:
 			path: app/Livewire/CustomFieldSetDefaultValuesForModel.php
 
 		-
+			message: '#^Access to an undefined property App\\Models\\CustomField\:\:\$pivot\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Livewire/FieldsetFieldPicker.php
+
+		-
 			message: '#^Access to an undefined property App\\Livewire\\Importer\:\:\$activeFile\.$#'
 			identifier: property.notFound
 			count: 4
@@ -3335,24 +3263,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Importer.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/OauthClients.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Livewire/OauthClients.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/OauthClients.php
 
 		-
 			message: '#^Access to an undefined property Laravel\\Passport\\Client\:\:\$created_by\.$#'
@@ -3805,12 +3715,6 @@ parameters:
 			path: app/Models/Accessory.php
 
 		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: app/Models/Accessory.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 3
@@ -3856,12 +3760,6 @@ parameters:
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
-			path: app/Models/Accessory.php
-
-		-
-			message: '#^Unsafe access to private property App\\Models\\Accessory\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
 			path: app/Models/Accessory.php
 
 		-
@@ -3958,12 +3856,6 @@ parameters:
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
-			path: app/Models/AccessoryCheckout.php
-
-		-
-			message: '#^Unsafe access to private property App\\Models\\AccessoryCheckout\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
 			path: app/Models/AccessoryCheckout.php
 
 		-
@@ -4087,12 +3979,6 @@ parameters:
 			path: app/Models/Actionlog.php
 
 		-
-			message: '#^Unsafe access to private property App\\Models\\Actionlog\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
-			path: app/Models/Actionlog.php
-
-		-
 			message: '#^Variable \$filters in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -4161,7 +4047,7 @@ parameters:
 		-
 			message: '#^Call to function is_int\(\) with App\\Models\\User\|null will always evaluate to false\.$#'
 			identifier: function.impossibleType
-			count: 1
+			count: 2
 			path: app/Models/Asset.php
 
 		-
@@ -4237,6 +4123,12 @@ parameters:
 			path: app/Models/Asset.php
 
 		-
+			message: '#^Method Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<Illuminate\\Database\\Eloquent\\Model,Illuminate\\Database\\Eloquent\\Model\>\:\:disassociate\(\) invoked with 1 parameter, 0 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: app/Models/Asset.php
+
+		-
 			message: '#^Offset class\-string\<static\(App\\Models\\Asset\)\> on array\{App\\Models\\Accessory\: ''accessories\.fulfill…'', App\\Models\\Consumable\: ''consumables\.fulfill…'', App\\Models\\Component\: ''components\.fulfill…'', App\\Models\\License\: ''licenses\.fulfill…'', App\\Models\\AssetModel\: ''models\.fulfill…''\} on left side of \?\? does not exist\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -4245,6 +4137,12 @@ parameters:
 		-
 			message: '#^PHPDoc tag @var above a method has no effect\.$#'
 			identifier: varTag.misplaced
+			count: 1
+			path: app/Models/Asset.php
+
+		-
+			message: '#^Property App\\Models\\Asset\:\:\$location_id \(int\|null\) does not accept string\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: app/Models/Asset.php
 
@@ -4267,13 +4165,13 @@ parameters:
 			path: app/Models/Asset.php
 
 		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
+			message: '#^Property App\\Models\\IdeHelperAsset\:\:\$expected_checkin \(Illuminate\\Support\\Carbon\|null\) does not accept Carbon\\Carbon\.$#'
 			identifier: assign.propertyType
-			count: 2
+			count: 1
 			path: app/Models/Asset.php
 
 		-
-			message: '#^Property App\\Models\\IdeHelperAsset\:\:\$expected_checkin \(Illuminate\\Support\\Carbon\|null\) does not accept Carbon\\Carbon\.$#'
+			message: '#^Property App\\Models\\IdeHelperAsset\:\:\$rtd_location_id \(int\|null\) does not accept string\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: app/Models/Asset.php
@@ -4342,12 +4240,6 @@ parameters:
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 2
-			path: app/Models/Asset.php
-
-		-
-			message: '#^Unsafe access to private property App\\Models\\Asset\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
 			path: app/Models/Asset.php
 
 		-
@@ -4477,12 +4369,6 @@ parameters:
 			path: app/Models/AssetModel.php
 
 		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Models/AssetModel.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 2
@@ -4516,12 +4402,6 @@ parameters:
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
-			path: app/Models/AssetModel.php
-
-		-
-			message: '#^Unsafe access to private property App\\Models\\AssetModel\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
 			path: app/Models/AssetModel.php
 
 		-
@@ -4633,12 +4513,6 @@ parameters:
 			path: app/Models/Category.php
 
 		-
-			message: '#^Unsafe access to private property App\\Models\\Category\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
-			path: app/Models/Category.php
-
-		-
 			message: '#^Variable \$filters in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -4714,12 +4588,6 @@ parameters:
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
-			path: app/Models/CheckoutRequest.php
-
-		-
-			message: '#^Unsafe access to private property App\\Models\\CheckoutRequest\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
 			path: app/Models/CheckoutRequest.php
 
 		-
@@ -4893,12 +4761,6 @@ parameters:
 		-
 			message: '#^Property App\\Models\\Company\:\:\$searchableRelations \(array\) on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.property
-			count: 1
-			path: app/Models/Company.php
-
-		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
 			count: 1
 			path: app/Models/Company.php
 
@@ -5113,12 +4975,6 @@ parameters:
 			path: app/Models/Component.php
 
 		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: app/Models/Component.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 3
@@ -5164,12 +5020,6 @@ parameters:
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
-			path: app/Models/Component.php
-
-		-
-			message: '#^Unsafe access to private property App\\Models\\Component\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
 			path: app/Models/Component.php
 
 		-
@@ -5266,12 +5116,6 @@ parameters:
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
-			path: app/Models/ComponentAssignment.php
-
-		-
-			message: '#^Unsafe access to private property App\\Models\\ComponentAssignment\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
 			path: app/Models/ComponentAssignment.php
 
 		-
@@ -5407,12 +5251,6 @@ parameters:
 			path: app/Models/Consumable.php
 
 		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: app/Models/Consumable.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 3
@@ -5458,12 +5296,6 @@ parameters:
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
-			path: app/Models/Consumable.php
-
-		-
-			message: '#^Unsafe access to private property App\\Models\\Consumable\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
 			path: app/Models/Consumable.php
 
 		-
@@ -5629,12 +5461,6 @@ parameters:
 			path: app/Models/Department.php
 
 		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Models/Department.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 2
@@ -5668,12 +5494,6 @@ parameters:
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
-			path: app/Models/Department.php
-
-		-
-			message: '#^Unsafe access to private property App\\Models\\Department\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
 			path: app/Models/Department.php
 
 		-
@@ -5797,12 +5617,6 @@ parameters:
 			path: app/Models/Depreciation.php
 
 		-
-			message: '#^Unsafe access to private property App\\Models\\Depreciation\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
-			path: app/Models/Depreciation.php
-
-		-
 			message: '#^Variable \$filters in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -5890,12 +5704,6 @@ parameters:
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
-			path: app/Models/Group.php
-
-		-
-			message: '#^Unsafe access to private property App\\Models\\Group\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
 			path: app/Models/Group.php
 
 		-
@@ -6211,22 +6019,10 @@ parameters:
 			path: app/Models/Labels/Tapes/Generic/Continuous_Landscape_0_59in.php
 
 		-
-			message: '#^Variable \$labelWidth might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: app/Models/Labels/Tapes/Generic/Continuous_Landscape_0_59in_A.php
-
-		-
 			message: '#^Property App\\Models\\Labels\\Tapes\\Generic\\Tape_53mm\:\:\$tapeHeight is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
 			path: app/Models/Labels/Tapes/Generic/Tape_53mm.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\Relation\:\:attach\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Models/Ldap.php
 
 		-
 			message: '#^Method App\\Models\\Ldap\:\:findLdapUsers\(\) should return array\|bool but returns Illuminate\\Http\\RedirectResponse\.$#'
@@ -6349,12 +6145,6 @@ parameters:
 			path: app/Models/License.php
 
 		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Models/License.php
-
-		-
 			message: '#^Property App\\Models\\License\:\:\$guarded \(array\<string\>\) does not accept default value of type string\.$#'
 			identifier: property.defaultValue
 			count: 1
@@ -6412,12 +6202,6 @@ parameters:
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
-			path: app/Models/License.php
-
-		-
-			message: '#^Unsafe access to private property App\\Models\\License\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
 			path: app/Models/License.php
 
 		-
@@ -6493,12 +6277,6 @@ parameters:
 			path: app/Models/LicenseSeat.php
 
 		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Models/LicenseSeat.php
-
-		-
 			message: '#^Property App\\Models\\LicenseSeat\:\:\$guarded \(array\<string\>\) does not accept default value of type string\.$#'
 			identifier: property.defaultValue
 			count: 1
@@ -6544,12 +6322,6 @@ parameters:
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
-			path: app/Models/LicenseSeat.php
-
-		-
-			message: '#^Unsafe access to private property App\\Models\\LicenseSeat\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
 			path: app/Models/LicenseSeat.php
 
 		-
@@ -6625,12 +6397,6 @@ parameters:
 			path: app/Models/Location.php
 
 		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Models/Location.php
-
-		-
 			message: '#^Property App\\Models\\Location\:\:\$searchableAttributes \(array\) on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.property
 			count: 1
@@ -6676,12 +6442,6 @@ parameters:
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
-			path: app/Models/Location.php
-
-		-
-			message: '#^Unsafe access to private property App\\Models\\Location\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
 			path: app/Models/Location.php
 
 		-
@@ -6757,12 +6517,6 @@ parameters:
 			path: app/Models/Maintenance.php
 
 		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Models/Maintenance.php
-
-		-
 			message: '#^Property App\\Models\\Maintenance\:\:\$searchableAttributes \(array\) on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.property
 			count: 1
@@ -6808,12 +6562,6 @@ parameters:
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
-			path: app/Models/Maintenance.php
-
-		-
-			message: '#^Unsafe access to private property App\\Models\\Maintenance\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
 			path: app/Models/Maintenance.php
 
 		-
@@ -6895,12 +6643,6 @@ parameters:
 			path: app/Models/MaintenanceType.php
 
 		-
-			message: '#^Unsafe access to private property App\\Models\\MaintenanceType\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
-			path: app/Models/MaintenanceType.php
-
-		-
 			message: '#^Variable \$filters in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -6979,12 +6721,6 @@ parameters:
 			path: app/Models/Manufacturer.php
 
 		-
-			message: '#^Unsafe access to private property App\\Models\\Manufacturer\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
-			path: app/Models/Manufacturer.php
-
-		-
 			message: '#^Variable \$filters in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -7054,12 +6790,6 @@ parameters:
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
-			path: app/Models/PredefinedKit.php
-
-		-
-			message: '#^Unsafe access to private property App\\Models\\PredefinedKit\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
 			path: app/Models/PredefinedKit.php
 
 		-
@@ -7189,12 +6919,6 @@ parameters:
 			path: app/Models/Statuslabel.php
 
 		-
-			message: '#^Method App\\Models\\Statuslabel\:\:getStatuslabelTypesForDB\(\) should return string but returns array\<string, int\>\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Models/Statuslabel.php
-
-		-
 			message: '#^Property App\\Models\\Statuslabel\:\:\$searchableAttributes \(array\) on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.property
 			count: 1
@@ -7234,12 +6958,6 @@ parameters:
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
-			path: app/Models/Statuslabel.php
-
-		-
-			message: '#^Unsafe access to private property App\\Models\\Statuslabel\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
 			path: app/Models/Statuslabel.php
 
 		-
@@ -7309,12 +7027,6 @@ parameters:
 			path: app/Models/Supplier.php
 
 		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Models/Supplier.php
-
-		-
 			message: '#^Property App\\Models\\Supplier\:\:\$searchableAttributes \(array\) on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.property
 			count: 1
@@ -7360,12 +7072,6 @@ parameters:
 			message: '#^Unreachable statement \- code above always terminates\.$#'
 			identifier: deadCode.unreachable
 			count: 1
-			path: app/Models/Supplier.php
-
-		-
-			message: '#^Unsafe access to private property App\\Models\\Supplier\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
 			path: app/Models/Supplier.php
 
 		-
@@ -7465,18 +7171,6 @@ parameters:
 			path: app/Models/User.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\Relation\:\:detach\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\Relation\:\:sync\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Models/User.php
-
-		-
 			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
 			identifier: function.impossibleType
 			count: 2
@@ -7519,21 +7213,9 @@ parameters:
 			path: app/Models/User.php
 
 		-
-			message: '#^Method App\\Models\\User\:\:allAssignedCount\(\) should return Illuminate\\Database\\Eloquent\\Relations\\Relation but returns int\<0, max\>\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Models/User.php
-
-		-
 			message: '#^Property \$this\(App\\Models\\User\)\:\:\$company_id is not readable\.$#'
 			identifier: property.writeOnly
 			count: 7
-			path: app/Models/User.php
-
-		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 3
 			path: app/Models/User.php
 
 		-
@@ -7609,12 +7291,6 @@ parameters:
 			path: app/Models/User.php
 
 		-
-			message: '#^Unsafe access to private property App\\Models\\User\:\:\$customFieldFilterMapCache through static\:\:\.$#'
-			identifier: staticClassAccess.privateProperty
-			count: 4
-			path: app/Models/User.php
-
-		-
 			message: '#^Using nullsafe method call on non\-nullable type Psr\\Http\\Message\\ResponseInterface\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 2
@@ -7672,12 +7348,6 @@ parameters:
 			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 2
-			path: app/Notifications/CheckinAssetNotification.php
-
-		-
-			message: '#^Variable \$notifyBy might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: app/Notifications/CheckinAssetNotification.php
 
 		-
@@ -8741,12 +8411,6 @@ parameters:
 			identifier: throws.notThrowable
 			count: 1
 			path: app/Services/Saml.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/SyncAdapters/MappingTargets.php
 
 		-
 			message: '#^Strict comparison using \=\=\= between non\-empty\-string and null will always evaluate to false\.$#'

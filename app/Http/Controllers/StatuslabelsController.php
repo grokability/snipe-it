@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\StatusLabelType;
 use App\Helpers\Helper;
 use App\Models\Statuslabel;
 use App\Rules\CssColor;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * This controller handles all actions related to Status Labels for
@@ -56,11 +58,10 @@ class StatuslabelsController extends Controller
         // create a new model instance
         $statusLabel = new Statuslabel;
 
-        if ($request->missing('statuslabel_types')) {
-            return redirect()->back()->withInput()->withErrors(['statuslabel_types' => trans('validation.statuslabel_type')]);
-        }
-
-        $request->validate(['color' => ['nullable', new CssColor]]);
+        $request->validate([
+            'statuslabel_types' => ['required', 'string', Rule::enum(StatusLabelType::class)],
+            'color' => ['nullable', new CssColor],
+        ]);
 
         $statusType = Statuslabel::getStatuslabelTypesForDB($request->input('statuslabel_types'));
 
@@ -90,7 +91,7 @@ class StatuslabelsController extends Controller
     {
         $this->authorize('update', Statuslabel::class);
 
-        $statuslabel_types = ['' => trans('admin/hardware/form.select_statustype')] + ['undeployable' => trans('admin/hardware/general.undeployable')] + ['pending' => trans('admin/hardware/general.pending')] + ['archived' => trans('admin/hardware/general.archived')] + ['deployable' => trans('admin/hardware/general.deployable')];
+        $statuslabel_types = Helper::statusTypeList();
 
         return view('statuslabels/edit', compact('statuslabel_types'))
             ->with('item', $statuslabel)
@@ -104,12 +105,10 @@ class StatuslabelsController extends Controller
     {
         $this->authorize('update', Statuslabel::class);
 
-        if (! $request->filled('statuslabel_types')) {
-            return redirect()->back()->withInput()->withErrors(['statuslabel_types' => trans('validation.statuslabel_type')]);
-        }
-
-        // See color-validation comment in store() above.
-        $request->validate(['color' => ['nullable', new CssColor]]);
+        $request->validate([
+            'statuslabel_types' => ['required', 'string', Rule::enum(StatusLabelType::class)],
+            'color' => ['nullable', new CssColor],
+        ]);
 
         // Update the Statuslabel data
         $statustype = Statuslabel::getStatuslabelTypesForDB($request->input('statuslabel_types'));
