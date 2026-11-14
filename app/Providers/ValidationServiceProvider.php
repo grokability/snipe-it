@@ -687,14 +687,20 @@ class ValidationServiceProvider extends ServiceProvider
 
         /*
          * Confirms a manager_id write references a user visible within the
-         * acting user's FMCS scope.
+         * acting user's FMCS scope. Actor-scope, not target-scope: the rule
+         * asks "can the person making this write see the referenced user,"
+         * so a scoped editor cannot assign a cross-company manager even on
+         * a target user who happens to belong to both companies.
          */
         Validator::extend('fmcs_manager', function ($attribute, $value, $parameters, $validator) {
             if (empty($value)) {
                 return true;
             }
-            // CLI contexts (snipeit:import, seeders, queue workers) have no
-            // auth user.
+            // No authenticated actor (LDAP sync, importer, seeders, queue
+            // workers) means there is no FMCS scope to compare against, and
+            // the CLI trust boundary already authorizes those paths. Same
+            // reasoning the sibling fmcs_department and fmcs_location rules
+            // carry.
             if (! auth()->check()) {
                 return true;
             }
@@ -710,10 +716,20 @@ class ValidationServiceProvider extends ServiceProvider
             return str_replace(':attribute', trans('general.manager'), $message);
         });
 
+        /*
+         * Confirms a department_id write references a department visible
+         * within the acting user's FMCS scope. Actor-scope, same semantics
+         * as fmcs_manager and fmcs_location.
+         */
         Validator::extend('fmcs_department', function ($attribute, $value, $parameters, $validator) {
             if (empty($value)) {
                 return true;
             }
+            // No authenticated actor (LDAP sync, importer, seeders, queue
+            // workers) means there is no FMCS scope to compare against, and
+            // the CLI trust boundary already authorizes those paths. Same
+            // reasoning the sibling fmcs_manager and fmcs_location rules
+            // carry.
             if (! auth()->check()) {
                 return true;
             }
@@ -732,45 +748,55 @@ class ValidationServiceProvider extends ServiceProvider
         // Validates that the company of the validated object matches the company of the location in case of scoped locations
         Validator::extend('fmcs_location', function ($attribute, $value, $parameters, $validator) {
             $settings = Setting::getSettings();
-            if ($settings->full_multiple_companies_support == '1' && $settings->scope_locations_fmcs == '1') {
-                $data = $validator->getData();
-                // Support both multi-company (company_ids[]) and single-company (company_id) requests
-                $companyIds = array_filter(array_unique(array_merge(
-                    (array) ($data['company_ids'] ?? []),
-                    [$data['company_id'] ?? null]
-                )));
-                // No company context available (e.g. model-level validation before companies are
-                // persisted) — nothing to compare against, so skip the check.
-                if (empty($companyIds)) {
-                    return true;
-                }
-
-                // Bypass CompanyableScope on the lookup. With scope_locations_fmcs=1
-                // Location has the scope applied, so Location::find() on a
-                // location whose company_id sits outside the current user's
-                // scope returns null. That would drop through to the trailing
-                // `return true` and let a cross-tenant location_id write pass
-                // validation, which is the opposite of what this rule exists
-                // to enforce. withoutGlobalScopes() ensures the rule sees the
-                // real record every time and can compare it against the
-                // request's company scope.
-                $location = Location::withoutGlobalScopes()->find($value);
-
-                if ($location) {
-                    $effectiveCompanyId = $location->effectiveFmcsCompanyId();
-
-                    if ($effectiveCompanyId === null) {
-                        // No company found anywhere in the parent chain — floater rule applies.
-                        return (bool) $settings->null_company_is_floater;
-                    }
-
-                    if (! in_array($effectiveCompanyId, $companyIds)) {
-                        return false;
-                    }
-                }
+            if ($settings->full_multiple_companies_support != '1' || $settings->scope_locations_fmcs != '1') {
+                return true;
             }
 
-            return true;
+            if (empty($value)) {
+                return true;
+            }
+
+            // The rule asks "can the acting user see this location." With
+            // no authenticated actor (LDAP sync, importer, seeders, queue
+            // workers) there is no FMCS scope to compare against, and the
+            // CLI trust boundary (shell / artisan access) already
+            // authorizes those paths. Same reasoning the sibling
+            // fmcs_manager and fmcs_department rules carry.
+            if (! auth()->check()) {
+                return true;
+            }
+
+            $location = Location::withoutGlobalScopes()->find($value);
+            if (! $location) {
+                return true;
+            }
+
+            $data = $validator->getData();
+            // Support both multi-company (company_ids[]) and single-company (company_id) requests
+            $companyIds = array_filter(array_unique(array_merge(
+                (array) ($data['company_ids'] ?? []),
+                [$data['company_id'] ?? null]
+            )));
+
+            if (! empty($companyIds)) {
+                // Request carries explicit company context (item create /
+                // update with company_id or company_ids). The target location
+                // must sit inside that company set.
+                $effectiveCompanyId = $location->effectiveFmcsCompanyId();
+
+                if ($effectiveCompanyId === null) {
+                    // No company found anywhere in the parent chain, floater rule applies.
+                    return (bool) $settings->null_company_is_floater;
+                }
+
+                return in_array($effectiveCompanyId, $companyIds);
+            }
+
+            // No explicit company context in the request (e.g. user-location
+            // assignment or self-service profile update). Fall back to the
+            // acting user's scope, same pattern fmcs_manager and fmcs_
+            // department already apply.
+            return (bool) Company::isCurrentUserHasAccess($location);
         });
     }
 

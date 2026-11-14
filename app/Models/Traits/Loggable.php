@@ -70,9 +70,7 @@ trait Loggable
         });
 
         // Restoring is a SoftDeletes event. Only register the hook
-        // on models that actually use SoftDeletes. Non-SoftDeletes
-        // consumers of Loggable (e.g. the custom-fields test fixture)
-        // would otherwise BadMethodCall at boot time.
+        // on models that actually use SoftDeletes.
         if (in_array(\Illuminate\Database\Eloquent\SoftDeletes::class, class_uses_recursive(static::class), true)) {
             self::restoring(function (self $item) {
                 $item->action_type = ActionType::Restore;

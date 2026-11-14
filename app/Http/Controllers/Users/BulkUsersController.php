@@ -162,6 +162,18 @@ class BulkUsersController extends Controller
         if ((! $request->filled('ids')) || $request->input('ids') <= 0) {
             return redirect()->back()->with('error', trans('general.no_users_selected'));
         }
+
+        // Fail-fast FMCS scope check on the three cross-tenant FKs the
+        // bulk form accepts. 
+        $bulkFmcsValidator = \Validator::make($request->all(), [
+            'manager_id' => 'nullable|integer|exists:users,id|fmcs_manager',
+            'department_id' => 'nullable|integer|exists:departments,id|fmcs_department',
+            'location_id' => 'nullable|integer|exists:locations,id|fmcs_location',
+        ]);
+        if ($bulkFmcsValidator->fails()) {
+            return redirect()->back()->withInput()->withErrors($bulkFmcsValidator);
+        }
+
         $user_raw_array = $request->input('ids');
 
         // Remove the user from any updates.

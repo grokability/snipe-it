@@ -47,7 +47,7 @@ class Location extends SnipeModel implements Importable
         'state' => 'min:2|max:191|nullable',
         'country' => 'min:2|max:191|nullable',
         'zip' => 'max:10|nullable',
-        'manager_id' => 'exists:users,id|nullable',
+        'manager_id' => 'exists:users,id|nullable|fmcs_manager',
         'parent_id' => 'nullable|exists:locations,id|non_circular:locations,id|parent_matches_location_company',
         'company_id' => 'integer|nullable|exists:companies,id|fmcs_company',
     ];
