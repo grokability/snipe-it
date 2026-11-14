@@ -529,4 +529,122 @@ class LicenseCheckoutCheckinTest extends TestCase
             'Reassign must delete the displaced holder\'s pending acceptance row so the audit trail does not carry a stale acceptance for an item they no longer hold.',
         );
     }
+
+    // GHSA-73jx-c32h-c3w9: failed reassignment used to displace the current
+    // holder anyway because the transaction committed on a plain `return`
+    // from inside its closure. All fallible validation now runs before any
+    // mutation.
+
+    #[Test]
+    public function reassign_to_nonexistent_user_does_not_displace_current_holder(): void
+    {
+        Event::fake([CheckoutableCheckedIn::class]);
+
+        $license = License::factory()->create(['seats' => 1, 'reassignable' => true]);
+        $holder = User::factory()->create();
+        $seat = $license->licenseseats()->first();
+        $seat->update(['assigned_to' => $holder->id]);
+
+        $pendingAcceptance = CheckoutAcceptance::factory()->create([
+            'checkoutable_type' => LicenseSeat::class,
+            'checkoutable_id' => $seat->id,
+            'assigned_to_id' => $holder->id,
+        ]);
+
+        $this->actingAsForApi(User::factory()->checkoutLicenses()->create())
+            ->postJson(route('api.licenses.checkout', $license->id), [
+                'seat_id' => $seat->id,
+                'target_type' => 'user',
+                'assigned_to' => 999999,
+                'reassign' => true,
+            ])
+            ->assertJson(['status' => 'error']);
+
+        $this->assertSame(
+            $holder->id,
+            (int) $seat->fresh()->assigned_to,
+            'Holder must remain assigned when the replacement target does not exist.',
+        );
+        $this->assertNotNull(
+            CheckoutAcceptance::find($pendingAcceptance->id),
+            'Pending acceptance must survive a failed reassignment.',
+        );
+        Event::assertNotDispatched(CheckoutableCheckedIn::class);
+    }
+
+    #[Test]
+    public function reassign_to_cross_company_user_does_not_displace_current_holder_under_fmcs(): void
+    {
+        Event::fake([CheckoutableCheckedIn::class]);
+
+        [$companyA, $companyB] = \App\Models\Company::factory()->count(2)->create();
+        $license = License::factory()->create([
+            'seats' => 1,
+            'reassignable' => true,
+            'company_id' => $companyA->id,
+        ]);
+        $holder = $companyA->users()->save(User::factory()->make());
+        $seat = $license->licenseseats()->first();
+        $seat->update(['assigned_to' => $holder->id]);
+
+        // Enable FMCS AFTER setup so the CompanyableChildTrait scope does not
+        // hide the seat from the fixture lookups above.
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $pendingAcceptance = CheckoutAcceptance::factory()->create([
+            'checkoutable_type' => LicenseSeat::class,
+            'checkoutable_id' => $seat->id,
+            'assigned_to_id' => $holder->id,
+        ]);
+
+        $crossCompanyTarget = $companyB->users()->save(User::factory()->make());
+        $actor = $companyA->users()->save(User::factory()->checkoutLicenses()->make());
+
+        $this->actingAsForApi($actor)
+            ->postJson(route('api.licenses.checkout', $license->id), [
+                'seat_id' => $seat->id,
+                'target_type' => 'user',
+                'assigned_to' => $crossCompanyTarget->id,
+                'reassign' => true,
+            ])
+            ->assertJson(['status' => 'error']);
+
+        $this->assertSame(
+            $holder->id,
+            (int) $seat->fresh()->assigned_to,
+            'Holder must remain assigned when the FMCS company check rejects the replacement target.',
+        );
+        $this->assertNotNull(
+            CheckoutAcceptance::find($pendingAcceptance->id),
+            'Pending acceptance must survive a failed reassignment under FMCS.',
+        );
+        Event::assertNotDispatched(CheckoutableCheckedIn::class);
+    }
+
+    #[Test]
+    public function reassign_to_nonexistent_asset_does_not_displace_current_holder(): void
+    {
+        Event::fake([CheckoutableCheckedIn::class]);
+
+        $license = License::factory()->create(['seats' => 1, 'reassignable' => true]);
+        $holder = User::factory()->create();
+        $seat = $license->licenseseats()->first();
+        $seat->update(['assigned_to' => $holder->id]);
+
+        $this->actingAsForApi(User::factory()->checkoutLicenses()->create())
+            ->postJson(route('api.licenses.checkout', $license->id), [
+                'seat_id' => $seat->id,
+                'target_type' => 'asset',
+                'asset_id' => 999999,
+                'reassign' => true,
+            ])
+            ->assertJson(['status' => 'error']);
+
+        $this->assertSame(
+            $holder->id,
+            (int) $seat->fresh()->assigned_to,
+            'Holder must remain assigned when the replacement asset does not exist.',
+        );
+        Event::assertNotDispatched(CheckoutableCheckedIn::class);
+    }
 }
