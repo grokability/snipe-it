@@ -362,7 +362,7 @@ class LicensesController extends Controller
             //
             // GHSA-73jx-c32h-c3w9: resolve + validate the replacement
             // target BEFORE doing anything destructive to the current
-            // holder. 
+            // holder.
             $needsReassignment = $licenseSeat->assigned_to !== null || $licenseSeat->asset_id !== null;
             if ($needsReassignment) {
                 if (! ($validated['reassign'] ?? false)) {
