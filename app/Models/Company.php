@@ -840,41 +840,19 @@ final class Company extends SnipeModel
                 return $query->whereNull($table.$column);
             }
 
-            // action_logs: a NULL company_id means the logged object's table has no
-            // company_id column. For most of those (AssetModel, Category, Manufacturer,
-            // Statuslabel, Location, etc.) the row is admin-authored global config
-            // that is safe to show cross-company. But User is also a table without a
-            // scalar company_id column (users belong to companies via the company_user
-            // pivot), and User-item action_logs carry PII in their log_meta diff
-            // (email, phone, employee_num, notes, address, jobtitle, etc.) written by
-            // UserObserver on every profile edit. Treating those as globally visible
-            // leaks cross-company PII, per GHSA-mch3-g6rh-gj22.
-            //
-            // Split by item_type: non-User rows keep the existing "null is safe" rule;
-            // User-item rows only fall through when the viewer shares at least one
-            // company with the target user via the company_user pivot (same visibility
-            // rule the users list itself applies under FMCS).
+            // action_logs has its own compound visibility rule:
+            //   - rows whose company_id matches the caller are always visible
+            //   - rows with NULL company_id dispatch by item_type (user-pivot
+            //     match for User-item, current-owner match for tenant-scoped
+            //     items like Asset/License/..., plain cross-company allow for
+            //     global-config types like AssetModel/Category/Manufacturer).
+            // The full tree lives alongside the model it describes so any new
+            // tenant-scoped item_type is a one-line addition to the map in
+            // Actionlog, not a hunt through Company. Covers GHSA-mch3-g6rh-gj22
+            // (User-item PII) and GHSA-m955-p5pg-78mv (tenant-scoped NULL-company
+            // historical rows).
             if ($query->getModel()->getTable() === 'action_logs') {
-                $userClass = User::class;
-
-                return $query->where(function ($q) use ($table, $column, $companyIds, $userClass) {
-                    $q->whereIn($table.$column, $companyIds)
-                        ->orWhere(function ($null) use ($table, $column, $companyIds, $userClass) {
-                            $null->whereNull($table.$column)
-                                ->where(function ($check) use ($companyIds, $userClass) {
-                                    // Non-User item (or null item_type): safe global config, existing behavior.
-                                    $check->where('action_logs.item_type', '!=', $userClass)
-                                        ->orWhereNull('action_logs.item_type')
-                                        // User-item: viewer must share a company with the target user via pivot.
-                                        ->orWhere(function ($userItem) use ($companyIds, $userClass) {
-                                            $userItem->where('action_logs.item_type', $userClass)
-                                                ->whereIn('action_logs.item_id', function ($sub) use ($companyIds) {
-                                                    $sub->select('user_id')->from('company_user')->whereIn('company_id', $companyIds);
-                                                });
-                                        });
-                                });
-                        });
-                });
+                return Actionlog::applyCrossCompanyScope($query, $companyIds);
             }
 
             // Floater: null-company items are visible to users from any company.

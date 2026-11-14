@@ -53,6 +53,13 @@ class Actionlog extends SnipeModel
     protected $with = ['adminuser'];
 
     /**
+     * Process-wide cache for scalarCompanyItemTables().
+     *
+     * @var array<class-string, string>|null
+     */
+    private static ?array $scalarCompanyItemTablesCache = null;
+
+    /**
      * Mask the diff blob on read when it carries license-key values the
      * current user is not permitted to see.
      */
@@ -63,11 +70,23 @@ class Actionlog extends SnipeModel
                 return $value;
             }
 
-            if (! $this->item instanceof License) {
+            // Decide mask status by item_type, not by whether $this->item
+            // resolves to a License instance. CompanyableScope filters a
+            // cross-tenant license to null, which would otherwise bypass
+            // the mask via `null instanceof License === false` and return
+            // the raw product-key diff. Fail-closed. When item_type says
+            // License, apply the mask unless the viewer is explicitly
+            // granted viewKeys on the underlying row.
+            // GHSA-m955-p5pg-78mv.
+            if ($this->item_type !== License::class) {
                 return $value;
             }
 
-            if (Gate::allows('viewKeys', $this->item)) {
+            $license = License::withoutGlobalScopes()
+                ->whereKey($this->item_id)
+                ->first();
+
+            if ($license && Gate::allows('viewKeys', $license)) {
                 return $value;
             }
 
@@ -84,6 +103,121 @@ class Actionlog extends SnipeModel
             }
 
             return json_encode($decoded);
+        });
+    }
+
+    /**
+     * All App\Models classes that use CompanyableTrait AND whose
+     * underlying table has a scalar company_id column, mapped to the
+     * owning table. The authoritative "is this item tenant-scoped via
+     * a scalar column" signal is the trait plus the schema. Hardcoding
+     * the list drifts (a new Companyable model is easy to add without
+     * remembering to update action_logs scoping).
+     *
+     * Users use the trait too but have no company_id column (pivot-
+     * scoped via company_user), so they fall out of this map by the
+     * schema check. They are still tenant-scoped and handled in a
+     * parallel branch of applyCrossCompanyScope.
+     *
+     * Cached process-wide: the set of Companyable models and their
+     * schemas is stable within a request lifecycle.
+     *
+     * @return array<class-string, string>
+     */
+    public static function scalarCompanyItemTables(): array
+    {
+        if (self::$scalarCompanyItemTablesCache !== null) {
+            return self::$scalarCompanyItemTablesCache;
+        }
+
+        $map = [];
+        foreach (glob(app_path('Models/*.php')) ?: [] as $file) {
+            $class = 'App\\Models\\' . basename($file, '.php');
+
+            // Action logs don't log themselves, so self-reference is a
+            // dead branch. Skipping keeps the subquery list tight.
+            if ($class === self::class) {
+                continue;
+            }
+
+            if (!class_exists($class) || !is_subclass_of($class, Model::class)) {
+                continue;
+            }
+
+            if ((new \ReflectionClass($class))->isAbstract()) {
+                continue;
+            }
+
+            if (!in_array(CompanyableTrait::class, class_uses_recursive($class), true)) {
+                continue;
+            }
+
+            /** @var Model $instance */
+            $instance = app($class);
+            $table = $instance->getTable();
+
+            $hasCompanyColumn = static::$companyColumnCache[$table]
+                ??= Schema::hasColumn($table, 'company_id');
+
+            if (!$hasCompanyColumn) {
+                continue;
+            }
+
+            $map[$class] = $table;
+        }
+
+        return self::$scalarCompanyItemTablesCache = $map;
+    }
+
+    /**
+     * Apply tenant scoping to an action_logs query for the given caller
+     * company IDs. Delegated to from Company::scopeCompanyables so every
+     * reader of the action_logs table (API, UI, MCP, importer) flows
+     * through the same rule set.
+     *
+     * Covers GHSA-mch3-g6rh-gj22 (User-item PII) and
+     * GHSA-m955-p5pg-78mv (scalar-column tenant-scoped NULL-company
+     * historical rows).
+     */
+    public static function applyCrossCompanyScope(Builder $query, array $companyIds): Builder
+    {
+        $userClass = User::class;
+        $scalarCompanyItems = self::scalarCompanyItemTables();
+        $allTenantScopedTypes = array_merge(array_keys($scalarCompanyItems), [$userClass]);
+
+        return $query->where(function ($q) use ($companyIds, $allTenantScopedTypes) {
+            $q->whereIn('action_logs.company_id', $companyIds)
+                ->orWhere(function ($null) use ($allTenantScopedTypes) {
+                    $null->whereNull('action_logs.company_id')
+                        ->where(function ($check) use ($allTenantScopedTypes) {
+                            // Tenant-scoped items (User + every scalar-company
+                            // model): row is visible iff the item is visible
+                            // through its OWN scope. Delegating to the model's
+                            // scoped query honors floater, scope_locations_fmcs,
+                            // company_user pivot share, parent-company
+                            // hierarchy, and anything else the item's scope
+                            // adds in future without this helper needing to
+                            // change.
+                            foreach ($allTenantScopedTypes as $itemType) {
+                                /** @var class-string<\Illuminate\Database\Eloquent\Model> $itemType */
+                                $check->orWhere(function ($scoped) use ($itemType) {
+                                    $scoped->where('action_logs.item_type', $itemType)
+                                        ->whereIn(
+                                            'action_logs.item_id',
+                                            $itemType::query()->select((new $itemType)->getKeyName())
+                                        );
+                                });
+                            }
+
+                            // Safe global config: item_types that are not
+                            // tenant-scoped at all (Category / Manufacturer /
+                            // Statuslabel / ... and null item_type).
+                            $check->orWhere(function ($global) use ($allTenantScopedTypes) {
+                                $global->whereNull('action_logs.item_type')
+                                    ->orWhereNotIn('action_logs.item_type', $allTenantScopedTypes);
+                            });
+                        });
+                });
         });
     }
 
