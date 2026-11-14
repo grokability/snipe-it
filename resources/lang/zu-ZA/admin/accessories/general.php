@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Sebenzisa i-EULA eyinhloko yokuzenzakalela esikhundleni.</del> Ayikho i-EULA eyimilayezo eyisisekelo esethiwe. Sicela ungeze eyodwa kuzilungiselelo.',
     'clone' => 'Clone Accessory',
     'delete_disabled' => 'This accessory cannot be deleted yet because some items are still checked out.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

@@ -63,7 +63,9 @@ jobs:
         run: php artisan passport:keys
 
       - name: Directory Permissions
-        run: chmod -R 777 storage bootstrap/cache
+        run: |
+          chmod -R 777 storage bootstrap/cache
+          chmod 600 storage/oauth-private.key storage/oauth-public.key
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit
         env:

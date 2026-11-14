@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'Una asignación que iniciaste ha sido declinada',
     'inventory_report' => 'Reporte de inventario',
     'item' => 'Elemento',
-    'item_checked_reminder' => 'Este es un recordatorio de que actualmente tiene :count elemento(s) asignado(s) que no ha aceptado o rechazado. Haga clic en el siguiente enlace para confirmar su decisión.',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => 'Hay :count licencia que expira o termina en los siguientes :threshold días.|Hay :count licencias que expiran o terminan en los siguientes :treshold días.',
     'link_to_update_password' => 'Por favor, haga clic en el siguiente enlace para actualizar su contraseña de :web :',
     'login' => 'Iniciar sesión',

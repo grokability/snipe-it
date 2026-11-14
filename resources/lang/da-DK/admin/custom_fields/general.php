@@ -5,7 +5,7 @@ return [
     'manage' => 'Administrer',
     'field' => 'Felt',
     'about_fieldsets_title' => 'Om Feltsæt',
-    'about_fieldsets_text' => 'Feltsæt muliggør at oprette grupper af tilpassede og ofte genbrugte felter til bestemte aktivmodeltyper.',
+    'about_fieldsets_text' => 'Fieldsets giver dig mulighed for at oprette grupper af brugerdefinerede felter, der ofte bruges igen til specifikke aktivmodeltyper.',
     'custom_format' => 'Tilpasset Regex format...',
     'encrypt_field' => 'Kryptere værdien af dette felt i databasen',
     'encrypt_field_help' => 'Advarsel: Kryptere et felt gør det uransagelige.',

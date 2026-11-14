@@ -70,6 +70,7 @@ return [
     ],
 
     'select_country' => 'Pasirinkite šalį',
+    'select_currency' => 'Select a currency',
 
     'countries' => [
         'AC' => 'Dangun Žengimo sala',

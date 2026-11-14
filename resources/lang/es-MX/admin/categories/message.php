@@ -21,15 +21,15 @@ return [
         'confirm' => '¿Está seguro de que desea eliminar esta categoría?',
         'error' => 'Hubo un problema eliminando la categoría. Inténtelo de nuevo.',
         'success' => 'La categoría fue eliminada exitosamente.',
-        'bulk_success' => 'Category deleted successfully.|:count categories were deleted successfully.',
+        'bulk_success' => 'Categoría eliminada correctamente.|:count categorías eliminadas correctamente.',
         'partial_success' => 'La categoría fue eliminada exitosamente. Ve abajo para más información. | :count categorías fueron eliminadas exitosamente. Ve abajo para más información.',
     ],
 
     'bulkedit' => [
         'warn' => 'You are about to edit the properties of the following category:|You are about to edit the properties of the following :count categories:',
-        'no_selection' => 'You must select at least one category to edit.',
+        'no_selection' => 'Debe seleccionar al menos una categoría para editar.',
         'no_changes' => 'Ningún cambio fue cambiado, así que nada se actualizó.',
-        'success' => 'Category successfully updated.|:count categories successfully updated.',
+        'success' => 'Categoría actualizada correctamente.|:count categorías actualizadas correctamente.',
     ],
 
 ];

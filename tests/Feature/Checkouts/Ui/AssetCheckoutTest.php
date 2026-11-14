@@ -2,11 +2,13 @@
 
 namespace Tests\Feature\Checkouts\Ui;
 
+use App\Events\CheckoutableCheckedIn;
 use App\Events\CheckoutableCheckedOut;
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
 use App\Models\Company;
+use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\Location;
 use App\Models\Statuslabel;
@@ -682,5 +684,138 @@ class AssetCheckoutTest extends TestCase
 
         $this->assertNull($asset->fresh()->assigned_to);
         Event::assertNotDispatched(CheckoutableCheckedOut::class);
+    }
+
+    // GHSA-9wq4-gp32-rcgj: AssetCheckoutController::store looped the attached
+    // license seats and wrote $seat->assigned_to without any of the guards
+    // the license checkout surfaces already enforce (occupied-seat reject,
+    // unreassignable_seat reject, license->reassignable reject, no
+    // CheckoutableCheckedIn event for displaced holders). The asset
+    // checkout path now mirrors those guards and the audit-trail event.
+
+    public function test_asset_checkout_rejects_when_attached_seat_is_unreassignable(): void
+    {
+        $previousHolder = User::factory()->create();
+        $license = License::factory()->create(['seats' => 1, 'reassignable' => true]);
+        $seat = $license->licenseseats()->first();
+        $asset = Asset::factory()->create();
+        $seat->asset_id = $asset->id;
+        $seat->assigned_to = $previousHolder->id;
+        $seat->unreassignable_seat = true;
+        $seat->save();
+
+        $newHolder = User::factory()->create();
+
+        $this->actingAs(User::factory()->checkoutAssets()->create())
+            ->post(route('hardware.checkout.store', $asset), [
+                'checkout_to_type' => 'user',
+                'assigned_user' => $newHolder->id,
+            ])
+            ->assertSessionHas('error');
+
+        $this->assertSame($previousHolder->id, (int) $seat->fresh()->assigned_to);
+        $this->assertNull($asset->fresh()->assigned_to);
+    }
+
+    public function test_asset_checkout_rejects_when_license_is_not_reassignable_and_seat_is_occupied(): void
+    {
+        $previousHolder = User::factory()->create();
+        $license = License::factory()->create(['seats' => 1, 'reassignable' => false]);
+        $seat = $license->licenseseats()->first();
+        $asset = Asset::factory()->create();
+        $seat->asset_id = $asset->id;
+        $seat->assigned_to = $previousHolder->id;
+        $seat->save();
+
+        $newHolder = User::factory()->create();
+
+        $this->actingAs(User::factory()->checkoutAssets()->create())
+            ->post(route('hardware.checkout.store', $asset), [
+                'checkout_to_type' => 'user',
+                'assigned_user' => $newHolder->id,
+            ])
+            ->assertSessionHas('error');
+
+        $this->assertSame($previousHolder->id, (int) $seat->fresh()->assigned_to);
+        $this->assertNull($asset->fresh()->assigned_to);
+    }
+
+    public function test_asset_checkout_fires_checkin_event_for_displaced_seat_holder(): void
+    {
+        Event::fake([CheckoutableCheckedIn::class, CheckoutableCheckedOut::class]);
+
+        $previousHolder = User::factory()->create();
+        $license = License::factory()->create(['seats' => 1, 'reassignable' => true]);
+        $seat = $license->licenseseats()->first();
+        $asset = Asset::factory()->create();
+        $seat->asset_id = $asset->id;
+        $seat->assigned_to = $previousHolder->id;
+        $seat->save();
+
+        $newHolder = User::factory()->create();
+
+        $this->actingAs(User::factory()->checkoutAssets()->create())
+            ->post(route('hardware.checkout.store', $asset), [
+                'checkout_to_type' => 'user',
+                'assigned_user' => $newHolder->id,
+            ]);
+
+        // Seat moves to the new holder, previous holder gets a checkin event.
+        $this->assertSame($newHolder->id, (int) $seat->fresh()->assigned_to);
+        Event::assertDispatched(CheckoutableCheckedIn::class, function (CheckoutableCheckedIn $event) use ($seat, $previousHolder) {
+            return $event->checkoutable->is($seat) && $event->checkedOutTo->is($previousHolder);
+        });
+    }
+
+    public function test_asset_checkout_deletes_pending_acceptances_of_displaced_seat_holder(): void
+    {
+        $previousHolder = User::factory()->create();
+        $license = License::factory()->create(['seats' => 1, 'reassignable' => true]);
+        $seat = $license->licenseseats()->first();
+        $asset = Asset::factory()->create();
+        $seat->asset_id = $asset->id;
+        $seat->assigned_to = $previousHolder->id;
+        $seat->save();
+
+        $pendingAcceptance = new CheckoutAcceptance;
+        $pendingAcceptance->checkoutable_type = LicenseSeat::class;
+        $pendingAcceptance->checkoutable_id = $seat->id;
+        $pendingAcceptance->assigned_to_id = $previousHolder->id;
+        $pendingAcceptance->save();
+
+        $newHolder = User::factory()->create();
+
+        $this->actingAs(User::factory()->checkoutAssets()->create())
+            ->post(route('hardware.checkout.store', $asset), [
+                'checkout_to_type' => 'user',
+                'assigned_user' => $newHolder->id,
+            ]);
+
+        $this->assertNull(
+            CheckoutAcceptance::find($pendingAcceptance->id),
+            'Displaced seat holder\'s pending acceptance must be cleared so the audit trail does not carry a stale acceptance for a seat they no longer hold.',
+        );
+    }
+
+    public function test_asset_checkout_does_not_fire_checkin_event_when_seat_was_already_assigned_to_same_user(): void
+    {
+        Event::fake([CheckoutableCheckedIn::class, CheckoutableCheckedOut::class]);
+
+        $target = User::factory()->create();
+        $license = License::factory()->create(['seats' => 1, 'reassignable' => true]);
+        $seat = $license->licenseseats()->first();
+        $asset = Asset::factory()->create();
+        $seat->asset_id = $asset->id;
+        $seat->assigned_to = $target->id;
+        $seat->save();
+
+        $this->actingAs(User::factory()->checkoutAssets()->create())
+            ->post(route('hardware.checkout.store', $asset), [
+                'checkout_to_type' => 'user',
+                'assigned_user' => $target->id,
+            ]);
+
+        $this->assertSame($target->id, (int) $seat->fresh()->assigned_to);
+        Event::assertNotDispatched(CheckoutableCheckedIn::class);
     }
 }

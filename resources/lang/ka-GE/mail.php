@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'A checkout you initiated was declined',
     'inventory_report' => 'ინვენტარის ანგარიში',
     'item' => 'ნივთი',
-    'item_checked_reminder' => 'შეგახსენებთ, რომ თქვენზე გაცემულია :count ერთეული, რომლის მიღება ან უარყოფაც ჯერ არ დაგიდასტურებიათ. გთხოვთ, დაადასტურეთ თქვენი გადაწყვეტილება ქვემოთ მოცემული ბმულით.',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => 'There is :count license expiring or terminating in the next :threshold days.|There are :count licenses expiring or terminating in the next :threshold days.',
     'link_to_update_password' => 'დააჭირეთ შემდეგ ბმულს თქვენი :web პაროლის გასანახლებლად:',
     'login' => 'შესვლა',

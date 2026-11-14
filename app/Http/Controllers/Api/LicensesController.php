@@ -359,7 +359,12 @@ class LicensesController extends Controller
 
             // GHSA-r25g-f428-466r: reject occupied seats on explicit-id
             // checkout by default.
-            if ($licenseSeat->assigned_to !== null || $licenseSeat->asset_id !== null) {
+            //
+            // GHSA-73jx-c32h-c3w9: resolve + validate the replacement
+            // target BEFORE doing anything destructive to the current
+            // holder.
+            $needsReassignment = $licenseSeat->assigned_to !== null || $licenseSeat->asset_id !== null;
+            if ($needsReassignment) {
                 if (! ($validated['reassign'] ?? false)) {
                     $errorResponse = response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/licenses/message.checkout.unavailable')));
 
@@ -371,9 +376,38 @@ class LicensesController extends Controller
 
                     return;
                 }
+            }
 
-                // Fire CheckoutableCheckedIn for the
-                // current holder and delete their pending acceptance
+            if ($validated['target_type'] === 'user') {
+                $target = User::withoutGlobalScopes()->whereNull('deleted_at')->find($validated['assigned_to'] ?? null);
+                if (!$target) {
+                    $errorResponse = response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/licenses/message.user_does_not_exist')));
+
+                    return;
+                }
+
+                if (Company::isFullMultipleCompanySupportEnabled() && !$target->companies()->where('companies.id', $license->company_id)->exists()) {
+                    $errorResponse = response()->json(Helper::formatStandardApiResponse('error', null, trans('general.error_user_company')));
+
+                    return;
+                }
+            } else {
+                $target = Asset::withoutGlobalScopes()->whereNull('deleted_at')->find($validated['asset_id'] ?? null);
+                if (!$target) {
+                    $errorResponse = response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/licenses/message.asset_does_not_exist')));
+
+                    return;
+                }
+
+                if (Company::isFullMultipleCompanySupportEnabled() && $license->company_id && $license->company_id !== $target->company_id) {
+                    $errorResponse = response()->json(Helper::formatStandardApiResponse('error', null, trans('general.error_user_company')));
+
+                    return;
+                }
+            }
+
+            // All validation passed. Safe to mutate.
+            if ($needsReassignment) {
                 $displaced = $licenseSeat->assigned_to
                     ? User::withoutGlobalScopes()->find($licenseSeat->assigned_to)
                     : ($licenseSeat->asset_id ? Asset::withoutGlobalScopes()->find($licenseSeat->asset_id) : null);
@@ -397,35 +431,9 @@ class LicensesController extends Controller
             }
 
             if ($validated['target_type'] === 'user') {
-                $target = User::withoutGlobalScopes()->whereNull('deleted_at')->find($validated['assigned_to'] ?? null);
-                if (! $target) {
-                    $errorResponse = response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/licenses/message.user_does_not_exist')));
-
-                    return;
-                }
-
-                if (Company::isFullMultipleCompanySupportEnabled() && ! $target->companies()->where('companies.id', $license->company_id)->exists()) {
-                    $errorResponse = response()->json(Helper::formatStandardApiResponse('error', null, trans('general.error_user_company')));
-
-                    return;
-                }
-
                 $licenseSeat->assigned_to = $target->id;
                 $licenseSeat->asset_id = null;
             } else {
-                $target = Asset::withoutGlobalScopes()->whereNull('deleted_at')->find($validated['asset_id'] ?? null);
-                if (! $target) {
-                    $errorResponse = response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/licenses/message.asset_does_not_exist')));
-
-                    return;
-                }
-
-                if (Company::isFullMultipleCompanySupportEnabled() && $license->company_id && $license->company_id !== $target->company_id) {
-                    $errorResponse = response()->json(Helper::formatStandardApiResponse('error', null, trans('general.error_user_company')));
-
-                    return;
-                }
-
                 $licenseSeat->asset_id = $target->id;
                 $licenseSeat->assigned_to = null;
 

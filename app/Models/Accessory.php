@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Watson\Validating\ValidatingTrait;
@@ -257,7 +258,7 @@ class Accessory extends SnipeModel implements Importable
             // `qty - checkouts_count`, so the filter compares against
             // that same expression.
             $checkoutCountSub = \App\Models\AccessoryCheckout::query()
-                ->whereColumn('accessory_checkouts.accessory_id', 'accessories.id')
+                ->whereColumn('accessories_checkout.accessory_id', 'accessories.id')
                 ->selectRaw('COUNT(*)');
 
             $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
@@ -326,7 +327,7 @@ class Accessory extends SnipeModel implements Importable
             // the `remaining` filter uses, compared against directly
             // rather than through the qty - count arithmetic.
             $checkoutCountSub = \App\Models\AccessoryCheckout::query()
-                ->whereColumn('accessory_checkouts.accessory_id', 'accessories.id')
+                ->whereColumn('accessories_checkout.accessory_id', 'accessories.id')
                 ->selectRaw('COUNT(*)');
 
             $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
@@ -511,7 +512,8 @@ class Accessory extends SnipeModel implements Importable
 
     public function isDeletable()
     {
-        return $this->checkouts_count === 0;
+        return Gate::allows('delete', $this)
+            && (($this->checkouts_count ?? $this->checkouts()->count()) === 0);
     }
 
     /**

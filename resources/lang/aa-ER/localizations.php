@@ -70,6 +70,7 @@ return [
     ],
 
     'select_country' => 'crwdns12748:0crwdne12748:0',
+    'select_currency' => 'crwdns17725:0crwdne17725:0',
 
     'countries' => [
         'AC' => 'crwdns10674:0crwdne10674:0',

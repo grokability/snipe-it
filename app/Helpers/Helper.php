@@ -711,15 +711,18 @@ class Helper
      */
     public static function statusTypeList(?string $scope = null)
     {
+        // Build the list from the StatusLabelType enum so this and the
+        // enum stay in sync. Order mirrors the historical UI ordering
+        // rather than enum declaration order.
         $types = [
-            'deployable' => trans('admin/hardware/general.deployable'),
-            'pending' => trans('admin/hardware/general.pending'),
-            'undeployable' => trans('admin/hardware/general.undeployable'),
-            'archived' => trans('admin/hardware/general.archived'),
+            \App\Enums\StatusLabelType::Deployable->value => \App\Enums\StatusLabelType::Deployable->label(),
+            \App\Enums\StatusLabelType::Pending->value => \App\Enums\StatusLabelType::Pending->label(),
+            \App\Enums\StatusLabelType::Undeployable->value => \App\Enums\StatusLabelType::Undeployable->label(),
+            \App\Enums\StatusLabelType::Archived->value => \App\Enums\StatusLabelType::Archived->label(),
         ];
-        
+
         if ($scope === 'non_deployable') {
-            unset($types['deployable']);
+            unset($types[\App\Enums\StatusLabelType::Deployable->value]);
         }
 
         return ['' => trans('admin/hardware/form.select_statustype')] + $types;

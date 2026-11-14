@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'A checkout you initiated was declined',
     'inventory_report' => 'Laporan Inventori',
     'item' => 'Item',
-    'item_checked_reminder' => 'Ini adalah pengingat bahwa Anda saat ini memiliki :count item yang dipinjamkan kepada Anda yang belum Anda terima atau tolak. Silakan klik tautan di bawah untuk mengonfirmasi keputusan Anda.',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => 'There is :count license expiring or terminating in the next :threshold days.|There are :count licenses expiring or terminating in the next :threshold days.',
     'link_to_update_password' => 'Silahkan klik pada link berikut untuk mengupdate: password web anda:',
     'login' => 'Masuk',

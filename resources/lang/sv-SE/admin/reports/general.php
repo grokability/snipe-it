@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'Skicka påminnelse',
     'cannot_send_reminder' => 'Användaren har raderats eller saknar e-postadress och kan därför inte ta emot påminnelser',
     'reminder_sent' => 'Påminnelse har skickats',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'Begäran om godkännande borttagen',
     'acceptance_request' => 'Begäran om godkännande',
     'custom_export' => [

@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Foloseste EULA general implicita.</del> EULA implicita nu a fost gasita. A se crea una in Setari.',
     'clone' => 'Clonează accesoriul',
     'delete_disabled' => 'Acest accesoriu nu poate fi șters încă pentru că unele elemente sunt încă verificate.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

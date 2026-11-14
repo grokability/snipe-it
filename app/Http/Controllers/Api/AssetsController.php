@@ -1367,8 +1367,9 @@ class AssetsController extends Controller
         } elseif (request('checkout_to_type') == 'asset') {
             // Resolve unscoped target first so FMCS mismatch can be handled explicitly.
             $target = Asset::withoutGlobalScopes()->where('id', '!=', $asset_id)->find(request('assigned_asset'));
-            // Override with the asset's location_id if it has one
-            $asset->location_id = (($target) && (isset($target->location_id))) ? $target->location_id : '';
+            // Prefer the target's current location, fall back to its RTD (home) location
+            // when the target has no current location. Matches AssetCheckoutService::checkout.
+            $asset->location_id = $target ? ($target->location_id ?: $target->rtd_location_id) : '';
             $error_payload['target_id'] = $request->input('assigned_asset');
             $error_payload['target_type'] = 'asset';
         } elseif (request('checkout_to_type') == 'user') {
@@ -2035,12 +2036,35 @@ class AssetsController extends Controller
                 'requests'
             );
 
+        // GHSA-799x-8mjm-g656: Restrict fields on requestable searches
         if ($request->filled('search')) {
-            $assets->TextSearch($request->input('search'));
+            $search = $request->input('search');
+            $assets->where(function ($q) use ($search, $all_custom_fields) {
+                $q->where('assets.name', 'LIKE', '%'.$search.'%')
+                    ->orWhere('assets.asset_tag', 'LIKE', '%'.$search.'%')
+                    ->orWhere('assets.serial', 'LIKE', '%'.$search.'%')
+                    ->orWhereHas('model', function ($mq) use ($search) {
+                        $mq->where('models.name', 'LIKE', '%'.$search.'%')
+                            ->orWhere('models.model_number', 'LIKE', '%'.$search.'%');
+                    });
+
+                // Custom fields: only those flagged for the requestable list
+                // AND not encrypted (encrypted values aren't searchable in
+                // the first place, matching Searchable::searchCustomFields).
+                foreach ($all_custom_fields as $field) {
+                    if ($field->show_in_requestable_list == '1' && $field->field_encrypted == '0' && $field->db_column) {
+                        $q->orWhere('assets.'.$field->db_column_name(), 'LIKE', '%'.$search.'%');
+                    }
+                }
+            });
         }
 
-        // Search custom fields by column name
+        // Exact-match custom-field filters: same gate as search above.
+        // Hidden or encrypted fields are not queryable from this endpoint.
         foreach ($all_custom_fields as $field) {
+            if ($field->show_in_requestable_list != '1' || $field->field_encrypted != '0') {
+                continue;
+            }
             if ($request->filled($field->db_column_name())) {
                 $assets->where($field->db_column_name(), '=', $request->input($field->db_column_name()));
             }

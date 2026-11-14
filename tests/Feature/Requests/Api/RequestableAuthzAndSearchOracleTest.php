@@ -3,10 +3,14 @@
 namespace Tests\Feature\Requests\Api;
 
 use App\Models\Accessory;
+use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Component;
 use App\Models\Consumable;
+use App\Models\CustomField;
+use App\Models\CustomFieldset;
 use App\Models\License;
+use App\Models\Statuslabel;
 use App\Models\User;
 use Tests\TestCase;
 
@@ -221,5 +225,137 @@ class RequestableAuthzAndSearchOracleTest extends TestCase
             ->assertOk()
             ->json();
         $this->assertGreaterThan(0, $byName['total']);
+    }
+
+    // GHSA-799x-8mjm-g656: the Asset requestable endpoint was the one
+    // sibling that missed the TextSearch-scoping fix from commit 9328fe7b8
+    // and continued to search notes, order_number, purchase_cost, and every
+    // unencrypted custom-field column (including show_in_requestable_list=0
+    // fields) through Asset::$searchableAttributes + searchCustomFields.
+    // Total count served as a boolean oracle for substring guessing.
+
+    public function test_assets_requestable_search_cannot_oracle_notes(): void
+    {
+        $this->seedRequestableAsset(['notes' => self::NOTES_SENTINEL]);
+        $caller = User::factory()->viewRequestableAssets()->create();
+
+        $bySentinelSubstring = $this->actingAsForApi($caller)
+            ->getJson(route('api.assets.requestable', ['search' => 'REORDER-FROM-ACME']))
+            ->assertOk()
+            ->json();
+        $this->assertSame(0, $bySentinelSubstring['total']);
+
+        $byName = $this->actingAsForApi($caller)
+            ->getJson(route('api.assets.requestable', ['search' => 'Oracle-Target']))
+            ->assertOk()
+            ->json();
+        $this->assertGreaterThan(0, $byName['total']);
+    }
+
+    public function test_assets_requestable_search_cannot_oracle_order_number(): void
+    {
+        $this->seedRequestableAsset(['order_number' => 'PO-SECRET-7731']);
+        $caller = User::factory()->viewRequestableAssets()->create();
+
+        $this->assertSame(0, $this->actingAsForApi($caller)
+            ->getJson(route('api.assets.requestable', ['search' => 'PO-SECRET-7731']))
+            ->assertOk()
+            ->json('total'));
+    }
+
+    public function test_assets_requestable_search_cannot_oracle_purchase_cost(): void
+    {
+        $this->seedRequestableAsset(['purchase_cost' => 4242.42]);
+        $caller = User::factory()->viewRequestableAssets()->create();
+
+        $this->assertSame(0, $this->actingAsForApi($caller)
+            ->getJson(route('api.assets.requestable', ['search' => '4242.42']))
+            ->assertOk()
+            ->json('total'));
+    }
+
+    public function test_assets_requestable_search_cannot_oracle_hidden_custom_field(): void
+    {
+        $field = CustomField::factory()->create([
+            'name' => 'Hidden Serial Prefix',
+            'show_in_requestable_list' => '0',
+            'field_encrypted' => 0,
+        ]);
+        $fieldset = CustomFieldset::factory()->create(['name' => 'Oracle Fieldset']);
+        $fieldset->fields()->attach($field, ['order' => 1, 'required' => false]);
+
+        $asset = $this->seedRequestableAsset([], $fieldset);
+        $asset->{$field->db_column_name()} = 'CF-SECRET-CODE-9F3A1';
+        $asset->save();
+
+        $caller = User::factory()->viewRequestableAssets()->create();
+
+        $bySubstring = $this->actingAsForApi($caller)
+            ->getJson(route('api.assets.requestable', ['search' => 'SECRET-CODE-9F3A']))
+            ->assertOk()
+            ->json('total');
+        $this->assertSame(0, $bySubstring);
+
+        // Exact-match filter on the hidden field's db column must also be
+        // ignored (the oracle also worked through per-field query params).
+        $byExactMatch = $this->actingAsForApi($caller)
+            ->getJson(route('api.assets.requestable', [
+                $field->db_column_name() => 'CF-SECRET-CODE-9F3A1',
+            ]))
+            ->assertOk()
+            ->json('total');
+        $this->assertGreaterThan(
+            0,
+            $byExactMatch,
+            'Exact-match filter on a show_in_requestable_list=0 field must be ignored (query runs unfiltered), not act as an oracle.'
+        );
+    }
+
+    public function test_assets_requestable_exact_match_on_visible_custom_field_still_works(): void
+    {
+        $field = CustomField::factory()->create([
+            'name' => 'Visible SKU',
+            'show_in_requestable_list' => '1',
+            'field_encrypted' => 0,
+        ]);
+        $fieldset = CustomFieldset::factory()->create(['name' => 'Visible Fieldset']);
+        $fieldset->fields()->attach($field, ['order' => 1, 'required' => false]);
+
+        $asset = $this->seedRequestableAsset([], $fieldset);
+        $asset->{$field->db_column_name()} = 'VISIBLE-SKU-ABC';
+        $asset->save();
+
+        $caller = User::factory()->viewRequestableAssets()->create();
+
+        $hit = $this->actingAsForApi($caller)
+            ->getJson(route('api.assets.requestable', [
+                $field->db_column_name() => 'VISIBLE-SKU-ABC',
+            ]))
+            ->assertOk()
+            ->json('total');
+        $this->assertGreaterThan(0, $hit);
+
+        $miss = $this->actingAsForApi($caller)
+            ->getJson(route('api.assets.requestable', [
+                $field->db_column_name() => 'WRONG-VALUE',
+            ]))
+            ->assertOk()
+            ->json('total');
+        $this->assertSame(0, $miss);
+    }
+
+    private function seedRequestableAsset(array $overrides = [], ?CustomFieldset $fieldset = null): Asset
+    {
+        $status = Statuslabel::where('name', 'Ready to Deploy')->first()
+            ?? Statuslabel::factory()->rtd()->create(['name' => 'Ready to Deploy']);
+
+        $modelAttrs = $fieldset ? ['fieldset_id' => $fieldset->id] : [];
+
+        return Asset::factory()->create(array_merge([
+            'name' => 'Oracle-Target',
+            'requestable' => 1,
+            'status_id' => $status->id,
+            'model_id' => \App\Models\AssetModel::factory()->create($modelAttrs)->id,
+        ], $overrides));
     }
 }

@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Utilisez la license par défaut à la place.</del> Aucune licence d\'utilisation par défaut trouvée. Ajoutez-en une dans la section "Préférences".',
     'clone' => 'Dupliquer l\'accessoire',
     'delete_disabled' => 'Cet accessoire ne peut pas encore être supprimé car certaines pièces sont encore attribuées.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

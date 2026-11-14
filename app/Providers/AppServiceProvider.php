@@ -14,13 +14,7 @@ use App\Models\Maintenance;
 use App\Models\Setting;
 use App\Models\SnipeSCIMConfig;
 use App\Models\User;
-use App\Observers\AccessoryObserver;
-use App\Observers\AssetModelObserver;
 use App\Observers\AssetObserver;
-use App\Observers\ComponentObserver;
-use App\Observers\ConsumableObserver;
-use App\Observers\LicenseObserver;
-use App\Observers\LocationObserver;
 use App\Observers\MaintenanceObserver;
 use App\Observers\SettingObserver;
 use App\Observers\UserObserver;
@@ -34,6 +28,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Passport;
 use Rollbar\Laravel\RollbarServiceProvider;
 
 /**
@@ -68,6 +63,12 @@ class AppServiceProvider extends ServiceProvider
             $url->forceScheme('https');
         }
 
+        Passport::enablePasswordGrant();
+
+        Passport::authorizationView(function ($parameters) {
+            return view('mcp.authorize', $parameters);
+        });
+
         if (! config('app.allow_insecure_hosts')) {  // unless you set APP_ALLOW_INSECURE_HOSTS, you should PROHIBIT forging domain parts of URL via Host: headers
             $url_parts = parse_url(config('app.url'));
             if ($url_parts && array_key_exists('scheme', $url_parts) && array_key_exists('host', $url_parts)) { // check for the *required* parts of a bare-minimum URL
@@ -83,16 +84,10 @@ class AppServiceProvider extends ServiceProvider
         View::composer('partials.impersonation-banner', ImpersonationBannerComposer::class);
 
         Schema::defaultStringLength(191);
-        Accessory::observe(AccessoryObserver::class);
+
         Asset::observe(AssetObserver::class);
-        AssetModel::observe(AssetModelObserver::class);
-        Component::observe(ComponentObserver::class);
-        Consumable::observe(ConsumableObserver::class);
-        License::observe(LicenseObserver::class);
-        Location::observe(LocationObserver::class);
         Maintenance::observe(MaintenanceObserver::class);
         Setting::observe(SettingObserver::class);
-        User::observe(UserObserver::class);
 
         // Defense against sync-adapter base URLs pointing at the vendor's
         // web console instead of their API. A wrong URL commonly returns

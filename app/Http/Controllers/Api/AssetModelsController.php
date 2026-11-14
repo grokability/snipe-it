@@ -341,7 +341,7 @@ class AssetModelsController extends Controller
                 return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.not_deleted', ['item_type' => trans('general.asset_model')])), 200);
             }
 
-            // The `restore` action_log entry is written by AssetModelObserver::restoring
+            // The `restore` action_log entry is written by Loggable during restore
             if ($assetmodel->restore()) {
                 return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/models/message.restore.success')), 200);
             }

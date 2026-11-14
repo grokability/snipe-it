@@ -41,7 +41,7 @@ return [
 
     'assetsview' => [
         'name' => 'Переглянути активи',
-        'note' => 'Note that users with this permission will also be able to see (not modify or delete) files uploaded to the asset model as well. This is to make it easier to share common documents like user manuals across assets without having to upload them to every asset, and to avoid having to grant the user permission to modify asset files. Users with this permission will also be able to view edit and checkin history.',
+        'note' => 'Зауважте, що користувачі з цим дозволом також зможуть переглядати (але не змінювати й не видаляти) файли, завантажені для моделі активу. Це спрощує спільне використання загальних документів, як-от посібники користувача, для різних активів без необхідності завантажувати їх для кожного активу окремо та надавати користувачеві дозвіл на змінення файлів активів. Користувачі з цим дозволом також зможуть переглядати історію редагування та повернення активів.',
     ],
 
     'assetscreate' => [
@@ -72,8 +72,8 @@ return [
     ],
 
     'assetsviewrequestable' => [
-        'name' => 'View Requestable Items',
-        'note' => 'Allows the user to view items that are marked as requestable.',
+        'name' => 'Переглянути доступні для запиту активи',
+        'note' => 'Дозволяє користувачеві переглядати активи, позначені як доступні для запиту.',
     ],
 
     'assetsviewencrypted-custom-fields' => [
@@ -108,47 +108,47 @@ return [
     ],
     'accessoriesfiles' => [
         'name' => 'Керування файлами аксесуарів',
-        'note' => 'Allows the user to upload, download, and delete files associated with accessories. (This only makes sense with view privileges or higher.)',
+        'note' => 'Дозволяє користувачеві завантажувати, викачувати та видаляти файли, пов’язані з аксесуарами. (Цей дозвіл має сенс лише за наявності прав на перегляд або вищих прав.)',
     ],
 
     'assetsfiles' => [
-        'name' => 'Manage Asset Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with assets. (This only makes sense with view privileges or higher.)',
+        'name' => 'Керувати файлами активів',
+        'note' => 'Дозволяє користувачеві завантажувати, викачувати та видаляти файли, пов’язані з активами. (Цей дозвіл має сенс лише за наявності прав на перегляд або вищих прав.)',
     ],
 
     'usersfiles' => [
-        'name' => 'Manage User Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with users. (This only makes sense with view privileges or higher.)',
+        'name' => 'Керувати файлами користувачів',
+        'note' => 'Дозволяє користувачеві завантажувати, викачувати та видаляти файли, пов’язані з користувачами. (Цей дозвіл має сенс лише за наявності прав на перегляд або вищих прав.)',
     ],
 
     'modelsfiles' => [
-        'name' => 'Manage Model Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with asset models on both the model view and the asset view screens. (This only makes sense with view privileges or higher.)',
+        'name' => 'Керувати файлами моделей',
+        'note' => 'Дозволяє користувачеві завантажувати, викачувати та видаляти файли, пов’язані з моделями активів, як на сторінці перегляду моделі, так і на сторінці перегляду активу. (Цей дозвіл має сенс лише за наявності прав на перегляд або вищих прав.)',
     ],
 
     'departmentsfiles' => [
-        'name' => 'Manage Department Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with departments. (This only makes sense with view privileges or higher.)',
+        'name' => 'Керувати файлами відділів',
+        'note' => 'Дозволяє користувачеві завантажувати, викачувати та видаляти файли, пов’язані з відділами. (Цей дозвіл має сенс лише за наявності прав на перегляд або вищих прав.)',
     ],
 
     'suppliersfiles' => [
-        'name' => 'Manage Supplier Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with suppliers. (This only makes sense with view privileges or higher.)',
+        'name' => 'Керувати файлами постачальників',
+        'note' => 'Дозволяє користувачеві завантажувати, викачувати та видаляти файли, пов’язані з постачальниками. (Цей дозвіл має сенс лише за наявності прав на перегляд або вищих прав.)',
     ],
 
     'locationsfiles' => [
-        'name' => 'Manage Location Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with locations.(This only makes sense with view privileges or higher.)',
+        'name' => 'Керувати файлами розташувань',
+        'note' => 'Дозволяє користувачеві завантажувати, викачувати та видаляти файли, пов’язані з розташуваннями.(Цей дозвіл має сенс лише за наявності прав на перегляд або вищих прав.)',
     ],
 
     'companiesfiles' => [
-        'name' => 'Manage Company Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with companies. (This only makes sense with view privileges or higher.)',
+        'name' => 'Керувати файлами компанії',
+        'note' => 'Дозволяє користувачеві завантажувати, викачувати та видаляти файли, пов’язані з постачальниками. (Цей дозвіл має сенс лише за наявності прав на перегляд або вищих прав.)',
     ],
 
     'consumablesfiles' => [
         'name' => 'Керування файлами витратних матеріалів',
-        'note' => 'Allows the user to upload, download, and delete files associated with consumables. (This only makes sense with view privileges or higher.)',
+        'note' => 'Дозволяє користувачеві завантажувати, викачувати та видаляти файли, пов’язані з витратними матеріалами. (Цей дозвіл має сенс лише за наявності прав на перегляд або вищих прав.)',
     ],
 
     'consumables' => [
@@ -256,7 +256,7 @@ return [
     ],
     'usersview' => [
         'name' => 'Переглянути користувачів',
-        'note' => 'Note that users with this permission will also be able to see (not modify or delete) files uploaded to the user as well. Users with this permission will also be able to view edit and checkin history.',
+        'note' => 'Зауважте, що користувачі з цим дозволом також зможуть переглядати (але не змінювати й не видаляти) файли, завантажені для користувача. Користувачі з цим дозволом також зможуть переглядати історію редагування та повернення активів.',
     ],
     'userscreate' => [
         'name' => 'Створення нових користувачів',

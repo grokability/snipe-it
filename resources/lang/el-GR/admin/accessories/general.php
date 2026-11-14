@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Χρησιμοποιήστε την κύρια προεπιλεγμένη EULA instead.</del> καμία κύρια προεπιλεγμένη άδεια χρήσης τελικού χρήστη δεν έχει οριστεί. Παρακαλείσθε να προσθέσετε μία στις ρυθμίσεις.',
     'clone' => 'Κλώνος Αξεσουάρ',
     'delete_disabled' => 'Αυτό το εξάρτημα δεν μπορεί να διαγραφεί ακόμα, επειδή κάποια στοιχεία εξακολουθούν να εκκρεμούν.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

@@ -70,6 +70,7 @@ return [
     ],
 
     'select_country' => 'Pilih Negara',
+    'select_currency' => 'Select a currency',
 
     'countries' => [
         'AC' => 'Pulau Ascension',

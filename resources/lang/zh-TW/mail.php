@@ -77,7 +77,7 @@ return [
     'initiated_declined' => '您發起的借出已被拒絕',
     'inventory_report' => '庫存報告',
     'item' => '項目',
-    'item_checked_reminder' => '提醒您，目前有 :count 個項目借出給您但尚未接受或拒絕。請點擊下方連結確認您的決定。',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => '在未來 :threshold 天內，有 :count 個授權即將到期或終止。|在未來 :threshold 天內，有 :count 個授權即將到期或終止。',
     'link_to_update_password' => '請點擊以下鏈結以更新 :web 的密碼：',
     'login' => '登入',

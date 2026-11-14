@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'Une demande d\'emprunt que vous avez initiée a été refusée',
     'inventory_report' => 'Rapport d\'inventaire',
     'item' => 'Item',
-    'item_checked_reminder' => 'Ceci est un rappel que vous avez actuellement :count articles que vous n\'avez pas acceptés ou refusés. Veuillez cliquer sur le lien ci-dessous pour confirmer votre décision.',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => 'Il y a :count licence expirant dans les prochains :threshold jours.|Il y a :count licences expirant dans les prochains :threshold jours.',
     'link_to_update_password' => 'Veuillez cliquer sur le lien suivant pour confirmer votre :web account:',
     'login' => 'Connexion',

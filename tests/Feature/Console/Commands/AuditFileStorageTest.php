@@ -38,9 +38,23 @@ class AuditFileStorageTest extends TestCase
         // storage/framework/testing/disks/ until something cleans them
         // up. Explicitly flush both fake disks here so the test suite
         // leaves nothing behind on the real filesystem.
+        //
+        // The path() check guards against the wipe hitting a real disk.
+        // Storage::fake() swaps the binding under this test's lifetime,
+        // but if an earlier error prevents setUp from faking (test
+        // extension, misconfig, etc), the facade returns the real disk
+        // and allDirectories/allFiles enumerates the production tree.
+        // Deleting under the real disk nukes committed dotfiles like
+        // public/uploads/.gitignore. Restricting to a path inside
+        // storage/framework/testing/disks/ keeps the wipe scoped to
+        // Laravel's fake-disk sandbox.
+        $fakeRoot = storage_path('framework/testing/disks');
         foreach (['public', config('filesystems.default')] as $disk) {
             try {
                 $driver = Storage::disk($disk);
+                if (! str_starts_with((string) $driver->path(''), $fakeRoot)) {
+                    continue;
+                }
                 foreach ($driver->allDirectories() as $dir) {
                     $driver->deleteDirectory($dir);
                 }

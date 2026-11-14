@@ -113,6 +113,12 @@ class AuthServiceProvider extends ServiceProvider
 
         Passport::cookie(config('passport.cookie_name'));
 
+        // Register the MCP scopes so Passport recognizes them during
+        // token issuance (OAuth consent and PATs). Tool-level
+        // enforcement lives in the HasMcpScope trait, which calls
+        // $user->tokenCan('mcp:read') (etc.) per request.
+        Passport::tokensCan(\App\Enums\McpScope::forPassport());
+
         // Federated identity: a provider-agnostic OIDC bearer guard, layered
         // alongside Passport via the `auth:oidc,api` multi-guard. Inert until
         // config('oidc.enabled') is true, so this is purely additive.

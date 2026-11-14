@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>대체 기본 사용권 계약서를 사용합니다.</del> 기본 사용권 계약서가 정의되지 않았습니다. 설정에서 하나를 추가해 주세요.',
     'clone' => '부속품 복제',
     'delete_disabled' => '이 주변기기는 아직 반출된 수량이 남아있어서 삭제하실 수 없습니다.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

@@ -103,6 +103,45 @@ class IndexAccessoryTest extends TestCase implements TestsFullMultipleCompaniesS
             ->assertJson(fn (AssertableJson $json) => $json->has('rows', 1)->where('rows.0.name', 'Accessory With Two Checkouts')->etc());
     }
 
+    public function test_can_filter_accessories_by_remaining_count()
+    {
+        $this->markIncompleteIfSqlite('This test is not compatible with SQLite');
+        $user = User::factory()->viewAccessories()->create();
+
+        $available = Accessory::factory()->create(['name' => 'Some left', 'qty' => 2]);
+        $empty = Accessory::factory()->create(['name' => 'None left', 'qty' => 1]);
+
+        AccessoryCheckout::factory()->create(['accessory_id' => $available->id]);
+        AccessoryCheckout::factory()->create(['accessory_id' => $empty->id]);
+
+        $this->actingAsForApi($user)
+            ->getJson(route('api.accessories.index', [
+                'filter' => json_encode(['remaining' => 'gt:0']),
+            ]))
+            ->assertOk()
+            ->assertResponseContainsInRows($available)
+            ->assertResponseDoesNotContainInRows($empty);
+    }
+
+    public function test_can_filter_accessories_by_checkouts_count_range()
+    {
+        $this->markIncompleteIfSqlite('This test is not compatible with SQLite');
+        $user = User::factory()->viewAccessories()->create();
+
+        $checkedOut = Accessory::factory()->create(['name' => 'Checked out']);
+        $notCheckedOut = Accessory::factory()->create(['name' => 'Not checked out']);
+
+        AccessoryCheckout::factory()->create(['accessory_id' => $checkedOut->id]);
+
+        $this->actingAsForApi($user)
+            ->getJson(route('api.accessories.index', [
+                'filter' => json_encode(['checkouts_count' => 'gt:0']),
+            ]))
+            ->assertOk()
+            ->assertResponseContainsInRows($checkedOut)
+            ->assertResponseDoesNotContainInRows($notCheckedOut);
+    }
+
     public function test_can_filter_accessories_by_all_supported_exact_fields()
     {
         $user = User::factory()->superuser()->create();

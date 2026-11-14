@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'Pri odovzdanom majetku bolo odmietnuté prevzatie',
     'inventory_report' => 'Report majetku',
     'item' => 'Položka',
-    'item_checked_reminder' => 'Toto je pripomienka, že vám boli odovzdané :count položky, ktorých prijatie ste nepotvrdili a ani neodmietli. Prosím kliknite na odkaz nižšie pre potvrdenie vašej voľby.',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => ':count licencií exspiruje alebo sa skončí v nasledujúcich :threshold dňoch.',
     'link_to_update_password' => 'Prosím kliknite na nasledovný odkaz pre zmenu hesla na stránke :web :',
     'login' => 'Prihlásenie',

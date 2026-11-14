@@ -305,8 +305,8 @@ class BulkUsersController extends Controller
                 ->with('error', trans('admin/users/general.cannot_make_floater'));
         }
 
-        // Save per-user so UserObserver::updating() fires and all field changes are written
-        // to the Activity Report. A mass update() bypasses model observers entirely.
+        // Save per-user so Loggable writes field changes to the Activity Report.
+        // A mass update() bypasses model lifecycle events entirely.
         foreach ($users as $user) {
             $canEditAuth = auth()->user()->can('canEditAuthFields', $user) && auth()->user()->can('editableOnDemo');
             $userUpdate = $this->update_array;

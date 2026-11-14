@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'แจ้งเตือนการส่ง',
     'cannot_send_reminder' => 'ผู้ใช้ถูกลบไปแล้ว หรือไม่มีที่อยู่อีเมล จึงไม่สามารถรับการแจ้งเตือนได้',
     'reminder_sent' => 'ส่งแจ้งเตือนแล้ว',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'คำขอการยอมรับถูกลบแล้ว',
     'acceptance_request' => 'คำขอการยอมรับ',
     'custom_export' => [

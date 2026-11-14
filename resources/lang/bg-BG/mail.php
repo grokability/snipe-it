@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'Изписването беше отказано',
     'inventory_report' => 'Списък активи',
     'item' => 'Информация',
-    'item_checked_reminder' => 'Това е напомняне, че имате :count артикула изписани към вас, които не са приети/отказани. Моля отворете линка по-долу за да ги приемете/откажете.',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => 'Има :count лиценз, който са изтекли или ще изтекат през следващите :threshold дни.|Има :count лиценза, който са изтекли или ще изтекат през следващите :threshold дни.',
     'link_to_update_password' => 'Моля щракенете върху следния линк за да обновите своята :web password:',
     'login' => 'Логин',

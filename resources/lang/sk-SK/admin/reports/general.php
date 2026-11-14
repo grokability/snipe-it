@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'Poslať pripomienku',
     'cannot_send_reminder' => 'Používateľ bol vymazaný alebo nemá e-mailovú adresu, takže nemôže dostávať pripomienku',
     'reminder_sent' => 'Pripomienka zaslaná',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'Požiadavka na akceptáciu odstránená',
     'acceptance_request' => 'Požiadavka na akceptáciu',
     'custom_export' => [

@@ -73,7 +73,7 @@ class AccessoriesController extends Controller
         $accessory->min_amt = request('min_amt');
         $accessory->company_id = Company::getIdForCurrentUser(request('company_id'));
         // order_number + currency don't live on the Accessory parent
-        // column any more — the AccessoryObserver::created hook writes
+        // column any more — the HasOrders creation hook writes
         // the initial Order + OrderItem, and we enrich that Order below
         // (after save) with the form-supplied order_number / currency.
         $accessory->manufacturer_id = request('manufacturer_id');
@@ -166,7 +166,7 @@ class AccessoriesController extends Controller
         // date / price from another tab. Field names match the
         // create-form input names so enrichInitialOrderFromRequest
         // in store() picks them up on save and writes them onto the
-        // observer-created initial Order + OrderItem for the new row.
+        // initial Order + OrderItem created by HasOrders for the new row.
         // Explicit assignments (not a foreach) so each typed value from
         // lastOrderPrefill() lands on the matching typed model property
         // without going through a mixed intermediate that would fail

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\FileStorage;
+use App\Events\CheckoutableCheckedIn;
 use App\Events\CheckoutableCheckedOut;
 use App\Exceptions\CheckoutNotAllowed;
 use App\Helpers\Helper;
@@ -79,6 +80,14 @@ class Asset extends Depreciable implements HasCustomFields, Importable
     public const USER = 'user';
 
     use Acceptable;
+
+    /**
+     * Tells HasOrders not to add the initial inventory record automatically.
+     */
+    protected static function shouldAutoCreateInventory(): bool
+    {
+        return false;
+    }
 
     public static function fileStorage(): FileStorage
     {
@@ -1253,6 +1262,84 @@ class Asset extends Depreciable implements HasCustomFields, Importable
             event(new CheckoutableCheckedOut($this, $target, $checkedOutBy, $note, $originalValues, 1, $signInPlace));
 
             $this->increment('checkout_counter', 1);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check this asset back in. This lives on the model so everything
+     * (HTTP controllers, MCP tools, CLI commands) can call the same
+     * method and get the same behavior.
+     *
+     * Disassociates the current holder, resets location to rtd (or a
+     * provided override), releases license seats, cleans up pending
+     * Acceptance records, saves, and fires the checked-in event. The
+     * checkin_counter is incremented by the Loggable trait's event
+     * listener, not here.
+     *
+     * @param  User|null  $admin  Actor performing the checkin. Defaults to the authed user.
+     * @param  string|null  $note  Optional checkin note recorded on the event.
+     * @param  string|null  $checkin_at  Optional timestamp. Defaults to now.
+     * @param  int|null  $location  Optional location override. Null keeps the rtd-reset default.
+     * @param  bool  $updateDefaultLocation  When true and $location is provided, also writes rtd_location_id.
+     */
+    public function checkIn($admin = null, $note = null, $checkin_at = null, $location = null, bool $updateDefaultLocation = false): bool
+    {
+        $target = $this->assignedTo;
+        $checkin_at = $checkin_at ?? date('Y-m-d H:i:s');
+        $originalValues = $this->getRawOriginal();
+
+        if (substr($checkin_at, 0, 10) !== date('Y-m-d')) {
+            $originalValues['action_date'] = date('Y-m-d H:i:s');
+        }
+
+        $this->expected_checkin = null;
+        $this->last_checkin = $checkin_at;
+        $this->assignedTo()->disassociate($this);
+        $this->accepted = null;
+
+        // This bit cleans up weird data where a location_id or rtd_location_id is set to 0. This should never happen,
+        // but we've seen it in older datasets. Could maybe be a mutator instead?
+        if ($this->rtd_location_id == '0') {
+            $this->rtd_location_id = '';
+        }
+        if ($this->location_id == '0') {
+            $this->location_id = '';
+        }
+
+        $this->location_id = $this->rtd_location_id;
+
+        if ($location !== null) {
+            $this->location_id = $location;
+            if ($updateDefaultLocation) {
+                $this->rtd_location_id = $location;
+            }
+        }
+
+        $this->licenseseats->each(fn($seat) => $seat->update(['assigned_to' => null]));
+
+        CheckoutAcceptance::pending()
+            ->whereHasMorph('checkoutable', [self::class], fn(Builder $q) => $q->where('id', $this->id))
+            ->get()
+            ->each(fn($acceptance) => $acceptance->delete());
+
+        if ($this->save()) {
+            self::where('assigned_type', self::class)
+                ->where('assigned_to', $this->id)
+                ->update(['location_id' => $this->location_id]);
+
+            if (is_int($admin)) {
+                $checkedInBy = User::findOrFail($admin);
+            } elseif ($admin && get_class($admin) === User::class) {
+                $checkedInBy = $admin;
+            } else {
+                $checkedInBy = auth()->user();
+            }
+
+            event(new CheckoutableCheckedIn($this, $target, $checkedInBy, $note, $checkin_at, $originalValues));
 
             return true;
         }

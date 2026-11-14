@@ -605,11 +605,14 @@ class ValidationServiceProvider extends ServiceProvider
                 : (int) $childCompanyIdRaw;
             $childCompany = $childCompanyId ? Company::withoutGlobalScopes()->find($childCompanyId) : null;
 
-            return trans('general.error_location_parent_company', [
-                'parent' => $parent?->name ?? '?',
-                'parent_company' => $parent?->company?->name ?? trans('general.unassigned'),
-                'location_company' => $childCompany?->name ?? trans('general.unassigned'),
-            ]);
+            // No parent resolved (bad id, deleted, etc): fall back to the
+            // generic message. Name interpolation is skipped by the shared
+            // helper for callers who cannot see the parent (GHSA-vx68-xhq6-9gmr).
+            if (! $parent) {
+                return trans('general.error_location_parent_company_generic');
+            }
+
+            return Location::parentCompanyMismatchMessage($parent, $childCompany?->name);
         });
 
         // Requires a company be picked when a companied non-superuser
