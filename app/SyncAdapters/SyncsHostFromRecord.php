@@ -1417,11 +1417,9 @@ trait SyncsHostFromRecord
      * Commit the assignment. Suppress mode is always silent (direct
      * assignment). Otherwise fall through to Asset::checkOut() which
      * fires the CheckoutableCheckedOut event and its notification
-     * listener. The event constructor requires a non-null admin User.
-     * auth() is null for CLI-triggered sync runs, so silently fall
-     * back to direct assignment when there's no auth context to
-     * attach the event to. Skips when the asset is already assigned
-     * to the resolved user.
+     * listener (EULA acceptance, email, webhooks). Scheduled/CLI runs
+     * have no auth() user, so the event carries a null admin. Skips
+     * when the asset is already assigned to the resolved user.
      */
     private static function applyUserAssignment(
         Asset $asset,
@@ -1434,8 +1432,7 @@ trait SyncsHostFromRecord
             return;
         }
 
-        $admin = auth()->user();
-        if ($adapter->suppressesNotifications() || $admin === null) {
+        if ($adapter->suppressesNotifications()) {
             self::silentAssignToUser($asset, $user);
 
             return;
@@ -1443,11 +1440,15 @@ trait SyncsHostFromRecord
 
         $asset->checkOut(
             target: $user,
-            admin: $admin,
+            admin: auth()->user(),
             checkout_at: now()->toDateTimeString(),
             note: 'Assigned via sync from '.$instance->slug,
             name: $asset->name,
         );
+
+        // checkOut() caches the target under the morph name 'assigned', which has
+        // no matching method, so syncFromRecord()'s $asset->refresh() would throw.
+        $asset->unsetRelation('assigned');
     }
 
     /**

@@ -29,7 +29,7 @@ class CheckoutableCheckedOut
      *
      * @return void
      */
-    public function __construct($checkoutable, $checkedOutTo, User $checkedOutBy, $note, $originalValues = [], $quantity = 1, bool $signInPlace = false)
+    public function __construct($checkoutable, $checkedOutTo, ?User $checkedOutBy, $note, $originalValues = [], $quantity = 1, bool $signInPlace = false)
     {
         $this->checkoutable = $checkoutable;
         $this->checkedOutTo = $checkedOutTo;
