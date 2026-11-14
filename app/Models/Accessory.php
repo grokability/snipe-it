@@ -258,7 +258,7 @@ class Accessory extends SnipeModel implements Importable
             // `qty - checkouts_count`, so the filter compares against
             // that same expression.
             $checkoutCountSub = \App\Models\AccessoryCheckout::query()
-                ->whereColumn('accessory_checkouts.accessory_id', 'accessories.id')
+                ->whereColumn('accessories_checkout.accessory_id', 'accessories.id')
                 ->selectRaw('COUNT(*)');
 
             $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
@@ -327,7 +327,7 @@ class Accessory extends SnipeModel implements Importable
             // the `remaining` filter uses, compared against directly
             // rather than through the qty - count arithmetic.
             $checkoutCountSub = \App\Models\AccessoryCheckout::query()
-                ->whereColumn('accessory_checkouts.accessory_id', 'accessories.id')
+                ->whereColumn('accessories_checkout.accessory_id', 'accessories.id')
                 ->selectRaw('COUNT(*)');
 
             $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
