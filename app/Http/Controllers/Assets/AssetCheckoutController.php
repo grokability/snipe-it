@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Assets;
 
 use App\Actions\Acceptances\CreateCheckoutAcceptanceAction;
+use App\Events\CheckoutableCheckedIn;
 use App\Exceptions\CheckoutNotAllowed;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
@@ -11,6 +12,7 @@ use App\Http\Traits\CheckInOutTrait;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
 use App\Models\CheckoutRequest;
+use App\Models\LicenseSeat;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
@@ -164,7 +166,40 @@ class AssetCheckoutController extends Controller
 
             if (! empty($asset->licenseseats->all())) {
                 if (request('checkout_to_type') == 'user') {
+                    // GHSA-9wq4-gp32-rcgj: validate every attached seat
+                    // before writing to any
                     foreach ($asset->licenseseats as $seat) {
+                        if ($seat->unreassignable_seat) {
+                            return redirect()->back()->withInput()->with('error', trans('admin/licenses/message.checkout.unavailable'));
+                        }
+
+                        $isOccupiedByOther = $seat->assigned_to !== null && (int) $seat->assigned_to !== (int) $target->id;
+                        if ($isOccupiedByOther && !$seat->license->reassignable) {
+                            return redirect()->back()->withInput()->with('error', trans('admin/licenses/message.checkout.unavailable'));
+                        }
+                    }
+
+                    // All seats are legally reassignable. Displace any
+                    // current holders through the normal CheckoutableCheckedIn
+                    // event + pending-acceptance cleanup so the audit trail
+                    // reflects the change, then assign to the new holder.
+                    foreach ($asset->licenseseats as $seat) {
+                        $previousHolderId = $seat->assigned_to;
+
+                        if ($previousHolderId !== null && (int) $previousHolderId !== (int) $target->id) {
+                            $displaced = User::withoutGlobalScopes()->find($previousHolderId);
+                            if ($displaced) {
+                                CheckoutAcceptance::pending()
+                                    ->where('checkoutable_type', LicenseSeat::class)
+                                    ->where('checkoutable_id', $seat->id)
+                                    ->where('assigned_to_id', $displaced->id)
+                                    ->get()
+                                    ->each(fn($a) => $a->delete());
+
+                                event(new CheckoutableCheckedIn($seat, $displaced, auth()->user(), null));
+                            }
+                        }
+
                         $seat->assigned_to = $target->id;
                         $seat->save();
                     }

@@ -80,14 +80,24 @@ class CheckoutAssetTool extends Tool
             return Response::make(Response::error(trans('mcp.checkout_target_not_found', ['type' => $checkoutType])));
         }
 
-        if ($this->checkoutService->checkout(
-            $asset,
-            $target,
-            auth()->user(),
-            checkoutAt: $request->filled('checkout_at') ? $request->get('checkout_at') : null,
-            expectedCheckin: $request->filled('expected_checkin') ? $request->get('expected_checkin') : null,
-            note: $request->filled('note') ? $request->get('note') : null,
-        )) {
+        // AssetCheckoutService throws CheckoutNotAllowed when an attached
+        // license seat fails the seat-propagation guards (GHSA-9wq4-gp32-rcgj):
+        // unreassignable seat, or occupied seat on a non-reassignable
+        // license. Surface those as a structured MCP error.
+        try {
+            $ok = $this->checkoutService->checkout(
+                $asset,
+                $target,
+                auth()->user(),
+                checkoutAt: $request->filled('checkout_at') ? $request->get('checkout_at') : null,
+                expectedCheckin: $request->filled('expected_checkin') ? $request->get('expected_checkin') : null,
+                note: $request->filled('note') ? $request->get('note') : null,
+            );
+        } catch (\App\Exceptions\CheckoutNotAllowed $e) {
+            return Response::make(Response::error($e->getMessage()));
+        }
+
+        if ($ok) {
             return Response::make(
                 Response::text(trans('mcp.asset_checked_out', ['asset_tag' => $asset->asset_tag]))
             )->withStructuredContent([
