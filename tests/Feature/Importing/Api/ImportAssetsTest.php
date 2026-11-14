@@ -828,7 +828,8 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
         $this->importFileResponse(['import' => $import->id])->assertOk();
 
         $asset = Asset::query()->where('serial', $importFileBuilder->firstRow()['serialNumber'])->sole();
-        $encryptedMacAddress = $asset->getAttribute($customField->db_column);
+        // Read the raw stored value, not the cast-decrypted one.
+        $encryptedMacAddress = $asset->getRawOriginal($customField->db_column);
 
         $this->assertNotEquals($encryptedMacAddress, $macAddress);
     }
