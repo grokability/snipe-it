@@ -108,7 +108,7 @@ herd coverage
 
 ## Foundational Context
 
-This application is a Laravel application running on PHP 8.5. Always use the APIs that match the installed major version of each package — do not assume a version.
+This application is a Laravel application that MUST run on PHP 8.2 through 8.5. `composer.json` requires `"php": "^8.2"` and `config.platform.php = "8.2"` keeps the lockfile 8.2-compatible, so never use syntax or APIs that require PHP 8.3+. Always use the APIs that match the installed major version of each package. Do not assume a newer version just because your local PHP is newer.
 
 Before relying on a package's API, confirm its installed version:
 - PHP packages: run `composer show --direct` to list direct dependencies with versions, or `composer show <vendor/package>` for a single package.
