@@ -2130,12 +2130,12 @@ class AssetsController extends Controller
         if ($request->filled('search')) {
             $search = $request->input('search');
             $assets->where(function ($q) use ($search, $all_custom_fields) {
-                $q->where('assets.name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('assets.asset_tag', 'LIKE', '%' . $search . '%')
-                    ->orWhere('assets.serial', 'LIKE', '%' . $search . '%')
+                $q->where('assets.name', 'LIKE', '%'.$search.'%')
+                    ->orWhere('assets.asset_tag', 'LIKE', '%'.$search.'%')
+                    ->orWhere('assets.serial', 'LIKE', '%'.$search.'%')
                     ->orWhereHas('model', function ($mq) use ($search) {
-                        $mq->where('models.name', 'LIKE', '%' . $search . '%')
-                            ->orWhere('models.model_number', 'LIKE', '%' . $search . '%');
+                        $mq->where('models.name', 'LIKE', '%'.$search.'%')
+                            ->orWhere('models.model_number', 'LIKE', '%'.$search.'%');
                     });
 
                 // Custom fields: only those flagged for the requestable list
@@ -2143,7 +2143,7 @@ class AssetsController extends Controller
                 // the first place, matching Searchable::searchCustomFields).
                 foreach ($all_custom_fields as $field) {
                     if ($field->show_in_requestable_list == '1' && $field->field_encrypted == '0' && $field->db_column) {
-                        $q->orWhere('assets.' . $field->db_column_name(), 'LIKE', '%' . $search . '%');
+                        $q->orWhere('assets.'.$field->db_column_name(), 'LIKE', '%'.$search.'%');
                     }
                 }
             });

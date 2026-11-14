@@ -487,4 +487,32 @@ class Location extends SnipeModel implements Importable
     {
         return new LocationQueryBuilder($query);
     }
+
+    /**
+     * Build the parent-company-mismatch error message for store / update
+     * flows (API, web, and the parent_matches_location_company validator
+     * replacer). GHSA-vx68-xhq6-9gmr: the detailed variant disclosed the
+     * cross-tenant parent location's name to any caller who submitted its
+     * id, turning the endpoint into an enumeration oracle for location
+     * names across company boundaries. Legitimate callers who already have
+     * visibility into the parent (superusers, and non-supers whose company
+     * pivot includes the parent's company) still get the detailed
+     * diagnostic. Everyone else gets a generic message that reveals no
+     * cross-tenant data.
+     */
+    public static function parentCompanyMismatchMessage(self $parent, ?string $locationCompanyName): string
+    {
+        $canSeeParent = auth()->user()?->isSuperUser()
+            || Company::isCurrentUserHasAccess($parent);
+
+        if ($canSeeParent) {
+            return trans('general.error_location_parent_company', [
+                'parent' => $parent->name,
+                'parent_company' => $parent->company?->name ?? trans('general.unassigned'),
+                'location_company' => $locationCompanyName ?? trans('general.unassigned'),
+            ]);
+        }
+
+        return trans('general.error_location_parent_company_generic');
+    }
 }

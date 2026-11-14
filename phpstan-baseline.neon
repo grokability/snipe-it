@@ -1099,13 +1099,13 @@ parameters:
 			path: app/Http/Controllers/Api/LocationsController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Location\>\:\:\$company_id\.$#'
+			message: '#^Access to an undefined property App\\Models\\SnipeModel\:\:\$company\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Http/Controllers/Api/LocationsController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Location\>\:\:\$name\.$#'
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Location\>\:\:\$company_id\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Http/Controllers/Api/LocationsController.php
@@ -1143,12 +1143,6 @@ parameters:
 		-
 			message: '#^Property App\\Models\\SnipeModel\:\:\$parent_id is not readable\.$#'
 			identifier: property.writeOnly
-			count: 4
-			path: app/Http/Controllers/Api/LocationsController.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
 			count: 4
 			path: app/Http/Controllers/Api/LocationsController.php
 
@@ -2014,12 +2008,6 @@ parameters:
 			message: '#^Property App\\Models\\IdeHelperLocation\:\:\$id \(int\) does not accept null\.$#'
 			identifier: assign.propertyType
 			count: 1
-			path: app/Http/Controllers/LocationsController.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 4
 			path: app/Http/Controllers/LocationsController.php
 
 		-
@@ -3099,7 +3087,7 @@ parameters:
 		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\Relation\:\:associate\(\)\.$#'
 			identifier: method.notFound
-			count: 6
+			count: 4
 			path: app/Listeners/LogListener.php
 
 		-
@@ -3153,12 +3141,6 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\CustomField\:\:\$pivot\.$#'
 			identifier: property.notFound
-			count: 1
-			path: app/Livewire/CloneFieldset.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Livewire/CloneFieldset.php
 
@@ -3603,7 +3585,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\Accessory\:\:\$license_id\.$#'
 			identifier: property.notFound
-			count: 5
+			count: 4
 			path: app/Models/Accessory.php
 
 		-
@@ -3657,12 +3639,6 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with class\-string\<static\(App\\Models\\Accessory\)\> and ''filterableFields'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: app/Models/Accessory.php
-
-		-
-			message: '#^Cannot access property \$id on class\-string\|object\.$#'
-			identifier: property.nonObject
 			count: 1
 			path: app/Models/Accessory.php
 
@@ -4005,7 +3981,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\Asset\:\:\$license_id\.$#'
 			identifier: property.notFound
-			count: 5
+			count: 4
 			path: app/Models/Asset.php
 
 		-
@@ -4071,12 +4047,6 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with class\-string\<static\(App\\Models\\Asset\)\> and ''filterableFields'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: app/Models/Asset.php
-
-		-
-			message: '#^Cannot access property \$id on class\-string\|object\.$#'
-			identifier: property.nonObject
 			count: 1
 			path: app/Models/Asset.php
 
@@ -4287,7 +4257,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\AssetModel\:\:\$license_id\.$#'
 			identifier: property.notFound
-			count: 5
+			count: 4
 			path: app/Models/AssetModel.php
 
 		-
@@ -4671,7 +4641,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\Company\:\:\$license_id\.$#'
 			identifier: property.notFound
-			count: 5
+			count: 4
 			path: app/Models/Company.php
 
 		-
@@ -4737,7 +4707,7 @@ parameters:
 		-
 			message: '#^Loose comparison using \=\= between ''App\\\\Models\\\\Company'' and ''App\\\\Models\\\\LicenseSeat'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
-			count: 5
+			count: 4
 			path: app/Models/Company.php
 
 		-
@@ -4857,7 +4827,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\Component\:\:\$license_id\.$#'
 			identifier: property.notFound
-			count: 5
+			count: 4
 			path: app/Models/Component.php
 
 		-
@@ -4929,12 +4899,6 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with class\-string\<static\(App\\Models\\Component\)\> and ''filterableFields'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: app/Models/Component.php
-
-		-
-			message: '#^Cannot access property \$id on class\-string\|object\.$#'
-			identifier: property.nonObject
 			count: 1
 			path: app/Models/Component.php
 
@@ -5139,7 +5103,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\Consumable\:\:\$license_id\.$#'
 			identifier: property.notFound
-			count: 5
+			count: 4
 			path: app/Models/Consumable.php
 
 		-
@@ -5205,12 +5169,6 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with class\-string\<static\(App\\Models\\Consumable\)\> and ''filterableFields'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: app/Models/Consumable.php
-
-		-
-			message: '#^Cannot access property \$id on class\-string\|object\.$#'
-			identifier: property.nonObject
 			count: 1
 			path: app/Models/Consumable.php
 
@@ -5403,7 +5361,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\Department\:\:\$license_id\.$#'
 			identifier: property.notFound
-			count: 5
+			count: 4
 			path: app/Models/Department.php
 
 		-
@@ -6051,7 +6009,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\License\:\:\$license_id\.$#'
 			identifier: property.notFound
-			count: 5
+			count: 4
 			path: app/Models/License.php
 
 		-
@@ -6351,7 +6309,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\Location\:\:\$license_id\.$#'
 			identifier: property.notFound
-			count: 5
+			count: 4
 			path: app/Models/Location.php
 
 		-
@@ -6457,6 +6415,12 @@ parameters:
 			path: app/Models/Location.php
 
 		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Location.php
+
+		-
 			message: '#^Variable \$filters in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -6471,7 +6435,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\Maintenance\:\:\$license_id\.$#'
 			identifier: property.notFound
-			count: 5
+			count: 4
 			path: app/Models/Maintenance.php
 
 		-
@@ -6981,7 +6945,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\Supplier\:\:\$license_id\.$#'
 			identifier: property.notFound
-			count: 5
+			count: 4
 			path: app/Models/Supplier.php
 
 		-
@@ -7131,7 +7095,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Models\\User\:\:\$license_id\.$#'
 			identifier: property.notFound
-			count: 5
+			count: 4
 			path: app/Models/User.php
 
 		-
@@ -7507,64 +7471,10 @@ parameters:
 			path: app/Notifications/ExpiringLicenseNotification.php
 
 		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: app/Observers/AccessoryObserver.php
-
-		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 4
-			path: app/Observers/AssetModelObserver.php
-
-		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 4
-			path: app/Observers/AssetObserver.php
-
-		-
 			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\AssetModel\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Observers/AssetObserver.php
-
-		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: app/Observers/ComponentObserver.php
-
-		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: app/Observers/ConsumableObserver.php
-
-		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 3
-			path: app/Observers/LicenseObserver.php
-
-		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 4
-			path: app/Observers/LocationObserver.php
-
-		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 3
-			path: app/Observers/MaintenanceObserver.php
-
-		-
-			message: '#^Property App\\Models\\IdeHelperActionlog\:\:\$created_at \(Illuminate\\Support\\Carbon\|null\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 4
-			path: app/Observers/UserObserver.php
 
 		-
 			message: '#^Method App\\Policies\\AccessoryPolicy\:\:columnName\(\) should return bool but returns string\.$#'
@@ -8385,7 +8295,7 @@ parameters:
 		-
 			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
-			count: 5
+			count: 2
 			path: app/Providers/ValidationServiceProvider.php
 
 		-

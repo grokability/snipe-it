@@ -149,4 +149,56 @@ class LocationParentCompanyTest extends TestCase
 
         $this->assertEquals($parentLocation->id, $location->fresh()->parent_id);
     }
+
+    // GHSA-vx68-xhq6-9gmr: cross-company parent rejection used to leak the
+    // parent location's name via a flash error message on the web path.
+
+    public function test_ui_store_cross_company_parent_does_not_leak_name_to_non_superuser(): void
+    {
+        $this->settings->enableScopedLocationsWithFullMultipleCompanySupport();
+        $this->settings->disableFloaterMode();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+        $actor = $companyA->users()->save(User::factory()->createLocations()->make());
+
+        $secret = Location::factory()->make(['name' => 'Vault Secret HQ']);
+        $secret->company_id = $companyB->id;
+        $secret->setValidating(false);
+        $secret->save();
+
+        $response = $this->actingAs($actor)->post(
+            route('locations.store'),
+            [
+                'name' => 'probe',
+                'company_id' => $companyA->id,
+                'parent_id' => $secret->id,
+            ]
+        );
+
+        $errorMessage = (string) session('error');
+        $this->assertStringNotContainsString('Vault Secret HQ', $errorMessage);
+    }
+
+    public function test_ui_store_cross_company_parent_still_discloses_to_superuser(): void
+    {
+        $this->settings->enableScopedLocationsWithFullMultipleCompanySupport();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+        $secret = Location::factory()->create([
+            'name' => 'Vault Secret HQ',
+            'company_id' => $companyB->id,
+        ]);
+
+        $response = $this->actingAs(User::factory()->superuser()->create())->post(
+            route('locations.store'),
+            [
+                'name' => 'probe',
+                'company_id' => $companyA->id,
+                'parent_id' => $secret->id,
+            ]
+        );
+
+        $errorMessage = (string) session('error');
+        $this->assertStringContainsString('Vault Secret HQ', $errorMessage);
+    }
 }

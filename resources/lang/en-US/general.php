@@ -713,6 +713,7 @@ return [
     'error_checkout_company_mismatch' => ':item cannot be checked out to :target — :item belongs to :item_company',
     'error_location_scoped_items' => 'This location cannot be saved. :item_type ":item_name" (Company: :item_company) does not match this location\'s company.',
     'error_location_parent_company' => 'Parent location ":parent" belongs to :parent_company, but this location belongs to :location_company.',
+    'error_location_parent_company_generic' => 'The specified parent location is not valid for this location\'s company.',
     'error_assets_already_checked_out' => 'One or more of the assets are already checked out',
     'assigned_assets_removed' => 'The following were removed from the selected assets because they are already checked out',
     'unassigned_assets_removed' => 'The following were removed from the selected assets because they are not currently checked out',
