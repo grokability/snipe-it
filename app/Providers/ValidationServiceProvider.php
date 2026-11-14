@@ -245,6 +245,8 @@ class ValidationServiceProvider extends ServiceProvider
             $data_pk = array_get($data, $pk);
             $value_pk = $value;
 
+            $visited = [];
+
             // If we’re editing an existing model and there is a parent value set…
             while ($data_pk && $value_pk) {
 
@@ -252,6 +254,16 @@ class ValidationServiceProvider extends ServiceProvider
                 if ($data_pk == $value_pk) {
                     return false;
                 }
+
+                // A chain that revisits a node without passing through the
+                // edited model contains a pre-existing cycle (legacy rows,
+                // two-pass imports). This edit does not create that cycle,
+                // so stop walking and pass instead of spinning until the
+                // depth cap fails the edit with a misleading error.
+                if (isset($visited[$value_pk])) {
+                    return true;
+                }
+                $visited[$value_pk] = true;
 
                 // Avoid accidental infinite loops
                 if (--$depth < 0) {

@@ -105,6 +105,25 @@ class ManagerChainCycleGuardTest extends TestCase
         $this->assertFalse($a->isValid());
     }
 
+    public function test_validator_allows_a_manager_whose_chain_contains_a_legacy_cycle_elsewhere(): void
+    {
+        // A pre-existing A <-> B cycle that does not involve the user
+        // being edited (the scenario in #20034, typically a SCIM-synced
+        // directory). Before this test, non_circular walked into the
+        // cycle and spun until the depth cap, so *any* manager update
+        // whose chain reached the cycle failed with "The manager id
+        // must not create a circular reference" even though the edit
+        // created no cycle.
+        [$a, $b] = User::factory()->count(2)->create();
+        DB::table('users')->where('id', $a->id)->update(['manager_id' => $b->id]);
+        DB::table('users')->where('id', $b->id)->update(['manager_id' => $a->id]);
+
+        $outsider = User::factory()->create();
+        $outsider->manager_id = $a->id;
+
+        $this->assertTrue($outsider->isValid());
+    }
+
     public function test_eulas_endpoint_returns_safely_when_target_is_in_a_cycle(): void
     {
         // End-to-end guard. Pre-fix this request pinned the worker for
