@@ -14,6 +14,7 @@
     $urlField = $slug.'_url';
     $activeField = $slug.'_active';
     $locked = config('app.lock_passwords') === true;
+    $allowInternalTargets = (bool) config('app.sync_adapter_allow_internal_targets');
     // Memoized per-request via Laravel's Str/once so N adapter tab-panes
     // don't each fire their own companies-count query. The pickers below
     // (both the per-instance company scope and the per-vendor-group
@@ -127,7 +128,7 @@
             >
                 <x-slot:input>
                     <x-input.text
-                        type="url"
+                        :type="$allowInternalTargets ? 'text' : 'url'"
                         :name="$urlField"
                         :value="old($urlField, $adapter->getUrl())"
                         :disabled="$locked"

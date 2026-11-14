@@ -73,7 +73,7 @@
                                 <label for="webhook_endpoint">{{ trans('admin/settings/general.webhook_endpoint',['app' => $webhook_name ]) }}</label>
                             </div>
                             <div class="col-md-9 required">
-                                <input type="url" wire:model.change.live="webhook_endpoint" class="form-control" placeholder="{{$webhook_placeholder}}"{{ Helper::isDemoMode() ? ' disabled' : ''}}>
+                                <input type="{{ config('app.webhook_allow_internal_targets') ? 'text' : 'url' }}" wire:model.change.live="webhook_endpoint" class="form-control" placeholder="{{$webhook_placeholder}}"{{ Helper::isDemoMode() ? ' disabled' : ''}}>
                                 <x-form.error name="webhook_endpoint" />
                             </div>
                         </div>
