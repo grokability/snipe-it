@@ -113,9 +113,10 @@ class ShowAssetTool extends Tool
             $raw = $asset->{$field->db_column};
 
             if ($field->isFieldDecryptable($raw)) {
-                $decrypted = Helper::gracefulDecrypt($field, $raw);
+                // Decryption is handled transparently by the SnipeCrypt cast
+                // applied to encrypted custom-field attributes
                 $value = Gate::allows('assets.view.encrypted_custom_fields')
-                    ? $decrypted
+                    ? $raw
                     : strtoupper(trans('admin/custom_fields/general.encrypted'));
 
                 if ($field->format == 'DATE' || $field->format == 'DATETIME') {
