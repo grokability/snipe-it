@@ -5,7 +5,7 @@ return [
     'manage' => 'crwdns6501:0crwdne6501:0',
     'field' => 'crwdns1487:0crwdne1487:0',
     'about_fieldsets_title' => 'crwdns1488:0crwdne1488:0',
-    'about_fieldsets_text' => 'crwdns17239:0crwdne17239:0',
+    'about_fieldsets_text' => 'crwdns17649:0crwdne17649:0',
     'custom_format' => 'crwdns6505:0crwdne6505:0',
     'encrypt_field' => 'crwdns1792:0crwdne1792:0',
     'encrypt_field_help' => 'crwdns1683:0crwdne1683:0',

@@ -70,6 +70,7 @@ return [
     ],
 
     'select_country' => 'ជ្រើសរើសប្រទេសមួយ',
+    'select_currency' => 'Select a currency',
 
     'countries' => [
         'AC' => 'កោះ Ascension',

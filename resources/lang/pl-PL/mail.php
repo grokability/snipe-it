@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'Przekazanie środka zainicjowane przez Ciebie zostało odrzucone',
     'inventory_report' => 'Raport z magazynu',
     'item' => 'Przedmiot',
-    'item_checked_reminder' => 'To jest przypomnienie, że aktualnie masz :count elementów przydzielonych do Ciebie, których nie zaakceptowałeś lub nie odrzuciłeś. Kliknij poniższy link, aby potwierdzić swoją decyzję.',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => 'Istnieje :count licencja z wygasającą gwarancją lub której cykl życia dobiega końca w ciągu następnych :treshold dni.|Istnieją :count licencje z wygasającą gwarancją lub których cykl życia dobiega końca w ciągu następnych :treshold dni.',
     'link_to_update_password' => 'Proszę kliknąć na poniższy link, aby zaktualizować swoje hasło na :web:',
     'login' => 'Login',

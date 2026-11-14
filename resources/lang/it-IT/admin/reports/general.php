@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'Invia promemoria',
     'cannot_send_reminder' => 'L\'utente è stato cancellato o non ha un indirizzo email, quindi non può ricevere un promemoria',
     'reminder_sent' => 'Promemoria spedito',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'Richiesta di accettazione eliminata',
     'acceptance_request' => 'Richiesta di accettazione',
     'custom_export' => [

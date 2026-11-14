@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Namesto tega uporabite privzeto EULA.</del> Ni privzetega EULA. Dodajte ga v Nastavitvah.',
     'clone' => 'Clone Accessory',
     'delete_disabled' => 'Tega dodatka še ni mogoče izbrisati, ker so nekateri elementi še vedno rezervirani.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

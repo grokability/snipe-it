@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Uporedi primarnu zadanu EULA.</del> Nije postavljena primarna zadana EULA. Dodajte jednu u Postavke.',
     'clone' => 'Klonirajte dodatnu opremu',
     'delete_disabled' => 'Ova dodatna oprema se trenutno ne može obrisati, obzirom da su neki predmeti i dalje odjavljeni.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Võtke kasutusele esmane vaikimisi EULA-d.</del> Ükski esmane vaikimisi EULA ei ole määratud. Lisage see üksus valikut Seaded.',
     'clone' => 'Klooni tarvik',
     'delete_disabled' => 'Seda tarvikut ei saa veel kustutada, sest mõned ühikud on veel väljastatud olekus.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

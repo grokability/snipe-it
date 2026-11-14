@@ -70,6 +70,7 @@ return [
     ],
 
     'select_country' => 'Bir Ülke Seç',
+    'select_currency' => 'Select a currency',
 
     'countries' => [
         'AC' => 'Ascension Adası',

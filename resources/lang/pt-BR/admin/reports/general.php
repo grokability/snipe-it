@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'Enviar lembrete',
     'cannot_send_reminder' => 'Usuário não pode receber um lembrete por ter sido excluído ou não possuir um endereço de e-mail cadastrado',
     'reminder_sent' => 'Lembrete enviado',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'Pedido de aceitação excluído',
     'acceptance_request' => 'Solicitação de aceitação',
     'custom_export' => [

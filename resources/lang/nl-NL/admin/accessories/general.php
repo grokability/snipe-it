@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Gebruik de standaard gebruikersovereenkomst.</del> Geen standaard gebruikersovereenkomst ingesteld. Ga naar Instellingen en voeg er één toe.',
     'clone' => 'Accessoire dupliceren',
     'delete_disabled' => 'Deze accessoire kan niet verwijderd worden! Er zijn er nog objecten uitgecheckt.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

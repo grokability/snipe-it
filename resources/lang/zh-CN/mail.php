@@ -77,7 +77,7 @@ return [
     'initiated_declined' => '您发起的签出已被拒绝',
     'inventory_report' => '库存报告',
     'item' => '项目',
-    'item_checked_reminder' => '提醒，当前签出给您 :count 件物品，您还没有签收或拒绝。 请点击下面的链接以确认您的决定。',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => '有 :count 个许可证将在未来 :threshold 天内到期或终止。|有 :count 个许可证将在未来 :threshold 天内到期或终止。',
     'link_to_update_password' => '请点击以下链接以更新 :web 的密码：',
     'login' => '登录',

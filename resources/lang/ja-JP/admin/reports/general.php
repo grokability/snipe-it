@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'リマインダーを送信',
     'cannot_send_reminder' => 'ユーザーが削除されたか、メールアドレスがないため、リマインダーを受信できません',
     'reminder_sent' => 'リマインダーを送信しました',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => '承認リクエストが削除されました',
     'acceptance_request' => 'リクエストを承認',
     'custom_export' => [

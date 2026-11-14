@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Použiť namiesto aktuálneho predvolený dokument EULA.</del> Predvolený dokument EULA nie je nastavený. Prosím vyberte predvolený dokument v Nastaveniach.',
     'clone' => 'Duplikovať príslušenstvo',
     'delete_disabled' => 'Toto príslušenstvo nemôže byť zmazané pretože niektoré položky sú stále odovzdané.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

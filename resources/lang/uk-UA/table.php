@@ -7,10 +7,10 @@ return [
     'by' => 'Ким',
     'item' => 'Елемент',
     'no_matching_records' => 'Не знайдено відповідних записів',
-    'load_error_title' => 'Could not load results',
-    'load_error_body' => 'The server returned an error. Please try again in a moment. If this keeps happening, check the application log.',
-    'load_error_http_status' => 'HTTP status',
-    'load_error_session_expired' => 'Your session has expired. Reloading the page.',
-    'shift_select' => 'Click on a checkbox and hold <code>shift</code> and click another checkbox in the table to select/de-select a range.'
+    'load_error_title' => 'Не вдалося завантажити результ',
+    'load_error_body' => 'Сервер повернув помилку. Повторіть спробу за мить. Якщо помилка не зникає, перевірте журнал застосунку.',
+    'load_error_http_status' => 'Стан HTTP',
+    'load_error_session_expired' => 'Термін дії вашого сеансу минув. Сторінку буде перезавантажено.',
+    'shift_select' => 'Установіть прапорець, потім, утримуючи клавішу <code>shift</code>, установіть або зніміть інший прапорець у таблиці, щоб вибрати або скасувати вибір діапазону.'
 
 ];

@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Dùng điều khoản sử dụng mặc định.<del> Điều khoản sử dụng chưa được thiết lập. Hãy thêm một cái vào trong phần Settings.',
     'clone' => 'Nhân bản phụ kiện',
     'delete_disabled' => 'Không thể xóa phụ kiện này vì một số thiết bị đã được kiểm tra đưa ra.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Использовать основное пользовательское соглашение.</del> Не задано основное пользовательское соглашение. Добавьте его в Настройках.',
     'clone' => 'Клонировать аксессуар',
     'delete_disabled' => 'Этот аксессуар не может быть удалён, т. к. некоторые элементы всё ещё выданы.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

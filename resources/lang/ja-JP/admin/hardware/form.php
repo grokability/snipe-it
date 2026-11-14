@@ -10,7 +10,7 @@ return [
     'bulk_update' => '資産を一括更新',
     'bulk_update_help' => 'このフォームは一度に複数の資産を更新することが可能です。変更が必要なフィールドにのみ入力をして下さい。ブランクのフィールドは変更されません。 ',
     'bulk_update_warn' => '単一資産のプロパティを編集しようとしています。|:asset_count 件のプロパティを編集しようとしています。',
-    'bulk_update_with_custom_field' => 'Your selection spans :asset_model_count different asset models. Custom fields below are grouped by model.',
+    'bulk_update_with_custom_field' => '選択した資産には:asset_model_count種類の資産モデルが含まれています。下のカスタムフィールドはモデルごとに分けて表示されます。',
     'bulk_update_model_prefix' => 'モデル上',
     'bulk_update_custom_field_unique' => 'これは一意のフィールドであり、一括編集はできません。',
     'checkedout_to' => 'チェックアウト先',

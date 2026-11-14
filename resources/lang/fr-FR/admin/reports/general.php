@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'Envoyer un rappel',
     'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
     'reminder_sent' => 'Rappel envoyé',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'Demande d\'acceptation supprimée',
     'acceptance_request' => 'Demande d\'acceptation',
     'custom_export' => [

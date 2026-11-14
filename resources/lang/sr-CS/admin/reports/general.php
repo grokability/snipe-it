@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'Pošalji podsetnik',
     'cannot_send_reminder' => 'Korisnik je obrisan ili nema navedenu adresu e-pošte pa ne može da dobije potsetnik',
     'reminder_sent' => 'Podsetnik je poslat',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'Zahtev za prihvatanje je izbrisan',
     'acceptance_request' => 'Zahtev za prihvatanje',
     'custom_export' => [

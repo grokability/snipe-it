@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>使用默认EULA（最终用户许可协议）.</del>没有设置默认EULA（最终用户许可协议），请在设置中增加一个。',
     'clone' => '克隆配件',
     'delete_disabled' => '不能删除此配件，因为有些物品仍被签出。',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

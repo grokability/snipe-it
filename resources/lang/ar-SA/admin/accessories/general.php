@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>استخدام (اتفاقية ترخيص المستخدم) الافتراضية الأساسية بدلا من ذلك.</del> لم يتم تحديد (اتفاقية ترخيص المستخدم) الافتراضية الأساسية. الرجاء إضافتها في الإعدادات.',
     'clone' => 'استنساخ الملحق',
     'delete_disabled' => 'لا يمكن حذف هذا الملحق حتى الآن لأن بعض العناصر لا تزال قيد الخروج.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>ប្រើ EULA លំនាំដើមចម្បងជំនួសវិញ។</del> គ្មាន EULA លំនាំដើមចម្បងត្រូវបានកំណត់ទេ។ សូមបន្ថែមមួយនៅក្នុងការកំណត់។',
     'clone' => 'Clone Accessory',
     'delete_disabled' => 'គ្រឿងបន្លាស់នេះមិនអាចលុបចេញបានទេ ដោយសារធាតុមួយចំនួននៅតែត្រូវបានដកចេញ។',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

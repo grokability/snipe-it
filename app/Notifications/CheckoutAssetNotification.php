@@ -38,9 +38,9 @@ class CheckoutAssetNotification extends Notification implements ShouldQueue
     public function __construct(
         public Asset $item,
         public $target,
-        public User $admin,
+        public ?User $admin,
         public $acceptance, // ???? what is this? (doesn't seem used)
-        public                 $note,
+        public $note,
         public Company|Setting $webhookSource,
     ) {
         if ($this->item->last_checkout) {
@@ -93,8 +93,12 @@ class CheckoutAssetNotification extends Notification implements ShouldQueue
 
         $fields = [
             trans('general.to_user') => '<'.$target->present()->viewUrl().'|'.$target->display_name.'>',
-            trans('general.by_user') => '<'.$admin->present()->viewUrl().'|'.$admin->display_name.'>',
         ];
+
+        // Sync-driven checkouts from scheduled runs have no admin.
+        if ($admin) {
+            $fields[trans('general.by_user')] = '<'.$admin->present()->viewUrl().'|'.$admin->display_name.'>';
+        }
 
         if ($item->location) {
             $fields[trans('general.location')] = $item->location->name;
@@ -126,7 +130,7 @@ class CheckoutAssetNotification extends Notification implements ShouldQueue
         $item = $this->item;
         $note = $this->note;
 
-        if (!Str::contains($this->webhookSource->webhook_endpoint, 'workflows')) {
+        if (! Str::contains($this->webhookSource->webhook_endpoint, 'workflows')) {
             return MicrosoftTeamsMessage::create()
                 ->to($this->webhookSource->webhook_endpoint)
                 ->type('success')
@@ -142,7 +146,7 @@ class CheckoutAssetNotification extends Notification implements ShouldQueue
         $details = [
             trans('mail.assigned_to') => $target->present()->name,
             trans('mail.asset') => htmlspecialchars_decode($item->display_name),
-            trans('general.administrator') => $admin->display_name,
+            trans('general.administrator') => (string) ($admin?->display_name ?? ''),
             trans('mail.notes') => $note ?: '',
         ];
 

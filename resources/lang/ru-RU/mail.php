@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'Выдача, которую вы инициировали, была отклонена',
     'inventory_report' => 'Отчет о запасах',
     'item' => 'Предмет',
-    'item_checked_reminder' => 'Напоминание о том, что в настоящее время у вас есть :count предметов, выданных вам, которые вы не приняли. Пожалуйста, нажмите на ссылку ниже, чтобы принять решение.',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => 'Имеется :count лиценз(ия/ий), срок котор(ой/ых) истечет в следующ(ие/ий) :threshold дней/день.|Имеются :count лиценз(ия/ии), срок котор(ой/ых) истечет в следующ(ие/ий) :threshold дней/день.',
     'link_to_update_password' => 'Пожалуйста, перейдите по ссылке, чтобы обновить ваш :web пароль:',
     'login' => 'Логин',

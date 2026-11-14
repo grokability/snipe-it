@@ -203,7 +203,7 @@ return [
     'email_array' => '1 つまたは複数の電子メール アドレスが無効です。',
     'checkboxes' => ':attribute に無効なオプションが含まれています。',
     'radio_buttons' => ':attribute は不正です。',
-    'image_file_too_large' => 'The :attribute may not be larger than :max.',
+    'image_file_too_large' => ':attributeは:max以下にしてください。',
 
     'custom' => [
         'alpha_space' => ':attribute フィールドに、禁止文字列が含まれています。',

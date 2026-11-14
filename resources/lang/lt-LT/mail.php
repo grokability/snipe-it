@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'Jūsų išduotas turtas buvo nepriimtas',
     'inventory_report' => 'Inventoriaus ataskaita',
     'item' => 'Daiktas',
-    'item_checked_reminder' => 'Tai priminimas, kad šiuo metu jums yra išduoti :count daiktai, kurių nepriėmėte arba neatmetėte. Spustelėkite toliau pateiktą nuorodą, kad patvirtintumėte savo sprendimą.',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => 'Yra :count licencija, kuri baigsis arba bus nutraukta per ateinančias :threshold dienas.|Yra licencijų (:count), kurios baigiasi arba bus nutrauktos per ateinančias :threshold dienas (-ų).',
     'link_to_update_password' => 'Spustelėkite šią nuorodą, kad atnaujintumėte savo :web slaptažodį:',
     'login' => 'Prisijungti',

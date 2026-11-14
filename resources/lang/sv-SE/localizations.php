@@ -70,6 +70,7 @@ return [
     ],
 
     'select_country' => 'Välj ett land',
+    'select_currency' => 'Select a currency',
 
     'countries' => [
         'AC' => 'Ön Ascension',

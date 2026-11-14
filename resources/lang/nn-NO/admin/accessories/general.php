@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Bruk standard EULA i stedet.</del> Ingen standard EULA er satt. Legg til en i Innstillinger.',
     'clone' => 'Klon tilbehør',
     'delete_disabled' => 'Dette tilbehøret kan ikke slettes enda fordi noen elementer er fremdeles sjekket ut.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Usa L\'EULA predefinita.</del> Nessuna EULA predefinita è in uso. Per favore aggiungine una nelle Impostazioni.',
     'clone' => 'Clona Accessorio',
     'delete_disabled' => 'Questo accessorio non può essere cancellato perché alcuni elementi sono ancora assegnati.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

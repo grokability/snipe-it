@@ -16,7 +16,7 @@ return [
     'sync_complete' => 'crwdns17249:0crwdne17249:0',
     'sync_failed' => 'crwdns16423:0crwdne16423:0',
     'sync_failed_network' => 'crwdns16425:0crwdne16425:0',
-    'last_synced_label' => 'crwdns16427:0crwdne16427:0',
+    'last_synced_label' => 'crwdns17737:0crwdne17737:0',
     'never_synced' => 'crwdns16429:0crwdne16429:0',
     'large_fleet_note' => 'crwdns16431:0crwdne16431:0',
     'large_fleet_note_pull_only' => 'crwdns16433:0crwdne16433:0',
@@ -110,6 +110,8 @@ return [
     'default_category_help' => 'crwdns16587:0crwdne16587:0',
     'default_status' => 'crwdns16589:0crwdne16589:0',
     'default_status_help' => 'crwdns16591:0crwdne16591:0',
+    'default_fieldset' => 'crwdns17671:0crwdne17671:0',
+    'default_fieldset_help' => 'crwdns17673:0crwdne17673:0',
     'user_match_strategy' => 'crwdns16593:0crwdne16593:0',
     'user_match_strategy_help' => 'crwdns16595:0crwdne16595:0',
     'user_match_none' => 'crwdns16597:0crwdne16597:0',
@@ -126,7 +128,22 @@ return [
 
     // Push dry-run + composite notes push
     'push_dry_run_label' => 'crwdns16611:0crwdne16611:0',
-    'push_dry_run_help' => 'crwdns16613:0crwdne16613:0',
+    'pull_dry_run_label' => 'crwdns17739:0crwdne17739:0',
+    'run_limit_label' => 'crwdns17741:0crwdne17741:0',
+    'run_limit_placeholder' => 'crwdns17743:0crwdne17743:0',
+    'run_limit_help' => 'crwdns17745:0crwdne17745:0',
+    'diagnostics_section_title' => 'crwdns17747:0crwdne17747:0',
+    'diagnostics_section_intro' => 'crwdns17749:0crwdne17749:0',
+    'preview_payload_button' => 'crwdns17751:0crwdne17751:0',
+    'preview_payload_help' => 'crwdns17753:0crwdne17753:0',
+    'test_1_push_button' => 'crwdns17755:0crwdne17755:0',
+    'test_1_push_help' => 'crwdns17757:0crwdne17757:0',
+    'test_1_pull_button' => 'crwdns17759:0crwdne17759:0',
+    'test_1_pull_help' => 'crwdns17761:0crwdne17761:0',
+    'diagnostics_output_placeholder' => 'crwdns17763:0crwdne17763:0',
+    'diagnostics_no_eligible_asset' => 'crwdns17765:0crwdne17765:0',
+    'diagnostics_no_vendor_records' => 'crwdns17767:0crwdne17767:0',
+    'download_sync_run_log_button' => 'crwdns17769:0crwdne17769:0',
     'push_notes_section_title' => 'crwdns16615:0crwdne16615:0',
     'push_notes_section_intro' => 'crwdns16617:0crwdne16617:0',
     'push_notes_target_label' => 'crwdns16619:0crwdne16619:0',
@@ -142,6 +159,9 @@ return [
     'refresh_groups' => 'crwdns16635:0crwdne16635:0',
     'refresh_groups_ok' => 'crwdns16637:0crwdne16637:0',
     'refresh_groups_failed' => 'crwdns16639:0crwdne16639:0',
+    'refresh_sites' => 'crwdns17661:0crwdne17661:0',
+    'refresh_sites_ok' => 'crwdns17663:0crwdne17663:0',
+    'refresh_sites_failed' => 'crwdns17665:0crwdne17665:0',
 
     // Vendor custom fields refresh
     'refresh_custom_fields' => 'crwdns16641:0crwdne16641:0',
@@ -208,9 +228,10 @@ return [
     'addigy_key_id_help' => 'crwdns16665:0crwdne16665:0',
     'addigy_key_secret_help' => 'crwdns16667:0crwdne16667:0',
     'unifi_api_key_help' => 'crwdns16669:0crwdne16669:0',
-    'unifi_site_id_help' => 'crwdns16671:0crwdne16671:0',
+    'unifi_site_id_help' => 'crwdns17667:0crwdne17667:0',
+    'unifi_access_api_token_help' => 'crwdns17669:0crwdne17669:0',
     'intune_tenant_id_help' => 'crwdns16673:0crwdne16673:0',
-    'intune_client_id_help' => 'crwdns16675:0crwdne16675:0',
+    'intune_client_id_help' => 'crwdns17825:0crwdne17825:0',
     'intune_client_secret_help' => 'crwdns16677:0crwdne16677:0',
     'intune_extra_compliance_state' => 'crwdns17259:0crwdne17259:0',
     'intune_extra_enrolled_at' => 'crwdns17261:0crwdne17261:0',
@@ -246,7 +267,7 @@ return [
     'intune_fetch_per_device_details_label' => 'crwdns17319:0crwdne17319:0',
     'intune_fetch_per_device_details_help' => 'crwdns17321:0crwdne17321:0',
     'intune_scope_tag_filter_label' => 'crwdns17563:0crwdne17563:0',
-    'intune_scope_tag_filter_help' => 'crwdns17565:0crwdne17565:0',
+    'intune_scope_tag_filter_help' => 'crwdns17827:0crwdne17827:0',
     'meraki_sm_api_key_help' => 'crwdns16679:0crwdne16679:0',
     'meraki_sm_organization_id_help' => 'crwdns16681:0crwdne16681:0',
     'workspace_one_tenant_code_help' => 'crwdns16683:0crwdne16683:0',
@@ -273,6 +294,10 @@ return [
     'jamf_platform_client_secret_help' => 'crwdns17043:0crwdne17043:0',
     'jamf_platform_environment_id_help' => 'crwdns17045:0crwdne17045:0',
     'landscape_token_help' => 'crwdns17069:0crwdne17069:0',
+    'sophos_client_id_help' => 'crwdns17829:0crwdne17829:0',
+    'sophos_client_secret_help' => 'crwdns17831:0crwdne17831:0',
+    'sophos_endpoint_types_help' => 'crwdns17833:0crwdne17833:0',
+    'sophos_skip_cloud_instances_help' => 'crwdns17835:0crwdne17835:0',
 
     // Google Workspace (ChromeOS) adapter
     'google_workspace_label_service_account_email' => 'crwdns17185:0crwdne17185:0',
@@ -408,6 +433,15 @@ return [
     'extra_reboot_required' => 'crwdns17073:0crwdne17073:0',
     'extra_ubuntu_pro' => 'crwdns17075:0crwdne17075:0',
     'extra_osquery_version' => 'crwdns16877:0crwdne16877:0',
+    'extra_endpoint_id' => 'crwdns17837:0crwdne17837:0',
+    'extra_health' => 'crwdns17839:0crwdne17839:0',
+    'extra_threat_status' => 'crwdns17841:0crwdne17841:0',
+    'extra_service_status' => 'crwdns17843:0crwdne17843:0',
+    'extra_tamper_protection' => 'crwdns17845:0crwdne17845:0',
+    'extra_encryption_status' => 'crwdns17847:0crwdne17847:0',
+    'extra_isolation_status' => 'crwdns17849:0crwdne17849:0',
+    'extra_last_user' => 'crwdns17851:0crwdne17851:0',
+    'extra_installed_products' => 'crwdns17853:0crwdne17853:0',
 
     // Shared label strings for adapter settings schemas. Adapters
     // reach for these via trans() so the labels localize alongside
@@ -476,6 +510,10 @@ return [
     'abm_label_pull_model_images' => 'crwdns16971:0crwdne16971:0',
     'abm_option_mode_business' => 'crwdns16973:0crwdne16973:0',
     'abm_option_mode_school' => 'crwdns16975:0crwdne16975:0',
+
+    // Sophos Central adapter-specific labels.
+    'sophos_label_endpoint_types' => 'crwdns17855:0crwdne17855:0',
+    'sophos_label_skip_cloud_instances' => 'crwdns17857:0crwdne17857:0',
 
     // Custom HTTP option strings.
     'custom_option_auth_bearer' => 'crwdns16977:0crwdne16977:0',

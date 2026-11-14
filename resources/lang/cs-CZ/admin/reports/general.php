@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'Poslat připomínku',
     'cannot_send_reminder' => 'Uživatel byl odstraněn nebo nemá e-mailovou adresu, takže nemůže obdržet připomenutí',
     'reminder_sent' => 'Připomínka odeslána',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'Žádost o přijetí byla smazána',
     'acceptance_request' => 'Žádost o přijetí',
     'custom_export' => [

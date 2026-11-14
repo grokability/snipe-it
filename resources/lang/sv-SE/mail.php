@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'En utcheckning du initierade har avvisats',
     'inventory_report' => 'Inventarierapport',
     'item' => 'Objekt',
-    'item_checked_reminder' => 'Detta är en påminnelse om att du för närvarande har :count objekt utcheckade till dig som du inte har accepterat eller nekat. Klicka på länken nedan för att bekräfta ditt beslut.',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => 'Det finns :count licens som utgår eller upphör under de nästa :threshold dagarna.|Det finns :count licenser som utgår eller upphör under de nästa :threshold dagarna.',
     'link_to_update_password' => 'Vänligen klicka på följande länk för att uppdatera ditt :web lösenord:',
     'login' => 'Logga in',

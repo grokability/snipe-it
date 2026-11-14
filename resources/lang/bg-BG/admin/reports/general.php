@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'Изпрати напомняне',
     'cannot_send_reminder' => 'Потребителя е бил изтрит или няма валиден е-майл адрес и не може да получи напомняне',
     'reminder_sent' => 'Напомнянето изпратено',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'Заявката за приемане е изтрита',
     'acceptance_request' => 'Заявка за приемане',
     'custom_export' => [

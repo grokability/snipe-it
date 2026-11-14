@@ -16,7 +16,7 @@ return [
     'sync_complete' => 'Sync complete. Synced :count host(s), :skipped skipped, :errors error(s).',
     'sync_failed' => 'Sync failed: :summary. See storage/logs/sync-adapters.log for full details.',
     'sync_failed_network' => 'network error',
-    'last_synced_label' => 'Last Synced',
+    'last_synced_label' => 'Last Successful Sync',
     'never_synced' => 'Never',
     'large_fleet_note' => 'For large fleets, schedule these CLI commands instead of clicking the buttons above: :pull_command to pull inventory, :push_command to push Snipe-IT values back to the vendor.',
     'large_fleet_note_pull_only' => 'For large fleets, schedule the CLI command :pull_command instead of clicking Pull Now.',
@@ -110,6 +110,8 @@ return [
     'default_category_help' => 'When a device from this adapter reports a hardware model that doesn\'t exist in Snipe-IT yet, a new asset model is created and placed in this category. Leave blank to use the "Discovered Hardware" category.',
     'default_status' => 'Default Status Label',
     'default_status_help' => 'When a device from this adapter is created in Snipe-IT for the first time, its status label is set to this value. Leave blank to use the first deployable status label (or the first status label if none are marked deployable).',
+    'default_fieldset' => 'Model Fieldset',
+    'default_fieldset_help' => 'When this adapter has to create a new asset model (because the vendor reported a hardware model Snipe-IT doesn\'t know about), the new model is linked to this fieldset so your custom fields show on devices the adapter discovers. Leave blank to leave the fieldset unset on new models.',
     'user_match_strategy' => 'Assign to Snipe-IT user',
     'user_match_strategy_help' => 'When a match is found, the asset checks out to that user. Missing or unmatched users are skipped and written to <code>storage/logs/sync-adapters.log</code> as warnings. Existing assignments are never cleared by a payload that omits the user field.',
     'user_match_none' => 'Do not assign users',
@@ -126,7 +128,22 @@ return [
 
     // Push dry-run + composite notes push
     'push_dry_run_label' => 'Dry-run push (log payloads, do not send)',
-    'push_dry_run_help' => 'When on, Push Now builds every payload and writes it to the sync-adapters log without calling the vendor API. Useful for verifying your direction + mapping configuration end-to-end before flipping the switch on real data.',
+    'pull_dry_run_label' => 'Dry-run pull (log records, do not write to Snipe-IT)',
+    'run_limit_label' => 'Limit',
+    'run_limit_placeholder' => 'kaikki',
+    'run_limit_help' => 'Stops after this many records. Useful for sanity-checking a dry run on a large fleet.',
+    'diagnostics_section_title' => 'Diagnostics',
+    'diagnostics_section_intro' => 'Preview or run against a single asset so you can catch misconfiguration before attempting a full sync.',
+    'preview_payload_button' => 'Preview push payload',
+    'preview_payload_help' => 'Builds the payload for the first linked asset without calling the vendor. Shows the method, URL, and JSON body.',
+    'test_1_push_button' => 'Test 1 Push',
+    'test_1_push_help' => 'Actually pushes one real asset to the vendor and returns the vendor response. Not a dry run.',
+    'test_1_pull_button' => 'Test 1 Pull',
+    'test_1_pull_help' => 'Actually pulls one record from the vendor and upserts it in Snipe-IT. Returns the normalized record. Not a dry run.',
+    'diagnostics_output_placeholder' => 'Output appears here when you run a diagnostic.',
+    'diagnostics_no_eligible_asset' => 'No asset is linked to this adapter yet. Run a Pull first (even with limit=1) so there is something to push.',
+    'diagnostics_no_vendor_records' => 'The vendor returned no records on this pull.',
+    'download_sync_run_log_button' => 'Download run log',
     'push_notes_section_title' => 'Composite Field',
     'push_notes_section_intro' => 'Optional composite field where you can assemble multiple attributes from an asset in Snipe-IT and push it into a compatible field on the vendor side. This is useful for vendors that do not support multiple fields or custom attributes, but do support a single notes field.',
     'push_notes_target_label' => 'Vendor field',
@@ -142,6 +159,9 @@ return [
     'refresh_groups' => 'Refresh :label list',
     'refresh_groups_ok' => 'Refreshed :count :label(s) from the vendor.',
     'refresh_groups_failed' => 'Refresh failed: :summary. See storage/logs/sync-adapters.log for full details.',
+    'refresh_sites' => 'Refresh :label list',
+    'refresh_sites_ok' => 'Refreshed :count :label(s) from the vendor.',
+    'refresh_sites_failed' => 'Refresh failed: :summary. See storage/logs/sync-adapters.log for full details.',
 
     // Vendor custom fields refresh
     'refresh_custom_fields' => 'Refresh vendor custom fields',
@@ -208,9 +228,10 @@ return [
     'addigy_key_id_help' => 'Generate under Integrations -> Addigy API in your Addigy admin console. Both Client ID and Client Secret come from the same "Create API Integration" flow. Client ID is a public identifier and not encrypted at rest.',
     'addigy_key_secret_help' => 'Paired with Client ID above. Displayed once in the Addigy admin console at creation time. Needs read access to Devices.',
     'unifi_api_key_help' => 'Generate under Settings -> Admins & Users -> API Keys in your UniFi Network application (UniFi OS 4.0.6+ / Network 9.0.108+ required). Older controllers use session cookies and are not supported.',
-    'unifi_site_id_help' => 'The UniFi site to sync from. Use "default" for the primary site, or the site\'s ID from Settings -> System -> Advanced.',
+    'unifi_site_id_help' => 'The UniFi site to sync from. Click Refresh Sites above after saving the API key to populate this list from your controller.',
+    'unifi_access_api_token_help' => 'Sign in to the UniFi Portal, open the console where Access is installed, and go to Access -> Settings -> General -> Advanced -> API Token to generate one. UniFi Access 1.9.1 or later is required, and the API is not available on consoles that have upgraded to Identity Enterprise. This is a different credential from the UniFi Network API key, so running both requires one adapter instance of each.',
     'intune_tenant_id_help' => 'Copy your Azure AD tenant\'s Directory (tenant) ID from Microsoft Entra admin center -> Overview.',
-    'intune_client_id_help' => 'Register an application in Microsoft Entra ID -> App registrations, then copy the Application (client) ID. Grant it the DeviceManagementManagedDevices.Read.All Microsoft Graph application permission (admin consent required).',
+    'intune_client_id_help' => 'Register an application in Microsoft Entra ID -> App registrations, then copy the Application (client) ID. Grant the DeviceManagementManagedDevices.Read.All Microsoft Graph application permission for pull. Add DeviceManagementManagedDevices.ReadWrite.All to push composed notes back to Intune, and DeviceManagementConfiguration.Read.All to filter devices by scope tag name rather than ID. Admin consent is required.',
     'intune_client_secret_help' => 'Generate under your app registration -> Certificates & secrets -> New client secret. Copy the value immediately (Azure only shows it once).',
     'intune_extra_compliance_state' => 'Intune Compliance State',
     'intune_extra_enrolled_at' => 'Intune Enrolled At',
@@ -246,7 +267,7 @@ return [
     'intune_fetch_per_device_details_label' => 'Fetch per-device details on every sync (Ethernet MAC + Physical Memory)',
     'intune_fetch_per_device_details_help' => 'Microsoft Graph does not return Ethernet MAC Address or Physical Memory on the list endpoint we paginate through. Turning this on fires one extra Graph call per managed device at pull time to backfill those two fields. Default off because the extra call per device adds up on large fleets - leave off unless you need those fields populated.',
     'intune_scope_tag_filter_label' => 'Scope tag filter',
-    'intune_scope_tag_filter_help' => 'Comma-separated Intune Scope Tag names (or IDs) to limit the sync to. Devices with any of these tags are synced, everything else is skipped at the Graph API layer so unrelated devices never leave Microsoft. Leave blank to sync every device the app registration can see. Scope tags are managed under Tenant admin -> Roles -> Scope (Tags) in Intune. Example: "Marketing, Engineering".',
+    'intune_scope_tag_filter_help' => 'Comma-separated Intune Scope Tag names (or IDs) to limit the sync to. Devices with any of these tags are synced, everything else is skipped at the Graph API layer so unrelated devices never leave Microsoft. Leave blank to sync every device the app registration can see. Scope tags are managed under Tenant admin -> Roles -> Scope (Tags) in Intune. Example: "Marketing, Engineering". Note: scope tag filtering goes through the Microsoft Graph beta API, which Microsoft does not guarantee stable.',
     'meraki_sm_api_key_help' => 'Generate under your Meraki Dashboard profile -> My Profile -> API access. Needs read access to the target organization (and Systems Manager network access for the devices endpoint).',
     'meraki_sm_organization_id_help' => 'Copy from Organization -> Settings -> Dashboard API access in the Meraki Dashboard, or from any org URL segment after /o/.',
     'workspace_one_tenant_code_help' => 'Find under Groups & Settings -> All Settings -> System -> Advanced -> API -> REST API in your Workspace ONE console.',
@@ -273,6 +294,10 @@ return [
     'jamf_platform_client_secret_help' => 'Paired with the Client ID above. Jamf shows the secret once at integration creation time.',
     'jamf_platform_environment_id_help' => 'UUID of the Platform environment the integration is scoped to. Copy from Jamf Account under Environments, or from the URL of your environment console. Sent as the X-Environment-Id header on every request.',
     'landscape_token_help' => 'Landscape does not have a UI for API tokens. Obtain one by POSTing your credentials to <code>/api/v2/login</code> on your Landscape instance and copying the <code>token</code> field from the JSON response. Pass an <code>expiry_minutes</code> value on that call to control how long the token stays valid (defaults to 24h). The account behind the token needs read access to computers.',
+    'sophos_client_id_help' => 'Create a credential in Sophos Central under Global Settings -> API Credentials Management, with the Service Principal Read-Only role. Copy the Client ID from the credential page. Only tenant-level credentials are supported.',
+    'sophos_client_secret_help' => 'Paired with the Client ID above. Sophos Central shows the secret once, when the credential is created. Credentials expire eventually and can\'t be renewed, so create a new one when that happens.',
+    'sophos_endpoint_types_help' => 'Only sync these Sophos endpoint types. Sophos lists every Linux device as a server, laptops included.',
+    'sophos_skip_cloud_instances_help' => 'Skip endpoints that Sophos reports as cloud instances, such as AWS or Azure virtual machines.',
 
     // Google Workspace (ChromeOS) adapter
     'google_workspace_label_service_account_email' => 'Service Account Email',
@@ -408,6 +433,15 @@ return [
     'extra_reboot_required' => ':vendor Reboot Required',
     'extra_ubuntu_pro' => 'Ubuntu Pro',
     'extra_osquery_version' => 'osquery Version',
+    'extra_endpoint_id' => ':vendor Endpoint ID',
+    'extra_health' => ':vendor Health',
+    'extra_threat_status' => ':vendor Threat Status',
+    'extra_service_status' => ':vendor Service Status',
+    'extra_tamper_protection' => ':vendor Tamper Protection',
+    'extra_encryption_status' => ':vendor Encryption Status',
+    'extra_isolation_status' => ':vendor Isolation Status',
+    'extra_last_user' => ':vendor Last User',
+    'extra_installed_products' => ':vendor Installed Products',
 
     // Shared label strings for adapter settings schemas. Adapters
     // reach for these via trans() so the labels localize alongside
@@ -476,6 +510,10 @@ return [
     'abm_label_pull_model_images' => 'Pull model images from appledb.dev',
     'abm_option_mode_business' => 'Apple Business Manager',
     'abm_option_mode_school' => 'Apple School Manager',
+
+    // Sophos Central adapter-specific labels.
+    'sophos_label_endpoint_types' => 'Endpoint Types',
+    'sophos_label_skip_cloud_instances' => 'Skip Cloud Instances',
 
     // Custom HTTP option strings.
     'custom_option_auth_bearer' => 'Bearer Token',

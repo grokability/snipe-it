@@ -203,7 +203,7 @@ return [
     'email_array' => 'Bir veya daha fazla e-posta adresi geçersiz.',
     'checkboxes' => ':attribute geçersiz seçenekler içeriyor.',
     'radio_buttons' => ':attribute geçersiz.',
-    'image_file_too_large' => 'The :attribute may not be larger than :max.',
+    'image_file_too_large' => ':attribute, :max değerinden büyük olamaz.',
 
     'custom' => [
         'alpha_space' => ': Attribute alanı, izin verilmeyen bir karakter içeriyor.',
