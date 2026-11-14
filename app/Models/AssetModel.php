@@ -14,6 +14,8 @@ use App\Models\Traits\Searchable;
 use App\Presenters\AssetModelPresenter;
 use App\Presenters\Presentable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Gate;
@@ -128,8 +130,12 @@ class AssetModel extends SnipeModel implements Importable
         'depreciation' => ['name'],
         'category' => ['name'],
         'manufacturer' => ['name'],
-        'fieldset' => ['name'],
+        'custom_fieldset' => ['name'],
         'adminuser' => ['first_name', 'last_name', 'display_name'],
+    ];
+
+    protected $searchableRelationAliases = [
+        'fieldset' => 'custom_fieldset',
     ];
 
     /**
@@ -436,23 +442,10 @@ class AssetModel extends SnipeModel implements Importable
         return $this->belongsTo(Manufacturer::class, 'manufacturer_id');
     }
 
-    /**
-     * Establishes the model -> fieldset relationship
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     *
-     * @since  [v2.0]
-     *
-     * @return Relation
-     */
-    public function fieldset()
+    /** @return BelongsTo<CustomFieldset, $this> */
+    public function custom_fieldset(): BelongsTo
     {
         return $this->belongsTo(CustomFieldset::class, 'fieldset_id');
-    }
-
-    public function customFields()
-    {
-        return $this->fieldset()->first()->fields();
     }
 
     /**
@@ -462,11 +455,11 @@ class AssetModel extends SnipeModel implements Importable
      *
      * @since  [v4.3]
      *
-     * @return Relation
+     * @return BelongsToMany<CustomField, $this, CustomFieldDefault>
      */
-    public function defaultValues()
+    public function defaultValues(): BelongsToMany
     {
-        return $this->belongsToMany(CustomField::class, 'models_custom_fields')->withPivot('default_value');
+        return $this->belongsToMany(CustomField::class, CustomFieldDefault::class)->using(CustomFieldDefault::class)->withPivot('id', 'default_value');
     }
 
     /**

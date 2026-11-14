@@ -1,27 +1,18 @@
 @php
 //set array up before loop so it doesn't get wiped at every iteration
     $fields = [];
-    $anyModelHasCustomFields = 0;
+    $hasCustomFields = $fieldsets->isNotEmpty();
 @endphp
 
-@foreach($models as $model)
-    @if (($model) && ($model->fieldset ? $model->fieldset->count() > 0 : false))
-        @php
-            $anyModelHasCustomFields++;
-        @endphp
-    @endif
-@endforeach
-
-@if ($anyModelHasCustomFields > 0)
+@if ($hasCustomFields)
     <fieldset name="custom-fields"">
         <x-form.legend>
             {{ trans('admin/custom_fields/general.custom_fields') }}
         </x-form.legend>
 @endif
 
-@foreach($models as $model)
-@if (($model) && ($model->fieldset))
-    @foreach($model->fieldset->fields AS $field)
+@foreach($fieldsets as $fieldset)
+    @foreach($fieldset->fields AS $field)
         @php
         //prevents some duplicate queries - open to a better way of skipping dupes in output
         //its ugly, but if we'd rather deal with duplicate queries we can get rid of this. 
@@ -44,7 +35,7 @@
                   <x-input.select
                       :name="$field->db_column_name()"
                       :options="$field->formatFieldValuesAsArray()"
-                      :selected="old($field->db_column_name(), (isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : ''))"
+                      :selected="old($field->db_column_name(), (isset($item) ? $item->{$field->db_column_name()} : ''))"
                       :include-empty="true"
                       class="format form-control"
                   />
@@ -54,7 +45,7 @@
                     <input type="text" class="form-control" disabled value="{{ trans('/admin/hardware/form.bulk_update_custom_field_unique') }}">
                 @endif
                 @if(!$field->is_unique)
-                    <textarea class="col-md-6 form-control" id="{{ $field->db_column_name() }}" name="{{ $field->db_column_name() }}">{{ old($field->db_column_name(), (isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : '')) }}</textarea>
+                    <textarea class="col-md-6 form-control" id="{{ $field->db_column_name() }}" name="{{ $field->db_column_name() }}">{{ old($field->db_column_name(), (isset($item) ? $item->{$field->db_column_name()} : '')) }}</textarea>
                 @endif
               @elseif ($field->element=='checkbox')
                     <!-- Checkboxes -->
@@ -103,7 +94,7 @@
                     <x-input.datepicker
                         id="{{ $field->db_column_name() }}"
                         name="{{ $field->db_column_name() }}"
-                        :value="old($field->db_column_name(), isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : '')"
+                        :value="old($field->db_column_name(), isset($item) ? $item->{$field->db_column_name()} : '')"
                     />
                 </div>
 
@@ -112,7 +103,7 @@
                     <x-input.datetimepicker
                         id="{{ $field->db_column_name() }}"
                         name="{{ $field->db_column_name() }}"
-                        :value="old($field->db_column_name(), isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : '')"
+                        :value="old($field->db_column_name(), isset($item) ? $item->{$field->db_column_name()} : '')"
                         :default_now="false"
                     />
                 </div>
@@ -127,7 +118,7 @@
                 <x-input.datepicker
                     id="{{ $field->db_column_name() }}"
                     name="{{ $field->db_column_name() }}"
-                    :value="old($field->db_column_name(), isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : '')"
+                    :value="old($field->db_column_name(), isset($item) ? $item->{$field->db_column_name()} : '')"
                 />
             </div>
 
@@ -142,7 +133,7 @@
                         <x-input.datetimepicker
                             id="{{ $field->db_column_name() }}"
                             name="{{ $field->db_column_name() }}"
-                            :value="old($field->db_column_name(), isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : '')"
+                            :value="old($field->db_column_name(), isset($item) ? $item->{$field->db_column_name()} : '')"
                             :default_now="false"
                         />
                     </div>
@@ -156,7 +147,7 @@
                             @endif
                             @if(!$field->is_unique)
                                 <input type="text"
-                                       value="{{ old($field->db_column_name(),(isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : '')) }}"
+                                       value="{{ old($field->db_column_name(),(isset($item) ? $item->{$field->db_column_name()} : '')) }}"
                                        id="{{ $field->db_column_name() }}"
                                        class="form-control{{ strtoupper($field->format) === 'MAC' ? ' mac-address-input' : '' }}"
                                        name="{{ $field->db_column_name() }}"
@@ -171,14 +162,16 @@
 
           @endif
 
+          @if (!empty($fieldLabels[$field->id]))
           <p class="help-block">
               <x-icon type="warning" class="text-info" /> {{ trans('admin/hardware/form.bulk_update_model_prefix') }}:
-              @foreach ($field->assetModels()->pluck('name')->intersect($modelNames) as $modelName)
+              @foreach ($fieldLabels[$field->id] as $modelName)
                   <span class="label label-default">
                 {{ $modelName }}
             </span>&nbsp;
               @endforeach
           </p>
+          @endif
 
         @if ($field->help_text!='')
             <p class="help-block">{{ $field->help_text }}</p>
@@ -206,13 +199,12 @@
         <div class="col-md-8 col-md-offset-3" style="padding-bottom: 10px;">
             <label class="form-control">
                 <input type="checkbox" name="{{ 'null'.$field->db_column_name() }}" value="1">
-                {{ trans_choice('general.set_to_null', count($assets),['selection_count' => count($assets)]) }}
+                {{ trans_choice('general.set_to_null', $selectionCount,['selection_count' => $selectionCount]) }}
             </label>
         </div>
     </div>
     @endforeach
-@endif
- @endforeach
-@if ($anyModelHasCustomFields > 0)
+@endforeach
+@if ($hasCustomFields)
     </fieldset>
 @endif

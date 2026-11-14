@@ -1,4 +1,4 @@
-@if (($model) && ($model->fieldset) && $model->fieldset->displayAnyFieldsInForm($show_custom_fields_type ?? ''))
+@if (($fieldset ?? null) && $fieldset->displayAnyFieldsInForm($show_custom_fields_type ?? ''))
     <div class="col-md-12 col-sm-12">
 
     <fieldset name="custom-fields">
@@ -8,7 +8,10 @@
             {{ trans('admin/custom_fields/general.custom_fields') }}
         </x-form.legend>
 
-  @foreach($model->fieldset->fields as $field)
+  @foreach($fieldset->fields as $field)
+    @php
+        $defaultValue = $defaultValues[$field->db_column_name()] ?? null;
+    @endphp
     @if (!isset($show_custom_fields_type) || ($field->displayFieldInCurrentForm($show_custom_fields_type)))
 
 
@@ -34,18 +37,18 @@
                   <x-input.select
                       :name="$field->db_column_name()"
                       :options="$field->formatFieldValuesAsArray()"
-                      :selected="old($field->db_column_name(), Helper::customFieldFormValue($field, $item ?? null, $model))"
+                      :selected="old($field->db_column_name(), Helper::customFieldFormValue($field, $item ?? null, $defaultValue))"
                       :required="$field->pivot->required == '1'"
                       class="format form-control"
                   />
 
               @elseif ($field->element=='textarea')
                   <!-- Textarea -->
-                    <textarea rows="6" class="col-md-6 form-control" id="{{ $field->db_column_name() }}" name="{{ $field->db_column_name() }}"{{ ($field->pivot->required=='1') ? ' required' : '' }}>{{ old($field->db_column_name(), Helper::customFieldFormValue($field, $item ?? null, $model)) }}</textarea>
+                    <textarea rows="6" class="col-md-6 form-control" id="{{ $field->db_column_name() }}" name="{{ $field->db_column_name() }}"{{ ($field->pivot->required=='1') ? ' required' : '' }}>{{ old($field->db_column_name(), Helper::customFieldFormValue($field, $item ?? null, $defaultValue)) }}</textarea>
 
                 @elseif ($field->element=='markdown-textarea')
                     <!-- Markdown Textarea -->
-                    <textarea rows="6" class="col-md-6 form-control" id="{{ $field->db_column_name() }}" name="{{ $field->db_column_name() }}"{{ ($field->pivot->required=='1') ? ' required' : '' }}>{{ old($field->db_column_name(), Helper::customFieldFormValue($field, $item ?? null, $model)) }}</textarea>
+                    <textarea rows="6" class="col-md-6 form-control" id="{{ $field->db_column_name() }}" name="{{ $field->db_column_name() }}"{{ ($field->pivot->required=='1') ? ' required' : '' }}>{{ old($field->db_column_name(), Helper::customFieldFormValue($field, $item ?? null, $defaultValue)) }}</textarea>
                     <x-form.help :name="$field->db_column_name()" icon="markdown">
                         {{ trans('general.markdown') }}
                     </x-form.help>
@@ -55,7 +58,7 @@
                   @foreach ($field->formatFieldValuesAsArray() as $key => $value)
                       <div>
                           <label class="form-control">
-                              <input type="checkbox" value="{{ $value }}" name="{{ $field->db_column_name() }}[]" {{  isset($item) ? (in_array($value, array_map('trim', explode(',', $item->{$field->db_column_name()}))) ? ' checked="checked"' : '') : (old($field->db_column_name()) != '' ? ' checked="checked"' : (in_array($key, array_map('trim', explode(',', $field->defaultValue($model->id)))) ? ' checked="checked"' : '')) }}>
+                              <input type="checkbox" value="{{ $value }}" name="{{ $field->db_column_name() }}[]" {{  isset($item) ? (in_array($value, array_map('trim', explode(',', $item->{$field->db_column_name()}))) ? ' checked="checked"' : '') : (old($field->db_column_name()) != '' ? ' checked="checked"' : (in_array($key, array_map('trim', explode(',', ($defaultValue)))) ? ' checked="checked"' : '')) }}>
                               {{ $value }}
                           </label>
                       </div>
@@ -66,7 +69,7 @@
                   @foreach ($field->formatFieldValuesAsArray() as $value)
                       <div>
                           <label class="form-control">
-                              <input type="radio" value="{{ $value }}" name="{{ $field->db_column_name() }}" {{ isset($item) ? ($item->{$field->db_column_name()} == $value ? ' checked="checked"' : '') : (old($field->db_column_name()) != '' ? ' checked="checked"' : (in_array($value, explode(', ', $field->defaultValue($model->id))) ? ' checked="checked"' : '')) }}>
+                              <input type="radio" value="{{ $value }}" name="{{ $field->db_column_name() }}" {{ isset($item) ? ($item->{$field->db_column_name()} == $value ? ' checked="checked"' : '') : (old($field->db_column_name()) != '' ? ' checked="checked"' : (in_array($value, explode(', ', ($defaultValue))) ? ' checked="checked"' : '')) }}>
                               {{ $value }}
                           </label>
                       </div>
@@ -80,7 +83,7 @@
                       <x-input.datepicker
                           id="{{ $field->db_column_name() }}"
                           name="{{ $field->db_column_name() }}"
-                          :value="old($field->db_column_name(), Helper::customFieldFormValue($field, $item ?? null, $model))"
+                          :value="old($field->db_column_name(), Helper::customFieldFormValue($field, $item ?? null, $defaultValue))"
                           required="{{ ($field->pivot->required=='1') ? '1' : '' }}"
                       />
                   </div>
@@ -93,7 +96,7 @@
                       <x-input.datetimepicker
                           id="{{ $field->db_column_name() }}"
                           name="{{ $field->db_column_name() }}"
-                          :value="old($field->db_column_name(), Helper::customFieldFormValue($field, $item ?? null, $model))"
+                          :value="old($field->db_column_name(), Helper::customFieldFormValue($field, $item ?? null, $defaultValue))"
                           required="{{ ($field->pivot->required=='1') ? '1' : '' }}"
                           :default_now="false"
                       />
@@ -109,7 +112,7 @@
                             <x-input.datepicker
                                 id="{{ $field->db_column_name() }}"
                                 name="{{ $field->db_column_name() }}"
-                                :value="old($field->db_column_name(), Helper::customFieldFormValue($field, $item ?? null, $model))"
+                                :value="old($field->db_column_name(), Helper::customFieldFormValue($field, $item ?? null, $defaultValue))"
                                 required="{{ ($field->pivot->required=='1') ? '1' : '' }}"
                             />
                         </div>
@@ -126,7 +129,7 @@
                             <x-input.datetimepicker
                                 id="{{ $field->db_column_name() }}"
                                 name="{{ $field->db_column_name() }}"
-                                :value="old($field->db_column_name(), Helper::customFieldFormValue($field, $item ?? null, $model))"
+                                :value="old($field->db_column_name(), Helper::customFieldFormValue($field, $item ?? null, $defaultValue))"
                                 required="{{ ($field->pivot->required=='1') ? '1' : '' }}"
                                 :default_now="false"
                             />
@@ -163,11 +166,11 @@
                         @endphp
                         @if ($format_icon)
                             <div class="input-group">
-                                <input type="text" value="{{ old($field->db_column_name(),(isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : $field->defaultValue($model->id))) }}" id="{{ $field->db_column_name() }}" class="form-control{{ $macClass }}" name="{{ $field->db_column_name() }}" placeholder="{{ $placeholder }}"{!! $macAttrs !!}{{ ($field->pivot->required=='1') ? ' required' : '' }}>
+                                <input type="text" value="{{ old($field->db_column_name(),(isset($item) ? $item->{$field->db_column_name()} : ($defaultValue))) }}" id="{{ $field->db_column_name() }}" class="form-control{{ $macClass }}" name="{{ $field->db_column_name() }}" placeholder="{{ $placeholder }}"{!! $macAttrs !!}{{ ($field->pivot->required=='1') ? ' required' : '' }}>
                                 <span class="input-group-addon"><x-icon :type="$format_icon" /></span>
                             </div>
                         @else
-                            <input type="text" value="{{ old($field->db_column_name(),(isset($item) ? Helper::gracefulDecrypt($field, $item->{$field->db_column_name()}) : $field->defaultValue($model->id))) }}" id="{{ $field->db_column_name() }}" class="form-control{{ $macClass }}" name="{{ $field->db_column_name() }}" placeholder="{{ $placeholder }}"{!! $macAttrs !!}{{ ($field->pivot->required=='1') ? ' required' : '' }}>
+                            <input type="text" value="{{ old($field->db_column_name(),(isset($item) ? $item->{$field->db_column_name()} : ($defaultValue))) }}" id="{{ $field->db_column_name() }}" class="form-control{{ $macClass }}" name="{{ $field->db_column_name() }}" placeholder="{{ $placeholder }}"{!! $macAttrs !!}{{ ($field->pivot->required=='1') ? ' required' : '' }}>
                         @endif
                     @else
                         <input type="text" value="{{ strtoupper(trans('admin/custom_fields/general.encrypted')) }}" class="form-control disabled" disabled>

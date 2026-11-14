@@ -276,9 +276,7 @@ class AssetAuditPresenter extends Presenter
         // models. We only pass the fieldsets that pertain to each asset (via their model) so that we
         // don't junk up the REST API with tons of custom fields that don't apply
 
-        $fields = CustomField::whereHas('fieldset', function ($query) {
-            $query->whereHas('models');
-        })->get();
+        $fields = CustomField::assignedToInUseFieldsets()->get();
 
         foreach ($fields as $field) {
             $layout[] = [

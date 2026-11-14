@@ -27,8 +27,8 @@
                 <x-callout type="warning" icon="warning" live="assertive">
                     {{ trans_choice('admin/hardware/form.bulk_update_warn', count($assets), ['asset_count' => count($assets)]) }}
 
-                    @if (count($models) > 1)
-                        {{ trans('admin/hardware/form.bulk_update_with_custom_field', ['asset_model_count' => count($models)]) }}
+                    @if (count($modelNames) > 1)
+                        {{ trans('admin/hardware/form.bulk_update_with_custom_field', ['asset_model_count' => count($modelNames)]) }}
                     @endif
                 </x-callout>
 
@@ -317,7 +317,7 @@
                     :label="trans_choice('general.set_to_null', count($assets), ['selection_count' => count($assets)])"
                 />
 
-                @include('models/custom_fields_form_bulk_edit', ['models' => $models])
+                @include('models/custom_fields_form_bulk_edit', ['fieldsets' => $fieldsets, 'selectionCount' => count($assets)])
 
                 @foreach ($assets as $asset)
                     <input type="hidden" name="ids[]" value="{{ $asset }}">

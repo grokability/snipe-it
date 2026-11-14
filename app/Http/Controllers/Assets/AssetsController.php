@@ -14,6 +14,8 @@ use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\CheckoutRequest;
 use App\Models\Company;
+use App\Models\CustomFieldDefault;
+use App\Models\CustomFieldset;
 use App\Models\Location;
 use App\Models\Setting;
 use App\Models\Statuslabel;
@@ -26,7 +28,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
@@ -89,10 +90,7 @@ class AssetsController extends Controller
             ->with('item', new Asset)
             ->with('statuslabel_types', Helper::statusTypeList());
 
-        if ($request->filled('model_id')) {
-            $selected_model = AssetModel::find($request->input('model_id'));
-            $view->with('selected_model', $selected_model);
-        }
+        $view->with($this->customFieldFormData(old('model_id', $request->input('model_id'))));
 
         return $view;
     }
@@ -227,31 +225,13 @@ class AssetsController extends Controller
                     }
 
                 } else {
-                    $asset = $request->handleImages($asset);
+                    $request->handleImages($asset);
                 }
 
                 // Update custom fields in the database.
                 // Validation for these fields is handled through the AssetRequest form request
 
-                if (($model) && ($model->fieldset)) {
-                    foreach ($model->fieldset->fields as $field) {
-                        if ($field->field_encrypted == '1') {
-                            if (Gate::allows('assets.view.encrypted_custom_fields')) {
-                                if (is_array($request->input($field->db_column))) {
-                                    $asset->{$field->db_column} = Crypt::encrypt(implode(', ', $request->input($field->db_column)));
-                                } else {
-                                    $asset->{$field->db_column} = Crypt::encrypt($request->input($field->db_column));
-                                }
-                            }
-                        } else {
-                            if (is_array($request->input($field->db_column))) {
-                                $asset->{$field->db_column} = implode(', ', $request->input($field->db_column));
-                            } else {
-                                $asset->{$field->db_column} = $request->input($field->db_column);
-                            }
-                        }
-                    }
-                }
+                $asset->custom_fill($request, only_present: false);
 
                 // Validate the asset before saving
                 // Note - it can be tempting to instead want to call saveOrFail(), to automatically throw when an object
@@ -360,6 +340,7 @@ class AssetsController extends Controller
         }
 
         return view('hardware/edit')
+            ->with($this->customFieldFormData(old('model_id', $asset->model_id)))
             ->with('item', $asset)
             ->with('statuslabel_list', Helper::statusLabelList())
             ->with('statuslabel_types', Helper::statusTypeList());
@@ -415,8 +396,8 @@ class AssetsController extends Controller
         $total_cost_for_asset = $asset->purchase_cost + $total_maintenance_cost + $total_asset_cost + $total_license_cost + $total_accessory_cost + $total_component_cost;
 
         $audit_custom_field_columns = [];
-        if ($asset->model && $asset->model->fieldset) {
-            $audit_custom_field_columns = $asset->model->fieldset->fields
+        if ($asset->custom_fieldset) {
+            $audit_custom_field_columns = $asset->custom_fieldset->fields
                 ->where('display_audit', '1')
                 ->map(fn ($field) => [
                     'field' => $field->db_column,
@@ -540,36 +521,13 @@ class AssetsController extends Controller
 
         $asset->notes = $request->input('notes');
 
-        $asset = $request->handleImages($asset);
+        $request->handleImages($asset);
 
         // Update custom fields in the database.
         // FIXME: No idea why this is returning a Builder error on db_column_name.
         // Need to investigate and fix. Using static method for now.
         $model = AssetModel::find($request->input('model_id'));
-        if (($model) && ($model->fieldset)) {
-            foreach ($model->fieldset->fields as $field) {
-                if ($field->element == 'checkbox' && ! $request->has($field->db_column)) {
-                    $asset->{$field->db_column} = null;
-                }
-                if ($request->has($field->db_column)) {
-                    if ($field->field_encrypted == '1') {
-                        if (Gate::allows('assets.view.encrypted_custom_fields')) {
-                            if (is_array($request->input($field->db_column))) {
-                                $asset->{$field->db_column} = Crypt::encrypt(implode(', ', $request->input($field->db_column)));
-                            } else {
-                                $asset->{$field->db_column} = Crypt::encrypt($request->input($field->db_column));
-                            }
-                        }
-                    } else {
-                        if (is_array($request->input($field->db_column))) {
-                            $asset->{$field->db_column} = implode(', ', $request->input($field->db_column));
-                        } else {
-                            $asset->{$field->db_column} = $request->input($field->db_column);
-                        }
-                    }
-                }
-            }
-        }
+        $asset->custom_fill($request, only_present: false);
         session()->put([
             'redirect_option' => $request->input('redirect_option'),
             'checkout_to_type' => $request->input('checkout_to_type'),
@@ -796,7 +754,7 @@ class AssetsController extends Controller
      *
      * @return View
      */
-    public function getClone(Asset $asset)
+    public function getClone(Asset $asset): View
     {
         $this->authorize('clone', $asset);
         $cloned = clone $asset;
@@ -808,6 +766,7 @@ class AssetsController extends Controller
         $cloned->deleted_at = '';
 
         return view('hardware/edit')
+            ->with($this->customFieldFormData(old('model_id', $asset->model_id)))
             ->with('statuslabel_list', Helper::statusLabelList())
             ->with('statuslabel_types', Helper::statusTypeList())
             ->with('cloned_model', $cloned_model)
@@ -896,9 +855,6 @@ class AssetsController extends Controller
         $this->authorize('audit', $asset);
         $settings = Setting::getSettings();
 
-        // Invoke the validation to see if the audit will complete successfully
-        $asset->setRules($asset->getRules() + $asset->customFieldValidationRules());
-
         if ($asset->isInvalid()) {
             return redirect()->route('hardware.edit', $asset)->withErrors($asset->getErrors());
         }
@@ -932,31 +888,7 @@ class AssetsController extends Controller
             $asset->location_id = $request->input('location_id');
         }
 
-        // Update custom fields in the database
-        if (($asset->model) && ($asset->model->fieldset)) {
-            foreach ($asset->model->fieldset->fields as $field) {
-                if (($field->display_audit == '1') && ($request->has($field->db_column))) {
-                    if ($field->field_encrypted == '1') {
-                        if (Gate::allows('assets.view.encrypted_custom_fields')) {
-                            if (is_array($request->input($field->db_column))) {
-                                $asset->{$field->db_column} = Crypt::encrypt(implode(', ', $request->input($field->db_column)));
-                            } else {
-                                $asset->{$field->db_column} = Crypt::encrypt($request->input($field->db_column));
-                            }
-                        }
-                    } else {
-                        if (is_array($request->input($field->db_column))) {
-                            $asset->{$field->db_column} = implode(', ', $request->input($field->db_column));
-                        } else {
-                            $asset->{$field->db_column} = $request->input($field->db_column);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Invoke the validation to see if the audit will complete successfully
-        $asset->setRules($asset->getRules() + $asset->customFieldValidationRules());
+        $asset->custom_fill($request, false, 'display_audit');
 
         // Validate the rest of the data before we turn off the event dispatcher
         if ($asset->isInvalid()) {
@@ -1094,4 +1026,18 @@ class AssetsController extends Controller
         return redirect()->route('requests.index')
             ->with('success', trans('admin/hardware/message.requests.canceled'));
     }
+    /** @return array{selected_model: ?AssetModel, fieldset: ?CustomFieldset, defaultValues: array<string, mixed>} */
+    protected function customFieldFormData(mixed $modelId): array
+    {
+        $model = is_numeric($modelId)
+            ? AssetModel::withTrashed()->with('defaultValues')->find((int) $modelId)
+            : null;
+
+        return [
+            'selected_model' => $model,
+            'fieldset' => CustomFieldset::with('fields')->find($model?->fieldset_id),
+            'defaultValues' => CustomFieldDefault::valuesFor($model),
+        ];
+    }
+
 }

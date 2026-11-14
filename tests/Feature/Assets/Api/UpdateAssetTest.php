@@ -379,10 +379,11 @@ class UpdateAssetTest extends TestCase
                 $field->db_column_name() => 'This is encrypted field',
             ])
             ->assertStatusMessageIs('success')
+            ->assertJsonPath('payload.'.$field->db_column_name(), 'This is encrypted field')
             ->assertOk();
 
         $asset->refresh();
-        $this->assertEquals('This is encrypted field', Crypt::decrypt($asset->{$field->db_column_name()}));
+        $this->assertEquals('This is encrypted field', Crypt::decrypt($asset->getRawOriginal($field->db_column_name())));
     }
 
     public function test_permission_needed_to_update_encrypted_field()
@@ -393,7 +394,7 @@ class UpdateAssetTest extends TestCase
         $asset = Asset::factory()->hasEncryptedCustomField($field)->create();
         $normal_user = User::factory()->editAssets()->create();
 
-        $asset->{$field->db_column_name()} = Crypt::encrypt('encrypted value should not change');
+        $asset->{$field->db_column_name()} = 'encrypted value should not change';
         $asset->save();
 
         // test that a 'normal' user *cannot* change the encrypted custom field
@@ -403,10 +404,32 @@ class UpdateAssetTest extends TestCase
             ])
             ->assertStatusMessageIs('success')
             ->assertOk()
-            ->assertMessagesAre('Asset updated successfully, but encrypted custom fields were not due to permissions');
+            ->assertMessagesAre('Asset updated successfully, but encrypted custom fields were not due to permissions')
+            ->assertJsonPath('payload.'.$field->db_column_name(), strtoupper(trans('admin/custom_fields/general.encrypted')))
+            ->assertDontSee('encrypted value should not change', false);
 
         $asset->refresh();
-        $this->assertEquals('encrypted value should not change', Crypt::decrypt($asset->{$field->db_column_name()}));
+        $this->assertEquals('encrypted value should not change', Crypt::decrypt($asset->getRawOriginal($field->db_column_name())));
+    }
+
+    public function test_updating_an_unrelated_attribute_does_not_disclose_encrypted_fields(): void
+    {
+        $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
+
+        $field = CustomField::factory()->testEncrypted()->create();
+        $asset = Asset::factory()->hasEncryptedCustomField($field)->create([
+            $field->db_column => 'secret retained on the asset',
+        ]);
+
+        $this->actingAsForApi(User::factory()->editAssets()->create())
+            ->patchJson(route('api.assets.update', $asset->id), ['name' => 'Updated name'])
+            ->assertOk()
+            ->assertStatusMessageIs('success')
+            ->assertJsonPath('payload.name', 'Updated name')
+            ->assertJsonPath('payload.'.$field->db_column, strtoupper(trans('admin/custom_fields/general.encrypted')))
+            ->assertDontSee('secret retained on the asset', false);
+
+        $this->assertSame('secret retained on the asset', $asset->fresh()->{$field->db_column});
     }
 
     public function test_checkout_to_user_on_asset_update()

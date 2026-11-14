@@ -55,9 +55,8 @@ class FieldsWithDefaultValuesTest extends TestCase
         // transformer called $field->defaultValue($modelId) per field,
         // each firing a `SELECT models.* INNER JOIN models_custom_fields`
         // against the full set of AssetModel rows with any default for
-        // that field. The fix constrains an eager-load of defaultValues
-        // to the one pivot row that matches the requested model, so the
-        // pivot walk collapses to a single query.
+        // that field. Defaults are now loaded once from the owner and
+        // shared across the per-field transformer calls.
         $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
 
         $fieldA = CustomField::factory()->macAddress()->create();
@@ -89,14 +88,13 @@ class FieldsWithDefaultValuesTest extends TestCase
         DB::disableQueryLog();
 
         $pivotWalks = collect($queries)
-            ->filter(fn ($q) => str_contains($q['query'], '`models`')
-                && str_contains($q['query'], 'inner join `models_custom_fields`'))
+            ->filter(fn ($q) => str_contains($q['query'], 'models_custom_fields'))
             ->count();
 
         $this->assertLessThanOrEqual(
             1,
             $pivotWalks,
-            'Endpoint fired '.$pivotWalks.' models <-> models_custom_fields pivot queries. Expected at most 1 (the constrained eager load upfront).'
+            'Endpoint fired '.$pivotWalks.' default-value pivot queries. Expected at most 1.'
         );
     }
 }

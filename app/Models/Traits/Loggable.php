@@ -8,6 +8,7 @@ use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\CompanyableScope;
 use App\Models\Contracts\CompanyableChild;
+use App\Models\Contracts\HasCustomFields;
 use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\Location;
@@ -20,6 +21,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -443,20 +445,10 @@ trait Loggable
             $log->location_id = $target->location_id;
         }
 
-        if (static::class == Asset::class) {
-            $asset = Asset::find($log->item_id);
-            if ($asset) {
-
-                // add the custom fields that were changed
-                if ($asset->model->fieldset) {
-                    $fields_array = [];
-                    foreach ($asset->model->fieldset->fields as $field) {
-                        if ($field->display_checkout == 1) {
-                            $fields_array[$field->db_column] = $asset->{$field->db_column};
-                        }
-                    }
-                }
-            }
+        if ($this instanceof HasCustomFields) {
+            $item = static::whereKey($log->item_id)->first();
+            // add the custom fields that were changed
+            $fields_array = $this->customFieldValuesForLog($item, 'display_checkout');
         }
 
         $log->note = $note;
@@ -564,20 +556,15 @@ trait Loggable
             $log->item_type = static::class;
             $log->item_id = $this->id;
 
-            if (static::class == Asset::class) {
-                $asset = Asset::find($log->item_id);
-                if ($asset) {
-                    $asset->increment('checkin_counter', 1);
+            if ($this instanceof HasCustomFields) {
+                $item = static::whereKey($log->item_id)->first();
+                if ($item !== null) {
+                    if (static::class == Asset::class) {
+                        $item->increment('checkin_counter', 1);
+                    }
 
                     // add the custom fields that were changed
-                    if ($asset->model->fieldset) {
-                        $fields_array = [];
-                        foreach ($asset->model->fieldset->fields as $field) {
-                            if ($field->display_checkin == 1) {
-                                $fields_array[$field->db_column] = $asset->{$field->db_column};
-                            }
-                        }
-                    }
+                    $fields_array = $this->customFieldValuesForLog($item, 'display_checkin');
                 }
             }
         }
@@ -648,6 +635,24 @@ trait Loggable
         return $log;
     }
 
+    /** @return array<string, mixed> */
+    protected function customFieldValuesForLog(?Model $item, string $filter): array
+    {
+        if (! ($item instanceof HasCustomFields)) {
+            return [];
+        }
+
+        $values = [];
+        $attributes = $item->getAttributes();
+        foreach ($item->custom_fieldset->fields ?? [] as $field) {
+            if ($field->{$filter}) {
+                $values[$field->db_column] = $attributes[$field->db_column] ?? null;
+            }
+        }
+
+        return $values;
+    }
+
     /**
      * @author A. Gianotto <snipe@snipe.net>
      *
@@ -660,14 +665,7 @@ trait Loggable
 
         $log = new Actionlog;
 
-        $fields_array = [];
-        if (static::class == Asset::class && $this->model && $this->model->fieldset) {
-            foreach ($this->model->fieldset->fields as $field) {
-                if ($field->display_audit == 1) {
-                    $fields_array[$field->db_column] = $this->{$field->db_column};
-                }
-            }
-        }
+        $fields_array = $this->customFieldValuesForLog($this, 'display_audit');
 
         $changed = [];
 

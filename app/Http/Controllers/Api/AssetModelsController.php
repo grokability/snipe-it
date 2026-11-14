@@ -93,7 +93,7 @@ class AssetModelsController extends Controller
             'models.updated_at',
             'models.require_serial',
         ])
-            ->with('category', 'depreciation', 'manufacturer', 'fieldset.fields.defaultValues', 'adminuser')
+            ->with('category', 'depreciation', 'manufacturer', 'adminuser')
             ->withCount('assets as assets_count')
             ->withCount('availableAssets as remaining')
             ->withCount('assignedAssets as assets_assigned_count')
@@ -206,7 +206,7 @@ class AssetModelsController extends Controller
      *
      * @param  int  $id
      */
-    public function show($id): array
+    public function show(int|string $id): array
     {
         $this->authorize('view', AssetModel::class);
         $assetmodel = AssetModel::withCount('assets as assets_count')->findOrFail($id);
@@ -241,7 +241,7 @@ class AssetModelsController extends Controller
                 'model.category',
                 'model.manufacturer',
                 'model.depreciation',
-                'model.fieldset',
+                'custom_fieldset',
                 'location',
                 'defaultLoc',
                 'status',
@@ -271,7 +271,7 @@ class AssetModelsController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update(StoreAssetModelRequest $request, $id): JsonResponse
+    public function update(StoreAssetModelRequest $request, int|string $id): JsonResponse
     {
         $this->authorize('update', AssetModel::class);
         $assetmodel = AssetModel::findOrFail($id);

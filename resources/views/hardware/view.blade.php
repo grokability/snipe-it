@@ -187,8 +187,8 @@
                                 @endif
 
 
-                                @if (($asset->model) && ($asset->model->fieldset))
-                                    @foreach($asset->model->fieldset->fields as $field)
+                                @if ($asset->custom_fieldset)
+                                    @foreach($asset->custom_fieldset->fields as $field)
                                         <x-data-row :label="$field->name">
                                             <x-info-element.customfield :item="$asset" :field="$field"/>
                                         </x-data-row>

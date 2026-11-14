@@ -59,8 +59,8 @@ class CheckinAssetMail extends BaseMailable
         $customFields = [];
 
         // Check if the item has custom fields associated with it
-        if (($this->item->model) && ($this->item->model->fieldset)) {
-            $fields = $this->item->model->fieldset->fields;
+        if (($this->item->custom_fieldset)) {
+            $fields = $this->item->custom_fieldset->fields;
 
             foreach ($fields as $field) {
                 if (! $field->show_in_email || $field->field_encrypted == '1') {

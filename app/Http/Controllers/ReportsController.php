@@ -797,7 +797,7 @@ class ReportsController extends Controller
 
             $assets = Asset::select('assets.*')->with([
                 'location', 'status', 'company', 'defaultLoc',
-                'model.category', 'model.manufacturer', 'model.fieldset.fields', 'supplier',
+                'model.category', 'model.manufacturer', 'custom_fieldset.fields', 'supplier',
                 // assignedTo is a morphTo. The user_company column below
                 // reads $assignee->companies when the assignee is a User,
                 // and only User has a companies pivot. morphWith constrains
@@ -1241,7 +1241,7 @@ class ReportsController extends Controller
                         $row[] = config('app.url').'/hardware/'.$asset->id;
                     }
 
-                    $modelFieldIds = $asset->model?->fieldset?->fields->pluck('id') ?? collect();
+                    $modelFieldIds = $asset->custom_fieldset?->fields->pluck('id') ?? collect();
 
                     foreach ($customfields as $customfield) {
                         $column_name = $customfield->db_column_name();
@@ -1250,8 +1250,8 @@ class ReportsController extends Controller
                                 ? $asset->$column_name
                                 : null;
 
-                            if ($value !== null && $customfield->field_encrypted == '1' && Gate::allows('assets.view.encrypted_custom_fields')) {
-                                $value = Helper::gracefulDecrypt($customfield, $value);
+                            if ($customfield->field_encrypted && ! Gate::allows('assets.view.encrypted_custom_fields')) {
+                                $value = strtoupper(trans('admin/custom_fields/general.encrypted'));
                             }
 
                             $row[] = $value;

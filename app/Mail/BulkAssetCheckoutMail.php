@@ -76,7 +76,7 @@ class BulkAssetCheckoutMail extends Mailable
     private function loadCustomFieldsOnAssets(): void
     {
         $this->assets = $this->assets->map(function (Asset $asset) {
-            $fields = $asset->model?->fieldset?->fields->filter(function (CustomField $field) {
+            $fields = $asset->custom_fieldset?->fields->filter(function (CustomField $field) {
                 return $field->show_in_email && ! $field->field_encrypted;
             });
 

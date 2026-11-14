@@ -5,7 +5,6 @@ namespace Tests\Feature\Assets\Api;
 use App\Models\Asset;
 use App\Models\CustomField;
 use App\Models\User;
-use Illuminate\Support\Facades\Crypt;
 use Tests\TestCase;
 
 class AssetHistoryTest extends TestCase
@@ -45,7 +44,7 @@ class AssetHistoryTest extends TestCase
 
         $field = CustomField::factory()->testEncrypted()->create();
         $asset = Asset::factory()->hasEncryptedCustomField($field)->create([
-            $field->db_column => Crypt::encrypt('safe initial value'),
+            $field->db_column => 'safe initial value',
         ]);
         $superuser = User::factory()->superuser()->create();
 
@@ -67,7 +66,7 @@ class AssetHistoryTest extends TestCase
 
         $field = CustomField::factory()->testEncrypted()->create();
         $asset = Asset::factory()->hasEncryptedCustomField($field)->create([
-            $field->db_column => Crypt::encrypt('safe initial value'),
+            $field->db_column => 'safe initial value',
         ]);
         $superuser = User::factory()->superuser()->create();
 

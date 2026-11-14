@@ -87,33 +87,13 @@ class ProfileTransformer
      * customFieldsFormatter expects). Encrypted fields stay out of the
      * response entirely.
      */
-    private function transformAssetCustomFields(Asset $asset): object|array
+    protected function transformAssetCustomFields(Asset $asset): object|array
     {
-        if (!$asset->model || !$asset->model->fieldset) {
-            return new \stdClass;
-        }
-
-        $fields_array = [];
-        foreach ($asset->model->fieldset->fields as $field) {
-            if ($field->field_encrypted) {
-                continue;
-            }
-            if (!$field->display_in_user_view) {
-                continue;
-            }
-            $value = $asset->{$field->db_column};
-            if (($field->format === 'DATE' || $field->format === 'DATETIME') && $value) {
-                $value = Helper::getFormattedDateObject($value, $field->format === 'DATETIME' ? 'datetime' : 'date', false);
-            }
-
-            $fields_array[$field->name] = [
-                'field' => e($field->db_column),
-                'value' => e($value),
-                'field_format' => $field->format,
-                'element' => $field->element,
-            ];
-        }
-
-        return $fields_array ?: new \stdClass;
+        return (new CustomFieldValuesTransformer)->transform(
+            $asset,
+            includeEncrypted: false,
+            renderMarkdown: false,
+            filterFieldExpression: 'display_in_user_view',
+        ) ?: new \stdClass;
     }
 }

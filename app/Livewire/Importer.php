@@ -1150,7 +1150,7 @@ class Importer extends Component
         // fieldsets, so a field required in Fieldset A may be irrelevant
         // for rows destined for Fieldset B (issue #19468). Server-side
         // validation on Asset::save() enforces the correct per-asset rule
-        // via customFieldValidationRules() -> $model->fieldset->validation_rules(),
+        // via the resolved custom_fieldset validation rules,
         // which reads the pivot->required flag for the specific fieldset
         // attached to the row's model. Rows that legitimately need the
         // field will still fail at save-time and surface in the import

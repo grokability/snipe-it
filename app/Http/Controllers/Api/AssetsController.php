@@ -34,7 +34,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
@@ -173,7 +172,7 @@ class AssetsController extends Controller
                 'model.depreciation',
                 'model.category',
                 'model.manufacturer',
-                'model.fieldset',
+                'custom_fieldset',
                 'model.depreciation',
                 'supplier',
                 'externalSource',
@@ -642,7 +641,7 @@ class AssetsController extends Controller
             'location',
             'model.category',
             'model.depreciation',
-            'model.fieldset',
+            'custom_fieldset',
             'model.manufacturer',
             'supplier',
         ]);
@@ -812,9 +811,8 @@ class AssetsController extends Controller
      */
     public function store(StoreAssetRequest $request): JsonResponse
     {
-        // Eager-load the fieldset chain down to the per-model pivot defaults
-        $model = AssetModel::with('fieldset.fields.defaultValues')
-            ->find((int) $request->input('model_id'));
+        // custom_fill resolves defaults together before filling the custom fields.
+        $model = AssetModel::find((int) $request->input('model_id'));
 
         $asset = new Asset;
         $asset->model()->associate($model);
@@ -830,47 +828,10 @@ class AssetsController extends Controller
             $request->offsetSet('image', $request->offsetGet('image_source'));
         }
 
-        $asset = $request->handleImages($asset);
+        $request->handleImages($asset);
 
         // Update custom fields in the database.
-        if ($model && $model->fieldset) {
-            foreach ($model->fieldset->fields as $field) {
-
-                // Set the field value based on what was sent in the request
-                $field_val = $request->input($field->db_column, null);
-
-                // If input value is null, use custom field's default value
-                if ($field_val == null) {
-                    Log::debug('Field value for '.$field->db_column.' is null');
-                    $field_val = $field->defaultValue($request->input('model_id'));
-                    Log::debug('Use the default fieldset value of '.$field_val);
-                }
-
-                // if the field is set to encrypted, make sure we encrypt the value
-                if ($field->field_encrypted == '1') {
-                    Log::debug('This model field is encrypted in this fieldset.');
-
-                    if (Gate::allows('assets.view.encrypted_custom_fields')) {
-
-                        // If input value is null, use custom field's default value
-                        if (($field_val == null) && ($request->has('model_id') != '')) {
-                            $field_val = Crypt::encrypt($field_val);
-                        } else {
-                            $field_val = Crypt::encrypt($request->input($field->db_column));
-                        }
-                    } else {
-                        continue;
-                    }
-                }
-                if ($field->element == 'checkbox') {
-                    if (is_array($field_val)) {
-                        $field_val = implode(',', $field_val);
-                    }
-                }
-
-                $asset->{$field->db_column} = $field_val;
-            }
-        }
+        $asset->custom_fill($request, true);
 
         $target = $this->resolveCheckoutTargetForAssetMutation($request);
         $requestedCheckout = $request->filled('assigned_user') || $request->filled('assigned_asset') || $request->filled('assigned_location');
@@ -923,7 +884,7 @@ class AssetsController extends Controller
                 ? trans('admin/hardware/message.create.success_no_checkout')
                 : trans('admin/hardware/message.create.success');
 
-            return response()->json(Helper::formatStandardApiResponse('success', $asset, $message));
+            return response()->json(Helper::formatStandardApiResponse('success', (new AssetsTransformer)->transformAssetForWrite($asset), $message));
 
             // below is what we want the _eventual_ return to look like - in a more standardized format.
             // return response()->json(Helper::formatStandardApiResponse('success', (new AssetsTransformer)->transformAsset($asset), trans('admin/hardware/message.create.success')));
@@ -1054,7 +1015,7 @@ class AssetsController extends Controller
      * response body. Used by update() (default shape) and by buildRowResult()
      * to shape each row of a bulk response.
      *
-     * Kept as a flat asset payload (not through AssetsTransformer) so the
+     * Kept as a flat asset payload through AssetsTransformer so the
      * response continues to match the shape existing integrations rely on.
      */
     private function formatSingleAssetResponse(array $result): array
@@ -1067,7 +1028,7 @@ class AssetsController extends Controller
             return Helper::formatStandardApiResponse('error', null, $result['errors']);
         }
 
-        return Helper::formatStandardApiResponse('success', $result['asset'], trans($result['message']));
+        return Helper::formatStandardApiResponse('success', (new AssetsTransformer)->transformAssetForWrite($result['asset']), trans($result['message']));
     }
 
     /**
@@ -1115,37 +1076,11 @@ class AssetsController extends Controller
             $request->offsetSet('image', $request->offsetGet('image_source'));
         }
 
-        $asset = $request->handleImages($asset);
-        $model = $asset->model;
+        $request->handleImages($asset);
 
         $problems_updating_encrypted_custom_fields = false;
-        if ($model && isset($model->fieldset)) {
-            foreach ($model->fieldset->fields as $field) {
-                if (! $request->has($field->db_column)) {
-                    continue;
-                }
-
-                $field_val = $request->input($field->db_column, null);
-
-                if ($field->element === 'checkbox' && is_array($field_val)) {
-                    $field_val = implode(',', $field_val);
-                }
-
-                if ($field->field_encrypted == '1') {
-                    if (Gate::allows('assets.view.encrypted_custom_fields')) {
-                        $field_val = Crypt::encrypt($field_val);
-                    } else {
-                        // Skip encrypted-field updates for callers without the
-                        // permission, but flag it so the response can nudge them.
-                        $problems_updating_encrypted_custom_fields = true;
-
-                        continue;
-                    }
-                }
-
-                $asset->{$field->db_column} = $field_val;
-            }
-        }
+        $asset->custom_fill($request);
+        $problems_updating_encrypted_custom_fields = $asset->hasSkippedEncryptedCustomFields();
 
         $target = $this->resolveCheckoutTargetForAssetMutation($request, $asset->id);
         $requestedCheckout = $request->filled('assigned_user') || $request->filled('assigned_asset') || $request->filled('assigned_location');
@@ -1901,35 +1836,10 @@ class AssetsController extends Controller
             'next_audit_date' => Helper::getFormattedDateObject($asset->next_audit_date),
         ];
 
-        if ($asset->model && $asset->model->fieldset) {
-            $payload['custom_fields'] = [];
-            foreach ($asset->model->fieldset->fields as $field) {
-                if ($field->display_audit != '1' || ! $request->has($field->db_column)) {
-                    continue;
-                }
-
-                $value = $request->input($field->db_column);
-                $stored = is_array($value) ? implode(', ', $value) : $value;
-
-                if ($field->field_encrypted == '1') {
-                    // Only writers with the encrypted-view permission can
-                    // set encrypted fields. Other callers get the payload
-                    // echo but no persisted change.
-                    if (Gate::allows('assets.view.encrypted_custom_fields')) {
-                        $asset->{$field->db_column} = Crypt::encrypt($stored);
-                    }
-                } else {
-                    $asset->{$field->db_column} = $stored;
-                }
-
-                $payload['custom_fields'][$field->db_column] = $value;
-            }
+        if ($asset->custom_fieldset) {
+            $payload['custom_fields'] = $asset->custom_fill($request, false, 'display_audit');
         }
-
-        // Merge the model-level base rules with the custom-field rules so
-        // uploaded audit data is checked before we bypass the observer below.
-        $asset->setRules($asset->getRules() + $asset->customFieldValidationRules());
-
+        
         if ($asset->isInvalid()) {
             return [
                 'success' => false,
@@ -2121,7 +2031,7 @@ class AssetsController extends Controller
                 'assignedTo',
                 'model.category',
                 'model.manufacturer',
-                'model.fieldset',
+                'custom_fieldset',
                 'supplier',
                 'requests'
             );

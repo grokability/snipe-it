@@ -6,6 +6,7 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\CustomFieldsetsTransformer;
 use App\Http\Transformers\CustomFieldsTransformer;
+use App\Models\AssetModel;
 use App\Models\CustomField;
 use App\Models\CustomFieldset;
 use Illuminate\Http\JsonResponse;
@@ -209,10 +210,9 @@ class CustomFieldsetsController extends Controller
         $this->authorize('delete', CustomField::class);
         $fieldset = CustomFieldset::findOrFail($id);
 
-        $modelsCount = $fieldset->models->count();
         $fieldsCount = $fieldset->fields->count();
 
-        if (($modelsCount > 0) || ($fieldsCount > 0)) {
+        if (! $fieldset->isDeletable() || ($fieldsCount > 0)) {
             return response()->json(Helper::formatStandardApiResponse('error', null, 'Fieldset is in use.'));
         }
 
@@ -253,12 +253,9 @@ class CustomFieldsetsController extends Controller
         $this->authorize('view', CustomField::class);
         $set = CustomFieldset::findOrFail($fieldsetId);
 
-        // Constrain the eager load to only the one models_custom_fields pivot
-        // row that matches this specific model
-        $fields = $set->fields()
-            ->with(['defaultValues' => fn ($q) => $q->wherePivot('asset_model_id', $modelId)])
-            ->get();
+        $fields = $set->fields;
+        $owner = AssetModel::with('defaultValues')->find($modelId);
 
-        return (new CustomFieldsTransformer)->transformCustomFieldsWithDefaultValues($fields, $modelId, $fields->count());
+        return (new CustomFieldsTransformer)->transformCustomFields($fields, $fields->count(), $owner);
     }
 }

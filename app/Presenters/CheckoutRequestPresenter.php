@@ -199,9 +199,7 @@ class CheckoutRequestPresenter extends Presenter
         // asset layout uses. Only asset requests have per-instance
         // values so non-asset rows render blank in these columns;
         // the transformer emits an empty object for those rows.
-        $fields = CustomField::whereHas('fieldset', function ($query): void {
-            $query->whereHas('models');
-        })->where('field_encrypted', 0)
+        $fields = CustomField::assignedToInUseFieldsets()->where('field_encrypted', 0)
             ->where('show_in_requestable_list', 1)
             ->get();
 

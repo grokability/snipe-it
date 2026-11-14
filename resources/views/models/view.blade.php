@@ -72,7 +72,7 @@
         </x-page-column>
         <x-page-column class="col-md-3">
             <x-box class="side-box expanded">
-                <x-info-panel :infoPanelObj="$model" img_path="{{ app('models_upload_url') }}" :qr_code_url="route('qr_code/common', ['object_type' => 'models', 'id' => $model->id])">
+                <x-info-panel :fieldset="$fieldset" :infoPanelObj="$model" img_path="{{ app('models_upload_url') }}" :qr_code_url="route('qr_code/common', ['object_type' => 'models', 'id' => $model->id])">
                     <x-slot:buttons>
                         <x-button.edit :item="$model" :route="route('models.edit', $model->id)" />
                         <x-button.add :item="\App\Models\Asset::class" :tooltip="trans('general.new_asset')" :route="route('hardware.create', ['model_id' => $model->id])"/>

@@ -10,7 +10,6 @@ use App\Models\CustomField;
 use App\Models\CustomFieldset;
 use App\Models\ReportTemplate;
 use App\Models\User;
-use Illuminate\Support\Facades\Crypt;
 use League\Csv\Reader;
 use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
@@ -254,7 +253,7 @@ class CustomAssetReportTest extends TestCase
         $model = AssetModel::factory()->create(['fieldset_id' => $fieldset->id]);
 
         $asset = Asset::factory()->for($model, 'model')->create(['name' => 'Encrypted Asset']);
-        $asset->{$columnName} = Crypt::encrypt('super-secret-value');
+        $asset->{$columnName} = 'super-secret-value';
         $asset->save();
 
         $user = User::factory()->create([

@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use App\Http\Traits\UniqueUndeletedTrait;
+use App\Models\Builders\CustomFieldQueryBuilder;
 use App\Models\Traits\HasCachedNameMap;
 use EasySlugger\Utf8Slugger;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
@@ -611,40 +613,6 @@ class CustomField extends Model
     }
 
     /**
-     * Establishes the customfield -> default values relationship
-     *
-     * @author Hannah Tinkler
-     *
-     * @since  [v3.0]
-     *
-     * @return Relation
-     */
-    public function defaultValues()
-    {
-        return $this->belongsToMany(AssetModel::class, 'models_custom_fields')->withPivot('default_value');
-    }
-
-    /**
-     * Returns the default value for a given model using the defaultValues
-     * relationship
-     *
-     * @param  int  $modelId
-     * @return string
-     */
-    public function defaultValue($modelId)
-    {
-        return $this->defaultValues->filter(
-            function ($item) use ($modelId) {
-                return $item->pivot->asset_model_id == $modelId;
-            }
-        )->map(
-            function ($item) {
-                return $item->pivot->default_value;
-            }
-        )->first();
-    }
-
-    /**
      * Checks the format of the attribute
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
@@ -844,5 +812,10 @@ class CustomField extends Model
         }
 
         return $this->format;
+    }
+
+    public function newEloquentBuilder($query): CustomFieldQueryBuilder
+    {
+        return new CustomFieldQueryBuilder($query);
     }
 }

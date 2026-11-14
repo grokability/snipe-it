@@ -336,6 +336,57 @@ class BulkEditAssetsTest extends TestCase
         });
     }
 
+    public function test_bulk_edit_only_fills_fields_attached_to_each_asset_and_honors_explicit_nulls(): void
+    {
+        [$firstField, $secondField] = CustomField::factory()->count(2)->create();
+        $first = Asset::factory()->hasMultipleCustomFields([$firstField])->create([$firstField->db_column => 'original']);
+        $second = Asset::factory()->hasMultipleCustomFields([$secondField])->create([$secondField->db_column => 'original']);
+
+        $this->actingAs(User::factory()->editAssets()->create())->post(route('hardware/bulksave'), [
+            'ids' => [$first->id, $second->id],
+            $firstField->db_column => '0',
+            'null'.$secondField->db_column => '1',
+        ])->assertRedirect()->assertSessionMissing('bulk_asset_errors');
+
+        $this->assertSame('0', $first->fresh()->{$firstField->db_column});
+        $this->assertNull($first->fresh()->getRawOriginal($secondField->db_column));
+        $this->assertNull($second->fresh()->{$secondField->db_column});
+        $this->assertNull($second->fresh()->getRawOriginal($firstField->db_column));
+    }
+
+    public function test_bulk_edit_uses_the_new_models_fieldset_when_changing_models(): void
+    {
+        [$oldField, $newField] = CustomField::factory()->count(2)->create();
+        $asset = Asset::factory()->hasMultipleCustomFields([$oldField])->create();
+        $newModel = AssetModel::factory()->hasMultipleCustomFields([$newField])->create();
+
+        $this->actingAs(User::factory()->editAssets()->create())->post(route('hardware/bulksave'), [
+            'ids' => [$asset->id],
+            'model_id' => $newModel->id,
+            $newField->db_column => 'new value',
+            $oldField->db_column => 'ignored',
+        ])->assertRedirect()->assertSessionMissing('bulk_asset_errors');
+
+        $this->assertSame($newModel->id, $asset->fresh()->model_id);
+        $this->assertSame('new value', $asset->fresh()->{$newField->db_column});
+        $this->assertNull($asset->fresh()->getRawOriginal($oldField->db_column));
+    }
+
+    public function test_bulk_edit_keeps_the_admin_requirement_even_when_the_actor_can_view_encrypted_fields(): void
+    {
+        $field = CustomField::factory()->encrypt()->create();
+        $asset = Asset::factory()->hasEncryptedCustomField($field)->create([$field->db_column => 'original']);
+        $actor = User::factory()->editAssets()->viewEncryptedCustomFields()->create();
+
+        $this->actingAs($actor)->post(route('hardware/bulksave'), [
+            'ids' => [$asset->id],
+            $field->db_column => 'replacement',
+            'null'.$field->db_column => '1',
+        ])->assertRedirect()->assertSessionMissing('bulk_asset_errors');
+
+        $this->assertSame('original', Crypt::decrypt($asset->fresh()->getRawOriginal($field->db_column)));
+    }
+
     public function test_bulk_edit_assets_accepts_and_updates_encrypted_custom_fields()
     {
         $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
@@ -345,7 +396,7 @@ class BulkEditAssetsTest extends TestCase
         $encrypted = CustomField::where('name', 'Test Encrypted')->first();
 
         $assets = Asset::factory()->count(10)->hasEncryptedCustomField($encrypted)->create([
-            $encrypted->db_column => Crypt::encrypt('Original Encrypted Text'),
+            $encrypted->db_column => 'Original Encrypted Text',
         ]);
 
         $id_array = $assets->pluck('id')->toArray();
@@ -356,7 +407,7 @@ class BulkEditAssetsTest extends TestCase
         ])->assertStatus(302);
 
         Asset::findMany($id_array)->each(function (Asset $asset) use ($encrypted) {
-            $this->assertEquals('New Encrypted Text', Crypt::decrypt($asset->{$encrypted->db_column}));
+            $this->assertEquals('New Encrypted Text', Crypt::decrypt($asset->getRawOriginal($encrypted->db_column)));
         });
     }
 
@@ -371,11 +422,11 @@ class BulkEditAssetsTest extends TestCase
         $encrypted = CustomField::where('name', 'Test Encrypted')->first();
 
         $admin_assets = Asset::factory()->count(5)->hasEncryptedCustomField($encrypted)->create([
-            $encrypted->db_column => Crypt::encrypt('Original Encrypted Text'),
+            $encrypted->db_column => 'Original Encrypted Text',
         ]);
 
         $standard_assets = Asset::factory()->count(5)->hasEncryptedCustomField($encrypted)->create([
-            $encrypted->db_column => Crypt::encrypt('Original Encrypted Text'),
+            $encrypted->db_column => 'Original Encrypted Text',
         ]);
 
         $admin_id_array = $admin_assets->pluck('id')->toArray();
@@ -393,11 +444,11 @@ class BulkEditAssetsTest extends TestCase
         ])->assertStatus(302);
 
         Asset::findMany($admin_id_array)->each(function (Asset $asset) use ($encrypted) {
-            $this->assertEquals('New Encrypted Text', Crypt::decrypt($asset->{$encrypted->db_column}));
+            $this->assertEquals('New Encrypted Text', Crypt::decrypt($asset->getRawOriginal($encrypted->db_column)));
         });
 
         Asset::findMany($standard_id_array)->each(function (Asset $asset) use ($encrypted) {
-            $this->assertEquals('Original Encrypted Text', Crypt::decrypt($asset->{$encrypted->db_column}));
+            $this->assertEquals('Original Encrypted Text', Crypt::decrypt($asset->getRawOriginal($encrypted->db_column)));
         });
     }
 

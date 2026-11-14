@@ -19,6 +19,44 @@ use Tests\TestCase;
 
 class AssetTest extends TestCase
 {
+    public function test_required_serial_is_checked_by_validation_and_save_without_changing_rules(): void
+    {
+        $model = AssetModel::factory()->create(['require_serial' => 1]);
+        $asset = Asset::factory()->make(['model_id' => $model->id, 'serial' => null]);
+        $rules = $asset->getRules();
+
+        $this->assertFalse($asset->isValid());
+        $this->assertTrue($asset->getErrors()->has('serial'));
+        $this->assertFalse($asset->save());
+        $this->assertSame($rules, $asset->getRules());
+
+        $asset->serial = 'REQUIRED-SERIAL-1';
+
+        $this->assertTrue($asset->isValid());
+        $this->assertTrue($asset->save());
+        $this->assertSame($rules, $asset->getRules());
+    }
+
+    public function test_serial_requirement_is_rechecked_when_switching_models(): void
+    {
+        $requiredModel = AssetModel::factory()->create(['require_serial' => 1]);
+        $optionalModel = AssetModel::factory()->create(['require_serial' => 0]);
+        $asset = Asset::factory()->make(['model_id' => $requiredModel->id, 'serial' => null]);
+
+        $this->assertFalse($asset->save());
+
+        $asset->model()->associate($optionalModel);
+
+        $this->assertTrue($asset->isValid());
+        $this->assertTrue($asset->save());
+
+        $asset->model()->associate($requiredModel);
+
+        $this->assertFalse($asset->isValid());
+        $this->assertFalse($asset->save());
+        $this->assertTrue($asset->getErrors()->has('serial'));
+    }
+
     public function test_auto_increment()
     {
         $this->settings->enableAutoIncrement();

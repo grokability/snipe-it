@@ -139,8 +139,8 @@ class RequestAssetCancelation extends Notification implements ShouldQueue
         $fields = [];
 
         // Check if the item has custom fields associated with it
-        if (($this->item->model) && ($this->item->model->fieldset)) {
-            $fields = $this->item->model->fieldset->fields;
+        if (($this->item->custom_fieldset)) {
+            $fields = $this->item->custom_fieldset->fields;
         }
 
         $message = (new MailMessage)->markdown('notifications.markdown.asset-requested',
