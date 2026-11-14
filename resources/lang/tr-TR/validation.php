@@ -185,6 +185,7 @@ return [
     'ulid' => ':attribute alanı geçerli bir ULID olmalıdır.',
     'uuid' => ':attribute alanı geçerli bir UUID olmalıdır.',
     'valid_css_color' => ':attribute alanı geçerli bir CSS rengi olmalıdır (hex, rgb, rgba, hsl veya hsla).',
+    'eloquent_model_class' => 'The :attribute field must be the fully-qualified class name of an Eloquent model.',
     'fmcs_company' => 'Birden fazla şirket için tam destek etkin ve geçici atamalara izin verilmiyor; bu nedenle :attribute alanı zorunludur.',
     'fmcs_location' => '":location" konumu, seçilen şirketle eşleşmeyen :location_company şirketine ait.',
     'is_unique_across_company_and_location' => ':attribute, seçilen şirket ve konum içinde benzersiz olmalıdır.',

@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Ustvari samodejno povečevalne oznake sredstev',
     'auto_increment_prefix' => 'Predpona (neobvezno)',
     'auto_incrementing_help' => 'Enable auto-incrementing asset tags first to set this',
-    'backups' => 'Varnostna kopija',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Ustvarjanje, prenos in obnovitev varnostnih kopij ',
     'backups_restoring' => 'Obnovitev iz varnostne kopije',
     'backups_clean' => 'Pred obnovitvijo očistite varnostno kopirano bazo podatkov',

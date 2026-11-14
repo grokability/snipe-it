@@ -19,8 +19,8 @@ return [
         'confirm' => 'Ви впевнені що хочете видалити цей витратний матеріал?',
         'error' => 'Виникла проблема при видаленні витратного файлу. Будь ласка, спробуйте ще раз.',
         'success' => 'Витяг успішно видалено.',
-        'bulk_success' => 'Consumable deleted successfully.|:count consumables were deleted successfully.',
-        'partial_success' => ':count consumable was deleted successfully, but others could not be deleted. See below for details.|:count consumables were deleted successfully, but others could not be deleted. See below for details.',
+        'bulk_success' => 'Витратний матеріал успішно видалено.|:count витратних матеріалів успішно видалено.',
+        'partial_success' => ':count витратний матеріал успішно видалено, але інші не вдалося видалити. Докладну інформацію наведено нижче.|:count витратних матеріалів успішно видалено, але інші не вдалося видалити. Докладну інформацію наведено нижче.',
     ],
 
     'checkout' => [
@@ -31,11 +31,11 @@ return [
     ],
 
     'consumed' => [
-        'success' => 'Distribution marked as consumed.',
-        'bulk_success' => ':count distribution was marked as consumed.|:count distributions were marked as consumed.',
-        'already' => 'That distribution was already marked as consumed.',
-        'error' => 'Could not mark the distribution as consumed, please try again.',
-        'no_rows_selected' => 'No valid distributions were selected.',
+        'success' => 'Видачу позначено як списану.',
+        'bulk_success' => ':count видачу успішно позначено як використану.|:count видач успішно позначено як використані.',
+        'already' => 'Цю видачу вже було позначено як списану.',
+        'error' => 'Не вдалося позначити видачу як використану, будь ласка, спробуйте ще раз.',
+        'no_rows_selected' => 'Не вибрано жодної дійсної видачі для обробки.',
     ],
 
     'checkin' => [
@@ -45,23 +45,23 @@ return [
     ],
 
     'restore' => [
-        'error' => 'Consumable was not restored, please try again',
-        'success' => 'Consumable restored successfully.',
+        'error' => 'Не вдалося відновити витратний матеріал. Спробуйте ще раз',
+        'success' => 'Витратний матеріал успішно відновлено в системі.',
     ],
 
     'bulk' => [
-        'no_consumables_selected' => 'No consumables were selected.',
+        'no_consumables_selected' => 'Жодного витратного матеріалу не вибрано.',
         'no_action_selected' => 'Будь ласка, виберіть дію зі списку.',
         'no_fields_updated' => 'Немає змінених полів, тому нічого не було оновлено.',
-        'skipped_unauthorized' => ':count consumable(s) were skipped because you do not have permission to update them.',
+        'skipped_unauthorized' => ':count витратний(і) матеріал пропущено, оскільки у вас немає дозволу на їх оновлення.',
 
         'update' => [
-            'success' => ':count consumable was updated.|:count consumables were updated.',
-            'none_updated' => 'The selected consumable could not be updated. See errors below for details.|None of the selected consumables could be updated. See errors below for details.',
+            'success' => ':count витратний матеріал оновлено.|:count витратних матеріалів оновлено.',
+            'none_updated' => 'Не вдалося оновити вибраний витратний матеріал. Деталі помилок наведено нижче.|Не вдалося оновити жоден із вибраних витратних матеріалів. Деталі помилок наведено нижче.',
         ],
 
         'restore' => [
-            'success' => ':count consumable was restored.|:count consumables were restored.',
+            'success' => ':count витратний матеріал успішно відновлено.|:count витратних матеріалів успішно відновлено.',
         ],
     ],
 ];

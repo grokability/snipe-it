@@ -13,7 +13,7 @@ return [
     'total' => 'المجموع',
     'update' => 'تحديث مكون',
     'checkin_limit' => 'يجب أن يكون المبلغ المدخل مساوياً أو أقل من :assigned_Qty',
-    'exclude_deleted' => 'Exclude Deleted Components',
-    'include_deleted' => 'Include Deleted Components',
-    'only_deleted' => 'Only Deleted Components',
+    'exclude_deleted' => 'استبعاد المكوّنات المحذوفة',
+    'include_deleted' => 'تضمين المكوّنات المحذوفة',
+    'only_deleted' => 'المكوّنات المحذوفة فقط',
 ];

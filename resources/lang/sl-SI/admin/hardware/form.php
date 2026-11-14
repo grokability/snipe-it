@@ -56,8 +56,6 @@ return [
     'years' => 'let',
     'asset_location' => 'Posodobi lokacijo sredstva',
     'asset_location_update_default_current' => 'Posodobi privzeto lokacijo in aktualno lokacijo',
-    'asset_location_update_default' => 'Posodobi samo privzeto lokacijo',
-    'asset_location_update_actual' => 'Posodobi samo aktualno lokacijo',
     'asset_not_deployable' => 'Tega statusa sredstev ni mogoče uporabiti. Tega sredstva ni mogoče odjaviti.',
     'asset_not_deployable_checkin' => '{1} That asset status is not deployable. Using this status label will check in the asset.|[2,*] That asset status in not deployable. Using this status label will result in no change.',
     'asset_deployable' => '{1} This asset can be checked out.|[2,*] These assets can be checked out.',

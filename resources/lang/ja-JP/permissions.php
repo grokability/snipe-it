@@ -256,7 +256,7 @@ return [
     ],
     'usersview' => [
         'name' => 'ユーザーを表示',
-        'note' => 'この権限を持つユーザーは、ユーザーにアップロードされたファイルも表示できます（変更や削除はできません）。また、編集とチェックインの履歴も表示できます。',
+        'note' => 'Users with this permission will also be able to view edit and checkin history. Access to files uploaded to a user is gated separately by the Manage User Files permission.',
     ],
     'userscreate' => [
         'name' => 'ユーザーを作成',

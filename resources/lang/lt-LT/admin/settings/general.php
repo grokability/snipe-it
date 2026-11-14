@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Generuoti automatiškai didėjančius inventorinius numerius',
     'auto_increment_prefix' => 'Prefiksas (pasirinktinai)',
     'auto_incrementing_help' => 'Norėdami tai nustatyti, pirmiausia įjunkite automatiškai didėjančius inventorinius numerius',
-    'backups' => 'Atsarginės kopijos',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Kurti, atsisiųsti ir atkurti atsargines kopijas ',
     'backups_restoring' => 'Atkurti iš atsarginės kopijos',
     'backups_clean' => 'Išvalyti išsaugotą duomenų bazę prieš atkūrimą',

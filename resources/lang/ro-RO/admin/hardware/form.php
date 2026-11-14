@@ -56,8 +56,6 @@ return [
     'years' => 'Ani',
     'asset_location' => 'Actualizați locația activului',
     'asset_location_update_default_current' => 'Actualizați locația implicită ȘI locația curentă',
-    'asset_location_update_default' => 'Actualizați doar locația implicită',
-    'asset_location_update_actual' => 'Actualizează doar locația reală',
     'asset_not_deployable' => 'Activul este indisponibil și nu poate fi eliberat.',
     'asset_not_deployable_checkin' => '{1} That asset status is not deployable. Using this status label will check in the asset.|[2,*] That asset status in not deployable. Using this status label will result in no change.',
     'asset_deployable' => '{1} This asset can be checked out.|[2,*] These assets can be checked out.',

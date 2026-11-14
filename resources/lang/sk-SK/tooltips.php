@@ -3,22 +3,22 @@
 return [
 
     'disabled_assoc' => [
-        'accessory' => 'This accessory cannot be deleted because it still has items, users, or locations associated with it',
-        'asset' => 'This asset cannot be deleted because it still has items associated with it',
-        'category' => 'This category cannot be deleted because it still has items associated with it',
-        'company' => 'This company cannot be deleted because it still has items or users associated with it',
-        'component' => 'This component cannot be deleted because it still has items associated with it',
-        'custom_field' => 'This custom field cannot be deleted because it is still associated with at least one fieldset',
-        'department' => 'This department cannot be deleted because it still has users associated with it',
-        'location' => 'This location cannot be deleted because it still has items or users associated with it',
-        'manufacturer' => 'This manufacturer cannot be deleted because it still has items associated with it',
-        'supplier' => 'This supplier cannot be deleted because it still has items associated with it',
-        'user' => 'This user cannot be deleted because it still has items associated with it',
-        'user_self' => 'You cannot delete yourself',
+        'accessory' => 'Toto príslušenstvo nie je možné odstrániť, pretože sú k nemu stále priradené položky, používatelia alebo lokality',
+        'asset' => 'Tento majetok nie je možné odstrániť, pretože sú k nemu stále priradené položky',
+        'category' => 'Túto kategóriu nie je možné odstrániť, pretože sú k nej stále priradené položky',
+        'company' => 'Túto spoločnosť nie je možné odstrániť, pretože sú k nej stále priradené položky alebo používatelia',
+        'component' => 'Tento komponent nie je možné odstrániť, pretože sú k nemu stále priradené položky',
+        'custom_field' => 'Toto vlastné pole nie je možné odstrániť, pretože je stále priradené aspoň k jednej skupine polí',
+        'department' => 'Toto oddelenie nie je možné odstrániť, pretože sú k nemu stále priradení používatelia',
+        'location' => 'Túto lokalitu nie je možné odstrániť, pretože sú k nej stále priradené položky alebo používatelia',
+        'manufacturer' => 'Tohto výrobcu nie je možné odstrániť, pretože sú k nemu stále priradené položky',
+        'supplier' => 'Tohto dodávateľa nie je možné odstrániť, pretože sú k nemu stále priradené položky',
+        'user' => 'Tohto používateľa nie je možné odstrániť, pretože sú k nemu stále priradené položky',
+        'user_self' => 'Nemôžete odstrániť sami seba',
     ],
 
     'checkin_all' => [
-        'user' => 'Checkin all items for this user and optionally delete them. You will be able to confirm this on the next page.',
+        'user' => 'Prevziať všetky položky tohto používateľa a voliteľne ho odstrániť. Potvrdiť to budete môcť na ďalšej stránke.',
     ],
 
 ];

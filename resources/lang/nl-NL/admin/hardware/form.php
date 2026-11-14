@@ -56,8 +56,6 @@ return [
     'years' => 'jaar',
     'asset_location' => 'Update Asset locatie',
     'asset_location_update_default_current' => 'Update standaard locatie EN huidige locatie',
-    'asset_location_update_default' => 'Update alleen standaard locatie',
-    'asset_location_update_actual' => 'Alleen actuele locatie bijwerken',
     'asset_not_deployable' => 'Deze Asset status is niet uitgeefbaar. Dit Asset kan niet uitgegeven worden.',
     'asset_not_deployable_checkin' => '{1} That asset status is not deployable. Using this status label will check in the asset.|[2,*] That asset status in not deployable. Using this status label will result in no change.',
     'asset_deployable' => '{1} This asset can be checked out.|[2,*] These assets can be checked out.',

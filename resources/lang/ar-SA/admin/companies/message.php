@@ -3,7 +3,7 @@
 return [
     'does_not_exist' => 'الشركة غير موجودة.',
     'deleted' => 'الشركة المحذوفة',
-    'assoc_users' => 'هذه الشركة مرتبطة حاليا مع موديل ولا يمكن حذفها. رجاءً قم بتحديث الموديلات بحيث لا تكون مرتبطة بهذه الشركة ثم حاول مرة اُخرى. ',
+    'assoc_users' => 'هذه الشركة مرتبطة حاليًا بعنصر واحد على الأقل (مثل موقع أو مستخدم أو ترخيص أو أصل أو غير ذلك) في Snipe-IT، لذلك لا يمكن حذفها. يُرجى تحديث العناصر المرتبطة لإزالة الإشارة إلى هذه الشركة، ثم المحاولة مرة أخرى. ',
     'create' => [
         'error' => 'لم يتم انشاء الشركة، الرجاء المحاولة مرة اُخرى.',
         'success' => 'تم إنشاء الشركة بنجاح.',
@@ -16,7 +16,8 @@ return [
         'confirm' => 'هل أنت متأكد من رغبتك في حذف هذه الشركة؟',
         'error' => 'حدثت مشكلة اثناء عملية حذف الشركة. الرجاء المحاولة مرة اُخرى.',
         'success' => 'تم حذف الشركة بنجاح.',
-        'bulk_success' => 'Company deleted successfully.|:count companies were deleted successfully.',
-        'partial_success' => 'Company deleted successfully. See additional information below. | :count companies were deleted successfully. See additional information below.',
+        'bulk_success' => 'تم حذف الشركة بنجاح.|:count شركة تم حذفها بنجاح.',
+        'partial_success' => 'تم حذف الشركة بنجاح. راجع المعلومات الإضافية أدناه.|:count شركة تم حذفها بنجاح. راجع المعلومات الإضافية أدناه.',
     ],
+    'webhook_fields_require_superuser' => 'لا يمكن تعديل حقول إعدادات Webhook (:fields) إلا بواسطة المستخدم ذي الصلاحيات العليا.',
 ];

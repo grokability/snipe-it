@@ -3,7 +3,7 @@
 return [
     'does_not_exist' => 'Shirkaddu ma jirto.',
     'deleted' => 'Shirkadda la tirtiray',
-    'assoc_users' => 'Shirkaddan hadda waxay ku xidhan tahay ugu yaraan hal nooc oo lama tirtiri karo. Fadlan cusboonaysii moodooyinkaaga si aanay u tixraacin shirkaddan oo isku day mar kale. ',
+    'assoc_users' => 'This company is currently associated with at least one other item (location, user, license, asset, etc.) in Snipe-IT and cannot be deleted. Please update your models to no longer reference this company and try again. ',
     'create' => [
         'error' => 'Shirkadda lama abuurin, fadlan isku day mar kale.',
         'success' => 'Shirkadda waa lagu guuleystay in la sameeyo.',
@@ -19,4 +19,5 @@ return [
         'bulk_success' => 'Company deleted successfully.|:count companies were deleted successfully.',
         'partial_success' => 'Company deleted successfully. See additional information below. | :count companies were deleted successfully. See additional information below.',
     ],
+    'webhook_fields_require_superuser' => 'Webhook configuration fields (:fields) can only be modified by a superuser.',
 ];

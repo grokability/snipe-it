@@ -59,7 +59,7 @@ return [
     ],
     'location_scoping' => [
         'not_saved' => 'Your settings were not saved.',
-        'mismatch' => 'There is 1 item in the database that need your attention before you can enable location scoping.|There are :count items in the database that need your attention before you can enable location scoping.',
+        'mismatch' => 'Prije nego što omogućite provjeru usklađenosti lokacije pri zaduživanju, potrebno je uskladiti 1 zapis u bazi podataka.|Prije nego što omogućite provjeru usklađenosti lokacije pri zaduživanju, potrebno je uskladiti :count zapisa u bazi podataka.',
     ],
     'oauth' => [
         'token_revoked' => 'Personal access token revoked successfully.',

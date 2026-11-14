@@ -24,9 +24,9 @@ return [
     'delete' => [
         'confirm' => 'هل أنت متأكد من رغبتك في حذف هذه الشركة المصنعة؟',
         'error' => 'لقد حدثت مشكلة اثناء عملية حذف الشركة المصنعة، الرجاء المحاولة مرة اخرى.',
-        'success' => 'Manufacturer deleted successfully.',
-        'bulk_success' => 'Manufacturer deleted successfully.|:count manufacturers were deleted successfully.',
-        'partial_success' => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
+        'success' => 'تم حذف الشركة المصنعة بنجاح.',
+        'bulk_success' => 'تم حذف الشركة المصنعة بنجاح.|:count الشركات المصنعة تم حذفها بنجاح.',
+        'partial_success' => 'تم حذف الشركة المصنعة بنجاح. راجع المعلومات الإضافية أدناه. | :count الشركات المصنعة تم حذفها بنجاح. راجع المعلومات الإضافية أدناه.',
     ],
 
 ];

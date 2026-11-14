@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Il Bene non è stato restituito, riprova',
         'success' => 'Bene restituito con successo.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Questo utente non è valido. Riprova.',
         'already_checked_in' => 'Il prodotto è già rientrato.',
         'force_checkin_orphaned_success' => 'Assegnazione non valida annullata con successo.',

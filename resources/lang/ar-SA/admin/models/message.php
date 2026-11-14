@@ -7,7 +7,7 @@ return [
     'no_association' => 'تحذير! نموذج الأصول لهذا العنصر غير صالح أو مفقود!',
     'no_association_fix' => 'سيؤدي هذا إلى كسر الأمور بطرق غريبة وفظيعة. قم بتعديل هذا الأصل الآن لربطه بنموذج.',
     'assoc_users' => 'هذا الموديل مرتبط حاليا بواحد أو أكثر من الأصول ولا يمكن حذفه. يرجى حذف الأصول، ثم محاولة الحذف مرة أخرى. ',
-    'invalid_category_type' => 'This category must be an asset category.',
+    'invalid_category_type' => 'يجب أن تكون هذه الفئة فئة أصول.',
 
     'create' => [
         'error' => 'لم يتم انشاء الموديل، يرجى إعادة المحاولة.',
@@ -40,19 +40,19 @@ return [
 
     'bulkdelete' => [
         'error' => 'لم يتم اختيار أي موديلات، لذلك لم يتم حذف أي شيء.',
-        'nothing_deletable' => 'None of the selected models can be deleted because they still have assets associated with them.',
+        'nothing_deletable' => 'لا يمكن حذف أي من الطرازات المحددة لأنها لا تزال مرتبطة بأصول.',
         'success' => 'تم حذف النموذج!|تم حذف :success_count نموذج!',
         'success_partial' => 'تم حذف:success_count: من الموديلات، ومع ذلك تعذر حذف fail_count: نظرًا لأنها لا تزال تحتوي على أصول مقترنة بها.',
     ],
 
     'merge' => [
-        'min_two' => 'Select at least two models to merge.',
-        'no_target' => 'Select which model to keep before merging.',
-        'not_found' => 'One or more of the selected models could not be loaded. Refresh the models list and try again.',
-        'information' => 'You are about to merge :count models. Pick the model you want to keep. Every asset attached to the other models will be reassigned to the model you pick, then the source models will be deleted.',
-        'warning' => 'This cannot be undone. Reassigned assets will inherit the surviving model\'s category, fieldset, and depreciation settings.',
-        'pick_target' => 'Which model do you want to keep?',
-        'success' => 'Merged :source_count model(s) into ":target". :asset_count asset(s) were reassigned.',
+        'min_two' => 'حدد طرازين على الأقل للدمج.',
+        'no_target' => 'حدد الطراز الذي تريد الاحتفاظ به قبل الدمج.',
+        'not_found' => 'تعذّر تحميل طراز واحد أو أكثر من الطرازات المحددة. حدّث قائمة الطرازات وحاول مرة أخرى.',
+        'information' => 'أنت على وشك دمج :count طرازات. اختر الطراز الذي تريد الاحتفاظ به. ستتم إعادة تعيين كل أصل مرتبط بالطرازات الأخرى إلى الطراز الذي تختاره، ثم سيتم حذف الطرازات المصدر.',
+        'warning' => 'لا يمكن التراجع عن هذا الإجراء. سترث الأصول المُعاد تعيينها فئة الطراز الباقي ومجموعة حقوله وإعدادات الإهلاك الخاصة به.',
+        'pick_target' => 'أي طراز تريد الاحتفاظ به؟',
+        'success' => 'تم دمج :source_count من الطراز (الطرازات) في ":target". تمت إعادة تعيين :asset_count من (الأصول).',
     ],
 
 ];

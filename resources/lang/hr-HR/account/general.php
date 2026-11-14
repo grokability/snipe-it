@@ -12,6 +12,11 @@ return [
     'api_reference' => 'Please check the <a href="https://snipe-it.readme.io/reference" target="_blank">API reference</a> to find specific API endpoints and additional API documentation.',
     'profile_updated' => 'Account successfully updated',
     'no_tokens' => 'You have not created any personal access tokens.',
-    'enable_sounds' => 'Enable sound effects',
-    'enable_confetti' => 'Enable confetti effects',
+    'enable_sounds' => 'Omogući zvučne efekte',
+    'enable_confetti' => 'Omogući efekt konfeta',
+    'pat_scopes_column' => 'MCP Scopes',
+    'pat_scopes_help' => 'Scopes control which MCP tools this token can call. Leave every box unchecked for a REST-API-only token. For an MCP client (ChatGPT, Claude Desktop, etc.), check the capabilities you want that client to have.',
+    'pat_no_scopes' => 'REST API only',
+    'pat_no_scopes_tooltip' => 'No MCP scopes are granted on this token. It works for every REST API endpoint but cannot call MCP tools. To use this token with an MCP client, delete it and create a new one with the capability scopes you need.',
+    'mcp_url' => 'MCP URL: ',
 ];

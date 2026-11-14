@@ -17,11 +17,11 @@ return [
     'name' => '分类名称',
     'require_acceptance' => '要求用户确认接受这一类的资产。',
     'required_acceptance' => '用户会收到一封邮件，邮件中包含一个确认接收的链接。',
-    'global_signature_required_notice' => 'The global "Require Signature" setting is on. Signatures only apply when this category also has "Require acceptance" turned on: enable both to require users to sign when accepting items from this category.',
+    'global_signature_required_notice' => '全局“要求签名”设置已开启。仅当此分类同时开启“要求验收”时，签名才会生效：两者都开启后，用户在接受此分类下的物品时才需要签名。',
     'required_eula' => '用户将会从邮件收到 EULA（最终用户许可协议）的副本',
-    'required_acceptance_component' => 'If the target asset is currently assigned to a user, that user will be emailed with a link to confirm acceptance of this component.',
-    'required_eula_component' => 'If the target asset is currently assigned to a user, that user will be emailed a copy of the EULA.',
-    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
+    'required_acceptance_component' => '如果目标资产当前已分配给某位用户，系统将向该用户发送一封电子邮件，其中包含一个用于确认接收此组件的链接。',
+    'required_eula_component' => '如果目标资产当前已分配给某位用户，该用户将收到一封包含 EULA 副本的电子邮件。',
+    'required_signature' => '该用户需要签名以确认接收此物品。',
     'no_default_eula' => '未找到默认的 EULA（最终用户许可协议），请在设置中添加一个。',
     'update' => '更新分类',
     'use_default_eula' => '使用<a href="#" data-toggle="modal" data-target="#eulaModal">默认 EULA（最终用户许可协议）</a>进行替换。',
@@ -31,6 +31,6 @@ return [
     'import_checkin_email' => '发送签入邮件',
     'import_eula_text' => 'EULA（最终用户许可协议）文本',
     'import_category_type' => '分类类型',
-    'import_alert_on_response' => 'Alert on Response',
+    'import_alert_on_response' => '响应时提醒',
 
 ];

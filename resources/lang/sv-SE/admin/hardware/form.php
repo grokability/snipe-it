@@ -56,8 +56,6 @@ return [
     'years' => 'år',
     'asset_location' => 'Uppdatera tillgångsplats',
     'asset_location_update_default_current' => 'Uppdatera standardplats OCH nuvarande plats',
-    'asset_location_update_default' => 'Uppdatera endast standardplats',
-    'asset_location_update_actual' => 'Uppdatera endast nuvarande plats',
     'asset_not_deployable' => 'Denna tillgångsstatus kan inte levereras. Denna tillgång kan inte checkas ut.',
     'asset_not_deployable_checkin' => '{1} Tillgångens status är inte tillgänglig. Om du använder den här statusetiketten checkas tillgången in.|[2,*] Tillgångens status är inte tillgänglig. Om du använder den här statusetiketten sker ingen ändring.',
     'asset_deployable' => '{1} Denna tillgång kan checkas ut.|[2,*] Dessa tillgångar kan checkas ut.',

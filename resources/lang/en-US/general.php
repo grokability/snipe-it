@@ -197,7 +197,7 @@ return [
     'debug_warning_text' => 'This application is running in production mode with debugging enabled. This can expose sensitive data if your application is accessible to the outside world. Disable debug mode by setting the <code>APP_DEBUG</code> value in your <code>.env</code> file to <code>false</code>.',
     'delete' => 'Delete',
     'delete_confirm' => 'Are you sure you wish to delete :item?',
-    'delete_confirm_no_undo' => 'Are you sure you wish to delete :item? This cannot be undone.',
+    'delete_confirm_no_undo' => 'Are you sure, you wish to delete :item? This cannot be undone.',
     'deleted' => 'Deleted',
     'deleted_at' => 'Deleted At',
     'delete_seats' => 'Deleted Seats',

@@ -20,8 +20,8 @@ return [
         'confirm' => 'Ste si istý, že chcete zmazať toto príslušenstvo?',
         'error' => 'Pri mazaní príslušenstva nastala chyba. Skúste prosím znovu.',
         'success' => 'Príslušenstvo bolo úspešne zmazané.',
-        'bulk_success' => 'Accessory deleted successfully.|:count accessories were deleted successfully.',
-        'partial_success' => ':count accessory was deleted successfully, but others could not be deleted. See below for details.|:count accessories were deleted successfully, but others could not be deleted. See below for details.',
+        'bulk_success' => 'Príslušenstvo bolo úspešne odstránené.|:count príslušenstiev bolo úspešne odstránených.',
+        'partial_success' => ':count príslušenstvo bolo úspešne odstránené, ale ostatné sa nepodarilo odstrániť. Podrobnosti nájdete nižšie.|:count príslušenstiev bolo úspešne odstránených, ale ostatné sa nepodarilo odstrániť. Podrobnosti nájdete nižšie.',
     ],
 
     'checkout' => [
@@ -42,28 +42,28 @@ return [
     ],
 
     'restore' => [
-        'error' => 'Accessory was not restored, please try again',
-        'success' => 'Accessory restored successfully.',
+        'error' => 'Príslušenstvo nebolo obnovené, skúste to znova',
+        'success' => 'Príslušenstvo bolo úspešne obnovené.',
     ],
 
     'bulk' => [
-        'no_accessories_selected' => 'No accessories were selected.',
-        'no_action_selected' => 'Please pick an action from the dropdown.',
+        'no_accessories_selected' => 'Nebolo vybrané žiadne príslušenstvo.',
+        'no_action_selected' => 'Vyberte akciu z rozbaľovacieho zoznamu.',
         'no_fields_updated' => 'Neboli zmenené žiadne polia, preto nebolo nič aktualizované.',
-        'skipped_unauthorized' => ':count accessory(s) were skipped because you do not have permission to update them.',
+        'skipped_unauthorized' => ':count príslušenstiev bolo preskočených (nemáte oprávnenie ich aktualizovať).',
 
         'update' => [
-            'success' => ':count accessory was updated.|:count accessories were updated.',
-            'none_updated' => 'The selected accessory could not be updated. See errors below for details.|None of the selected accessories could be updated. See errors below for details.',
+            'success' => ':count príslušenstvo bolo aktualizované.|:count príslušenstiev bolo aktualizovaných.',
+            'none_updated' => 'Vybrané príslušenstvo sa nepodarilo aktualizovať. Podrobnosti nájdete v chybách nižšie.|Žiadne z vybraných príslušenstiev sa nepodarilo aktualizovať. Podrobnosti nájdete v chybách nižšie.',
         ],
 
         'restore' => [
-            'success' => ':count accessory was restored.|:count accessories were restored.',
+            'success' => ':count príslušenstvo bolo obnovené.|:count príslušenstiev bolo obnovených.',
         ],
 
         'checkin_selected' => [
-            'no_rows_selected' => 'No checked-out accessories were selected.',
-            'success' => ':count accessory checkout was returned.|:count accessory checkouts were returned.',
+            'no_rows_selected' => 'Nebolo vybrané žiadne odovzdané príslušenstvo.',
+            'success' => ':count odovzdané príslušenstvo bolo prevzaté späť.|:count odovzdaných príslušenstiev bolo prevzatých späť.',
         ],
     ],
 ];

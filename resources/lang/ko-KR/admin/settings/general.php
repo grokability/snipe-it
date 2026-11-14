@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => '자동 증가 자산 태그 생성',
     'auto_increment_prefix' => '접두사 (부가적)',
     'auto_incrementing_help' => '이 설정을 하려면 먼저 자산 태그 자동 증가를 활성화하세요',
-    'backups' => '예비품',
+    'backups' => 'Backups & Restore',
     'backups_help' => '백업 생성, 다운로드 및 복원',
     'backups_restoring' => '백업에서 복원 중',
     'backups_clean' => '복원 전에 백업된 데이터베이스 정리',

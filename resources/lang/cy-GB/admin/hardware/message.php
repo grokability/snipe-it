@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Ased heb ei nodi i mewn, ceisiwch eto o. g. y. dd',
         'success' => 'Ased wedi nodi i mewn yn llwyddiannus.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Nid yw\'r defnyddiwr yna yn ddilys. Ceisiwch eto o. g. y. dd.',
         'already_checked_in' => 'Ased wedi nodi i mewn yn gywir.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

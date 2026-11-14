@@ -17,8 +17,8 @@ return [
         'confirm' => 'Ste si istý, že chcete zmazať toto oddelenie?',
         'error' => 'Pri mazaní oddelenia nastal problém. Skúste znovu.',
         'success' => 'Oddelenie bolo úspešne odstránené.',
-        'bulk_success' => 'Department deleted successfully.|:count departments were deleted successfully.',
-        'partial_success' => 'Department deleted successfully. See additional information below. | :count departments were deleted successfully. See additional information below.',
+        'bulk_success' => 'Oddelenie bolo úspešne odstránené.|:count oddelení bolo úspešne odstránených.',
+        'partial_success' => 'Oddelenie bolo úspešne odstránené. Ďalšie informácie nájdete nižšie. | :count oddelení bolo úspešne odstránených. Ďalšie informácie nájdete nižšie.',
     ],
 
 ];

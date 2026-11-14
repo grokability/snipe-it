@@ -6,11 +6,13 @@ return [
     'action' => 'الإجراء',
     'by' => 'بواسطة',
     'item' => 'عنصر',
-    'no_matching_records' => 'No matching records found',
-    'load_error_title' => 'Could not load results',
-    'load_error_body' => 'The server returned an error. Please try again in a moment. If this keeps happening, check the application log.',
-    'load_error_http_status' => 'HTTP status',
-    'load_error_session_expired' => 'Your session has expired. Reloading the page.',
-    'shift_select' => 'Click on a checkbox and hold <code>shift</code> and click another checkbox in the table to select/de-select a range.'
+    'no_matching_records' => 'لم يتم العثور على سجلات مطابقة',
+    'load_error_title' => 'تعذّر تحميل النتائج',
+    'load_error_body' => 'أعاد الخادم خطأ. يُرجى المحاولة مرة أخرى بعد قليل. إذا استمر حدوث ذلك، فراجع سجل التطبيق.',
+    'load_error_http_status' => 'حالة HTTP',
+    'load_error_session_expired' => 'انتهت صلاحية جلستك. جارٍ إعادة تحميل الصفحة.',
+    'shift_select' => 'انقر على مربع اختيار واستمر في الضغط على <code>shift</code> ثم انقر على مربع اختيار آخر في الجدول لتحديد/إلغاء تحديد نطاق.',
+    'reset_column_order' => 'إعادة ضبط ترتيب الأعمدة',
+    'reset_column_order_tooltip' => 'استعادة ترتيب الأعمدة الافتراضي لهذا الجدول',
 
 ];

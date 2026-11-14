@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Generate auto-incrementing asset tags',
     'auto_increment_prefix' => 'முன்னுரிமை (விரும்பினால்)',
     'auto_incrementing_help' => 'Enable auto-incrementing asset tags first to set this',
-    'backups' => 'காப்புப்பிரதிகளில்',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Create, download, and restore backups ',
     'backups_restoring' => 'Restoring from Backup',
     'backups_clean' => 'Clean the backed-up database before restore',

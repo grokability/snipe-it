@@ -16,7 +16,7 @@ return [
 
     'restore' => [
         'error' => 'Component was not restored, please try again',
-        'success' => 'Component restored successfully.',
+        'success' => 'Komponentas sėkmingai atkurtas.',
     ],
 
     'delete' => [
@@ -34,7 +34,7 @@ return [
     ],
 
     'bulk' => [
-        'no_components_selected' => 'No components were selected.',
+        'no_components_selected' => 'Nebuvo pasirinkta jokių komponentų.',
         'no_action_selected' => 'Please pick an action from the dropdown.',
         'no_fields_updated' => 'Jokie laukai nebuvo pakeisti, todėl niekas nebuvo atnaujinta.',
         'skipped_unauthorized' => ':count component(s) were skipped because you do not have permission to update them.',

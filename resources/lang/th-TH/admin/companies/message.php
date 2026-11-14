@@ -3,7 +3,7 @@
 return [
     'does_not_exist' => 'ไม่มี บริษัท',
     'deleted' => 'บริษัทที่ถูกลบ',
-    'assoc_users' => 'บริษัท นี้เชื่อมโยงกับโมเดลอย่างน้อยหนึ่งรายการและไม่สามารถลบได้ โปรดอัปเดตโมเดลของคุณเพื่อไม่ให้ บริษัท นี้อ้างอิงอีกต่อไปและลองอีกครั้ง',
+    'assoc_users' => 'This company is currently associated with at least one other item (location, user, license, asset, etc.) in Snipe-IT and cannot be deleted. Please update your models to no longer reference this company and try again. ',
     'create' => [
         'error' => 'บริษัท ไม่ได้สร้างโปรดลองอีกครั้ง',
         'success' => 'บริษัท สร้างสำเร็จแล้ว',
@@ -19,4 +19,5 @@ return [
         'bulk_success' => 'Company deleted successfully.|:count companies were deleted successfully.',
         'partial_success' => 'Company deleted successfully. See additional information below. | :count companies were deleted successfully. See additional information below.',
     ],
+    'webhook_fields_require_superuser' => 'Webhook configuration fields (:fields) can only be modified by a superuser.',
 ];

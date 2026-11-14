@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Imovina nije prijavljena. Pokušajte ponovo',
         'success' => 'Imovina je uspešno prijavljena.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Taj je korisnik nevažeći. Molim pokušajte ponovo.',
         'already_checked_in' => 'Imovina je već prijavljena.',
         'force_checkin_orphaned_success' => 'Neispravna dodela je uspešno očišćena.',

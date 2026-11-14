@@ -185,6 +185,7 @@ return [
     'ulid' => 'Поле :attribute має бути дійсним ULID.',
     'uuid' => 'Поле :attribute має бути коректним UUID.',
     'valid_css_color' => 'Поле :attribute має містити коректне значення кольору CSS (hex, rgb, rgba, hsl або hsla).',
+    'eloquent_model_class' => 'У полі :attribute потрібно вказати повністю кваліфіковане ім’я класу моделі Eloquent.',
     'fmcs_company' => 'Поле :attribute є обов’язковим, оскільки ввімкнено повну підтримку кількох компаній, а активи без прив’язки до компанії не дозволені.',
     'fmcs_location' => 'Розташування «:location» належить компанії :location_company, яка не відповідає вибраній компанії.',
     'is_unique_across_company_and_location' => 'Поле :attribute має бути унікальним у межах вибраної компанії та локації.',

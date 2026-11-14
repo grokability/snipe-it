@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => '產生自動遞增資產標籤',
     'auto_increment_prefix' => '前綴(可選)',
     'auto_incrementing_help' => '首先設定此選項以設定自動遞增資產標籤',
-    'backups' => '備份',
+    'backups' => 'Backups & Restore',
     'backups_help' => '建立, 下載和還原備份 ',
     'backups_restoring' => '從備份還原',
     'backups_clean' => '還原前清除備份的資料庫',

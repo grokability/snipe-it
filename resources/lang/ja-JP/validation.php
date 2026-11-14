@@ -185,6 +185,7 @@ return [
     'ulid' => ':attributeには有効なULIDを入力してください。',
     'uuid' => ':attributeには有効なUUIDを入力してください。',
     'valid_css_color' => ':attributeには有効なCSSカラー（hex、rgb、rgba、hsl、hsla）を入力してください。',
+    'eloquent_model_class' => 'The :attribute field must be the fully-qualified class name of an Eloquent model.',
     'fmcs_company' => '完全な複数会社対応が有効で、会社未所属のユーザーは許可されていないため、:attributeは必須です。',
     'fmcs_location' => '場所「:location」は:location_companyに属しており、選択した会社と一致しません。',
     'is_unique_across_company_and_location' => ':attributeは、選択した会社と場所の組み合わせ内で一意にしてください。',

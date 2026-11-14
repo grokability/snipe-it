@@ -56,8 +56,6 @@ return [
     'years' => 'gadiem',
     'asset_location' => 'Atjaunināt pamatlīdzekļa atrašanās vietu',
     'asset_location_update_default_current' => 'Atjaunināt noklusējuma KĀ ARĪ tekošo atrašanās vietu',
-    'asset_location_update_default' => 'Atjaunināt tikai noklusēja atrašanās vietu',
-    'asset_location_update_actual' => 'Update only actual location',
     'asset_not_deployable' => 'Šis statuss nav izmantojams. Pamatlīdzeklis nevar tikt izrakstīts.',
     'asset_not_deployable_checkin' => '{1} That asset status is not deployable. Using this status label will check in the asset.|[2,*] That asset status in not deployable. Using this status label will result in no change.',
     'asset_deployable' => '{1} This asset can be checked out.|[2,*] These assets can be checked out.',

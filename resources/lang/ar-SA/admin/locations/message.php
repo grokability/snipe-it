@@ -3,12 +3,12 @@
 return [
 
     'does_not_exist' => 'الموقع غير موجود.',
-    'assoc_users' => 'This location is not currently deletable because it is the location of record for at least one item or user, has assets assigned to it, or is the parent location of another location. Please update your records to no longer reference this location and try again ',
+    'assoc_users' => 'لا يمكن حذف هذا الموقع حاليًا لأنه موقع السجل لعنصر واحد أو مستخدم واحد على الأقل، أو لأن هناك أصولًا مُعيَّنة له، أو لأنه موقع رئيسي لموقع آخر. يُرجى تحديث سجلاتك بحيث لا تعود تشير إلى هذا الموقع، ثم حاول مرة أخرى ',
     'assoc_assets' => 'هذا الموقع مرتبط حاليا بمادة عرض واحدة على الأقل ولا يمكن حذفها. يرجى تحديث مواد العرض لم تعد تشير إلى هذا الموقع ثم أعد المحاولة. ',
     'assoc_child_loc' => 'هذا الموقع هو حاليا أحد الوالدين لموقع طفل واحد على الأقل ولا يمكن حذفه. يرجى تحديث مواقعك لم تعد تشير إلى هذا الموقع ثم أعد المحاولة.',
     'assigned_assets' => 'الأصول المعينة',
     'current_location' => 'الموقع الحالي',
-    'deleted_warning' => 'This location has been deleted. Please restore it before attempting to make any changes.',
+    'deleted_warning' => 'تم حذف هذا الموقع. يُرجى استعادته قبل محاولة إجراء أي تغييرات.',
 
     'create' => [
         'error' => 'لم يتم إنشاء الموقع، الرجاء المحاولة مرة أخرى.',
@@ -21,8 +21,8 @@ return [
     ],
 
     'restore' => [
-        'error' => 'Location was not restored, please try again',
-        'success' => 'Location restored successfully.',
+        'error' => 'لم يتم استعادة الموقع، يُرجى المحاولة مرة أخرى',
+        'success' => 'تم استعادة الموقع بنجاح.',
     ],
 
     'delete' => [
@@ -33,13 +33,13 @@ return [
 
     'bulkedit' => [
         'error' => 'لم يتم تغيير أي حقول، لذلك لم يتم تحديث أي شيء.',
-        'success' => 'Location successfully updated.|:count locations successfully updated.',
-        'warn' => 'Edit the fields below to update this location. Fields you leave blank will not change on the location.|Edit the fields below to update all :count selected locations. Fields you leave blank will not change on any of them.',
-        'show_selected' => '1 selected location|:count selected locations',
-        'company_scope_mismatch_partial' => 'The company was not changed on 1 location because items or users at that location belong to different companies. Update or move those first.|The company was not changed on :count locations because items or users at those locations belong to different companies. Update or move those first.',
-        'company_scope_mismatch_all' => 'No locations were reassigned. The requested company does not match items or users at the selected location.|No locations were reassigned. The requested company does not match items or users at any of the :count selected locations.',
-        'parent_company_mismatch_partial' => 'The parent or company was not changed on 1 location because it would leave the location in a different company than its parent.|The parent or company was not changed on :count locations because it would leave those locations in a different company than their parent.',
-        'parent_company_mismatch_all' => 'No changes were saved. The requested parent or company would leave the location in a different company than its parent.|No changes were saved. The requested parent or company would leave every one of the :count selected locations in a different company than their parent.',
+        'success' => 'تم تحديث الموقع بنجاح.|:count المواقع تم تحديثها بنجاح.',
+        'warn' => 'عدّل الحقول أدناه لتحديث هذا الموقع. الحقول التي تتركها فارغة لن تتغير في الموقع.|عدّل الحقول أدناه لتحديث جميع المواقع المحددة البالغ عددها :count. الحقول التي تتركها فارغة لن تتغير في أي منها.',
+        'show_selected' => 'موقع 1|:count مواقع محددة',
+        'company_scope_mismatch_partial' => 'لم يتم تغيير الشركة في موقع 1 لأن العناصر أو المستخدمين في ذلك الموقع ينتمون إلى شركات مختلفة. قم بتحديثهم أو نقلهم أولًا.|لم يتم تغيير الشركة في :count مواقع لأن العناصر أو المستخدمين في تلك المواقع ينتمون إلى شركات مختلفة. قم بتحديثهم أو نقلهم أولًا.',
+        'company_scope_mismatch_all' => 'لم تتم إعادة تعيين أي مواقع. الشركة المطلوبة لا تطابق العناصر أو المستخدمين في الموقع المحدد.|لم تتم إعادة تعيين أي مواقع. الشركة المطلوبة لا تطابق العناصر أو المستخدمين في أي من المواقع المحددة البالغ عددها :count.',
+        'parent_company_mismatch_partial' => 'لم يتم تغيير الموقع الرئيسي أو الشركة في موقع 1 لأن ذلك سيترك الموقع في شركة مختلفة عن موقعه الرئيسي.|لم يتم تغيير الموقع الرئيسي أو الشركة في :count مواقع لأن ذلك سيترك تلك المواقع في شركة مختلفة عن موقعها الرئيسي.',
+        'parent_company_mismatch_all' => 'لم يتم حفظ أي تغييرات. الموقع الرئيسي أو الشركة المطلوبة ستترك الموقع في شركة مختلفة عن موقعه الرئيسي.|لم يتم حفظ أي تغييرات. الموقع الرئيسي أو الشركة المطلوبة ستترك كل موقع من المواقع المحددة البالغ عددها :count في شركة مختلفة عن موقعه الرئيسي.',
     ],
 
 ];

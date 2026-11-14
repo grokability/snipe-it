@@ -2,5 +2,5 @@
 
 return [
     'created' => 'Loodud',
-    'size' => 'Size',
+    'size' => 'Suurus',
 ];

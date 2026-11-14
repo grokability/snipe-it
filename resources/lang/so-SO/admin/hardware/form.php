@@ -56,8 +56,6 @@ return [
     'years' => 'sanado',
     'asset_location' => 'Cusbooneysii Goobta Hantida',
     'asset_location_update_default_current' => 'Cusbooneysii goobta caadiga ah IYO goobta dhabta ah',
-    'asset_location_update_default' => 'Cusbooneysii kaliya goobta caadiga ah',
-    'asset_location_update_actual' => 'Cusbooneysii goobta dhabta ah oo kaliya',
     'asset_not_deployable' => 'Heerka hantidu maaha mid la diri karo Hantidan lama hubin karo.',
     'asset_not_deployable_checkin' => '{1} That asset status is not deployable. Using this status label will check in the asset.|[2,*] That asset status in not deployable. Using this status label will result in no change.',
     'asset_deployable' => '{1} This asset can be checked out.|[2,*] These assets can be checked out.',

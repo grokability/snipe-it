@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Ce bien n\'a pas été retourné, veuillez réessayer',
         'success' => 'Ce bien a été retourné correctement.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Cet utilisateur est invalide. Veuillez réessayer.',
         'already_checked_in' => 'Ce bien est déjà dissocié.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

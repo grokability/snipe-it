@@ -10,7 +10,7 @@ return [
     'example_supplier' => 'Testovacia spoločnosť s obmedzením',
     'labels_per_page' => 'Štítky',
     'support_fields' => 'Polia',
-    'support_asset_tag' => 'Značka',
+    'support_asset_tag' => 'Označenie',
     'support_1d_barcode' => '1D',
     'support_2d_barcode' => '2D',
     'support_logo' => 'Logo',

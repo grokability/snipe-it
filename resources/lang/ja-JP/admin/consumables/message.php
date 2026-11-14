@@ -19,8 +19,8 @@ return [
         'confirm' => 'この消耗品を削除しますか？',
         'error' => '消耗品の削除に失敗しました。もう一度試して下さい。',
         'success' => '消耗品は削除されました。',
-        'bulk_success' => 'Consumable deleted successfully.|:count consumables were deleted successfully.',
-        'partial_success' => ':count consumable was deleted successfully, but others could not be deleted. See below for details.|:count consumables were deleted successfully, but others could not be deleted. See below for details.',
+        'bulk_success' => '消耗品を削除しました。|消耗品:count件を削除しました。',
+        'partial_success' => '消耗品:count件を削除しましたが、削除できなかったものがあります。詳細は下を確認してください。|消耗品:count件を削除しましたが、削除できなかったものがあります。詳細は下を確認してください。',
     ],
 
     'checkout' => [
@@ -31,11 +31,11 @@ return [
     ],
 
     'consumed' => [
-        'success' => 'Distribution marked as consumed.',
-        'bulk_success' => ':count distribution was marked as consumed.|:count distributions were marked as consumed.',
-        'already' => 'That distribution was already marked as consumed.',
-        'error' => 'Could not mark the distribution as consumed, please try again.',
-        'no_rows_selected' => 'No valid distributions were selected.',
+        'success' => '払い出しを消費済みにしました。',
+        'bulk_success' => ':count件の払い出しを消費済みにしました。|:count件の払い出しを消費済みにしました。',
+        'already' => 'その払い出しはすでに消費済みです。',
+        'error' => '払い出しを消費済みにできませんでした。もう一度お試しください。',
+        'no_rows_selected' => '有効な払い出しが選択されていません。',
     ],
 
     'checkin' => [
@@ -45,23 +45,23 @@ return [
     ],
 
     'restore' => [
-        'error' => 'Consumable was not restored, please try again',
-        'success' => 'Consumable restored successfully.',
+        'error' => '消耗品を復元できませんでした。もう一度お試しください',
+        'success' => '消耗品を復元しました。',
     ],
 
     'bulk' => [
-        'no_consumables_selected' => 'No consumables were selected.',
-        'no_action_selected' => 'Please pick an action from the dropdown.',
+        'no_consumables_selected' => '消耗品が選択されていません。',
+        'no_action_selected' => 'ドロップダウンから操作を選択してください。',
         'no_fields_updated' => 'フィールドが選択されていないため、更新されませんでした。',
-        'skipped_unauthorized' => ':count consumable(s) were skipped because you do not have permission to update them.',
+        'skipped_unauthorized' => '更新する権限がないため、消耗品:count件をスキップしました。',
 
         'update' => [
-            'success' => ':count consumable was updated.|:count consumables were updated.',
-            'none_updated' => 'The selected consumable could not be updated. See errors below for details.|None of the selected consumables could be updated. See errors below for details.',
+            'success' => '消耗品:count件を更新しました。|消耗品:count件を更新しました。',
+            'none_updated' => '選択した消耗品を更新できませんでした。詳細は下のエラーを確認してください。|選択した消耗品をどれも更新できませんでした。詳細は下のエラーを確認してください。',
         ],
 
         'restore' => [
-            'success' => ':count consumable was restored.|:count consumables were restored.',
+            'success' => '消耗品:count件を復元しました。|消耗品:count件を復元しました。',
         ],
     ],
 ];

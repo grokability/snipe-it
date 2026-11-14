@@ -23,6 +23,9 @@ return [
             'error' => 'Er was een probleem tijden het verwijderen van dit veld. Probeer het opnieuw.',
             'success' => 'Het veld is met succes verwijderd.',
             'in_use' => 'Veld is nog in gebruik.',
+            'in_use_named' => ':name is still attached to at least one fieldset and cannot be deleted.',
+            'bulk_success' => 'Field deleted successfully.|:count fields were deleted successfully.',
+            'partial_success' => ':count field was deleted successfully, but others could not be deleted. See below for details.|:count fields were deleted successfully, but others could not be deleted. See below for details.',
         ],
 
     ],
@@ -46,6 +49,13 @@ return [
             'error' => 'Er was een probleem tijdens het verwijderen van deze veldverzameling, probeer het opnieuw.',
             'success' => 'De veldverzameling is met succes verwijderd.',
             'in_use' => 'Veldverzamelingen is nog in gebruikt.',
+            'in_use_named' => ':name is still attached to at least one asset model and cannot be deleted.',
+            'bulk_success' => 'Fieldset deleted successfully.|:count fieldsets were deleted successfully.',
+            'partial_success' => ':count fieldset was deleted successfully, but others could not be deleted. See below for details.|:count fieldsets were deleted successfully, but others could not be deleted. See below for details.',
+        ],
+
+        'clone' => [
+            'success' => 'Fieldset cloned successfully.',
         ],
 
     ],

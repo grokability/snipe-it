@@ -165,6 +165,7 @@ return [
     'checkin' => [
         'error' => 'دارایی در بررسی نیست، لطفا دوباره امتحان کنید',
         'success' => 'دارایی ها با موفقیت در بررسی.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'آن کاربر نامعتبر است. لطفا دوباره سعی کنید.',
         'already_checked_in' => 'دارایی ها که در حال حاضر انتخاب شده است.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

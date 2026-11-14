@@ -185,6 +185,7 @@ return [
     'ulid' => ':attribute-fältet måste vara ett giltigt ULID.',
     'uuid' => ':attribute-fältet måste vara ett giltigt UUID.',
     'valid_css_color' => 'Fältet :attribute måste vara en giltig CSS-färg (hex, rgb, rgba, hsl eller hsla).',
+    'eloquent_model_class' => 'The :attribute field must be the fully-qualified class name of an Eloquent model.',
     'fmcs_company' => 'Fältet :attribute krävs eftersom fullt stöd för flera företag är aktiverat och flytande tillgångar inte tillåts.',
     'fmcs_location' => 'Platsen ":location" tillhör :location_company, vilket inte matchar det valda företaget.',
     'is_unique_across_company_and_location' => 'Värdet för :attribute måste vara unikt inom det valda företaget och platsen.',

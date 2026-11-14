@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'Видачу, яку ви ініціювали, було відхилено',
     'inventory_report' => 'Звіт про запаси',
     'item' => 'Елемент',
-    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
+    'item_checked_reminder' => '{1}Нагадуємо, що вам видано один об’єкт, отримання якого ви ще не підтвердили або не відхилили. Будь ласка, натисніть посилання нижче, щоб підтвердити своє рішення.|[2,*]Нагадуємо, що вам видано :count об’єктів, отримання яких ви ще не підтвердили або не відхилили. Будь ласка, натисніть посилання нижче, щоб підтвердити своє рішення.',
     'license_expiring_alert' => 'Є :count ліцензія, термін дії якої закінчується протягом наступних :threshold днів.|Є така кількість ліцензій: :count, термін дії яких закінчується протягом наступних :threshold днів.',
     'link_to_update_password' => 'Будь-ласка, натисніть на це посилання, щоб оновити свій пароль:',
     'login' => 'Вхід',

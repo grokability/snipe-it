@@ -44,7 +44,7 @@ return [
         'unsuspend' => 'Korisnik je uspješno suspendiran.',
         'restored' => 'Korisnik je uspješno obnovljen.',
         'import' => 'Korisnici su uspješno uvezeni.',
-        'acceptance_reminder_sent' => 'Podsjetnik za prihvaćanje poslan za :count stavku na čekanju. | Podsjetnik za prihvaćanje poslan za :count stavki na čekanju.',
+        'acceptance_reminder_sent' => 'Podsjetnik za potvrdu preuzimanja poslan je za :count komad opreme koji čeka potvrdu.|Podsjetnik za potvrdu preuzimanja poslan je za :count komada opreme koji čekaju potvrdu.',
     ],
 
     'error' => [

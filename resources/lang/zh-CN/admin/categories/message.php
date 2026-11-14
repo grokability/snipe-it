@@ -21,15 +21,15 @@ return [
         'confirm' => '你确定要删除这个分类吗？',
         'error' => '删除分类出现异常，请重试。',
         'success' => '分类已经被成功删除。',
-        'bulk_success' => 'Category deleted successfully.|:count categories were deleted successfully.',
+        'bulk_success' => '分类删除成功。|:count 个分类删除成功。',
         'partial_success' => '分类已成功删除。请参阅下面的额外信息。 | :count 个类别已成功删除。请参阅下面的额外信息。',
     ],
 
     'bulkedit' => [
-        'warn' => 'You are about to edit the properties of the following category:|You are about to edit the properties of the following :count categories:',
-        'no_selection' => 'You must select at least one category to edit.',
+        'warn' => '您将要编辑以下分类的属性：|您将要编辑以下分类的属性：',
+        'no_selection' => '您必须选择至少一个分类进行编辑。',
         'no_changes' => '没有字段被更改，因此没有更新任何内容。',
-        'success' => 'Category successfully updated.|:count categories successfully updated.',
+        'success' => '分类已成功更新。|:model_count 个分类已成功更新。',
     ],
 
 ];

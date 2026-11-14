@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Aset tidak dicek, coba lagi',
         'success' => 'Aset berhasil dicek.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Pengguna tidak cocok. Silahkan coba lagi.',
         'already_checked_in' => 'Aset tersebut sudah diperiksa.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

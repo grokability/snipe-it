@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => '資産タグを自動採番で生成',
     'auto_increment_prefix' => 'プレフィクス (オプション)',
     'auto_incrementing_help' => 'この初期値を使って資産タグの自動採番を有効化',
-    'backups' => 'バックアップ',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'バックアップの作成、ダウンロード、および復元 ',
     'backups_restoring' => 'バックアップから復元中',
     'backups_clean' => '復元する前にバックアップされたデータベースをクリーンアップします',

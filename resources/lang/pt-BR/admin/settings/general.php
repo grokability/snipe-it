@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Gerar auto insercao de etiquetas de ativos',
     'auto_increment_prefix' => 'Prefixo (opcional)',
     'auto_incrementing_help' => 'Permitir auto insercao dessa tag de ativo antes de configurar isto',
-    'backups' => 'Backups',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Criar, baixar e restaurar backups ',
     'backups_restoring' => 'Restaurando do Backup',
     'backups_clean' => 'Limpe o banco de dados de backup antes de realizar a restauração',

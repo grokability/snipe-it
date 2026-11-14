@@ -97,7 +97,7 @@ return [
     'base_label_missing' => 'Base label can not be found',
     'label_deleted_successfully' => 'Label deleted successfully',
     'created_successfully' => ' :item created successfully',
-    'updated_successfully' => ':item updated successfully',
+    'updated_successfully' => ':item 已成功更新',
 
 
 ];

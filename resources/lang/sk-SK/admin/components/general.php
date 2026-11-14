@@ -13,7 +13,7 @@ return [
     'total' => 'Celkom',
     'update' => 'O komponentoch',
     'checkin_limit' => 'Prijaté množstvo musí byť rovné alebo menšie ako :assigned_qty',
-    'exclude_deleted' => 'Exclude Deleted Components',
-    'include_deleted' => 'Include Deleted Components',
-    'only_deleted' => 'Only Deleted Components',
+    'exclude_deleted' => 'Vylúčiť odstránené komponenty',
+    'include_deleted' => 'Zahrnúť odstránené komponenty',
+    'only_deleted' => 'Iba odstránené komponenty',
 ];

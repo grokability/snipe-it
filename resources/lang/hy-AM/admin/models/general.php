@@ -9,6 +9,9 @@ return [
     'bulk_delete_warn' => 'Դուք պատրաստվում եք ջնջել մեկ ակտիվի մոդել։|Դուք պատրաստվում եք ջնջել :model_count ակտիվի մոդել։',
     'restore' => 'Վերականգնել մոդելը',
     'requestable' => 'Օգտատերերը կարող են հայցել այս մոդելը',
+    'mfg_marketing_name' => 'Marketing name',
+    'mfg_release_date' => 'Release date',
+    'mfg_discontinued_date' => 'Discontinued date',
     'show_mac_address' => 'Ցուցադրել MAC հասցեի դաշտը այս մոդելի ակտիվներում',
     'view_deleted' => 'Դիտել ջնջվածները
 ',

@@ -56,8 +56,6 @@ return [
     'years' => 'godina',
     'asset_location' => 'Izmeni lokaciju imovine',
     'asset_location_update_default_current' => 'Izmeni predefinisanu i stvarnu lokaciju',
-    'asset_location_update_default' => 'Izmeni samo predefinisanu lokaciju',
-    'asset_location_update_actual' => 'Izmeni samo stvarnu lokaciju',
     'asset_not_deployable' => 'Status imovine je nezaduživo. Ova imovina se ne može zadužiti.',
     'asset_not_deployable_checkin' => '{1} Status ove imovine je zaduživo. Korišćenjem ove oznake statusa će razdužiti imovinu.|[2,*] Status te imovine je nezaduživo. Korišćenjem ove oznake statusa neće proizvesti nikakvu promenu.',
     'asset_deployable' => '{1} Ova imovina se može zadužiti.|[2,*] Ove imovine se mogu zadužiti.',

@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Generar incremento automático en las placas de activos',
     'auto_increment_prefix' => 'Prefijo (opcional)',
     'auto_incrementing_help' => 'Habilite primero el incremento automático de las placas de activos antes de configurar esto',
-    'backups' => 'Copias de Seguridad',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Crear, descargar y restaurar copias de seguridad ',
     'backups_restoring' => 'Restaurando desde la copia de seguridad',
     'backups_clean' => 'Depure la base de datos de la copia de seguridad antes de restaurarla',

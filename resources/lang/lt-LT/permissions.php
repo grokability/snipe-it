@@ -256,7 +256,7 @@ return [
     ],
     'usersview' => [
         'name' => 'Peržiūrėti naudotojus',
-        'note' => 'Atkreipkite dėmesį, kad naudotojai, turintys šią teisę, taip pat galės peržiūrėti (bet nekeisti ar ištrinti) į naudotojo profilį įkeltus failus. Naudotojai, turintys šią teisę, taip pat galės peržiūrėti redagavimo ir išdavimo istoriją.',
+        'note' => 'Users with this permission will also be able to view edit and checkin history. Access to files uploaded to a user is gated separately by the Manage User Files permission.',
     ],
     'userscreate' => [
         'name' => 'Sukurti naudotojus',

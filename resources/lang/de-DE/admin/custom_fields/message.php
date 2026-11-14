@@ -23,6 +23,9 @@ return [
             'error' => 'Beim Löschen des Felds ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
             'success' => 'Das Feld wurde erfolgreich gelöscht.',
             'in_use' => 'Dieses Feld wird derzeit noch verwendet.',
+            'in_use_named' => ':name is still attached to at least one fieldset and cannot be deleted.',
+            'bulk_success' => 'Field deleted successfully.|:count fields were deleted successfully.',
+            'partial_success' => ':count field was deleted successfully, but others could not be deleted. See below for details.|:count fields were deleted successfully, but others could not be deleted. See below for details.',
         ],
 
     ],
@@ -46,6 +49,13 @@ return [
             'error' => 'Beim Löschen des Feldsatzes ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
             'success' => 'Der Feldsatz wurde erfolgreich gelöscht.',
             'in_use' => 'Dieser Feldsatz wird derzeit noch verwendet.',
+            'in_use_named' => ':name is still attached to at least one asset model and cannot be deleted.',
+            'bulk_success' => 'Fieldset deleted successfully.|:count fieldsets were deleted successfully.',
+            'partial_success' => ':count fieldset was deleted successfully, but others could not be deleted. See below for details.|:count fieldsets were deleted successfully, but others could not be deleted. See below for details.',
+        ],
+
+        'clone' => [
+            'success' => 'Fieldset cloned successfully.',
         ],
 
     ],

@@ -2,12 +2,12 @@
 
 return [
 
-    'deleted' => 'Deleted asset model',
+    'deleted' => 'Kustutatud vahendimudel',
     'does_not_exist' => 'Mudelit pole olemas.',
-    'no_association' => 'WARNING! The asset model for this item is invalid or missing!',
-    'no_association_fix' => 'This will break things in weird and horrible ways. Edit this asset now to assign it a model.',
+    'no_association' => 'HOIATUS! Selle kirje vahendimudel on vigane või puudub!',
+    'no_association_fix' => 'See võib põhjustada ootamatuid ja tõsiseid tõrkeid. Muuda seda vahendit kohe ja määra sellele mudel.',
     'assoc_users' => 'See mudel on seostus ühe või mitme vahendiga ja seda ei saa kustutada. Palun kustuta vahendid ja seejärel proovi uuesti kustutada. ',
-    'invalid_category_type' => 'This category must be an asset category.',
+    'invalid_category_type' => 'See kategooria peab olema vahendite kategooria.',
 
     'create' => [
         'error' => 'Mudelit ei loodud, proovi uuesti.',
@@ -33,26 +33,26 @@ return [
 
     'bulkedit' => [
         'error' => 'Ühtegi välja ei muudetud, uuendusi ei tehtud',
-        'success' => 'Model successfully updated. |:model_count models successfully updated.',
-        'warn' => 'You are about to update the properties of the following model:|You are about to edit the properties of the following :model_count models:',
+        'success' => 'Mudeli uuendamine õnnestus. |:model_count mudeli uuendamine õnnestus.',
+        'warn' => 'Oled muutmas järgmise mudeli omadusi:|Oled muutmas järgmise :model_count mudeli omadusi:',
 
     ],
 
     'bulkdelete' => [
         'error' => 'Mudeleid ei valitud, nii et midagi ei kustutatud.',
-        'nothing_deletable' => 'None of the selected models can be deleted because they still have assets associated with them.',
-        'success' => 'Model deleted!|:success_count models deleted!',
+        'nothing_deletable' => 'Ühtegi valitud mudelit ei saa kustutada, sest nendega on endiselt seotud vahendeid.',
+        'success' => 'Mudel kustutatud!|:success_count mudelit kustutatud!',
         'success_partial' => ':success_count mudel(it) kustutati, kuid :fail_count ei õnnestunud kustutada kuna nendega on ikka veel vara seotud.',
     ],
 
     'merge' => [
-        'min_two' => 'Select at least two models to merge.',
-        'no_target' => 'Select which model to keep before merging.',
-        'not_found' => 'One or more of the selected models could not be loaded. Refresh the models list and try again.',
-        'information' => 'You are about to merge :count models. Pick the model you want to keep. Every asset attached to the other models will be reassigned to the model you pick, then the source models will be deleted.',
-        'warning' => 'This cannot be undone. Reassigned assets will inherit the surviving model\'s category, fieldset, and depreciation settings.',
-        'pick_target' => 'Which model do you want to keep?',
-        'success' => 'Merged :source_count model(s) into ":target". :asset_count asset(s) were reassigned.',
+        'min_two' => 'Vali ühendamiseks vähemalt kaks mudelit.',
+        'no_target' => 'Vali enne ühendamist, milline mudel alles jätta.',
+        'not_found' => 'Üht või mitut valitud mudelit ei saanud laadida. Värskenda mudelite loendit ja proovi uuesti.',
+        'information' => 'Oled ühendamas :count mudelit. Vali mudel, mille soovid alles jätta. Kõik teiste mudelitega seotud vahendid määratakse valitud mudelile ümber ning seejärel kustutatakse lähtemudelid.',
+        'warning' => 'Seda toimingut ei saa tagasi võtta. Ümbermääratud vahendid pärivad allesjääva mudeli kategooria, väljakomplekti ja amortisatsiooniseaded.',
+        'pick_target' => 'Millise mudeli soovid alles jätta?',
+        'success' => ':source_count mudelit ühendati mudeliks „:target”. :asset_count vahendit määrati ümber.',
     ],
 
 ];

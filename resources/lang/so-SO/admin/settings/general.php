@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Samee calaamadaynta hantida oo si toos ah u kordhisa',
     'auto_increment_prefix' => 'Horgale (ikhtiyaar)',
     'auto_incrementing_help' => 'Daree kor u qaadista otomaatigga ah ee sumadaha hantida marka hore si tan loo dejiyo',
-    'backups' => 'Kaabta',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Abuur, soo deji, oo soo celi kaydinta ',
     'backups_restoring' => 'Ka soo celinta kaabta',
     'backups_clean' => 'Clean the backed-up database before restore',

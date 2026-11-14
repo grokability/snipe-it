@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Az eszköz nem lett visszavéve, próbálkozzon újra',
         'success' => 'Az Asset sikeresen ellenőrzött.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Ez a felhasználó érvénytelen. Kérlek próbáld újra.',
         'already_checked_in' => 'Ez az eszköz már be van jelölve.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

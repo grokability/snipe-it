@@ -33,13 +33,13 @@ return [
 
     'bulkedit' => [
         'error' => '没有字段被更改，因此没有更新任何内容。',
-        'success' => 'Location successfully updated.|:count locations successfully updated.',
-        'warn' => 'Edit the fields below to update this location. Fields you leave blank will not change on the location.|Edit the fields below to update all :count selected locations. Fields you leave blank will not change on any of them.',
-        'show_selected' => '1 selected location|:count selected locations',
-        'company_scope_mismatch_partial' => 'The company was not changed on 1 location because items or users at that location belong to different companies. Update or move those first.|The company was not changed on :count locations because items or users at those locations belong to different companies. Update or move those first.',
-        'company_scope_mismatch_all' => 'No locations were reassigned. The requested company does not match items or users at the selected location.|No locations were reassigned. The requested company does not match items or users at any of the :count selected locations.',
-        'parent_company_mismatch_partial' => 'The parent or company was not changed on 1 location because it would leave the location in a different company than its parent.|The parent or company was not changed on :count locations because it would leave those locations in a different company than their parent.',
-        'parent_company_mismatch_all' => 'No changes were saved. The requested parent or company would leave the location in a different company than its parent.|No changes were saved. The requested parent or company would leave every one of the :count selected locations in a different company than their parent.',
+        'success' => '位置更新成功。|:count 个位置更新成功。',
+        'warn' => '编辑下方字段以更新此位置。留空的字段不会在此位置上产生更改。|编辑下方字段以更新所有 :count 个所选位置。留空的字段不会在其中任何一个位置上产生更改。',
+        'show_selected' => '1个选定的位置|:count 个选定的位置',
+        'company_scope_mismatch_partial' => '未在1个位置上更改公司，因为该位置上的物品或用户属于不同的公司。请先更新或移动这些物品或用户。|未在 :count 个位置上更改公司，因为这些位置上的物品或用户属于不同的公司。请先更新或移动这些物品或用户。',
+        'company_scope_mismatch_all' => '未重新分配任何位置。所请求的公司与所选位置中的物品或用户不匹配。|未重新分配任何位置。在所选的 :count 个位置中，所请求的公司与其中任何一个位置的物品或用户都不匹配。',
+        'parent_company_mismatch_partial' => '父级或公司未在 1 个位置上更改，因为这会使得该位置的公司与其父级不同。|父级或公司未在 :count 个位置上更改，因为这会使得这些位置的公司与其父级不同。',
+        'parent_company_mismatch_all' => '未保存任何更改。请求的父级或公司会使该位置与其父级归属不同公司。|未保存任何更改。请求的父级或公司会使所选 :count 个位置全部与其父级归属不同公司。',
     ],
 
 ];

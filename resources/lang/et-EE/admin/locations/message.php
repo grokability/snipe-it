@@ -3,12 +3,12 @@
 return [
 
     'does_not_exist' => 'Asukohta ei eksisteeri.',
-    'assoc_users' => 'This location is not currently deletable because it is the location of record for at least one item or user, has assets assigned to it, or is the parent location of another location. Please update your records to no longer reference this location and try again ',
+    'assoc_users' => 'Seda asukohta ei saa praegu kustutada, sest see on vähemalt ühe kirje või kasutaja registreeritud asukoht, sellele on väljastatud vahendeid või see on mõne teise asukoha ülem-asukoht. Uuenda kirjeid nii, et need ei viitaks enam sellele asukohale, ja proovi uuesti. ',
     'assoc_assets' => 'Selle asukohaga on seotud vähemalt üks vahend ja seda ei saa kustutada. Palun uuenda oma vahendeid, et need ei kasutaks seda asukohta ning seejärel proovi uuesti. ',
     'assoc_child_loc' => 'Sel asukohal on hetkel all-asukohti ja seda ei saa kustutada. Palun uuenda oma asukohti nii, et need ei kasutaks seda asukohta ning seejärel proovi uuesti. ',
     'assigned_assets' => 'Määratud Varad',
     'current_location' => 'Praegune asukoht',
-    'deleted_warning' => 'This location has been deleted. Please restore it before attempting to make any changes.',
+    'deleted_warning' => 'See asukoht on kustutatud. Taasta see enne muudatuste tegemist.',
 
     'create' => [
         'error' => 'Asukohta ei loodud, palun proovi uuesti.',
@@ -21,8 +21,8 @@ return [
     ],
 
     'restore' => [
-        'error' => 'Location was not restored, please try again',
-        'success' => 'Location restored successfully.',
+        'error' => 'Asukoha taastamine ebaõnnestus, proovi uuesti',
+        'success' => 'Asukoha taastamine õnnestus.',
     ],
 
     'delete' => [
@@ -33,13 +33,13 @@ return [
 
     'bulkedit' => [
         'error' => 'Ühtegi välja ei muudetud, uuendusi ei tehtud',
-        'success' => 'Location successfully updated.|:count locations successfully updated.',
-        'warn' => 'Edit the fields below to update this location. Fields you leave blank will not change on the location.|Edit the fields below to update all :count selected locations. Fields you leave blank will not change on any of them.',
-        'show_selected' => '1 selected location|:count selected locations',
-        'company_scope_mismatch_partial' => 'The company was not changed on 1 location because items or users at that location belong to different companies. Update or move those first.|The company was not changed on :count locations because items or users at those locations belong to different companies. Update or move those first.',
-        'company_scope_mismatch_all' => 'No locations were reassigned. The requested company does not match items or users at the selected location.|No locations were reassigned. The requested company does not match items or users at any of the :count selected locations.',
-        'parent_company_mismatch_partial' => 'The parent or company was not changed on 1 location because it would leave the location in a different company than its parent.|The parent or company was not changed on :count locations because it would leave those locations in a different company than their parent.',
-        'parent_company_mismatch_all' => 'No changes were saved. The requested parent or company would leave the location in a different company than its parent.|No changes were saved. The requested parent or company would leave every one of the :count selected locations in a different company than their parent.',
+        'success' => 'Asukoha uuendamine õnnestus.|:count asukoha uuendamine õnnestus.',
+        'warn' => 'Muuda allolevaid välju selle asukoha uuendamiseks. Tühjaks jäetud välju asukohal ei muudeta.|Muuda allolevaid välju kõigi :count valitud asukoha uuendamiseks. Tühjaks jäetud välju ühelgi neist ei muudeta.',
+        'show_selected' => '1 valitud asukoht|:count valitud asukohta',
+        'company_scope_mismatch_partial' => 'Ühe asukoha ettevõtet ei muudetud, sest selle asukoha kirjed või kasutajad kuuluvad erinevatele ettevõtetele. Uuenda või teisalda need esmalt.|:count asukoha ettevõtet ei muudetud, sest nende asukohtade kirjed või kasutajad kuuluvad erinevatele ettevõtetele. Uuenda või teisalda need esmalt.',
+        'company_scope_mismatch_all' => 'Ühtegi asukohta ei määratud ümber. Taotletud ettevõte ei vasta valitud asukoha kirjetele või kasutajatele.|Ühtegi asukohta ei määratud ümber. Taotletud ettevõte ei vasta ühegi :count valitud asukoha kirjetele või kasutajatele.',
+        'parent_company_mismatch_partial' => 'Ühe asukoha ülem-asukohta või ettevõtet ei muudetud, sest asukoht jääks siis oma ülem-asukohast erinevasse ettevõttesse.|:count asukoha ülem-asukohta või ettevõtet ei muudetud, sest need jääksid siis oma ülem-asukohast erinevasse ettevõttesse.',
+        'parent_company_mismatch_all' => 'Muudatusi ei salvestatud. Taotletud ülem-asukoha või ettevõtte korral jääks asukoht oma ülem-asukohast erinevasse ettevõttesse.|Muudatusi ei salvestatud. Taotletud ülem-asukoha või ettevõtte korral jääks iga :count valitud asukoht oma ülem-asukohast erinevasse ettevõttesse.',
     ],
 
 ];

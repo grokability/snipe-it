@@ -3,7 +3,7 @@
 return [
     'does_not_exist' => '公司不存在。',
     'deleted' => '已删除公司',
-    'assoc_users' => '此公司下至少关联了一个型号，目前不能被删除，请确定您的所有型号不在此公司下，然后重试。 ',
+    'assoc_users' => 'This company is currently associated with at least one other item (location, user, license, asset, etc.) in Snipe-IT and cannot be deleted. Please update your models to no longer reference this company and try again. ',
     'create' => [
         'error' => '新增公司失败，请重试。',
         'success' => '新增公司成功。',
@@ -19,4 +19,5 @@ return [
         'bulk_success' => 'Company deleted successfully.|:count companies were deleted successfully.',
         'partial_success' => 'Company deleted successfully. See additional information below. | :count companies were deleted successfully. See additional information below.',
     ],
+    'webhook_fields_require_superuser' => 'Webhook configuration fields (:fields) can only be modified by a superuser.',
 ];

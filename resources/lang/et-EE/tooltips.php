@@ -3,22 +3,22 @@
 return [
 
     'disabled_assoc' => [
-        'accessory' => 'This accessory cannot be deleted because it still has items, users, or locations associated with it',
-        'asset' => 'This asset cannot be deleted because it still has items associated with it',
-        'category' => 'This category cannot be deleted because it still has items associated with it',
-        'company' => 'This company cannot be deleted because it still has items or users associated with it',
-        'component' => 'This component cannot be deleted because it still has items associated with it',
-        'custom_field' => 'This custom field cannot be deleted because it is still associated with at least one fieldset',
-        'department' => 'This department cannot be deleted because it still has users associated with it',
-        'location' => 'This location cannot be deleted because it still has items or users associated with it',
-        'manufacturer' => 'This manufacturer cannot be deleted because it still has items associated with it',
-        'supplier' => 'This supplier cannot be deleted because it still has items associated with it',
-        'user' => 'This user cannot be deleted because it still has items associated with it',
-        'user_self' => 'You cannot delete yourself',
+        'accessory' => 'Seda tarvikut ei saa kustutada, sest sellega on endiselt seotud kirjeid, kasutajaid või asukohti',
+        'asset' => 'Seda vahendit ei saa kustutada, sest sellega on endiselt seotud kirjeid',
+        'category' => 'Seda kategooriat ei saa kustutada, sest sellega on endiselt seotud kirjeid',
+        'company' => 'Seda ettevõtet ei saa kustutada, sest sellega on endiselt seotud kirjeid või kasutajaid',
+        'component' => 'Seda komponenti ei saa kustutada, sest sellega on endiselt seotud kirjeid',
+        'custom_field' => 'Seda kohandatud välja ei saa kustutada, sest see on endiselt seotud vähemalt ühe väljakomplektiga',
+        'department' => 'Seda osakonda ei saa kustutada, sest sellega on endiselt seotud kasutajaid',
+        'location' => 'Seda asukohta ei saa kustutada, sest sellega on endiselt seotud kirjeid või kasutajaid',
+        'manufacturer' => 'Seda tootjat ei saa kustutada, sest sellega on endiselt seotud kirjeid',
+        'supplier' => 'Seda tarnijat ei saa kustutada, sest sellega on endiselt seotud kirjeid',
+        'user' => 'Seda kasutajat ei saa kustutada, sest temaga on endiselt seotud kirjeid',
+        'user_self' => 'Sa ei saa iseennast kustutada',
     ],
 
     'checkin_all' => [
-        'user' => 'Checkin all items for this user and optionally delete them. You will be able to confirm this on the next page.',
+        'user' => 'Tagasta kõik selle kasutaja kirjed ja soovi korral kustuta kasutaja. Saad seda järgmisel lehel kinnitada.',
     ],
 
 ];

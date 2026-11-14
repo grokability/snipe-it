@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Generate auto-incrementing asset tags',
     'auto_increment_prefix' => 'Réimse (roghnach)',
     'auto_incrementing_help' => 'Enable auto-incrementing asset tags first to set this',
-    'backups' => 'Cúltacaí',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Create, download, and restore backups ',
     'backups_restoring' => 'Restoring from Backup',
     'backups_clean' => 'Clean the backed-up database before restore',

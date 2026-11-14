@@ -19,8 +19,8 @@ return [
         'confirm' => '确定删除这个折旧类吗？',
         'error' => '删除折旧类的过程中出现了一些问题，请重试。',
         'success' => '折旧类已经成功被删除。',
-        'bulk_success' => 'Depreciation class deleted successfully.|:count depreciation classes were deleted successfully.',
-        'partial_success' => 'Depreciation class deleted successfully. See additional information below.|:count depreciation classes were deleted successfully. See additional information below.',
+        'bulk_success' => '折旧类已成功删除。|:count 个折旧类已成功删除。',
+        'partial_success' => '折旧类已成功删除。请参阅下方的其他信息。|:count 个折旧类已成功删除。请参阅下方的其他信息。',
     ],
 
 ];

@@ -256,7 +256,7 @@ return [
     ],
     'usersview' => [
         'name' => 'Voir les utilisateurs',
-        'note' => 'Note that users with this permission will also be able to see (not modify or delete) files uploaded to the user as well. Users with this permission will also be able to view edit and checkin history.',
+        'note' => 'Users with this permission will also be able to view edit and checkin history. Access to files uploaded to a user is gated separately by the Manage User Files permission.',
     ],
     'userscreate' => [
         'name' => 'Create New Users',
@@ -268,7 +268,7 @@ return [
         'name' => 'Delete Users',
     ],
     'models' => [
-        'name' => 'Models',
+        'name' => 'Modèles',
         'note' => 'Grants access to the Models section of the application.',
     ],
     'modelsview' => [
@@ -276,7 +276,7 @@ return [
     ],
 
     'modelscreate' => [
-        'name' => 'Create New Models',
+        'name' => 'Créer de nouveaux modèles',
     ],
     'modelsedit' => [
         'name' => 'Edit Models',
@@ -295,10 +295,10 @@ return [
         'name' => 'Create New Categories',
     ],
     'categoriesedit' => [
-        'name' => 'Edit Categories',
+        'name' => 'Modifier la catégorie',
     ],
     'categoriesdelete' => [
-        'name' => 'Delete Categories',
+        'name' => 'Supprimer les catégories',
     ],
     'departments' => [
         'name' => 'Départements',

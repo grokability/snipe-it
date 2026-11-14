@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Generišite oznake sredstava koje se automatski povećavaju',
     'auto_increment_prefix' => 'Prefiks (opciono)',
     'auto_incrementing_help' => 'Prvo omogućite oznake sredstava za automatsko povećanje da biste ovo postavili',
-    'backups' => 'Rezervne kopije',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Kreirajte, preuzmite i vratite rezervne kopije ',
     'backups_restoring' => 'Vraćanje rezervne kopije',
     'backups_clean' => 'Očisti rezervnu kopiju baze podataka pre povraćanja',

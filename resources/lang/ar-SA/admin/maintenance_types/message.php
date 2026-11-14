@@ -1,24 +1,24 @@
 <?php
 
 return [
-    'not_found' => 'Maintenance type not found.',
+    'not_found' => 'نوع الصيانة غير موجود.',
     'create' => [
-        'error' => 'Maintenance type was not created, please try again.',
-        'success' => 'Maintenance type created successfully.',
+        'error' => 'لم يتم إنشاء نوع الصيانة، الرجاء المحاولة مرة أخرى.',
+        'success' => 'تم إنشاء نوع الصيانة بنجاح.',
     ],
     'update' => [
-        'error' => 'Maintenance type was not updated, please try again.',
-        'success' => 'Maintenance type updated successfully.',
+        'error' => 'لم يتم تحديث نوع الصيانة، الرجاء المحاولة مرة أخرى.',
+        'success' => 'تم تحديث نوع الصيانة بنجاح.',
     ],
     'delete' => [
-        'confirm' => 'Are you sure you wish to delete this maintenance type?',
-        'error' => 'There was an issue deleting this maintenance type. Please try again.',
-        'success' => 'The maintenance type was deleted successfully.',
-        'bulk_success' => 'Maintenance type deleted successfully.|:count maintenance types were deleted successfully.',
-        'partial_success' => 'Maintenance type deleted successfully. See additional information below. | :count maintenance types were deleted successfully. See additional information below.',
+        'confirm' => 'هل أنت متأكد من رغبتك في حذف نوع الصيانة هذا؟',
+        'error' => 'حدثت مشكلة أثناء حذف هذا النوع من الصيانة. الرجاء المحاولة مرة أخرى.',
+        'success' => 'تم حذف نوع الصيانة بنجاح.',
+        'bulk_success' => 'تم حذف نوع الصيانة بنجاح.|:count أنواع الصيانة تم حذفها بنجاح.',
+        'partial_success' => 'تم حذف نوع الصيانة بنجاح. راجع المعلومات الإضافية أدناه. | :count أنواع الصيانة تم حذفها بنجاح. راجع المعلومات الإضافية أدناه.',
     ],
     'complete' => [
-        'success' => 'Maintenance marked as complete.',
-        'error' => 'There was an issue marking this maintenance as complete. Please try again.',
+        'success' => 'تم وضع علامة على الصيانة كمكتملة.',
+        'error' => 'حدثت مشكلة في وضع علامة على اكتمال هذه الصيانة. الرجاء المحاولة مرة أخرى.',
     ],
 ];

@@ -8,7 +8,7 @@ return [
     'checkin_and_delete' => 'Dodijeli sve / Izbriši korisnika',
     'delete' => 'Izbrisati',
     'edit' => 'Uredi',
-    'clone' => 'Clone',
+    'clone' => 'Kloniraj',
     'restore' => 'Vratiti',
     'remove' => 'Izbriši',
     'request' => 'Zahtjev',

@@ -6,7 +6,7 @@ return [
     'send_reminder' => 'Надіслати нагадування',
     'cannot_send_reminder' => 'Користувач був видалений або не має електронної пошти, тому не може отримати нагадування',
     'reminder_sent' => 'Нагадування надіслано',
-    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
+    'reminder_sent_count' => '{0}Жодного нагадування не надіслано|{1}Надіслано одне нагадування|[2,*]Надіслано :count нагадувань',
     'acceptance_deleted' => 'Видалено запит на підтвердження',
     'acceptance_request' => 'Прийнятий запит',
     'custom_export' => [

@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Demirbaş girişi yapılamadı. Lütfen tekrar deneyin',
         'success' => 'Demirbaş girişi yapıldı.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Bu kullanıcı geçersiz. Lütfen tekrar deneyin.',
         'already_checked_in' => 'Bu varlık zaten atanmış.',
         'force_checkin_orphaned_success' => 'Geçersiz atama başarıyla temizlendi.',

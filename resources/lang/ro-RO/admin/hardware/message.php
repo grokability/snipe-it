@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Activul nu a fost primit, va rugam incercati iar',
         'success' => 'Activul a fost primit.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Utilizatorul este invalid. Va rugam incercati iar.',
         'already_checked_in' => 'Activul respectiv este deja înregistrat.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

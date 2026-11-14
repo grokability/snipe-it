@@ -13,9 +13,9 @@ return [
     |
     */
 
-    'week_start_select' => 'Select Day of Week',
-    'week_start' => 'Day the Week Starts On',
-    'today' => 'Today',
+    'week_start_select' => 'Odaberite dan u tjednu',
+    'week_start' => 'Dan kojim počinje tjedan',
+    'today' => 'Danas',
     'clear' => 'Očisti',
     'days' => [
         'sunday' => 'Sunday',

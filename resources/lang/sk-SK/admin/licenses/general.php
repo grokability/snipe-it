@@ -32,8 +32,8 @@ return [
         ],
 
         'checkin_selected' => [
-            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
-            'no_seats_selected' => 'No seats were selected.',
+            'success' => ':count licenčné miesto bolo úspešne prevzaté. | :count licenčných miest bolo úspešne prevzatých.',
+            'no_seats_selected' => 'Neboli vybrané žiadne licenčné miesta.',
         ],
 
         'checkout_all' => [
@@ -50,8 +50,8 @@ return [
         ],
 
         'delete_with_checkin' => [
-            'label' => 'Check in seats and delete',
-            'log_msg' => 'Checked in via bulk delete-with-checkin in license index',
+            'label' => 'Prevziať licenčné miesta a odstrániť',
+            'log_msg' => 'Prevzaté prostredníctvom hromadného odstránenia s prevzatím v zozname licencií',
         ],
     ],
 

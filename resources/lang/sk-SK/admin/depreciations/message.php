@@ -19,8 +19,8 @@ return [
         'confirm' => 'Ste si istý, že chcete odstrániť túto triedu odpisovania?',
         'error' => 'Pri odstraňovaní triedy odpisovania sa vyskytla chyba. Skúste prosím znovu.',
         'success' => 'Triedu odpisovania sa nepodarilo odstrániť.',
-        'bulk_success' => 'Depreciation class deleted successfully.|:count depreciation classes were deleted successfully.',
-        'partial_success' => 'Depreciation class deleted successfully. See additional information below.|:count depreciation classes were deleted successfully. See additional information below.',
+        'bulk_success' => 'Trieda odpisovania bola úspešne odstránená.|:count tried odpisovania bolo úspešne odstránených.',
+        'partial_success' => 'Trieda odpisovania bola úspešne odstránená. Ďalšie informácie nájdete nižšie.|:count tried odpisovania bolo úspešne odstránených. Ďalšie informácie nájdete nižšie.',
     ],
 
 ];

@@ -15,47 +15,47 @@ return [
     ],
 
     'restore' => [
-        'error' => 'Component was not restored, please try again',
-        'success' => 'Component restored successfully.',
+        'error' => 'Komponendi taastamine ebaõnnestus, proovi uuesti',
+        'success' => 'Komponendi taastamine õnnestus.',
     ],
 
     'delete' => [
         'confirm' => 'Kas oled kindel, et soovid selle komponendi kustutada?',
         'error' => 'Komponendi kustutamisel tekkis probleem. Palun proovi uuesti.',
         'success' => 'Komponendi kustutamine õnnestus.',
-        'error_qty' => 'Some components of this type are still checked out. Please check them in and try again.',
+        'error_qty' => 'Osa seda tüüpi komponente on endiselt väljastatud. Tagasta need ja proovi uuesti.',
     ],
 
     'checkout' => [
         'error' => 'Komponenti ei kontrollitud, palun proovige uuesti',
         'success' => 'Komponent on edukalt välja võetud.',
         'user_does_not_exist' => 'Vale kasutaja. Palun proovi uuesti.',
-        'unavailable' => 'Not enough components remaining: :remaining remaining, :requested requested ',
+        'unavailable' => 'Komponente pole piisavalt: alles on :remaining, taotleti :requested ',
     ],
 
     'bulk' => [
-        'no_components_selected' => 'No components were selected.',
-        'no_action_selected' => 'Please pick an action from the dropdown.',
+        'no_components_selected' => 'Ühtegi komponenti pole valitud.',
+        'no_action_selected' => 'Vali rippmenüüst toiming.',
         'no_fields_updated' => 'Ühtegi välja ei muudetud, uuendusi ei tehtud',
-        'skipped_unauthorized' => ':count component(s) were skipped because you do not have permission to update them.',
+        'skipped_unauthorized' => ':count komponenti jäeti vahele, sest sul puudub õigus neid uuendada.',
 
         'update' => [
-            'success' => ':count component was updated.|:count components were updated.',
-            'none_updated' => 'The selected component could not be updated. See errors below for details.|None of the selected components could be updated. See errors below for details.',
+            'success' => ':count komponent uuendati.|:count komponenti uuendati.',
+            'none_updated' => 'Valitud komponendi uuendamine ebaõnnestus. Vaata üksikasju allolevatest vigadest.|Ühegi valitud komponendi uuendamine ei õnnestunud. Vaata üksikasju allolevatest vigadest.',
         ],
 
         'delete' => [
-            'success' => ':count component was deleted.|:count components were deleted.',
-            'partial_success' => ':count component was deleted. See errors below for the rest.|:count components were deleted. See errors below for the rest.',
+            'success' => ':count komponent kustutati.|:count komponenti kustutati.',
+            'partial_success' => ':count komponent kustutati. Ülejäänute vead leiad allpool.|:count komponenti kustutati. Ülejäänute vead leiad allpool.',
         ],
 
         'restore' => [
-            'success' => ':count component was restored.|:count components were restored.',
+            'success' => ':count komponent taastati.|:count komponenti taastati.',
         ],
 
         'checkin_selected' => [
-            'no_rows_selected' => 'No checked-out components were selected.',
-            'success' => ':unit_count unit returned across :count checkout.|:unit_count units returned across :count checkouts.',
+            'no_rows_selected' => 'Ühtegi väljastatud komponenti pole valitud.',
+            'success' => ':unit_count ühik tagastati :count väljastuse kohta.|:unit_count ühikut tagastati :count väljastuse kohta.',
         ],
     ],
 

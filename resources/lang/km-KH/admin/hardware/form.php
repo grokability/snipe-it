@@ -56,8 +56,6 @@ return [
     'years' => 'ឆ្នាំ',
     'asset_location' => 'ធ្វើបច្ចុប្បន្នភាពទីតាំង Asset',
     'asset_location_update_default_current' => 'ធ្វើបច្ចុប្បន្នភាពទីតាំងលំនាំដើម និងទីតាំងជាក់ស្តែង',
-    'asset_location_update_default' => 'ធ្វើបច្ចុប្បន្នភាពតែទីតាំងលំនាំដើមប៉ុណ្ណោះ។',
-    'asset_location_update_actual' => 'ធ្វើបច្ចុប្បន្នភាពតែទីតាំងជាក់ស្តែងប៉ុណ្ណោះ។',
     'asset_not_deployable' => 'That asset status is not deployable. This asset cannot be checked out.',
     'asset_not_deployable_checkin' => '{1} That asset status is not deployable. Using this status label will check in the asset.|[2,*] That asset status in not deployable. Using this status label will result in no change.',
     'asset_deployable' => '{1} This asset can be checked out.|[2,*] These assets can be checked out.',

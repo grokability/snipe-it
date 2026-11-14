@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'ไม่ได้เช็คอินเนื้อหาโปรดลองอีกครั้ง',
         'success' => 'ตรวจสอบเนื้อหาเรียบร้อยแล้ว',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'ผู้ใช้รายนั้นไม่ถูกต้อง กรุณาลองอีกครั้ง.',
         'already_checked_in' => 'มีการตรวจสอบเนื้อหาดังกล่าวแล้ว',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

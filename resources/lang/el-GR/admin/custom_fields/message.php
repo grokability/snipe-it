@@ -23,6 +23,9 @@ return [
             'error' => 'Παρουσιάστηκε πρόβλημα κατά τη διαγραφή του πεδίου. ΠΑΡΑΚΑΛΩ προσπαθησε ξανα.',
             'success' => 'Το πεδίο διαγράφηκε με επιτυχία.',
             'in_use' => 'Το πεδίο παραμένει σε χρήση.',
+            'in_use_named' => ':name is still attached to at least one fieldset and cannot be deleted.',
+            'bulk_success' => 'Field deleted successfully.|:count fields were deleted successfully.',
+            'partial_success' => ':count field was deleted successfully, but others could not be deleted. See below for details.|:count fields were deleted successfully, but others could not be deleted. See below for details.',
         ],
 
     ],
@@ -46,6 +49,13 @@ return [
             'error' => 'Παρουσιάστηκε ένα ζήτημα κατάργησης του πεδίου. ΠΑΡΑΚΑΛΩ προσπαθησε ξανα.',
             'success' => 'Το πεδίο πεδίου διαγράφηκε με επιτυχία.',
             'in_use' => 'Το σύνολο των πεδίων παραμένουν σε χρήση.',
+            'in_use_named' => ':name is still attached to at least one asset model and cannot be deleted.',
+            'bulk_success' => 'Fieldset deleted successfully.|:count fieldsets were deleted successfully.',
+            'partial_success' => ':count fieldset was deleted successfully, but others could not be deleted. See below for details.|:count fieldsets were deleted successfully, but others could not be deleted. See below for details.',
+        ],
+
+        'clone' => [
+            'success' => 'Fieldset cloned successfully.',
         ],
 
     ],

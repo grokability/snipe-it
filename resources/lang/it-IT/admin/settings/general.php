@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Genera tag beni ad incremento automatico',
     'auto_increment_prefix' => 'Prefisso (Opzionale)',
     'auto_incrementing_help' => 'Attiva i tag beni ad incremento automatico per impostarlo',
-    'backups' => 'Backup',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Crea, scarica e ripristina i backup ',
     'backups_restoring' => 'Ripristino da backup',
     'backups_clean' => 'Pulire il database di backup prima di ripristinare',

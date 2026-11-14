@@ -40,19 +40,19 @@ return [
 
     'bulkdelete' => [
         'error' => '没有型号被选中，所以没有删除任何东西。',
-        'nothing_deletable' => 'None of the selected models can be deleted because they still have assets associated with them.',
+        'nothing_deletable' => '所选型号中没有一个可以删除，因为它们仍然拥有与它们相关联的资产。',
         'success' => '型号已删除！|:succes_count 个型号已删除！',
         'success_partial' => ':success_count 个已删除, 但是 :fail_count 个因为还有关联资产所以没办法删除。',
     ],
 
     'merge' => [
-        'min_two' => 'Select at least two models to merge.',
-        'no_target' => 'Select which model to keep before merging.',
-        'not_found' => 'One or more of the selected models could not be loaded. Refresh the models list and try again.',
-        'information' => 'You are about to merge :count models. Pick the model you want to keep. Every asset attached to the other models will be reassigned to the model you pick, then the source models will be deleted.',
-        'warning' => 'This cannot be undone. Reassigned assets will inherit the surviving model\'s category, fieldset, and depreciation settings.',
-        'pick_target' => 'Which model do you want to keep?',
-        'success' => 'Merged :source_count model(s) into ":target". :asset_count asset(s) were reassigned.',
+        'min_two' => '选择至少两个型号进行合并。',
+        'no_target' => '在合并之前选择要保留的型号。',
+        'not_found' => '一个或多个选定的型号无法加载。刷新型号列表然后重试。',
+        'information' => '您即将合并 :count 个型号。请选择您要保留的型号。关联到其他型号的所有资产都将重新分配给您选择的型号，源型号将被删除。',
+        'warning' => '此操作无法撤销。重新分配的资产将继承未存型号的类别、字段和折旧设置。',
+        'pick_target' => '您想要保留哪个型号？',
+        'success' => '已将 :source_count 个型号合并至 ":target"。:asset_count 个资产已重新分配。',
     ],
 
 ];

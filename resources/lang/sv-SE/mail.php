@@ -70,7 +70,7 @@ return [
     'terminates' => 'Upphör',
     'following_accepted' => 'Följande har godkänts',
     'following_declined' => 'Följande har avvisats',
-    'hello' => 'Hejsan',
+    'hello' => 'Hej',
     'hi' => 'Hej',
     'i_have_read' => 'Jag har läst och godkänt användarvillkoren och har mottagit det här objektet.',
     'initiated_accepted' => 'En utcheckning du initierade har godkänts',

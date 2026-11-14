@@ -4,6 +4,7 @@ return [
 
     'deleted' => 'Fornitore eliminato',
     'does_not_exist' => 'Il fornitore non esiste.',
+    'assoc_items' => 'This supplier is currently associated with at least one asset, accessory, consumable, component, license, or maintenance record and cannot be deleted. Please update those items to no longer reference this supplier and try again. ',
 
     'create' => [
         'error' => 'Il fornitore non è stato creato, si prega di riprovare.',

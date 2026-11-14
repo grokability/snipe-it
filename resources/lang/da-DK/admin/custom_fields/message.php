@@ -23,6 +23,9 @@ return [
             'error' => 'Der opstod et problem under sletning af feltet. Prøv venligst igen.',
             'success' => 'Feltet blev slettet.',
             'in_use' => 'Feltet er stadig i brug.',
+            'in_use_named' => ':name is still attached to at least one fieldset and cannot be deleted.',
+            'bulk_success' => 'Field deleted successfully.|:count fields were deleted successfully.',
+            'partial_success' => ':count field was deleted successfully, but others could not be deleted. See below for details.|:count fields were deleted successfully, but others could not be deleted. See below for details.',
         ],
 
     ],
@@ -46,6 +49,13 @@ return [
             'error' => 'Der opstod et problem under sletning af feltsættet. Prøv venligst igen.',
             'success' => 'Feltsættet blev slettet.',
             'in_use' => 'Feltsættet er stadig i brug.',
+            'in_use_named' => ':name is still attached to at least one asset model and cannot be deleted.',
+            'bulk_success' => 'Fieldset deleted successfully.|:count fieldsets were deleted successfully.',
+            'partial_success' => ':count fieldset was deleted successfully, but others could not be deleted. See below for details.|:count fieldsets were deleted successfully, but others could not be deleted. See below for details.',
+        ],
+
+        'clone' => [
+            'success' => 'Fieldset cloned successfully.',
         ],
 
     ],

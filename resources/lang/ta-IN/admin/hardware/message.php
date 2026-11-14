@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'சொத்து சரிபார்க்கப்படவில்லை, மீண்டும் முயற்சிக்கவும்',
         'success' => 'சொத்து வெற்றிகரமாக சரிபார்க்கப்பட்டது.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'அந்த பயனர் தவறானது. தயவு செய்து மீண்டும் முயற்சிக்கவும்.',
         'already_checked_in' => 'அந்தச் சொத்து ஏற்கனவே சோதிக்கப்பட்டுள்ளது.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

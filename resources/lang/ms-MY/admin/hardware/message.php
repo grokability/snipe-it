@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Harta tidak diterima, sila cuba lagi',
         'success' => 'Harta berjaya diterima.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Pengguna tidah sah. Sila cuba lagi.',
         'already_checked_in' => 'Aset itu sudah diperiksa.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

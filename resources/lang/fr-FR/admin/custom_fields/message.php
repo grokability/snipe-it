@@ -23,6 +23,9 @@ return [
             'error' => 'Un problème a eu lien pendant la suppression du champ. Veuillez réessayer.',
             'success' => 'Le champ a bien été supprimé.',
             'in_use' => 'Le champ est actuellement en utilisation.',
+            'in_use_named' => ':name is still attached to at least one fieldset and cannot be deleted.',
+            'bulk_success' => 'Field deleted successfully.|:count fields were deleted successfully.',
+            'partial_success' => ':count field was deleted successfully, but others could not be deleted. See below for details.|:count fields were deleted successfully, but others could not be deleted. See below for details.',
         ],
 
     ],
@@ -46,6 +49,13 @@ return [
             'error' => 'Un problème a eu lien pendant la suppression du fieldset. Veuillez réessayer.',
             'success' => 'Le fieldset a bien été supprimé.',
             'in_use' => 'Le fieldset est actuellement utilisé.',
+            'in_use_named' => ':name is still attached to at least one asset model and cannot be deleted.',
+            'bulk_success' => 'Fieldset deleted successfully.|:count fieldsets were deleted successfully.',
+            'partial_success' => ':count fieldset was deleted successfully, but others could not be deleted. See below for details.|:count fieldsets were deleted successfully, but others could not be deleted. See below for details.',
+        ],
+
+        'clone' => [
+            'success' => 'Fieldset cloned successfully.',
         ],
 
     ],

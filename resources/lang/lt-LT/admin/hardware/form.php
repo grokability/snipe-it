@@ -56,8 +56,6 @@ return [
     'years' => 'metai',
     'asset_location' => 'Atnaujinti turto vietą',
     'asset_location_update_default_current' => 'Atnaujinti numatytąją vietą IR faktinę vietą',
-    'asset_location_update_default' => 'Atnaujinti tik numatytąją vietą',
-    'asset_location_update_actual' => 'Atnaujinti tik faktinę vietą',
     'asset_not_deployable' => 'Turto būsena netinkama išdavimui, todėl šis turtas negali būti išduotas.',
     'asset_not_deployable_checkin' => '{1} Šios turto būsenos tipas yra „Negalima išduoti“. Pasirinkus šią būsenos žymą, turtas bus paimtas.|[2,*] Šios turto būsenos tipas yra „Negalima išduoti“. Pasirinkus šią būsenos žymą, niekas nepasikeis.',
     'asset_deployable' => '{1} Šį turtą galima išduoti.|[2,*] Šį turtą galima išduoti.',

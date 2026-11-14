@@ -4,6 +4,7 @@ return [
 
     'deleted' => 'Избришан добавувач',
     'does_not_exist' => 'Добавувачот не постои.',
+    'assoc_items' => 'This supplier is currently associated with at least one asset, accessory, consumable, component, license, or maintenance record and cannot be deleted. Please update those items to no longer reference this supplier and try again. ',
 
     'create' => [
         'error' => 'Добавувачот не е креиран, обидете се повторно.',

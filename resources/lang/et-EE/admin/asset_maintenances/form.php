@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'select_type' => 'Select Maintenance Type',
+    'select_type' => 'Vali hoolduse tüüp',
     'asset_maintenance_type' => 'Vara hoolduse tüüp',
     'title' => 'Pealkiri',
     'start_date' => 'Alguskuupäev',

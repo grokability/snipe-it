@@ -20,8 +20,8 @@ return [
         'confirm' => 'هل أنت متأكد من رغبتك في حذف هذا الملحق؟',
         'error' => 'حدث خطأ أثناء محاولة حذف الملحق. الرجاء المحاولة مرة أخرى.',
         'success' => 'تم حذف الملحق بنجاح.',
-        'bulk_success' => 'Accessory deleted successfully.|:count accessories were deleted successfully.',
-        'partial_success' => ':count accessory was deleted successfully, but others could not be deleted. See below for details.|:count accessories were deleted successfully, but others could not be deleted. See below for details.',
+        'bulk_success' => 'تم حذف الملحق بنجاح.|:count تم حذف الملحقات بنجاح.',
+        'partial_success' => ':count تم حذف ملحق بنجاح، ولكن تعذّر حذف البقية. راجع التفاصيل أدناه.|:count تم حذف الملحقات بنجاح، ولكن تعذّر حذف البقية. راجع التفاصيل أدناه.',
     ],
 
     'checkout' => [
@@ -30,7 +30,7 @@ return [
         'unavailable' => 'الملحق غير متوفر لعملية الدفع. تحقق من الكمية المتاحة',
         'user_does_not_exist' => 'هذا المستخدم خاطئ، الرجاء المحاولة مرة أخرى.',
         'checkout_qty' => [
-            'lte' => 'There is currently only one available accessory of this type, and you are trying to check out :checkout_qty. Please adjust the checkout quantity or the total stock of this accessory and try again.|There are :number_currently_remaining total available accessories, and you are trying to check out :checkout_qty. Please adjust the checkout quantity or the total stock of this accessory and try again.',
+            'lte' => 'لا يتوفر حاليًا سوى ملحق واحد من هذا النوع، بينما تحاول تسليم :checkout_qty. يُرجى تعديل كمية التسليم أو إجمالي مخزون هذا الملحق، ثم المحاولة مرة أخرى.|يتوفر حاليًا إجمالي :number_currently_remaining من الملحقات، بينما تحاول تسليم :checkout_qty. يُرجى تعديل كمية التسليم أو إجمالي مخزون هذا الملحق، ثم المحاولة مرة أخرى.',
         ],
 
     ],
@@ -42,28 +42,28 @@ return [
     ],
 
     'restore' => [
-        'error' => 'Accessory was not restored, please try again',
-        'success' => 'Accessory restored successfully.',
+        'error' => 'تعذّرت استعادة الملحق، يُرجى المحاولة مرة أخرى',
+        'success' => 'تمت استعادة الملحق بنجاح.',
     ],
 
     'bulk' => [
-        'no_accessories_selected' => 'No accessories were selected.',
-        'no_action_selected' => 'Please pick an action from the dropdown.',
+        'no_accessories_selected' => 'لم يتم تحديد أي ملحقات.',
+        'no_action_selected' => 'يُرجى اختيار إجراء من القائمة المنسدلة.',
         'no_fields_updated' => 'لم يتم تغيير أي حقول، لذلك لم يتم تحديث أي شيء.',
-        'skipped_unauthorized' => ':count accessory(s) were skipped because you do not have permission to update them.',
+        'skipped_unauthorized' => ':count ملحق (ملحقات) تم تخطيها لعدم امتلاكك صلاحية تعديلها.',
 
         'update' => [
-            'success' => ':count accessory was updated.|:count accessories were updated.',
-            'none_updated' => 'The selected accessory could not be updated. See errors below for details.|None of the selected accessories could be updated. See errors below for details.',
+            'success' => ':count ملحق تم تحديثه.|:count ملحقات تم تحديثها.',
+            'none_updated' => 'تعذّر تحديث الملحق المحدد. راجع الأخطاء أدناه لمعرفة التفاصيل.|تعذّر تحديث أيٍّ من الملحقات المحددة. راجع الأخطاء أدناه لمعرفة التفاصيل.',
         ],
 
         'restore' => [
-            'success' => ':count accessory was restored.|:count accessories were restored.',
+            'success' => ':count ملحق تمت استعادته.|:count ملحقات تمت استعادتها.',
         ],
 
         'checkin_selected' => [
-            'no_rows_selected' => 'No checked-out accessories were selected.',
-            'success' => ':count accessory checkout was returned.|:count accessory checkouts were returned.',
+            'no_rows_selected' => 'لم يتم تحديد أي ملحقات تم تسليمها.',
+            'success' => ':count عملية تسليم ملحق تم إرجاعها.|:count عمليات تسليم ملحقات تم إرجاعها.',
         ],
     ],
 ];

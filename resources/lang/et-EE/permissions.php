@@ -16,450 +16,450 @@ return [
     */
 
     'superuser' => [
-        'name' => 'Super User',
-        'note' => 'Determines whether the user has full access to all aspects of the admin. This setting overrides ALL more specific and restrictive permissions throughout the system. ',
+        'name' => 'Superkasutaja',
+        'note' => 'Määrab, kas kasutajal on täielik juurdepääs kõigile haldusfunktsioonidele. See seade tühistab KÕIK täpsemad ja piiravamad õigused kogu süsteemis. ',
     ],
     'admin' => [
-        'name' => 'Admin Access',
-        'note' => 'Determines whether the user has access to most aspects of the system EXCEPT the System Admin Settings. These users will be able to manage users, locations, categories, etc, but ARE constrained by Full Multiple Company Support if it is enabled.',
+        'name' => 'Administraatori juurdepääs',
+        'note' => 'Määrab, kas kasutajal on juurdepääs enamikule süsteemi funktsioonidele, VÄLJA ARVATUD süsteemi haldusseadetele. Need kasutajad saavad hallata kasutajaid, asukohti, kategooriaid jne, kuid kui täielik mitme ettevõtte tugi on lubatud, kehtivad neile selle piirangud.',
     ],
 
     'import' => [
-        'name' => 'CSV Import',
-        'note' => 'This will allow users to import even if access to users, assets, etc is denied elsewhere.',
+        'name' => 'CSV-import',
+        'note' => 'Lubab kasutajatel importida ka siis, kui juurdepääs kasutajatele, vahenditele jne on mujal keelatud.',
     ],
 
     'reports' => [
-        'name' => 'Reports Access',
-        'note' => 'Determines whether the user has access to the Reports section of the application.',
+        'name' => 'Juurdepääs aruannetele',
+        'note' => 'Määrab, kas kasutajal on juurdepääs rakenduse aruannete jaotisele.',
     ],
 
     'assets' => [
         'name' => 'Vahendid',
-        'note' => 'Grants access to the Assets section of the application. ',
+        'note' => 'Annab juurdepääsu rakenduse vahendite jaotisele. ',
     ],
 
     'assetsview' => [
-        'name' => 'View Assets',
-        'note' => 'Note that users with this permission will also be able to see (not modify or delete) files uploaded to the asset model as well. This is to make it easier to share common documents like user manuals across assets without having to upload them to every asset, and to avoid having to grant the user permission to modify asset files. Users with this permission will also be able to view edit and checkin history.',
+        'name' => 'Vaata vahendeid',
+        'note' => 'Pane tähele, et selle õigusega kasutajad saavad vaadata ka vahendimudelile üles laaditud faile (kuid mitte neid muuta ega kustutada). Nii on lihtsam jagada vahendite vahel ühiseid dokumente, näiteks kasutusjuhendeid, ilma neid igale vahendile eraldi üles laadimata ja kasutajale vahendifailide muutmise õigust andmata. Selle õigusega kasutajad saavad vaadata ka muutmis- ja tagastamisajalugu.',
     ],
 
     'assetscreate' => [
-        'name' => 'Create New Assets',
+        'name' => 'Loo uusi vahendeid',
     ],
 
     'assetsedit' => [
-        'name' => 'Edit Assets',
+        'name' => 'Muuda vahendeid',
     ],
 
     'assetsdelete' => [
-        'name' => 'Delete Assets',
+        'name' => 'Kustuta vahendeid',
     ],
 
     'assetscheckin' => [
-        'name' => 'Check In',
-        'note' => 'Check assets back into inventory that are currently checked out.',
+        'name' => 'Tagasta',
+        'note' => 'Tagasta praegu väljastatud vahendid lattu.',
     ],
 
     'assetscheckout' => [
-        'name' => 'Check Out',
-        'note' => 'Assign assets in inventory by checking them out.',
+        'name' => 'Väljasta',
+        'note' => 'Määra laos olevad vahendid saajatele neid väljastades.',
     ],
 
     'assetsaudit' => [
-        'name' => 'Audit Assets',
-        'note' => 'Allows the user to mark an asset as physically inventoried.',
+        'name' => 'Auditeeri vahendeid',
+        'note' => 'Lubab kasutajal märkida vahendi füüsiliselt inventeerituks.',
     ],
 
     'assetsviewrequestable' => [
-        'name' => 'View Requestable Items',
-        'note' => 'Allows the user to view items that are marked as requestable.',
+        'name' => 'Vaata taotletavaid kirjeid',
+        'note' => 'Lubab kasutajal vaadata kirjeid, mis on märgitud taotletavaks.',
     ],
 
     'assetsviewencrypted-custom-fields' => [
-        'name' => 'View Encrypted Custom Fields',
-        'note' => 'Allows the user to view and modify encrypted custom fields on assets.',
+        'name' => 'Vaata krüpteeritud kohandatud välju',
+        'note' => 'Lubab kasutajal vaadata ja muuta vahendite krüpteeritud kohandatud välju.',
     ],
 
     'accessories' => [
         'name' => 'Tarvikud',
-        'note' => 'Grants access to the Accessories section of the application.',
+        'note' => 'Annab juurdepääsu rakenduse tarvikute jaotisele.',
     ],
 
     'accessoriesview' => [
-        'name' => 'View Accessories',
+        'name' => 'Vaata tarvikuid',
     ],
     'accessoriescreate' => [
-        'name' => 'Create New Accessories',
+        'name' => 'Loo uusi tarvikuid',
     ],
     'accessoriesedit' => [
-        'name' => 'Edit Accessories',
+        'name' => 'Muuda tarvikuid',
     ],
     'accessoriesdelete' => [
-        'name' => 'Delete Accessories',
+        'name' => 'Kustuta tarvikuid',
     ],
     'accessoriescheckout' => [
-        'name' => 'Check Out Accessories',
-        'note' => 'Assign accessories in inventory by checking them out.',
+        'name' => 'Väljasta tarvikuid',
+        'note' => 'Määra laos olevad tarvikud saajatele neid väljastades.',
     ],
     'accessoriescheckin' => [
-        'name' => 'Check In Accessories',
-        'note' => 'Check accessories back into inventory that are currently checked out.',
+        'name' => 'Tagasta tarvikuid',
+        'note' => 'Tagasta praegu väljastatud tarvikud lattu.',
     ],
     'accessoriesfiles' => [
-        'name' => 'Manage Accessory Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with accessories. (This only makes sense with view privileges or higher.)',
+        'name' => 'Halda tarvikute faile',
+        'note' => 'Lubab kasutajal tarvikutega seotud faile üles ja alla laadida ning kustutada. (See on mõttekas ainult vaatamisõiguse või kõrgemate õigustega.)',
     ],
 
     'assetsfiles' => [
-        'name' => 'Manage Asset Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with assets. (This only makes sense with view privileges or higher.)',
+        'name' => 'Halda vahendite faile',
+        'note' => 'Lubab kasutajal vahenditega seotud faile üles ja alla laadida ning kustutada. (See on mõttekas ainult vaatamisõiguse või kõrgemate õigustega.)',
     ],
 
     'usersfiles' => [
-        'name' => 'Manage User Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with users. (This only makes sense with view privileges or higher.)',
+        'name' => 'Halda kasutajate faile',
+        'note' => 'Lubab kasutajal kasutajatega seotud faile üles ja alla laadida ning kustutada. (See on mõttekas ainult vaatamisõiguse või kõrgemate õigustega.)',
     ],
 
     'modelsfiles' => [
-        'name' => 'Manage Model Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with asset models on both the model view and the asset view screens. (This only makes sense with view privileges or higher.)',
+        'name' => 'Halda mudelite faile',
+        'note' => 'Lubab kasutajal vahendimudelitega seotud faile üles ja alla laadida ning kustutada nii mudeli- kui ka vahendivaates. (See on mõttekas ainult vaatamisõiguse või kõrgemate õigustega.)',
     ],
 
     'departmentsfiles' => [
-        'name' => 'Manage Department Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with departments. (This only makes sense with view privileges or higher.)',
+        'name' => 'Halda osakondade faile',
+        'note' => 'Lubab kasutajal osakondadega seotud faile üles ja alla laadida ning kustutada. (See on mõttekas ainult vaatamisõiguse või kõrgemate õigustega.)',
     ],
 
     'suppliersfiles' => [
-        'name' => 'Manage Supplier Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with suppliers. (This only makes sense with view privileges or higher.)',
+        'name' => 'Halda tarnijate faile',
+        'note' => 'Lubab kasutajal tarnijatega seotud faile üles ja alla laadida ning kustutada. (See on mõttekas ainult vaatamisõiguse või kõrgemate õigustega.)',
     ],
 
     'locationsfiles' => [
-        'name' => 'Manage Location Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with locations.(This only makes sense with view privileges or higher.)',
+        'name' => 'Halda asukohtade faile',
+        'note' => 'Lubab kasutajal asukohtadega seotud faile üles ja alla laadida ning kustutada. (See on mõttekas ainult vaatamisõiguse või kõrgemate õigustega.)',
     ],
 
     'companiesfiles' => [
-        'name' => 'Manage Company Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with companies. (This only makes sense with view privileges or higher.)',
+        'name' => 'Halda ettevõtete faile',
+        'note' => 'Lubab kasutajal ettevõtetega seotud faile üles ja alla laadida ning kustutada. (See on mõttekas ainult vaatamisõiguse või kõrgemate õigustega.)',
     ],
 
     'consumablesfiles' => [
-        'name' => 'Manage Consumable Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with consumables. (This only makes sense with view privileges or higher.)',
+        'name' => 'Halda kulumaterjalide faile',
+        'note' => 'Lubab kasutajal kulumaterjalidega seotud faile üles ja alla laadida ning kustutada. (See on mõttekas ainult vaatamisõiguse või kõrgemate õigustega.)',
     ],
 
     'consumables' => [
         'name' => 'Kulumaterjalid',
-        'note' => 'Grants access to the Consumables section of the application.',
+        'note' => 'Annab juurdepääsu rakenduse kulumaterjalide jaotisele.',
     ],
     'consumablesview' => [
-        'name' => 'View Consumables',
+        'name' => 'Vaata kulumaterjale',
     ],
     'consumablescreate' => [
-        'name' => 'Create New Consumables',
+        'name' => 'Loo uusi kulumaterjale',
     ],
     'consumablesedit' => [
-        'name' => 'Edit Consumables',
+        'name' => 'Muuda kulumaterjale',
     ],
     'consumablesdelete' => [
-        'name' => 'Delete Consumables',
+        'name' => 'Kustuta kulumaterjale',
     ],
     'consumablescheckout' => [
-        'name' => 'Check Out Consumables',
-        'note' => 'Assign consumables in inventory by checking them out.',
+        'name' => 'Väljasta kulumaterjale',
+        'note' => 'Määra laos olevad kulumaterjalid saajatele neid väljastades.',
     ],
 
     'licenses' => [
         'name' => 'Litsentsid',
-        'note' => 'Grants access to the Licenses section of the application.',
+        'note' => 'Annab juurdepääsu rakenduse litsentside jaotisele.',
     ],
     'licensesview' => [
-        'name' => 'View Licenses',
+        'name' => 'Vaata litsentse',
     ],
     'licensescreate' => [
-        'name' => 'Create New Licenses',
+        'name' => 'Loo uusi litsentse',
     ],
     'licensesedit' => [
-        'name' => 'Edit Licenses',
+        'name' => 'Muuda litsentse',
     ],
     'licensesdelete' => [
-        'name' => 'Delete Licenses',
+        'name' => 'Kustuta litsentse',
     ],
     'licensescheckout' => [
-        'name' => 'Assign Licenses',
-        'note' => 'Allows the user to assign licenses to assets or users.',
+        'name' => 'Määra litsentse',
+        'note' => 'Lubab kasutajal määrata litsentse vahenditele või kasutajatele.',
     ],
     'licensescheckin' => [
-        'name' => 'Unassign Licenses',
-        'note' => 'Allows the user to unassign licenses from assets or users.',
+        'name' => 'Eemalda litsentside määrangud',
+        'note' => 'Lubab kasutajal eemaldada litsentside määranguid vahenditelt või kasutajatelt.',
     ],
     'licensesfiles' => [
-        'name' => 'Manage License Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with licenses.',
+        'name' => 'Halda litsentside faile',
+        'note' => 'Lubab kasutajal litsentsidega seotud faile üles ja alla laadida ning kustutada.',
     ],
     'componentsfiles' => [
-        'name' => 'Manage Component Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with components.',
+        'name' => 'Halda komponentide faile',
+        'note' => 'Lubab kasutajal komponentidega seotud faile üles ja alla laadida ning kustutada.',
     ],
 
     'licenseskeys' => [
-        'name' => 'Manage License Keys',
-        'note' => 'Allows the user to view product keys associated with licenses.',
+        'name' => 'Halda litsentsivõtmeid',
+        'note' => 'Lubab kasutajal vaadata litsentsidega seotud tootevõtmeid.',
     ],
     'components' => [
         'name' => 'Komponendid',
-        'note' => 'Grants access to the Components section of the application.',
+        'note' => 'Annab juurdepääsu rakenduse komponentide jaotisele.',
     ],
     'componentsview' => [
-        'name' => 'View Components',
+        'name' => 'Vaata komponente',
     ],
     'componentscreate' => [
-        'name' => 'Create New Components',
+        'name' => 'Loo uusi komponente',
     ],
     'componentsedit' => [
-        'name' => 'Edit Components',
+        'name' => 'Muuda komponente',
     ],
     'componentsdelete' => [
-        'name' => 'Delete Components',
+        'name' => 'Kustuta komponente',
     ],
 
     'componentscheckout' => [
-        'name' => 'Check Out Components',
-        'note' => 'Assign components in inventory by checking them out.',
+        'name' => 'Väljasta komponente',
+        'note' => 'Määra laos olevad komponendid saajatele neid väljastades.',
     ],
     'componentscheckin' => [
-        'name' => 'Check In Components',
-        'note' => 'Check components back into inventory that are currently checked out.',
+        'name' => 'Tagasta komponente',
+        'note' => 'Tagasta praegu väljastatud komponendid lattu.',
     ],
     'kits' => [
         'name' => 'Eelnevalt määratud komplektid',
-        'note' => 'Grants access to the Predefined Kits section of the application.',
+        'note' => 'Annab juurdepääsu rakenduse eelmääratud komplektide jaotisele.',
     ],
     'kitsview' => [
-        'name' => 'View Predefined Kits',
+        'name' => 'Vaata eelmääratud komplekte',
     ],
     'kitscreate' => [
-        'name' => 'Create New Predefined Kits',
+        'name' => 'Loo uusi eelmääratud komplekte',
     ],
     'kitsedit' => [
-        'name' => 'Edit Predefined Kits',
+        'name' => 'Muuda eelmääratud komplekte',
     ],
     'kitsdelete' => [
-        'name' => 'Delete Predefined Kits',
+        'name' => 'Kustuta eelmääratud komplekte',
     ],
     'users' => [
         'name' => 'Kasutajad',
-        'note' => 'Grants access to the Users section of the application.',
+        'note' => 'Annab juurdepääsu rakenduse kasutajate jaotisele.',
     ],
     'usersview' => [
         'name' => 'Vaata kasutajaid',
-        'note' => 'Note that users with this permission will also be able to see (not modify or delete) files uploaded to the user as well. Users with this permission will also be able to view edit and checkin history.',
+        'note' => 'Selle õigusega kasutajad saavad vaadata ka muutmis- ja tagastamisajalugu. Kasutajale üles laaditud failidele juurdepääsu reguleerib eraldi õigus „Halda kasutajate faile”.',
     ],
     'userscreate' => [
-        'name' => 'Create New Users',
+        'name' => 'Loo uusi kasutajaid',
     ],
     'usersedit' => [
-        'name' => 'Edit Users',
+        'name' => 'Muuda kasutajaid',
     ],
     'usersdelete' => [
-        'name' => 'Delete Users',
+        'name' => 'Kustuta kasutajaid',
     ],
     'models' => [
-        'name' => 'Models',
-        'note' => 'Grants access to the Models section of the application.',
+        'name' => 'Mudelid',
+        'note' => 'Annab juurdepääsu rakenduse mudelite jaotisele.',
     ],
     'modelsview' => [
         'name' => 'Vaata mudeleid',
     ],
 
     'modelscreate' => [
-        'name' => 'Create New Models',
+        'name' => 'Loo uusi mudeleid',
     ],
     'modelsedit' => [
-        'name' => 'Edit Models',
+        'name' => 'Muuda mudeleid',
     ],
     'modelsdelete' => [
-        'name' => 'Delete Models',
+        'name' => 'Kustuta mudeleid',
     ],
     'categories' => [
         'name' => 'Kategooriad',
-        'note' => 'Grants access to the Categories section of the application.',
+        'note' => 'Annab juurdepääsu rakenduse kategooriate jaotisele.',
     ],
     'categoriesview' => [
-        'name' => 'View Categories',
+        'name' => 'Vaata kategooriaid',
     ],
     'categoriescreate' => [
-        'name' => 'Create New Categories',
+        'name' => 'Loo uusi kategooriaid',
     ],
     'categoriesedit' => [
-        'name' => 'Edit Categories',
+        'name' => 'Muuda kategooriaid',
     ],
     'categoriesdelete' => [
-        'name' => 'Delete Categories',
+        'name' => 'Kustuta kategooriaid',
     ],
     'departments' => [
         'name' => 'Osakonnad',
-        'note' => 'Grants access to the Departments section of the application.',
+        'note' => 'Annab juurdepääsu rakenduse osakondade jaotisele.',
     ],
     'departmentsview' => [
-        'name' => 'View Departments',
+        'name' => 'Vaata osakondi',
     ],
     'departmentscreate' => [
-        'name' => 'Create New Departments',
+        'name' => 'Loo uusi osakondi',
     ],
     'departmentsedit' => [
-        'name' => 'Edit Departments',
+        'name' => 'Muuda osakondi',
     ],
     'departmentsdelete' => [
-        'name' => 'Delete Departments',
+        'name' => 'Kustuta osakondi',
     ],
     'locations' => [
         'name' => 'Asukohad',
-        'note' => 'Grants access to the Locations section of the application.',
+        'note' => 'Annab juurdepääsu rakenduse asukohtade jaotisele.',
     ],
     'locationsview' => [
-        'name' => 'View Locations',
+        'name' => 'Vaata asukohti',
     ],
     'locationscreate' => [
-        'name' => 'Create New Locations',
+        'name' => 'Loo uusi asukohti',
     ],
     'locationsedit' => [
-        'name' => 'Edit Locations',
+        'name' => 'Muuda asukohti',
     ],
     'locationsdelete' => [
-        'name' => 'Delete Locations',
+        'name' => 'Kustuta asukohti',
     ],
     'status-labels' => [
         'name' => 'Staatuse sildid',
-        'note' => 'Grants access to the Status Labels section of the application used by Assets.',
+        'note' => 'Annab juurdepääsu rakenduse olekusiltide jaotisele, mida kasutatakse vahendite jaoks.',
     ],
     'statuslabelsview' => [
-        'name' => 'View Status Labels',
+        'name' => 'Vaata olekusilte',
     ],
     'statuslabelscreate' => [
-        'name' => 'Create New Status Labels',
+        'name' => 'Loo uusi olekusilte',
     ],
     'statuslabelsedit' => [
-        'name' => 'Edit Status Labels',
+        'name' => 'Muuda olekusilte',
     ],
     'statuslabelsdelete' => [
-        'name' => 'Delete Status Labels',
+        'name' => 'Kustuta olekusilte',
     ],
     'custom-fields' => [
         'name' => 'Kohandatud väljad',
-        'note' => 'Grants access to the Custom Fields section of the application used by Assets.',
+        'note' => 'Annab juurdepääsu rakenduse kohandatud väljade jaotisele, mida kasutatakse vahendite jaoks.',
     ],
     'customfieldsview' => [
-        'name' => 'View Custom Fields',
+        'name' => 'Vaata kohandatud välju',
     ],
     'customfieldscreate' => [
-        'name' => 'Create New Custom Fields',
+        'name' => 'Loo uusi kohandatud välju',
     ],
     'customfieldsedit' => [
-        'name' => 'Edit Custom Fields',
+        'name' => 'Muuda kohandatud välju',
     ],
     'customfieldsdelete' => [
-        'name' => 'Delete Custom Fields',
+        'name' => 'Kustuta kohandatud välju',
     ],
     'suppliers' => [
         'name' => 'Tarnijad',
-        'note' => 'Grants access to the Suppliers section of the application.',
+        'note' => 'Annab juurdepääsu rakenduse tarnijate jaotisele.',
     ],
     'suppliersview' => [
-        'name' => 'View Suppliers',
+        'name' => 'Vaata tarnijaid',
     ],
     'supplierscreate' => [
-        'name' => 'Create New Suppliers',
+        'name' => 'Loo uusi tarnijaid',
     ],
     'suppliersedit' => [
-        'name' => 'Edit Suppliers',
+        'name' => 'Muuda tarnijaid',
     ],
     'suppliersdelete' => [
-        'name' => 'Delete Suppliers',
+        'name' => 'Kustuta tarnijaid',
     ],
     'manufacturers' => [
         'name' => 'Tootjad',
-        'note' => 'Grants access to the Manufacturers section of the application.',
+        'note' => 'Annab juurdepääsu rakenduse tootjate jaotisele.',
     ],
     'manufacturersview' => [
-        'name' => 'View Manufacturers',
+        'name' => 'Vaata tootjaid',
     ],
     'manufacturerscreate' => [
-        'name' => 'Create New Manufacturers',
+        'name' => 'Loo uusi tootjaid',
     ],
     'manufacturersedit' => [
-        'name' => 'Edit Manufacturers',
+        'name' => 'Muuda tootjaid',
     ],
     'manufacturersdelete' => [
-        'name' => 'Delete Manufacturers',
+        'name' => 'Kustuta tootjaid',
     ],
     'companies' => [
         'name' => 'Ettevõtted',
-        'note' => 'Grants access to the Companies section of the application.',
+        'note' => 'Annab juurdepääsu rakenduse ettevõtete jaotisele.',
     ],
     'companiesview' => [
-        'name' => 'View Companies',
+        'name' => 'Vaata ettevõtteid',
     ],
     'companiescreate' => [
-        'name' => 'Create New Companies',
+        'name' => 'Loo uusi ettevõtteid',
     ],
     'companiesedit' => [
-        'name' => 'Edit Companies',
+        'name' => 'Muuda ettevõtteid',
     ],
     'companiesdelete' => [
-        'name' => 'Delete Companies',
+        'name' => 'Kustuta ettevõtteid',
     ],
     'user-self-accounts' => [
-        'name' => 'User Self Accounts',
-        'note' => 'Grants non-admin users the ability to manage certain aspects of their own user accounts.',
+        'name' => 'Kasutajate iseteeninduskontod',
+        'note' => 'Lubab administraatoriõigusteta kasutajatel hallata oma kasutajakonto teatud andmeid ja seadeid.',
     ],
     'selftwo-factor' => [
-        'name' => 'Manage Two-Factor Authentication',
-        'note' => 'Allows users to enable, disable, and manage two-factor authentication for their own accounts.',
+        'name' => 'Halda kaheastmelist autentimist',
+        'note' => 'Lubab kasutajatel oma kontol kaheastmelist autentimist lubada, keelata ja hallata.',
     ],
     'selfapi' => [
-        'name' => 'Manage API Tokens',
-        'note' => 'Allows users to create, view, and revoke their own API tokens. User tokens will have the same permissions as the user who created them.',
+        'name' => 'Halda API juurdepääsutõendeid',
+        'note' => 'Lubab kasutajatel oma API juurdepääsutõendeid luua, vaadata ja tühistada. Tõenditel on samad õigused kui need loonud kasutajal.',
     ],
     'selfedit-location' => [
-        'name' => 'Edit Location',
-        'note' => 'Allows users to edit the location associated with their own user account.',
+        'name' => 'Muuda asukohta',
+        'note' => 'Lubab kasutajatel muuta oma kasutajakontoga seotud asukohta.',
     ],
     'selfcheckout-assets' => [
-        'name' => 'Self Check Out Assets',
-        'note' => 'Allows users to check out assets to themselves without admin intervention.',
+        'name' => 'Väljasta vahendeid iseendale',
+        'note' => 'Lubab kasutajatel väljastada vahendeid iseendale ilma administraatori sekkumiseta.',
     ],
     'selfview-purchase-cost' => [
-        'name' => 'View Purchase Cost',
-        'note' => 'Allows users to view the purchase cost of items in their account view.',
+        'name' => 'Vaata ostuhinda',
+        'note' => 'Lubab kasutajatel oma kontovaates näha kirjete ostuhinda.',
     ],
 
     'depreciations' => [
-        'name' => 'Depreciation Management',
-        'note' => 'Allows users to manage and view asset depreciation details.',
+        'name' => 'Amortisatsiooni haldamine',
+        'note' => 'Lubab kasutajatel hallata ja vaadata vahendite amortisatsiooniandmeid.',
     ],
     'depreciationsview' => [
-        'name' => 'View Depreciation Details',
+        'name' => 'Vaata amortisatsiooniandmeid',
     ],
     'depreciationsedit' => [
-        'name' => 'Edit Depreciation Settings',
+        'name' => 'Muuda amortisatsiooniseadeid',
     ],
     'depreciationsdelete' => [
-        'name' => 'Delete Depreciation Records',
+        'name' => 'Kustuta amortisatsioonikirjeid',
     ],
     'depreciationscreate' => [
-        'name' => 'Create Depreciation Records',
+        'name' => 'Loo amortisatsioonikirjeid',
     ],
 
-    'grant_all' => 'Grant all permissions for :area',
-    'deny_all' => 'Deny all permissions for :area',
-    'inherit_all' => 'Inherit all permissions for :area from permission groups',
-    'grant' => 'Grant Permission for :area',
-    'deny' => 'Deny Permission for :area',
-    'inherit' => 'Inherit Permission for :area from permission groups',
-    'use_groups' => 'We strongly suggest using Permission Groups instead of assigning individual permissions for easier management.',
+    'grant_all' => 'Anna kõik õigused valdkonnas :area',
+    'deny_all' => 'Keela kõik õigused valdkonnas :area',
+    'inherit_all' => 'Päri kõik valdkonna :area õigused õigusrühmadest',
+    'grant' => 'Anna õigus valdkonnas :area',
+    'deny' => 'Keela õigus valdkonnas :area',
+    'inherit' => 'Päri valdkonna :area õigus õigusrühmadest',
+    'use_groups' => 'Haldamise lihtsustamiseks soovitame tungivalt kasutada üksikõiguste määramise asemel õigusrühmi.',
 
 ];

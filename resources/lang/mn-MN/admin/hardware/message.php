@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Хөрөнгө оруулаагүй байна, дахин оролдоно уу',
         'success' => 'Хөрөнгө амжилттай шалгагдсан.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Энэ хэрэглэгч буруу байна. Дахин оролдоно уу.',
         'already_checked_in' => 'Энэ аккаунтыг аль хэдийн шалгасан байна.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

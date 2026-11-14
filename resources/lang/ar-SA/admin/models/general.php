@@ -9,6 +9,9 @@ return [
     'bulk_delete_warn' => 'أنت على وشك حذف نموذج واحد للأصول.|أنت على وشك حذف :model_count من نماذج الأصول.',
     'restore' => 'إستعادة الموديل',
     'requestable' => 'يمكن للمستخدمين طلب هذا الموديل',
+    'mfg_marketing_name' => 'الاسم التسويقي',
+    'mfg_release_date' => 'تاريخ الإصدار',
+    'mfg_discontinued_date' => 'تاريخ التوقف',
     'show_mac_address' => 'عرض حقل عنوان ماك MAC في الأصول لهذا الموديل',
     'view_deleted' => 'مشاهدة محذوفة',
     'view_models' => 'عرض الموديلات',
@@ -16,7 +19,7 @@ return [
     'no_custom_field' => 'لا يوجد حقول مخصصة',
     'add_default_values' => 'أضف القيم الافتراضية',
     'importer' => [
-        'require_serial' => 'Require Serial',
-        'serial_required' => 'Serial Required',
+        'require_serial' => 'يتطلب الرقم التسلسلي',
+        'serial_required' => 'الرقم التسلسلي مطلوب',
     ],
 ];

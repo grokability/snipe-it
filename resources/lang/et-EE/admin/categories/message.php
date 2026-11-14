@@ -14,22 +14,22 @@ return [
     'update' => [
         'error' => 'Kategooriat ei uuendatud, proovige uuesti',
         'success' => 'Kategooria uuendamine õnnestus.',
-        'cannot_change_category_type' => 'You cannot change the category type once it has been created',
+        'cannot_change_category_type' => 'Kategooria tüüpi ei saa pärast loomist muuta',
     ],
 
     'delete' => [
         'confirm' => 'Kas oled kindel, et soovid selle kategooria kustutada?',
         'error' => 'Kategooria kustutamisel tekkis probleem. Palun proovi uuesti.',
-        'success' => 'Category was deleted successfully.',
-        'bulk_success' => 'Category deleted successfully.|:count categories were deleted successfully.',
-        'partial_success' => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
+        'success' => 'Kategooria kustutamine õnnestus.',
+        'bulk_success' => 'Kategooria kustutamine õnnestus.|:count kategooria kustutamine õnnestus.',
+        'partial_success' => 'Kategooria kustutamine õnnestus. Vaata lisateavet allpool. | :count kategooria kustutamine õnnestus. Vaata lisateavet allpool.',
     ],
 
     'bulkedit' => [
-        'warn' => 'You are about to edit the properties of the following category:|You are about to edit the properties of the following :count categories:',
-        'no_selection' => 'You must select at least one category to edit.',
+        'warn' => 'Oled muutmas järgmise kategooria omadusi:|Oled muutmas järgmise :count kategooria omadusi:',
+        'no_selection' => 'Vali muutmiseks vähemalt üks kategooria.',
         'no_changes' => 'Ühtegi välja ei muudetud, uuendusi ei tehtud',
-        'success' => 'Category successfully updated.|:count categories successfully updated.',
+        'success' => 'Kategooria uuendamine õnnestus.|:count kategooria uuendamine õnnestus.',
     ],
 
 ];

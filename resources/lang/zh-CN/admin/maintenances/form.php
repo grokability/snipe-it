@@ -7,7 +7,7 @@ return [
     'start_date' => '开始日期',
     'completion_date' => 'Expected Completion',
     'cost' => '花费',
-    'is_warranty' => '质保升级/延期',
+    'is_warranty' => '质保内',
     'asset_maintenance_time' => 'Duration',
     'notes' => '备注',
     'update' => '更新资产维护',

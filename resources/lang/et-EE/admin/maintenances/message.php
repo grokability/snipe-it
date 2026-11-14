@@ -19,10 +19,10 @@ return [
     'warranty' => 'Garantii',
     'not_warranty' => 'Mitte garantii',
     'complete' => [
-        'confirm' => 'Are you sure you want to mark this maintenance as complete? This cannot be undone.',
-        'success' => 'Maintenance marked as complete.',
-        'error' => 'There was an issue marking this maintenance as complete. Please try again.',
+        'confirm' => 'Kas oled kindel, et soovid selle hoolduse lõpetatuks märkida? Seda toimingut ei saa tagasi võtta.',
+        'success' => 'Hooldus märgiti lõpetatuks.',
+        'error' => 'Hoolduse lõpetatuks märkimisel tekkis probleem. Proovi uuesti.',
     ],
-    'bulk_delete' => 'No maintenance records were deleted (:skipped skipped).|Deleted :count maintenance record. (:skipped skipped)|Deleted :count maintenance records. (:skipped skipped)',
-    'bulk_complete' => 'No maintenance records were marked complete (:skipped skipped or already complete).|Marked :count maintenance record complete. (:skipped skipped or already complete)|Marked :count maintenance records complete. (:skipped skipped or already complete)',
+    'bulk_delete' => 'Ühtegi hoolduskirjet ei kustutatud (:skipped jäeti vahele).|Kustutati :count hoolduskirje. (:skipped jäeti vahele)|Kustutati :count hoolduskirjet. (:skipped jäeti vahele)',
+    'bulk_complete' => 'Ühtegi hoolduskirjet ei märgitud lõpetatuks (:skipped jäeti vahele või olid juba lõpetatud).|Lõpetatuks märgiti :count hoolduskirje. (:skipped jäeti vahele või olid juba lõpetatud)|Lõpetatuks märgiti :count hoolduskirjet. (:skipped jäeti vahele või olid juba lõpetatud)',
 ];

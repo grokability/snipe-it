@@ -1,24 +1,24 @@
 <?php
 
 return [
-    'not_found' => 'Maintenance type not found.',
+    'not_found' => 'Hoolduse tüüpi ei leitud.',
     'create' => [
-        'error' => 'Maintenance type was not created, please try again.',
-        'success' => 'Maintenance type created successfully.',
+        'error' => 'Hoolduse tüübi loomine ebaõnnestus, proovi uuesti.',
+        'success' => 'Hoolduse tüübi loomine õnnestus.',
     ],
     'update' => [
-        'error' => 'Maintenance type was not updated, please try again.',
-        'success' => 'Maintenance type updated successfully.',
+        'error' => 'Hoolduse tüübi uuendamine ebaõnnestus, proovi uuesti.',
+        'success' => 'Hoolduse tüübi uuendamine õnnestus.',
     ],
     'delete' => [
-        'confirm' => 'Are you sure you wish to delete this maintenance type?',
-        'error' => 'There was an issue deleting this maintenance type. Please try again.',
-        'success' => 'The maintenance type was deleted successfully.',
-        'bulk_success' => 'Maintenance type deleted successfully.|:count maintenance types were deleted successfully.',
-        'partial_success' => 'Maintenance type deleted successfully. See additional information below. | :count maintenance types were deleted successfully. See additional information below.',
+        'confirm' => 'Kas oled kindel, et soovid selle hoolduse tüübi kustutada?',
+        'error' => 'Hoolduse tüübi kustutamisel tekkis probleem. Proovi uuesti.',
+        'success' => 'Hoolduse tüübi kustutamine õnnestus.',
+        'bulk_success' => 'Hoolduse tüübi kustutamine õnnestus.|:count hoolduse tüübi kustutamine õnnestus.',
+        'partial_success' => 'Hoolduse tüübi kustutamine õnnestus. Vaata lisateavet allpool. | :count hoolduse tüübi kustutamine õnnestus. Vaata lisateavet allpool.',
     ],
     'complete' => [
-        'success' => 'Maintenance marked as complete.',
-        'error' => 'There was an issue marking this maintenance as complete. Please try again.',
+        'success' => 'Hooldus märgiti lõpetatuks.',
+        'error' => 'Hoolduse lõpetatuks märkimisel tekkis probleem. Proovi uuesti.',
     ],
 ];

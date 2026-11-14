@@ -56,8 +56,6 @@ return [
     'years' => 'anos',
     'asset_location' => 'Atualizar Local do Ativo',
     'asset_location_update_default_current' => 'Atualizar a localização padrão e local real',
-    'asset_location_update_default' => 'Atualizar somente local padrão',
-    'asset_location_update_actual' => 'Atualizar somente a localização atual',
     'asset_not_deployable' => 'Esta situação de ativo não é implementável. A saída deste ativo não pode ser realizada.',
     'asset_not_deployable_checkin' => '{1} That asset status is not deployable. Using this status label will check in the asset.|[2,*] That asset status in not deployable. Using this status label will result in no change.',
     'asset_deployable' => '{1} This asset can be checked out.|[2,*] These assets can be checked out.',

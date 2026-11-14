@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Erstellen von fortlaufenden Asset Tags',
     'auto_increment_prefix' => 'Präfix (optional)',
     'auto_incrementing_help' => 'Aktiviere zuerst fortlaufende Asset Tags um dies zu setzen',
-    'backups' => 'Backups',
+    'backups' => 'Sicherungen & Wiederherstellen',
     'backups_help' => 'Backups erstellen, herunterladen und wiederherstellen ',
     'backups_restoring' => 'Aus Backup wiederherstellen',
     'backups_clean' => 'Bereinige die gesicherte Datenbank vor der Wiederherstellung',

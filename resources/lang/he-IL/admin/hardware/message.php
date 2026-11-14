@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'הנכס לא נבדק, נסה שוב',
         'success' => 'הנכס נבדק בהצלחה.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'משתמש זה אינו חוקי. בבקשה נסה שוב.',
         'already_checked_in' => 'הנכס כבר נבדק.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

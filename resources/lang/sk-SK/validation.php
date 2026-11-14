@@ -160,9 +160,9 @@ return [
     'two_column_unique_undeleted' => 'Pole :attribute musí byť unikátne naprieč :table1 a :table2. ',
     'unique_undeleted' => 'Pole :attribute musí byť unikátne.',
     'non_circular' => 'Pole :attribute nemôže vytvárať kruhovú referenciu.',
-    'parent_must_be_top_level' => 'The selected :attribute must itself be a top-level item. Only one level of nesting is allowed.',
-    'must_have_no_children' => 'This item already has children of its own, so it cannot be assigned a parent.',
-    'parent_within_scope' => 'The selected :attribute is outside your assigned scope.',
+    'parent_must_be_top_level' => 'Vybraná hodnota :attribute musí byť sama položkou najvyššej úrovne. Povolená je iba jedna úroveň vnorenia.',
+    'must_have_no_children' => 'Táto položka už má vlastné podradené položky, preto jej nie je možné priradiť nadradenú položku.',
+    'parent_within_scope' => 'Vybraná hodnota :attribute je mimo vášho priradeného rozsahu.',
     'not_array' => ':attribute nemôže byť poľom.',
     'disallow_same_pwd_as_user_fields' => 'Heslo nemôže byť rovnaké ako užívateľské meno.',
     'letters' => 'Heslo musí obsahovať najmenej jedno písmeno.',
@@ -174,19 +174,20 @@ return [
     'uploaded' => 'Pole :attribute sa nepodarilo nahrať.',
     'uppercase' => 'Pole :attribute musí obsahovať veľké písmená.',
     'url' => 'Pole :attribute musí obsahovať správnu URL adresu.',
-    'external_url' => 'The :attribute field must be a valid external URL (http:// or https://) that does not point at a private or local address.',
-    'asset_tag_pattern_placeholder' => 'The asset tag pattern must include at least one placeholder from :placeholders, otherwise every synced asset would receive the same tag and only the first would save.',
+    'external_url' => 'Pole :attribute musí byť platná externá URL adresa (http:// alebo https://), ktorá nesmeruje na súkromnú alebo lokálnu adresu.',
+    'asset_tag_pattern_placeholder' => 'Vzor označenia majetku musí obsahovať aspoň jeden zástupný symbol z :placeholders, inak by každý synchronizovaný majetok dostal rovnaké označenie a uložil by sa iba prvý.',
     'custom_http_extras_json' => [
-        'not_json' => 'Custom Extras must be valid JSON. Parser error: :error',
-        'not_array' => 'Custom Extras must be a JSON array (starting with [ and ending with ]).',
-        'entry_not_object' => 'Custom Extras entry #:index must be a JSON object with key, label, and path fields.',
-        'missing_field' => 'Custom Extras entry #:index is missing the required ":field" field.',
+        'not_json' => 'Custom Extras musí byť platný JSON. Chyba parsera: :error',
+        'not_array' => 'Custom Extras musí byť pole JSON (začínajúce [ a končiace ]).',
+        'entry_not_object' => 'Položka Custom Extras #:index musí byť objekt JSON s poľami key, label a path.',
+        'missing_field' => 'V položke Custom Extras #:index chýba povinné pole ":field".',
     ],
     'ulid' => 'Pole :attribute musí obsahovať platný ULID.',
     'uuid' => 'Pole :attribute musí obsahovať platný ULID.',
-    'valid_css_color' => 'The :attribute field must be a valid CSS color (hex, rgb, rgba, hsl, or hsla).',
-    'fmcs_company' => 'The :attribute field is required because full multiple companies support is enabled and floaters are not allowed.',
-    'fmcs_location' => 'Location ":location" belongs to :location_company, which does not match the selected company.',
+    'valid_css_color' => 'Pole :attribute musí byť platná farba CSS (hex, rgb, rgba, hsl alebo hsla).',
+    'eloquent_model_class' => 'Pole :attribute musí byť plne kvalifikovaný názov triedy modelu Eloquent.',
+    'fmcs_company' => 'Pole :attribute je povinné, pretože je zapnutá plná podpora pre viacero spoločností a nezaradené položky nie sú povolené.',
+    'fmcs_location' => 'Lokalita ":location" patrí spoločnosti :location_company, ktorá nezodpovedá vybranej spoločnosti.',
     'is_unique_across_company_and_location' => 'Atribút :attribute musí byť jedinečný v rámci vybranej spoločnosti a lokality.',
 
     /*
@@ -203,7 +204,7 @@ return [
     'email_array' => 'Neplatná jedna alebo viacero emailových adries.',
     'checkboxes' => ':attribute obsahuje neplatné možnosti.',
     'radio_buttons' => ':attribute je neplatný.',
-    'image_file_too_large' => 'The :attribute may not be larger than :max.',
+    'image_file_too_large' => 'Hodnota :attribute nesmie byť väčšia ako :max.',
 
     'custom' => [
         'alpha_space' => 'Pole :attribute obsahuje nepovolený znak.',
@@ -245,7 +246,7 @@ return [
     */
 
     'attributes' => [
-        'serials.*' => 'Sériové čislo',
+        'serials.*' => 'Sériové číslo',
         'asset_tags.*' => 'Označenie majetku',
     ],
 

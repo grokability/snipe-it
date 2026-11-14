@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Generer automatisk økende eiendelsmerker',
     'auto_increment_prefix' => 'Prefiks (valgfritt)',
     'auto_incrementing_help' => 'Slå på automatisk økende eiendelsmerker for å velge dette',
-    'backups' => 'Sikkerhetskopier',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Opprette, laste ned og gjenopprette sikkerhetskopier ',
     'backups_restoring' => 'Gjenoppretting fra sikkerhetskopi',
     'backups_clean' => 'Clean the backed-up database before restore',

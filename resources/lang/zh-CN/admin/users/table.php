@@ -17,7 +17,7 @@ return [
     'last_login' => '上一次登陆',
     'last_name' => '姓氏',
     'location' => '位置',
-    'lock_passwords' => 'Some user details cannot be changed on the demo. Try creating a new user instead.',
+    'lock_passwords' => '演示环境中无法更改部分用户详细信息。请尝试新建一个用户。',
     'manager' => '管理者',
     'managed_locations' => '管理的位置',
     'managed_users' => '管理的用户',

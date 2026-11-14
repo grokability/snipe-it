@@ -12,8 +12,8 @@ return [
     'remember_me' => 'Jäta mind meelde',
     'username_help_top' => 'Parooli lähtestamiseks sisesta oma <strong>kasutajanimi</strong>.',
     'username_help_bottom' => 'Kasutajanimi ja e-posti aadress <em>võivad</em> olla samad, aga ei pruugi olla. Kui oled kasutajanime unustanud, võta ühendust oma süsteemiadministraatoriga. <br><br><strong>Kasutajatele ilma liidetud e-posti aadressita ei saa parooli lähtestamise linki saata.</strong> ',
-    'google_login' => 'Login with Google Workspace',
-    'google_login_failed' => 'Google Login failed, please try again.',
-    'invite_password_expires' => 'This password reset link will expire on :expire_date. You can use the manual password reset link to receive a new reset token by clicking here',
+    'google_login' => 'Logi sisse Google Workspace\'iga',
+    'google_login_failed' => 'Google\'iga sisselogimine ebaõnnestus, proovi uuesti.',
+    'invite_password_expires' => 'See parooli lähtestamise link aegub :expire_date. Uue lähtestamistõendi saamiseks kasuta käsitsi parooli lähtestamise linki, klõpsates siin',
 
 ];

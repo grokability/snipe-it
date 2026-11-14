@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Tài sản chưa được checkin, xin vui lòng thử lại',
         'success' => 'Tài sản đã checkin thành công.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Người dùng này không tồn tại. Bạn hãy thử lại.',
         'already_checked_in' => 'Nội dung đó đã được kiểm tra.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

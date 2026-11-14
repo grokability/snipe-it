@@ -19,8 +19,8 @@ return [
         'confirm' => 'Kas olete kindel, et soovite selle amortisatsiooni klassi kustutada?',
         'error' => 'Amortisatsiooniklassi kustutati. Palun proovi uuesti.',
         'success' => 'Amortisatsiooniklass kustutati edukalt.',
-        'bulk_success' => 'Depreciation class deleted successfully.|:count depreciation classes were deleted successfully.',
-        'partial_success' => 'Depreciation class deleted successfully. See additional information below.|:count depreciation classes were deleted successfully. See additional information below.',
+        'bulk_success' => 'Amortisatsiooniklassi kustutamine õnnestus.|:count amortisatsiooniklassi kustutamine õnnestus.',
+        'partial_success' => 'Amortisatsiooniklassi kustutamine õnnestus. Vaata lisateavet allpool.|:count amortisatsiooniklassi kustutamine õnnestus. Vaata lisateavet allpool.',
     ],
 
 ];

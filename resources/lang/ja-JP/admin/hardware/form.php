@@ -56,8 +56,6 @@ return [
     'years' => '年',
     'asset_location' => '資産の場所を更新',
     'asset_location_update_default_current' => '既定の場所と実際の場所を更新',
-    'asset_location_update_default' => 'デフォルトの場所のみ更新',
-    'asset_location_update_actual' => '実際の場所のみ更新',
     'asset_not_deployable' => 'その資産ステータスは配備可能ではありません。この資産はチェックアウトできません。',
     'asset_not_deployable_checkin' => '{1} この資産のステータスは配備不可です。このステータスラベルを使用すると資産がチェックインされます。|[2,*] これらの資産のステータスは配備不可です。このステータスラベルを使用しても変更されません。',
     'asset_deployable' => '{1} この資産はチェックアウトできます。|[2,*] これらの資産はチェックアウトできます。',

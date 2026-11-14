@@ -1,14 +1,14 @@
 <?php
 
 return [
-    'about' => 'About Status Types',
+    'about' => 'Olekutüüpide teave',
     'archived' => 'Arhiveeritud',
     'create' => 'Uus staatuse silt',
     'color' => 'Joonise värv',
     'default_label' => 'Vaikimisi silt',
     'default_label_help' => 'Seda kasutatakse tagamaks, et seadmete loomisel või redigeerimisel on ülaosas valida kõige sagedamini kasutatavad olekusildid.',
     'deployable' => 'Käivitatav',
-    'info' => 'Status label types are used to describe the various states your assets could be in. They may be out for repair, lost/stolen, etc. You can create new status labels for your deployable, pending and archived assets according to your own workflow. For more information, <a href="https://snipe-it.readme.io/docs/overview#status-labels" target="_blank">see the documentation <i class="fa fa-external-link"></i></a>.',
+    'info' => 'Olekusiltide tüübid kirjeldavad vahendite võimalikke olekuid. Vahend võib olla näiteks remondis, kadunud või varastatud. Saad oma töökorralduse järgi luua uusi olekusilte kasutusvalmis, ootel ja arhiveeritud vahenditele. Lisateabe saamiseks <a href="https://snipe-it.readme.io/docs/overview#status-labels" target="_blank">vaata dokumentatsiooni <i class="fa fa-external-link"></i></a>.',
     'name' => 'Saatuse nimi',
     'pending' => 'Ootel',
     'status_type' => 'Saatuse tüüp',

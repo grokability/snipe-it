@@ -3,7 +3,7 @@
 return [
     'does_not_exist' => 'Společnost nebyla založena.',
     'deleted' => 'Odstraněné společnosti',
-    'assoc_users' => 'Tato společnost je právě přiřazena alespoň k jednomu modelu majetku a nemůže tak být odstraněna. Odeberte její vazbu z patřičných modelů a akci opakujte. ',
+    'assoc_users' => 'This company is currently associated with at least one other item (location, user, license, asset, etc.) in Snipe-IT and cannot be deleted. Please update your models to no longer reference this company and try again. ',
     'create' => [
         'error' => 'Společnost nebyla založena, zkuste to znovu.',
         'success' => 'Společnost byla v pořádku založena.',
@@ -19,4 +19,5 @@ return [
         'bulk_success' => 'Company deleted successfully.|:count companies were deleted successfully.',
         'partial_success' => 'Company deleted successfully. See additional information below. | :count companies were deleted successfully. See additional information below.',
     ],
+    'webhook_fields_require_superuser' => 'Webhook configuration fields (:fields) can only be modified by a superuser.',
 ];

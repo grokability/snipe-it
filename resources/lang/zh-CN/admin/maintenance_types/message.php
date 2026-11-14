@@ -1,14 +1,14 @@
 <?php
 
 return [
-    'not_found' => 'Maintenance type not found.',
+    'not_found' => '未找到维护类型。',
     'create' => [
         'error' => 'Maintenance type was not created, please try again.',
         'success' => 'Maintenance type created successfully.',
     ],
     'update' => [
         'error' => 'Maintenance type was not updated, please try again.',
-        'success' => 'Maintenance type updated successfully.',
+        'success' => '维护类型更新成功。',
     ],
     'delete' => [
         'confirm' => 'Are you sure you wish to delete this maintenance type?',

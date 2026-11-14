@@ -56,8 +56,6 @@ return [
     'years' => 'anni',
     'asset_location' => 'Aggiorna Sede del Bene',
     'asset_location_update_default_current' => 'Aggiorna la Sede predefinita E quella attuale',
-    'asset_location_update_default' => 'Aggiorna solo la Sede predefinita',
-    'asset_location_update_actual' => 'Aggiorna solo la Sede effettiva',
     'asset_not_deployable' => 'Lo stato del bene è "Non Assegnabile". Non puoi fare l\'assegnazione di questo Bene.',
     'asset_not_deployable_checkin' => '{1} Lo stato di quel Bene non è distribuibile. Usare questa etichetta di stato causerà restituzione del Bene.|[2,*] Lo stato di quel Bene non è distribuibile. Usare questa etichetta di stato non produrrà cambiamento.',
     'asset_deployable' => '{1} Questo Bene può essere assegnato.|[2,*] Questi Beni possono essere assegnati.',

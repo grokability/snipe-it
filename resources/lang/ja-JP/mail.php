@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'あなたがチェックアウトしたアイテムの受領が辞退されました',
     'inventory_report' => 'インベントリレポート',
     'item' => 'アイテム',
-    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
+    'item_checked_reminder' => '{1}あなたにチェックアウトされたアイテムのうち、受領または辞退をまだ回答していないものが1件あります。下のリンクから回答してください。|[2,*]あなたにチェックアウトされたアイテムのうち、受領または辞退をまだ回答していないものが:count件あります。下のリンクから回答してください。',
     'license_expiring_alert' => '今後:threshold日以内に有効期限または終了日を迎えるライセンスが:count件あります。|今後:threshold日以内に有効期限または終了日を迎えるライセンスが:count件あります。',
     'link_to_update_password' => '次のリンクをクリックして、パスワードを更新してください。 :web password:',
     'login' => 'ログイン',

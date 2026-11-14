@@ -43,7 +43,7 @@ return [
 
     'restore' => [
         'error' => 'Accessory was not restored, please try again',
-        'success' => 'Accessory restored successfully.',
+        'success' => 'Priedas sėkmingai atkurtas.',
     ],
 
     'bulk' => [
@@ -58,7 +58,7 @@ return [
         ],
 
         'restore' => [
-            'success' => ':count accessory was restored.|:count accessories were restored.',
+            'success' => 'Buvo atkurtas :count priedas.|Buvo atkurti :count priedai.',
         ],
 
         'checkin_selected' => [

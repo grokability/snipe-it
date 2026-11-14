@@ -2,7 +2,7 @@
 
 return [
 
-    'invalid_category_type' => 'The category must be a consumable category.',
+    'invalid_category_type' => 'يجب أن تكون الفئة مخصصة للمواد الاستهلاكية.',
     'does_not_exist' => 'المادة الإستهلاكية غير موجودة.',
 
     'create' => [
@@ -19,8 +19,8 @@ return [
         'confirm' => 'هل أنت متأكد من رغبتك في حذف هذه المادة الإستهلاكية؟',
         'error' => 'لقد حدثت مشكلة اثناء عملية حذف المادة الإستهلاكية، الرجاء المحاولة مرة اخرى.',
         'success' => 'تم حذف المادة الإستهلاكية بنجاح.',
-        'bulk_success' => 'Consumable deleted successfully.|:count consumables were deleted successfully.',
-        'partial_success' => ':count consumable was deleted successfully, but others could not be deleted. See below for details.|:count consumables were deleted successfully, but others could not be deleted. See below for details.',
+        'bulk_success' => 'تم حذف المادة الاستهلاكية بنجاح.|:count مادة استهلاكية تم حذفها بنجاح.',
+        'partial_success' => ':count مادة استهلاكية تم حذفها بنجاح، ولكن تعذّر حذف المواد الاستهلاكية الأخرى. راجع التفاصيل أدناه.|:count مواد استهلاكية تم حذفها بنجاح، ولكن تعذّر حذف المواد الاستهلاكية الأخرى. راجع التفاصيل أدناه.',
     ],
 
     'checkout' => [
@@ -31,11 +31,11 @@ return [
     ],
 
     'consumed' => [
-        'success' => 'Distribution marked as consumed.',
-        'bulk_success' => ':count distribution was marked as consumed.|:count distributions were marked as consumed.',
-        'already' => 'That distribution was already marked as consumed.',
-        'error' => 'Could not mark the distribution as consumed, please try again.',
-        'no_rows_selected' => 'No valid distributions were selected.',
+        'success' => 'تم تحديد التوزيع كمستهلك.',
+        'bulk_success' => ':count عملية توزيع تم تحديدها كمستهلكة.|:count عمليات توزيع تم تحديدها كمستهلكة.',
+        'already' => 'تم تحديد هذا التوزيع كمستهلك مسبقًا.',
+        'error' => 'تعذّر تحديد التوزيع كمستهلك، يُرجى المحاولة مرة أخرى.',
+        'no_rows_selected' => 'لم يتم تحديد أي توزيعات صالحة.',
     ],
 
     'checkin' => [
@@ -45,23 +45,23 @@ return [
     ],
 
     'restore' => [
-        'error' => 'Consumable was not restored, please try again',
-        'success' => 'Consumable restored successfully.',
+        'error' => 'تعذّرت استعادة المادة الاستهلاكية، يُرجى المحاولة مرة أخرى',
+        'success' => 'تمت استعادة المادة الاستهلاكية بنجاح.',
     ],
 
     'bulk' => [
-        'no_consumables_selected' => 'No consumables were selected.',
-        'no_action_selected' => 'Please pick an action from the dropdown.',
+        'no_consumables_selected' => 'لم يتم تحديد أي مواد استهلاكية.',
+        'no_action_selected' => 'يُرجى اختيار إجراء من القائمة المنسدلة.',
         'no_fields_updated' => 'لم يتم تغيير أي حقول، لذلك لم يتم تحديث أي شيء.',
-        'skipped_unauthorized' => ':count consumable(s) were skipped because you do not have permission to update them.',
+        'skipped_unauthorized' => ':count مادة (مواد) استهلاكية تم تخطيها لعدم امتلاكك صلاحية تعديلها.',
 
         'update' => [
-            'success' => ':count consumable was updated.|:count consumables were updated.',
-            'none_updated' => 'The selected consumable could not be updated. See errors below for details.|None of the selected consumables could be updated. See errors below for details.',
+            'success' => ':count مادة استهلاكية تم تحديثه.|:count مواد استهلاكية تم تحديثها.',
+            'none_updated' => 'تعذّر تحديث المادة استهلاكية المحددة. راجع الأخطاء أدناه لمعرفة التفاصيل.|تعذّر تحديث أيٍّ من المواد الاستهلاكية المحددة. راجع الأخطاء أدناه لمعرفة التفاصيل.',
         ],
 
         'restore' => [
-            'success' => ':count consumable was restored.|:count consumables were restored.',
+            'success' => ':count مادة استهلاكية تمت استعادتها.|:count مادة استهلاكية تمت استعادتها.',
         ],
     ],
 ];

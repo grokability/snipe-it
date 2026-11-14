@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Generează tag-uri de active cu auto-incrementare',
     'auto_increment_prefix' => 'Prefix (optional)',
     'auto_incrementing_help' => 'Permite auto-incrementarea tag-urilor de active pentru a seta acest lucru',
-    'backups' => 'Copiile de rezervă',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Creează, descarcă și restaurează copii de rezervă ',
     'backups_restoring' => 'Restaurare din Backup',
     'backups_clean' => 'Clean the backed-up database before restore',

@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Ang asset ay hindi nai-check in, mangyaring subukang muli',
         'success' => 'Ang asset ay matagumpay na nai-check in.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Ang user na iyon ay hindi balido. Mangyaring subukang muli.',
         'already_checked_in' => 'Ang asset ay nai-check in na.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

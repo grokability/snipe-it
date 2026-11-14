@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Generate auto-incrementing asset tags',
     'auto_increment_prefix' => 'Tiền tố (tùy chọn)',
     'auto_incrementing_help' => 'Enable auto-incrementing asset tags first to set this',
-    'backups' => 'Sao lưu',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Tạo, tải xuống, và khôi phục các dữ liệu ',
     'backups_restoring' => 'Đang khôi phục từ bản sao lưu',
     'backups_clean' => 'Clean the backed-up database before restore',

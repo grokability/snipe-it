@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Otomatik olarak artan varlık etiketi oluşturun',
     'auto_increment_prefix' => 'Ünvan (opsiyonel)',
     'auto_incrementing_help' => 'Bunu ayarlamak için önce otomatik artan varlık etiketlerini etkinleştirin',
-    'backups' => 'Yedekler',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Yedekler oluşturun, indirin ve geri yükleyin ',
     'backups_restoring' => 'Yedekten geri dön',
     'backups_clean' => 'Geri yüklemeden önce yedeklenen veritabanını temizleyin',

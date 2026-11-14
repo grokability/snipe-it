@@ -19,8 +19,8 @@ return [
         'confirm' => 'Ste si istý, že chcete zmazať tento spotrebný materiál?',
         'error' => 'Pri mazaní spotrebného materiálu nastal problém. Skúste prosím znovu.',
         'success' => 'Spotrebný materiál bol úspešne zmazaný.',
-        'bulk_success' => 'Consumable deleted successfully.|:count consumables were deleted successfully.',
-        'partial_success' => ':count consumable was deleted successfully, but others could not be deleted. See below for details.|:count consumables were deleted successfully, but others could not be deleted. See below for details.',
+        'bulk_success' => 'Spotrebný materiál bol úspešne odstránený.|:count spotrebných materiálov bolo úspešne odstránených.',
+        'partial_success' => ':count spotrebný materiál bol úspešne odstránený, ale ostatné sa nepodarilo odstrániť. Podrobnosti nájdete nižšie.|:count spotrebných materiálov bolo úspešne odstránených, ale ostatné sa nepodarilo odstrániť. Podrobnosti nájdete nižšie.',
     ],
 
     'checkout' => [
@@ -31,11 +31,11 @@ return [
     ],
 
     'consumed' => [
-        'success' => 'Distribution marked as consumed.',
-        'bulk_success' => ':count distribution was marked as consumed.|:count distributions were marked as consumed.',
-        'already' => 'That distribution was already marked as consumed.',
-        'error' => 'Could not mark the distribution as consumed, please try again.',
-        'no_rows_selected' => 'No valid distributions were selected.',
+        'success' => 'Výdaj bol označený ako spotrebovaný.',
+        'bulk_success' => ':count výdaj bol označený ako spotrebovaný.|:count výdajov bolo označených ako spotrebované.',
+        'already' => 'Tento výdaj už bol označený ako spotrebovaný.',
+        'error' => 'Výdaj sa nepodarilo označiť ako spotrebovaný, skúste to znova.',
+        'no_rows_selected' => 'Neboli vybrané žiadne platné výdaje.',
     ],
 
     'checkin' => [
@@ -45,23 +45,23 @@ return [
     ],
 
     'restore' => [
-        'error' => 'Consumable was not restored, please try again',
-        'success' => 'Consumable restored successfully.',
+        'error' => 'Spotrebný materiál nebol obnovený, skúste to znova',
+        'success' => 'Spotrebný materiál bol úspešne obnovený.',
     ],
 
     'bulk' => [
-        'no_consumables_selected' => 'No consumables were selected.',
-        'no_action_selected' => 'Please pick an action from the dropdown.',
+        'no_consumables_selected' => 'Nebol vybraný žiadny spotrebný materiál.',
+        'no_action_selected' => 'Vyberte akciu z rozbaľovacieho zoznamu.',
         'no_fields_updated' => 'Neboli zmenené žiadne polia, preto nebolo nič aktualizované.',
-        'skipped_unauthorized' => ':count consumable(s) were skipped because you do not have permission to update them.',
+        'skipped_unauthorized' => ':count spotrebných materiálov bolo preskočených (nemáte oprávnenie ich aktualizovať).',
 
         'update' => [
-            'success' => ':count consumable was updated.|:count consumables were updated.',
-            'none_updated' => 'The selected consumable could not be updated. See errors below for details.|None of the selected consumables could be updated. See errors below for details.',
+            'success' => ':count spotrebný materiál bol aktualizovaný.|:count spotrebných materiálov bolo aktualizovaných.',
+            'none_updated' => 'Vybraný spotrebný materiál sa nepodarilo aktualizovať. Podrobnosti nájdete v chybách nižšie.|Žiadny z vybraných spotrebných materiálov sa nepodarilo aktualizovať. Podrobnosti nájdete v chybách nižšie.',
         ],
 
         'restore' => [
-            'success' => ':count consumable was restored.|:count consumables were restored.',
+            'success' => ':count spotrebný materiál bol obnovený.|:count spotrebných materiálov bolo obnovených.',
         ],
     ],
 ];

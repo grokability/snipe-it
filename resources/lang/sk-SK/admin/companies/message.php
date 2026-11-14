@@ -3,7 +3,7 @@
 return [
     'does_not_exist' => 'Spoločnosť neexistuje.',
     'deleted' => 'Zmazané spoločnosti',
-    'assoc_users' => 'Táto spoločnosť je aktuálne priradená jednému alebo viacerým modelom, preto nemôže byť odstránená. Prosím aktualizujte vaše modely, aby nevyužívali túto spoločnosť a skúste znovu. ',
+    'assoc_users' => 'Táto spoločnosť je momentálne priradená minimálne k jednej ďalšej položke (lokalita, používateľ, licencia, majetok atď.) v Snipe-IT, preto ju nie je možné odstrániť. Upravte príslušné záznamy tak, aby na túto spoločnosť už neodkazovali, a skúste to znova. ',
     'create' => [
         'error' => 'Spoločnosť nebola pridaná, prosím skúste znovu.',
         'success' => 'Spoločnosť bola úspešne pridaná.',
@@ -16,7 +16,8 @@ return [
         'confirm' => 'Ste si istý, že chcete zmazať túto spoločnosť?',
         'error' => 'Pri mazaní spoločnosti nastal problém. Skúste znovu.',
         'success' => 'Spoločnosť bola úspešne zmazaná.',
-        'bulk_success' => 'Company deleted successfully.|:count companies were deleted successfully.',
-        'partial_success' => 'Company deleted successfully. See additional information below. | :count companies were deleted successfully. See additional information below.',
+        'bulk_success' => 'Spoločnosť bola úspešne odstránená.|:count spoločností bolo úspešne odstránených.',
+        'partial_success' => 'Spoločnosť bola úspešne odstránená. Ďalšie informácie nájdete nižšie. | :count spoločností bolo úspešne odstránených. Ďalšie informácie nájdete nižšie.',
     ],
+    'webhook_fields_require_superuser' => 'Polia konfigurácie webhooku (:fields) môže upravovať iba superpoužívateľ.',
 ];

@@ -10,7 +10,7 @@ return [
     'group_admin' => 'Grupi admin',
     'allow' => 'Luba',
     'deny' => 'Keela',
-    'permission' => 'Permission',
-    'grant' => 'Grant',
-    'no_permissions' => 'This group has no permissions.',
+    'permission' => 'Õigus',
+    'grant' => 'Anna õigus',
+    'no_permissions' => 'Sellel rühmal pole õigusi.',
 ];

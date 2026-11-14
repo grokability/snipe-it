@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Generovat automatické inventární číslo položek',
     'auto_increment_prefix' => 'Předpona (volitnelná)',
     'auto_incrementing_help' => 'Pro nastavení musíte nejdřív povolit automatickou generaci inventárních čísel',
-    'backups' => 'Zálohy',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Vytvořit, stáhnout a obnovit zálohy ',
     'backups_restoring' => 'Obnovit ze zálohy',
     'backups_clean' => 'Vyčistit zálohovanou databázi před obnovou',

@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Ativo não foi retornado, favor tentar novamente',
         'success' => 'Ativo retornado com sucesso.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Este usuário é inválido. Tente novamente.',
         'already_checked_in' => 'Este ativo já foi devolvido.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

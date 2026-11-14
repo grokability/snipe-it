@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Активът не беше вписан. Моля опитайте отново.',
         'success' => 'Активът вписан успешно.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Невалиден потребител. Моля опитайте отново.',
         'already_checked_in' => 'Активът е вече вписан.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

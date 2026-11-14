@@ -38,7 +38,7 @@ Veuillez vérifier et recommencer',
         'no_components_selected' => 'No components were selected.',
         'no_action_selected' => 'Please pick an action from the dropdown.',
         'no_fields_updated' => 'Aucun champ n\'a été changé, donc rien n\'a été mis à jour.',
-        'skipped_unauthorized' => ':count component(s) were skipped because you do not have permission to update them.',
+        'skipped_unauthorized' => ':count composant(s) ont été ignorés car vous n\'avez pas la permission de les mettre à jour.',
 
         'update' => [
             'success' => ':count component was updated.|:count components were updated.',

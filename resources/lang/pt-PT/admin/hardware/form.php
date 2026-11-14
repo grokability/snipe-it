@@ -56,8 +56,6 @@ return [
     'years' => 'anos',
     'asset_location' => 'Atualizar a localização do artigo',
     'asset_location_update_default_current' => 'Atualizar a localização por defeito E localização atual',
-    'asset_location_update_default' => 'Atualizar apenas a localização por defeito',
-    'asset_location_update_actual' => 'Atualizar apenas a localização atual',
     'asset_not_deployable' => 'Este estado de artigo não é implementável. Este artigo não pode ser verificado.',
     'asset_not_deployable_checkin' => '{1} That asset status is not deployable. Using this status label will check in the asset.|[2,*] That asset status in not deployable. Using this status label will result in no change.',
     'asset_deployable' => '{1} This asset can be checked out.|[2,*] These assets can be checked out.',

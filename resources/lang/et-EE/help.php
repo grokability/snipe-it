@@ -15,7 +15,7 @@ return [
 
     'more_info_title' => 'Rohkem infot',
 
-    'audit_help' => 'Checking this box will edit the asset record to reflect this new location. Leaving it unchecked will simply note the location in the audit log.<br><br>Note that if this asset is checked out, it will not change the location of the person, asset or location it is checked out to.',
+    'audit_help' => 'Selle ruudu märkimisel uuendatakse vahendi kirjet uue asukohaga. Märkimata jätmisel lisatakse asukoht ainult auditilogisse.<br><br>Kui vahend on väljastatud, ei muuda see selle kasutaja, vahendi ega asukoha asukohta, kellele või kuhu vahend on väljastatud.',
 
     'assets' => 'Vahendeid saab tuvastada ja jälgida seerianumbri või seadme identifikaatori abil. Tavaliselt määratletakse ja registreeritakse seerianumber või identifikaator väärtuslikele vahenditele, mille individuaalne tuvastamine on oluline.',
 
@@ -31,5 +31,5 @@ return [
 
     'depreciations' => 'Sa saad seadistada vahendite amortisatsiooni, et neid amortiseeritakse lineaarse amortisatsiooni alusel.',
 
-    'empty_file' => 'The importer detects that this file is empty.',
+    'empty_file' => 'Importija tuvastas, et see fail on tühi.',
 ];

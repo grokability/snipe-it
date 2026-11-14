@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Laitteen palautus epäonnistui, yritä uudelleen',
         'success' => 'Laite palautettu onnistuneesti.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Käyttäjä on virheellinen. Yritä uudelleen.',
         'already_checked_in' => 'Tämä laite on jo palautettu.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

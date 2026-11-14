@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Środek nie został przyjęty, proszę spróbować ponownie',
         'success' => 'Pomyślnie przyjęto środek.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Nieprawidłowy użytkownik. Proszę spróbować ponownie.',
         'already_checked_in' => 'Środek jest już przyjęty.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

@@ -15,15 +15,15 @@ return [
     ],
 
     'restore' => [
-        'error' => 'Component was not restored, please try again',
-        'success' => 'Component restored successfully.',
+        'error' => 'تعذّرت استعادة المكوّن، يُرجى المحاولة مرة أخرى',
+        'success' => 'تمت استعادة المكوّن بنجاح.',
     ],
 
     'delete' => [
         'confirm' => 'هل أنت متأكد من رغبتك في حذف هذا المكون؟',
         'error' => 'حدثت مشكلة اثناء عملية حذف المكون. الرجاء المحاولة مرة اُخرى.',
         'success' => 'تم حذف المكون بنجاح.',
-        'error_qty' => 'Some components of this type are still checked out. Please check them in and try again.',
+        'error_qty' => 'لا تزال بعض المكوّنات من هذا النوع مُسلّمة. يُرجى إرجاعها ثم المحاولة مرة أخرى.',
     ],
 
     'checkout' => [
@@ -34,28 +34,28 @@ return [
     ],
 
     'bulk' => [
-        'no_components_selected' => 'No components were selected.',
-        'no_action_selected' => 'Please pick an action from the dropdown.',
+        'no_components_selected' => 'لم يتم تحديد أي مكونات.',
+        'no_action_selected' => 'يُرجى اختيار إجراء من القائمة المنسدلة.',
         'no_fields_updated' => 'لم يتم تغيير أي حقول، لذلك لم يتم تحديث أي شيء.',
-        'skipped_unauthorized' => ':count component(s) were skipped because you do not have permission to update them.',
+        'skipped_unauthorized' => ':count مكون (مكونات) تم تخطيها لعدم امتلاكك صلاحية تعديلها.',
 
         'update' => [
-            'success' => ':count component was updated.|:count components were updated.',
-            'none_updated' => 'The selected component could not be updated. See errors below for details.|None of the selected components could be updated. See errors below for details.',
+            'success' => ':count مكون تم تحديثه.|:count مكونات تم تحديثها.',
+            'none_updated' => 'تعذّر تحديث المكون المحدد. راجع الأخطاء أدناه لمعرفة التفاصيل.|تعذّر تحديث أيٍّ من المكونات المحددة. راجع الأخطاء أدناه لمعرفة التفاصيل.',
         ],
 
         'delete' => [
-            'success' => ':count component was deleted.|:count components were deleted.',
-            'partial_success' => ':count component was deleted. See errors below for the rest.|:count components were deleted. See errors below for the rest.',
+            'success' => ':count مكون تم تحديثه.|:count مكونات تم تحديثها.',
+            'partial_success' => ':count مكوّن تم حذفه. راجع الأخطاء أدناه لمعرفة تفاصيل المكوّنات المتبقية.|:count مكوّنات تم حذفها. راجع الأخطاء أدناه لمعرفة تفاصيل المكوّنات المتبقية.',
         ],
 
         'restore' => [
-            'success' => ':count component was restored.|:count components were restored.',
+            'success' => ':count مكون تم تحديثه.|:count مكونات تم تحديثها.',
         ],
 
         'checkin_selected' => [
-            'no_rows_selected' => 'No checked-out components were selected.',
-            'success' => ':unit_count unit returned across :count checkout.|:unit_count units returned across :count checkouts.',
+            'no_rows_selected' => 'لم يتم تحديد أي مكونات تم تسليمها.',
+            'success' => ':unit_count وحدة تم إرجاعها عبر :count عملية تسليم.|:unit_count وحدات تم إرجاعها عبر :count عمليات تسليم.',
         ],
     ],
 

@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Automatikusan növekvő eszközazonosítók generálása',
     'auto_increment_prefix' => 'Előtag (opcionális)',
     'auto_incrementing_help' => 'Először engedélyezze az eszközazonosítók automatikus növelését, hogy ezt beállítsa',
-    'backups' => 'Biztonsági mentések',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Biztonsági mentések létrehozása, letöltése és visszaállítása ',
     'backups_restoring' => 'Visszaállítás biztonsági másolatból',
     'backups_clean' => 'Tisztítsa meg a biztonsági mentésből visszaállítandó adatbázist',

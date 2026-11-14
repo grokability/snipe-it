@@ -19,6 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Die Standard-EULA verwenden.</del> Es wurde keine Standard-EULA definiert. Bitte füge eine in den Einstellungen hinzu.',
     'clone' => 'Zubehör kopieren',
     'delete_disabled' => 'Dieses Zubehör kann noch nicht gelöscht werden, da einige Artikel noch herausgegeben sind.',
-    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
+    'accessory_deleted_warning' => 'Dieses Zubehör wurde gelöscht. Es muss wiederhergestellt werden, bevor es zugewiesen werden kann.',
 
 ];

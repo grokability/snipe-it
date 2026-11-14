@@ -23,6 +23,9 @@ return [
             'error' => 'Đã xảy ra sự cố khi xóa trường. Vui lòng thử lại.',
             'success' => 'Trường đã bị xóa thành công.',
             'in_use' => 'Trường vẫn đang được sử dụng.',
+            'in_use_named' => ':name is still attached to at least one fieldset and cannot be deleted.',
+            'bulk_success' => 'Field deleted successfully.|:count fields were deleted successfully.',
+            'partial_success' => ':count field was deleted successfully, but others could not be deleted. See below for details.|:count fields were deleted successfully, but others could not be deleted. See below for details.',
         ],
 
     ],
@@ -46,6 +49,13 @@ return [
             'error' => 'Có vấn đề xóa fieldset. Vui lòng thử lại.',
             'success' => 'Fieldset đã bị xóa thành công.',
             'in_use' => 'Fieldset vẫn đang được sử dụng.',
+            'in_use_named' => ':name is still attached to at least one asset model and cannot be deleted.',
+            'bulk_success' => 'Fieldset deleted successfully.|:count fieldsets were deleted successfully.',
+            'partial_success' => ':count fieldset was deleted successfully, but others could not be deleted. See below for details.|:count fieldsets were deleted successfully, but others could not be deleted. See below for details.',
+        ],
+
+        'clone' => [
+            'success' => 'Fieldset cloned successfully.',
         ],
 
     ],

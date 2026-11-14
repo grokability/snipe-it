@@ -6,11 +6,13 @@ return [
     'action' => 'Tegevus',
     'by' => 'Kes',
     'item' => 'Vara',
-    'no_matching_records' => 'No matching records found',
-    'load_error_title' => 'Could not load results',
-    'load_error_body' => 'The server returned an error. Please try again in a moment. If this keeps happening, check the application log.',
-    'load_error_http_status' => 'HTTP status',
-    'load_error_session_expired' => 'Your session has expired. Reloading the page.',
-    'shift_select' => 'Click on a checkbox and hold <code>shift</code> and click another checkbox in the table to select/de-select a range.'
+    'no_matching_records' => 'Vastavaid kirjeid ei leitud',
+    'load_error_title' => 'Tulemuste laadimine ebaõnnestus',
+    'load_error_body' => 'Server tagastas vea. Proovi mõne hetke pärast uuesti. Kui probleem kordub, kontrolli rakenduse logi.',
+    'load_error_http_status' => 'HTTP olekukood',
+    'load_error_session_expired' => 'Sinu seanss on aegunud. Leht laaditakse uuesti.',
+    'shift_select' => 'Vahemiku valimiseks või valiku tühistamiseks klõpsa märkeruutu, hoia all klahvi <code>shift</code> ja klõpsa tabelis teist märkeruutu.',
+    'reset_column_order' => 'Lähtesta veergude järjekord',
+    'reset_column_order_tooltip' => 'Taasta selle tabeli veergude vaikejärjekord',
 
 ];

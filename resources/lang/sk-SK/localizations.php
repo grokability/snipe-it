@@ -9,7 +9,7 @@ return [
         'am-ET' => 'Amharčina',
         'af-ZA' => 'Afrikánčina',
         'ar-SA' => 'Arabčina',
-        'hy-AM' => 'Armenian',
+        'hy-AM' => 'Arménčina',
         'bg-BG' => 'Bulharčina',
         'zh-CN' => 'Čínština (zjednodušená)',
         'zh-TW' => 'Čínština (tradičná)',
@@ -70,7 +70,7 @@ return [
     ],
 
     'select_country' => 'Vybrať krajinu',
-    'select_currency' => 'Select a currency',
+    'select_currency' => 'Vyberte menu',
 
     'countries' => [
         'AC' => 'Ostrov Ascension',

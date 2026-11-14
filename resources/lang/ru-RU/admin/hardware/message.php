@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Актив не был отвязан, пожалуйста попробуйте снова',
         'success' => 'Актив успешно отвязан.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Этот пользователь является недопустимым. Пожалуйста, попробуйте еще раз.',
         'already_checked_in' => 'Этот актив уже привязан.',
         'force_checkin_orphaned_success' => 'Некорректное назначение успешно удалено.',

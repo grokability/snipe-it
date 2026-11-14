@@ -166,6 +166,7 @@ return [
     'checkin' => [
         'error' => 'Majetek nebyl převzat. Zkuste to prosím znovu',
         'success' => 'Majetek byl v pořádku převzat.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Tento uživatel je neplatný. Zkuste to prosím znovu.',
         'already_checked_in' => 'Tento majetek je již předaný.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

@@ -23,6 +23,9 @@ return [
             'error' => 'crwdns1513:0crwdne1513:0',
             'success' => 'crwdns1514:0crwdne1514:0',
             'in_use' => 'crwdns1515:0crwdne1515:0',
+            'in_use_named' => 'crwdns18293:0crwdne18293:0',
+            'bulk_success' => 'crwdns18295:0crwdne18295:0',
+            'partial_success' => 'crwdns18297:0crwdne18297:0',
         ],
 
     ],
@@ -46,6 +49,13 @@ return [
             'error' => 'crwdns1521:0crwdne1521:0',
             'success' => 'crwdns1522:0crwdne1522:0',
             'in_use' => 'crwdns1523:0crwdne1523:0',
+            'in_use_named' => 'crwdns18299:0crwdne18299:0',
+            'bulk_success' => 'crwdns18301:0crwdne18301:0',
+            'partial_success' => 'crwdns18303:0crwdne18303:0',
+        ],
+
+        'clone' => [
+            'success' => 'crwdns17945:0crwdne17945:0',
         ],
 
     ],

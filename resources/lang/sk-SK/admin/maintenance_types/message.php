@@ -1,24 +1,24 @@
 <?php
 
 return [
-    'not_found' => 'Maintenance type not found.',
+    'not_found' => 'Typ údržby sa nenašiel.',
     'create' => [
-        'error' => 'Maintenance type was not created, please try again.',
-        'success' => 'Maintenance type created successfully.',
+        'error' => 'Typ údržby nebol vytvorený, skúste to znova.',
+        'success' => 'Typ údržby bol úspešne vytvorený.',
     ],
     'update' => [
-        'error' => 'Maintenance type was not updated, please try again.',
-        'success' => 'Maintenance type updated successfully.',
+        'error' => 'Typ údržby nebol aktualizovaný, skúste to znova.',
+        'success' => 'Typ údržby bol úspešne aktualizovaný.',
     ],
     'delete' => [
-        'confirm' => 'Are you sure you wish to delete this maintenance type?',
-        'error' => 'There was an issue deleting this maintenance type. Please try again.',
-        'success' => 'The maintenance type was deleted successfully.',
-        'bulk_success' => 'Maintenance type deleted successfully.|:count maintenance types were deleted successfully.',
-        'partial_success' => 'Maintenance type deleted successfully. See additional information below. | :count maintenance types were deleted successfully. See additional information below.',
+        'confirm' => 'Naozaj chcete odstrániť tento typ údržby?',
+        'error' => 'Pri odstraňovaní tohto typu údržby sa vyskytol problém. Skúste to znova.',
+        'success' => 'Typ údržby bol úspešne odstránený.',
+        'bulk_success' => 'Typ údržby bol úspešne odstránený.|:count typov údržby bolo úspešne odstránených.',
+        'partial_success' => 'Typ údržby bol úspešne odstránený. Ďalšie informácie nájdete nižšie. | :count typov údržby bolo úspešne odstránených. Ďalšie informácie nájdete nižšie.',
     ],
     'complete' => [
-        'success' => 'Maintenance marked as complete.',
+        'success' => 'Údržba bola označená ako dokončená.',
         'error' => 'Pri označení tejto údržby za ukončenú došlo k chybe. Prosím skúste znova.',
     ],
 ];

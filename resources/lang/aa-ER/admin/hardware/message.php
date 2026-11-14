@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'crwdns752:0crwdne752:0',
         'success' => 'crwdns753:0crwdne753:0',
+        'updated_without_checkin' => 'crwdns17979:0crwdne17979:0',
         'user_does_not_exist' => 'crwdns754:0crwdne754:0',
         'already_checked_in' => 'crwdns1603:0crwdne1603:0',
         'force_checkin_orphaned_success' => 'crwdns14742:0crwdne14742:0',
