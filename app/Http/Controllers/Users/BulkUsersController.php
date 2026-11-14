@@ -164,7 +164,7 @@ class BulkUsersController extends Controller
         }
 
         // Fail-fast FMCS scope check on the three cross-tenant FKs the
-        // bulk form accepts. 
+        // bulk form accepts.
         $bulkFmcsValidator = \Validator::make($request->all(), [
             'manager_id' => 'nullable|integer|exists:users,id|fmcs_manager',
             'department_id' => 'nullable|integer|exists:departments,id|fmcs_department',
