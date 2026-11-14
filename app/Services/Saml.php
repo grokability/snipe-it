@@ -25,6 +25,12 @@ class Saml
 {
     public const DATA_SESSION_KEY = '_samlData';
 
+    public const CLAIM_GIVEN_NAME = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname';
+
+    public const CLAIM_SURNAME = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname';
+
+    public const CLAIM_EMAIL = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress';
+
     /**
      * OneLogin_Saml2_Auth instance.
      *
@@ -303,8 +309,8 @@ class Saml
      *
      * @since 5.0.0
      *
-     * @param  string  $data
-     * @return User
+     * @param  array  $data
+     * @return User|null
      */
     public function samlLogin($data)
     {
@@ -317,7 +323,55 @@ class Saml
             ->where('activated', '=', '1')
             ->first();
 
-        return User::verifyExactUsernameMatch($user, (string) $username);
+        $user = User::verifyExactUsernameMatch($user, (string) $username);
+
+        if (is_null($user) && config('app.saml_auto_create_users')) {
+            $user = $this->createUserFromSamlData((string) $username);
+        }
+
+        return $user;
+    }
+
+    /**
+     * Create an activated, permissionless user from the SAML claims.
+     *
+     * Never re-creates a username held by a deactivated or deleted user, so
+     * an admin's deactivation or deletion still blocks SAML login.
+     */
+    private function createUserFromSamlData(string $username): ?User
+    {
+        if ($username === '' || User::withTrashed()->where('username', '=', $username)->exists()) {
+            return null;
+        }
+
+        $user = new User([
+            'username' => $username,
+            'first_name' => $this->getFirstAttribute(self::CLAIM_GIVEN_NAME) ?? $username,
+            'last_name' => $this->getFirstAttribute(self::CLAIM_SURNAME),
+            'email' => $this->getFirstAttribute(self::CLAIM_EMAIL),
+            'activated' => 1,
+        ]);
+        $user->password = $user->noPassword();
+
+        if (! $user->save()) {
+            Log::warning("SAML user '$username' could not be created: ".$user->getErrors()->toJson());
+
+            return null;
+        }
+
+        Log::info("Created SAML user '$username' on first login.");
+
+        return $user;
+    }
+
+    /**
+     * First value of a SAML attribute, or null when absent or empty.
+     */
+    private function getFirstAttribute(string $name): ?string
+    {
+        $value = $this->getAttributes()[$name][0] ?? null;
+
+        return ($value === null || $value === '') ? null : (string) $value;
     }
 
     /**

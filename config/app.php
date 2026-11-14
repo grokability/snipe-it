@@ -348,6 +348,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    |  Create Users On SAML Login
+    |--------------------------------------------------------------------------
+    |
+    | When a SAML login matches no Snipe-IT user, create an activated user
+    | with no permissions from the SAML claims instead of rejecting the login.
+    | Only enable this if your IdP limits who can obtain an assertion for
+    | Snipe-IT (e.g. Entra "Assignment required"). A username that belongs to
+    | a deactivated or deleted user is never re-created.
+    |
+    */
+
+    'saml_auto_create_users' => env('SAML_AUTO_CREATE_USERS', false),
+
+    /*
+    |--------------------------------------------------------------------------
     |  SAML KEYS
     |--------------------------------------------------------------------------
     |
