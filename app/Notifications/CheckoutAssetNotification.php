@@ -129,6 +129,8 @@ class CheckoutAssetNotification extends Notification implements ShouldQueue
         $admin = $this->admin;
         $item = $this->item;
         $note = $this->note;
+        $targetName = $target ? (string) $target->display_name : '';
+        $adminName = $admin ? (string) $admin->display_name : '';
 
         if (! Str::contains($this->webhookSource->webhook_endpoint, 'workflows')) {
             return MicrosoftTeamsMessage::create()
@@ -136,9 +138,9 @@ class CheckoutAssetNotification extends Notification implements ShouldQueue
                 ->type('success')
                 ->title(trans('mail.Asset_Checkout_Notification', ['tag' => '']))
                 ->addStartGroupToSection('activityText')
-                ->fact(trans('mail.assigned_to'), (string) ($target?->display_name ?? ''))
+                ->fact(trans('mail.assigned_to'), $targetName)
                 ->fact(htmlspecialchars_decode($item->display_name), '', 'activityText')
-                ->fact(trans('general.administrator'), (string) ($admin?->display_name ?? ''))
+                ->fact(trans('general.administrator'), $adminName)
                 ->fact(trans('mail.notes'), $note ?: '');
         }
 
@@ -146,7 +148,7 @@ class CheckoutAssetNotification extends Notification implements ShouldQueue
         $details = [
             trans('mail.assigned_to') => $target->present()->name,
             trans('mail.asset') => htmlspecialchars_decode($item->display_name),
-            trans('general.administrator') => (string) ($admin?->display_name ?? ''),
+            trans('general.administrator') => $adminName,
             trans('mail.notes') => $note ?: '',
         ];
 
