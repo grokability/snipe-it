@@ -737,6 +737,16 @@ class ConsumablesController extends Controller
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/consumables/message.bulk.no_consumables_selected')), 422);
         }
 
+        // Only a superuser may null the company_id in bulk. For non-
+        // superusers, Company::getIdForCurrentUser() in the single-item
+        // update path coerces a null submission back to the actor's own
+        // company and never allows the field to be cleared. The bulk
+        // null-out loop below unconditionally wipes company_id AFTER the
+        // FMCS validation runs, so this gate has to come up front.
+        if ($request->boolean('null_company_id') && ! auth()->user()->isSuperUser()) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.insufficient_permissions')), 422);
+        }
+
         $consumables = Consumable::whereIn('id', $request->input('ids'))->get();
         if ($consumables->isEmpty()) {
             return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/consumables/message.bulk.no_consumables_selected')), 422);
