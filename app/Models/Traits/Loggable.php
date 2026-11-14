@@ -46,17 +46,18 @@ trait Loggable
     public function setOrderItem(?OrderItem $order_item): self
     {
         $this->order_item = $order_item;
+
         return $this;
     }
 
     public static function bootLoggable(): void
     {
         self::updating(function (self $item) {
-            if (!$item->action_type) {
+            if (! $item->action_type) {
                 \Log::debug('UPDATING! Because action_type was blank');
                 $item->action_type = ActionType::Update;
             } else {
-                \Log::debug('NOT updating because action_type is: ' . $item->action_type->name);
+                \Log::debug('NOT updating because action_type is: '.$item->action_type->name);
             }
         });
 
@@ -68,14 +69,15 @@ trait Loggable
             $item->action_type = ActionType::Delete;
         });
 
-        self::restoring(function (self $item) {
-            $item->action_type = ActionType::Restore;
-        });
-
-        // self::restored(function ($item) {
-        //     \Log::error("RESTORED!!");
-        //     $item->real_log("restored");
-        // });
+        // Restoring is a SoftDeletes event. Only register the hook
+        // on models that actually use SoftDeletes. Non-SoftDeletes
+        // consumers of Loggable (e.g. the custom-fields test fixture)
+        // would otherwise BadMethodCall at boot time.
+        if (in_array(\Illuminate\Database\Eloquent\SoftDeletes::class, class_uses_recursive(static::class), true)) {
+            self::restoring(function (self $item) {
+                $item->action_type = ActionType::Restore;
+            });
+        }
 
         self::deleted(function (self $item) {
             $item->log_lifecycle_events();
@@ -92,12 +94,12 @@ trait Loggable
 
         // This is where the magic happens!
         try {
-            \Log::debug('ActionType: ' . ($this->action_type ? $this->action_type->name : 'NULL'));
+            \Log::debug('ActionType: '.($this->action_type ? $this->action_type->name : 'NULL'));
         } catch (\Exception $e) {
-            \Log::debug('Exception: ' . $e->getMessage());
+            \Log::debug('Exception: '.$e->getMessage());
         }
 
-        if (!$this->action_type) {
+        if (! $this->action_type) {
             \Log::debug('No action type, aborting save.');
 
             return;
@@ -289,7 +291,7 @@ trait Loggable
             }
         }
 
-        if (!empty($diffOld) || !empty($diffNew)) {
+        if (! empty($diffOld) || ! empty($diffNew)) {
             return ['old' => json_encode($diffOld), 'new' => json_encode($diffNew)];
         }
 

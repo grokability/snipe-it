@@ -35,7 +35,7 @@ class ShowAssetTool extends Tool
             'id' => 'nullable|integer',
         ]);
 
-        $with = ['status', 'model.category', 'model.manufacturer', 'model.fieldset.fields', 'location', 'defaultLoc', 'company', 'supplier', 'adminuser'];
+        $with = ['status', 'model.category', 'model.manufacturer', 'model.custom_fieldset.fields', 'location', 'defaultLoc', 'company', 'supplier', 'adminuser'];
         $asset = null;
 
         if ($request->filled('asset_tag')) {
@@ -96,20 +96,20 @@ class ShowAssetTool extends Tool
      * formatted through Helper::getFormattedDateObject. Markdown fields
      * are rendered the same way the HTTP transformer renders them.
      *
-     * Returns an empty array when the asset's model has no fieldset.
+     * Returns an empty array when the asset's model has no custom_fieldset.
      *
      * @return array<string, array{field: string, value: string, field_format: string, element: string}>
      */
     private function buildCustomFields(Asset $asset): array
     {
-        $fieldset = $asset->model?->fieldset;
-        if (! $fieldset || $fieldset->fields->isEmpty()) {
+        $custom_fieldset = $asset->model?->custom_fieldset;
+        if (! $custom_fieldset || $custom_fieldset->fields->isEmpty()) {
             return [];
         }
 
         $fields = [];
 
-        foreach ($fieldset->fields as $field) {
+        foreach ($custom_fieldset->fields as $field) {
             $raw = $asset->{$field->db_column};
 
             if ($field->isFieldDecryptable($raw)) {
@@ -184,7 +184,7 @@ class ShowAssetTool extends Tool
             'purchase_cost' => $schema->string()->description('Purchase cost'),
             'last_checkout' => $schema->string()->description('Date of last checkout'),
             'last_checkin' => $schema->string()->description('Date of last checkin'),
-            'custom_fields' => $schema->object()->description('Per-field custom data defined on the asset model\'s fieldset. Keys are field names (e.g. "CPU", "RAM GB"). Each value is `{field, value, field_format, element}`. Empty object when the model has no fieldset. Mirrors the HTTP API shape.'),
+            'custom_fields' => $schema->object()->description('Per-field custom data defined on the asset model\'s custom_fieldset. Keys are field names (e.g. "CPU", "RAM GB"). Each value is `{field, value, field_format, element}`. Empty object when the model has no custom_fieldset. Mirrors the HTTP API shape.'),
         ];
     }
 }
