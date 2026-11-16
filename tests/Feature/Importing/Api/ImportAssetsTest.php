@@ -7,6 +7,7 @@ use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Company;
 use App\Models\CustomField;
+use App\Models\CustomFieldset;
 use App\Models\Import;
 use App\Models\User;
 use Carbon\Carbon;
@@ -821,6 +822,13 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
             $customField->field_encrypted = 1;
             $customField->save();
         }
+
+        AssetModel::factory()
+            ->for(CustomFieldset::factory()->hasEncryptedCustomField($customField), 'custom_fieldset')
+            ->create([
+                'name' => $row['model'],
+                'model_number' => $row['modelNumber'],
+            ]);
 
         $import = Import::factory()->asset()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
 

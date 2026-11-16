@@ -84,8 +84,8 @@ class ShowDepreciationTool extends Tool
             'name' => $schema->string()->description('Depreciation name'),
             'months' => $schema->number()->description('Depreciation period in months'),
             'models_count' => $schema->number()->description('Number of asset models using this depreciation'),
-            'created_at' => $schema->string()->description('Creation timestamp'),
-            'updated_at' => $schema->string()->description('Last update timestamp'),
+            'created_at' => $schema->string()->description('Creation timestamp')->nullable(),
+            'updated_at' => $schema->string()->description('Last update timestamp')->nullable(),
         ];
     }
 }

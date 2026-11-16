@@ -122,9 +122,9 @@ class ShowUserTool extends Tool
         return [
             'id' => $schema->number()->description('Numeric user ID')->required(),
             'username' => $schema->string()->description('Username')->required(),
-            'email' => $schema->string()->description('Email address'),
-            'first_name' => $schema->string()->description('First name'),
-            'last_name' => $schema->string()->description('Last name'),
+            'email' => $schema->string()->description('Email address')->nullable(),
+            'first_name' => $schema->string()->description('First name')->nullable(),
+            'last_name' => $schema->string()->description('Last name')->nullable(),
         ];
     }
 }

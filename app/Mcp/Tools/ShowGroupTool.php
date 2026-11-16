@@ -75,7 +75,7 @@ class ShowGroupTool extends Tool
         return [
             'id' => $schema->number()->description('Numeric group ID')->required(),
             'name' => $schema->string()->description('Group name')->required(),
-            'notes' => $schema->string()->description('Notes about the group'),
+            'notes' => $schema->string()->description('Notes about the group')->nullable(),
             'permissions' => $schema->object()->description('Decoded permissions array'),
             'users_count' => $schema->number()->description('Number of users in this group'),
         ];

@@ -128,7 +128,7 @@ class CreateAssetTool extends Tool
             'message' => $schema->string()->description('Human-readable result message')->required(),
             'id' => $schema->number()->description('Numeric ID of the new asset'),
             'asset_tag' => $schema->string()->description('Asset tag of the new asset'),
-            'name' => $schema->string()->description('Display name of the new asset'),
+            'name' => $schema->string()->description('Display name of the new asset')->nullable(),
         ];
     }
 }

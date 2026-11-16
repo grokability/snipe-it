@@ -202,7 +202,7 @@ class UpdateUserTool extends Tool
             'message' => $schema->string()->description('Human-readable result message')->required(),
             'id' => $schema->number()->description('Numeric ID of the updated user'),
             'username' => $schema->string()->description('Username of the updated user'),
-            'email' => $schema->string()->description('Email of the updated user'),
+            'email' => $schema->string()->description('Email of the updated user')->nullable(),
         ];
     }
 }

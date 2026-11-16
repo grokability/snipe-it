@@ -173,9 +173,9 @@ class CreateUserTool extends Tool
             'message' => $schema->string()->description('Human-readable result message')->required(),
             'id' => $schema->number()->description('Numeric ID of the new user'),
             'username' => $schema->string()->description('Username of the new user'),
-            'email' => $schema->string()->description('Email of the new user'),
+            'email' => $schema->string()->description('Email of the new user')->nullable(),
             'first_name' => $schema->string()->description('First name'),
-            'last_name' => $schema->string()->description('Last name'),
+            'last_name' => $schema->string()->description('Last name')->nullable(),
         ];
     }
 }
