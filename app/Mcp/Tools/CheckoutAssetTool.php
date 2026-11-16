@@ -155,8 +155,8 @@ class CheckoutAssetTool extends Tool
     public function outputSchema(JsonSchema $schema): array
     {
         return [
-            'success' => $schema->string()->description('True if the checkout succeeded'),
-            'error' => $schema->string()->description('True if the checkout failed'),
+            'success' => $schema->boolean()->description('True if the checkout succeeded'),
+            'error' => $schema->boolean()->description('True if the checkout failed')->nullable(),
             'message' => $schema->string()->description('Human-readable result message')->required(),
             'asset_tag' => $schema->string()->description('Asset tag of the checked-out asset'),
             'checked_out_to_type' => $schema->string()->description('Type of entity the asset was checked out to'),

@@ -298,9 +298,9 @@ class TransferAssetsTool extends Tool
             'success' => $schema->boolean()->description('True if the (dry-run preview or actual) transfer reported no errors'),
             'dry_run' => $schema->boolean()->description('Whether this response was a preview (true) or an actual execution (false)'),
             'message' => $schema->string()->description('Human-readable result message')->required(),
-            'preview' => $schema->object()->description('Structured preview of what would move (present when dry_run=true)'),
-            'executed' => $schema->object()->description('Structured record of what did move (present when dry_run=false)'),
-            'matches' => $schema->array()->description('When an ambiguous user is encountered, the list of candidate users for the caller to pick from'),
+            'preview' => $schema->object()->description('Structured preview of what would move (present when dry_run=true)')->nullable(),
+            'executed' => $schema->object()->description('Structured record of what did move (present when dry_run=false)')->nullable(),
+            'matches' => $schema->array()->description('When an ambiguous user is encountered, the list of candidate users for the caller to pick from')->nullable(),
         ];
     }
 }

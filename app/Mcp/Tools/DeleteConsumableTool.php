@@ -339,7 +339,7 @@ class DeleteConsumableTool extends Tool
         return [
             // Single-identifier shape
             'id' => $schema->number()->description('Numeric consumable ID (single-target shape).'),
-            'name' => $schema->string()->description('Consumable name (single-target shape). Alternative: pass names array for multiple.'),
+            'name' => $schema->string()->description('Consumable name (single-target shape). Alternative: pass names array for multiple.')->nullable(),
 
             // Array shape
             'ids' => $schema->array()->description('Array of numeric IDs. Defaults to dry_run=true, pass dry_run=false to commit.'),
@@ -375,15 +375,15 @@ class DeleteConsumableTool extends Tool
             'success' => $schema->boolean()->description('True if the deletion (or preview) succeeded'),
             'message' => $schema->string()->description('Human-readable result message')->required(),
             'dry_run' => $schema->boolean()->description('True when the response is a preview, false when it is a commit result'),
-            'name' => $schema->string()->description('Name of the deleted consumable (single-target shape only)'),
-            'total_matched' => $schema->number()->description('How many rows matched (bulk preview only)'),
-            'will_delete' => $schema->number()->description('How many rows would actually delete (bulk preview only)'),
-            'undeletable_count' => $schema->number()->description('How many rows match but fail isDeletable (bulk preview only)'),
-            'sample_rows' => $schema->array()->description('First 10 matched rows with id + name (bulk preview only)'),
-            'undeletable_matches' => $schema->array()->description('First 10 undeletable rows with reason (bulk preview only)'),
-            'deleted_count' => $schema->number()->description('How many rows were deleted (bulk commit only)'),
-            'failed_count' => $schema->number()->description('How many rows failed at commit (bulk commit only)'),
-            'failures' => $schema->array()->description('Per-row failure messages (bulk commit only)'),
+            'name' => $schema->string()->description('Name of the deleted consumable (single-target shape only)')->nullable(),
+            'total_matched' => $schema->number()->description('How many rows matched (bulk preview only)')->nullable(),
+            'will_delete' => $schema->number()->description('How many rows would actually delete (bulk preview only)')->nullable(),
+            'undeletable_count' => $schema->number()->description('How many rows match but fail isDeletable (bulk preview only)')->nullable(),
+            'sample_rows' => $schema->array()->description('First 10 matched rows with id + name (bulk preview only)')->nullable(),
+            'undeletable_matches' => $schema->array()->description('First 10 undeletable rows with reason (bulk preview only)')->nullable(),
+            'deleted_count' => $schema->number()->description('How many rows were deleted (bulk commit only)')->nullable(),
+            'failed_count' => $schema->number()->description('How many rows failed at commit (bulk commit only)')->nullable(),
+            'failures' => $schema->array()->description('Per-row failure messages (bulk commit only)')->nullable(),
         ];
     }
 }

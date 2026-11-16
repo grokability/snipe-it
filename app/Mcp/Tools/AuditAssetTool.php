@@ -113,12 +113,12 @@ class AuditAssetTool extends Tool
     {
         return [
             'success' => $schema->boolean()->description('True if the audit succeeded'),
-            'error' => $schema->boolean()->description('True if the audit failed'),
+            'error' => $schema->boolean()->description('True if the audit failed')->nullable(),
             'message' => $schema->string()->description('Human-readable result message')->required(),
             'asset_tag' => $schema->string()->description('Asset tag of the audited asset'),
-            'last_audit_date' => $schema->string()->description('Timestamp of the audit just recorded'),
-            'next_audit_date' => $schema->string()->description('Date of the next scheduled audit'),
-            'location' => $schema->string()->description('Location name where the asset was found'),
+            'last_audit_date' => $schema->string()->description('Timestamp of the audit just recorded')->nullable(),
+            'next_audit_date' => $schema->string()->description('Date of the next scheduled audit')->nullable(),
+            'location' => $schema->string()->description('Location name where the asset was found')->nullable(),
         ];
     }
 }

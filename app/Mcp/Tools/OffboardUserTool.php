@@ -290,8 +290,8 @@ class OffboardUserTool extends Tool
             'success' => $schema->boolean()->description('True if the (dry-run preview or actual) offboarding reported no errors'),
             'dry_run' => $schema->boolean()->description('Whether this response was a preview (true) or an actual execution (false)'),
             'message' => $schema->string()->description('Human-readable result message')->required(),
-            'preview' => $schema->object()->description('Structured preview of what would change (present when dry_run=true)'),
-            'executed' => $schema->object()->description('Structured record of what did change (present when dry_run=false)'),
+            'preview' => $schema->object()->description('Structured preview of what would change (present when dry_run=true)')->nullable(),
+            'executed' => $schema->object()->description('Structured record of what did change (present when dry_run=false)')->nullable(),
         ];
     }
 }

@@ -315,13 +315,16 @@ class DeleteAssetTool extends Tool
             'reason' => trans('admin/hardware/message.assoc_users'),
         ])->values()->all();
 
+        $message = trans('mcp.bulk_dry_run_summary', [
+            'total' => $targets->count(),
+            'deletable' => $deletable->count(),
+        ]);
+
         return Response::make(
-            Response::text(trans('mcp.bulk_dry_run_summary', [
-                'total' => $targets->count(),
-                'deletable' => $deletable->count(),
-            ]))
+            Response::text($message)
         )->withStructuredContent([
             'success' => true,
+            'message' => $message,
             'dry_run' => true,
             'total_matched' => $targets->count(),
             'will_delete' => $deletable->count(),
@@ -362,12 +365,13 @@ class DeleteAssetTool extends Tool
             ])));
         }
 
+        $message = trans('mcp.bulk_delete_completed', ['count' => $deletedCount]);
+
         return Response::make(
-            Response::text(trans('mcp.bulk_delete_completed', [
-                'count' => $deletedCount,
-            ]))
+            Response::text($message)
         )->withStructuredContent([
             'success' => true,
+            'message' => $message,
             'dry_run' => false,
             'deleted_count' => $deletedCount,
             'failed_count' => count($failures),
@@ -437,16 +441,16 @@ class DeleteAssetTool extends Tool
             'success' => $schema->boolean()->description('True if the deletion (or preview) succeeded'),
             'message' => $schema->string()->description('Human-readable result message')->required(),
             'dry_run' => $schema->boolean()->description('True when the response is a preview, false when it is a commit result'),
-            'asset_tag' => $schema->string()->description('Asset tag of the deleted asset (single-target shape only)'),
-            'total_matched' => $schema->number()->description('How many rows matched the filter / array (bulk preview only)'),
-            'will_delete' => $schema->number()->description('How many rows would actually delete (bulk preview only)'),
-            'undeletable_count' => $schema->number()->description('How many rows match but fail isDeletable (bulk preview only)'),
-            'sample_rows' => $schema->array()->description('First 10 matched rows with id + asset_tag (bulk preview only)'),
-            'undeletable_matches' => $schema->array()->description('First 10 undeletable rows with reason (bulk preview only)'),
-            'deleted_count' => $schema->number()->description('How many rows were deleted (bulk commit only)'),
-            'failed_count' => $schema->number()->description('How many rows failed at commit (bulk commit only)'),
-            'failures' => $schema->array()->description('Per-row failure messages (bulk commit only)'),
-            'reason' => $schema->string()->description('The reason string passed on this call'),
+            'asset_tag' => $schema->string()->description('Asset tag of the deleted asset (single-target shape only)')->nullable(),
+            'total_matched' => $schema->number()->description('How many rows matched the filter / array (bulk preview only)')->nullable(),
+            'will_delete' => $schema->number()->description('How many rows would actually delete (bulk preview only)')->nullable(),
+            'undeletable_count' => $schema->number()->description('How many rows match but fail isDeletable (bulk preview only)')->nullable(),
+            'sample_rows' => $schema->array()->description('First 10 matched rows with id + asset_tag (bulk preview only)')->nullable(),
+            'undeletable_matches' => $schema->array()->description('First 10 undeletable rows with reason (bulk preview only)')->nullable(),
+            'deleted_count' => $schema->number()->description('How many rows were deleted (bulk commit only)')->nullable(),
+            'failed_count' => $schema->number()->description('How many rows failed at commit (bulk commit only)')->nullable(),
+            'failures' => $schema->array()->description('Per-row failure messages (bulk commit only)')->nullable(),
+            'reason' => $schema->string()->description('The reason string passed on this call')->nullable(),
         ];
     }
 }

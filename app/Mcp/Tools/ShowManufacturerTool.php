@@ -91,15 +91,15 @@ class ShowManufacturerTool extends Tool
         return [
             'id' => $schema->number()->description('Numeric ID of the manufacturer'),
             'name' => $schema->string()->description('Manufacturer name')->required(),
-            'url' => $schema->string()->description('Manufacturer website URL'),
-            'support_url' => $schema->string()->description('Support website URL'),
-            'support_email' => $schema->string()->description('Support email address'),
-            'support_phone' => $schema->string()->description('Support phone number'),
-            'warranty_lookup_url' => $schema->string()->description('Warranty lookup URL'),
+            'url' => $schema->string()->description('Manufacturer website URL')->nullable(),
+            'support_url' => $schema->string()->description('Support website URL')->nullable(),
+            'support_email' => $schema->string()->description('Support email address')->nullable(),
+            'support_phone' => $schema->string()->description('Support phone number')->nullable(),
+            'warranty_lookup_url' => $schema->string()->description('Warranty lookup URL')->nullable(),
             'assets_count' => $schema->number()->description('Number of assets from this manufacturer'),
-            'notes' => $schema->string()->description('Notes'),
-            'created_at' => $schema->string()->description('Creation timestamp'),
-            'updated_at' => $schema->string()->description('Last update timestamp'),
+            'notes' => $schema->string()->description('Notes')->nullable(),
+            'created_at' => $schema->string()->description('Creation timestamp')->nullable(),
+            'updated_at' => $schema->string()->description('Last update timestamp')->nullable(),
         ];
     }
 }

@@ -176,8 +176,8 @@ class UploadAssetImageTool extends Tool
             'success' => $schema->boolean()->description('True if the image was attached')->required(),
             'message' => $schema->string()->description('Human-readable result message')->required(),
             'asset_tag' => $schema->string()->description('Asset tag of the updated asset'),
-            'image' => $schema->string()->description('Stored filename of the newly attached image'),
-            'image_url' => $schema->string()->description('Public URL to the stored image'),
+            'image' => $schema->string()->description('Stored filename of the newly attached image')->nullable(),
+            'image_url' => $schema->string()->description('Public URL to the stored image')->nullable(),
         ];
     }
 }
