@@ -6,6 +6,7 @@ use App\Models\Actionlog;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -150,5 +151,18 @@ class UpdateLocationsTest extends TestCase
                 route('locations.show', $child),
                 trans('general.update'),
             ]);
+    }
+
+    public function test_edit_page_renders_when_location_is_in_a_parent_cycle()
+    {
+        $locationA = Location::factory()->create();
+        $locationB = Location::factory()->create();
+
+        DB::table('locations')->where('id', $locationA->id)->update(['parent_id' => $locationB->id]);
+        DB::table('locations')->where('id', $locationB->id)->update(['parent_id' => $locationA->id]);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->get(route('locations.edit', $locationA))
+            ->assertOk();
     }
 }

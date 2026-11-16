@@ -4,6 +4,7 @@ namespace Tests\Feature\Locations\Ui;
 
 use App\Models\Location;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class ShowLocationTest extends TestCase
@@ -113,5 +114,50 @@ class ShowLocationTest extends TestCase
             '<a href="'.route('locations.show', $child).'">'.$child->display_name.'</a>',
             $responseContent
         );
+    }
+
+    public function test_print_all_assigned_lists_child_locations()
+    {
+        $parent = Location::factory()->create(['name' => 'Print Parent Location']);
+        $location = Location::factory()->create([
+            'name' => 'Print Middle Location',
+            'parent_id' => $parent->id,
+        ]);
+        Location::factory()->create(['name' => 'Print First Child Location', 'parent_id' => $location->id]);
+        Location::factory()->create(['name' => 'Print Second Child Location', 'parent_id' => $location->id]);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->get(route('locations.print_all_assigned', $location))
+            ->assertOk()
+            ->assertSee('Print Parent Location')
+            ->assertSee('Print First Child Location')
+            ->assertSee('Print Second Child Location');
+    }
+
+    public function test_show_page_renders_when_location_is_in_a_parent_cycle()
+    {
+        $locationA = Location::factory()->create();
+        $locationB = Location::factory()->create();
+
+        DB::table('locations')->where('id', $locationA->id)->update(['parent_id' => $locationB->id]);
+        DB::table('locations')->where('id', $locationB->id)->update(['parent_id' => $locationA->id]);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->get(route('locations.show', $locationA))
+            ->assertOk()
+            ->assertSee(route('locations.show', $locationB));
+    }
+
+    public function test_print_all_assigned_renders_when_location_is_in_a_parent_cycle()
+    {
+        $locationA = Location::factory()->create();
+        $locationB = Location::factory()->create();
+
+        DB::table('locations')->where('id', $locationA->id)->update(['parent_id' => $locationB->id]);
+        DB::table('locations')->where('id', $locationB->id)->update(['parent_id' => $locationA->id]);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->get(route('locations.print_all_assigned', $locationA))
+            ->assertOk();
     }
 }
