@@ -36,14 +36,22 @@ class ShowAssetTool extends Tool
         ]);
 
         $with = ['status', 'model.category', 'model.manufacturer', 'model.custom_fieldset.fields', 'location', 'defaultLoc', 'company', 'supplier', 'adminuser'];
+        $withCount = [
+            'maintenances as maintenance_count',
+            'maintenances as open_maintenance_count' => fn ($q) => $q->whereNull('completed_at'),
+        ];
         $asset = null;
 
+        $baseQuery = Asset::with($with)
+            ->withCount($withCount)
+            ->withSum('maintenances as maintenance_cost_total', 'cost');
+
         if ($request->filled('asset_tag')) {
-            $asset = Asset::where('asset_tag', $request->get('asset_tag'))->with($with)->first();
+            $asset = (clone $baseQuery)->where('asset_tag', $request->get('asset_tag'))->first();
         } elseif ($request->filled('serial')) {
-            $asset = Asset::where('serial', $request->get('serial'))->with($with)->first();
+            $asset = (clone $baseQuery)->where('serial', $request->get('serial'))->first();
         } elseif ($request->filled('id')) {
-            $asset = Asset::with($with)->find($request->get('id'));
+            $asset = $baseQuery->find($request->get('id'));
         }
 
         if (! $asset || ! Gate::allows('view', $asset)) {
@@ -85,6 +93,9 @@ class ShowAssetTool extends Tool
             'last_audit_date' => $asset->last_audit_date,
             'created_at' => $asset->created_at?->format('Y-m-d H:i:s'),
             'updated_at' => $asset->updated_at?->format('Y-m-d H:i:s'),
+            'maintenance_count' => (int) ($asset->maintenance_count ?? 0),
+            'open_maintenance_count' => (int) ($asset->open_maintenance_count ?? 0),
+            'maintenance_cost_total' => $asset->maintenance_cost_total !== null ? (float) $asset->maintenance_cost_total : 0.0,
             'custom_fields' => $this->buildCustomFields($asset),
         ];
     }
@@ -185,6 +196,9 @@ class ShowAssetTool extends Tool
             'purchase_cost' => $schema->string()->description('Purchase cost')->nullable(),
             'last_checkout' => $schema->string()->description('Date of last checkout')->nullable(),
             'last_checkin' => $schema->string()->description('Date of last checkin')->nullable(),
+            'maintenance_count' => $schema->number()->description('Total maintenance records on this asset'),
+            'open_maintenance_count' => $schema->number()->description('Open maintenances (completed_at is null)'),
+            'maintenance_cost_total' => $schema->number()->description('Sum of maintenance cost across all records on this asset'),
             'custom_fields' => $schema->object()->description('Per-field custom data defined on the asset model\'s custom_fieldset. Keys are field names (e.g. "CPU", "RAM GB"). Each value is `{field, value, field_format, element}`. Empty object when the model has no custom_fieldset. Mirrors the HTTP API shape.'),
         ];
     }
