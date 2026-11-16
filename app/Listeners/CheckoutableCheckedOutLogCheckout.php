@@ -3,7 +3,6 @@
 namespace App\Listeners;
 
 use App\Actions\CheckoutRequests\FulfillCheckoutRequestAction;
-use App\Enums\ActionType;
 use App\Enums\CheckoutRequestState;
 use App\Events\CheckoutableCheckedOut;
 use App\Models\Actionlog;
@@ -19,11 +18,10 @@ use Illuminate\Support\Facades\Log;
  * controllers, API, imports, tinker) closes matching requests
  * automatically instead of each controller wiring the hook itself.
  *
- * Registered AFTER LogListener in EventServiceProvider so by the
- * time this fires, the checkout Actionlog row exists and can be
- * linked from the CheckoutRequest via checkout_actionlog_id.
+ * Write the checkout Actionlog before fulfilling matching requests,
+ * linking the exact log via checkout_actionlog_id.
  *
- * Only fires for user-target checkouts. Location and child-asset
+ * Only fulfills requests for user-target checkouts. Location and child-asset
  * targets don't correspond to a requester (requests are user-
  * owned), so those checkouts have no matching request to close.
  *
@@ -32,17 +30,22 @@ use Illuminate\Support\Facades\Log;
  * Loggable::determineLogItemType stores License::class in the
  * checkout actionlog for the same reason.
  */
-class FulfillCheckoutRequestListener
+class CheckoutableCheckedOutLogCheckout
 {
-    public function subscribe($events): void
+    public function handle(CheckoutableCheckedOut $event): void
     {
-        $events->listen(
-            CheckoutableCheckedOut::class,
-            self::class.'@onCheckedOut',
+        $actionlog = $event->checkoutable->logCheckout(
+            $event->note,
+            $event->checkedOutTo,
+            $event->checkoutable->last_checkout,
+            $event->originalValues,
+            $event->quantity
         );
+
+        $this->fulfillCheckoutRequests($event, $actionlog);
     }
 
-    public function onCheckedOut(CheckoutableCheckedOut $event): void
+    protected function fulfillCheckoutRequests(CheckoutableCheckedOut $event, Actionlog $actionlog): void
     {
         if (! $event->checkedOutTo instanceof User) {
             return;
@@ -67,20 +70,6 @@ class FulfillCheckoutRequestListener
         if ($openRequests->isEmpty()) {
             return;
         }
-
-        // Find the checkout Actionlog LogListener just wrote (it
-        // subscribes to the same event and runs first per the order
-        // in EventServiceProvider). Match on all four polymorphic
-        // slots plus action_type. Grab the most recent id in case
-        // this user has multiple checkout rows for the same item
-        // over its lifetime.
-        $actionlog = Actionlog::where('item_type', $requestableType)
-            ->where('item_id', $requestableId)
-            ->where('target_type', User::class)
-            ->where('target_id', $event->checkedOutTo->id)
-            ->where('action_type', ActionType::Checkout->value)
-            ->latest('id')
-            ->first();
 
         // Pass the event's quantity through so partial-fulfillment
         // tracking works. A request for 5 pens that gets a checkout

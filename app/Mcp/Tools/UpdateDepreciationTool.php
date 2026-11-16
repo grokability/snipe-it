@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Depreciation;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -22,7 +22,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT depreciation schedule identified by numeric ID or name')]
 class UpdateDepreciationTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -60,15 +60,16 @@ class UpdateDepreciationTool extends Tool
         $dep->fill(array_merge($input, $validated));
 
         if ($dep->save()) {
-            return Response::make(
-                Response::text(trans('mcp.depreciation_updated', ['name' => $dep->name]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.depreciation_updated', ['name' => $dep->name]),
-                'id' => $dep->id,
-                'name' => $dep->name,
-                'months' => $dep->months,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.depreciation_updated', ['name' => $dep->name]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.depreciation_updated', ['name' => $dep->name]),
+                    'id' => $dep->id,
+                    'name' => $dep->name,
+                    'months' => $dep->months,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.update_failed', ['error' => $dep->getErrors()->first()])));

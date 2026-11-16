@@ -3,10 +3,14 @@
 namespace Tests\Feature\Notifications\Webhooks;
 
 use App\Events\CheckoutableCheckedOut;
+use App\Listeners\CheckoutableCheckedOutEmailNotification;
+use App\Listeners\CheckoutableCheckedOutWebhookNotification;
+use App\Mail\CheckoutAssetMail;
 use App\Models\Accessory;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Category;
+use App\Models\CheckoutAcceptance;
 use App\Models\Component;
 use App\Models\Consumable;
 use App\Models\LicenseSeat;
@@ -20,14 +24,13 @@ use App\Notifications\CheckoutConsumableNotification;
 use App\Notifications\CheckoutLicenseSeatNotification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
+use NotificationChannels\GoogleChat\GoogleChatMessage;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
-use Illuminate\Notifications\Messages\SlackMessage;
-use NotificationChannels\GoogleChat\GoogleChatMessage;
-
 
 #[Group('notifications')]
 class IntegrationNotificationsUponCheckoutTest extends TestCase
@@ -47,6 +50,55 @@ class IntegrationNotificationsUponCheckoutTest extends TestCase
             'Asset checked out to asset' => [fn () => Asset::factory()->laptopMbp()->create()],
             'Asset checked out to location' => [fn () => Location::factory()->create()],
         ];
+    }
+
+    public static function checkoutNotificationOrders(): array
+    {
+        return [
+            'discovered listeners' => [null],
+            'email first' => [false],
+            'webhook first' => [true],
+        ];
+    }
+
+    #[DataProvider('checkoutNotificationOrders')]
+    public function test_checkout_notifications_share_one_acceptance(?bool $webhookFirst): void
+    {
+        $this->settings->enableSlackWebhook()->disableAdminCC()->disableAdminCCAlways();
+
+        $asset = Asset::factory()->create();
+        $asset->model->category->update(['require_acceptance' => true]);
+        $user = User::factory()->create();
+        $event = new CheckoutableCheckedOut($asset, $user, User::factory()->create(), null);
+
+        if ($webhookFirst === null) {
+            event($event);
+        } else {
+            $emailListener = new CheckoutableCheckedOutEmailNotification;
+            $webhookListener = new CheckoutableCheckedOutWebhookNotification;
+            $listeners = $webhookFirst
+                ? [$webhookListener, $emailListener]
+                : [$emailListener, $webhookListener];
+
+            foreach ($listeners as $listener) {
+                $listener->handle($event);
+            }
+        }
+
+        $this->assertDatabaseCount('checkout_acceptances', 1);
+        $acceptance = CheckoutAcceptance::firstOrFail();
+        $this->assertSame($acceptance->id, $event->checkoutAcceptance?->id);
+
+        Mail::assertSent(CheckoutAssetMail::class, 1);
+        Mail::assertSent(CheckoutAssetMail::class, function (CheckoutAssetMail $mail) use ($acceptance, $user): bool {
+            return $mail->hasTo($user->email)
+                && str_contains($mail->render(), route('account.accept.item', $acceptance));
+        });
+
+        Notification::assertSentOnDemandTimes(CheckoutAssetNotification::class, 1);
+        Notification::assertSentOnDemand(CheckoutAssetNotification::class, function (CheckoutAssetNotification $notification) use ($acceptance): bool {
+            return $notification->acceptance->id === $acceptance->id;
+        });
     }
 
     public static function licenseCheckoutTargets(): array
@@ -289,7 +341,7 @@ class IntegrationNotificationsUponCheckoutTest extends TestCase
     {
         return [
             'Accessory' => [
-                fn($webhookSource) => new CheckoutAccessoryNotification(
+                fn ($webhookSource) => new CheckoutAccessoryNotification(
                     Accessory::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),
@@ -300,7 +352,7 @@ class IntegrationNotificationsUponCheckoutTest extends TestCase
             ],
 
             'Asset' => [
-                fn($webhookSource) => new CheckoutAssetNotification(
+                fn ($webhookSource) => new CheckoutAssetNotification(
                     Asset::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),
@@ -311,7 +363,7 @@ class IntegrationNotificationsUponCheckoutTest extends TestCase
             ],
 
             'Component' => [
-                fn($webhookSource) => new CheckoutComponentNotification(
+                fn ($webhookSource) => new CheckoutComponentNotification(
                     Component::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),
@@ -322,7 +374,7 @@ class IntegrationNotificationsUponCheckoutTest extends TestCase
             ],
 
             'Consumable' => [
-                fn($webhookSource) => new CheckoutConsumableNotification(
+                fn ($webhookSource) => new CheckoutConsumableNotification(
                     Consumable::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),
@@ -333,7 +385,7 @@ class IntegrationNotificationsUponCheckoutTest extends TestCase
             ],
 
             'License seat' => [
-                fn($webhookSource) => new CheckoutLicenseSeatNotification(
+                fn ($webhookSource) => new CheckoutLicenseSeatNotification(
                     LicenseSeat::factory()->create(),
                     User::factory()->create(),
                     User::factory()->superuser()->create(),

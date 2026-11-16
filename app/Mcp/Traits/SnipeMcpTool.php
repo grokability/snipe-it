@@ -8,9 +8,8 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\ResponseFactory;
 
 /**
- * Per-tool Passport scope enforcement + metadata emission.
- *
- * Three surfaces, all driven by ToolScopeMap:
+ * Project-level conventions every Snipe-IT MCP tool mixes in. Four
+ * surfaces today, driven by ToolScopeMap and the MCP spec:
  *
  *   1. toArray() override: emits `_meta.securitySchemes` on each
  *      tool's `tools/list` entry so OAuth-aware MCP clients (ChatGPT,
@@ -27,8 +26,14 @@ use Laravel\Mcp\ResponseFactory;
  *      actingAs() tests, no Passport TokenGuard), the check returns
  *      null so the existing MCP test suite keeps working without
  *      every test having to mint a real token.
+ *
+ *   4. structuredResponse(): dual-content response builder that
+ *      satisfies the MCP spec requirement that tools returning
+ *      structuredContent also emit a functionally equivalent copy in
+ *      the text `content` field so clients that read only the text
+ *      side still receive the payload.
  */
-trait HasMcpScope
+trait SnipeMcpTool
 {
     /**
      * Override Tool::toArray to attach _meta.securitySchemes for this
@@ -96,5 +101,24 @@ trait HasMcpScope
         ]);
 
         return $response;
+    }
+
+    /**
+     * Build a response that mirrors the structured payload into the
+     * text content block alongside structuredContent. The MCP spec says
+     * a tool returning structuredContent SHOULD also return a
+     * functionally equivalent copy in `content`, so clients that read
+     * only the text side (Claude Desktop, claude.ai at time of writing)
+     * get the same data as clients that read structuredContent
+     * (Claude Code, MCP Inspector).
+     *
+     * @param  array<string, mixed>  $structured
+     */
+    protected function structuredResponse(string $summary, array $structured): ResponseFactory
+    {
+        return Response::make([
+            Response::text($summary),
+            Response::text(json_encode($structured, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)),
+        ])->withStructuredContent($structured);
     }
 }

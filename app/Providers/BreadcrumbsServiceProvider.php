@@ -663,21 +663,17 @@ class BreadcrumbsServiceProvider extends ServiceProvider
     }
 
     /**
-     * Append parent -> child location breadcrumbs recursively for a location.
+     * Append root -> location breadcrumbs for a location, built from
+     * Location::ancestors() so a legacy parent_id cycle stops instead of
+     * looping forever.
      */
     private function pushLocationHierarchy(Trail $trail, Location $location): void
     {
-        $ancestorChain = [];
-        $cursor = $location;
-
-        while ($cursor !== null) {
-            array_unshift($ancestorChain, $cursor);
-            $cursor = $cursor->parent;
+        foreach ($location->ancestors()->reverse() as $ancestor) {
+            $trail->push($ancestor->name, route('locations.show', $ancestor));
         }
 
-        foreach ($ancestorChain as $node) {
-            $trail->push($node->name, route('locations.show', $node));
-        }
+        $trail->push($location->name, route('locations.show', $location));
     }
 
     /**

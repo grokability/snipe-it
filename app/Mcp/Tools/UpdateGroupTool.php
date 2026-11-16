@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Group;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -22,7 +22,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update an existing Snipe-IT permission group by ID or name. Requires superadmin. Supplying permissions replaces the group\'s entire permission set.')]
 class UpdateGroupTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -78,15 +78,16 @@ class UpdateGroupTool extends Tool
         }
 
         if ($group->save()) {
-            return Response::make(
-                Response::text(trans('mcp.group_updated', ['name' => $group->name]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.group_updated', ['name' => $group->name]),
-                'id' => $group->id,
-                'name' => $group->name,
-                'permissions' => $group->decodePermissions(),
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.group_updated', ['name' => $group->name]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.group_updated', ['name' => $group->name]),
+                    'id' => $group->id,
+                    'name' => $group->name,
+                    'permissions' => $group->decodePermissions(),
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.update_failed', ['error' => $group->getErrors()->first()])));

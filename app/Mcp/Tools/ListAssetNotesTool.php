@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Actionlog;
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -21,7 +21,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('List manual notes added to a Snipe-IT asset, identified by asset tag, serial number, or numeric ID')]
 class ListAssetNotesTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -64,20 +64,21 @@ class ListAssetNotesTool extends Tool
             'created_by_username' => $n->adminuser?->username,
         ])->values()->all();
 
-        return Response::make(
-            Response::text(trans('mcp.list_asset_notes', [
+        return $this->structuredResponse(
+            trans('mcp.list_asset_notes', [
                 'asset_tag' => $asset->asset_tag,
                 'total' => $total,
                 'count' => count($notes),
-            ]))
-        )->withStructuredContent([
-            'asset_id' => $asset->id,
-            'asset_tag' => $asset->asset_tag,
-            'total' => $total,
-            'offset' => $offset,
-            'limit' => $limit,
-            'notes' => $notes,
-        ]);
+            ]),
+            [
+                'asset_id' => $asset->id,
+                'asset_tag' => $asset->asset_tag,
+                'total' => $total,
+                'offset' => $offset,
+                'limit' => $limit,
+                'notes' => $notes,
+            ]
+        );
     }
 
     private function resolveAsset(Request $request): ?Asset

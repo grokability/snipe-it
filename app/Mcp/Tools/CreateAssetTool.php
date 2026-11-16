@@ -3,8 +3,8 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Company;
@@ -28,8 +28,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT asset')]
 class CreateAssetTool extends Tool
 {
-    use HasMcpScope;
     use ResolvesForeignKeyByName;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -80,15 +80,16 @@ class CreateAssetTool extends Tool
         $asset->created_by = auth()->id();
 
         if ($asset->save()) {
-            return Response::make(
-                Response::text(trans('mcp.asset_created', ['asset_tag' => $asset->asset_tag]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.asset_created', ['asset_tag' => $asset->asset_tag]),
-                'id' => $asset->id,
-                'asset_tag' => $asset->asset_tag,
-                'name' => $asset->name,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.asset_created', ['asset_tag' => $asset->asset_tag]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.asset_created', ['asset_tag' => $asset->asset_tag]),
+                    'id' => $asset->id,
+                    'asset_tag' => $asset->asset_tag,
+                    'name' => $asset->name,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.create_failed', ['error' => $asset->getErrors()->first()])));

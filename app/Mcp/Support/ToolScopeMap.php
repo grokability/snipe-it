@@ -8,7 +8,7 @@ use App\Mcp\Tools;
 /**
  * Declarative map of MCP tool class => required McpScope.
  *
- * The HasMcpScope trait reads this map to:
+ * The SnipeMcpTool trait reads this map to:
  *   1. Emit `_meta.securitySchemes` on each tool's `tools/list`
  *      entry so OpenAI / Anthropic MCP clients can learn which
  *      scope to request for each tool.
@@ -89,6 +89,11 @@ class ToolScopeMap
         Tools\CreateLocationTool::class => McpScope::Write,
         Tools\CreateMaintenanceTool::class => McpScope::Write,
         Tools\CreateMaintenanceTypeTool::class => McpScope::Write,
+        Tools\UpdateMaintenanceTool::class => McpScope::Write,
+        Tools\UpdateMaintenanceTypeTool::class => McpScope::Write,
+        Tools\CompleteMaintenanceTool::class => McpScope::Write,
+        Tools\DeleteMaintenanceTool::class => McpScope::Write,
+        Tools\DeleteMaintenanceTypeTool::class => McpScope::Write,
         Tools\CreateManufacturerTool::class => McpScope::Write,
         Tools\CreateStatusLabelTool::class => McpScope::Write,
         Tools\CreateSupplierTool::class => McpScope::Write,

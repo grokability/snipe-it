@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Accessory;
 use App\Models\Asset;
 use App\Models\AssetModel;
@@ -32,7 +32,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('List files uploaded to a Snipe-IT object. Supported types: accessories, assets, companies, components, consumables, departments, licenses, locations, maintenances, models, suppliers, users')]
 class ListUploadsTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     private const TYPE_MAP = [
         'accessories' => Accessory::class,
@@ -98,20 +98,21 @@ class ListUploadsTool extends Tool
             'exists_on_disk' => Storage::exists($file->uploads_file_path()),
         ])->values()->all();
 
-        return Response::make(
-            Response::text(trans('mcp.list_uploads', [
+        return $this->structuredResponse(
+            trans('mcp.list_uploads', [
                 'total' => $total,
                 'count' => count($files),
                 'type' => $objectType,
-            ]))
-        )->withStructuredContent([
-            'object_type' => $objectType,
-            'object_id' => $object->id,
-            'total' => $total,
-            'offset' => $offset,
-            'limit' => $limit,
-            'files' => $files,
-        ]);
+            ]),
+            [
+                'object_type' => $objectType,
+                'object_id' => $object->id,
+                'total' => $total,
+                'offset' => $offset,
+                'limit' => $limit,
+                'files' => $files,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\License;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +20,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Look up a single Snipe-IT license by numeric ID or name and return its full details including seat counts')]
 class ShowLicenseTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -52,37 +52,38 @@ class ShowLicenseTool extends Tool
 
         $assignedCount = $license->assignedCount()->count();
 
-        return Response::make(
-            Response::text(trans('mcp.license_found', ['name' => $license->name]))
-        )->withStructuredContent([
-            'id' => $license->id,
-            'name' => $license->name,
-            'serial' => $license->serial,
-            'seats' => $license->seats,
-            'free_seats' => $license->free_seats_count,
-            'assigned_seats' => $assignedCount,
-            'category' => $license->category?->name,
-            'category_id' => $license->category_id,
-            'manufacturer' => $license->manufacturer?->name,
-            'manufacturer_id' => $license->manufacturer_id,
-            'company' => $license->company?->name,
-            'company_id' => $license->company_id,
-            'supplier' => $license->supplier?->name,
-            'supplier_id' => $license->supplier_id,
-            'license_name' => $license->license_name,
-            'license_email' => $license->license_email,
-            'maintained' => (bool) $license->maintained,
-            'reassignable' => (bool) $license->reassignable,
-            'purchase_date' => $license->purchase_date?->format('Y-m-d'),
-            'purchase_cost' => $license->purchase_cost,
-            'purchase_order' => $license->purchase_order,
-            'order_number' => $license->order_number,
-            'expiration_date' => $license->expiration_date?->format('Y-m-d'),
-            'termination_date' => $license->termination_date?->format('Y-m-d'),
-            'notes' => $license->notes,
-            'created_at' => $license->created_at?->format('Y-m-d H:i:s'),
-            'updated_at' => $license->updated_at?->format('Y-m-d H:i:s'),
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.license_found', ['name' => $license->name]),
+            [
+                'id' => $license->id,
+                'name' => $license->name,
+                'serial' => $license->serial,
+                'seats' => $license->seats,
+                'free_seats' => $license->free_seats_count,
+                'assigned_seats' => $assignedCount,
+                'category' => $license->category?->name,
+                'category_id' => $license->category_id,
+                'manufacturer' => $license->manufacturer?->name,
+                'manufacturer_id' => $license->manufacturer_id,
+                'company' => $license->company?->name,
+                'company_id' => $license->company_id,
+                'supplier' => $license->supplier?->name,
+                'supplier_id' => $license->supplier_id,
+                'license_name' => $license->license_name,
+                'license_email' => $license->license_email,
+                'maintained' => (bool) $license->maintained,
+                'reassignable' => (bool) $license->reassignable,
+                'purchase_date' => $license->purchase_date?->format('Y-m-d'),
+                'purchase_cost' => $license->purchase_cost,
+                'purchase_order' => $license->purchase_order,
+                'order_number' => $license->order_number,
+                'expiration_date' => $license->expiration_date?->format('Y-m-d'),
+                'termination_date' => $license->termination_date?->format('Y-m-d'),
+                'notes' => $license->notes,
+                'created_at' => $license->created_at?->format('Y-m-d H:i:s'),
+                'updated_at' => $license->updated_at?->format('Y-m-d H:i:s'),
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

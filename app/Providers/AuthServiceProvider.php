@@ -115,7 +115,7 @@ class AuthServiceProvider extends ServiceProvider
 
         // Register the MCP scopes so Passport recognizes them during
         // token issuance (OAuth consent and PATs). Tool-level
-        // enforcement lives in the HasMcpScope trait, which calls
+        // enforcement lives in the SnipeMcpTool trait, which calls
         // $user->tokenCan('mcp:read') (etc.) per request.
         Passport::tokensCan(\App\Enums\McpScope::forPassport());
 

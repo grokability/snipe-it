@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Supplier;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -22,7 +22,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT supplier')]
 class CreateSupplierTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -44,14 +44,15 @@ class CreateSupplierTool extends Tool
         $supplier->fill(array_merge($request->all(), $validated));
 
         if ($supplier->save()) {
-            return Response::make(
-                Response::text(trans('mcp.supplier_created', ['name' => $supplier->name]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.supplier_created', ['name' => $supplier->name]),
-                'id' => $supplier->id,
-                'name' => $supplier->name,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.supplier_created', ['name' => $supplier->name]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.supplier_created', ['name' => $supplier->name]),
+                    'id' => $supplier->id,
+                    'name' => $supplier->name,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.create_failed', ['error' => $supplier->getErrors()->first()])));

@@ -531,9 +531,9 @@ class Actionlog extends SnipeModel
      *
      * @since  [v3.0]
      *
-     * @return Relation
+     * @return MorphTo<Model, $this>
      */
-    public function item()
+    public function item(): MorphTo
     {
         return $this->morphTo('item')->withTrashed();
     }

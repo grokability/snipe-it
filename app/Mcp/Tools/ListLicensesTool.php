@@ -4,8 +4,8 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Http\Requests\LicenseIndexRequest;
-use App\Mcp\Traits\HasMcpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Category;
 use App\Models\Company;
 use App\Models\Depreciation;
@@ -28,8 +28,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Search and list Snipe-IT licenses with optional filtering by keyword, company, category, and manufacturer')]
 class ListLicensesTool extends Tool
 {
-    use HasMcpScope;
     use ResolvesForeignKeyByName;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -164,14 +164,15 @@ class ListLicensesTool extends Tool
             'notes' => $license->notes,
         ])->values()->all();
 
-        return Response::make(
-            Response::text(trans('mcp.list_licenses', ['total' => $total, 'count' => count($licensesData)]))
-        )->withStructuredContent([
-            'total' => $total,
-            'offset' => $offset,
-            'limit' => $limit,
-            'licenses' => $licensesData,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.list_licenses', ['total' => $total, 'count' => count($licensesData)]),
+            [
+                'total' => $total,
+                'offset' => $offset,
+                'limit' => $limit,
+                'licenses' => $licensesData,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

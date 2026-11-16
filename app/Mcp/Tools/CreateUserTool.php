@@ -3,8 +3,8 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Company;
 use App\Models\Department;
 use App\Models\Group;
@@ -27,8 +27,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT user account')]
 class CreateUserTool extends Tool
 {
-    use HasMcpScope;
     use ResolvesForeignKeyByName;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -114,18 +114,19 @@ class CreateUserTool extends Tool
                 return Response::make(Response::error(trans('mcp.superadmin_required_for_groups')));
             }
 
-            return Response::make(
-                Response::text(trans('mcp.user_created', ['username' => $user->username]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.user_created', ['username' => $user->username]),
-                'id' => $user->id,
-                'username' => $user->username,
-                'email' => $user->email,
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'group_ids' => $groupIds,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.user_created', ['username' => $user->username]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.user_created', ['username' => $user->username]),
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                    'group_ids' => $groupIds,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.create_failed', ['error' => $user->getErrors()->first()])));

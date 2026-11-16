@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Category;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +20,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Look up a single Snipe-IT category by numeric ID or name and return its full details')]
 class ShowCategoryTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -55,21 +55,22 @@ class ShowCategoryTool extends Tool
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.category')])));
         }
 
-        return Response::make(
-            Response::text(trans('mcp.category_found', ['name' => $category->name]))
-        )->withStructuredContent([
-            'id' => $category->id,
-            'name' => $category->name,
-            'category_type' => $category->category_type,
-            'assets_count' => $category->assets_count,
-            'accessories_count' => $category->accessories_count,
-            'consumables_count' => $category->consumables_count,
-            'components_count' => $category->components_count,
-            'licenses_count' => $category->licenses_count,
-            'notes' => $category->notes,
-            'created_at' => $category->created_at?->format('Y-m-d H:i:s'),
-            'updated_at' => $category->updated_at?->format('Y-m-d H:i:s'),
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.category_found', ['name' => $category->name]),
+            [
+                'id' => $category->id,
+                'name' => $category->name,
+                'category_type' => $category->category_type,
+                'assets_count' => $category->assets_count,
+                'accessories_count' => $category->accessories_count,
+                'consumables_count' => $category->consumables_count,
+                'components_count' => $category->components_count,
+                'licenses_count' => $category->licenses_count,
+                'notes' => $category->notes,
+                'created_at' => $category->created_at?->format('Y-m-d H:i:s'),
+                'updated_at' => $category->updated_at?->format('Y-m-d H:i:s'),
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

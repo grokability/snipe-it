@@ -4,7 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Http\Requests\AssetCheckoutRequest;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use App\Models\Location;
 use App\Models\User;
@@ -24,7 +24,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check out a Snipe-IT asset to a user, location, or another asset')]
 class CheckoutAssetTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function __construct(private readonly AssetCheckoutService $checkoutService) {}
 
@@ -98,15 +98,16 @@ class CheckoutAssetTool extends Tool
         }
 
         if ($ok) {
-            return Response::make(
-                Response::text(trans('mcp.asset_checked_out', ['asset_tag' => $asset->asset_tag]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.asset_checked_out', ['asset_tag' => $asset->asset_tag]),
-                'asset_tag' => $asset->asset_tag,
-                'checked_out_to_type' => $checkoutType,
-                'checked_out_to_id' => $target->id,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.asset_checked_out', ['asset_tag' => $asset->asset_tag]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.asset_checked_out', ['asset_tag' => $asset->asset_tag]),
+                    'asset_tag' => $asset->asset_tag,
+                    'checked_out_to_type' => $checkoutType,
+                    'checked_out_to_id' => $target->id,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.checkout_failed')));

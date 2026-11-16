@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Group;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +20,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Delete a Snipe-IT permission group by ID or name. The group must have no users assigned.')]
 class DeleteGroupTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -56,13 +56,14 @@ class DeleteGroupTool extends Tool
         $groupName = $group->name;
 
         if ($group->delete()) {
-            return Response::make(
-                Response::text(trans('mcp.group_deleted', ['name' => $groupName]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.group_deleted', ['name' => $groupName]),
-                'name' => $groupName,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.group_deleted', ['name' => $groupName]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.group_deleted', ['name' => $groupName]),
+                    'name' => $groupName,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.delete_failed')));

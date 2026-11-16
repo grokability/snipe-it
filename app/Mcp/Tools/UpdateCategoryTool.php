@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Category;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -22,7 +22,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT category identified by numeric ID or name')]
 class UpdateCategoryTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -60,15 +60,16 @@ class UpdateCategoryTool extends Tool
         $category->fill(array_merge($input, $validated));
 
         if ($category->save()) {
-            return Response::make(
-                Response::text(trans('mcp.category_updated', ['name' => $category->name]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.category_updated', ['name' => $category->name]),
-                'id' => $category->id,
-                'name' => $category->name,
-                'category_type' => $category->category_type,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.category_updated', ['name' => $category->name]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.category_updated', ['name' => $category->name]),
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'category_type' => $category->category_type,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.update_failed', ['error' => $category->getErrors()->first()])));

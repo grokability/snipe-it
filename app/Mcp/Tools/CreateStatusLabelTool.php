@@ -4,7 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Enums\StatusLabelType;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Statuslabel;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -24,7 +24,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT status label')]
 class CreateStatusLabelTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -66,15 +66,16 @@ class CreateStatusLabelTool extends Tool
         $statuslabel->show_in_nav = $request->get('show_in_nav', 0);
 
         if ($statuslabel->save()) {
-            return Response::make(
-                Response::text(trans('mcp.status_label_created', ['name' => $statuslabel->name]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.status_label_created', ['name' => $statuslabel->name]),
-                'id' => $statuslabel->id,
-                'name' => $statuslabel->name,
-                'type' => $statuslabel->getStatuslabelType(),
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.status_label_created', ['name' => $statuslabel->name]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.status_label_created', ['name' => $statuslabel->name]),
+                    'id' => $statuslabel->id,
+                    'name' => $statuslabel->name,
+                    'type' => $statuslabel->getStatuslabelType(),
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.create_failed', ['error' => $statuslabel->getErrors()->first()])));

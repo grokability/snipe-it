@@ -122,7 +122,7 @@ Every request to `/mcp/snipe-it` passes through this chain, in order:
 | `mcp.scope.handshake` | HTTP 401 + `WWW-Authenticate: Bearer error="insufficient_scope", scope="..."` | Rejects tokens that carry zero `mcp:*` scopes. The WWW-Authenticate header advertises all available MCP scopes so OAuth-compliant clients can re-initiate authorization. This is the gate pre-scope tokens (issued before this release) hit. |
 | `api-throttle:api` | HTTP 429 | Rate limiting plus JSON response-header setup. |
 
-Per-tool scope checks (via `HasMcpScope`) run **inside** the MCP tool handler, so their errors come back as JSON-RPC-level tool errors inside an HTTP 200 response. Session-level failures (the four middleware above) short-circuit at the HTTP layer with the appropriate status + headers, which is what compliant OAuth clients need to trigger a reauthorization flow.
+Per-tool scope checks (via `SnipeMcpTool`) run **inside** the MCP tool handler, so their errors come back as JSON-RPC-level tool errors inside an HTTP 200 response. Session-level failures (the four middleware above) short-circuit at the HTTP layer with the appropriate status + headers, which is what compliant OAuth clients need to trigger a reauthorization flow.
 
 ---
 
@@ -453,6 +453,23 @@ attention.
 
 ---
 
+### `maintenance_summary`
+
+**Summarize maintenance activity (counts, costs, open vs completed, breakdown by type) for a user, location, asset model, manufacturer, or supplier.**
+
+For a single asset, call `show_asset` directly - its response already includes `maintenance_count`, `open_maintenance_count`, and `maintenance_cost_total`. This prompt covers the indirect cases where the entity is joined to maintenances through assets.
+
+| Argument      | Required | Description                                                                                                                                 |
+|---------------|----------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| `entity_type` | Yes      | One of `user`, `location`, `asset_model`, `manufacturer`, `supplier`                                                                        |
+| `identifier`  | Yes      | Numeric id, username, name, or other lookup token                                                                                           |
+| `scope`       | No       | `current` (default - whoever/whatever is tied to the entity right now) or `historical` (walk action_logs for everyone/thing ever tied to it) |
+
+**Example usage in Claude:**
+> Use the `maintenance_summary` prompt → entity_type: "location", identifier: "Denver Office"
+
+---
+
 ## Tools Reference
 
 Tools are individual actions the AI can call directly. They can also be combined freely in conversation without using a prompt, just describe what you want in plain language.
@@ -518,6 +535,8 @@ Look up a single asset by asset tag, serial number, or numeric ID.
 | `id` | number | No | Numeric ID |
 
 Response includes a `custom_fields` object that mirrors the HTTP API shape. Keys are field names (e.g. `CPU`, `RAM GB`, `GPU`) from the asset model's fieldset. Each value is `{field, value, field_format, element}`. Encrypted fields respect the `assets.view.encrypted_custom_fields` permission. This is how "what CPU is in server AST-001" questions get answered without extra tool calls.
+
+The response also includes three maintenance aggregates computed on the fly: `maintenance_count` (total records), `open_maintenance_count` (records with no `completed_at`), and `maintenance_cost_total` (sum of `cost` across all records). These avoid a follow-up `list_maintenances` call for the common "give me the asset and its maintenance history at a glance" shape. For aggregates against a user, location, asset model, manufacturer, or supplier, use the `maintenance_summary` prompt.
 
 #### `list_assets`
 
@@ -1495,6 +1514,50 @@ Before calling this tool, use `list_maintenance_types` to find the right `mainte
 
 Response includes `id`, `name`, `item_type`, `item_id`, and `asset_tag`.
 
+#### `update_maintenance`
+
+Update an existing maintenance record by numeric ID. Only fields you supply get changed. To close out an open maintenance, use `complete_maintenance` instead - `update_maintenance` deliberately does not accept `completed_at` / `completed_by`.
+
+| Parameter                  | Type    | Required | Description                                                                                                                      |
+|----------------------------|---------|----------|----------------------------------------------------------------------------------------------------------------------------------|
+| `id`                       | number  | **Yes**  | Numeric ID of the maintenance record to update                                                                                   |
+| `title`                    | string  | No       | New name/title                                                                                                                   |
+| `maintenance_type_id`      | number  | No       | New maintenance type ID. Alternative: `maintenance_type_name`.                                                                   |
+| `maintenance_type_name`    | string  | No       | New maintenance type name. Resolved to an ID server-side.                                                                        |
+| `supplier_id`              | number  | No       | New supplier ID. Alternative: `supplier_name`.                                                                                   |
+| `supplier_name`            | string  | No       | New supplier name. Resolved to an ID server-side.                                                                                |
+| `is_warranty`              | boolean | No       | Whether this is covered by warranty                                                                                              |
+| `cost`                     | number  | No       | Cost in the install's currency                                                                                                   |
+| `start_date`               | string  | No       | Work start date (YYYY-MM-DD)                                                                                                     |
+| `expected_completion_date` | string  | No       | Planned completion date (YYYY-MM-DD). This is the PLANNED date. Use `complete_maintenance` to record an actual close-out.        |
+| `notes`                    | string  | No       | Free-form notes                                                                                                                  |
+| `url`                      | string  | No       | Optional reference URL                                                                                                           |
+| `responsible_party_id`     | number  | No       | Technician user ID responsible for the work                                                                                      |
+
+Response includes `id`, `name`, `item_type`, `item_id`, `asset_tag`, and `completed_at`.
+
+#### `complete_maintenance`
+
+Mark an open maintenance as completed. Sets `completed_at` (defaults to now) and `completed_by` to the acting user. Refuses to re-close a maintenance that already has `completed_at` set.
+
+| Parameter      | Type   | Required | Description                                                                                 |
+|----------------|--------|----------|---------------------------------------------------------------------------------------------|
+| `id`           | number | **Yes**  | Numeric ID of the maintenance record                                                        |
+| `completed_at` | string | No       | Completion timestamp (YYYY-MM-DD or YYYY-MM-DD HH:MM:SS). Defaults to now.                  |
+| `notes`        | string | No       | Optional closing notes                                                                      |
+
+Response includes `id`, `name`, `completed_at`, `completed_by_id`, and `asset_tag`.
+
+#### `delete_maintenance`
+
+Soft-delete a maintenance record. Requires `assets.edit` on the parent asset.
+
+| Parameter | Type   | Required | Description                               |
+|-----------|--------|----------|-------------------------------------------|
+| `id`      | number | **Yes**  | Numeric ID of the maintenance record      |
+
+Response includes `id` and `name`.
+
 #### `list_maintenance_types`
 
 List the maintenance type taxonomy. Call this before `create_maintenance` to discover the right `maintenance_type_id`
@@ -1521,6 +1584,30 @@ will reject duplicates with an error if you try to create one anyway.
 
 Response includes `id`, `name`, and `tag_color`. The `id` is what you pass as `maintenance_type_id` on the next
 `create_maintenance` call.
+
+#### `update_maintenance_type`
+
+Rename or re-color an existing maintenance type. Identify by `id` or current `name`.
+
+| Parameter   | Type   | Required | Description                                                              |
+|-------------|--------|----------|--------------------------------------------------------------------------|
+| `id`        | number | No       | Numeric ID of the maintenance type                                       |
+| `name`      | string | No       | Current name (alternative to `id` for lookup)                            |
+| `new_name`  | string | No       | New name                                                                 |
+| `tag_color` | string | No       | New hex color (e.g. `#ff9900`). Pass an empty string to clear.           |
+
+Response includes `id`, `name`, and `tag_color`.
+
+#### `delete_maintenance_type`
+
+Soft-delete a maintenance type. Refuses to delete if any maintenances still reference the type - reassign or delete those maintenances first. Identify by `id` or `name`.
+
+| Parameter | Type   | Required | Description                                 |
+|-----------|--------|----------|---------------------------------------------|
+| `id`      | number | No       | Numeric ID of the maintenance type          |
+| `name`    | string | No       | Name of the maintenance type (alt. to `id`) |
+
+Response includes `name`.
 
 ---
 

@@ -70,7 +70,7 @@ class McpScopeHandshakeMiddlewareTest extends TestCase
         // A token with only Session passes the handshake so the
         // client can call tools/list and discover what capability
         // scopes it needs to elevate to. Per-tool enforcement in
-        // HasMcpScope still blocks capability calls on a session-
+        // SnipeMcpTool still blocks capability calls on a session-
         // only token.
         Passport::actingAs(User::factory()->create(), [McpScope::Session->value]);
 

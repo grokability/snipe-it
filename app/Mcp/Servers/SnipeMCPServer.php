@@ -13,6 +13,7 @@ use App\Mcp\Prompts\FindAvailableAssetPrompt;
 use App\Mcp\Prompts\InventorySummaryPrompt;
 use App\Mcp\Prompts\LocationShutdownPrompt;
 use App\Mcp\Prompts\LowStockAlertPrompt;
+use App\Mcp\Prompts\MaintenanceSummaryPrompt;
 use App\Mcp\Prompts\OffboardEmployeePrompt;
 use App\Mcp\Prompts\OnboardEmployeePrompt;
 use App\Mcp\Prompts\ReportLostStolenPrompt;
@@ -31,6 +32,7 @@ use App\Mcp\Tools\CheckoutAssetTool;
 use App\Mcp\Tools\CheckoutComponentTool;
 use App\Mcp\Tools\CheckoutConsumableTool;
 use App\Mcp\Tools\CheckoutLicenseTool;
+use App\Mcp\Tools\CompleteMaintenanceTool;
 use App\Mcp\Tools\CreateAccessoryTool;
 use App\Mcp\Tools\CreateAssetModelTool;
 use App\Mcp\Tools\CreateAssetTool;
@@ -61,6 +63,8 @@ use App\Mcp\Tools\DeleteDepreciationTool;
 use App\Mcp\Tools\DeleteGroupTool;
 use App\Mcp\Tools\DeleteLicenseTool;
 use App\Mcp\Tools\DeleteLocationTool;
+use App\Mcp\Tools\DeleteMaintenanceTool;
+use App\Mcp\Tools\DeleteMaintenanceTypeTool;
 use App\Mcp\Tools\DeleteManufacturerTool;
 use App\Mcp\Tools\DeleteStatusLabelTool;
 use App\Mcp\Tools\DeleteSupplierTool;
@@ -120,6 +124,8 @@ use App\Mcp\Tools\UpdateDepreciationTool;
 use App\Mcp\Tools\UpdateGroupTool;
 use App\Mcp\Tools\UpdateLicenseTool;
 use App\Mcp\Tools\UpdateLocationTool;
+use App\Mcp\Tools\UpdateMaintenanceTool;
+use App\Mcp\Tools\UpdateMaintenanceTypeTool;
 use App\Mcp\Tools\UpdateManufacturerTool;
 use App\Mcp\Tools\UpdateProfileTool;
 use App\Mcp\Tools\UpdateStatusLabelTool;
@@ -275,8 +281,13 @@ class SnipeMCPServer extends Server
         // Maintenance
         ListMaintenancesTool::class,
         CreateMaintenanceTool::class,
+        UpdateMaintenanceTool::class,
+        CompleteMaintenanceTool::class,
+        DeleteMaintenanceTool::class,
         ListMaintenanceTypesTool::class,
         CreateMaintenanceTypeTool::class,
+        UpdateMaintenanceTypeTool::class,
+        DeleteMaintenanceTypeTool::class,
 
         // Activity Log
         GetActivityLogTool::class,
@@ -305,5 +316,6 @@ class SnipeMCPServer extends Server
         VendorSummaryPrompt::class,
         DataQualityAuditPrompt::class,
         UserInventoryPrompt::class,
+        MaintenanceSummaryPrompt::class,
     ];
 }

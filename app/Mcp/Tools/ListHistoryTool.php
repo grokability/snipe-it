@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Accessory;
 use App\Models\Actionlog;
 use App\Models\Asset;
@@ -29,7 +29,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('List the activity history for a Snipe-IT object. Supported types: accessory, asset, asset_model, component, consumable, license, location, maintenance, user')]
 class ListHistoryTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     private const TYPE_MAP = [
         'accessory' => Accessory::class,
@@ -119,20 +119,21 @@ class ListHistoryTool extends Tool
             ] : null,
         ])->values()->all();
 
-        return Response::make(
-            Response::text(trans('mcp.list_history', [
+        return $this->structuredResponse(
+            trans('mcp.list_history', [
                 'total' => $total,
                 'count' => count($entries),
                 'type' => $objectType,
-            ]))
-        )->withStructuredContent([
-            'object_type' => $objectType,
-            'object_id' => $object->id,
-            'total' => $total,
-            'offset' => $offset,
-            'limit' => $limit,
-            'history' => $entries,
-        ]);
+            ]),
+            [
+                'object_type' => $objectType,
+                'object_id' => $object->id,
+                'total' => $total,
+                'offset' => $offset,
+                'limit' => $limit,
+                'history' => $entries,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

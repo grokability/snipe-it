@@ -3,8 +3,8 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Category;
 use App\Models\Company;
 use App\Models\Component;
@@ -28,8 +28,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT component')]
 class CreateComponentTool extends Tool
 {
-    use HasMcpScope;
     use ResolvesForeignKeyByName;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -93,16 +93,17 @@ class CreateComponentTool extends Tool
         $component->created_by = auth()->id();
 
         if ($component->save()) {
-            return Response::make(
-                Response::text(trans('mcp.component_created', ['name' => $component->name]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.component_created', ['name' => $component->name]),
-                'id' => $component->id,
-                'name' => $component->name,
-                'qty' => $component->qty,
-                'category_id' => $component->category_id,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.component_created', ['name' => $component->name]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.component_created', ['name' => $component->name]),
+                    'id' => $component->id,
+                    'name' => $component->name,
+                    'qty' => $component->qty,
+                    'category_id' => $component->category_id,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.create_failed', ['error' => $component->getErrors()->first()])));

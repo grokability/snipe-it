@@ -4,8 +4,8 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Events\CheckoutableCheckedIn;
-use App\Mcp\Traits\HasMcpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Category;
@@ -48,8 +48,8 @@ use Throwable;
 #[Description('Soft-delete one asset by identifier, several by identifier array, or many by filter. Filter and array shapes default to dry_run=true for preview-first safety. If an asset is checked out it will be checked in first.')]
 class DeleteAssetTool extends Tool
 {
-    use HasMcpScope;
     use ResolvesForeignKeyByName;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -211,13 +211,14 @@ class DeleteAssetTool extends Tool
         $this->checkInIfAssigned($asset, $request->get('reason'));
         $asset->delete();
 
-        return Response::make(
-            Response::text(trans('mcp.asset_deleted', ['asset_tag' => $assetTag]))
-        )->withStructuredContent([
-            'success' => true,
-            'message' => trans('mcp.asset_deleted', ['asset_tag' => $assetTag]),
-            'asset_tag' => $assetTag,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.asset_deleted', ['asset_tag' => $assetTag]),
+            [
+                'success' => true,
+                'message' => trans('mcp.asset_deleted', ['asset_tag' => $assetTag]),
+                'asset_tag' => $assetTag,
+            ]
+        );
     }
 
     private function resolveSingle(Request $request): ?Asset
@@ -320,18 +321,19 @@ class DeleteAssetTool extends Tool
             'deletable' => $deletable->count(),
         ]);
 
-        return Response::make(
-            Response::text($message)
-        )->withStructuredContent([
-            'success' => true,
-            'message' => $message,
-            'dry_run' => true,
-            'total_matched' => $targets->count(),
-            'will_delete' => $deletable->count(),
-            'undeletable_count' => $undeletable->count(),
-            'sample_rows' => $sampleRows,
-            'undeletable_matches' => $undeletableMatches,
-        ]);
+        return $this->structuredResponse(
+            $message,
+            [
+                'success' => true,
+                'message' => $message,
+                'dry_run' => true,
+                'total_matched' => $targets->count(),
+                'will_delete' => $deletable->count(),
+                'undeletable_count' => $undeletable->count(),
+                'sample_rows' => $sampleRows,
+                'undeletable_matches' => $undeletableMatches,
+            ]
+        );
     }
 
     private function commitBulkDelete(Collection $deletable, ?string $reason): ResponseFactory
@@ -367,17 +369,18 @@ class DeleteAssetTool extends Tool
 
         $message = trans('mcp.bulk_delete_completed', ['count' => $deletedCount]);
 
-        return Response::make(
-            Response::text($message)
-        )->withStructuredContent([
-            'success' => true,
-            'message' => $message,
-            'dry_run' => false,
-            'deleted_count' => $deletedCount,
-            'failed_count' => count($failures),
-            'failures' => $failures,
-            'reason' => $reason,
-        ]);
+        return $this->structuredResponse(
+            $message,
+            [
+                'success' => true,
+                'message' => $message,
+                'dry_run' => false,
+                'deleted_count' => $deletedCount,
+                'failed_count' => count($failures),
+                'failures' => $failures,
+                'reason' => $reason,
+            ]
+        );
     }
 
     private function checkInIfAssigned(Asset $asset, ?string $reason): void

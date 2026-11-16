@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Manufacturer;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +20,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Search and list Snipe-IT manufacturers with optional filtering and pagination')]
 class ListManufacturersTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -70,14 +70,15 @@ class ListManufacturersTool extends Tool
             'components_count' => $manufacturer->components_count,
         ])->values()->all();
 
-        return Response::make(
-            Response::text(trans('mcp.list_manufacturers', ['total' => $total, 'count' => count($manufacturersData)]))
-        )->withStructuredContent([
-            'total' => $total,
-            'offset' => $offset,
-            'limit' => $limit,
-            'manufacturers' => $manufacturersData,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.list_manufacturers', ['total' => $total, 'count' => count($manufacturersData)]),
+            [
+                'total' => $total,
+                'offset' => $offset,
+                'limit' => $limit,
+                'manufacturers' => $manufacturersData,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array
