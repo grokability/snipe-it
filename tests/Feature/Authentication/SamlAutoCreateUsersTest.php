@@ -20,9 +20,24 @@ class SamlAutoCreateUsersTest extends TestCase
         ];
     }
 
+    public function test_auto_create_setting_can_be_saved()
+    {
+        $this->settings->set(['saml_auto_create_users' => 0]);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('settings.saml.save'), [
+                'saml_auto_create_users' => '1',
+                'saml_sp_x509cert' => '',
+            ])
+            ->assertRedirect(route('settings.saml.index'))
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('settings', ['saml_auto_create_users' => 1]);
+    }
+
     public function test_unknown_user_is_rejected_when_auto_create_is_disabled()
     {
-        config(['app.saml_auto_create_users' => false]);
+        $this->settings->set(['saml_auto_create_users' => 0]);
 
         $this->assertNull(app(Saml::class)->samlLogin($this->samlData('ada@example.com')));
         $this->assertDatabaseMissing('users', ['username' => 'ada@example.com']);
@@ -30,7 +45,7 @@ class SamlAutoCreateUsersTest extends TestCase
 
     public function test_unknown_user_is_created_from_claims_when_auto_create_is_enabled()
     {
-        config(['app.saml_auto_create_users' => true]);
+        $this->settings->set(['saml_auto_create_users' => 1]);
 
         $user = app(Saml::class)->samlLogin($this->samlData('ada@example.com'));
 
@@ -47,7 +62,7 @@ class SamlAutoCreateUsersTest extends TestCase
 
     public function test_first_name_falls_back_to_username_when_claim_is_missing()
     {
-        config(['app.saml_auto_create_users' => true]);
+        $this->settings->set(['saml_auto_create_users' => 1]);
 
         $user = app(Saml::class)->samlLogin($this->samlData('ada@example.com', ['unrelated' => ['x']]));
 
@@ -57,7 +72,7 @@ class SamlAutoCreateUsersTest extends TestCase
 
     public function test_existing_user_is_returned_without_creating_another()
     {
-        config(['app.saml_auto_create_users' => true]);
+        $this->settings->set(['saml_auto_create_users' => 1]);
         $existing = User::factory()->create(['username' => 'ada@example.com']);
 
         $user = app(Saml::class)->samlLogin($this->samlData('ada@example.com'));
@@ -68,7 +83,7 @@ class SamlAutoCreateUsersTest extends TestCase
 
     public function test_deactivated_user_is_not_recreated()
     {
-        config(['app.saml_auto_create_users' => true]);
+        $this->settings->set(['saml_auto_create_users' => 1]);
         User::factory()->create(['username' => 'ada@example.com', 'activated' => 0]);
 
         $this->assertNull(app(Saml::class)->samlLogin($this->samlData('ada@example.com')));
@@ -77,7 +92,7 @@ class SamlAutoCreateUsersTest extends TestCase
 
     public function test_deleted_user_is_not_recreated()
     {
-        config(['app.saml_auto_create_users' => true]);
+        $this->settings->set(['saml_auto_create_users' => 1]);
         User::factory()->create(['username' => 'ada@example.com'])->delete();
 
         $this->assertNull(app(Saml::class)->samlLogin($this->samlData('ada@example.com')));

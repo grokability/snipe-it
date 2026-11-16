@@ -327,6 +327,8 @@ return [
     'saml_slo_label' => 'SAML Single Log Out',
     'saml_slo' => 'Send a LogoutRequest to IdP on Logout',
     'saml_slo_help' => 'This will cause the user to be first redirected to the IdP on logout. Leave unchecked if the IdP doesn\'t correctly support SP-initiated SAML SLO.',
+    'saml_auto_create_users' => 'Create users on first SAML login',
+    'saml_auto_create_users_help' => 'When a SAML login matches no user, create an activated user with no permissions from the SAML claims. Only enable this if your IdP restricts who can obtain an assertion for Snipe-IT. Usernames belonging to deactivated or deleted users are never re-created.',
     'saml_custom_settings' => 'SAML Custom Settings',
     'saml_custom_settings_help' => 'You can specify additional settings to the onelogin/php-saml library. Use at your own risk.',
     'saml_download' => 'Download Metadata',

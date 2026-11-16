@@ -325,7 +325,7 @@ class Saml
 
         $user = User::verifyExactUsernameMatch($user, (string) $username);
 
-        if (is_null($user) && config('app.saml_auto_create_users')) {
+        if (is_null($user) && Setting::getSettings()->saml_auto_create_users) {
             $user = $this->createUserFromSamlData((string) $username);
         }
 

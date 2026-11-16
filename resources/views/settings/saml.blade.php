@@ -154,6 +154,15 @@
                     :disabled="config('app.lock_passwords') === true"
                 />
 
+                {{-- SAML Auto-Create Users --}}
+                <x-form.checkbox-row
+                    name="saml_auto_create_users"
+                    :label="trans('admin/settings/general.saml_auto_create_users')"
+                    :help_text="trans('admin/settings/general.saml_auto_create_users_help')"
+                    :item="$setting"
+                    :disabled="config('app.lock_passwords') === true"
+                />
+
                 {{-- SAML Custom Options (raw settings passed to the SAML lib) --}}
                 <x-form.row
                     :label="trans('admin/settings/general.saml_custom_settings')"
