@@ -8,7 +8,6 @@ use App\Models\Asset;
 use App\Models\Location;
 use App\Models\Setting;
 use App\Models\User;
-use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -34,7 +33,7 @@ class CheckoutablesCheckedOutInBulkListener
                 ));
 
                 Log::info('BulkAssetCheckoutMail sent to checkout target');
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 Log::debug('Exception caught during BulkAssetCheckoutMail to target: '.$e->getMessage());
             }
         }
@@ -58,7 +57,7 @@ class CheckoutablesCheckedOutInBulkListener
                 ));
 
                 Log::info('BulkAssetCheckoutMail sent to admin_cc_email');
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 Log::debug('Exception caught during BulkAssetCheckoutMail to admin_cc_email: '.$e->getMessage());
             }
         }
