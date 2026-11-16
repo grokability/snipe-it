@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Consumable;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +20,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Look up a single Snipe-IT consumable by numeric ID or name and return its full details')]
 class ShowConsumableTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -49,33 +49,34 @@ class ShowConsumableTool extends Tool
 
         $usersCount = $consumable->users()->count();
 
-        return Response::make(
-            Response::text(trans('mcp.consumable_found', ['name' => $consumable->name]))
-        )->withStructuredContent([
-            'id' => $consumable->id,
-            'name' => $consumable->name,
-            'qty' => $consumable->qty,
-            'users_count' => $usersCount,
-            'min_amt' => $consumable->min_amt,
-            'category_id' => $consumable->category_id,
-            'category' => $consumable->category?->name,
-            'manufacturer_id' => $consumable->manufacturer_id,
-            'manufacturer' => $consumable->manufacturer?->name,
-            'company_id' => $consumable->company_id,
-            'company' => $consumable->company?->name,
-            'location_id' => $consumable->location_id,
-            'location' => $consumable->location?->name,
-            // Per-acquisition purchase data (date, cost, order number)
-            // moved to the Orders table. default_purchase_cost is the
-            // template value on the parent consumable itself.
-            'default_purchase_cost' => $consumable->default_purchase_cost,
-            'model_number' => $consumable->model_number,
-            'archived' => (bool) $consumable->archived,
-            'requestable' => (bool) $consumable->requestable,
-            'notes' => $consumable->notes,
-            'created_at' => $consumable->created_at?->format('Y-m-d H:i:s'),
-            'updated_at' => $consumable->updated_at?->format('Y-m-d H:i:s'),
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.consumable_found', ['name' => $consumable->name]),
+            [
+                'id' => $consumable->id,
+                'name' => $consumable->name,
+                'qty' => $consumable->qty,
+                'users_count' => $usersCount,
+                'min_amt' => $consumable->min_amt,
+                'category_id' => $consumable->category_id,
+                'category' => $consumable->category?->name,
+                'manufacturer_id' => $consumable->manufacturer_id,
+                'manufacturer' => $consumable->manufacturer?->name,
+                'company_id' => $consumable->company_id,
+                'company' => $consumable->company?->name,
+                'location_id' => $consumable->location_id,
+                'location' => $consumable->location?->name,
+                // Per-acquisition purchase data (date, cost, order number)
+                // moved to the Orders table. default_purchase_cost is the
+                // template value on the parent consumable itself.
+                'default_purchase_cost' => $consumable->default_purchase_cost,
+                'model_number' => $consumable->model_number,
+                'archived' => (bool) $consumable->archived,
+                'requestable' => (bool) $consumable->requestable,
+                'notes' => $consumable->notes,
+                'created_at' => $consumable->created_at?->format('Y-m-d H:i:s'),
+                'updated_at' => $consumable->updated_at?->format('Y-m-d H:i:s'),
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

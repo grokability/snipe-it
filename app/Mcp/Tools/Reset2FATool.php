@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +20,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Reset two-factor authentication for a Snipe-IT user')]
 class Reset2FATool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -47,14 +47,15 @@ class Reset2FATool extends Tool
         $user->two_factor_optin = 0;
         $user->save();
 
-        return Response::make(
-            Response::text(trans('mcp.two_factor_reset', ['username' => $user->username]))
-        )->withStructuredContent([
-            'success' => true,
-            'message' => trans('mcp.two_factor_reset', ['username' => $user->username]),
-            'id' => $user->id,
-            'username' => $user->username,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.two_factor_reset', ['username' => $user->username]),
+            [
+                'success' => true,
+                'message' => trans('mcp.two_factor_reset', ['username' => $user->username]),
+                'id' => $user->id,
+                'username' => $user->username,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

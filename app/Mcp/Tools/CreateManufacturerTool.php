@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Manufacturer;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -22,7 +22,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT manufacturer')]
 class CreateManufacturerTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -44,14 +44,15 @@ class CreateManufacturerTool extends Tool
         $manufacturer->fill(array_merge($request->all(), $validated));
 
         if ($manufacturer->save()) {
-            return Response::make(
-                Response::text(trans('mcp.manufacturer_created', ['name' => $manufacturer->name]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.manufacturer_created', ['name' => $manufacturer->name]),
-                'id' => $manufacturer->id,
-                'name' => $manufacturer->name,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.manufacturer_created', ['name' => $manufacturer->name]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.manufacturer_created', ['name' => $manufacturer->name]),
+                    'id' => $manufacturer->id,
+                    'name' => $manufacturer->name,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.create_failed', ['error' => $manufacturer->getErrors()->first()])));

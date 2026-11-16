@@ -3,8 +3,8 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Company;
 use App\Models\Department;
 use App\Models\Group;
@@ -27,8 +27,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT user identified by numeric ID, username, or email address')]
 class UpdateUserTool extends Tool
 {
-    use HasMcpScope;
     use ResolvesForeignKeyByName;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -134,9 +134,10 @@ class UpdateUserTool extends Tool
                 $content['group_ids'] = $groupIds;
             }
 
-            return Response::make(
-                Response::text(trans('mcp.user_updated', ['username' => $user->username]))
-            )->withStructuredContent($content);
+            return $this->structuredResponse(
+                trans('mcp.user_updated', ['username' => $user->username]),
+                $content
+            );
         }
 
         return Response::make(Response::error(trans('mcp.update_failed', ['error' => $user->getErrors()->first()])));

@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use App\Models\MaintenanceType;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -21,7 +21,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('List configured maintenance types (the taxonomy that create_maintenance requires via maintenance_type_id). Use this to look up the right id before creating a maintenance so you do not create duplicate type rows.')]
 class ListMaintenanceTypesTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -63,14 +63,15 @@ class ListMaintenanceTypesTool extends Tool
             'tag_color' => $type->tag_color,
         ])->values()->all();
 
-        return Response::make(
-            Response::text(trans('mcp.list_maintenance_types', ['total' => $total, 'count' => count($typesData)]))
-        )->withStructuredContent([
-            'total' => $total,
-            'offset' => $offset,
-            'limit' => $limit,
-            'maintenance_types' => $typesData,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.list_maintenance_types', ['total' => $total, 'count' => count($typesData)]),
+            [
+                'total' => $total,
+                'offset' => $offset,
+                'limit' => $limit,
+                'maintenance_types' => $typesData,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

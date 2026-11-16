@@ -3,8 +3,8 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\AssetModel;
 use App\Models\Category;
 use App\Models\Depreciation;
@@ -26,8 +26,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT asset model identified by numeric ID or name')]
 class UpdateAssetModelTool extends Tool
 {
-    use HasMcpScope;
     use ResolvesForeignKeyByName;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -82,14 +82,15 @@ class UpdateAssetModelTool extends Tool
         $model->fill(array_merge($input, $validated));
 
         if ($model->save()) {
-            return Response::make(
-                Response::text(trans('mcp.asset_model_updated', ['name' => $model->name]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.asset_model_updated', ['name' => $model->name]),
-                'id' => $model->id,
-                'name' => $model->name,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.asset_model_updated', ['name' => $model->name]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.asset_model_updated', ['name' => $model->name]),
+                    'id' => $model->id,
+                    'name' => $model->name,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.update_failed', ['error' => $model->getErrors()->first()])));

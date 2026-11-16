@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\AssetModel;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +20,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Look up a single Snipe-IT asset model by numeric ID or name and return its full details')]
 class ShowAssetModelTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -45,25 +45,26 @@ class ShowAssetModelTool extends Tool
 
         $model->loadCount('assets as assets_count');
 
-        return Response::make(
-            Response::text(trans('mcp.asset_model_found', ['name' => $model->name]))
-        )->withStructuredContent([
-            'id' => $model->id,
-            'name' => $model->name,
-            'model_number' => $model->model_number,
-            'category_id' => $model->category_id,
-            'category' => $model->category?->name,
-            'manufacturer_id' => $model->manufacturer_id,
-            'manufacturer' => $model->manufacturer?->name,
-            'depreciation_id' => $model->depreciation_id,
-            'depreciation' => $model->depreciation?->name,
-            'assets_count' => $model->assets_count,
-            'eol' => $model->eol,
-            'min_amt' => $model->min_amt,
-            'notes' => $model->notes,
-            'created_at' => $model->created_at?->format('Y-m-d H:i:s'),
-            'updated_at' => $model->updated_at?->format('Y-m-d H:i:s'),
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.asset_model_found', ['name' => $model->name]),
+            [
+                'id' => $model->id,
+                'name' => $model->name,
+                'model_number' => $model->model_number,
+                'category_id' => $model->category_id,
+                'category' => $model->category?->name,
+                'manufacturer_id' => $model->manufacturer_id,
+                'manufacturer' => $model->manufacturer?->name,
+                'depreciation_id' => $model->depreciation_id,
+                'depreciation' => $model->depreciation?->name,
+                'assets_count' => $model->assets_count,
+                'eol' => $model->eol,
+                'min_amt' => $model->min_amt,
+                'notes' => $model->notes,
+                'created_at' => $model->created_at?->format('Y-m-d H:i:s'),
+                'updated_at' => $model->updated_at?->format('Y-m-d H:i:s'),
+            ]
+        );
     }
 
     private function resolveModel(Request $request): AssetModel|false|null

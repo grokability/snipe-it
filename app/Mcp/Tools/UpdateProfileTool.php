@@ -3,8 +3,8 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Location;
 use App\Models\Setting;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -24,8 +24,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update the authenticated user\'s own profile information')]
 class UpdateProfileTool extends Tool
 {
-    use HasMcpScope;
     use ResolvesForeignKeyByName;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -98,18 +98,19 @@ class UpdateProfileTool extends Tool
         }
 
         if ($user->save()) {
-            return Response::make(
-                Response::text(trans('mcp.profile_updated'))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.profile_updated'),
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'phone' => $user->phone,
-                'website' => $user->website,
-                'locale' => $user->locale,
-                'location_id' => $user->location_id,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.profile_updated'),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.profile_updated'),
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                    'phone' => $user->phone,
+                    'website' => $user->website,
+                    'locale' => $user->locale,
+                    'location_id' => $user->location_id,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.update_failed', ['error' => $user->getErrors()->first()])));

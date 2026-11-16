@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\AccessoryCheckout;
 use App\Models\Asset;
 use App\Models\LicenseSeat;
@@ -39,7 +39,7 @@ use Throwable;
 #[Description('Atomically transfer every asset, accessory, and license seat from one user to another. Defaults to dry_run so no changes are made without explicit confirmation.')]
 class TransferAssetsTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -122,20 +122,21 @@ class TransferAssetsTool extends Tool
         ];
 
         if ($dryRun) {
-            return Response::make(
-                Response::text(trans('mcp.transfer_dry_run_summary', [
+            return $this->structuredResponse(
+                trans('mcp.transfer_dry_run_summary', [
                     'from' => $from->username,
                     'to' => $to->username,
                     'assets' => count($preview['assets_to_transfer']),
                     'accessories' => count($preview['accessory_checkouts_to_transfer']),
                     'seats' => count($preview['license_seats_to_transfer']),
-                ]))
-            )->withStructuredContent([
-                'success' => true,
-                'dry_run' => true,
-                'message' => trans('mcp.transfer_dry_run_message'),
-                'preview' => $preview,
-            ]);
+                ]),
+                [
+                    'success' => true,
+                    'dry_run' => true,
+                    'message' => trans('mcp.transfer_dry_run_message'),
+                    'preview' => $preview,
+                ]
+            );
         }
 
         $note = $request->get('note');
@@ -196,20 +197,21 @@ class TransferAssetsTool extends Tool
             ])));
         }
 
-        return Response::make(
-            Response::text(trans('mcp.transfer_completed_summary', [
+        return $this->structuredResponse(
+            trans('mcp.transfer_completed_summary', [
                 'from' => $from->username,
                 'to' => $to->username,
                 'assets' => count($preview['assets_to_transfer']),
                 'accessories' => count($preview['accessory_checkouts_to_transfer']),
                 'seats' => count($preview['license_seats_to_transfer']),
-            ]))
-        )->withStructuredContent([
-            'success' => true,
-            'dry_run' => false,
-            'message' => trans('mcp.transfer_completed_message', ['from' => $from->username, 'to' => $to->username]),
-            'executed' => $preview,
-        ]);
+            ]),
+            [
+                'success' => true,
+                'dry_run' => false,
+                'message' => trans('mcp.transfer_completed_message', ['from' => $from->username, 'to' => $to->username]),
+                'executed' => $preview,
+            ]
+        );
     }
 
     /**
@@ -250,20 +252,21 @@ class TransferAssetsTool extends Tool
      */
     private function ambiguousUserResponse(Collection $matches, string $side): ResponseFactory
     {
-        return Response::make(
-            Response::text(trans('mcp.transfer_ambiguous_user', ['side' => $side]))
-        )->withStructuredContent([
-            'success' => false,
-            'error' => 'ambiguous_user',
-            'side' => $side,
-            'message' => trans('mcp.transfer_ambiguous_user', ['side' => $side]),
-            'matches' => $matches->map(fn (User $u) => [
-                'id' => $u->id,
-                'username' => $u->username,
-                'full_name' => $u->full_name,
-                'email' => $u->email,
-            ])->all(),
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.transfer_ambiguous_user', ['side' => $side]),
+            [
+                'success' => false,
+                'error' => 'ambiguous_user',
+                'side' => $side,
+                'message' => trans('mcp.transfer_ambiguous_user', ['side' => $side]),
+                'matches' => $matches->map(fn (User $u) => [
+                    'id' => $u->id,
+                    'username' => $u->username,
+                    'full_name' => $u->full_name,
+                    'email' => $u->email,
+                ])->all(),
+            ]
+        );
     }
 
     /**

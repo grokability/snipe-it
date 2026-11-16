@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Maintenance;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -22,7 +22,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Mark a maintenance completed. Defaults completed_at to now, stamps completed_by.')]
 class CompleteMaintenanceTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -77,17 +77,18 @@ class CompleteMaintenanceTool extends Tool
         if ($maintenance->save()) {
             $maintenance->refresh();
 
-            return Response::make(
-                Response::text(trans('admin/maintenances/message.complete.success'))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('admin/maintenances/message.complete.success'),
-                'id' => $maintenance->id,
-                'name' => $maintenance->name,
-                'completed_at' => $maintenance->completed_at->toDateTimeString(),
-                'completed_by_id' => $maintenance->completed_by,
-                'asset_tag' => $maintenance->asset?->asset_tag,
-            ]);
+            return $this->structuredResponse(
+                trans('admin/maintenances/message.complete.success'),
+                [
+                    'success' => true,
+                    'message' => trans('admin/maintenances/message.complete.success'),
+                    'id' => $maintenance->id,
+                    'name' => $maintenance->name,
+                    'completed_at' => $maintenance->completed_at->toDateTimeString(),
+                    'completed_by_id' => $maintenance->completed_by,
+                    'asset_tag' => $maintenance->asset?->asset_tag,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.update_failed', ['error' => $maintenance->getErrors()->first()])));

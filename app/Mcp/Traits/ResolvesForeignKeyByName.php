@@ -47,14 +47,14 @@ trait ResolvesForeignKeyByName
             return (int) $request->get($idField);
         }
 
-        if (!$request->filled($nameField)) {
+        if (! $request->filled($nameField)) {
             return null;
         }
 
         $name = $request->get($nameField);
 
         $matches = $modelClass::query()
-            ->whereRaw('LOWER(' . $nameColumn . ') = ?', [mb_strtolower($name)])
+            ->whereRaw('LOWER('.$nameColumn.') = ?', [mb_strtolower($name)])
             ->limit(2)
             ->get(['id', $nameColumn]);
 
@@ -92,7 +92,7 @@ trait ResolvesForeignKeyByName
      */
     protected function fkErrorMessage(array $sentinel): string
     {
-        if (!empty($sentinel['_fk_ambiguous'])) {
+        if (! empty($sentinel['_fk_ambiguous'])) {
             return trans('mcp.fk_ambiguous', [
                 'field' => $sentinel['field'],
                 'value' => $sentinel['value'],

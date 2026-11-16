@@ -4,7 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Events\CheckoutableCheckedOut;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use App\Models\License;
 use App\Models\User;
@@ -23,7 +23,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check out an available license seat to a user or asset')]
 class CheckoutLicenseTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -76,17 +76,18 @@ class CheckoutLicenseTool extends Tool
             if ($seat->save()) {
                 event(new CheckoutableCheckedOut($seat, $target, auth()->user(), $note, [], 1));
 
-                return Response::make(
-                    Response::text(trans('mcp.license_seat_checked_out_user', ['username' => $target->username]))
-                )->withStructuredContent([
-                    'success' => true,
-                    'message' => trans('mcp.license_seat_checked_out_user', ['username' => $target->username]),
-                    'license_id' => $license->id,
-                    'license_name' => $license->name,
-                    'seat_id' => $seat->id,
-                    'assigned_to_type' => 'user',
-                    'assigned_to_id' => $target->id,
-                ]);
+                return $this->structuredResponse(
+                    trans('mcp.license_seat_checked_out_user', ['username' => $target->username]),
+                    [
+                        'success' => true,
+                        'message' => trans('mcp.license_seat_checked_out_user', ['username' => $target->username]),
+                        'license_id' => $license->id,
+                        'license_name' => $license->name,
+                        'seat_id' => $seat->id,
+                        'assigned_to_type' => 'user',
+                        'assigned_to_id' => $target->id,
+                    ]
+                );
             }
         } elseif ($request->filled('asset_id')) {
             $target = Asset::find($request->get('asset_id'));
@@ -102,17 +103,18 @@ class CheckoutLicenseTool extends Tool
             if ($seat->save()) {
                 event(new CheckoutableCheckedOut($seat, $target, auth()->user(), $note, [], 1));
 
-                return Response::make(
-                    Response::text(trans('mcp.license_seat_checked_out_asset', ['asset_tag' => $target->asset_tag]))
-                )->withStructuredContent([
-                    'success' => true,
-                    'message' => trans('mcp.license_seat_checked_out_asset', ['asset_tag' => $target->asset_tag]),
-                    'license_id' => $license->id,
-                    'license_name' => $license->name,
-                    'seat_id' => $seat->id,
-                    'assigned_to_type' => 'asset',
-                    'assigned_to_id' => $target->id,
-                ]);
+                return $this->structuredResponse(
+                    trans('mcp.license_seat_checked_out_asset', ['asset_tag' => $target->asset_tag]),
+                    [
+                        'success' => true,
+                        'message' => trans('mcp.license_seat_checked_out_asset', ['asset_tag' => $target->asset_tag]),
+                        'license_id' => $license->id,
+                        'license_name' => $license->name,
+                        'seat_id' => $seat->id,
+                        'assigned_to_type' => 'asset',
+                        'assigned_to_id' => $target->id,
+                    ]
+                );
             }
         }
 

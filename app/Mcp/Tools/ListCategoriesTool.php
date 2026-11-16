@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Category;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +20,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Search and list Snipe-IT categories with optional filtering by type and pagination')]
 class ListCategoriesTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -74,14 +74,15 @@ class ListCategoriesTool extends Tool
             'licenses_count' => $category->licenses_count,
         ])->values()->all();
 
-        return Response::make(
-            Response::text(trans('mcp.list_categories', ['total' => $total, 'count' => count($categoriesData)]))
-        )->withStructuredContent([
-            'total' => $total,
-            'offset' => $offset,
-            'limit' => $limit,
-            'categories' => $categoriesData,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.list_categories', ['total' => $total, 'count' => count($categoriesData)]),
+            [
+                'total' => $total,
+                'offset' => $offset,
+                'limit' => $limit,
+                'categories' => $categoriesData,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

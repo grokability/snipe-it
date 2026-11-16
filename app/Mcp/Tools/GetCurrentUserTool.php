@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
@@ -19,7 +19,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Return information about the currently authenticated Snipe-IT user')]
 class GetCurrentUserTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -37,22 +37,23 @@ class GetCurrentUserTool extends Tool
             return Response::make(Response::error(trans('mcp.not_authenticated')));
         }
 
-        return Response::make(
-            Response::text(trans('mcp.current_user', ['username' => $user->username]))
-        )->withStructuredContent([
-            'id' => $user->id,
-            'username' => $user->username,
-            'first_name' => $user->first_name,
-            'last_name' => $user->last_name,
-            'email' => $user->email,
-            'company' => $user->company?->name,
-            'department' => $user->department?->name,
-            'location' => $user->userloc?->name,
-            'employee_num' => $user->employee_num,
-            'title' => $user->jobtitle,
-            'phone' => $user->phone,
-            'activated' => (bool) $user->activated,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.current_user', ['username' => $user->username]),
+            [
+                'id' => $user->id,
+                'username' => $user->username,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'company' => $user->company?->name,
+                'department' => $user->department?->name,
+                'location' => $user->userloc?->name,
+                'employee_num' => $user->employee_num,
+                'title' => $user->jobtitle,
+                'phone' => $user->phone,
+                'activated' => (bool) $user->activated,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

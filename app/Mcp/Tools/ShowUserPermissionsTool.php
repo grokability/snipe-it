@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +20,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Return the effective permission set for a user, merging their individual grants/denials with inherited group permissions. Omit all identifiers to query the currently authenticated user.')]
 class ShowUserPermissionsTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -69,19 +69,20 @@ class ShowUserPermissionsTool extends Tool
             }
         }
 
-        return Response::make(
-            Response::text(trans('mcp.user_permissions_found', ['username' => $user->username, 'count' => count($allowedKeys)]))
-        )->withStructuredContent([
-            'id' => $user->id,
-            'username' => $user->username,
-            'is_superuser' => $user->isSuperUser(),
-            'groups' => $user->groups->map(fn ($group) => [
-                'id' => $group->id,
-                'name' => $group->name,
-            ])->values()->all(),
-            'allowed_permissions' => array_values(array_unique($allowedKeys)),
-            'permissions_by_section' => $effectiveBySection,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.user_permissions_found', ['username' => $user->username, 'count' => count($allowedKeys)]),
+            [
+                'id' => $user->id,
+                'username' => $user->username,
+                'is_superuser' => $user->isSuperUser(),
+                'groups' => $user->groups->map(fn ($group) => [
+                    'id' => $group->id,
+                    'name' => $group->name,
+                ])->values()->all(),
+                'allowed_permissions' => array_values(array_unique($allowedKeys)),
+                'permissions_by_section' => $effectiveBySection,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

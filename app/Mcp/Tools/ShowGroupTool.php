@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Group;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +20,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Look up a single Snipe-IT permission group by numeric ID or name')]
 class ShowGroupTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -51,15 +51,16 @@ class ShowGroupTool extends Tool
             return Response::make(Response::error(trans('mcp.group_not_found')));
         }
 
-        return Response::make(
-            Response::text(trans('mcp.group_found', ['name' => $group->name]))
-        )->withStructuredContent([
-            'id' => $group->id,
-            'name' => $group->name,
-            'notes' => $group->notes,
-            'permissions' => $group->decodePermissions(),
-            'users_count' => $group->users_count,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.group_found', ['name' => $group->name]),
+            [
+                'id' => $group->id,
+                'name' => $group->name,
+                'notes' => $group->notes,
+                'permissions' => $group->decodePermissions(),
+                'users_count' => $group->users_count,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

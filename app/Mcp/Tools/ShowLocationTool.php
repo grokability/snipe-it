@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Location;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +20,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Look up a single Snipe-IT location by numeric ID or name and return its full details')]
 class ShowLocationTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -45,27 +45,28 @@ class ShowLocationTool extends Tool
 
         $location->loadCount('assets as assets_count', 'users as users_count', 'children as children_count');
 
-        return Response::make(
-            Response::text(trans('mcp.location_found', ['name' => $location->name]))
-        )->withStructuredContent([
-            'id' => $location->id,
-            'name' => $location->name,
-            'address' => $location->address,
-            'address2' => $location->address2,
-            'city' => $location->city,
-            'state' => $location->state,
-            'country' => $location->country,
-            'zip' => $location->zip,
-            'phone' => $location->phone,
-            'fax' => $location->fax,
-            'parent_id' => $location->parent_id,
-            'parent' => $location->parent?->name,
-            'assets_count' => $location->assets_count,
-            'users_count' => $location->users_count,
-            'children_count' => $location->children_count,
-            'created_at' => $location->created_at?->format('Y-m-d H:i:s'),
-            'updated_at' => $location->updated_at?->format('Y-m-d H:i:s'),
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.location_found', ['name' => $location->name]),
+            [
+                'id' => $location->id,
+                'name' => $location->name,
+                'address' => $location->address,
+                'address2' => $location->address2,
+                'city' => $location->city,
+                'state' => $location->state,
+                'country' => $location->country,
+                'zip' => $location->zip,
+                'phone' => $location->phone,
+                'fax' => $location->fax,
+                'parent_id' => $location->parent_id,
+                'parent' => $location->parent?->name,
+                'assets_count' => $location->assets_count,
+                'users_count' => $location->users_count,
+                'children_count' => $location->children_count,
+                'created_at' => $location->created_at?->format('Y-m-d H:i:s'),
+                'updated_at' => $location->updated_at?->format('Y-m-d H:i:s'),
+            ]
+        );
     }
 
     private function resolveLocation(Request $request): Location|false|null

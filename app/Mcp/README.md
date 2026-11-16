@@ -122,7 +122,7 @@ Every request to `/mcp/snipe-it` passes through this chain, in order:
 | `mcp.scope.handshake` | HTTP 401 + `WWW-Authenticate: Bearer error="insufficient_scope", scope="..."` | Rejects tokens that carry zero `mcp:*` scopes. The WWW-Authenticate header advertises all available MCP scopes so OAuth-compliant clients can re-initiate authorization. This is the gate pre-scope tokens (issued before this release) hit. |
 | `api-throttle:api` | HTTP 429 | Rate limiting plus JSON response-header setup. |
 
-Per-tool scope checks (via `HasMcpScope`) run **inside** the MCP tool handler, so their errors come back as JSON-RPC-level tool errors inside an HTTP 200 response. Session-level failures (the four middleware above) short-circuit at the HTTP layer with the appropriate status + headers, which is what compliant OAuth clients need to trigger a reauthorization flow.
+Per-tool scope checks (via `SnipeMcpTool`) run **inside** the MCP tool handler, so their errors come back as JSON-RPC-level tool errors inside an HTTP 200 response. Session-level failures (the four middleware above) short-circuit at the HTTP layer with the appropriate status + headers, which is what compliant OAuth clients need to trigger a reauthorization flow.
 
 ---
 

@@ -4,7 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Events\CheckoutableCheckedIn;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use App\Models\Component;
 use Carbon\Carbon;
@@ -24,7 +24,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check in one or more units of a Snipe-IT component from an asset using the checkout record ID')]
 class CheckinComponentTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -73,16 +73,17 @@ class CheckinComponentTool extends Tool
 
         event(new CheckoutableCheckedIn($component, $asset, auth()->user(), $request->get('note'), Carbon::now()));
 
-        return Response::make(
-            Response::text(trans('mcp.component_checked_in', ['name' => $component->name]))
-        )->withStructuredContent([
-            'success' => true,
-            'message' => trans('mcp.component_checked_in', ['name' => $component->name]),
-            'component_id' => $component->id,
-            'component_name' => $component->name,
-            'checkin_qty' => $checkinQty,
-            'qty_still_checked_out' => $remaining,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.component_checked_in', ['name' => $component->name]),
+            [
+                'success' => true,
+                'message' => trans('mcp.component_checked_in', ['name' => $component->name]),
+                'component_id' => $component->id,
+                'component_name' => $component->name,
+                'checkin_qty' => $checkinQty,
+                'qty_still_checked_out' => $remaining,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

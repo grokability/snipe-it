@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Maintenance;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
@@ -19,7 +19,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Soft-delete a maintenance record by numeric ID')]
 class DeleteMaintenanceTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -45,14 +45,15 @@ class DeleteMaintenanceTool extends Tool
         $maintenanceId = $maintenance->id;
 
         if ($maintenance->delete()) {
-            return Response::make(
-                Response::text(trans('admin/maintenances/message.delete.success'))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('admin/maintenances/message.delete.success'),
-                'id' => $maintenanceId,
-                'name' => $maintenanceName,
-            ]);
+            return $this->structuredResponse(
+                trans('admin/maintenances/message.delete.success'),
+                [
+                    'success' => true,
+                    'message' => trans('admin/maintenances/message.delete.success'),
+                    'id' => $maintenanceId,
+                    'name' => $maintenanceName,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.delete_failed')));

@@ -4,8 +4,8 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Http\Requests\AssetIndexRequest;
-use App\Mcp\Traits\HasMcpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Category;
@@ -29,8 +29,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Search and list Snipe-IT assets with optional filtering by keyword, status, and pagination')]
 class ListAssetsTool extends Tool
 {
-    use HasMcpScope;
     use ResolvesForeignKeyByName;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -195,14 +195,15 @@ class ListAssetsTool extends Tool
             'assigned_assets_count' => $asset->assigned_assets_count,
         ])->values()->all();
 
-        return Response::make(
-            Response::text(trans('mcp.list_assets', ['total' => $total, 'count' => count($assetsData)]))
-        )->withStructuredContent([
-            'total' => $total,
-            'offset' => $offset,
-            'limit' => $limit,
-            'assets' => $assetsData,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.list_assets', ['total' => $total, 'count' => count($assetsData)]),
+            [
+                'total' => $total,
+                'offset' => $offset,
+                'limit' => $limit,
+                'assets' => $assetsData,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

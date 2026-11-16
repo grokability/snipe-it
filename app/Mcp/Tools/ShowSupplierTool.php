@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Supplier;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +20,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Show details of a Snipe-IT supplier identified by numeric ID or name')]
 class ShowSupplierTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -49,28 +49,29 @@ class ShowSupplierTool extends Tool
 
         $supplier->loadCount('assets as assets_count', 'licenses as licenses_count');
 
-        return Response::make(
-            Response::text(trans('mcp.supplier_found', ['name' => $supplier->name]))
-        )->withStructuredContent([
-            'id' => $supplier->id,
-            'name' => $supplier->name,
-            'address' => $supplier->address,
-            'address2' => $supplier->address2,
-            'city' => $supplier->city,
-            'state' => $supplier->state,
-            'country' => $supplier->country,
-            'zip' => $supplier->zip,
-            'phone' => $supplier->phone,
-            'fax' => $supplier->fax,
-            'email' => $supplier->email,
-            'url' => $supplier->url,
-            'contact' => $supplier->contact,
-            'notes' => $supplier->notes,
-            'assets_count' => $supplier->assets_count,
-            'licenses_count' => $supplier->licenses_count,
-            'created_at' => $supplier->created_at?->toISOString(),
-            'updated_at' => $supplier->updated_at?->toISOString(),
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.supplier_found', ['name' => $supplier->name]),
+            [
+                'id' => $supplier->id,
+                'name' => $supplier->name,
+                'address' => $supplier->address,
+                'address2' => $supplier->address2,
+                'city' => $supplier->city,
+                'state' => $supplier->state,
+                'country' => $supplier->country,
+                'zip' => $supplier->zip,
+                'phone' => $supplier->phone,
+                'fax' => $supplier->fax,
+                'email' => $supplier->email,
+                'url' => $supplier->url,
+                'contact' => $supplier->contact,
+                'notes' => $supplier->notes,
+                'assets_count' => $supplier->assets_count,
+                'licenses_count' => $supplier->licenses_count,
+                'created_at' => $supplier->created_at?->toISOString(),
+                'updated_at' => $supplier->updated_at?->toISOString(),
+            ]
+        );
     }
 
     private function resolveSupplier(Request $request): ?Supplier

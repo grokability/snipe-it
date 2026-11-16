@@ -4,7 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Helpers\Helper;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -21,7 +21,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Look up a single Snipe-IT asset by asset tag or numeric ID and return its full details')]
 class ShowAssetTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -58,9 +58,10 @@ class ShowAssetTool extends Tool
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset')])));
         }
 
-        return Response::make(
-            Response::text(trans('mcp.asset_found', ['asset_tag' => $asset->asset_tag]))
-        )->withStructuredContent($this->formatAsset($asset));
+        return $this->structuredResponse(
+            trans('mcp.asset_found', ['asset_tag' => $asset->asset_tag]),
+            $this->formatAsset($asset)
+        );
     }
 
     private function formatAsset(Asset $asset): array
@@ -95,7 +96,7 @@ class ShowAssetTool extends Tool
             'updated_at' => $asset->updated_at?->format('Y-m-d H:i:s'),
             'maintenance_count' => (int) ($asset->maintenance_count ?? 0),
             'open_maintenance_count' => (int) ($asset->open_maintenance_count ?? 0),
-            'maintenance_cost_total' => $asset->maintenance_cost_total !== null ? (float) $asset->maintenance_cost_total : 0.0,
+            'maintenance_cost_total' => (float) ($asset->getAttribute('maintenance_cost_total') ?? 0),
             'custom_fields' => $this->buildCustomFields($asset),
         ];
     }

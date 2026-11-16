@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use App\Models\MaintenanceType;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -23,7 +23,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Add a new maintenance type to the taxonomy. Only do this after list_maintenance_types confirms the name does not already exist in some variant. Taxonomy sprawl ("Repair" vs "repair" vs "Repairs") makes future reporting painful.')]
 class CreateMaintenanceTypeTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -50,15 +50,16 @@ class CreateMaintenanceTypeTool extends Tool
         $type->created_by = auth()->id();
 
         if ($type->save()) {
-            return Response::make(
-                Response::text(trans('mcp.maintenance_type_created', ['name' => $type->name]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.maintenance_type_created', ['name' => $type->name]),
-                'id' => $type->id,
-                'name' => $type->name,
-                'tag_color' => $type->tag_color,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.maintenance_type_created', ['name' => $type->name]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.maintenance_type_created', ['name' => $type->name]),
+                    'id' => $type->id,
+                    'name' => $type->name,
+                    'tag_color' => $type->tag_color,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.create_failed', ['error' => $type->getErrors()->first()])));

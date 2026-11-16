@@ -4,8 +4,8 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Http\Requests\AccessoryIndexRequest;
-use App\Mcp\Traits\HasMcpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Accessory;
 use App\Models\Category;
 use App\Models\Company;
@@ -28,8 +28,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Search and list Snipe-IT accessories with optional filtering by keyword, company, category, manufacturer, location, and low-stock status')]
 class ListAccessoriesTool extends Tool
 {
-    use HasMcpScope;
     use ResolvesForeignKeyByName;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -173,14 +173,15 @@ class ListAccessoriesTool extends Tool
             'notes' => $accessory->notes,
         ])->values()->all();
 
-        return Response::make(
-            Response::text(trans('mcp.list_accessories', ['total' => $total, 'count' => count($accessoriesData)]))
-        )->withStructuredContent([
-            'total' => $total,
-            'offset' => $offset,
-            'limit' => $limit,
-            'accessories' => $accessoriesData,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.list_accessories', ['total' => $total, 'count' => count($accessoriesData)]),
+            [
+                'total' => $total,
+                'offset' => $offset,
+                'limit' => $limit,
+                'accessories' => $accessoriesData,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

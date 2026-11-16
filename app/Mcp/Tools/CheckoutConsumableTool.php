@@ -4,7 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Events\CheckoutableCheckedOut;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Consumable;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -22,7 +22,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check out a Snipe-IT consumable to a user')]
 class CheckoutConsumableTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -77,16 +77,17 @@ class CheckoutConsumableTool extends Tool
             1,
         ));
 
-        return Response::make(
-            Response::text(trans('mcp.consumable_checked_out', ['name' => $consumable->name, 'username' => $user->username]))
-        )->withStructuredContent([
-            'success' => true,
-            'message' => trans('mcp.consumable_checked_out', ['name' => $consumable->name, 'username' => $user->username]),
-            'consumable_id' => $consumable->id,
-            'consumable_name' => $consumable->name,
-            'assigned_to_id' => $user->id,
-            'assigned_to_username' => $user->username,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.consumable_checked_out', ['name' => $consumable->name, 'username' => $user->username]),
+            [
+                'success' => true,
+                'message' => trans('mcp.consumable_checked_out', ['name' => $consumable->name, 'username' => $user->username]),
+                'consumable_id' => $consumable->id,
+                'consumable_name' => $consumable->name,
+                'assigned_to_id' => $user->id,
+                'assigned_to_username' => $user->username,
+            ]
+        );
     }
 
     private function resolveConsumable(Request $request): ?Consumable

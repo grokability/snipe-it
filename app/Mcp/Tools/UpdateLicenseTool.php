@@ -3,8 +3,8 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Category;
 use App\Models\Company;
 use App\Models\License;
@@ -27,8 +27,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT license identified by numeric ID or name')]
 class UpdateLicenseTool extends Tool
 {
-    use HasMcpScope;
     use ResolvesForeignKeyByName;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -88,15 +88,16 @@ class UpdateLicenseTool extends Tool
         }
 
         if ($license->save()) {
-            return Response::make(
-                Response::text(trans('mcp.license_updated', ['name' => $license->name]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.license_updated', ['name' => $license->name]),
-                'id' => $license->id,
-                'name' => $license->name,
-                'seats' => $license->seats,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.license_updated', ['name' => $license->name]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.license_updated', ['name' => $license->name]),
+                    'id' => $license->id,
+                    'name' => $license->name,
+                    'seats' => $license->seats,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.update_failed', ['error' => $license->getErrors()->first()])));

@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use App\Models\Component;
 use Carbon\Carbon;
@@ -23,7 +23,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check out one or more units of a Snipe-IT component to an asset')]
 class CheckoutComponentTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -80,18 +80,19 @@ class CheckoutComponentTool extends Tool
 
         $component->logCheckout($request->get('note'), $asset, null, [], $qty);
 
-        return Response::make(
-            Response::text(trans('mcp.component_checked_out', ['name' => $component->name, 'asset_tag' => $asset->asset_tag]))
-        )->withStructuredContent([
-            'success' => true,
-            'message' => trans('mcp.component_checked_out', ['name' => $component->name, 'asset_tag' => $asset->asset_tag]),
-            'component_id' => $component->id,
-            'component_name' => $component->name,
-            'asset_id' => $asset->id,
-            'asset_tag' => $asset->asset_tag,
-            'assigned_qty' => $qty,
-            'component_asset_id' => $pivotId,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.component_checked_out', ['name' => $component->name, 'asset_tag' => $asset->asset_tag]),
+            [
+                'success' => true,
+                'message' => trans('mcp.component_checked_out', ['name' => $component->name, 'asset_tag' => $asset->asset_tag]),
+                'component_id' => $component->id,
+                'component_name' => $component->name,
+                'asset_id' => $asset->id,
+                'asset_tag' => $asset->asset_tag,
+                'assigned_qty' => $qty,
+                'component_asset_id' => $pivotId,
+            ]
+        );
     }
 
     private function resolveComponent(Request $request): ?Component

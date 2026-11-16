@@ -5,7 +5,7 @@ namespace App\Mcp\Tools;
 use App\Enums\McpScope;
 use App\Events\CheckoutableCheckedOut;
 use App\Http\Requests\AccessoryCheckoutRequest;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Accessory;
 use App\Models\AccessoryCheckout;
 use App\Models\Asset;
@@ -27,7 +27,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check out a Snipe-IT accessory to a user, location, or asset')]
 class CheckoutAccessoryTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -101,17 +101,18 @@ class CheckoutAccessoryTool extends Tool
             1,
         ));
 
-        return Response::make(
-            Response::text(trans('mcp.accessory_checked_out', ['name' => $accessory->name]))
-        )->withStructuredContent([
-            'success' => true,
-            'message' => trans('mcp.accessory_checked_out', ['name' => $accessory->name]),
-            'accessory_id' => $accessory->id,
-            'accessory_name' => $accessory->name,
-            'checkout_id' => $checkout->id,
-            'checked_out_to_type' => $checkoutType,
-            'checked_out_to_id' => $target->id,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.accessory_checked_out', ['name' => $accessory->name]),
+            [
+                'success' => true,
+                'message' => trans('mcp.accessory_checked_out', ['name' => $accessory->name]),
+                'accessory_id' => $accessory->id,
+                'accessory_name' => $accessory->name,
+                'checkout_id' => $checkout->id,
+                'checked_out_to_type' => $checkoutType,
+                'checked_out_to_id' => $target->id,
+            ]
+        );
     }
 
     private function resolveAccessory(Request $request): ?Accessory

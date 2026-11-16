@@ -4,7 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Http\Requests\ImageUploadRequest;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Http\UploadedFile;
@@ -37,7 +37,7 @@ use Throwable;
 #[Description('Attach an image to a Snipe-IT asset. The image is accepted as base64-encoded bytes plus a MIME type. The same sanitization path as the HTTP upload endpoint is used (resize, re-encode, EXIF strip, SVG scrub). Replaces any existing image on the asset.')]
 class UploadAssetImageTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     private const MAX_BASE64_BYTES = 5_000_000;
 
@@ -134,15 +134,16 @@ class UploadAssetImageTool extends Tool
             ])));
         }
 
-        return Response::make(
-            Response::text(trans('mcp.upload_image_success', ['asset_tag' => $asset->asset_tag]))
-        )->withStructuredContent([
-            'success' => true,
-            'message' => trans('mcp.upload_image_success', ['asset_tag' => $asset->asset_tag]),
-            'asset_tag' => $asset->asset_tag,
-            'image' => $asset->image,
-            'image_url' => $asset->image ? url('uploads/assets/'.$asset->image) : null,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.upload_image_success', ['asset_tag' => $asset->asset_tag]),
+            [
+                'success' => true,
+                'message' => trans('mcp.upload_image_success', ['asset_tag' => $asset->asset_tag]),
+                'asset_tag' => $asset->asset_tag,
+                'image' => $asset->image,
+                'image_url' => $asset->image ? url('uploads/assets/'.$asset->image) : null,
+            ]
+        );
     }
 
     private function extensionForMime(string $mime): string

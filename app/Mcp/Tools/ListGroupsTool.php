@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Group;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +20,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('List Snipe-IT permission groups with optional search and pagination')]
 class ListGroupsTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -58,14 +58,15 @@ class ListGroupsTool extends Tool
             'users_count' => $group->users_count,
         ])->values()->all();
 
-        return Response::make(
-            Response::text(trans('mcp.list_groups', ['total' => $total, 'count' => count($groupsData)]))
-        )->withStructuredContent([
-            'total' => $total,
-            'offset' => $offset,
-            'limit' => $limit,
-            'groups' => $groupsData,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.list_groups', ['total' => $total, 'count' => count($groupsData)]),
+            [
+                'total' => $total,
+                'offset' => $offset,
+                'limit' => $limit,
+                'groups' => $groupsData,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use App\Models\MaintenanceType;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -23,7 +23,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Rename or re-color a maintenance type by numeric ID or current name')]
 class UpdateMaintenanceTypeTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -76,15 +76,16 @@ class UpdateMaintenanceTypeTool extends Tool
         $type->fill(array_merge($input, $validated));
 
         if ($type->save()) {
-            return Response::make(
-                Response::text(trans('admin/maintenance_types/message.update.success'))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('admin/maintenance_types/message.update.success'),
-                'id' => $type->id,
-                'name' => $type->name,
-                'tag_color' => $type->tag_color,
-            ]);
+            return $this->structuredResponse(
+                trans('admin/maintenance_types/message.update.success'),
+                [
+                    'success' => true,
+                    'message' => trans('admin/maintenance_types/message.update.success'),
+                    'id' => $type->id,
+                    'name' => $type->name,
+                    'tag_color' => $type->tag_color,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.update_failed', ['error' => $type->getErrors()->first()])));
