@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -21,7 +21,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Return all assets currently checked out to a Snipe-IT user')]
 class GetUserAssetsTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -61,14 +61,15 @@ class GetUserAssetsTool extends Tool
             'status' => $asset->status?->name,
         ])->values()->all();
 
-        return Response::make(
-            Response::text(trans('mcp.user_assets_found', ['count' => count($data), 'username' => $user->username]))
-        )->withStructuredContent([
-            'user_id' => $user->id,
-            'username' => $user->username,
-            'total' => count($data),
-            'assets' => $data,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.user_assets_found', ['count' => count($data), 'username' => $user->username]),
+            [
+                'user_id' => $user->id,
+                'username' => $user->username,
+                'total' => count($data),
+                'assets' => $data,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

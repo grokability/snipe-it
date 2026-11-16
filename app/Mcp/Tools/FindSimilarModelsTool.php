@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -36,7 +36,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Find AssetModel candidates similar to a given source model, ranked by category / manufacturer / name-token overlap and stock availability. Use for bulk replacement planning.')]
 class FindSimilarModelsTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -139,25 +139,26 @@ class FindSimilarModelsTool extends Tool
         $limit = $request->filled('limit') ? (int) $request->get('limit') : 10;
         $ranked = $candidates->take($limit)->all();
 
-        return Response::make(
-            Response::text(trans('mcp.find_similar_models_summary', [
+        return $this->structuredResponse(
+            trans('mcp.find_similar_models_summary', [
                 'source' => $source->name,
                 'total' => $candidates->count(),
                 'count' => count($ranked),
-            ]))
-        )->withStructuredContent([
-            'success' => true,
-            'source' => [
-                'id' => $source->id,
-                'name' => $source->name,
-                'category' => $source->category?->name,
-                'manufacturer' => $source->manufacturer?->name,
-                'deployed_count' => $sourceDeployedCount,
-            ],
-            'total_candidates_scored' => $candidates->count(),
-            'returned' => count($ranked),
-            'candidates' => $ranked,
-        ]);
+            ]),
+            [
+                'success' => true,
+                'source' => [
+                    'id' => $source->id,
+                    'name' => $source->name,
+                    'category' => $source->category?->name,
+                    'manufacturer' => $source->manufacturer?->name,
+                    'deployed_count' => $sourceDeployedCount,
+                ],
+                'total_candidates_scored' => $candidates->count(),
+                'returned' => count($ranked),
+                'candidates' => $ranked,
+            ]
+        );
     }
 
     /**

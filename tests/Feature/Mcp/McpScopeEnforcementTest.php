@@ -13,7 +13,7 @@ use Laravel\Passport\Passport;
 use Tests\TestCase;
 
 /**
- * Pins the per-tool Passport scope enforcement wired via HasMcpScope.
+ * Pins the per-tool Passport scope enforcement wired via SnipeMcpTool.
  *
  * The suite covers three behaviors:
  *   1. A token that carries the required scope passes the check and

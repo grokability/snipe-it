@@ -4,7 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Events\CheckoutableCheckedIn;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use App\Models\License;
 use App\Models\LicenseSeat;
@@ -24,7 +24,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check in a Snipe-IT license seat by its seat ID, returning it to the available pool')]
 class CheckinLicenseTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -71,15 +71,16 @@ class CheckinLicenseTool extends Tool
         if ($seat->save()) {
             event(new CheckoutableCheckedIn($seat, $returnTo, auth()->user(), $note));
 
-            return Response::make(
-                Response::text(trans('mcp.license_seat_checked_in', ['id' => $seat->id]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.license_seat_checked_in', ['id' => $seat->id]),
-                'seat_id' => $seat->id,
-                'license_id' => $license->id,
-                'license_name' => $license->name,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.license_seat_checked_in', ['id' => $seat->id]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.license_seat_checked_in', ['id' => $seat->id]),
+                    'seat_id' => $seat->id,
+                    'license_id' => $license->id,
+                    'license_name' => $license->name,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.checkin_failed')));

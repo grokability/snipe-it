@@ -3,8 +3,8 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Maintenance;
 use App\Models\MaintenanceType;
 use App\Models\Supplier;
@@ -25,8 +25,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update a maintenance record by ID. Only supplied fields change.')]
 class UpdateMaintenanceTool extends Tool
 {
-    use HasMcpScope;
     use ResolvesForeignKeyByName;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -109,18 +109,19 @@ class UpdateMaintenanceTool extends Tool
         if ($maintenance->save()) {
             $maintenance->refresh();
 
-            return Response::make(
-                Response::text(trans('admin/maintenances/message.edit.success'))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('admin/maintenances/message.edit.success'),
-                'id' => $maintenance->id,
-                'name' => $maintenance->name,
-                'item_type' => class_basename($maintenance->item_type),
-                'item_id' => $maintenance->item_id,
-                'asset_tag' => $maintenance->asset?->asset_tag,
-                'completed_at' => $maintenance->completed_at?->toDateTimeString(),
-            ]);
+            return $this->structuredResponse(
+                trans('admin/maintenances/message.edit.success'),
+                [
+                    'success' => true,
+                    'message' => trans('admin/maintenances/message.edit.success'),
+                    'id' => $maintenance->id,
+                    'name' => $maintenance->name,
+                    'item_type' => class_basename($maintenance->item_type),
+                    'item_id' => $maintenance->item_id,
+                    'asset_tag' => $maintenance->asset?->asset_tag,
+                    'completed_at' => $maintenance->completed_at?->toDateTimeString(),
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.update_failed', ['error' => $maintenance->getErrors()->first()])));

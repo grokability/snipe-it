@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +20,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Restore a soft-deleted Snipe-IT asset')]
 class RestoreAssetTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -48,14 +48,15 @@ class RestoreAssetTool extends Tool
 
         $asset->restore();
 
-        return Response::make(
-            Response::text(trans('mcp.asset_restored', ['asset_tag' => $asset->asset_tag]))
-        )->withStructuredContent([
-            'success' => true,
-            'message' => trans('mcp.asset_restored', ['asset_tag' => $asset->asset_tag]),
-            'id' => $asset->id,
-            'asset_tag' => $asset->asset_tag,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.asset_restored', ['asset_tag' => $asset->asset_tag]),
+            [
+                'success' => true,
+                'message' => trans('mcp.asset_restored', ['asset_tag' => $asset->asset_tag]),
+                'id' => $asset->id,
+                'asset_tag' => $asset->asset_tag,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

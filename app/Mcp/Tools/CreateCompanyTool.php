@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Company;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -22,7 +22,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT company')]
 class CreateCompanyTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -45,14 +45,15 @@ class CreateCompanyTool extends Tool
         $company->created_by = auth()->id();
 
         if ($company->save()) {
-            return Response::make(
-                Response::text(trans('mcp.company_created', ['name' => $company->name]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.company_created', ['name' => $company->name]),
-                'id' => $company->id,
-                'name' => $company->name,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.company_created', ['name' => $company->name]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.company_created', ['name' => $company->name]),
+                    'id' => $company->id,
+                    'name' => $company->name,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.create_failed', ['error' => $company->getErrors()->first()])));

@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use App\Models\MaintenanceType;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -21,7 +21,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Soft-delete a maintenance type by ID or name. The type must have no maintenances assigned.')]
 class DeleteMaintenanceTypeTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -60,13 +60,14 @@ class DeleteMaintenanceTypeTool extends Tool
         $typeName = $type->name;
 
         if ($type->delete()) {
-            return Response::make(
-                Response::text(trans('admin/maintenance_types/message.delete.success'))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('admin/maintenance_types/message.delete.success'),
-                'name' => $typeName,
-            ]);
+            return $this->structuredResponse(
+                trans('admin/maintenance_types/message.delete.success'),
+                [
+                    'success' => true,
+                    'message' => trans('admin/maintenance_types/message.delete.success'),
+                    'name' => $typeName,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.delete_failed')));

@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Statuslabel;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +20,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Show details of a Snipe-IT status label identified by numeric ID or name')]
 class ShowStatusLabelTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -45,23 +45,24 @@ class ShowStatusLabelTool extends Tool
 
         $label->loadCount('assets as assets_count');
 
-        return Response::make(
-            Response::text(trans('mcp.status_label_found', ['name' => $label->name]))
-        )->withStructuredContent([
-            'id' => $label->id,
-            'name' => $label->name,
-            'type' => $label->getStatuslabelType(),
-            'color' => $label->color,
-            'deployable' => (bool) $label->deployable,
-            'pending' => (bool) $label->pending,
-            'archived' => (bool) $label->archived,
-            'assets_count' => $label->assets_count,
-            'default_label' => (bool) $label->default_label,
-            'show_in_nav' => (bool) $label->show_in_nav,
-            'notes' => $label->notes,
-            'created_at' => $label->created_at?->toISOString(),
-            'updated_at' => $label->updated_at?->toISOString(),
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.status_label_found', ['name' => $label->name]),
+            [
+                'id' => $label->id,
+                'name' => $label->name,
+                'type' => $label->getStatuslabelType(),
+                'color' => $label->color,
+                'deployable' => (bool) $label->deployable,
+                'pending' => (bool) $label->pending,
+                'archived' => (bool) $label->archived,
+                'assets_count' => $label->assets_count,
+                'default_label' => (bool) $label->default_label,
+                'show_in_nav' => (bool) $label->show_in_nav,
+                'notes' => $label->notes,
+                'created_at' => $label->created_at?->toISOString(),
+                'updated_at' => $label->updated_at?->toISOString(),
+            ]
+        );
     }
 
     private function resolveStatusLabel(Request $request): ?Statuslabel

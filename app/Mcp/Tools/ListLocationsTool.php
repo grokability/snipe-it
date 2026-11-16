@@ -3,8 +3,8 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Location;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -21,8 +21,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Search and list Snipe-IT locations with optional filtering and pagination')]
 class ListLocationsTool extends Tool
 {
-    use HasMcpScope;
     use ResolvesForeignKeyByName;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -98,14 +98,15 @@ class ListLocationsTool extends Tool
             'children_count' => $location->children_count,
         ])->values()->all();
 
-        return Response::make(
-            Response::text(trans('mcp.list_locations', ['total' => $total, 'count' => count($locationsData)]))
-        )->withStructuredContent([
-            'total' => $total,
-            'offset' => $offset,
-            'limit' => $limit,
-            'locations' => $locationsData,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.list_locations', ['total' => $total, 'count' => count($locationsData)]),
+            [
+                'total' => $total,
+                'offset' => $offset,
+                'limit' => $limit,
+                'locations' => $locationsData,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

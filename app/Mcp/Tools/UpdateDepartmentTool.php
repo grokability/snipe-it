@@ -3,8 +3,8 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Company;
 use App\Models\Department;
 use App\Models\Location;
@@ -25,8 +25,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Update fields on a Snipe-IT department identified by numeric ID or name')]
 class UpdateDepartmentTool extends Tool
 {
-    use HasMcpScope;
     use ResolvesForeignKeyByName;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -84,14 +84,15 @@ class UpdateDepartmentTool extends Tool
         }
 
         if ($department->save()) {
-            return Response::make(
-                Response::text(trans('mcp.department_updated', ['name' => $department->name]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.department_updated', ['name' => $department->name]),
-                'id' => $department->id,
-                'name' => $department->name,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.department_updated', ['name' => $department->name]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.department_updated', ['name' => $department->name]),
+                    'id' => $department->id,
+                    'name' => $department->name,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.update_failed', ['error' => $department->getErrors()->first()])));

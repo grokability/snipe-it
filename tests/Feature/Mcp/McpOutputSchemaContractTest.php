@@ -232,6 +232,33 @@ class McpOutputSchemaContractTest extends TestCase
             "This is the exact failure mode of issue #20068: MCP clients that validate against outputSchema reject such responses.\n\n".
             implode("\n", $errors)
         );
+
+        // Issue #20074: tool responses MUST mirror structuredContent into
+        // a text content block so clients that read only `content` (Claude
+        // Desktop, claude.ai) still receive the payload. The shared
+        // SnipeMcpTool::structuredResponse() helper emits two text blocks:
+        // a summary string, then a JSON encoding of the structured payload.
+        $contents = $response->responses()->all();
+        $this->assertGreaterThanOrEqual(
+            2,
+            count($contents),
+            "Tool {$toolClass} must emit a text content block that mirrors structuredContent. Issue #20074."
+        );
+
+        $jsonBlock = end($contents);
+        $decoded = json_decode((string) $jsonBlock->content(), true);
+        $this->assertIsArray(
+            $decoded,
+            "Tool {$toolClass} last content block is not valid JSON. Issue #20074 requires the mirror to be parseable."
+        );
+        // Normalize both sides through a JSON round-trip so stdClass vs
+        // empty-assoc-array shape differences don't mask the "semantic
+        // equality" that MCP clients actually see.
+        $this->assertSame(
+            json_decode((string) json_encode($structuredContent), true),
+            $decoded,
+            "Tool {$toolClass} content-block JSON does not match structuredContent. Issue #20074."
+        );
     }
 
     /**

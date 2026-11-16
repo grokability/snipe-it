@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Actionlog;
 use App\Models\Asset;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -21,7 +21,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Add a manual note to a Snipe-IT asset identified by asset tag, serial number, or numeric ID')]
 class AddAssetNoteTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -49,15 +49,16 @@ class AddAssetNoteTool extends Tool
         $logaction->created_by = auth()->id();
 
         if ($logaction->logaction('note added')) {
-            return Response::make(
-                Response::text(trans('mcp.note_added_to_asset', ['asset_tag' => $asset->asset_tag]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.note_added_successfully'),
-                'asset_tag' => $asset->asset_tag,
-                'asset_id' => $asset->id,
-                'note' => $logaction->note,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.note_added_to_asset', ['asset_tag' => $asset->asset_tag]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.note_added_successfully'),
+                    'asset_tag' => $asset->asset_tag,
+                    'asset_id' => $asset->id,
+                    'note' => $logaction->note,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.note_save_failed')));

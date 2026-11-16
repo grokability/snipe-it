@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Supplier;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +20,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Search and list Snipe-IT suppliers with optional filtering and pagination')]
 class ListSuppliersTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -69,14 +69,15 @@ class ListSuppliersTool extends Tool
             'licenses_count' => $supplier->licenses_count,
         ])->values()->all();
 
-        return Response::make(
-            Response::text(trans('mcp.list_suppliers', ['total' => $total, 'count' => count($suppliersData)]))
-        )->withStructuredContent([
-            'total' => $total,
-            'offset' => $offset,
-            'limit' => $limit,
-            'suppliers' => $suppliersData,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.list_suppliers', ['total' => $total, 'count' => count($suppliersData)]),
+            [
+                'total' => $total,
+                'offset' => $offset,
+                'limit' => $limit,
+                'suppliers' => $suppliersData,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

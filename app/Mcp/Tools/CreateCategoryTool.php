@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Category;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -22,7 +22,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT category')]
 class CreateCategoryTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -45,15 +45,16 @@ class CreateCategoryTool extends Tool
         $category->created_by = auth()->id();
 
         if ($category->save()) {
-            return Response::make(
-                Response::text(trans('mcp.category_created', ['name' => $category->name]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.category_created', ['name' => $category->name]),
-                'id' => $category->id,
-                'name' => $category->name,
-                'category_type' => $category->category_type,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.category_created', ['name' => $category->name]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.category_created', ['name' => $category->name]),
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'category_type' => $category->category_type,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.create_failed', ['error' => $category->getErrors()->first()])));

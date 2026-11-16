@@ -3,8 +3,8 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Category;
 use App\Models\Company;
 use App\Models\Depreciation;
@@ -42,8 +42,8 @@ use Throwable;
 #[Description('Soft-delete one license by identifier, several by identifier array, or many by filter. Licenses must have no seats currently assigned to users or assets. Filter and array shapes default to dry_run=true for preview-first safety.')]
 class DeleteLicenseTool extends Tool
 {
-    use HasMcpScope;
     use ResolvesForeignKeyByName;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -195,13 +195,14 @@ class DeleteLicenseTool extends Tool
 
         $this->clearSeatsAndDelete($license);
 
-        return Response::make(
-            Response::text(trans('mcp.license_deleted', ['name' => $name]))
-        )->withStructuredContent([
-            'success' => true,
-            'message' => trans('mcp.license_deleted', ['name' => $name]),
-            'name' => $name,
-        ]);
+        return $this->structuredResponse(
+            trans('mcp.license_deleted', ['name' => $name]),
+            [
+                'success' => true,
+                'message' => trans('mcp.license_deleted', ['name' => $name]),
+                'name' => $name,
+            ]
+        );
     }
 
     private function resolveSingle(Request $request): ?License
@@ -292,20 +293,21 @@ class DeleteLicenseTool extends Tool
             'reason' => trans('admin/licenses/message.delete.bulk_checkout_warning', ['license_name' => $l->name]),
         ])->values()->all();
 
-        return Response::make(
-            Response::text(trans('mcp.bulk_dry_run_summary', [
+        return $this->structuredResponse(
+            trans('mcp.bulk_dry_run_summary', [
                 'total' => $targets->count(),
                 'deletable' => $deletable->count(),
-            ]))
-        )->withStructuredContent([
-            'success' => true,
-            'dry_run' => true,
-            'total_matched' => $targets->count(),
-            'will_delete' => $deletable->count(),
-            'undeletable_count' => $undeletable->count(),
-            'sample_rows' => $sampleRows,
-            'undeletable_matches' => $undeletableMatches,
-        ]);
+            ]),
+            [
+                'success' => true,
+                'dry_run' => true,
+                'total_matched' => $targets->count(),
+                'will_delete' => $deletable->count(),
+                'undeletable_count' => $undeletable->count(),
+                'sample_rows' => $sampleRows,
+                'undeletable_matches' => $undeletableMatches,
+            ]
+        );
     }
 
     private function commitBulkDelete(Collection $deletable): ResponseFactory
@@ -335,17 +337,18 @@ class DeleteLicenseTool extends Tool
             ])));
         }
 
-        return Response::make(
-            Response::text(trans('mcp.bulk_delete_completed', [
+        return $this->structuredResponse(
+            trans('mcp.bulk_delete_completed', [
                 'count' => $deletedCount,
-            ]))
-        )->withStructuredContent([
-            'success' => true,
-            'dry_run' => false,
-            'deleted_count' => $deletedCount,
-            'failed_count' => count($failures),
-            'failures' => $failures,
-        ]);
+            ]),
+            [
+                'success' => true,
+                'dry_run' => false,
+                'deleted_count' => $deletedCount,
+                'failed_count' => count($failures),
+                'failures' => $failures,
+            ]
+        );
     }
 
     /**

@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\AccessoryCheckout;
 use App\Models\Asset;
 use App\Models\Company;
@@ -50,7 +50,7 @@ use Throwable;
 #[Description('Atomically offboard a user: preview or execute check-in of every assigned asset/accessory/license seat, clear manager references on dependent users and locations, and deactivate the account. Defaults to dry_run so no changes are made without explicit confirmation.')]
 class OffboardUserTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -93,19 +93,20 @@ class OffboardUserTool extends Tool
         }
 
         if ($matches->count() > 1) {
-            return Response::make(
-                Response::text(trans('mcp.offboard_ambiguous_user'))
-            )->withStructuredContent([
-                'success' => false,
-                'error' => 'ambiguous_user',
-                'message' => trans('mcp.offboard_ambiguous_user'),
-                'matches' => $matches->map(fn (User $u) => [
-                    'id' => $u->id,
-                    'username' => $u->username,
-                    'full_name' => $u->full_name,
-                    'email' => $u->email,
-                ])->all(),
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.offboard_ambiguous_user'),
+                [
+                    'success' => false,
+                    'error' => 'ambiguous_user',
+                    'message' => trans('mcp.offboard_ambiguous_user'),
+                    'matches' => $matches->map(fn (User $u) => [
+                        'id' => $u->id,
+                        'username' => $u->username,
+                        'full_name' => $u->full_name,
+                        'email' => $u->email,
+                    ])->all(),
+                ]
+            );
         }
 
         $user = $matches->first();
@@ -196,19 +197,20 @@ class OffboardUserTool extends Tool
         ];
 
         if ($dryRun) {
-            return Response::make(
-                Response::text(trans('mcp.offboard_dry_run_summary', [
+            return $this->structuredResponse(
+                trans('mcp.offboard_dry_run_summary', [
                     'username' => $user->username,
                     'assets' => count($preview['assets_to_checkin']),
                     'accessories' => count($preview['accessory_checkouts_to_return']),
                     'seats' => count($preview['license_seats_to_release']),
-                ]))
-            )->withStructuredContent([
-                'success' => true,
-                'dry_run' => true,
-                'message' => trans('mcp.offboard_dry_run_message'),
-                'preview' => $preview,
-            ]);
+                ]),
+                [
+                    'success' => true,
+                    'dry_run' => true,
+                    'message' => trans('mcp.offboard_dry_run_message'),
+                    'preview' => $preview,
+                ]
+            );
         }
 
         $note = $request->get('note');
@@ -258,19 +260,20 @@ class OffboardUserTool extends Tool
             ])));
         }
 
-        return Response::make(
-            Response::text(trans('mcp.offboard_completed_summary', [
+        return $this->structuredResponse(
+            trans('mcp.offboard_completed_summary', [
                 'username' => $user->username,
                 'assets' => count($preview['assets_to_checkin']),
                 'accessories' => count($preview['accessory_checkouts_to_return']),
                 'seats' => count($preview['license_seats_to_release']),
-            ]))
-        )->withStructuredContent([
-            'success' => true,
-            'dry_run' => false,
-            'message' => trans('mcp.offboard_completed_message', ['username' => $user->username]),
-            'executed' => $preview,
-        ]);
+            ]),
+            [
+                'success' => true,
+                'dry_run' => false,
+                'message' => trans('mcp.offboard_completed_message', ['username' => $user->username]),
+                'executed' => $preview,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array

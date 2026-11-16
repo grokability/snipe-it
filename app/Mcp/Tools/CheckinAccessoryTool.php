@@ -3,7 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Accessory;
 use App\Models\AccessoryCheckout;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -21,7 +21,7 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Check in a Snipe-IT accessory checkout record by its checkout ID')]
 class CheckinAccessoryTool extends Tool
 {
-    use HasMcpScope;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -48,14 +48,15 @@ class CheckinAccessoryTool extends Tool
         $accessory->logCheckin($target, $request->get('note'));
 
         if ($checkout->delete()) {
-            return Response::make(
-                Response::text(trans('mcp.accessory_checked_in', ['name' => $accessory->name]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.accessory_checked_in', ['name' => $accessory->name]),
-                'accessory_id' => $accessory->id,
-                'accessory_name' => $accessory->name,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.accessory_checked_in', ['name' => $accessory->name]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.accessory_checked_in', ['name' => $accessory->name]),
+                    'accessory_id' => $accessory->id,
+                    'accessory_name' => $accessory->name,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.checkin_failed')));

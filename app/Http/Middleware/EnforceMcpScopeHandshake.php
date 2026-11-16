@@ -30,7 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
  *     Required because tool-level JSON-RPC errors are wrapped in
  *     HTTP 200 responses and give OAuth clients no signal to re-auth.
  *
- *   HasMcpScope::scopeDenied() (per-tool level)
+ *   SnipeMcpTool::scopeDenied() (per-tool level)
  *     Exact-match check per tool call. A token with McpScope::Session
  *     only (or with a capability scope that does not match the called
  *     tool) gets a scope_denied tool error with a structured

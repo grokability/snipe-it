@@ -3,8 +3,8 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
-use App\Mcp\Traits\HasMcpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
+use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Accessory;
 use App\Models\Category;
 use App\Models\Company;
@@ -28,8 +28,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Create a new Snipe-IT accessory')]
 class CreateAccessoryTool extends Tool
 {
-    use HasMcpScope;
     use ResolvesForeignKeyByName;
+    use SnipeMcpTool;
 
     public function handle(Request $request): ResponseFactory
     {
@@ -97,16 +97,17 @@ class CreateAccessoryTool extends Tool
         $accessory->created_by = auth()->id();
 
         if ($accessory->save()) {
-            return Response::make(
-                Response::text(trans('mcp.accessory_created', ['name' => $accessory->name]))
-            )->withStructuredContent([
-                'success' => true,
-                'message' => trans('mcp.accessory_created', ['name' => $accessory->name]),
-                'id' => $accessory->id,
-                'name' => $accessory->name,
-                'qty' => $accessory->qty,
-                'category_id' => $accessory->category_id,
-            ]);
+            return $this->structuredResponse(
+                trans('mcp.accessory_created', ['name' => $accessory->name]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.accessory_created', ['name' => $accessory->name]),
+                    'id' => $accessory->id,
+                    'name' => $accessory->name,
+                    'qty' => $accessory->qty,
+                    'category_id' => $accessory->category_id,
+                ]
+            );
         }
 
         return Response::make(Response::error(trans('mcp.create_failed', ['error' => $accessory->getErrors()->first()])));
