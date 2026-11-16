@@ -1371,6 +1371,28 @@
                     if (instance && instance.$el) {
                         clearBootstrapTableLoadError(instance);
                     }
+
+                    // The saved page number (cookie storage) is shared by every view of
+                    // the same table id, e.g. /hardware?status_type=Deployed and
+                    // /hardware?status_type=RTD. If it points past the end of the current
+                    // result set, the server returns an empty page even though total > 0,
+                    // and the table shows "No matching records found". bootstrap-table has
+                    // already clamped pageNumber to the last valid page by now, so refetch
+                    // once with the corrected page. The addrbar extension wraps this
+                    // callback and calls it with only the response, binding `this` to the
+                    // table instance, so accept either form.
+                    var data = arguments[0];
+                    var table = (this && this.$el && this.options) ? this
+                        : ((instance && instance.$el && instance.options) ? instance : null);
+                    if (table && table.options.sidePagination === 'server'
+                        && data && Array.isArray(data.rows) && data.rows.length === 0 && data.total > 0) {
+                        if (!table._snipeOutOfRangeRefetched) {
+                            table._snipeOutOfRangeRefetched = true;
+                            table.refresh();
+                        }
+                    } else if (table) {
+                        table._snipeOutOfRangeRefetched = false;
+                    }
                 },
                 onPostBody: function () {
                     // Reapply the tableExport opt-out attributes on
