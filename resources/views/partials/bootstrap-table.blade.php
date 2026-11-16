@@ -1372,7 +1372,7 @@
                         clearBootstrapTableLoadError(instance);
                     }
 
-                    // The saved page number (cookie storage) is shared by every view of
+                    // The saved page number (localStorage) is shared by every view of
                     // the same table id, e.g. /hardware?status_type=Deployed and
                     // /hardware?status_type=RTD. If it points past the end of the current
                     // result set, the server returns an empty page even though total > 0,
