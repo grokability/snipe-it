@@ -91,9 +91,9 @@ class ShowCategoryTool extends Tool
             'consumables_count' => $schema->number()->description('Number of consumables in this category'),
             'components_count' => $schema->number()->description('Number of components in this category'),
             'licenses_count' => $schema->number()->description('Number of licenses in this category'),
-            'notes' => $schema->string()->description('Notes'),
-            'created_at' => $schema->string()->description('Creation timestamp'),
-            'updated_at' => $schema->string()->description('Last update timestamp'),
+            'notes' => $schema->string()->description('Notes')->nullable(),
+            'created_at' => $schema->string()->description('Creation timestamp')->nullable(),
+            'updated_at' => $schema->string()->description('Last update timestamp')->nullable(),
         ];
     }
 }

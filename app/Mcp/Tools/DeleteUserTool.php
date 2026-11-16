@@ -360,7 +360,7 @@ class DeleteUserTool extends Tool
         return [
             // Single-identifier shape
             'id' => $schema->number()->description('Numeric user ID (single-target shape).'),
-            'username' => $schema->string()->description('Username (single-target shape). Alternative: pass usernames array for multiple.'),
+            'username' => $schema->string()->description('Username (single-target shape). Alternative: pass usernames array for multiple.')->nullable(),
             'email' => $schema->string()->description('Email address (single-target shape).'),
 
             // Array shape
@@ -396,15 +396,15 @@ class DeleteUserTool extends Tool
             'success' => $schema->boolean()->description('True if the deletion (or preview) succeeded'),
             'message' => $schema->string()->description('Human-readable result message')->required(),
             'dry_run' => $schema->boolean()->description('True when the response is a preview, false when it is a commit result'),
-            'username' => $schema->string()->description('Username of the deleted user (single-target shape only)'),
-            'total_matched' => $schema->number()->description('How many rows matched the filter / array (bulk preview only)'),
-            'will_delete' => $schema->number()->description('How many rows would actually delete (bulk preview only)'),
-            'undeletable_count' => $schema->number()->description('How many rows match but fail isDeletable (bulk preview only)'),
-            'sample_rows' => $schema->array()->description('First 10 matched rows with id + username (bulk preview only)'),
-            'undeletable_matches' => $schema->array()->description('First 10 undeletable rows with reason (bulk preview only)'),
-            'deleted_count' => $schema->number()->description('How many rows were deleted (bulk commit only)'),
-            'failed_count' => $schema->number()->description('How many rows failed at commit (bulk commit only)'),
-            'failures' => $schema->array()->description('Per-row failure messages (bulk commit only)'),
+            'username' => $schema->string()->description('Username of the deleted user (single-target shape only)')->nullable(),
+            'total_matched' => $schema->number()->description('How many rows matched the filter / array (bulk preview only)')->nullable(),
+            'will_delete' => $schema->number()->description('How many rows would actually delete (bulk preview only)')->nullable(),
+            'undeletable_count' => $schema->number()->description('How many rows match but fail isDeletable (bulk preview only)')->nullable(),
+            'sample_rows' => $schema->array()->description('First 10 matched rows with id + username (bulk preview only)')->nullable(),
+            'undeletable_matches' => $schema->array()->description('First 10 undeletable rows with reason (bulk preview only)')->nullable(),
+            'deleted_count' => $schema->number()->description('How many rows were deleted (bulk commit only)')->nullable(),
+            'failed_count' => $schema->number()->description('How many rows failed at commit (bulk commit only)')->nullable(),
+            'failures' => $schema->array()->description('Per-row failure messages (bulk commit only)')->nullable(),
         ];
     }
 }

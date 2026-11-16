@@ -136,11 +136,11 @@ class UpdateProfileTool extends Tool
             'success' => $schema->boolean()->description('True if the update succeeded'),
             'message' => $schema->string()->description('Human-readable result message')->required(),
             'first_name' => $schema->string()->description('Updated first name'),
-            'last_name' => $schema->string()->description('Updated last name'),
-            'phone' => $schema->string()->description('Updated phone number'),
-            'website' => $schema->string()->description('Updated website URL'),
-            'locale' => $schema->string()->description('Updated locale'),
-            'location_id' => $schema->number()->description('Updated location ID'),
+            'last_name' => $schema->string()->description('Updated last name')->nullable(),
+            'phone' => $schema->string()->description('Updated phone number')->nullable(),
+            'website' => $schema->string()->description('Updated website URL')->nullable(),
+            'locale' => $schema->string()->description('Updated locale')->nullable(),
+            'location_id' => $schema->number()->description('Updated location ID')->nullable(),
         ];
     }
 }

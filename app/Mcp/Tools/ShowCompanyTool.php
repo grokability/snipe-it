@@ -80,14 +80,14 @@ class ShowCompanyTool extends Tool
         return [
             'id' => $schema->number()->description('Numeric company ID'),
             'name' => $schema->string()->description('Company name'),
-            'phone' => $schema->string()->description('Company phone number'),
-            'fax' => $schema->string()->description('Company fax number'),
-            'email' => $schema->string()->description('Company email address'),
+            'phone' => $schema->string()->description('Company phone number')->nullable(),
+            'fax' => $schema->string()->description('Company fax number')->nullable(),
+            'email' => $schema->string()->description('Company email address')->nullable(),
             'assets_count' => $schema->number()->description('Number of assets belonging to this company'),
             'users_count' => $schema->number()->description('Number of users belonging to this company'),
-            'notes' => $schema->string()->description('Notes'),
-            'created_at' => $schema->string()->description('Creation timestamp'),
-            'updated_at' => $schema->string()->description('Last update timestamp'),
+            'notes' => $schema->string()->description('Notes')->nullable(),
+            'created_at' => $schema->string()->description('Creation timestamp')->nullable(),
+            'updated_at' => $schema->string()->description('Last update timestamp')->nullable(),
         ];
     }
 }

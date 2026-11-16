@@ -102,12 +102,12 @@ class CheckinAssetTool extends Tool
     public function outputSchema(JsonSchema $schema): array
     {
         return [
-            'success' => $schema->string()->description('True if the checkin succeeded'),
-            'error' => $schema->string()->description('True if the checkin failed'),
+            'success' => $schema->boolean()->description('True if the checkin succeeded'),
+            'error' => $schema->boolean()->description('True if the checkin failed')->nullable(),
             'message' => $schema->string()->description('Human-readable result message')->required(),
             'asset_tag' => $schema->string()->description('Asset tag of the checked-in asset'),
-            'model' => $schema->string()->description('Model name of the checked-in asset'),
-            'location' => $schema->string()->description('Location the asset returned to'),
+            'model' => $schema->string()->description('Model name of the checked-in asset')->nullable(),
+            'location' => $schema->string()->description('Location the asset returned to')->nullable(),
         ];
     }
 }

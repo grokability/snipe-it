@@ -145,7 +145,7 @@ class CreateAccessoryTool extends Tool
             'message' => $schema->string()->description('Human-readable result message')->required(),
             'id' => $schema->number()->description('Numeric ID of the new accessory'),
             'name' => $schema->string()->description('Name of the new accessory'),
-            'qty' => $schema->number()->description('Total quantity'),
+            'qty' => $schema->number()->description('Total quantity')->nullable(),
             'category_id' => $schema->number()->description('Category ID'),
         ];
     }

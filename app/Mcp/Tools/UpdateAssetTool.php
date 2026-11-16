@@ -159,7 +159,7 @@ class UpdateAssetTool extends Tool
     {
         return [
             'success' => $schema->boolean()->description('True if the update succeeded'),
-            'error' => $schema->boolean()->description('True if the update failed'),
+            'error' => $schema->boolean()->description('True if the update failed')->nullable(),
             'message' => $schema->string()->description('Human-readable result message')->required(),
             'asset_tag' => $schema->string()->description('Asset tag of the updated asset'),
             'id' => $schema->number()->description('Numeric ID of the updated asset'),
