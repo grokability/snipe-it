@@ -105,6 +105,9 @@ chown -R docker:root /var/lib/snipeit/dumps
 chown -R docker:root /var/lib/snipeit/keys
 chown -R docker:root /var/www/html/storage/framework/cache
 
+[ -f /var/lib/snipeit/keys/oauth-public.key ] && chmod 660 /var/lib/snipeit/keys/oauth-public.key
+[ -f /var/lib/snipeit/keys/oauth-private.key ] && chmod 600 /var/lib/snipeit/keys/oauth-private.key
+
 # Fix php settings
 if [ -v "PHP_UPLOAD_LIMIT" ]
 then

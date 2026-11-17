@@ -121,6 +121,53 @@ class NinjaOneAdapterTest extends TestCase
         $this->assertNotNull($record->lastSeen);
     }
 
+    public function test_fetch_groups_returns_ninjaone_organizations_as_id_label_pairs()
+    {
+        $adapter = $this->configuredAdapter();
+
+        Http::fake([
+            '*/ws/oauth/token' => Http::response(['access_token' => 'stub-bearer', 'expires_in' => 3600]),
+            '*/v2/organizations*' => Http::response([
+                ['id' => 1, 'name' => 'Acme Corp'],
+                ['id' => 2, 'name' => 'Globex'],
+            ]),
+        ]);
+
+        $this->assertSame([
+            ['id' => '1', 'label' => 'Acme Corp'],
+            ['id' => '2', 'label' => 'Globex'],
+        ], $adapter->fetchGroups());
+    }
+
+    public function test_fetch_groups_pages_through_all_organizations()
+    {
+        // The client pages with ?after=<lastId>&pageSize=N until a
+        // short page comes back. Force a two-page walk so the cursor
+        // advance (last id of page one -> after on page two) stays
+        // regression-covered even when real MSP installs have <500
+        // orgs.
+        $adapter = $this->configuredAdapter();
+
+        $pageSize = 500;
+        $firstPage = [];
+        for ($i = 1; $i <= $pageSize; $i++) {
+            $firstPage[] = ['id' => $i, 'name' => 'Org '.$i];
+        }
+
+        Http::fake([
+            '*/ws/oauth/token' => Http::response(['access_token' => 'stub-bearer', 'expires_in' => 3600]),
+            '*/v2/organizations*' => Http::sequence()
+                ->push($firstPage)
+                ->push([['id' => $pageSize + 1, 'name' => 'Final Org']]),
+        ]);
+
+        $groups = $adapter->fetchGroups();
+
+        $this->assertCount($pageSize + 1, $groups);
+        $this->assertSame(['id' => '1', 'label' => 'Org 1'], $groups[0]);
+        $this->assertSame(['id' => (string) ($pageSize + 1), 'label' => 'Final Org'], $groups[$pageSize]);
+    }
+
     public function test_zero_last_contact_does_not_produce_epoch_1970()
     {
         $adapter = $this->configuredAdapter();

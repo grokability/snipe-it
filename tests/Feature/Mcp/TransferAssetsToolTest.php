@@ -6,6 +6,7 @@ use App\Mcp\Tools\TransferAssetsTool;
 use App\Models\Accessory;
 use App\Models\AccessoryCheckout;
 use App\Models\Asset;
+use App\Models\Company;
 use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\User;
@@ -91,6 +92,42 @@ class TransferAssetsToolTest extends TestCase
         $this->handle(['from_username' => 'leaver', 'to_username' => 'receiver', 'dry_run' => false]);
 
         $this->assertSame($to->id, $checkout->fresh()->assigned_to);
+    }
+
+    public function test_rejects_transfer_that_would_cross_fmcs_company_boundary()
+    {
+        // Same bug class as the asset-model bulk-fulfill route the
+        // reporter filed: checkOut() was being called without the
+        // canCheckoutTo() guard that FMCS enforcement rides on. In
+        // strict mode a company-A asset must not land on a user who
+        // only belongs to company B.
+        $this->settings->enableMultipleFullCompanySupport();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+        $actor = User::factory()->superuser()->create();
+        $from = User::factory()->forCompany($companyA)->create(['username' => 'leaver']);
+        $from->companies()->sync([$companyA->id]);
+        $to = User::factory()->forCompany($companyB)->create(['username' => 'receiver']);
+        $to->companies()->sync([$companyB->id]);
+
+        // Rebind the active user so canCheckoutTo runs under a
+        // non-superuser (superusers bypass FMCS by design). Needs
+        // both checkin and checkout permissions so the tool's own
+        // gate at the top of the asset loop doesn't short-circuit
+        // the test before reaching the FMCS guard.
+        $operator = User::factory()
+            ->forCompany($companyA)
+            ->checkinAssets()
+            ->checkoutAssets()
+            ->create();
+        $operator->companies()->sync([$companyA->id, $companyB->id]);
+        $this->actingAs($operator);
+
+        $asset = Asset::factory()->assignedToUser($from)->create(['company_id' => $companyA->id]);
+
+        $this->handle(['from_username' => 'leaver', 'to_username' => 'receiver', 'dry_run' => false]);
+
+        $this->assertSame($from->id, (int) $asset->fresh()->assigned_to, 'FMCS cross-company transfer must leave the asset assigned to the source user.');
     }
 
     public function test_rejects_same_user_transfer()

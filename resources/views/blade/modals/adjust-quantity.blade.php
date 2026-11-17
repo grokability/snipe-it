@@ -130,7 +130,7 @@
         type="textarea"
         :rows="3"
         :label="trans('general.notes')"
-        required
+        :required="(bool) $snipeSettings->require_adjust_quantity_notes"
     />
 
     {{-- Inlined instead of x-input.file-upload because that component wraps
