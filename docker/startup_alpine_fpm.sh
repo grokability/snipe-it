@@ -113,6 +113,9 @@ chown -R www-data:www-data \
   /var/lib/snipeit/dumps \
   /var/lib/snipeit/keys
 
+[ -f /var/lib/snipeit/keys/oauth-public.key ] && chmod 660 /var/lib/snipeit/keys/oauth-public.key
+[ -f /var/lib/snipeit/keys/oauth-private.key ] && chmod 600 /var/lib/snipeit/keys/oauth-private.key
+
 # Migrate/create database
 php artisan migrate --force
 # Clear cache files

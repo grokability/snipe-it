@@ -266,6 +266,9 @@ install_snipeit () {
     chmod -R 775 "$chmod_dir"
   done
 
+  [ -f "$APP_PATH/storage/oauth-public.key" ] && chmod 660 "$APP_PATH/storage/oauth-public.key"
+  [ -f "$APP_PATH/storage/oauth-private.key" ] && chmod 600 "$APP_PATH/storage/oauth-private.key"
+
   chown -R "$APP_USER":"$apache_group" "$APP_PATH"
   chmod 640 "$APP_PATH/.env"
 
