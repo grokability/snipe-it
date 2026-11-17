@@ -6,13 +6,10 @@ use App\Models\Accessory;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class UserPendingAcceptanceItemsTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function test_it_returns_only_items_with_pending_acceptances_for_the_user(): void
     {
         $user = User::factory()->create();

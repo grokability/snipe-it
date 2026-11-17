@@ -5,9 +5,11 @@ namespace Tests;
 use App\Http\Middleware\SecurityHeaders;
 use App\Models\Asset;
 use App\Models\Company;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 use Tests\Support\AssertHasActionLogs;
@@ -16,6 +18,7 @@ use Tests\Support\CanSkipTests;
 use Tests\Support\CustomTestMacros;
 use Tests\Support\InitializesSettings;
 use Tests\Support\InteractsWithAuthentication;
+use Tests\Support\MySqlDatabaseSnapshot;
 use Tests\Support\SeedsShippedSyncAdapters;
 
 abstract class TestCase extends BaseTestCase
@@ -27,7 +30,9 @@ abstract class TestCase extends BaseTestCase
     use CustomTestMacros;
     use InitializesSettings;
     use InteractsWithAuthentication;
-    use LazilyRefreshDatabase;
+    use LazilyRefreshDatabase {
+        migrateDatabases as protected migrateDatabasesUsingMigrations;
+    }
     use SeedsShippedSyncAdapters;
 
     private array $globallyDisabledMiddleware = [
@@ -60,11 +65,21 @@ abstract class TestCase extends BaseTestCase
      */
     private array $uploadTreeSnapshot = [];
 
+    /**
+     * Snapshots belong to this PHP process, so every parallel worker builds
+     * its baseline from migrations once per run before creating test fixtures.
+     *
+     * @var array<string, string>
+     */
+    protected static array $databaseSnapshots = [];
+
     protected function setUp(): void
     {
         $this->guardAgainstMissingEnv();
 
         parent::setUp();
+
+        $this->isolateFileCache();
 
         $this->registerCustomMacros();
 
@@ -120,6 +135,68 @@ abstract class TestCase extends BaseTestCase
         }
 
         parent::tearDown();
+    }
+
+    protected function migrateDatabases(): void
+    {
+        $connection = $this->app->make('db')->connection();
+
+        // Seeded tests retain the framework's behavior: restoring a snapshot
+        // that already contains their seed data would run the seeder twice.
+        if (! MySqlDatabaseSnapshot::isSupported($connection) || $this->shouldSeed() || $this->seeder()) {
+            $this->migrateDatabasesUsingMigrations();
+
+            return;
+        }
+
+        $key = hash('sha256', serialize([$connection->getConfig(), $this->migrateFreshUsing()]));
+        $path = self::$databaseSnapshots[$key] ?? null;
+
+        if ($path !== null) {
+            $exitCode = $this->artisan('migrate:fresh', array_merge($this->migrateFreshUsing(), [
+                '--schema-path' => $path,
+            ]));
+
+            if ($exitCode !== 0) {
+                throw new RuntimeException('Unable to restore the test database snapshot.');
+            }
+
+            return;
+        }
+
+        $this->migrateDatabasesUsingMigrations();
+
+        $path = tempnam(sys_get_temp_dir(), 'snipe-test-database-');
+        if ($path === false) {
+            throw new RuntimeException('Unable to create the test database snapshot.');
+        }
+
+        register_shutdown_function(static function () use ($path): void {
+            if (is_file($path)) {
+                unlink($path);
+            }
+        });
+
+        (new MySqlDatabaseSnapshot($connection))->dump($connection, $path);
+        self::$databaseSnapshots[$key] = $path;
+    }
+
+    /**
+     * Operation mutexes explicitly use the file store, even when the default
+     * cache driver is array. Keep those locks out of other tests and the app.
+     */
+    protected function isolateFileCache(): void
+    {
+        $path = sys_get_temp_dir().'/snipe-test-cache-'.bin2hex(random_bytes(16));
+        $files = new Filesystem;
+        $files->makeDirectory($path, 0700);
+
+        config(['cache.stores.file.path' => $path, 'cache.stores.file.lock_path' => $path]);
+        Cache::forgetDriver('file');
+
+        $this->beforeApplicationDestroyed(static function () use ($files, $path): void {
+            $files->deleteDirectory($path);
+        });
     }
 
     /**
