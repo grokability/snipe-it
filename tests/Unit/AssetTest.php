@@ -317,6 +317,67 @@ class AssetTest extends TestCase
         );
     }
 
+    public function test_next_auto_tag_base_update_does_not_touch_settings_updated_at()
+    {
+        // Regression for issue #19744. Two concurrent asset-create
+        // requests both updated the settings row via the Eloquent
+        // builder, which auto-appends `settings.updated_at = NOW()`
+        // to the SET clause. MariaDB 12's stricter MVCC raises error
+        // 1020 (`Record has changed since last read`) when two
+        // transactions race on the same row with that shape. The fix
+        // routes through the raw query builder so the UPDATE touches
+        // only `next_auto_tag_base`, leaving updated_at alone and
+        // keeping the concurrent writes semantically disjoint.
+        $this->settings->enableAutoIncrement();
+
+        $capturedStatements = [];
+        DB::listen(function ($query) use (&$capturedStatements) {
+            if (str_starts_with($query->sql, 'update "settings"') || str_starts_with($query->sql, 'update `settings`')) {
+                $capturedStatements[] = $query->sql;
+            }
+        });
+
+        Asset::factory()->create(['asset_tag' => Asset::autoincrement_asset()]);
+
+        $this->assertNotEmpty($capturedStatements, 'expected AssetObserver::created to emit at least one settings UPDATE');
+        foreach ($capturedStatements as $sql) {
+            $this->assertStringNotContainsStringIgnoringCase('updated_at', $sql, "settings UPDATE must not touch updated_at: {$sql}");
+        }
+    }
+
+    public function test_next_auto_tag_base_update_is_deferred_until_after_commit()
+    {
+        // Regression for issue #19744. The settings UPDATE used to
+        // fire inside the asset-create DB::transaction, holding a
+        // row lock on the settings row until commit and racing with
+        // any concurrent writer on the same row. The fix moves the
+        // UPDATE into a DB::afterCommit callback so it runs outside
+        // the asset-insert window. Inside the transaction the row
+        // must still carry the pre-create value.
+        $this->settings->enableAutoIncrement();
+        $baselineBase = (int) DB::table('settings')->value('next_auto_tag_base');
+
+        DB::transaction(function () use ($baselineBase) {
+            Asset::factory()->create(['asset_tag' => Asset::autoincrement_asset()]);
+            // The observer's afterCommit callback hasn't fired yet
+            // since the transaction is still open. The DB value
+            // must still match the baseline.
+            $this->assertSame(
+                $baselineBase,
+                (int) DB::table('settings')->value('next_auto_tag_base'),
+                'settings bump must not fire inside the asset-create transaction',
+            );
+        });
+
+        // After commit, the deferred callback has run and bumped the
+        // counter.
+        $this->assertGreaterThan(
+            $baselineBase,
+            (int) DB::table('settings')->value('next_auto_tag_base'),
+            'settings bump must fire after the asset-create transaction commits',
+        );
+    }
+
     public function test_auto_increment_almost_big()
     {
         // TODO: this looks pretty close to the one above, could we maybe squish them together?
