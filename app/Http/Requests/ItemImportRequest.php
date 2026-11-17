@@ -78,16 +78,12 @@ class ItemImportRequest extends FormRequest
         $fieldMappings = [];
 
         if ($import->field_map) {
-            foreach ($import->field_map as $field => $fieldValue) {
-                $errorMessage = null;
-
-                if (is_null($fieldValue)) {
-                    $errorMessage = trans('validation.import_field_empty', ['fieldname' => $field]);
-                    $this->errorCallback($import, $field, [$field => [$errorMessage]]);
-
-                    return $this->errors;
-                }
-            }
+            // Columns the user marked "Do not import" in the wizard
+            // end up as null because Laravel's
+            // ConvertEmptyStringsToNull middleware rewrites the
+            // empty-string that the import wizard posts. Drop those
+            // entries from the map so the array_flip doesn't choke on them.
+            $import->field_map = array_filter($import->field_map, fn ($v) => $v !== null);
             // We submit as csv field: column, but the importer is happier if we flip it here.
             $fieldMappings = array_change_key_case(array_flip($import->field_map), CASE_LOWER);
         }
