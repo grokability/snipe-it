@@ -5,7 +5,6 @@ namespace App\SyncAdapters\NinjaOne;
 use App\Models\Asset;
 use App\SyncAdapters\HostInventoryRecord;
 use App\SyncAdapters\PushableSyncAdapter;
-use App\SyncAdapters\SyncAdapter;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -87,6 +86,39 @@ class NinjaOneAdapter extends PushableSyncAdapter
         foreach ($client->devices() as $device) {
             yield $this->normalize($device);
         }
+    }
+
+    public function supportsGroupScoping(): bool
+    {
+        return true;
+    }
+
+    public function vendorGroupLabel(): string
+    {
+        return trans('admin/settings/sync_adapters.vendor_group_ninjaone_organization');
+    }
+
+    /**
+     * This provides the labelled list the settings UI needs to render the mapping
+     * dropdown.
+     *
+     * @return array<int, array{id: string, label: string}>
+     */
+    public function fetchGroups(): array
+    {
+        $client = new NinjaOneClient(
+            baseUrl: $this->url(),
+            clientId: $this->credential('client_id'),
+            clientSecret: $this->credential('client_secret'),
+        );
+
+        return array_map(
+            fn(array $org) => [
+                'id' => (string) ($org['id'] ?? ''),
+                'label' => (string) ($org['name'] ?? $org['id'] ?? '?'),
+            ],
+            $client->organizations(),
+        );
     }
 
     /**

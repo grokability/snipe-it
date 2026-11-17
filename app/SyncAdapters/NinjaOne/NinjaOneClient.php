@@ -96,6 +96,37 @@ class NinjaOneClient
     }
 
     /**
+     * List every organization visible to the OAuth application.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function organizations(int $pageSize = 500): array
+    {
+        $organizations = [];
+        $after = 0;
+
+        do {
+            $batch = $this->request()
+                ->get('/v2/organizations', [
+                    'pageSize' => $pageSize,
+                    'after' => $after,
+                ])
+                ->throw()
+                ->json();
+
+            $batch = is_array($batch) ? $batch : [];
+            $organizations = array_merge($organizations, $batch);
+
+            $count = count($batch);
+            if ($count > 0) {
+                $after = (int) ($batch[$count - 1]['id'] ?? 0);
+            }
+        } while ($count === $pageSize && $after > 0);
+
+        return $organizations;
+    }
+
+    /**
      * Update a device's custom field values. NinjaOne exposes no
      * first-class asset_tag field, but admins can create their own
      * "custom fields" per-device and write to them via
