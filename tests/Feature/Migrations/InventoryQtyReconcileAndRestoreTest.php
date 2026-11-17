@@ -5,6 +5,7 @@ namespace Tests\Feature\Migrations;
 use App\Enums\ActionType;
 use App\Models\Accessory;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -32,6 +33,7 @@ use Tests\TestCase;
  * the ledger, and the restore is a no-op on rows where qty >= legacy_qty
  * or where qty_adjust events exist).
  */
+#[Group('mysql')]
 class InventoryQtyReconcileAndRestoreTest extends TestCase
 {
     private function runReconcile(): void

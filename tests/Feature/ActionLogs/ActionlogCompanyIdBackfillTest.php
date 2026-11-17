@@ -5,6 +5,7 @@ namespace Tests\Feature\ActionLogs;
 use App\Models\Asset;
 use App\Models\Company;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
 /**
@@ -15,6 +16,7 @@ use Tests\TestCase;
  * LazilyRefreshDatabase), we replicate the exact UPDATE SQL used by the
  * migration and assert on the resulting rows.
  */
+#[Group('mysql')]
 class ActionlogCompanyIdBackfillTest extends TestCase
 {
     private const ASSET_CLASS = 'App\\Models\\Asset';

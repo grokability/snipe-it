@@ -6,6 +6,7 @@ use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\User;
 use Illuminate\Testing\Fluent\AssertableJson;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
 class IndexAssetModelsTest extends TestCase
@@ -64,6 +65,7 @@ class IndexAssetModelsTest extends TestCase
             ->assertJson(fn (AssertableJson $json) => $json->has('rows', 1)->etc());
     }
 
+    #[Group('mysql')]
     public function test_asset_model_index_filter_can_search_computed_count_aliases()
     {
         $this->markIncompleteIfSqlite('This test is not compatible with SQLite');

@@ -9,6 +9,7 @@ use Firebase\JWT\Key;
 use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Passport;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
 /**
@@ -227,6 +228,7 @@ class OidcApiAuthTest extends TestCase
      * form would be caught by VerifyExactUsernameMatchTest or by a
      * MySQL-backed CI run.
      */
+    #[Group('mysql')]
     public function test_token_whose_claim_bytes_differ_from_matched_user_username_is_rejected()
     {
         User::factory()->create(['username' => 'admin', 'activated' => 1]);
