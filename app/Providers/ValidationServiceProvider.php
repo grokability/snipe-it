@@ -717,6 +717,68 @@ class ValidationServiceProvider extends ServiceProvider
         });
 
         /*
+         * Check for manager_id writes under FMCS.
+         * This rule walks the manager's company pivot and calls
+         * User::canReceiveFromCompany on the target for each company,
+         * which already knows about floater mode and parent/child
+         * hierarchy expansion.
+         */
+        Validator::extend('fmcs_target_compat', function ($attribute, $value, $parameters, $validator) {
+            if (empty($value)) {
+                return true;
+            }
+            if (! Company::isFullMultipleCompanySupportEnabled()) {
+                return true;
+            }
+            // CLI (LDAP sync, importer, seeders, queue workers)
+            if (! auth()->check()) {
+                return true;
+            }
+            // Superusers bypass validator-level FMCS rules
+            if (auth()->user()->isSuperUser()) {
+                return true;
+            }
+
+            $data = $validator->getData();
+            $targetId = $data['id'] ?? null;
+            if ($targetId === null) {
+                // Create path: target has no pivot yet.
+                return true;
+            }
+
+            $target = User::withoutGlobalScopes()->find((int) $targetId);
+            if (! $target) {
+                return true;
+            }
+
+            $manager = User::withoutGlobalScopes()->find((int) $value);
+            if (! $manager) {
+                return true;
+            }
+
+            $managerCompanyIds = DB::table('company_user')
+                ->where('user_id', $manager->id)
+                ->pluck('company_id');
+
+            if ($managerCompanyIds->isEmpty()) {
+                // Null-company manager
+                return $target->canReceiveFromCompany(null);
+            }
+
+            foreach ($managerCompanyIds as $mgrCompanyId) {
+                if ($target->canReceiveFromCompany((int) $mgrCompanyId)) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
+        Validator::replacer('fmcs_target_compat', function ($message) {
+            return str_replace(':attribute', trans('general.manager'), $message);
+        });
+
+        /*
          * Confirms a department_id write references a department visible
          * within the acting user's FMCS scope. Actor-scope, same semantics
          * as fmcs_manager and fmcs_location.
