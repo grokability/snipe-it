@@ -315,7 +315,7 @@ class CustomFieldEditor extends Component
 
         // The input is hidden for element/format combos that can't be
         // linked, so don't persist a stale template typed before switching.
-        $linkTemplate = ($this->showLinkTemplate && trim($this->link_template) !== '')
+        $linkTemplate = ($this->showLinkTemplate() && trim($this->link_template) !== '')
             ? trim($this->link_template)
             : null;
 
