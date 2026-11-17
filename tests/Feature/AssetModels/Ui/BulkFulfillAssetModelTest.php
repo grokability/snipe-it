@@ -6,6 +6,7 @@ use App\Enums\CheckoutRequestState;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\CheckoutRequest;
+use App\Models\Company;
 use App\Models\Statuslabel;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
@@ -122,6 +123,45 @@ class BulkFulfillAssetModelTest extends TestCase
         // Second row's request stays pending - the admin can pick
         // a different asset (or wait for stock) on a later pass.
         $this->assertSame(CheckoutRequestState::Pending, $bobReq->fresh()->state);
+    }
+
+    public function test_cross_company_fulfillment_is_rejected_under_fmcs(): void
+    {
+        // Regression for GHSA (reporter: superbot-helper): the model
+        // bulk-fulfill route was calling checkOut() without the
+        // canCheckoutTo() guard the sibling bulk-fulfill controllers
+        // and the single-asset path all use, so a company-A asset
+        // could be assigned to a requester who only belongs to
+        // company B.
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+        $model = AssetModel::factory()->create();
+        $status = Statuslabel::factory()->rtd()->create();
+        $companyAAsset = Asset::factory()
+            ->for($companyA, 'company')
+            ->create(['model_id' => $model->id, 'status_id' => $status->id]);
+        $companyBRequester = User::factory()->forCompany($companyB)->create();
+        $companyBRequester->companies()->sync([$companyB->id]);
+
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $admin = User::factory()->superuser()->create();
+
+        $request = CheckoutRequest::factory()->create([
+            'user_id' => $companyBRequester->id,
+            'requestable_id' => $model->id,
+            'requestable_type' => AssetModel::class,
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('models.fulfill-requests.store', $model), [
+                'enabled_requests' => [$request->id => '1'],
+                'asset_id' => [$request->id => $companyAAsset->id],
+                'notes' => [],
+            ])
+            ->assertRedirect();
+
+        $this->assertSame(CheckoutRequestState::Pending, $request->fresh()->state);
+        $this->assertNull($companyAAsset->fresh()->assigned_to);
     }
 
     public function test_asset_from_a_different_model_is_rejected(): void

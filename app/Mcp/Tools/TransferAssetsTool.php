@@ -151,6 +151,11 @@ class TransferAssetsTool extends Tool
 
                         continue;
                     }
+                    if (! $asset->canCheckoutTo($to)) {
+                        $failures[] = "asset {$asset->asset_tag}: target user is not allowed to receive items from this asset's company";
+
+                        continue;
+                    }
                     if (! $asset->checkIn($actor, $note)) {
                         $failures[] = "asset {$asset->asset_tag}: checkin from source failed";
 
