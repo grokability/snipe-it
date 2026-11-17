@@ -647,4 +647,83 @@ class LicenseCheckoutCheckinTest extends TestCase
         );
         Event::assertNotDispatched(CheckoutableCheckedIn::class);
     }
+
+    #[Test]
+    public function null_company_license_checks_out_to_companied_user_when_floater_is_on(): void
+    {
+
+        $this->settings->enableFloaterMode();
+
+        $companyA = \App\Models\Company::factory()->create();
+        $license = License::factory()->create(['seats' => 1, 'company_id' => null]);
+        $target = $companyA->users()->save(User::factory()->make());
+        $actor = $companyA->users()->save(User::factory()->checkoutLicenses()->make());
+
+        $this->actingAsForApi($actor)
+            ->postJson(route('api.licenses.checkout', $license->id), [
+                'target_type' => 'user',
+                'assigned_to' => $target->id,
+            ])
+            ->assertOk()
+            ->assertJson(['status' => 'success']);
+
+        $this->assertSame(
+            $target->id,
+            (int) $license->licenseseats()->first()->assigned_to,
+            'Floater-mode checkout of a null-company license to a companied user must succeed via the API, matching UI behavior.',
+        );
+    }
+
+    #[Test]
+    public function null_company_license_checks_out_to_companied_asset_when_floater_is_on(): void
+    {
+        $this->settings->enableFloaterMode();
+
+        $companyA = \App\Models\Company::factory()->create();
+        $license = License::factory()->create(['seats' => 1, 'company_id' => null]);
+        $targetAsset = Asset::factory()->create(['company_id' => $companyA->id]);
+        $actor = $companyA->users()->save(User::factory()->checkoutLicenses()->make());
+
+        $this->actingAsForApi($actor)
+            ->postJson(route('api.licenses.checkout', $license->id), [
+                'target_type' => 'asset',
+                'asset_id' => $targetAsset->id,
+            ])
+            ->assertOk()
+            ->assertJson(['status' => 'success']);
+
+        $this->assertSame(
+            $targetAsset->id,
+            (int) $license->licenseseats()->first()->asset_id,
+            'Floater-mode checkout of a null-company license to a companied asset must succeed via the API.',
+        );
+    }
+
+    #[Test]
+    public function null_company_license_checkout_fails_when_floater_is_off(): void
+    {
+        // Mirror of the above with floater off: canCheckoutTo must
+        // still enforce strict mode and reject a null-company license
+        // against a companied target.
+        $this->settings->enableMultipleFullCompanySupport();
+        $this->settings->disableFloaterMode();
+
+        $companyA = \App\Models\Company::factory()->create();
+        $license = License::factory()->create(['seats' => 1, 'company_id' => null]);
+        $seat = LicenseSeat::withoutGlobalScopes()->where('license_id', $license->id)->firstOrFail();
+        $target = $companyA->users()->save(User::factory()->make());
+        $actor = $companyA->users()->save(User::factory()->checkoutLicenses()->make());
+
+        $this->actingAsForApi($actor)
+            ->postJson(route('api.licenses.checkout', $license->id), [
+                'target_type' => 'user',
+                'assigned_to' => $target->id,
+            ])
+            ->assertJson(['status' => 'error']);
+
+        $this->assertNull(
+            LicenseSeat::withoutGlobalScopes()->find($seat->id)->assigned_to,
+            'Strict-mode checkout of a null-company license to a companied user must stay rejected.',
+        );
+    }
 }

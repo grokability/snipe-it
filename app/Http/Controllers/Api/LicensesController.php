@@ -380,30 +380,27 @@ class LicensesController extends Controller
 
             if ($validated['target_type'] === 'user') {
                 $target = User::withoutGlobalScopes()->whereNull('deleted_at')->find($validated['assigned_to'] ?? null);
-                if (!$target) {
+                if (! $target) {
                     $errorResponse = response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/licenses/message.user_does_not_exist')));
-
-                    return;
-                }
-
-                if (Company::isFullMultipleCompanySupportEnabled() && !$target->companies()->where('companies.id', $license->company_id)->exists()) {
-                    $errorResponse = response()->json(Helper::formatStandardApiResponse('error', null, trans('general.error_user_company')));
 
                     return;
                 }
             } else {
                 $target = Asset::withoutGlobalScopes()->whereNull('deleted_at')->find($validated['asset_id'] ?? null);
-                if (!$target) {
+                if (! $target) {
                     $errorResponse = response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/licenses/message.asset_does_not_exist')));
 
                     return;
                 }
+            }
 
-                if (Company::isFullMultipleCompanySupportEnabled() && $license->company_id && $license->company_id !== $target->company_id) {
-                    $errorResponse = response()->json(Helper::formatStandardApiResponse('error', null, trans('general.error_user_company')));
+            // Route the company check through the shared helper the UI
+            // checkout path uses. canCheckoutTo honors null_company_is_floater
+            // and the parent/child company hierarchy expansion.
+            if (! $license->canCheckoutTo($target)) {
+                $errorResponse = response()->json(Helper::formatStandardApiResponse('error', null, trans('general.error_user_company')));
 
-                    return;
-                }
+                return;
             }
 
             // All validation passed. Safe to mutate.

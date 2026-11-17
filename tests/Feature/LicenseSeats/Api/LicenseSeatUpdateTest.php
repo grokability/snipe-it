@@ -529,6 +529,62 @@ class LicenseSeatUpdateTest extends TestCase
             ->assertStatusMessageIs('success');
     }
 
+    public function test_null_company_license_seat_can_be_assigned_to_companied_user_when_floater_is_on()
+    {
+        
+        $this->settings->enableFloaterMode();
+
+        $company = Company::factory()->create();
+        $license = License::factory()->create(['company_id' => null]);
+        $seat = LicenseSeat::factory()->create(['license_id' => $license->id, 'assigned_to' => null, 'asset_id' => null]);
+        $target = $company->users()->save(User::factory()->make());
+        $actor = User::factory()->superuser()->create();
+
+        $this->actingAsForApi($actor)
+            ->patchJson($this->route($seat), ['assigned_to' => $target->id])
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+
+        $this->assertSame($target->id, (int) $seat->fresh()->assigned_to);
+    }
+
+    public function test_null_company_license_seat_can_be_assigned_to_companied_asset_when_floater_is_on()
+    {
+        $this->settings->enableFloaterMode();
+
+        $company = Company::factory()->create();
+        $license = License::factory()->create(['company_id' => null]);
+        $seat = LicenseSeat::factory()->create(['license_id' => $license->id, 'assigned_to' => null, 'asset_id' => null]);
+        $asset = Asset::factory()->create(['company_id' => $company->id]);
+        $actor = User::factory()->superuser()->create();
+
+        $this->actingAsForApi($actor)
+            ->patchJson($this->route($seat), ['asset_id' => $asset->id])
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+
+        $this->assertSame($asset->id, (int) $seat->fresh()->asset_id);
+    }
+
+    public function test_null_company_license_seat_assignment_fails_when_floater_is_off()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+        $this->settings->disableFloaterMode();
+
+        $company = Company::factory()->create();
+        $license = License::factory()->create(['company_id' => null]);
+        $seat = LicenseSeat::factory()->create(['license_id' => $license->id, 'assigned_to' => null, 'asset_id' => null]);
+        $target = $company->users()->save(User::factory()->make());
+        $actor = User::factory()->superuser()->create();
+
+        $this->actingAsForApi($actor)
+            ->patchJson($this->route($seat), ['assigned_to' => $target->id])
+            ->assertOk()
+            ->assertStatusMessageIs('error');
+
+        $this->assertNull($seat->fresh()->assigned_to);
+    }
+
     private function route(LicenseSeat $licenseSeat)
     {
         return route('api.licenses.seats.update', [$licenseSeat->license->id, $licenseSeat->id]);
