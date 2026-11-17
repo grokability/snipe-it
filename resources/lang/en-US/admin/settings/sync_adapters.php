@@ -536,6 +536,7 @@ return [
     'vendor_group_kaseya_organization' => 'Kaseya Organization',
     'vendor_group_google_workspace_org_unit' => 'Google Organizational Unit',
     'vendor_group_levelio_group' => 'Level.io Group',
+    'vendor_group_ninjaone_organization' => 'NinjaOne Organization',
 
     // Kaseya-specific label prefix for tenant-defined custom fields
     // captured by the "Refresh custom fields" button. Rendered in the

@@ -76,6 +76,7 @@ class Setting extends Model
     protected $casts = [
         'label2_asset_logo' => 'boolean',
         'require_checkinout_notes' => 'boolean',
+        'require_adjust_quantity_notes' => 'boolean',
         'manager_view_enabled' => 'boolean',
         'block_api_user_agents' => 'boolean',
         'block_blank_api_user_agents' => 'boolean',
