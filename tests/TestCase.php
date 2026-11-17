@@ -18,6 +18,7 @@ use Tests\Support\CanSkipTests;
 use Tests\Support\CustomTestMacros;
 use Tests\Support\InitializesSettings;
 use Tests\Support\InteractsWithAuthentication;
+use Tests\Support\MocksLdap;
 use Tests\Support\MySqlDatabaseSnapshot;
 use Tests\Support\SeedsShippedSyncAdapters;
 
@@ -30,6 +31,7 @@ abstract class TestCase extends BaseTestCase
     use CustomTestMacros;
     use InitializesSettings;
     use InteractsWithAuthentication;
+    use MocksLdap;
     use LazilyRefreshDatabase {
         migrateDatabases as protected migrateDatabasesUsingMigrations;
     }

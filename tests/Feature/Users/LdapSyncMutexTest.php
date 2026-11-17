@@ -6,10 +6,13 @@ use App\Console\Commands\LdapSync;
 use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
+use phpmock\phpunit\PHPMock;
 use Tests\TestCase;
 
 class LdapSyncMutexTest extends TestCase
 {
+    use PHPMock;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -72,13 +75,20 @@ class LdapSyncMutexTest extends TestCase
             ->assertOk()
             ->assertViewHas('ldapSyncRunning', false);
     }
-    
+
     public function test_bind_failure_returns_failure_exit_code(): void
     {
-        $this->settings->set([
-            'ldap_enabled' => '1',
-            'ldap_server' => '',
-        ]);
+        $this->settings->enableLdap();
+        $this->getFunctionMock('App\\Models', 'ldap_connect')
+            ->expects($this->once())->willReturn('dummy');
+        $this->getFunctionMock('App\\Models', 'ldap_set_option')
+            ->expects($this->atLeastOnce())->willReturn(true);
+        $this->getFunctionMock('App\\Models', 'ldap_bind')
+            ->expects($this->once())->with('dummy', 'fake_username', 'fake_password')->willReturn(false);
+        $this->getFunctionMock('App\\Models', 'ldap_get_option')
+            ->expects($this->once())->willReturn(true);
+        $this->getFunctionMock('App\\Models', 'ldap_error')
+            ->expects($this->once())->willReturn('Invalid credentials');
 
         $exitCode = Artisan::call('snipeit:ldap-sync');
 
