@@ -94,8 +94,8 @@
                                 </x-data-row>
 
                                 <x-data-row :label="trans('admin/maintenances/form.asset_maintenance_time')" copy_what="time">
-                                    @if ($maintenance->asset_maintenance_time)
-                                        {{ $maintenance->asset_maintenance_time }} {{ trans('general.days') }}
+                                    @if ($maintenance->duration_in_days !== null)
+                                        {{ $maintenance->duration_in_days }} {{ trans('general.days') }}
                                     @endif
                                 </x-data-row>
 
@@ -151,34 +151,15 @@
                             <x-page-column class="col-md-4 col-sm-12">
 
                                 <x-well class="well-sm" style="padding-left: 15px;">
-                                    @php
-
-                                        $startCarbon = $maintenance->start_date ? Carbon::parse($maintenance->start_date) : null;
-                                        $endCarbon   = $maintenance->expected_completion_date
-                                            ? Carbon::parse($maintenance->expected_completion_date)
-                                            : null;
-
-                                        $maintenancePercent = 0;
-                                        if ($startCarbon) {
-                                             $progressLabel = App\Helpers\Helper::getFormattedDateObject($maintenance->start_date, 'date', false);
-                                            if ($endCarbon) {
-                                                 $progressLabel .= ' - '.App\Helpers\Helper::getFormattedDateObject($maintenance->expected_completion_date, 'date', false);;
-                                                // Completed: show how far through the total duration we are as of today
-                                                $totalDays   = max(1, $startCarbon->diffInDays($endCarbon));
-                                                $elapsedDays = min($totalDays, $startCarbon->diffInDays(Carbon::now()));
-                                                $maintenancePercent = min(100, max(0, ($elapsedDays / $totalDays) * 100));
-                                            } else {
-                                                // In progress: base on days elapsed since start_date relative to 30-day window
-                                                $elapsedDays = $startCarbon->diffInDays(Carbon::now());
-                                                $maintenancePercent = min(100, max(0, ($elapsedDays / 30) * 100));
-                                            }
-                                        }
-                                    @endphp
-
-
-                                    <x-progressbar use_well="false" columns="12" :text="$progressLabel" :percent="$maintenancePercent">
-                                    </x-progressbar>
-
+                                    <x-progressbar
+                                        use_well="false"
+                                        columns="12"
+                                        :text="$maintenance->progress_label"
+                                        :percent="$maintenance->progress_percent"
+                                        :color="$maintenance->completed_at ? 'success' : null"
+                                        :warning_icon="$maintenance->is_overdue"
+                                        :warning_label="trans('admin/maintenances/general.overdue')"
+                                    />
                                 </x-well>
                             </x-page-column>
                             <div class="clearfix"></div>
@@ -192,7 +173,7 @@
                     </x-tabs.pane>
 
                     <x-tabs.pane name="notes">
-                        <x-table.history
+                        <x-table.history name="maintenanceNotes"
                             :table_header="trans('general.notes')"
                             :model="$maintenance"
                             :route="route('api.activity.index', ['item_id' => $maintenance->id, 'item_type' => 'maintenance', 'action_type' => 'note added'])"
@@ -201,7 +182,7 @@
                     </x-tabs.pane>
 
                     <x-tabs.pane name="history">
-                        <x-table.history :model="$maintenance" :route="route('api.maintenances.history', $maintenance)" :hide_fields="['order_number']"/>
+                        <x-table.history name="maintenanceHistory" :model="$maintenance" :route="route('api.maintenances.history', $maintenance)" :hide_fields="['order_number']"/>
                     </x-tabs.pane>
 
                 </x-slot:tabpanes>

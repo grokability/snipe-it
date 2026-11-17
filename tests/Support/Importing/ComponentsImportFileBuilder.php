@@ -44,6 +44,7 @@ class ComponentsImportFileBuilder extends FileBuilder
             'quantity' => 'Quantity',
             'serialNumber' => 'Serial number',
             'requestable' => 'Requestable',
+            'archived' => 'Archived',
         ];
     }
 
@@ -67,6 +68,7 @@ class ComponentsImportFileBuilder extends FileBuilder
             'quantity' => rand(1, 100_000),
             'serialNumber' => 'SN:COM:'.Str::random(),
             'requestable' => '',
+            'archived' => '',
         ];
     }
 }

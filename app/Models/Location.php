@@ -4,22 +4,27 @@ namespace App\Models;
 
 use App\Enums\FileStorage;
 use App\Http\Traits\UniqueUndeletedTrait;
+use App\Models\Builders\LocationQueryBuilder;
+use App\Models\Contracts\Importable;
 use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\HasUploads;
 use App\Models\Traits\Loggable;
 use App\Models\Traits\Searchable;
 use App\Presenters\LocationPresenter;
 use App\Presenters\Presentable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Watson\Validating\ValidatingTrait;
 
-class Location extends SnipeModel
+/**
+ * @mixin IdeHelperLocation
+ */
+class Location extends SnipeModel implements Importable
 {
     use CompanyableTrait;
     use HasFactory;
@@ -43,7 +48,7 @@ class Location extends SnipeModel
         'state' => 'min:2|max:191|nullable',
         'country' => 'min:2|max:191|nullable',
         'zip' => 'max:10|nullable',
-        'manager_id' => 'exists:users,id|nullable',
+        'manager_id' => 'exists:users,id|nullable|fmcs_manager',
         'parent_id' => 'nullable|exists:locations,id|non_circular:locations,id|parent_matches_location_company',
         'company_id' => 'integer|nullable|exists:companies,id|fmcs_company',
     ];
@@ -66,7 +71,7 @@ class Location extends SnipeModel
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'name',
@@ -120,6 +125,55 @@ class Location extends SnipeModel
         'manager' => ['first_name', 'last_name', 'display_name'],
         'adminuser' => ['first_name', 'last_name', 'display_name'],
     ];
+
+    /**
+     * Advanced-search filterable fields.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'company',
+                'type' => 'fk',
+                'column' => 'company_id',
+                'endpoint' => 'companies',
+                'label' => trans('admin/companies/table.title'),
+            ],
+            [
+                'field' => 'parent',
+                'type' => 'fk',
+                'column' => 'parent_id',
+                'endpoint' => 'locations',
+                'label' => trans('admin/locations/table.parent'),
+            ],
+            [
+                'field' => 'manager',
+                'type' => 'fk',
+                'column' => 'manager_id',
+                'endpoint' => 'users',
+                'label' => trans('admin/users/table.manager'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
 
     /**
      * On hard-delete, wipe the image file and Files-tab attachments.
@@ -293,8 +347,7 @@ class Location extends SnipeModel
      */
     public function parent()
     {
-        return $this->belongsTo(self::class, 'parent_id', 'id')
-            ->with('parent');
+        return $this->belongsTo(self::class, 'parent_id', 'id');
     }
 
     /**
@@ -308,11 +361,15 @@ class Location extends SnipeModel
             return (int) $this->company_id;
         }
 
+        $visitedIds = [$this->id => true];
         $ancestor = $this->parent()->withoutGlobalScopes()->first();
-        while ($ancestor) {
+
+        while ($ancestor && ! isset($visitedIds[$ancestor->id])) {
             if ($ancestor->company_id) {
                 return (int) $ancestor->company_id;
             }
+
+            $visitedIds[$ancestor->id] = true;
             $ancestor = $ancestor->parent()->withoutGlobalScopes()->first();
         }
 
@@ -358,8 +415,30 @@ class Location extends SnipeModel
      */
     public function children()
     {
-        return $this->hasMany(self::class, 'parent_id')
-            ->with('children');
+        return $this->hasMany(self::class, 'parent_id');
+    }
+
+    /**
+     * Walk up the parent chain, nearest ancestor first. Stops at the first
+     * location already seen so legacy parent_id cycles can't loop forever.
+     *
+     * @return Collection<int, Location>
+     */
+    public function ancestors(): Collection
+    {
+        $ancestors = new Collection;
+
+        $visitedIds = [$this->id => true];
+
+        $cursor = $this->parent;
+
+        while ($cursor && ! isset($visitedIds[$cursor->id])) {
+            $ancestors->push($cursor);
+            $visitedIds[$cursor->id] = true;
+            $cursor = $cursor->parent;
+        }
+
+        return $ancestors;
     }
 
     /**
@@ -396,13 +475,6 @@ class Location extends SnipeModel
     }
 
     /**
-     * Query builder scope to order on parent
-     *
-     * @param  Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  text  $order  Order
-     * @return Illuminate\Database\Query\Builder Modified query builder
-     */
-    /**
      * The map's keys are parent_id values, with `0` used for "no parent / top-
      * level". Using 0 (not null) avoids PHP 8.4's deprecation of null array
      * offsets when callers build the map from `$location->parent_id`.
@@ -437,48 +509,36 @@ class Location extends SnipeModel
         return $results;
     }
 
-    /**
-     * Query builder scope to order on parent
-     *
-     * @param  Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  text  $order  Order
-     * @return Illuminate\Database\Query\Builder Modified query builder
-     */
-    public function scopeOrderParent($query, $order)
+    public function newEloquentBuilder($query): LocationQueryBuilder
     {
-        // Left join here, or it will only return results with parents
-        return $query->leftJoin('locations as parent_loc', 'locations.parent_id', '=', 'parent_loc.id')->orderBy('parent_loc.name', $order);
+        return new LocationQueryBuilder($query);
     }
 
     /**
-     * Query builder scope to order on manager name
-     *
-     * @param  Builder  $query  Query builder instance
-     * @param  text  $order  Order
-     * @return Builder Modified query builder
+     * Build the parent-company-mismatch error message for store / update
+     * flows (API, web, and the parent_matches_location_company validator
+     * replacer). GHSA-vx68-xhq6-9gmr: the detailed variant disclosed the
+     * cross-tenant parent location's name to any caller who submitted its
+     * id, turning the endpoint into an enumeration oracle for location
+     * names across company boundaries. Legitimate callers who already have
+     * visibility into the parent (superusers, and non-supers whose company
+     * pivot includes the parent's company) still get the detailed
+     * diagnostic. Everyone else gets a generic message that reveals no
+     * cross-tenant data.
      */
-    public function scopeOrderManager($query, $order)
+    public static function parentCompanyMismatchMessage(self $parent, ?string $locationCompanyName): string
     {
-        return $query->leftJoin('users as location_user', 'locations.manager_id', '=', 'location_user.id')->orderBy('location_user.first_name', $order)->orderBy('location_user.last_name', $order);
-    }
+        $canSeeParent = auth()->user()?->isSuperUser()
+            || Company::isCurrentUserHasAccess($parent);
 
-    /**
-     * Query builder scope to order on company
-     *
-     * @param  Builder  $query  Query builder instance
-     * @param  text  $order  Order
-     * @return Builder Modified query builder
-     */
-    public function scopeOrderCompany($query, $order)
-    {
-        return $query->leftJoin('companies as company_sort', 'locations.company_id', '=', 'company_sort.id')->orderBy('company_sort.name', $order);
-    }
+        if ($canSeeParent) {
+            return trans('general.error_location_parent_company', [
+                'parent' => $parent->name,
+                'parent_company' => $parent->company?->name ?? trans('general.unassigned'),
+                'location_company' => $locationCompanyName ?? trans('general.unassigned'),
+            ]);
+        }
 
-    /**
-     * Query builder scope to order on the user that created it
-     */
-    public function scopeOrderByCreatedByName($query, $order)
-    {
-        return $query->leftJoin('users as admin_sort', 'locations.created_by', '=', 'admin_sort.id')->select('locations.*')->orderBy('admin_sort.first_name', $order)->orderBy('admin_sort.last_name', $order);
+        return trans('general.error_location_parent_company_generic');
     }
 }

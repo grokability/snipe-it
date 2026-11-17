@@ -70,6 +70,7 @@ return [
     ],
 
     'select_country' => 'Sélectionnez un pays',
+    'select_currency' => 'Select a currency',
 
     'countries' => [
         'AC' => 'Île de l\'Ascension',

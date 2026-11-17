@@ -26,7 +26,7 @@
 @endphp
 
 @if ($id)
-    <div class="modal fade" id="{{ $id }}" tabindex="-1" role="dialog" @if ($labelledById) aria-labelledby="{{ $labelledById }}" @endif aria-hidden="true">
+    <div {{ $attributes->merge(['class' => 'modal fade']) }} id="{{ $id }}" tabindex="-1" role="dialog" @if ($labelledById) aria-labelledby="{{ $labelledById }}" @endif aria-hidden="true">
 @endif
         <div class="modal-dialog">
         <div class="modal-content">

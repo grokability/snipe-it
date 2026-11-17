@@ -21,9 +21,10 @@
             <x-form id="audit-form">
                 <x-box>
 
-                    {{-- Audit by tag or by serial (serial disabled unless
-                         unique_serial is on). The audit_key label below
-                         switches text based on this choice via inline JS. --}}
+                    {{-- Audit by tag, serial, or 2D barcode scan. Serial
+                         is disabled unless unique_serial is on. The 2D
+                         barcode option only shows when the install has
+                         2D barcodes enabled. --}}
                     <x-form.row
                         :label="trans('general.audit_by_field')"
                         name="audit_by_field"
@@ -35,17 +36,19 @@
                             <select name="audit_by_field" data-minimum-results-for-search="Infinity" id="audit_by_field" style="width: 100% !important" class="form-control select2" aria-label="audit_by_field" required>
                                 <option value="asset_tag">{{ trans('general.asset_tag') }}</option>
                                 <option value="serial" {{ ($settings->unique_serial != '1') ? 'disabled' : '' }}>{{ trans('general.serial_number') }}</option>
+                                @if ($settings->label2_2d_type !== 'none')
+                                    <option value="2d_barcode">{{ trans('general.audit_by_2d_barcode') }}</option>
+                                @endif
                             </select>
                         </x-slot:input>
                     </x-form.row>
 
-                    {{-- Tag or serial input. Hand-rolled because the
-                         <label> needs a JS-targeted id (audit_key_label)
-                         plus two data-* attributes carrying the "Asset
-                         Tag" and "Serial Number" translations that the
-                         audit-by-field switcher script swaps between.
-                         x-form.row's label wrapper doesn't accept
-                         pass-through attributes. --}}
+                    {{-- Tag, serial, or 2D barcode input. Hand-rolled because
+                         the <label> needs a JS-targeted id (audit_key_label)
+                         plus data-* attributes carrying the per-option
+                         translations the audit-by-field switcher script
+                         swaps between. x-form.row's label wrapper doesn't
+                         accept pass-through attributes. --}}
                     <div class="form-group {{ $errors->has('audit_key') ? 'error' : '' }}">
                         <label
                             for="audit_key"
@@ -53,6 +56,7 @@
                             class="col-md-3 control-label"
                             data-asset-tag-label="{{ trans('general.asset_tag') }}"
                             data-serial-label="{{ trans('general.serial_number') }}"
+                            data-2d-barcode-label="{{ trans('general.audit_by_2d_barcode') }}"
                         >{{ trans('general.asset_tag') }}</label>
                         <div class="col-md-8">
                             <input type="text" class="form-control" name="audit_key" id="audit_key" required value="{{ old('audit_key') }}">
@@ -168,16 +172,17 @@
      the ride so we don't split this into two spots. --}}
 @section('moar_scripts')
     <script nonce="{{ csrf_token() }}">
-        // Swap the audit_key label text between "Asset Tag" and
-        // "Serial Number" as the user toggles the by-field select.
-        // Both translations ride on the label element's data attributes
-        // so this script doesn't need to embed them.
+        // Swap the audit_key label text between "Asset Tag", "Serial
+        // Number", and "2D Barcode" as the user toggles the by-field
+        // select. All three translations ride on the label element's
+        // data attributes so this script doesn't need to embed them.
         $(document.body).on('change', '#audit_by_field', function () {
             var $label = $('#audit_key_label');
-            var newText = this.value === 'serial'
-                ? $label.data('serial-label')
-                : $label.data('asset-tag-label');
-            $label.text(newText);
+            var dataKey = {
+                serial: 'serial-label',
+                '2d_barcode': '2d-barcode-label',
+            }[this.value] || 'asset-tag-label';
+            $label.text($label.data(dataKey));
         });
 
         $('#audit-form').submit(function (event) {
@@ -218,6 +223,10 @@
                 },
                 complete: function () {
                     $('#audit-loader').hide();
+                    // Quickscan audit is a tight scan loop. Restore the submit
+                    // button immediately so the next scan can fire without
+                    // waiting for the global double-submit safety timeout.
+                    window.enableSubmitsIn('#audit-form');
                 },
             });
 

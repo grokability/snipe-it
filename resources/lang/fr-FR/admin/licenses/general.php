@@ -32,8 +32,8 @@ return [
         ],
 
         'checkin_selected' => [
-            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
-            'no_seats_selected' => 'No seats were selected.',
+            'success' => ':count siège enregistré avec succès. | :count sièges enregistrés avec succès.',
+            'no_seats_selected' => 'Aucun siège n\'a été sélectionné.',
         ],
 
         'checkout_all' => [
@@ -50,8 +50,8 @@ return [
         ],
 
         'delete_with_checkin' => [
-            'label' => 'Check in seats and delete',
-            'log_msg' => 'Checked in via bulk delete-with-checkin in license index',
+            'label' => 'Enregistrez les sièges et supprimez',
+            'log_msg' => 'Enregistré via l\'index de licence de suppression en bloc',
         ],
     ],
 

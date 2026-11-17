@@ -293,7 +293,7 @@ class AssetCheckoutTest extends TestCase
                     return [
                         'checkout_type' => 'asset',
                         'target' => $asset,
-                        'expected_location' => null,
+                        'expected_location' => $rtdLocation,
                     ];
                 },
             ],

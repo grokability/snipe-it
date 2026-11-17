@@ -28,7 +28,7 @@ class ImageUploadRequestDimensionsLimitsTest extends TestCase
 
         $user = User::factory()->create(['avatar' => null]);
 
-        $path = tempnam(sys_get_temp_dir(), 'png');
+        $path = $this->trackTempFile(tempnam(sys_get_temp_dir(), 'png'));
         file_put_contents($path, $this->craftPngWithIhdrDimensions(50000, 50000));
         $upload = new UploadedFile($path, 'bomb.png', 'image/png', null, true);
 
@@ -53,7 +53,7 @@ class ImageUploadRequestDimensionsLimitsTest extends TestCase
     {
         Storage::fake('public');
 
-        $path = tempnam(sys_get_temp_dir(), 'png');
+        $path = $this->trackTempFile(tempnam(sys_get_temp_dir(), 'png'));
         file_put_contents($path, $this->craftPngWithIhdrDimensions(2048, 2048));
         $upload = new UploadedFile($path, 'big-favicon.png', 'image/png', null, true);
 
@@ -81,7 +81,7 @@ class ImageUploadRequestDimensionsLimitsTest extends TestCase
     {
         Storage::fake('public');
 
-        $path = tempnam(sys_get_temp_dir(), 'png');
+        $path = $this->trackTempFile(tempnam(sys_get_temp_dir(), 'png'));
         file_put_contents($path, $this->craftPngWithIhdrDimensions(4097, 4097));
         $upload = new UploadedFile($path, 'just-over.png', 'image/png', null, true);
 
@@ -111,7 +111,7 @@ class ImageUploadRequestDimensionsLimitsTest extends TestCase
         // Craft a legitimate-dimension PNG padded to just over the PHP
         // upload limit so dimensions + mime pass, and only the `max:`
         // rule can be the one that rejects it.
-        $path = tempnam(sys_get_temp_dir(), 'png');
+        $path = $this->trackTempFile(tempnam(sys_get_temp_dir(), 'png'));
         $header = $this->craftPngWithIhdrDimensions(400, 400);
         file_put_contents($path, $header.str_repeat("\0", \App\Helpers\Helper::file_upload_max_size() + 1024 - strlen($header)));
         $upload = new UploadedFile($path, 'oversized.png', 'image/png', null, true);
@@ -156,7 +156,7 @@ class ImageUploadRequestDimensionsLimitsTest extends TestCase
 
         $manufacturer = Manufacturer::factory()->create(['image' => null]);
 
-        $path = tempnam(sys_get_temp_dir(), 'png');
+        $path = $this->trackTempFile(tempnam(sys_get_temp_dir(), 'png'));
         file_put_contents($path, $this->craftPngWithIhdrDimensions(50000, 50000));
         $upload = new UploadedFile($path, 'bomb.png', 'image/png', null, true);
 

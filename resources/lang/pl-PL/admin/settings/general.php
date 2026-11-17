@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Generuj automatycznie zwiększanjące się tagi zasobów',
     'auto_increment_prefix' => 'Prefix (opcjonalnie)',
     'auto_incrementing_help' => 'Włącz automatyczne zwiększanie tagów zasobów aby to ustawić',
-    'backups' => 'Kopie zapasowe',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Utwórz, pobieraj i przywracaj kopie zapasowe ',
     'backups_restoring' => 'Przywróć z kopii zapasowej',
     'backups_clean' => 'Wyczyść kopię zapasową bazy danych przed przywróceniem',

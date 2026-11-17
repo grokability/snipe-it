@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'Emlékeztető küldése',
     'cannot_send_reminder' => 'A felhasználó törölve lett, vagy nincs e-mail címe, ezért nem tud emlékeztetőt kapni',
     'reminder_sent' => 'Emlékeztető elküldve',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'Törölt elfogadási kérelem',
     'acceptance_request' => 'Elfogadási kérelem',
     'custom_export' => [

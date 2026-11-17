@@ -125,12 +125,21 @@
             if (this.options.excludeFooter) {
                 thtb = thtb.not('tfoot');
             }
+            // Snipe-IT: bs-table persists column order in localStorage. When the
+            // column set changes between sessions (columns added / removed /
+            // renamed), saved target indices can point past the current column
+            // count, leaving col2 shorter than col1 — swapNodes then de-references
+            // undefined.parentNode was crashing dragtable init.  Guard so
+            // stale state degrades to "columns stay in current order" instead.
             if (from < to) {
                 for (i = from; i < to; i++) {
                     col1 = thtb.find('> tr > td:nth-child(' + i + ')')
                         .add(thtb.find('> tr > th:nth-child(' + i + ')'));
                     col2 = thtb.find('> tr > td:nth-child(' + (i + 1) + ')')
                         .add(thtb.find('> tr > th:nth-child(' + (i + 1) + ')'));
+                    if (col1.length !== col2.length) {
+                        return;
+                    }
                     for (j = 0; j < col1.length; j++) {
                         swapNodes(col1[j], col2[j]);
                     }
@@ -141,6 +150,9 @@
                         .add(thtb.find('> tr > th:nth-child(' + i + ')'));
                     col2 = thtb.find('> tr > td:nth-child(' + (i - 1) + ')')
                         .add(thtb.find('> tr > th:nth-child(' + (i - 1) + ')'));
+                    if (col1.length !== col2.length) {
+                        return;
+                    }
                     for (j = 0; j < col1.length; j++) {
                         swapNodes(col1[j], col2[j]);
                     }
@@ -172,6 +184,29 @@
                 // do reorganisation asynchronous
                 // for chrome a little bit more than 1 ms because we want to force a rerender
                 _this.originalTable.endIndex = _this.sortableTable.movingRow.prevAll().length + 1;
+                // Snipe-IT: lock the computed drop position to the NON-sticky
+                // range. jQuery UI sortable's `items` filter only restricts which
+                // children can be dragged, not where a dragged item can land.
+                // Without this, a non-sticky column dropped near the edge of the
+                // overlay lands in a DOM slot before a sticky-left or after a
+                // sticky-right column, breaking the CSS nth-child pin on
+                // snipe-table--sticky-left-N / --sticky-right-N tables.
+                var tableClasses = _this.originalTable.el[0].className || '';
+                var leftStickyMatch = tableClasses.match(/snipe-table--sticky-left-(\d+)/);
+                var rightStickyMatch = tableClasses.match(/snipe-table--sticky-right-(\d+)/);
+                var leftStickyCount = leftStickyMatch ? parseInt(leftStickyMatch[1], 10) : 0;
+                var rightStickyCount = rightStickyMatch ? parseInt(rightStickyMatch[1], 10) : 0;
+                if (leftStickyCount > 0 || rightStickyCount > 0) {
+                    var totalCols = _this.originalTable.el.find('> thead > tr:first > th').length;
+                    var minPos = leftStickyCount + 1;
+                    var maxPos = totalCols - rightStickyCount;
+                    if (_this.originalTable.endIndex < minPos) {
+                        _this.originalTable.endIndex = minPos;
+                    }
+                    else if (_this.originalTable.endIndex > maxPos) {
+                        _this.originalTable.endIndex = maxPos;
+                    }
+                }
                 setTimeout(_this._rearrangeTableBackroundProcessing(), 50);
             };
         },

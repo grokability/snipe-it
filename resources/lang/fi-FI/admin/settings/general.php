@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Luo automaattisesti kasvavat laitetunnisteet',
     'auto_increment_prefix' => 'Etuliite (valinnainen)',
     'auto_incrementing_help' => 'Valitaksesi tämän, ota ensin käyttöön automaattisesti kasvavat laitetunnisteet',
-    'backups' => 'Varmuuskopiot',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Luo, lataa ja palauta varmuuskopiota ',
     'backups_restoring' => 'Palauta varmuuskopiosta',
     'backups_clean' => 'Clean the backed-up database before restore',

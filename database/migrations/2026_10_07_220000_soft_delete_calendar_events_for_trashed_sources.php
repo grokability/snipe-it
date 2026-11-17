@@ -42,10 +42,15 @@ return new class extends Migration
                 continue;
             }
 
-            CalendarEvent::query()
-                ->where('source_type', $sourceClass)
-                ->whereIn('source_id', $trashedIds)
-                ->delete();
+            // Chunk the IN list so an install with thousands of trashed
+            // sources doesn't blow MySQL's prepared-statement placeholder
+            // ceiling 
+            foreach (array_chunk($trashedIds, 1000) as $chunk) {
+                CalendarEvent::query()
+                    ->where('source_type', $sourceClass)
+                    ->whereIn('source_id', $chunk)
+                    ->delete();
+            }
         }
     }
 

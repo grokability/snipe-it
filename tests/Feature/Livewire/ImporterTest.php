@@ -677,9 +677,11 @@ class ImporterTest extends TestCase
         config(['app.lock_passwords' => true]);
 
         $user = User::factory()->canImport()->superuser()->create();
+        $file = Import::factory()->create();
 
         Livewire::actingAs($user)
             ->test(Importer::class)
+            ->set('activeFileId', $file->id)
             ->call('startProcessing')
             ->assertSet('processing', true);
     }

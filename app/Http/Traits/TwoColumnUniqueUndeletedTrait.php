@@ -8,7 +8,6 @@ trait TwoColumnUniqueUndeletedTrait
      * Prepare a unique_ids rule, adding a model identifier if required.
      *
      * @param  array  $parameters
-     * @param  string  $field
      * @return string
      */
     protected function prepareTwoColumnUniqueUndeletedRule($parameters)

@@ -222,11 +222,6 @@ trait HasCustomLabelContentProperties
         $this->hydrateNumericContent($content);
         $this->hydrateStringContent($content);
 
-        if (array_key_exists('barcode2D_h_align', $content)) {
-            $this->syncLogoAnd2DBarcodeHAlign('barcode2D_h_align');
-        } elseif (array_key_exists('logo_h_align', $content)) {
-            $this->syncLogoAnd2DBarcodeHAlign('logo_h_align');
-        }
     }
 
     protected function hydrateNumericContent(array $content): void

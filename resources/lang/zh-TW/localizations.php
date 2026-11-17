@@ -70,6 +70,7 @@ return [
     ],
 
     'select_country' => '選擇一個國家或地區',
+    'select_currency' => 'Select a currency',
 
     'countries' => [
         'AC' => '阿森松島',

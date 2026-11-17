@@ -12,21 +12,17 @@ class ExpiringLicenseNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-
     /**
      * Create a new notification instance.
      */
     public function __construct(
         public $params,
         public $threshold
-    )
-    {
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
      * @return array
      */
     public function via()
@@ -40,7 +36,6 @@ class ExpiringLicenseNotification extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $asset
      * @return MailMessage
      */
     public function toMail()

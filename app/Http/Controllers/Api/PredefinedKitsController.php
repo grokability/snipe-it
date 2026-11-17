@@ -158,7 +158,6 @@ class PredefinedKitsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
      * @return Response
      */
     public function indexLicenses($kit_id): array
@@ -173,7 +172,6 @@ class PredefinedKitsController extends Controller
     /**
      * Store the specified resource.
      *
-     * @param  int  $id
      * @return Response
      */
     public function storeLicense(Request $request, $kit_id): JsonResponse
@@ -256,8 +254,6 @@ class PredefinedKitsController extends Controller
 
     /**
      * Store the specified resource.
-     *
-     * @param  int  $id
      */
     public function storeModel(Request $request, $kit_id): JsonResponse
     {
@@ -340,8 +336,6 @@ class PredefinedKitsController extends Controller
 
     /**
      * Store the specified resource.
-     *
-     * @param  int  $id
      */
     public function storeConsumable(Request $request, $kit_id): JsonResponse
     {

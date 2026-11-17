@@ -17,6 +17,9 @@
         {{ $table_header }}
     </x-slot:table_header>
 
+    <x-slot:bulkactions>
+        <x-table.bulk-components />
+    </x-slot:bulkactions>
 
     <x-table
         :$presenter

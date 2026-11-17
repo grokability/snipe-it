@@ -3,8 +3,9 @@
 namespace App\SyncAdapters\GoogleWorkspace;
 
 use App\Models\Asset;
+use App\Models\SyncAdapterConfig;
 use App\SyncAdapters\HostInventoryRecord;
-use App\SyncAdapters\PushableAdapter;
+use App\SyncAdapters\PushableSyncAdapter;
 use App\SyncAdapters\SyncAdapter;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
@@ -36,7 +37,7 @@ use Illuminate\Support\Facades\Log;
  * endpoint (admin.googleapis.com), and token exchange lives at
  * oauth2.googleapis.com. Neither has regional variants.
  */
-class GoogleWorkspaceAdapter extends SyncAdapter implements PushableAdapter
+class GoogleWorkspaceAdapter extends PushableSyncAdapter
 {
     public static function typeLabel(): string
     {
@@ -105,7 +106,7 @@ class GoogleWorkspaceAdapter extends SyncAdapter implements PushableAdapter
             'google_workspace_firmware_version' => ['label_key' => 'admin/settings/sync_adapters.google_workspace_extra_firmware_version'],
             'google_workspace_ethernet_mac' => ['label_key' => 'admin/settings/sync_adapters.google_workspace_extra_ethernet_mac'],
             'google_workspace_wifi_mac' => ['label_key' => 'admin/settings/sync_adapters.google_workspace_extra_wifi_mac'],
-            'google_workspace_enrollment_time' => ['label_key' => 'admin/settings/sync_adapters.google_workspace_extra_enrollment_time'],
+            'google_workspace_enrollment_time' => ['label_key' => 'admin/settings/sync_adapters.google_workspace_extra_enrollment_time', 'type' => 'date'],
             'google_workspace_org_unit_path' => ['label_key' => 'admin/settings/sync_adapters.google_workspace_extra_org_unit_path'],
         ];
     }
@@ -414,11 +415,13 @@ class GoogleWorkspaceAdapter extends SyncAdapter implements PushableAdapter
 
     private function buildClient(): GoogleWorkspaceClient
     {
+        $customerId = SyncAdapterConfig::get($this->instance->id, 'customer_id');
+
         return new GoogleWorkspaceClient(
             serviceAccountEmail: $this->credential('service_account_email'),
             privateKeyPem: $this->credential('private_key'),
             impersonateEmail: $this->credential('impersonate_email'),
-            customerId: $this->credential('customer_id') ?: 'my_customer',
+            customerId: is_string($customerId) && $customerId !== '' ? $customerId : 'my_customer',
         );
     }
 }

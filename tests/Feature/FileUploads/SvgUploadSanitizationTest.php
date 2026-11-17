@@ -27,21 +27,10 @@ use Tests\TestCase;
  */
 class SvgUploadSanitizationTest extends TestCase
 {
-    private array $tempFiles = [];
-
     protected function setUp(): void
     {
         parent::setUp();
         Storage::fake();
-    }
-
-    protected function tearDown(): void
-    {
-        foreach ($this->tempFiles as $path) {
-            @unlink($path);
-        }
-
-        parent::tearDown();
     }
 
     private function realUpload(string $clientName, string $content): UploadedFile
@@ -50,9 +39,8 @@ class SvgUploadSanitizationTest extends TestCase
         // correctly. UploadedFile::fake() derives its mime from the
         // filename, which would trivially "pass" the SVG detection
         // without exercising the real sanitize path.
-        $path = tempnam(sys_get_temp_dir(), 'snipeit_svg_');
+        $path = $this->trackTempFile(tempnam(sys_get_temp_dir(), 'snipeit_svg_'));
         file_put_contents($path, $content);
-        $this->tempFiles[] = $path;
 
         return new UploadedFile($path, $clientName, null, null, true);
     }

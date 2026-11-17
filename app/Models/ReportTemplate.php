@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use UnhandledMatchError;
 use Watson\Validating\ValidatingTrait;
 
+/**
+ * @mixin IdeHelperReportTemplate
+ */
 class ReportTemplate extends Model
 {
     use HasFactory;

@@ -10,7 +10,8 @@
     </title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1" name="viewport">
-
+    
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
 
@@ -56,6 +57,9 @@
             settings: {
                 "per_page": {{ $snipeSettings->per_page }},
                 "first_day_of_week": {{ (int) $snipeSettings->week_start }}
+            },
+            i18n: {
+                "processing": @json(trans('general.processing'))
             }
         };
     </script>
@@ -184,7 +188,7 @@
                                                     </label>
                                                     <input type="text" class="form-control" id="tagSearch" name="assetTag" placeholder="{{ trans('general.lookup_by_tag') }}">
                                                     <span class="input-group-btn">
-                                                        <button type="submit" id="topSearchButton" class="btn btn-sm btn-theme" style="padding: 7px 10px 7px 10px; "><x-icon type="search" class="fa-fw" /><div class="sr-only">{{ trans('general.search') }}</div></button>
+                                                        <button type="submit" id="topSearchButton" class="btn btn-sm btn-theme" style="padding: 7px 10px 7px 10px; " data-processing-icon-only="1"><x-icon type="search" class="fa-fw" /><div class="sr-only">{{ trans('general.search') }}</div></button>
                                                     </span>
                                                 </div>
 
@@ -308,7 +312,7 @@
                                         <li {!! (request()->is('account/accept') ? ' class="active" aria-current="page"' : '') !!}>
                                             <a href="{{ route('account.accept') }}">
                                                 <x-icon type="signature" class="fa-fw"/>
-                                                {{ trans('general.accept_assets_menu') }}
+                                                {{ trans('general.accept_items') }}
                                             </a>
                                         </li>
 
@@ -497,6 +501,13 @@
                                     </li>
                                     @endcan
 
+                                    <li id="past-eol-sidenav-option"{!! (request()->is('hardware') && request()->boolean('past_eol') ? ' class="active" aria-current="page"' : '') !!}>
+                                        <a href="{{ route('hardware.index', ['past_eol' => 1]) }}">
+                                            <x-icon type="due" class="text-orange fa-fw"/>
+                                            {{ trans('general.past_eol') }}
+                                        </a>
+                                    </li>
+
                                     <li class="divider">&nbsp;</li>
                                     @can('checkin', \App\Models\Asset::class)
                                         <li{!! (request()->is('hardware/quickscancheckin') ? ' class="active" aria-current="page"' : '') !!}>
@@ -650,6 +661,12 @@
                                             <a href="{{ route('users.index', ['activated' => false]) }}">
                                                 <i class="fa-solid fa-person-circle-xmark text-danger fa-fw"></i>
                                                 {{ trans('general.login_disabled') }}
+                                            </a>
+                                        </li>
+                                        <li class="{{ (request()->is('users') && request()->filled('end_date_within')) ? 'active' : '' }}" id="users-sidenav-offboarding">
+                                            <a href="{{ route('users.index', ['end_date_within' => \App\Livewire\NeedsAttention::OFFBOARDING_DAYS, 'with_assignments' => 1]) }}">
+                                                <x-icon type="offboarding" class="text-warning fa-fw"/>
+                                                {{ trans('general.offboarding_soon') }}
                                             </a>
                                         </li>
                                     </ul>
@@ -818,11 +835,6 @@
                                             {{ trans('general.asset_maintenance_report') }}
                                         </a>
                                     </li>
-                                    <li {!! (request()->is('reports/unaccepted_assets') ? ' class="active" aria-current="page"' : '') !!}>
-                                        <a href="{{ url('reports/unaccepted_assets') }}">
-                                            {{ trans('general.unaccepted_asset_report') }}
-                                        </a>
-                                    </li>
                                     <li  {!! (request()->is('reports/accessories') ? ' class="active" aria-current="page"' : '') !!}>
                                         <a href="{{ url('reports/accessories') }}">
                                             {{ trans('general.accessory_report') }}
@@ -834,8 +846,14 @@
                             @can('canCheckoutAtLeastOneItemType')
                                 <li{!! (request()->is('requests.index') ? ' class="active" aria-current="page"' : '') !!}>
                                     <a href="{{ route('requests.index') }}">
-                                        <i class="fa-solid fa-boxes-packing"></i>
+                                        <x-icon type="pending-requests" class="fa-fw"/>
                                         <span>{{ trans('general.pending_requests') }}</span>
+                                    </a>
+                                </li>
+                                <li{!! (request()->is('unaccepted-acceptances') ? ' class="active" aria-current="page"' : '') !!}>
+                                    <a href="{{ route('unaccepted-acceptances.index') }}">
+                                        <x-icon type="signature" class="fa-fw"/>
+                                        <span>{{ trans('general.unaccepted_asset_report') }}</span>
                                     </a>
                                 </li>
                             @endcan
@@ -1091,8 +1109,19 @@
 
         <script nonce="{{ csrf_token() }}">
 
-            // Handle the first selected tabs regardless of permissions
-            if ($('li.snipetab').is(':first-of-type')) {
+            // Pick the active tab. URL hash wins so controllers can
+            // redirect()->withFragment('tab-name') and the user lands
+            // back on the tab they were working in. Fall back to the
+            // first tab on the page when no hash is present or the
+            // hash doesn't match a snipetab-pane.
+            var hashTarget = window.location.hash && $('.snipetab-pane' + window.location.hash).length
+                ? window.location.hash
+                : null;
+
+            if (hashTarget) {
+                $('li.snipetab a[href="' + hashTarget + '"]').closest('li').addClass('active');
+                $(hashTarget + '.snipetab-pane').addClass('in active');
+            } else if ($('li.snipetab').is(':first-of-type')) {
                 var hash = $('li.snipetab:first-of-type').children().attr('href');
                 $('li.snipetab:first-of-type').addClass('active');
                 $('div'+hash+'.snipetab-pane').addClass('in active');
@@ -1387,28 +1416,8 @@
                 event.preventDefault();
                 $(this).ekkoLightbox();
             });
-            // Anti-double-click on checkout forms. The old implementation did
-            //   event.preventDefault(); $btn.prop('disabled', true); this.submit();
-            // which submitted the form NATIVELY (without re-firing the submit
-            // event), bypassing jQuery Validate entirely — hence any JS
-            // validation error was visible for a single frame before the form
-            // shipped straight to the server.
-            //
-            // New shape: let the normal submit lifecycle run, and only disable
-            // the button when the submit has not been cancelled by a prior
-            // handler (jQuery Validate calls event.preventDefault() when the
-            // form is invalid, so we skip the disable in that case and the
-            // operator can fix + retry). jQuery Validate is bound at .validate()
-            // time (line ~2390 above) which runs before this ready() callback,
-            // so its handler is registered — and fires — first.
-            $(document).ready(function () {
-                $('#checkout_form').on('submit', function (event) {
-                    if (event.isDefaultPrevented()) {
-                        return;
-                    }
-                    $('#submit_button').prop('disabled', true);
-                });
-            });
+            // Anti-double-click on checkout forms is handled by the
+            // global double-submit guard in snipeit.js
 
             // Select encrypted custom fields to hide them in the asset list
             $(document).ready(function() {

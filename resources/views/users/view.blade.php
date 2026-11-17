@@ -35,7 +35,9 @@
                     <x-tabs.maintenance-tab count="{{ $user->assignedMaintenances()->count() }}"/>
                     <x-tabs.files-tab :item="$user" count="{{ $user->uploads()->count() }}"/>
                     <x-tabs.eula-tab count="{{ $user->eulas()->count() }}"/>
-                    <x-tabs.location-tab count="{{ $user->managedLocations()->count() }}"/>
+                    @can('view', \App\Models\Location::class)
+                        <x-tabs.location-tab count="{{ $user->managedLocations()->count() }}"/>
+                    @endcan
                     <x-tabs.user-tab count="{{ $user->managesUsers()->count() }}" name="managed-users" icon_type="manager" :label="trans('admin/users/table.managed_users')"/>
                     <x-tabs.history-tab count="{{ $user->history->count() }}" :model="$user"/>
                     <x-tabs.upload-tab :item="$user"/>
@@ -106,7 +108,7 @@
                             <x-page-data>
 
                                 <x-data-row :label="trans('general.name')" copy_what="name">
-                                    {{ $user->first_name }} {{ $user->last_name }}
+                                    {{ $user->full_name }}
                                 </x-data-row>
 
                                 <x-data-row :label="trans('admin/users/table.display_name')" copy_what="display_name">
@@ -329,7 +331,7 @@
                         <x-slot:bulkactions>
                             <x-table.bulk-actions
                                 name="userLicenseTable"
-                                :action_route="route('licenses.bulkcheckin.selected')"
+                                :action_route="route('licenses.bulkcheckin.show')"
                                 model_name="license_seats"
                                 :actions="[
                                     'checkin' => ['label' => trans('general.checkin')],
@@ -353,7 +355,7 @@
                     </x-tabs.pane>
 
                     <x-tabs.pane name="assets" :count="$user->assets()->AssetsForShow()->count()">
-                        <x-table.assets :route="route('api.assets.index',['assigned_to' => e($user->id), 'assigned_type' => 'App\Models\User'])"/>
+                        <x-table.assets name="userAssets" :route="route('api.assets.index',['assigned_to' => e($user->id), 'assigned_type' => 'App\Models\User'])"/>
                     </x-tabs.pane>
 
                     <x-tabs.pane name="accessories" :count="$user->accessories()->count()">
@@ -395,7 +397,7 @@
                          closed; the tab badge only counts the open ones
                          (see assignedMaintenances()->active() above). --}}
                     <x-tabs.pane name="maintenances" :count="$user->assignedMaintenances()->count()">
-                        <x-table.maintenances
+                        <x-table.maintenances name="userMaintenances"
                             :route="route('api.maintenances.index', ['checked_out_to_id' => $user->id, 'checked_out_to_type' => \App\Models\User::class])"
                             export_filename="export-maintenances-{{ str_slug($user->username) }}-{{ date('Y-m-d') }}"
                         />
@@ -463,6 +465,12 @@
 
 
                     <!-- start locations tab pane -->
+                    {{-- Gate both the tab link (above) and this pane on
+                         locations.view: the api_url below hits
+                         /api/v1/locations which 403s callers without the
+                         permission. Showing the tab for a viewer who
+                         cannot populate it is an empty-state footgun. --}}
+                    @can('view', \App\Models\Location::class)
                     <x-tabs.pane name="locations">
 
                         <x-slot:table_header>
@@ -477,11 +485,12 @@
                         />
 
                     </x-tabs.pane>
+                    @endcan
 
 
                     <!-- start history tab pane -->
                     <x-tabs.pane name="history">
-                        <x-table.history :model="$user" :route="route('api.users.history', $user)" :hide_fields="['order_number']"/>
+                        <x-table.history name="userHistory" :model="$user" :route="route('api.users.history', $user)" :hide_fields="['order_number']"/>
                     </x-tabs.pane>
                     <!-- end history tab pane -->
                 </x-slot:tabpanes>

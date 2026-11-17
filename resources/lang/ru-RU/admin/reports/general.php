@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'Отправить напоминание',
     'cannot_send_reminder' => 'Пользователь удален или не имеет адреса электронной почты, поэтому не может получить напоминание',
     'reminder_sent' => 'Напоминание отправлено',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'Запрос на приемку удален',
     'acceptance_request' => 'Запрос на приемку',
     'custom_export' => [

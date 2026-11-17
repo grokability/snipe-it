@@ -17,6 +17,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\PendingCommand;
 use Tests\TestCase;
 
@@ -458,6 +459,74 @@ class BulkDeleteTest extends TestCase
             ->assertExitCode(0);
 
         $this->assertDatabaseHas('users', ['id' => $admin->id, 'deleted_at' => null]);
+    }
+
+    
+    public function test_user_avatar_delete_cannot_escape_avatars_prefix(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('barcodes/target.png', 'legitimate barcode asset');
+        Storage::disk('public')->put('avatars/target.png', 'legitimate avatar file');
+
+        $admin = User::factory()->superuser()->create();
+        $company = Company::factory()->create();
+        $user = User::factory()->forCompany($company->id)->create([
+            'activated' => 1,
+            'avatar' => 'https://x/../../../barcodes/target.png',
+        ]);
+
+        $this->runCommand($admin, [$company->id], ['users'], deleteFiles: true)
+            ->assertExitCode(0);
+
+        Storage::disk('public')->assertExists('barcodes/target.png');
+    }
+
+    /**
+     * The authoritative URL short-circuit on the delete sink: an OAuth
+     * avatar URL (Google, Microsoft, Gravatar) does not point at anything
+     * on this disk, so BulkDelete must not reach Flysystem with it at
+     * all. basename on a URL would additionally collide with an unrelated
+     * legitimately-named file inside `avatars/`. GHSA-fr6v-rhmg-9h3p.
+     */
+    public function test_user_delete_does_not_touch_disk_for_external_avatar(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('avatars/photo.jpg', 'legitimate other-user avatar');
+
+        $admin = User::factory()->superuser()->create();
+        $company = Company::factory()->create();
+        $user = User::factory()->forCompany($company->id)->create([
+            'activated' => 1,
+            'avatar' => 'https://lh3.googleusercontent.com/a/some-path/photo.jpg',
+        ]);
+
+        $this->runCommand($admin, [$company->id], ['users'], deleteFiles: true)
+            ->assertExitCode(0);
+
+        Storage::disk('public')->assertExists('avatars/photo.jpg');
+    }
+
+    /**
+     * Positive control: a legitimate avatar file at the expected path is
+     * removed by the command when file deletion is enabled, so the two
+     * guards above are not simply short-circuiting every delete.
+     */
+    public function test_user_delete_removes_legitimate_avatar_file(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('avatars/user-42.png', 'legitimate avatar');
+
+        $admin = User::factory()->superuser()->create();
+        $company = Company::factory()->create();
+        $user = User::factory()->forCompany($company->id)->create([
+            'activated' => 1,
+            'avatar' => 'user-42.png',
+        ]);
+
+        $this->runCommand($admin, [$company->id], ['users'], deleteFiles: true)
+            ->assertExitCode(0);
+
+        Storage::disk('public')->assertMissing('avatars/user-42.png');
     }
 
     // ---------------------------------------------------------------------------

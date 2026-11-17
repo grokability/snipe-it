@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Labels\CustomLabelFonts;
 use App\Rules\LabelGeometryRules;
+use App\Rules\CustomLabelContentRules;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-
 class CustomLabelRequest extends FormRequest
 {
     public function authorize(): bool
@@ -16,7 +15,14 @@ class CustomLabelRequest extends FormRequest
 
     public function rules(): array
     {
-        return $this->commonRules() + ($this->input('type') === 'tape' ? $this->tapeRules() : $this->sheetRules());
+        $isTape = $this->input('type') === 'tape';
+
+        return array_merge(
+            $this->commonRules(),
+            CustomLabelContentRules::shared(),
+            $isTape ? CustomLabelContentRules::tape() : [],
+            $isTape ? $this->tapeRules() : $this->sheetRules(),
+        );
     }
 
     private function commonRules(): array
@@ -27,10 +33,6 @@ class CustomLabelRequest extends FormRequest
             'template' => ['required', 'string'],
             'content' => ['required', 'array'],
             'supports' => ['required', 'array'],
-            'content.tag_font' => ['nullable', 'string', Rule::in(CustomLabelFonts::ALLOWED)],
-            'content.title_font' => ['nullable', 'string', Rule::in(CustomLabelFonts::ALLOWED)],
-            'content.field_label_font' => ['nullable', 'string', Rule::in(CustomLabelFonts::ALLOWED)],
-            'content.field_value_font' => ['nullable', 'string', Rule::in(CustomLabelFonts::ALLOWED)],
         ];
     }
 

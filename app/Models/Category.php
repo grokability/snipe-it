@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\Enums\FileStorage;
 use App\Http\Traits\TwoColumnUniqueUndeletedTrait;
+use App\Models\Builders\CategoryQueryBuilder;
+use App\Models\Contracts\Importable;
 use App\Models\Traits\Searchable;
 use App\Presenters\CategoryPresenter;
 use App\Presenters\Presentable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -24,8 +25,10 @@ use Watson\Validating\ValidatingTrait;
  * send a EULA to the user, etc.
  *
  * @version v1.0
+ *
+ * @mixin IdeHelperCategory
  */
-class Category extends SnipeModel
+class Category extends SnipeModel implements Importable
 {
     use HasFactory;
 
@@ -67,9 +70,9 @@ class Category extends SnipeModel
     use ValidatingTrait;
 
     /**
-     * The attributes that are mass assignable.
+     * The attributes that are mass-assignable.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'category_type',
@@ -106,6 +109,108 @@ class Category extends SnipeModel
     protected $searchableRelations = [
         'adminuser' => ['first_name', 'last_name', 'display_name'],
     ];
+
+    /**
+     * Advanced-search filterable fields.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'category_type',
+                'type' => 'enum',
+                'options' => [
+                    ['value' => 'asset', 'label' => trans('general.asset')],
+                    ['value' => 'accessory', 'label' => trans('general.accessory')],
+                    ['value' => 'consumable', 'label' => trans('general.consumable')],
+                    ['value' => 'component', 'label' => trans('general.component')],
+                    ['value' => 'license', 'label' => trans('general.license')],
+                ],
+                'label' => trans('admin/categories/general.import_category_type'),
+            ],
+            [
+                'field' => 'require_acceptance',
+                'type' => 'boolean',
+                'label' => trans('admin/categories/table.require_acceptance'),
+            ],
+            [
+                'field' => 'use_default_eula',
+                'type' => 'boolean',
+                'label' => trans('admin/settings/general.default_eula_text'),
+            ],
+            [
+                'field' => 'checkin_email',
+                'type' => 'boolean',
+                'label' => trans('general.send_email'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+            [
+                'field' => 'item_count',
+                'type' => 'numeric',
+                'label' => trans('general.qty'),
+            ],
+        ];
+    }
+
+    /**
+     * Override hook from Searchable. The displayed "qty" column
+     * (item_count) is derived per row from the category_type and the
+     * matching relation (assets via hasManyThrough models, everything
+     * else via direct hasMany on category_id). Filtering has to use
+     * the same CASE-dispatched correlated subquery so the gt/lt
+     * bounds match what the user sees.
+     */
+    protected function applyCustomFilter(\Illuminate\Database\Eloquent\Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?\Illuminate\Database\Eloquent\Builder
+    {
+        if ($filterKey !== 'item_count') {
+            return null;
+        }
+
+        $bounds = $this->parseGtLtBounds($filterValue);
+        if ($bounds === null) {
+            return null;
+        }
+        [$gt, $lt] = $bounds;
+
+        $countExpr = "(CASE categories.category_type
+            WHEN 'asset' THEN (SELECT COUNT(*) FROM models INNER JOIN assets ON assets.model_id = models.id WHERE models.category_id = categories.id AND assets.deleted_at IS NULL)
+            WHEN 'accessory' THEN (SELECT COUNT(*) FROM accessories WHERE accessories.category_id = categories.id AND accessories.deleted_at IS NULL)
+            WHEN 'consumable' THEN (SELECT COUNT(*) FROM consumables WHERE consumables.category_id = categories.id AND consumables.deleted_at IS NULL)
+            WHEN 'component' THEN (SELECT COUNT(*) FROM components WHERE components.category_id = categories.id AND components.deleted_at IS NULL)
+            WHEN 'license' THEN (SELECT COUNT(*) FROM licenses WHERE licenses.category_id = categories.id AND licenses.deleted_at IS NULL)
+            ELSE 0
+        END)";
+
+        $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+        $query->{$outerBoolean}(function ($nested) use ($countExpr, $gt, $lt) {
+            if ($gt !== null) {
+                $nested->whereRaw("{$countExpr} > ?", [$gt]);
+            }
+            if ($lt !== null) {
+                $nested->whereRaw("{$countExpr} < ?", [$lt]);
+            }
+        });
+
+        return $query;
+    }
 
     protected $searchableCounts = [
         'accessories_count',
@@ -349,27 +454,8 @@ class Category extends SnipeModel
         $this->attributes['checkin_email'] = (int) filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
 
-    /**
-     * -----------------------------------------------
-     * BEGIN QUERY SCOPES
-     * -----------------------------------------------
-     **/
-
-    /**
-     * Query builder scope for whether or not the category requires acceptance
-     *
-     * @author Vincent Sposato <vincent.sposato@gmail.com>
-     *
-     * @param  Builder  $query  Query builder instance
-     * @return Builder Modified query builder
-     */
-    public function scopeRequiresAcceptance($query)
+    public function newEloquentBuilder($query): CategoryQueryBuilder
     {
-        return $query->where('require_acceptance', '=', true);
-    }
-
-    public function scopeOrderByCreatedBy($query, $order)
-    {
-        return $query->leftJoin('users as admin_sort', 'categories.created_by', '=', 'admin_sort.id')->select('categories.*')->orderBy('admin_sort.first_name', $order)->orderBy('admin_sort.last_name', $order);
+        return new CategoryQueryBuilder($query);
     }
 }

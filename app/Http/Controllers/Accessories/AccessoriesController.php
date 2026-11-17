@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Accessories;
 
+use App\Enums\FileStorage;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdjustQuantityRequest;
@@ -49,7 +50,8 @@ class AccessoriesController extends Controller
         $category_type = 'accessory';
 
         return view('accessories/edit')->with('category_type', $category_type)
-            ->with('item', new Accessory);
+            ->with('item', new Accessory)
+            ->with('pendingRequestCount', 0);
     }
 
     /**
@@ -71,7 +73,7 @@ class AccessoriesController extends Controller
         $accessory->min_amt = request('min_amt');
         $accessory->company_id = Company::getIdForCurrentUser(request('company_id'));
         // order_number + currency don't live on the Accessory parent
-        // column any more — the AccessoryObserver::created hook writes
+        // column any more — the HasOrders creation hook writes
         // the initial Order + OrderItem, and we enrich that Order below
         // (after save) with the form-supplied order_number / currency.
         $accessory->manufacturer_id = request('manufacturer_id');
@@ -80,17 +82,24 @@ class AccessoriesController extends Controller
         $accessory->created_by = auth()->id();
         $accessory->notes = request('notes');
         $accessory->requestable = request('requestable', 0);
+        $accessory->archived = request('archived', 0);
         // Seed the template supplier from the initial-acquisition
         // supplier on the create form so newly-created items already
         // have a "typical" supplier pre-populated. Editable afterwards.
         $accessory->default_supplier_id = request('default_supplier_id', request('supplier_id'));
 
         if ($request->has('use_cloned_image')) {
-            $cloned_model_img = Accessory::select('image')->find($request->input('clone_image_from_id'));
-            if ($cloned_model_img) {
-                $new_image_name = 'clone-'.date('U').'-'.$cloned_model_img->image;
-                $new_image = 'accessories/'.$new_image_name;
-                Storage::disk('public')->copy('accessories/'.$cloned_model_img->image, $new_image);
+            // Authorize the source first
+            $cloned = Accessory::findOrFail($request->input('clone_image_from_id'));
+            $this->authorize('clone', $cloned);
+
+            $source_image = $cloned->image;
+            if ($source_image) {
+                $new_image_name = 'clone-' . date('U') . '-' . $source_image;
+                Storage::disk('public')->copy(
+                    FileStorage::Accessories->publicPath() . $source_image,
+                    FileStorage::Accessories->publicPath() . $new_image_name,
+                );
                 $accessory->image = $new_image_name;
             }
 
@@ -120,8 +129,6 @@ class AccessoriesController extends Controller
      * Return view for the Accessory update form, prepopulated with existing data
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     *
-     * @param  int  $accessoryId
      */
     public function edit(Accessory $accessory): View|RedirectResponse
     {
@@ -130,15 +137,16 @@ class AccessoriesController extends Controller
             session()->put('url.intended', $safeReferer);
         }
 
-        return view('accessories.edit')->with('item', $accessory)->with('category_type', 'accessory');
+        return view('accessories.edit')
+            ->with('item', $accessory)
+            ->with('category_type', 'accessory')
+            ->with('pendingRequestCount', $accessory->openRequests()->count());
     }
 
     /**
      * Returns a view that presents a form to clone an accessory.
      *
      * @author [J. Vinsmoke]
-     *
-     * @param  int  $accessoryId
      *
      * @since [v6.0]
      */
@@ -158,7 +166,7 @@ class AccessoriesController extends Controller
         // date / price from another tab. Field names match the
         // create-form input names so enrichInitialOrderFromRequest
         // in store() picks them up on save and writes them onto the
-        // observer-created initial Order + OrderItem for the new row.
+        // initial Order + OrderItem created by HasOrders for the new row.
         // Explicit assignments (not a foreach) so each typed value from
         // lastOrderPrefill() lands on the matching typed model property
         // without going through a mixed intermediate that would fail
@@ -171,7 +179,8 @@ class AccessoriesController extends Controller
 
         return view('accessories/edit')
             ->with('cloned_model', $accessory_to_clone)
-            ->with('item', $cloned);
+            ->with('item', $cloned)
+            ->with('pendingRequestCount', 0);
 
     }
 
@@ -179,8 +188,6 @@ class AccessoriesController extends Controller
      * Save edited Accessory from form post
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     *
-     * @param  int  $accessoryId
      */
     public function update(ImageUploadRequest $request, Accessory $accessory): RedirectResponse
     {
@@ -214,6 +221,7 @@ class AccessoriesController extends Controller
             $accessory->default_supplier_id = request('default_supplier_id');
             $accessory->notes = request('notes');
             $accessory->requestable = request('requestable', 0);
+            $accessory->archived = request('archived', 0);
 
             $accessory = $request->handleImages($accessory);
 
@@ -238,8 +246,6 @@ class AccessoriesController extends Controller
      * Delete the given accessory.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     *
-     * @param  int  $accessoryId
      */
     public function destroy(Accessory $accessory): RedirectResponse
     {
@@ -261,12 +267,58 @@ class AccessoriesController extends Controller
     }
 
     /**
+     * Restore a soft-deleted accessory.
+     */
+    public function postRestore($id): RedirectResponse
+    {
+        if ($accessory = Accessory::withTrashed()->find($id)) {
+            // Per-instance authorize so the policy's before() hook runs
+            // its FMCS isCurrentUserHasAccess check against the actual
+            // row, not just the class.
+            $this->authorize('delete', $accessory);
+
+            if ($accessory->deleted_at == '') {
+                return redirect()->back()->with('error', trans('general.not_deleted', ['item_type' => trans('general.accessory')]));
+            }
+
+            if ($accessory->restore()) {
+                return redirect()->route('accessories.show', $accessory)
+                    ->with('success', trans('admin/accessories/message.restore.success'));
+            }
+
+            return redirect()->back()->with('error', trans('general.could_not_restore', ['item_type' => trans('general.accessory'), 'error' => $accessory->getErrors()->first()]));
+        }
+
+        return redirect()->route('accessories.index')->with('error', trans('admin/accessories/message.does_not_exist'));
+    }
+
+    /**
+     * Flip an accessory back to live inventory. Mirrors postRestore's
+     * auth shape so unarchiving goes through the same per-instance
+     * authorize path as restore from soft-delete.
+     */
+    public function postUnarchive(Accessory $accessory): RedirectResponse
+    {
+        $this->authorize('update', $accessory);
+
+        if (! $accessory->archived) {
+            return redirect()->back()->with('error', trans('admin/accessories/message.does_not_exist'));
+        }
+
+        $accessory->archived = false;
+
+        if ($accessory->save()) {
+            return redirect()->back()->with('success', trans('general.unarchive_success', ['item_type' => trans('general.accessory')]));
+        }
+
+        return redirect()->back()->withErrors($accessory->getErrors());
+    }
+
+    /**
      * Returns a view that invokes the ajax table which  contains
      * the content for the accessory detail view, which is generated in getDataView.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     *
-     * @param  int  $accessoryID
      *
      * @see AccessoriesController::getDataView() method that generates the JSON response
      * @since [v1.0]

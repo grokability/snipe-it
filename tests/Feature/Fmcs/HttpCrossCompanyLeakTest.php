@@ -170,6 +170,42 @@ class HttpCrossCompanyLeakTest extends TestCase
         $this->assertCompanyBRowHidden(route('api.departments.index'), $companyBDepartment, $caller);
     }
 
+    public function test_search_filter_does_not_bypass_scope_via_multi_term_or_clause(): void
+    {
+        // Pre-fix: the Searchable trait's scopeTextSearch stitched multi-term
+        // searches with top-level orWhere clauses. Operator precedence (AND
+        // binds tighter than OR) let the second term match rows outside the
+        // FMCS scope: `WHERE scope AND col LIKE '%a%' OR col LIKE '%b%'`
+        // meant the second LIKE escaped the scope filter. Any scoped caller
+        // using the search field could probe for the existence of cross-
+        // company rows by name. The fix wraps the free-text branch in a
+        // nested where so OR stays inside the AND group with the scope.
+        // Note: this covers searchAttributes / searchCustomFields /
+        // searchRelations. Models that override advancedTextSearch
+        // (Asset, User, Actionlog, AccessoryCheckout, CheckoutRequest)
+        // still add top-level joined-column orWhere clauses and keep a
+        // narrower residual oracle on multi-term advanced searches.
+        // Follow-up PR will refactor those overrides to split joins
+        // (outer builder) from where clauses (nested builder).
+        $companyBCompany = Company::factory()->create(['name' => 'SECRET_CROSS_COMPANY']);
+        $caller = $this->callerScopedToCompanyA(['companies']);
+
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $ids = $this->idsFromResponse(
+            $this->actingAsForApi($caller)
+                ->getJson(route('api.companies.index', ['search' => 'nothing SECRET_CROSS_COMPANY']))
+                ->assertOk()
+                ->json('rows')
+        );
+
+        $this->assertNotContains(
+            $companyBCompany->id,
+            $ids,
+            'Multi-term search must not leak cross-company rows via the OR clause',
+        );
+    }
+
     public function test_api_users_index_hides_other_company_users(): void
     {
         $companyBUser = $this->companyB->users()->save(User::factory()->make());

@@ -20,5 +20,6 @@ return [
 Žádná výchozí EULA nenastavena. Zadejte novou v nastevení.',
     'clone' => 'Klonovat příslušenství',
     'delete_disabled' => 'Toto příslušenství ještě nelze odstranit, protože některé jeho položky jsou stále vydány.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

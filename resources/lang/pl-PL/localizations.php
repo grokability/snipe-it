@@ -70,6 +70,7 @@ return [
     ],
 
     'select_country' => 'Wybierz kraj',
+    'select_currency' => 'Select a currency',
 
     'countries' => [
         'AC' => 'Wyspa Wniebowstąpienia',

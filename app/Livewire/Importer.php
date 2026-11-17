@@ -10,6 +10,7 @@ use App\Models\Category;
 // Snipe-IT's Component model name clashes with Livewire\Component - alias it.
 use App\Models\Component as ComponentModel;
 use App\Models\Consumable;
+use App\Models\Contracts\Importable;
 use App\Models\CustomField;
 use App\Models\Import;
 use App\Models\License;
@@ -18,14 +19,17 @@ use App\Models\Manufacturer;
 use App\Models\Setting;
 use App\Models\Supplier;
 use App\Models\User;
+use App\Traits\LocksLongRunningOperation;
 use Illuminate\Support\Facades\Storage;
 use League\Csv\Reader;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class Importer extends Component
 {
+    use LocksLongRunningOperation;
     use WithPagination;
 
     // How many import files to show per page. Not currently user-configurable;
@@ -163,6 +167,10 @@ class Importer extends Component
     // / components / licenses use "item_name" for their name column;
     // asset models / locations / suppliers / manufacturers / categories
     // use "name" directly.
+    // requiredForType() cross-checks each class string against the
+    // Importable marker interface before `new`-ing. Defense in depth
+    // against future Livewire regressions that might bypass Locked.
+    #[Locked]
     public $required_field_model_map = [
         'asset' => [Asset::class, ['item_name' => 'name']],
         'assetModel' => [AssetModel::class, ['name' => 'name']],
@@ -176,7 +184,7 @@ class Importer extends Component
         // (2) update an existing License's capacity, (3) assign a user or
         // asset to one of an existing License's free seats. The importer
         // figures out which path each row takes at process time. seats is
-        // only needed for (1) and (2); (3) doesn't reference it. Since the
+        // only needed for (1) and (2), (3) doesn't reference it. Since the
         // wizard can't know per-row which path a caller intends, we don't
         // enforce seats at the wizard level. Server-side validation still
         // enforces `seats` on the create path per License::$rules. See
@@ -352,9 +360,13 @@ class Importer extends Component
         }
     }
 
-    public function mount()
+    public function boot(): void
     {
         $this->authorize('import');
+    }
+
+    public function mount()
+    {
         $this->refreshExistingImportFiles();
         $this->importTypes = [
             'accessory' => trans('general.accessories'),
@@ -375,6 +387,7 @@ class Importer extends Component
          * These are the item-type specific columns
          */
         $this->accessories_fields = [
+            'archived' => trans('general.archived'),
             'category' => trans('general.category'),
             'company' => trans('general.company'),
             'item_name' => trans('general.item_name_var', ['item' => trans('general.accessory')]),
@@ -387,6 +400,7 @@ class Importer extends Component
             'purchase_cost' => trans('general.purchase_cost'),
             'purchase_date' => trans('general.purchase_date'),
             'quantity' => trans('general.qty'),
+            'requestable' => trans('general.requestable'),
             'supplier' => trans('general.supplier'),
         ];
 
@@ -402,6 +416,7 @@ class Importer extends Component
             'image' => trans('general.importer.image_filename'),
             'item_name' => trans('general.item_name_var', ['item' => trans('general.asset')]),
             'location' => trans('general.location'),
+            'default_location' => trans('admin/hardware/form.default_location'),
             'manufacturer' => trans('general.manufacturer'),
             'model_notes' => trans('general.item_notes', ['item' => trans('admin/hardware/form.model')]),
             'model_number' => trans('general.model_no'),
@@ -459,10 +474,12 @@ class Importer extends Component
             // which does findCsvMatch($row, 'quantity'). A previous rename to
             // 'qty' silently broke consumable/component imports (issue #19312).
             'quantity' => trans('general.qty'),
+            'requestable' => trans('general.requestable'),
             'supplier' => trans('general.supplier'),
         ];
 
         $this->components_fields = [
+            'archived' => trans('general.archived'),
             'category' => trans('general.category'),
             'company' => trans('general.company'),
             'item_name' => trans('general.item_name_var', ['item' => trans('general.component')]),
@@ -476,6 +493,7 @@ class Importer extends Component
             'purchase_date' => trans('general.purchase_date'),
             // Internal key MUST be 'quantity' (see consumables_fields note above).
             'quantity' => trans('general.qty'),
+            'requestable' => trans('general.requestable'),
             'serial' => trans('general.serial_number'),
             'supplier' => trans('general.supplier'),
         ];
@@ -954,6 +972,27 @@ class Importer extends Component
             return;
         }
 
+        // Per-file mutex. Two admins (or two tabs) trying to process
+        // the SAME file concurrently would double-insert rows and race
+        // the slice index. Different files stay independent because
+        // the key is scoped by file id. The lock persists across all
+        // per-slice API POSTs until stopProcessing() releases it, or
+        // the 30-min TTL expires if the admin abandons the page
+        // mid-run.
+        $file = Import::find($this->activeFileId);
+        if ($file === null) {
+            $this->message = trans('general.file_not_found');
+            $this->message_type = 'danger';
+
+            return;
+        }
+        if (! $this->acquireOperationLock($file->lockKey())) {
+            $this->message = $this->operationAlreadyRunningMessage('general.import');
+            $this->message_type = 'danger';
+
+            return;
+        }
+
         $this->processing = true;
         $this->progress = 0;
         $this->progress_bar_class = 'progress-bar-warning';
@@ -986,6 +1025,15 @@ class Importer extends Component
     public function stopProcessing(): void
     {
         $this->processing = false;
+
+        // Release the per-file mutex acquired in startProcessing().
+        // Called by the slice-driver JS on either successful completion
+        // or any slice failure, so the lock clears whether the run
+        // finished or bailed early.
+        $file = Import::find($this->activeFileId);
+        if ($file !== null) {
+            $this->releaseOperationLock($file->lockKey());
+        }
     }
 
     /**
@@ -1075,7 +1123,17 @@ class Importer extends Component
         }
 
         [$modelClass, $translation] = $this->required_field_model_map[$type];
-        $rules = (new $modelClass)->getRules() ?? [];
+
+        // Defense in depth for GHSA-r43j-45c3-9vvw. #[Locked] on the
+        // property above should already reject client writes, but if a
+        // Livewire regression ever bypasses Locked, this interface check
+        // keeps the `new $modelClass` dispatch bounded to the set of
+        // models that opt in by implementing the Importable marker.
+        if (! is_string($modelClass) || ! class_exists($modelClass) || ! is_subclass_of($modelClass, Importable::class)) {
+            return [];
+        }
+
+        $rules = (new $modelClass)->getRules();
 
         $required = [];
         foreach ($translation as $importerKey => $modelAttr) {
@@ -1092,7 +1150,7 @@ class Importer extends Component
         // fieldsets, so a field required in Fieldset A may be irrelevant
         // for rows destined for Fieldset B (issue #19468). Server-side
         // validation on Asset::save() enforces the correct per-asset rule
-        // via customFieldValidationRules() -> $model->fieldset->validation_rules(),
+        // via the resolved custom_fieldset validation rules,
         // which reads the pivot->required flag for the specific fieldset
         // attached to the row's model. Rows that legitimately need the
         // field will still fail at save-time and surface in the import
@@ -1220,8 +1278,6 @@ class Importer extends Component
 
     public function destroy($id)
     {
-        $this->authorize('import');
-
         if (config('app.lock_passwords')) {
             $this->message = trans('general.feature_disabled');
             $this->message_type = 'danger';
@@ -1511,8 +1567,6 @@ class Importer extends Component
      */
     public function bulkDestroy()
     {
-        $this->authorize('import');
-
         if (config('app.lock_passwords')) {
             $this->message = trans('general.feature_disabled');
             $this->message_type = 'danger';

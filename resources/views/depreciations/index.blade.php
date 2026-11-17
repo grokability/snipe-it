@@ -21,6 +21,7 @@
             <x-table
                     name="depreciation"
                     show_column_search="false"
+                    show_advanced_search="true"
                     buttons="depreciationButtons"
                     fixed_right_number="1"
                     fixed_number="1"
@@ -34,4 +35,9 @@
 
 @section('moar_scripts')
 @include ('partials.bootstrap-table', ['exportFile' => 'depreciations-export', 'search' => true])
+
+<x-table.advanced-search
+    tableId="depreciationListingTable"
+    :model="\App\Models\Depreciation::class"
+/>
 @stop

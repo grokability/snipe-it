@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Օգտագործել առջնային EULA-ն</del> Առաջնային EULA չկա. Ավելացրեք Կարգավորումների միջոցով։',
     'clone' => 'Կրկնօրինակել աքսեսուարը',
     'delete_disabled' => 'Այս աքսեսուարը չի կարելի ջնջել, քանի որ որոշ իրեր տրամադրված են։',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

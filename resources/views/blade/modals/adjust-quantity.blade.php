@@ -104,16 +104,13 @@
                 >
             </x-slot:input>
         </x-form.row>
-        <x-form.row class="col-md-4" style="padding-left: 5px;" name="currency" :label="trans('general.currency')">
+        <x-form.row class="col-md-4" style="padding-left: 5px;" name="currency" :label="trans('general.currency_text')">
             <x-slot:input>
-                <input
-                    type="text"
-                    class="form-control"
-                    id="adjustQuantityCurrency"
+                <x-input.currency-select
                     name="currency"
-                    maxlength="10"
-                    placeholder="{{ $snipeSettings->default_currency }}"
-                >
+                    id="adjustQuantityCurrency"
+                    :selected="$snipeSettings->default_currency"
+                />
             </x-slot:input>
         </x-form.row>
     </div>

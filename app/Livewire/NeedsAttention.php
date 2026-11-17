@@ -16,6 +16,7 @@ use App\Models\Consumable;
 use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\Maintenance;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
@@ -67,6 +68,12 @@ class NeedsAttention extends Component
 
     public int $usersOffboardingSoon = 0;
 
+    // Days window for the offboarding tile. Fixed at 30 since there's
+    // no admin-level "offboarding alert" setting the way there is for
+    // licenses. The Blade link forwards this to users.index so the
+    // destination filter matches the count.
+    public const OFFBOARDING_DAYS = 30;
+
     public function boot(): void
     {
         // Matches the DashboardController::index gate. Without this a
@@ -80,7 +87,8 @@ class NeedsAttention extends Component
     public function mount(): void
     {
         $todayStart = now()->startOfDay();
-        $inThirtyDays = now()->addDays(30)->endOfDay();
+        $offboardingWindow = now()->addDays(self::OFFBOARDING_DAYS)->endOfDay();
+        $licenseExpiryDays = (int) (Setting::getSettings()->alert_interval ?: 30);
 
         // Every count is gated by the caller's per-type view
         // permission. A non-admin who reaches this widget through the
@@ -105,27 +113,48 @@ class NeedsAttention extends Component
         }
 
         if (Gate::allows('view', License::class)) {
-            $this->licensesExpiringSoon = License::whereBetween('expiration_date', [$todayStart, $inThirtyDays])->count();
+            // Reuses the same scope the admin License index uses for
+            // ?status=expiring, so clicking the tile lands on the same
+            // row set that the count reflects. The scope keys off the
+            // alert_interval setting (default 30 days) rather than a
+            // widget-local constant, so the two can't drift.
+            $this->licensesExpiringSoon = License::expiringLicenses($licenseExpiryDays)->count();
         }
 
         if (Gate::allows('view', User::class)) {
-            $this->usersOffboardingSoon = User::whereBetween('end_date', [$todayStart, $inThirtyDays])->count();
+            // Users with end_date in the window AND at least one
+            // assigned item. Someone offboarding with nothing on their
+            // record doesn't need IT's attention. Matches the
+            // ?with_assignments=1 filter the tile's link forwards to
+            // users.index.
+            $this->usersOffboardingSoon = User::whereBetween('end_date', [$todayStart, $offboardingWindow])
+                ->where(function ($query) {
+                    $query->has('assets')
+                        ->orHas('licenses')
+                        ->orHas('accessories')
+                        ->orHas('consumables');
+                })
+                ->count();
         }
 
-        // Pending checkout acceptances. whereHasMorph applies each
-        // checkoutable type's own CompanyableTrait global scope so
-        // FMCS scoping stays consistent. Restrict the morph list to
-        // types the caller can actually view so a non-admin's count
-        // reflects what they'd see if they clicked through, matching
-        // the /reports/unaccepted_assets scoping.
-        $acceptanceTypes = array_filter(
-            [Asset::class, LicenseSeat::class, Accessory::class, SnipeComponent::class, Consumable::class],
-            fn (string $type) => Gate::allows('view', $type === LicenseSeat::class ? License::class : $type),
-        );
-        if ($acceptanceTypes !== []) {
-            $this->pendingAcceptancesCount = CheckoutAcceptance::pending()
-                ->whereHasMorph('checkoutable', $acceptanceTypes)
-                ->count();
+        // Pending checkout acceptances. Count mirrors the destination
+        // page's gate (canCheckoutAtLeastOneItemType), so the tile is
+        // zeroed-and-hidden for a view-only user instead of linking
+        // through to a 403. whereHasMorph applies each checkoutable
+        // type's own CompanyableTrait global scope so FMCS scoping
+        // stays consistent, and the morph list is narrowed to types
+        // the caller holds checkout on so a non-admin's count reflects
+        // what they'd see if they clicked through.
+        if (Gate::allows('canCheckoutAtLeastOneItemType')) {
+            $acceptanceTypes = array_filter(
+                [Asset::class, LicenseSeat::class, Accessory::class, SnipeComponent::class, Consumable::class],
+                fn (string $type) => auth()->user()->can('checkout', $type === LicenseSeat::class ? License::class : $type),
+            );
+            if ($acceptanceTypes !== []) {
+                $this->pendingAcceptancesCount = CheckoutAcceptance::pending()
+                    ->whereHasMorph('checkoutable', $acceptanceTypes)
+                    ->count();
+            }
         }
 
         // CheckoutRequest is not itself Companyable, so the widget's

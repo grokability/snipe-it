@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DeleteUserRequest;
 use App\Http\Requests\ImageUploadRequest;
 use App\Http\Requests\SaveUserRequest;
-use App\Mail\UnacceptedAssetReminderMail;
 use App\Models\Accessory;
 use App\Models\Actionlog;
 use App\Models\Asset;
@@ -22,13 +21,13 @@ use App\Models\License;
 use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\CurrentInventory;
+use App\Notifications\UnacceptedAssetReminderNotification;
 use App\Notifications\WelcomeNotification;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use League\Csv\EscapeFormula;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -276,7 +275,6 @@ class UsersController extends Controller
      *
      * @since [v1.0]
      *
-     * @param  int  $id
      * @return RedirectResponse
      *
      * @throws AuthorizationException
@@ -308,7 +306,6 @@ class UsersController extends Controller
         $user->first_name = $request->input('first_name');
         $user->last_name = $request->input('last_name');
         $user->display_name = $request->input('display_name');
-        $user->two_factor_optin = $request->input('two_factor_optin') ?: 0;
         $user->locale = $request->input('locale');
         $user->employee_num = $request->input('employee_num');
         $user->jobtitle = $request->input('jobtitle', null);
@@ -344,6 +341,7 @@ class UsersController extends Controller
             $user->username = trim($request->input('username'));
             $user->email = trim($request->input('email'));
             $user->activated = $request->input('activated', $request->user()->is($user) ? 1 : 0);
+            $user->two_factor_optin = $request->input('two_factor_optin') ?: 0;
 
             // Do we want to update the user password?
             if ($request->filled('password')) {
@@ -360,7 +358,7 @@ class UsersController extends Controller
             }
 
             // Group sync lives in the post-save block below so
-            // UserObserver::updating() has already written its
+            // Loggable::log_lifecycle_events() has already written its
             // Actionlog row for this edit session, and
             // syncGroupsWithLogging() can merge the group diff into
             // that same row instead of producing two log entries.
@@ -432,7 +430,6 @@ class UsersController extends Controller
      *
      * @since [v1.0]
      *
-     * @param  int  $id
      * @return RedirectResponse
      *
      * @throws AuthorizationException
@@ -448,7 +445,7 @@ class UsersController extends Controller
 
         if ($user->restore()) {
             // The `restore` action_log entry is written by
-            // UserObserver::restoring - no manual write here.
+            // Loggable during restore - no manual write here.
 
             // Redirect them to the deleted page if there are more, otherwise the section index
             $deleted_users = User::onlyTrashed()->count();
@@ -472,7 +469,6 @@ class UsersController extends Controller
      *
      * @since [v1.0]
      *
-     * @param  int  $userId
      * @return View
      *
      * @throws AuthorizationException
@@ -505,7 +501,6 @@ class UsersController extends Controller
      *
      * @since [v1.0]
      *
-     * @param  int  $id
      * @return View
      *
      * @throws AuthorizationException
@@ -623,7 +618,7 @@ class UsersController extends Controller
                 trans('admin/licenses/table.deleted_at'),
             ];
 
-            fputcsv($handle, $headers);
+            fputcsv($handle, $headers, escape: '\\', eol: "\r\n");
 
             $users = User::with(
                 'assets',
@@ -705,11 +700,11 @@ class UsersController extends Controller
 
                         // CSV_ESCAPE_FORMULAS is set to false in the .env
                         if (config('app.escape_formulas') === false) {
-                            fputcsv($handle, $values);
+                            fputcsv($handle, $values, escape: '\\', eol: "\r\n");
 
                             // CSV_ESCAPE_FORMULAS is set to true or is not set in the .env
                         } else {
-                            fputcsv($handle, $formatter->escapeRecord($values));
+                            fputcsv($handle, $formatter->escapeRecord($values), escape: '\\', eol: "\r\n");
                         }
                     }
                 });
@@ -820,6 +815,9 @@ class UsersController extends Controller
 
     /**
      * Resend pending acceptance reminder email for a specific user.
+     * Routes through UnacceptedAssetReminderNotification so the
+     * console command, this button, and the bulk UI all share the
+     * same channel.
      */
     public function resendAcceptanceReminder(User $user): RedirectResponse
     {
@@ -849,13 +847,7 @@ class UsersController extends Controller
             return redirect()->back()->with('warning', trans('admin/users/message.error.no_pending_acceptances'));
         }
 
-        $mailable = new UnacceptedAssetReminderMail($firstAcceptance, $pendingItems->count());
-
-        if (! empty($user->locale)) {
-            $mailable->locale($user->locale);
-        }
-
-        Mail::to($user->email)->send($mailable);
+        $user->notify(new UnacceptedAssetReminderNotification($firstAcceptance, $pendingItems->count()));
 
         return redirect()->back()->with('success', trans_choice('admin/users/message.success.acceptance_reminder_sent', $pendingItems->count(), ['count' => $pendingItems->count()]));
     }

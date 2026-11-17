@@ -12,8 +12,8 @@ return [
     'remaining' => 'Alles',
     'total' => 'Kokku',
     'update' => 'Muuda komponenti',
-    'checkin_limit' => 'Amount checked in must be equal to or less than :assigned_qty',
-    'exclude_deleted' => 'Exclude Deleted Components',
-    'include_deleted' => 'Include Deleted Components',
-    'only_deleted' => 'Only Deleted Components',
+    'checkin_limit' => 'Tagastatav kogus peab olema :assigned_qty või väiksem',
+    'exclude_deleted' => 'Jäta kustutatud komponendid välja',
+    'include_deleted' => 'Kaasa kustutatud komponendid',
+    'only_deleted' => 'Ainult kustutatud komponendid',
 ];

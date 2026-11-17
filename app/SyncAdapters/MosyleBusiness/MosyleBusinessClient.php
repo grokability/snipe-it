@@ -2,6 +2,7 @@
 
 namespace App\SyncAdapters\MosyleBusiness;
 
+use App\SyncAdapters\Traits\RetriesTransientHttpErrors;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
@@ -36,6 +37,8 @@ use Illuminate\Support\Facades\Http;
  */
 class MosyleBusinessClient
 {
+    use RetriesTransientHttpErrors;
+
     // Mosyle Business splits devices by OS, which is a required option
     // on /devices list. A full-tenant pull iterates each OS. Note that
     // Business uses `mac` not `macos` (Manager uses `macos`).
@@ -171,14 +174,16 @@ class MosyleBusinessClient
 
     private function request(): PendingRequest
     {
-        return Http::baseUrl(rtrim($this->baseUrl, '/'))
-            ->withOptions(['allow_redirects' => false])
-            ->withHeaders([
-                'accessToken' => $this->accessToken,
-                'Authorization' => 'Bearer '.$this->bearer(),
-            ])
-            ->acceptJson()
-            ->asJson()
-            ->timeout(30);
+        return $this->withTransientRetry(
+            Http::baseUrl(rtrim($this->baseUrl, '/'))
+                ->withOptions(['allow_redirects' => false])
+                ->withHeaders([
+                    'accessToken' => $this->accessToken,
+                    'Authorization' => 'Bearer '.$this->bearer(),
+                ])
+                ->acceptJson()
+                ->asJson()
+                ->timeout(30)
+        );
     }
 }

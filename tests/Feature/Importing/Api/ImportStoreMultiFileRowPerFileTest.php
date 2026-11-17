@@ -85,7 +85,7 @@ class ImportStoreMultiFileRowPerFileTest extends TestCase
 
     private function fakeCsvUpload(string $name, string $contents): UploadedFile
     {
-        $path = tempnam(sys_get_temp_dir(), 'csv');
+        $path = $this->trackTempFile(tempnam(sys_get_temp_dir(), 'csv'));
         file_put_contents($path, $contents);
 
         return new UploadedFile($path, $name, 'text/csv', null, true);

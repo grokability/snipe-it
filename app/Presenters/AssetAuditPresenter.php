@@ -276,9 +276,7 @@ class AssetAuditPresenter extends Presenter
         // models. We only pass the fieldsets that pertain to each asset (via their model) so that we
         // don't junk up the REST API with tons of custom fields that don't apply
 
-        $fields = CustomField::whereHas('fieldset', function ($query) {
-            $query->whereHas('models');
-        })->get();
+        $fields = CustomField::assignedToInUseFieldsets()->get();
 
         foreach ($fields as $field) {
             $layout[] = [
@@ -290,6 +288,10 @@ class AssetAuditPresenter extends Presenter
                 'switchable' => true,
                 'title' => ($field->field_encrypted == '1') ? '<i class="fas fa-lock"></i> '.e($field->name) : e($field->name),
                 'formatter' => 'customFieldsFormatter',
+                // Use tableExport attributes on the TD so dot-containing
+                // text values stop being misread as EU-locale thousands
+                // numbers on export. See issue #19595.
+                'cellStyle' => 'customFieldsCellStyle',
             ];
         }
 

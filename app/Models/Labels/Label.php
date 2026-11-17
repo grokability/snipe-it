@@ -673,7 +673,6 @@ abstract class Label
      * Unlike most Models, these are defined by their existence as non-
      * abstract classes stored in Models\Labels.
      *
-     * @param  string|Arrayable|array|null  $path  Label path[s]
      * @return Collection|Label|null
      */
     public static function find($name = null)

@@ -40,5 +40,10 @@
       'search' => true,
       'columns' => \App\Presenters\CategoryPresenter::dataTableLayout()
   ])
+
+<x-table.advanced-search
+    tableId="categoryListingTable"
+    :model="\App\Models\Category::class"
+/>
 @stop
 

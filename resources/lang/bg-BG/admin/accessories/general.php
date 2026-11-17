@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Използване на EULA по подразбиране</del> Няма EULA по подразбиране. Добавете я в Настройки.',
     'clone' => 'Клониране на аксесоар',
     'delete_disabled' => 'Този аксесоар не може да бъде изтрит защото все още е заведен.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

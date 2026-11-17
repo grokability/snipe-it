@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'Wyślij przypomnienie',
     'cannot_send_reminder' => 'Użytkownik został usunięty lub nie posiada przypisanego adresu email przez co nie może otrzymać przypomnienia',
     'reminder_sent' => 'Przypomnienie wysłane',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'Prośba o akceptację usunięta',
     'acceptance_request' => 'Prośba o akceptację',
     'custom_export' => [

@@ -44,8 +44,6 @@ class AcceptanceStorageFailureTest extends TestCase
         ob_start();
         imagepng($canvas);
         $signaturePng = (string) ob_get_clean();
-        imagedestroy($canvas);
-
         return [
             'asset_acceptance' => 'accepted',
             'signature_output' => 'data:image/png;base64,' . base64_encode($signaturePng),

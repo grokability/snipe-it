@@ -3,22 +3,22 @@
 return [
 
     'disabled_assoc' => [
-        'accessory' => 'This accessory cannot be deleted because it still has items, users, or locations associated with it',
-        'asset' => 'This asset cannot be deleted because it still has items associated with it',
-        'category' => 'This category cannot be deleted because it still has items associated with it',
-        'company' => 'This company cannot be deleted because it still has items or users associated with it',
-        'component' => 'This component cannot be deleted because it still has items associated with it',
-        'custom_field' => 'This custom field cannot be deleted because it is still associated with at least one fieldset',
-        'department' => 'This department cannot be deleted because it still has users associated with it',
-        'location' => 'This location cannot be deleted because it still has items or users associated with it',
-        'manufacturer' => 'This manufacturer cannot be deleted because it still has items associated with it',
-        'supplier' => 'This supplier cannot be deleted because it still has items associated with it',
-        'user' => 'This user cannot be deleted because it still has items associated with it',
-        'user_self' => 'You cannot delete yourself',
+        'accessory' => 'لا يمكن حذف هذا الملحق لوجود عناصر أو مستخدمين أو مواقع مرتبطة به',
+        'asset' => 'لا يمكن حذف هذا الأصل لوجود عناصر مرتبطة به',
+        'category' => 'لا يمكن حذف هذه الفئة لوجود عناصر مرتبطة بها',
+        'company' => 'لا يمكن حذف هذه الشركة لوجود عناصر أو مستخدمين مرتبطين بها',
+        'component' => 'لا يمكن حذف هذا المكوّن لوجود عناصر مرتبطة به',
+        'custom_field' => 'لا يمكن حذف هذا الحقل المخصص لارتباطه بمجموعة حقول واحدة على الأقل',
+        'department' => 'لا يمكن حذف هذا القسم لوجود مستخدمين مرتبطين به',
+        'location' => 'لا يمكن حذف هذا الموقع لوجود عناصر أو مستخدمين مرتبطين به',
+        'manufacturer' => 'لا يمكن حذف هذه الشركة المصنّعة لوجود عناصر مرتبطة بها',
+        'supplier' => 'لا يمكن حذف هذا المورّد لوجود عناصر مرتبطة به',
+        'user' => 'لا يمكن حذف هذا المستخدم لوجود عناصر مرتبطة به',
+        'user_self' => 'لا يمكنك حذف حسابك',
     ],
 
     'checkin_all' => [
-        'user' => 'Checkin all items for this user and optionally delete them. You will be able to confirm this on the next page.',
+        'user' => 'استلام جميع العناصر المخصصة لهذا المستخدم، مع خيار حذف المستخدم. يمكنك تأكيد هذا الإجراء في الصفحة التالية.',
     ],
 
 ];

@@ -926,6 +926,7 @@ class BulkDelete extends Command
     ): void {
         $users = $this->buildUserQuery($companyIds, $includeNull)->get();
 
+        /** @var User $user */
         foreach ($users as $user) {
             if ($skipAdminUser && $user->id === $admin->id) {
                 continue;
@@ -1018,8 +1019,11 @@ class BulkDelete extends Command
                 }
 
                 if ($deleteFiles) {
-                    if ($user->avatar) {
-                        $this->deleteStorageFile('public', FileStorage::Avatars->publicPath().$user->avatar);
+                    // Avatar values can be absolute OAuth URLs (Google /
+                    // Microsoft / Gravatar), which do not point at anything
+                    // on this disk.
+                    if ($user->avatar && !$user->isAvatarExternal()) {
+                        $this->deleteStorageFile('public', FileStorage::Avatars->publicPath() . basename($user->avatar));
                     }
                     $acceptancesToDelete->each(fn (CheckoutAcceptance $ca) => $this->deleteAcceptanceFiles($ca));
                     foreach ($actionLogPaths as $path) {

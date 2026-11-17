@@ -58,6 +58,7 @@ class AccessoryImporter extends ItemImporter
         $this->setItemFromCsvIfPresent($row, 'min_amt');
         $this->setItemFromCsvIfPresent($row, 'qty', 'quantity');
         $this->setItemFromCsvIfPresent($row, 'requestable');
+        $this->setItemFromCsvIfPresent($row, 'archived');
 
         if ($this->csvRowHas($row, 'image')) {
             $raw = $this->findCsvMatch($row, 'image');

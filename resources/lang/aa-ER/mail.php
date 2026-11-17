@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'crwdns13440:0crwdne13440:0',
     'inventory_report' => 'crwdns11243:0crwdne11243:0',
     'item' => 'crwdns12726:0crwdne12726:0',
-    'item_checked_reminder' => 'crwdns12322:0crwdne12322:0',
+    'item_checked_reminder' => 'crwdns17925:0{1}crwdne17925:0',
     'license_expiring_alert' => 'crwdns13816:0crwdne13816:0',
     'link_to_update_password' => 'crwdns1742:0crwdne1742:0',
     'login' => 'crwdns12792:0crwdne12792:0',

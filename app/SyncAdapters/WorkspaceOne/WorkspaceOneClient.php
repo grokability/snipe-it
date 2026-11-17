@@ -2,6 +2,7 @@
 
 namespace App\SyncAdapters\WorkspaceOne;
 
+use App\SyncAdapters\Traits\RetriesTransientHttpErrors;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
@@ -23,6 +24,8 @@ use Illuminate\Support\Facades\Http;
  */
 class WorkspaceOneClient
 {
+    use RetriesTransientHttpErrors;
+
     private ?string $token = null;
 
     public function __construct(
@@ -130,11 +133,13 @@ class WorkspaceOneClient
 
     private function request(): PendingRequest
     {
-        return Http::baseUrl(rtrim($this->apiBaseUrl, '/'))
-            ->withOptions(['allow_redirects' => false])
-            ->withToken($this->bearer())
-            ->withHeaders(['aw-tenant-code' => $this->tenantCode])
-            ->acceptJson()
-            ->timeout(30);
+        return $this->withTransientRetry(
+            Http::baseUrl(rtrim($this->apiBaseUrl, '/'))
+                ->withOptions(['allow_redirects' => false])
+                ->withToken($this->bearer())
+                ->withHeaders(['aw-tenant-code' => $this->tenantCode])
+                ->acceptJson()
+                ->timeout(30)
+        );
     }
 }

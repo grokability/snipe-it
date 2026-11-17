@@ -4,8 +4,7 @@ namespace App\SyncAdapters\Intune;
 
 use App\Models\Asset;
 use App\SyncAdapters\HostInventoryRecord;
-use App\SyncAdapters\PushableAdapter;
-use App\SyncAdapters\SyncAdapter;
+use App\SyncAdapters\PushableSyncAdapter;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -28,7 +27,7 @@ use Illuminate\Support\Facades\Log;
  * so admins can audit which Azure app registration a Snipe-IT instance
  * is talking to without a decrypt step. Only client_secret is encrypted.
  */
-class IntuneAdapter extends SyncAdapter implements PushableAdapter
+class IntuneAdapter extends PushableSyncAdapter
 {
     public static function typeLabel(): string
     {
@@ -96,12 +95,12 @@ class IntuneAdapter extends SyncAdapter implements PushableAdapter
     {
         return [
             'intune_compliance_state' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_compliance_state'],
-            'intune_enrolled_at' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_enrolled_at'],
+            'intune_enrolled_at' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_enrolled_at', 'type' => 'date'],
             'intune_management_agent' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_management_agent'],
             'intune_ownership' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_ownership'],
             'intune_wifi_mac' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_wifi_mac'],
-            'intune_total_storage_bytes' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_total_storage_bytes'],
-            'intune_free_storage_bytes' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_free_storage_bytes'],
+            'intune_total_storage_gb' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_total_storage_gb'],
+            'intune_free_storage_gb' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_free_storage_gb'],
             'intune_is_encrypted' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_is_encrypted', 'type' => 'boolean'],
             'intune_jail_broken' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_jail_broken'],
             'intune_is_supervised' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_is_supervised', 'type' => 'boolean'],
@@ -121,8 +120,8 @@ class IntuneAdapter extends SyncAdapter implements PushableAdapter
             'intune_android_security_patch_level' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_android_security_patch_level'],
             'intune_enrollment_profile_name' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_enrollment_profile_name'],
             'intune_device_enrollment_type' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_device_enrollment_type'],
-            'intune_management_certificate_expiration' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_management_certificate_expiration'],
-            'intune_compliance_grace_period_expiration' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_compliance_grace_period_expiration'],
+            'intune_management_certificate_expiration' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_management_certificate_expiration', 'type' => 'date'],
+            'intune_compliance_grace_period_expiration' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_compliance_grace_period_expiration', 'type' => 'date'],
             'intune_device_registration_state' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_device_registration_state'],
             // Comma-joined roleScopeTagIds the device belongs to in
             // Intune. Admins who use scope tags for RBAC separation
@@ -133,7 +132,7 @@ class IntuneAdapter extends SyncAdapter implements PushableAdapter
             // "Fetch per-device details" opt-in is on - Graph's LIST
             // endpoint returns null for these regardless of $select.
             'intune_ethernet_mac' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_ethernet_mac'],
-            'intune_physical_memory_bytes' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_physical_memory_bytes'],
+            'intune_physical_memory_gb' => ['label_key' => 'admin/settings/sync_adapters.intune_extra_physical_memory_gb'],
         ];
     }
 
@@ -164,13 +163,61 @@ class IntuneAdapter extends SyncAdapter implements PushableAdapter
 
         $fetchPerDeviceDetails = $this->fetchesPerDeviceDetails();
         $scopeTagIds = $this->resolveScopeTagFilter($client);
+        $scopeTagSet = is_array($scopeTagIds) ? array_flip($scopeTagIds) : null;
 
-        foreach ($client->managedDevices($scopeTagIds) as $device) {
+        foreach ($client->managedDevices() as $device) {
+            // Scope-tag filtering is client-side (see #19849). Graph
+            // does not expose a working server-side $filter on
+            // roleScopeTagIds, and the field comes back empty on the
+            // list surface even with $select, so each device needs a
+            // per-device beta GET to resolve its tag membership.
+            // Skipped entirely when no filter is configured.
+            if ($scopeTagSet !== null && ! $this->deviceMatchesScopeTags($client, $device, $scopeTagSet)) {
+                continue;
+            }
+
             if ($fetchPerDeviceDetails) {
                 $this->fillPerDeviceEnrichment($client, $device);
             }
             yield $this->normalize($device);
         }
+    }
+
+    /**
+     * Resolve the device's scope-tag membership via a beta per-device
+     * detail fetch and test it against the admin's filter set. Returns
+     * true when at least one of the device's tags is in the admin's
+     * list. On a failed detail call (4xx/5xx, timeout) we return false
+     * so the device is excluded rather than silently sneaking through
+     * the filter.
+     *
+     * @param  array<string, mixed>  $device
+     * @param  array<string, int>  $scopeTagSet  Flipped id => arbitrary (for O(1) lookup)
+     */
+    private function deviceMatchesScopeTags(IntuneClient $client, array $device, array $scopeTagSet): bool
+    {
+        $deviceId = $device['id'] ?? null;
+        if (! is_string($deviceId) || $deviceId === '') {
+            return false;
+        }
+
+        $detail = $client->managedDeviceDetail($deviceId, ['id', 'roleScopeTagIds'], 'beta');
+        if ($detail === null) {
+            return false;
+        }
+
+        $deviceTagIds = $detail['roleScopeTagIds'] ?? [];
+        if (! is_array($deviceTagIds)) {
+            return false;
+        }
+
+        foreach ($deviceTagIds as $tagId) {
+            if (is_string($tagId) && isset($scopeTagSet[$tagId])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -320,11 +367,13 @@ class IntuneAdapter extends SyncAdapter implements PushableAdapter
             // setting is on. Null otherwise - Graph's LIST never
             // populates these fields.
             'intune_ethernet_mac' => self::blankToNull(Arr::get($device, 'ethernetMacAddress')),
-            'intune_physical_memory_bytes' => Arr::get($device, 'physicalMemoryInBytes'),
-            // Hardware inventory. Graph reports storage in bytes -
-            // admins who want GB can run a custom-field formula.
-            'intune_total_storage_bytes' => Arr::get($device, 'totalStorageSpaceInBytes'),
-            'intune_free_storage_bytes' => Arr::get($device, 'freeStorageSpaceInBytes'),
+            'intune_physical_memory_gb' => self::bytesToGb(Arr::get($device, 'physicalMemoryInBytes')),
+            // Hardware inventory. Graph reports storage in bytes which
+            // we convert to GB at the adapter boundary so the value
+            // lines up with the other adapters that speak GB natively
+            // (Addigy, Levelio, Mosyle, AxM device_capacity, Jamf).
+            'intune_total_storage_gb' => self::bytesToGb(Arr::get($device, 'totalStorageSpaceInBytes')),
+            'intune_free_storage_gb' => self::bytesToGb(Arr::get($device, 'freeStorageSpaceInBytes')),
             'intune_is_encrypted' => Arr::get($device, 'isEncrypted'),
             'intune_jail_broken' => Arr::get($device, 'jailBroken'),
             'intune_is_supervised' => Arr::get($device, 'isSupervised'),
@@ -410,6 +459,25 @@ class IntuneAdapter extends SyncAdapter implements PushableAdapter
         )));
 
         return $parts === [] ? null : implode(',', $parts);
+    }
+
+    /**
+     * Normalize a raw byte value from Graph's hardware inventory into
+     * GB so the storage/memory extras line up with the GB unit the
+     * other sync adapters already use. Divides by 10^9 (decimal GB,
+     * same convention Apple uses in marketed capacity). Null or
+     * non-numeric input returns null so an unpopulated field stays
+     * unpopulated rather than becoming a bogus 0 GB that an admin
+     * filter could misread.
+     */
+    private static function bytesToGb(mixed $bytes): int|float|null
+    {
+        if (! is_numeric($bytes)) {
+            return null;
+        }
+        $gb = $bytes / 1_000_000_000;
+
+        return $gb == (int) $gb ? (int) $gb : round($gb, 2);
     }
 
     private function parseTimestamp(mixed $value): ?Carbon

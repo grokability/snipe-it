@@ -24,6 +24,12 @@ use Tests\TestCase;
  */
 class UploadDeleteStorageFailureTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Storage::fake();
+    }
+
     private function seedAssetWithUpload(User $actor): array
     {
         $asset = Asset::factory()->create();

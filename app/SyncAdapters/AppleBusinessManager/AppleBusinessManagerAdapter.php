@@ -5,6 +5,7 @@ namespace App\SyncAdapters\AppleBusinessManager;
 use App\Models\AssetModel;
 use App\SyncAdapters\HostInventoryRecord;
 use App\SyncAdapters\SyncAdapter;
+use App\SyncAdapters\Traits\UsesAppleDbEnrichment;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -35,6 +36,8 @@ use Illuminate\Support\Facades\Log;
  */
 class AppleBusinessManagerAdapter extends SyncAdapter
 {
+    use UsesAppleDbEnrichment;
+
     /**
      * Apple's fixed productFamily enum -> friendly display name.
      * Drives the product-family filter's option list.
@@ -138,13 +141,7 @@ class AppleBusinessManagerAdapter extends SyncAdapter
                 'required' => false,
                 'help' => trans('admin/settings/sync_adapters.abm_product_family_filter_help'),
             ],
-            [
-                'key' => 'pull_model_images',
-                'label' => trans('admin/settings/sync_adapters.abm_label_pull_model_images'),
-                'type' => 'checkbox',
-                'required' => false,
-                'help' => trans('admin/settings/sync_adapters.abm_pull_model_images_help'),
-            ],
+            $this->appleDbSettingsField(),
         ];
 
         // Per-family category overrides. Apple's productFamily is a
@@ -225,28 +222,34 @@ class AppleBusinessManagerAdapter extends SyncAdapter
     public function extraFields(): array
     {
         return [
+            ...$this->appleDbExtraFieldsDeclaration(),
             'abm_product_family' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_product_family'],
             'abm_model_marketing_name' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_model_marketing_name'],
             'abm_product_type' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_product_type'],
             'abm_part_number' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_part_number'],
             'abm_color' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_color'],
             'abm_order_number' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_order_number'],
-            'abm_order_date' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_order_date'],
+            'abm_order_date' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_order_date', 'type' => 'date'],
             'abm_purchase_source_type' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_purchase_source_type'],
             'abm_purchase_source_id' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_purchase_source_id'],
             'abm_mdm_server' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_mdm_server'],
             'abm_applecare_agreement_number' => ['label_key' => 'admin/settings/sync_adapters.extra_applecare_agreement_number'],
             'abm_applecare_status' => ['label_key' => 'admin/settings/sync_adapters.extra_applecare_status'],
             'abm_applecare_payment_type' => ['label_key' => 'admin/settings/sync_adapters.extra_applecare_payment_type'],
-            'abm_applecare_start_date' => ['label_key' => 'admin/settings/sync_adapters.extra_applecare_start_date'],
-            'abm_applecare_end_date' => ['label_key' => 'admin/settings/sync_adapters.extra_applecare_end_date'],
+            'abm_applecare_start_date' => ['label_key' => 'admin/settings/sync_adapters.extra_applecare_start_date', 'type' => 'date'],
+            'abm_applecare_end_date' => ['label_key' => 'admin/settings/sync_adapters.extra_applecare_end_date', 'type' => 'date'],
             'abm_applecare_description' => ['label_key' => 'admin/settings/sync_adapters.extra_applecare_description'],
             'abm_applecare_is_canceled' => ['label_key' => 'admin/settings/sync_adapters.extra_applecare_is_canceled', 'type' => 'boolean'],
             'abm_applecare_is_renewable' => ['label_key' => 'admin/settings/sync_adapters.extra_applecare_is_renewable', 'type' => 'boolean'],
             'abm_device_capacity' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_device_capacity'],
             'abm_wifi_mac' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_wifi_mac'],
             'abm_bluetooth_mac' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_bluetooth_mac'],
-            'abm_ethernet_mac' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_ethernet_mac'],
+            // Desktop Macs with two Ethernet NICs (Mac Pro, iMac Pro)
+            // return ethernetMacAddress as a two-element array. Split
+            // positionally so admins can map each physical port to its
+            // own Snipe-IT custom field. #19877.
+            'abm_ethernet_mac_1' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_ethernet_mac_1'],
+            'abm_ethernet_mac_2' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_ethernet_mac_2'],
             // Apple returns IMEIs as an array (dual-SIM iPhones carry
             // two, older devices one). Positional split so admins can
             // map each to its own custom field. #19754.
@@ -254,8 +257,8 @@ class AppleBusinessManagerAdapter extends SyncAdapter
             'abm_imei_2' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_imei_2'],
             'abm_meid' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_meid'],
             'abm_eid' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_eid'],
-            'abm_added_to_org' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_added_to_org'],
-            'abm_released_from_org' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_released_from_org'],
+            'abm_added_to_org' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_added_to_org', 'type' => 'date'],
+            'abm_released_from_org' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_released_from_org', 'type' => 'date'],
             'abm_org_status' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_org_status'],
             'abm_activation_lock_enabled' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_activation_lock_enabled', 'type' => 'boolean'],
             // Apple Business Manager's built-in MDM (formerly Apple
@@ -269,8 +272,8 @@ class AppleBusinessManagerAdapter extends SyncAdapter
             'abm_mdm_device_lock_status' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_mdm_device_lock_status'],
             'abm_mdm_lost_mode_status' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_mdm_lost_mode_status'],
             'abm_mdm_device_erase_status' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_mdm_device_erase_status'],
-            'abm_mdm_storage_total' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_mdm_storage_total'],
-            'abm_mdm_storage_free' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_mdm_storage_free'],
+            'abm_mdm_storage_total_gb' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_mdm_storage_total_gb'],
+            'abm_mdm_storage_free_gb' => ['label_key' => 'admin/settings/sync_adapters.abm_extra_mdm_storage_free_gb'],
         ];
     }
 
@@ -346,6 +349,65 @@ class AppleBusinessManagerAdapter extends SyncAdapter
         };
     }
 
+    /**
+     * Apple drops released devices from /v1/orgDevices so the base
+     * "missing from list" sees the normal case, but if AxM
+     * ever surfaces a released device in the list response
+     * (edge case or future API behavior), the releasedFromOrgDateTime
+     * extra would be populated, and we should treat it as missing for the reconciliation.
+     */
+    public function recordReportsRemoved(HostInventoryRecord $record): bool
+    {
+        $released = $record->extra['abm_released_from_org'] ?? null;
+
+        return $released !== null && $released !== '';
+    }
+
+    /**
+     * AxM-specific auto-archive confirmation. The list
+     * endpoint (/v1/orgDevices) leaves out released / sold / returned
+     * devices, so the base correctly sees them as "missing
+     * from this pull". The single-device endpoint still returns them
+     * with releasedFromOrgDateTime set, so we double-check here:
+     *   - 404 from the vendor: really gone, allow the archive.
+     *   - releasedFromOrgDateTime set: vendor confirms it left the
+     *     org, allow the archive.
+     *   - Otherwise: the record is still active and just dropped out
+     *     of pagination for a transient reason (403 from a scope
+     *     change, network error, etc). Hold off.
+     * Errors from the single-device call fall through to "hold off"
+     * so a transient 5xx cannot archive a fleet.
+     */
+    public function confirmRecordRemoved(string $externalId): bool
+    {
+        try {
+            $client = new AppleBusinessManagerClient(
+                clientId: $this->credential('client_id'),
+                keyId: $this->credential('key_id'),
+                privateKeyPem: $this->credential('private_key'),
+                mode: $this->resolvedMode(),
+            );
+
+            $device = $client->deviceById($externalId);
+            if ($device === null) {
+                return true;
+            }
+
+            $releasedAt = \Illuminate\Support\Arr::get($device, 'attributes.releasedFromOrgDateTime');
+
+            return is_string($releasedAt) && $releasedAt !== '';
+        } catch (\Throwable $e) {
+            Log::channel('sync-adapters')->warning(sprintf(
+                '%s: auto-archive confirmation for AxM device %s failed, holding off: %s',
+                $this->instance->slug,
+                $externalId,
+                $e->getMessage(),
+            ));
+
+            return false;
+        }
+    }
+
     public function pull(): iterable
     {
         $client = new AppleBusinessManagerClient(
@@ -415,7 +477,7 @@ class AppleBusinessManagerAdapter extends SyncAdapter
         // opt-in and off by default. Per-pull cache keyed by
         // hardwareModel avoids re-fetching the same image when a
         // tenant has many devices of the same model.
-        $pullImages = $this->shouldPullModelImages();
+        $pullImages = $this->appleDbEnrichmentEnabled();
         $imagesHandled = [];
 
         foreach ($client->devices() as $device) {
@@ -445,136 +507,42 @@ class AppleBusinessManagerAdapter extends SyncAdapter
     }
 
     /**
-     * When the "Pull model images" toggle is on, populate the
-     * AssetModel image for the record's hardwareModel from
-     * appledb.dev. Idempotent and safe to call for every record:
+     * Resolve the ABM-side model name + productType and delegate to
+     * the shared enrichModelFromAppleDb helper. ABM's native:model
+     * mapping routes `abm_model_marketing_name` into AssetModel::name
+     * when the admin opts in, so the image lookup has to mirror that
+     * so it targets the row the framework will actually create.
      *
-     *   - If no productType is on the record, skip (nothing to key
-     *     appledb.dev on).
-     *   - If the model exists AND it already carries an image, skip
-     *     (respect admin curation). The category's image is a display
-     *     fallback in AssetModel::getImageUrl, not a signal to skip:
-     *     per-model images still populate over a category icon so
-     *     admins get Apple's marketing shots per SKU.
-     *   - Otherwise fetch the image, write it to storage, and set
-     *     model.image. The framework's later resolveModelIdByName
-     *     find the model we (or a prior sync) created.
-     *
-     * Cache is keyed by hardwareModel so the same model in a 500-
-     * device pull triggers one fetch, not 500.
-     *
-     * @param  array<string, bool>  $imagesHandled  modelName => true. Any key present means "already tried this model in this pull, skip".
-     * @return array<string, bool> Updated cache with this record's modelName marked.
+     * @param  array<string, bool>  $imagesHandled
+     * @return array<string, bool>
      */
     private function ensureModelImage(HostInventoryRecord $record, array $imagesHandled): array
     {
-        // Whichever field the admin routed to native:model becomes
-        // the AssetModel's name after sync. Mirror that pick here so
-        // our image lookup targets the same model row the framework
-        // will create or update.
         $modelName = $this->mappingFor('abm_model_marketing_name') === 'native:model'
             ? ($record->extra['abm_model_marketing_name'] ?? $record->hardwareModel)
             : $record->hardwareModel;
 
         if ($modelName === null || $modelName === '') {
-            Log::channel('sync-adapters')->info(sprintf(
-                '%s image skip for device %s: no model name resolvable (hardwareModel and abm_model_marketing_name both blank)',
-                $this->name(),
-                $record->sourceId,
-            ));
+            Log::channel('sync-adapters')->info("{$this->name()} enrichment skip for device {$record->sourceId}: no model name resolvable (hardwareModel and abm_model_marketing_name both blank)");
 
             return $imagesHandled;
         }
-
-        if (array_key_exists($modelName, $imagesHandled)) {
-            return $imagesHandled;
-        }
-        $imagesHandled[$modelName] = true;
 
         $productType = $record->extra['abm_product_type'] ?? null;
         if (! is_string($productType) || $productType === '') {
-            Log::channel('sync-adapters')->info(sprintf(
-                '%s image skip for model "%s": ABM did not return a productType, nothing to look up on appledb.dev',
-                $this->name(),
-                $modelName,
-            ));
-
-            return $imagesHandled;
-        }
-
-        $existing = AssetModel::query()
-            ->where('name', $modelName)
-            ->first();
-
-        if ($existing !== null && ! empty($existing->image)) {
-            Log::channel('sync-adapters')->info(sprintf(
-                '%s image skip for model "%s": model already has an image (%s)',
-                $this->name(),
-                $modelName,
-                $existing->image,
-            ));
+            Log::channel('sync-adapters')->info("{$this->name()} enrichment skip for model \"{$modelName}\": ABM did not return a productType, nothing to look up on appledb.dev");
 
             return $imagesHandled;
         }
 
         $color = $record->extra['abm_color'] ?? null;
-        $filename = AppleDBImageFetcher::fetch($productType, is_string($color) ? $color : null);
-        if ($filename === null) {
-            Log::channel('sync-adapters')->info(sprintf(
-                '%s image skip for model "%s" (productType=%s): appledb.dev returned no usable image',
-                $this->name(),
-                $modelName,
-                $productType,
-            ));
 
-            return $imagesHandled;
-        }
-
-        if ($existing === null) {
-            // First-pass timing: the framework hasn't created the
-            // AssetModel row yet (SyncAdapter builds it after
-            // pull() yields), so there's nothing to update. The image
-            // is already downloaded and cached under public/uploads/
-            // models/ by the fetcher, so the next sync will find the
-            // model row and only need to set model.image (no
-            // re-download).
-            Log::channel('sync-adapters')->info(sprintf(
-                '%s image staged for model "%s" (productType=%s, file=%s): AssetModel row not yet created, image will be assigned on the next sync',
-                $this->name(),
-                $modelName,
-                $productType,
-                $filename,
-            ));
-
-            return $imagesHandled;
-        }
-
-        $existing->image = $filename;
-        $existing->save();
-
-        Log::channel('sync-adapters')->info(sprintf(
-            '%s image assigned to model "%s" (productType=%s, file=%s)',
-            $this->name(),
+        return $this->enrichModelFromAppleDb(
             $modelName,
             $productType,
-            $filename,
-        ));
-
-        return $imagesHandled;
-    }
-
-    /**
-     * Read the "Pull model images" checkbox. Persists as '1' or '0'
-     * via the base class's schema handler, so a plain string compare
-     * is enough here.
-     */
-    private function shouldPullModelImages(): bool
-    {
-        try {
-            return $this->credential('pull_model_images') === '1';
-        } catch (\Throwable) {
-            return false;
-        }
+            is_string($color) ? $color : null,
+            $imagesHandled,
+        );
     }
 
     /**
@@ -723,6 +691,17 @@ class AppleBusinessManagerAdapter extends SyncAdapter
      * to be cleared before a device can be redeployed to a new user.
      * On empty or failed responses just return the un-enriched record
      * so the sync doesn't stall on a transient AL endpoint issue.
+     *
+     * Only trust `true` from the endpoint. A `false` response is
+     * ambiguous: Apple returns false when the device is genuinely
+     * not activation-locked AND when the API account's role lacks
+     * visibility into the device's lock state (common with the
+     * least-privilege "View device management services" role) AND
+     * for devices whose Activation Lock is managed by a third-party
+     * MDM (Jamf, Kandji, etc.) rather than Apple's own.
+     * Writing `false` indiscriminately would tell
+     * admins devices are safe to redeploy when many may actually be
+     * locked.
      */
     private function enrichRecordWithActivationLock(HostInventoryRecord $record, AppleBusinessManagerClient $client): HostInventoryRecord
     {
@@ -740,12 +719,12 @@ class AppleBusinessManagerAdapter extends SyncAdapter
         }
 
         $enabled = Arr::get($status, 'attributes.activationLockEnabled');
-        if (! is_bool($enabled)) {
+        if ($enabled !== true) {
             return $record;
         }
 
         $extra = $record->extra;
-        $extra['abm_activation_lock_enabled'] = $enabled;
+        $extra['abm_activation_lock_enabled'] = true;
 
         return new HostInventoryRecord(
             sourceKey: $record->sourceKey,
@@ -865,6 +844,25 @@ class AppleBusinessManagerAdapter extends SyncAdapter
     }
 
     /**
+     * Normalize MDM-reported bytes (storageTotalCapacity /
+     * storageFreeCapacity) to GB for cross-adapter consistency with
+     * the other storage extras across sync adapters. Divides by 10^9
+     * (decimal GB, same convention Apple uses in marketed capacity).
+     * Null or non-numeric input returns null so an unpopulated field
+     * stays unpopulated rather than becoming a bogus 0 GB that an
+     * admin filter could misread.
+     */
+    private static function bytesToGb(mixed $bytes): int|float|null
+    {
+        if (! is_numeric($bytes)) {
+            return null;
+        }
+        $gb = $bytes / 1_000_000_000;
+
+        return $gb == (int) $gb ? (int) $gb : round($gb, 2);
+    }
+
+    /**
      * Pick the primary MAC from the MDM detail attributes. Prefers
      * Wi-Fi, falls back to Ethernet (desktops without Wi-Fi), then
      * whatever the orgDevices path already set.
@@ -878,7 +876,10 @@ class AppleBusinessManagerAdapter extends SyncAdapter
             return $wifi;
         }
 
-        $ethernet = self::normalizeMacAddress(Arr::get($attrs, 'ethernetMacAddress'));
+        // ethernetMacAddress can be a two-element array on Macs with two
+        // physical ports. Prefer the first slot so the primaryMac field
+        // on a non-wifi Mac still populates something sensible.
+        $ethernet = self::extractMacAtIndex(Arr::get($attrs, 'ethernetMacAddress'), 0);
         if ($ethernet !== null) {
             return $ethernet;
         }
@@ -922,19 +923,31 @@ class AppleBusinessManagerAdapter extends SyncAdapter
         $extra['abm_mdm_device_lock_status'] = Arr::get($attrs, 'deviceLockStatus');
         $extra['abm_mdm_lost_mode_status'] = Arr::get($attrs, 'lostModeStatus');
         $extra['abm_mdm_device_erase_status'] = Arr::get($attrs, 'deviceEraseStatus');
-        $extra['abm_mdm_storage_total'] = Arr::get($attrs, 'storageTotalCapacity');
-        $extra['abm_mdm_storage_free'] = Arr::get($attrs, 'storageFreeCapacity');
+        $extra['abm_mdm_storage_total_gb'] = self::bytesToGb(Arr::get($attrs, 'storageTotalCapacity'));
+        $extra['abm_mdm_storage_free_gb'] = self::bytesToGb(Arr::get($attrs, 'storageFreeCapacity'));
 
-        $macMap = [
+        // Wi-Fi and Bluetooth are single-radio on every current Apple
+        // SKU so they stay scalar. Ethernet can be a two-element array
+        // on dual-NIC Macs, so split positionally like IMEI.
+        $singleMacMap = [
             'wifiMacAddress' => 'abm_wifi_mac',
             'bluetoothMacAddress' => 'abm_bluetooth_mac',
-            'ethernetMacAddress' => 'abm_ethernet_mac',
         ];
-        foreach ($macMap as $mdmKey => $extraKey) {
+        foreach ($singleMacMap as $mdmKey => $extraKey) {
             $val = self::normalizeMacAddress(Arr::get($attrs, $mdmKey));
             if ($val !== null) {
                 $extra[$extraKey] = $val;
             }
+        }
+
+        $mdmEthernet = Arr::get($attrs, 'ethernetMacAddress');
+        $ethernet1 = self::extractMacAtIndex($mdmEthernet, 0);
+        if ($ethernet1 !== null) {
+            $extra['abm_ethernet_mac_1'] = $ethernet1;
+        }
+        $ethernet2 = self::extractMacAtIndex($mdmEthernet, 1);
+        if ($ethernet2 !== null) {
+            $extra['abm_ethernet_mac_2'] = $ethernet2;
         }
 
         // IMEI is an array in both orgDevices and MDM-detail shapes.
@@ -991,6 +1004,27 @@ class AppleBusinessManagerAdapter extends SyncAdapter
      * Returns null when the slot is absent, when the value isn't a
      * non-empty string, or when a scalar is requested for slot 1.
      */
+    /**
+     * Pick a single MAC out of Apple's `ethernetMacAddress` field,
+     * which is a two-element array on Macs with two physical NICs and
+     * a bare string on everything else. Shape semantics mirror
+     * extractImeiAtIndex: scalar fills slot 0 only, array indexes
+     * positionally, anything else returns null. The returned value
+     * passes through normalizeMacAddress so the colon-separated upper-
+     * case shape custom-field validators expect round-trips cleanly.
+     */
+    private static function extractMacAtIndex(mixed $value, int $index): ?string
+    {
+        if (is_string($value)) {
+            return $index === 0 ? self::normalizeMacAddress($value) : null;
+        }
+        if (! is_array($value)) {
+            return null;
+        }
+
+        return self::normalizeMacAddress($value[$index] ?? null);
+    }
+
     private static function extractImeiAtIndex(mixed $value, int $index): ?string
     {
         if (is_string($value)) {
@@ -1108,6 +1142,17 @@ class AppleBusinessManagerAdapter extends SyncAdapter
         $attrs = $device['attributes'] ?? [];
         $id = (string) ($device['id'] ?? '');
 
+        // Pass the AssetModel name the framework will use (mirrors
+        // ensureModelImage's resolution) so the trait can
+        // short-circuit the AppleDB info call when an existing row
+        // already has every enrichable field set.
+        $modelName = $this->mappingFor('abm_model_marketing_name') === 'native:model'
+            ? (Arr::get($attrs, 'deviceModel') ?? Arr::get($attrs, 'partNumber'))
+            : Arr::get($attrs, 'partNumber');
+        $productType = Arr::get($attrs, 'productType');
+        $canonical = $this->canonicalIdentityFor($productType, $modelName);
+        $appleDbExtras = $this->appleDbExtrasFor($productType, $modelName);
+
         return new HostInventoryRecord(
             sourceKey: $this->name(),
             sourceId: $id,
@@ -1147,6 +1192,7 @@ class AppleBusinessManagerAdapter extends SyncAdapter
             assignedUserName: null,
             vendorGroupId: null,
             extra: [
+                ...$appleDbExtras,
                 'abm_product_family' => Arr::get($attrs, 'productFamily'),
                 'abm_model_marketing_name' => Arr::get($attrs, 'deviceModel'),
                 'abm_product_type' => Arr::get($attrs, 'productType'),
@@ -1160,10 +1206,14 @@ class AppleBusinessManagerAdapter extends SyncAdapter
                 'abm_device_capacity' => Arr::get($attrs, 'deviceCapacity'),
                 'abm_wifi_mac' => self::normalizeMacAddress(Arr::get($attrs, 'wifiMacAddress')),
                 'abm_bluetooth_mac' => self::normalizeMacAddress(Arr::get($attrs, 'bluetoothMacAddress')),
-                'abm_ethernet_mac' => self::normalizeMacAddress(Arr::get($attrs, 'ethernetMacAddress')),
+                // ethernetMacAddress is a two-element array on dual-NIC
+                // Macs. Positional split so admins can map each port to
+                // its own custom field. See #19877.
+                'abm_ethernet_mac_1' => self::extractMacAtIndex(Arr::get($attrs, 'ethernetMacAddress'), 0),
+                'abm_ethernet_mac_2' => self::extractMacAtIndex(Arr::get($attrs, 'ethernetMacAddress'), 1),
                 // Cellular-only identifiers. Populated for iPhones and
                 // cellular iPads, null on Macs / non-cellular devices.
-                // IMEI is an array in Apple's shape; _1/_2 split by
+                // IMEI is an array in Apple's shape, _1/_2 split by
                 // index so admins can map each to its own custom field.
                 'abm_imei_1' => self::extractImeiAtIndex(Arr::get($attrs, 'imei'), 0),
                 'abm_imei_2' => self::extractImeiAtIndex(Arr::get($attrs, 'imei'), 1),
@@ -1178,6 +1228,8 @@ class AppleBusinessManagerAdapter extends SyncAdapter
                 // even before the first sync run fills it in.
                 'abm_activation_lock_enabled' => null,
             ],
+            canonicalMarketingName: $canonical['canonicalMarketingName'],
+            canonicalModelNumber: $canonical['canonicalModelNumber'],
         );
     }
 

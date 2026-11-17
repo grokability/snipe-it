@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Generer auto-tilvækst af asset-tags',
     'auto_increment_prefix' => 'Præfiks (valgfrit)',
     'auto_incrementing_help' => 'Aktiver auto-tilvækst af asset-tags først for at indstille dette',
-    'backups' => 'Backups',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Opret, download og gendan sikkerhedskopier ',
     'backups_restoring' => 'Gendanner fra sikkerhedskopi',
     'backups_clean' => 'Clean the backed-up database before restore',

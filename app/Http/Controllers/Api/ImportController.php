@@ -44,8 +44,6 @@ class ImportController extends Controller
 
     /**
      * Process and store a CSV upload file.
-     *
-     * @param  \Illuminate\Http\Request  $request
      */
     public function store(): JsonResponse
     {

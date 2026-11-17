@@ -60,6 +60,8 @@ class ConsumablesTransformer
             'min_amt' => (int) $consumable->min_amt,
             'model_number' => ($consumable->model_number != '') ? e($consumable->model_number) : null,
             'remaining' => $consumable->numRemaining(),
+            'checked_out' => $consumable->numOutstanding(),
+            'consumed' => $consumable->numConsumed(),
             'percent_remaining' => round($consumable->percentRemaining()),
             // See AccessoriesTransformer for why order_number is no longer
             // in the parent-level output.
@@ -75,12 +77,14 @@ class ConsumablesTransformer
             'qty' => (int) $consumable->qty,
             'notes' => ($consumable->notes) ? Helper::parseEscapedMarkedownInline($consumable->notes) : null,
             'requestable' => (bool) $consumable->requestable,
+            'archived' => (bool) $consumable->archived,
             'created_by' => ($consumable->adminuser) ? [
                 'id' => (int) $consumable->adminuser->id,
                 'name' => e($consumable->adminuser->display_name),
             ] : null,
             'created_at' => Helper::getFormattedDateObject($consumable->created_at, 'datetime'),
             'updated_at' => Helper::getFormattedDateObject($consumable->updated_at, 'datetime'),
+            'deleted_at' => Helper::getFormattedDateObject($consumable->deleted_at, 'datetime'),
         ];
 
         $permissions_array = [];
@@ -99,15 +103,40 @@ class ConsumablesTransformer
         );
         $permissions_array['assigned_to_self'] = $userHasOpenRequest;
 
+        // Soft-deleted rows surface in the Deleted index view with
+        // their write-ish actions rendered disabled, not hidden, by
+        // the per-row formatter. Keep the policy-gated flags true so
+        // the disabled stand-ins render. The formatter inspects
+        // row.deleted_at to flip them to their disabled state.
+        $isDeleted = $consumable->deleted_at !== null;
+        $canUpdate = Gate::allows('update', $consumable);
+        $canDelete = $consumable->isDeletable();
+
         $permissions_array['available_actions'] = [
             'checkout' => Gate::allows('checkout', $consumable),
             'checkin' => Gate::allows('checkin', $consumable),
-            'update' => Gate::allows('update', $consumable),
-            'adjust_quantity' => Gate::allows('update', $consumable),
-            'delete' => Gate::allows('delete', $consumable),
-            'clone' => (Gate::allows('clone', $consumable) && ($consumable->deleted_at == '')),
-            'request' => (bool) $consumable->requestable && ! $userHasOpenRequest,
+            'update' => $canUpdate && ! $isDeleted,
+            'adjust_quantity' => $canUpdate,
+            'delete' => $canDelete,
+            // Cloning a deleted consumable is explicitly allowed. It
+            // produces a brand-new row and leaves the deleted parent
+            // untouched, so it's safe as a restore-and-tweak shortcut.
+            'clone' => Gate::allows('clone', $consumable),
+            // Top-level so genericActionsFormatter renders the per-row
+            // restore button on the Deleted index. The bulk_selectable
+            // mirror below drives the bulk-actions dropdown.
+            'restore' => $isDeleted && Gate::allows('delete', $consumable),
+            'request' => (bool) $consumable->requestable && ! $isDeleted && ! $userHasOpenRequest,
             'cancel' => (bool) $consumable->requestable && $userHasOpenRequest,
+            'bulk_selectable' => [
+                // Edit/delete only make sense for live rows. On soft-
+                // deleted rows the bulk-actions dropdown offers Restore.
+                'edit' => $canUpdate && ! $isDeleted,
+                'delete' => $canDelete && ! $isDeleted,
+                // Restore is only meaningful on the Deleted index.
+                // Delete-tier action (matches postRestore pattern).
+                'restore' => $isDeleted && Gate::allows('delete', $consumable),
+            ],
         ];
         $array += $permissions_array;
 
@@ -142,6 +171,8 @@ class ConsumablesTransformer
             ] : null,
             'qty' => (int) $consumable->qty,
             'remaining' => $consumable->numRemaining(),
+            'checked_out' => $consumable->numOutstanding(),
+            'consumed' => $consumable->numConsumed(),
             'requestable' => (bool) $consumable->requestable,
             'assigned_to_self' => $userHasOpenRequest,
             'available_actions' => [

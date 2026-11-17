@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Events\CheckoutableCheckedOut;
+use App\Exceptions\CheckoutNotAllowed;
 use App\Models\Accessory;
 use App\Models\AccessoryCheckout;
 use App\Models\Asset;
@@ -10,6 +11,7 @@ use App\Models\Consumable;
 use App\Models\LicenseSeat;
 use App\Models\PredefinedKit;
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -238,7 +240,13 @@ class PredefinedKitCheckoutService
                         continue;
                     }
 
-                    $error = $asset->checkOut($user, $admin, $checkout_at, $expected_checkin, $note, null);
+                    // Pass the current name as the override so Asset::checkOut()
+                    // does not null it out. The sixth arg is the admin-provided
+                    // rename-at-checkout value and the method assigns it to
+                    // $this->name unconditionally. Kit checkout has no form
+                    // field for renaming, so passing the existing name
+                    // preserves the asset's name across the save.
+                    $error = $asset->checkOut($user, $admin, $checkout_at, $expected_checkin, $note, $asset->name);
                     if ($error) {
                         array_merge_recursive($errors, $asset->getErrors()->toArray());
                     }

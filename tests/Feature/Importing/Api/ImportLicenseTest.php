@@ -43,7 +43,7 @@ class ImportLicenseTest extends ImportDataTestCase implements TestsPermissionsRe
     {
         $this->actingAsForApi(User::factory()->canImport()->create());
 
-        $import = Import::factory()->license()->create();
+        $import = Import::factory()->license()->withStubFile()->create();
 
         $this->importFileResponse(['import' => $import->id])->assertOk();
     }

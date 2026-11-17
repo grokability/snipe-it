@@ -58,6 +58,7 @@ class ConsumableImporter extends ItemImporter
         $this->setItemFromCsvIfPresent($row, 'min_amt');
         $this->setItemFromCsvIfPresent($row, 'qty', 'quantity');
         $this->setItemFromCsvIfPresent($row, 'requestable');
+        $this->setItemFromCsvIfPresent($row, 'archived');
         $this->setItemFromCsvIfPresent($row, 'item_no');
 
         if ($this->csvRowHas($row, 'purchase_date')) {

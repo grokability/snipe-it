@@ -41,4 +41,29 @@ return [
         'user_does_not_exist' => '잘못된 사용자 입니다. 다시 시도해 주세요.',
     ],
 
+    'restore' => [
+        'error' => 'Accessory was not restored, please try again',
+        'success' => 'Accessory restored successfully.',
+    ],
+
+    'bulk' => [
+        'no_accessories_selected' => 'No accessories were selected.',
+        'no_action_selected' => 'Please pick an action from the dropdown.',
+        'no_fields_updated' => '변경된 항목이 없어서, 갱신되지 않습니다.',
+        'skipped_unauthorized' => ':count accessory(s) were skipped because you do not have permission to update them.',
+
+        'update' => [
+            'success' => ':count accessory was updated.|:count accessories were updated.',
+            'none_updated' => 'The selected accessory could not be updated. See errors below for details.|None of the selected accessories could be updated. See errors below for details.',
+        ],
+
+        'restore' => [
+            'success' => ':count accessory was restored.|:count accessories were restored.',
+        ],
+
+        'checkin_selected' => [
+            'no_rows_selected' => 'No checked-out accessories were selected.',
+            'success' => ':count accessory checkout was returned.|:count accessory checkouts were returned.',
+        ],
+    ],
 ];

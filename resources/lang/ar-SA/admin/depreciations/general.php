@@ -2,20 +2,20 @@
 
 return [
     'about_asset_depreciations' => 'حول استهلاك الأصول',
-    'about_depreciations' => 'You can set up asset depreciations to depreciate assets based on linear (straight-line), Half Year applied with condition, or Half Year always applied.',
+    'about_depreciations' => 'يمكنك إعداد إهلاك الأصول لإهلاك الأصول بناءً على الطريقة الخطية (القسط الثابت)، أو نصف السنة المطبّقة بشرط، أو نصف السنة المطبّقة دائمًا.',
     'asset_depreciations' => 'استهلاك الأصول',
     'create' => 'إنشاء الاستهلاك',
     'depreciation_name' => 'اسم الاستهلاك',
     'number_of_months' => 'عدد الأشهر',
-    'rate_multiplier' => 'Rate Multiplier',
+    'rate_multiplier' => 'معامل الإهلاك',
     'update' => 'تحديث الاستهلاك',
-    'fiscal_year_start_month' => 'Fiscal Year Start Month',
-    'no_depreciations_warning' => '<strong>Warning: </strong>
-                      You do not currently have any depreciations set up.
-                      Please set up at least one depreciation to view the depreciation report.',
+    'fiscal_year_start_month' => 'شهر بداية السنة المالية',
+    'no_depreciations_warning' => '<strong>تحذير: </strong>
+لا توجد حاليًا أي إعدادات للإهلاك.
+يُرجى إعداد نوع إهلاك واحد على الأقل لعرض تقرير الإهلاك.',
     'depreciation_method' => 'تقرير الإستهلاك',
-    'linear_depreciation' => 'Linear (Default)',
-    'diminishing_depreciation' => 'Diminishing Value Depreciation',
-    'half_1' => 'Half-year convention, always applied',
-    'half_2' => 'Half-year convention, applied with condition',
+    'linear_depreciation' => 'خطي (افتراضي)',
+    'diminishing_depreciation' => 'الإهلاك بالقيمة المتناقصة',
+    'half_1' => 'تُطبَّق قاعدة نصف السنة دائمًا',
+    'half_2' => 'تُطبَّق قاعدة نصف السنة بشروط',
 ];

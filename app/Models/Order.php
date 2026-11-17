@@ -21,6 +21,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * the CSV importers write to.
  *
  * File attachments (receipt / invoice PDFs) are not modeled here yet.
+ *
+ * @mixin IdeHelperOrder
  */
 class Order extends SnipeModel
 {

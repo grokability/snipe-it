@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Bate is nie nagegaan nie, probeer asseblief weer',
         'success' => 'Die bate is suksesvol nagegaan.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Die gebruiker is ongeldig. Probeer asseblief weer.',
         'already_checked_in' => 'Daardie bate is reeds nagegaan.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

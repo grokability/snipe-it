@@ -11,8 +11,8 @@ use App\Models\Import;
 use App\Models\Location;
 use App\Models\Statuslabel;
 use App\Models\User;
-use Illuminate\Http\UploadedFile;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Support\Importing\CleansUpImportFiles;
 use Tests\TestCase;
 
 /**
@@ -31,13 +31,7 @@ use Tests\TestCase;
  */
 class AssetImportCheckoutAcceptanceTest extends TestCase
 {
-    private function createFakeUploadedFile(string $filename, string $content): UploadedFile
-    {
-        $path = tempnam(sys_get_temp_dir(), 'csv');
-        file_put_contents($path, $content);
-
-        return new UploadedFile($path, $filename, 'text/csv', null, true);
-    }
+    use CleansUpImportFiles;
 
     #[Test]
     public function importing_a_user_checkout_creates_an_acceptance_record_when_category_requires_it(): void
@@ -65,7 +59,7 @@ class AssetImportCheckoutAcceptanceTest extends TestCase
         $this->actingAsForApi($importer)
             ->postJson(route('api.imports.store'), [
                 'files' => [
-                    $this->createFakeUploadedFile('acceptance.csv', $csv),
+                    $this->tempUploadedFile('acceptance.csv', $csv),
                 ],
             ])
             ->assertSuccessful();
@@ -124,7 +118,7 @@ class AssetImportCheckoutAcceptanceTest extends TestCase
         $this->actingAsForApi($importer)
             ->postJson(route('api.imports.store'), [
                 'files' => [
-                    $this->createFakeUploadedFile('acceptance-location.csv', $csv),
+                    $this->tempUploadedFile('acceptance-location.csv', $csv),
                 ],
             ])
             ->assertSuccessful();

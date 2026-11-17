@@ -113,7 +113,14 @@ class OrderItemsController extends Controller
             // Orders tab shows purchases only. Corrections / consumption
             // events (zero or negative-qty OrderItems) belong in the
             // item's history tab, not on the "Orders" list.
-            ->where('order_items.qty', '>', 0);
+            ->where('order_items.qty', '>', 0)
+            // Drop rows whose parent Order has no order_number. Those
+            // are initial-inventory anchors (writeInitialOrderIfStocked)
+            // or seeded placeholders without a real acquisition
+            // reference. Including them makes the Orders tab show
+            // rows that look blank to the admin and inflates the
+            // tab badge past what the user considers a real order.
+            ->whereHas('order', fn ($q) => $q->whereNotNull('order_number'));
     }
 
     private function applyScopeFilters(Builder $query, Request $request): void

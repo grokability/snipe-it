@@ -27,26 +27,26 @@
                 <x-slot:tabpanes>
 
                     <x-tabs.pane name="assets">
-                        <x-table.assets :route="route('api.assets.index', ['manufacturer_id' => $manufacturer->id, 'itemtype' => 'assets'])" />
+                        <x-table.assets name="manufacturerAssets" :route="route('api.assets.index', ['manufacturer_id' => $manufacturer->id, 'itemtype' => 'assets'])" />
                     </x-tabs.pane>
 
                     <x-tabs.pane name="licenses">
                         <x-slot:bulkactions>
                             <x-table.bulk-licenses />
                         </x-slot:bulkactions>
-                        <x-table.licenses name="licenses" :export_name="$manufacturer->name" :route="route('api.licenses.index', ['manufacturer_id' => $manufacturer->id])" />
+                        <x-table.licenses name="manufacturerLicenses" :export_name="$manufacturer->name" :route="route('api.licenses.index', ['manufacturer_id' => $manufacturer->id])" />
                     </x-tabs.pane>
 
                     <x-tabs.pane name="accessories">
-                        <x-table.accessories :name="$manufacturer->name" :route="route('api.accessories.index', ['manufacturer_id' => $manufacturer->id])" />
+                        <x-table.accessories name="manufacturerAccessories" :route="route('api.accessories.index', ['manufacturer_id' => $manufacturer->id])" />
                     </x-tabs.pane>
 
                     <x-tabs.pane name="consumables">
-                        <x-table.consumables :name="$manufacturer->name" :route="route('api.consumables.index', ['manufacturer_id' => $manufacturer->id])" />
+                        <x-table.consumables name="manufacturerConsumables" :route="route('api.consumables.index', ['manufacturer_id' => $manufacturer->id])" />
                     </x-tabs.pane>
 
                     <x-tabs.pane name="components">
-                        <x-table.components :name="$manufacturer->name" :route="route('api.components.index', ['manufacturer_id' => $manufacturer->id])" />
+                        <x-table.components name="manufacturerComponents" :route="route('api.components.index', ['manufacturer_id' => $manufacturer->id])" />
                     </x-tabs.pane>
 
                 </x-slot:tabpanes>

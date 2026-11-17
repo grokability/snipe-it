@@ -27,7 +27,7 @@ class LicenseRequestTest extends TestCase
             ->assertOk()
             ->assertViewHas('counts', fn ($counts) => ($counts['licenses'] ?? 0) > 0);
 
-        $rows = $this->actingAsForApi(User::factory()->create())
+        $rows = $this->actingAsForApi(User::factory()->viewRequestableAssets()->create())
             ->getJson(route('api.licenses.requestable'))
             ->assertOk()
             ->json('rows');

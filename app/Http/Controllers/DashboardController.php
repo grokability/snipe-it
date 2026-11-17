@@ -49,10 +49,16 @@ class DashboardController extends Controller
         $counts = [];
         if (auth()->user()->hasAccess('admin')) {
             $counts['asset'] = Asset::count();
-            $counts['accessory'] = Accessory::count();
+            // Accessory / Consumable / Component rows are parents with a
+            // qty column that represents individual units in stock. Show
+            // the sum of units across live non-archived rows instead of
+            // the parent-row count so the dashboard reflects actual
+            // inventory volume. SoftDeletes drops trashed parents, and
+            // notArchived() excludes retired-but-live rows.
+            $counts['accessory'] = (int) Accessory::notArchived()->sum('qty');
             $counts['license'] = License::assetcount();
-            $counts['consumable'] = Consumable::count();
-            $counts['component'] = Component::count();
+            $counts['consumable'] = (int) Consumable::notArchived()->sum('qty');
+            $counts['component'] = (int) Component::notArchived()->sum('qty');
             $counts['user'] = Company::scopeCompanyables(auth()->user())->count();
             $counts['grand_total'] = $counts['asset'] + $counts['accessory'] + $counts['license'] + $counts['consumable'];
         }

@@ -16,7 +16,7 @@ class ConsumableFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var string
+     * @var class-string<Consumable>
      */
     protected $model = Consumable::class;
 
@@ -122,6 +122,11 @@ class ConsumableFactory extends Factory
         return $this->afterCreating(function (Consumable $consumable) {
             $consumable->category->update(['require_acceptance' => 0]);
         });
+    }
+
+    public function archived(): self
+    {
+        return $this->state(fn () => ['archived' => true]);
     }
 
     public function checkedOutToUser(?User $user = null)

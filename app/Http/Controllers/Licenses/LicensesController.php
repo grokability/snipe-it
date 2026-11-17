@@ -139,7 +139,6 @@ class LicensesController extends Controller
      *
      * @since [v1.0]
      *
-     * @param  int  $licenseId
      * @return View
      *
      * @throws AuthorizationException
@@ -172,7 +171,6 @@ class LicensesController extends Controller
      * @see LicensesController::getEdit() method that provides the form view
      * @since [v1.0]
      *
-     * @param  int  $licenseId
      * @return RedirectResponse
      *
      * @throws AuthorizationException
@@ -225,7 +223,6 @@ class LicensesController extends Controller
      *
      * @since [v1.0]
      *
-     * @param  int  $licenseId
      * @return RedirectResponse
      *
      * @throws AuthorizationException
@@ -266,7 +263,6 @@ class LicensesController extends Controller
      *
      * @since [v1.0]
      *
-     * @param  int  $licenseId
      * @return View
      *
      * @throws AuthorizationException
@@ -399,7 +395,7 @@ class LicensesController extends Controller
                         trans('general.created_at'),
                     ];
 
-                    fputcsv($handle, $headers);
+                    fputcsv($handle, $headers, escape: '\\', eol: "\r\n");
 
                     $formatter = new EscapeFormula('`');
 
@@ -436,11 +432,11 @@ class LicensesController extends Controller
 
                         // CSV_ESCAPE_FORMULAS is set to false in the .env
                         if (config('app.escape_formulas') === false) {
-                            fputcsv($handle, $values);
+                            fputcsv($handle, $values, escape: '\\', eol: "\r\n");
 
                             // CSV_ESCAPE_FORMULAS is set to true or is not set in the .env
                         } else {
-                            fputcsv($handle, $formatter->escapeRecord($values));
+                            fputcsv($handle, $formatter->escapeRecord($values), escape: '\\', eol: "\r\n");
                         }
                     }
                 });

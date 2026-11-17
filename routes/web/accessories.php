@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Accessories;
-use App\Http\Controllers\BulkAccessoriesController;
+use App\Http\Controllers\Accessories\BulkAccessoriesController;
 use App\Models\Accessory;
 use Illuminate\Support\Facades\Route;
 use Tabuna\Breadcrumbs\Trail;
@@ -36,6 +36,19 @@ Route::group(['prefix' => 'accessories', 'middleware' => ['auth']], function () 
     )->where('accessoryID', '[0-9]+')
         ->name('accessories.checkin.store');
 
+    // Bulk check-in from the accessory's checked-out tab. The `.show`
+    // route renders the confirmation interstitial where the admin
+    // picks the shared note; `.store` applies the checkin.
+    Route::post(
+        'bulkcheckin/show',
+        [Accessories\AccessoryCheckinController::class, 'bulkCheckinShow']
+    )->name('accessories.bulkcheckin.show');
+
+    Route::post(
+        'bulkcheckin/store',
+        [Accessories\AccessoryCheckinController::class, 'bulkCheckinStore']
+    )->name('accessories.bulkcheckin.store');
+
     Route::get('{accessory}/clone',
         [Accessories\AccessoriesController::class, 'getClone']
     )->name('clone/accessories');
@@ -68,11 +81,43 @@ Route::group(['prefix' => 'accessories', 'middleware' => ['auth']], function () 
         [Accessories\AccessoryCheckoutController::class, 'bulkFulfillStore']
     )->name('accessories.fulfill-requests.store');
 
+    Route::post('{accessoryId}/restore',
+        [Accessories\AccessoriesController::class, 'postRestore']
+    )->where('accessoryId', '[0-9]+')
+        ->name('accessories.restore');
+
+    Route::post('{accessory}/unarchive',
+        [Accessories\AccessoriesController::class, 'postUnarchive']
+    )->where('accessory', '[0-9]+')
+        ->name('accessories.unarchive');
+
+    // Bulk-actions
+    Route::post('bulkedit',
+        [BulkAccessoriesController::class, 'edit']
+    )->name('accessories.bulkedit.show')
+        ->breadcrumbs(function (Trail $trail) {
+            $label = match (request()->input('bulk_actions')) {
+                'edit' => trans('general.bulk_edit'),
+                'delete' => trans('general.bulk_delete'),
+                default => trans('general.bulk_actions'),
+            };
+
+            return $trail->parent('accessories.index')->push($label, route('accessories.index'));
+        });
+
+    Route::post('bulksave',
+        [BulkAccessoriesController::class, 'update']
+    )->name('accessories.bulkedit.store');
+
+    Route::post('bulkdelete',
+        [BulkAccessoriesController::class, 'destroy']
+    )->name('accessories.bulkdelete.store');
+
 });
 
 Route::resource('accessories', Accessories\AccessoriesController::class, [
     'middleware' => ['auth'],
-]);
+])->withTrashed(['show']);
 
 Route::post('accessories/bulk/delete', [BulkAccessoriesController::class, 'destroy'])
     ->middleware(['auth'])

@@ -113,9 +113,6 @@ class ManufacturersController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @see ManufacturersController::update()
-     *
-     * @param  int  $manufacturerId
-     *
      * @since [v1.0]
      */
     public function edit(Manufacturer $manufacturer): View|RedirectResponse
@@ -133,7 +130,6 @@ class ManufacturersController extends Controller
      * @see ManufacturersController::getEdit()
      *
      * @param  Request  $request
-     * @param  int  $manufacturerId
      *
      * @since [v1.0]
      */
@@ -169,8 +165,6 @@ class ManufacturersController extends Controller
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
-     * @param  int  $manufacturerId
-     *
      * @since [v1.0]
      */
     public function destroy(Manufacturer $manufacturer): RedirectResponse
@@ -196,8 +190,6 @@ class ManufacturersController extends Controller
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
-     * @param  int  $manufacturerId
-     *
      * @since [v1.0]
      */
     public function show(Manufacturer $manufacturer): View|RedirectResponse
@@ -213,8 +205,6 @@ class ManufacturersController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @since [v4.1.15]
-     *
-     * @param  int  $manufacturers_id
      */
     public function restore($id): RedirectResponse
     {

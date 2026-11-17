@@ -10,7 +10,7 @@ class SettingFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var string
+     * @var class-string<Setting>
      */
     protected $model = Setting::class;
 

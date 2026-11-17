@@ -18,7 +18,6 @@ use App\Http\Transformers\ActionlogsTransformer;
 use App\Http\Transformers\AssetsTransformer;
 use App\Http\Transformers\SelectlistTransformer;
 use App\Models\AccessoryCheckout;
-use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\CheckoutAcceptance;
@@ -35,7 +34,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
@@ -59,8 +57,6 @@ class AssetsController extends Controller
      * Returns JSON listing of all assets
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     *
-     * @param  int  $assetId
      *
      * @since [v4.0]
      */
@@ -145,6 +141,17 @@ class AssetsController extends Controller
             'external_os_version',
             'last_seen',
 
+            // Related-item counts exposed via withCount
+            'licenses_count',
+            'components_count',
+            'maintenances_count',
+            'assigned_assets_count',
+
+            // Age is computed from purchase_date (see the age sort
+            // case below), not a stored column, but the sort switch
+            // can still route it.
+            'age',
+
         ];
 
         $all_custom_fields = CustomField::all(); // used as a 'cache' of custom fields throughout this page load
@@ -154,15 +161,6 @@ class AssetsController extends Controller
         }
 
         $assets = Asset::select('assets.*')
-//            ->addSelect([
-//                'first_checkout_at' => Actionlog::query()
-//                    ->select('created_at')
-//                    ->whereColumn('item_id', 'assets.id')
-//                    ->where('item_type', Asset::class)
-//                    ->where('action_type', 'checkout')
-//                    ->orderBy('created_at')
-//                    ->limit(1),
-//            ])
             ->with(
                 'model',
                 'location',
@@ -174,11 +172,17 @@ class AssetsController extends Controller
                 'model.depreciation',
                 'model.category',
                 'model.manufacturer',
-                'model.fieldset',
+                'custom_fieldset',
                 'model.depreciation',
                 'supplier',
                 'externalSource',
-            ); // it might be tempting to add 'assetlog' here, but don't. It blows up update-heavy users.
+            ) // it might be tempting to add 'assetlog' here, but don't. It blows up update-heavy users.
+            ->withCount([
+                'licenses as licenses_count',
+                'components as components_count',
+                'maintenances as maintenances_count',
+                'assignedAssets as assigned_assets_count' => fn ($query) => $query->withoutTrashed(),
+            ]);
 
         if ($filter_non_deprecable_assets) {
             $non_deprecable_models = AssetModel::select('id')->whereNotNull('depreciation_id')->get();
@@ -469,6 +473,38 @@ class AssetsController extends Controller
             case 'last_seen':
                 $assets->OrderExternalSource($order, 'last_seen');
                 break;
+                /*
+                 * Per-asset counts route through AssetQueryBuilder
+                 * instead of a plain `orderBy('licenses_count', $order)`
+                 * on the withCount alias, even though the alias is
+                 * visible on `$assets` at this point. The id-pluck further
+                 * down does `(clone $assets)->select('assets.id')`,
+                 * which replaces the SELECT list on the pluck clone and
+                 * strips every withCount alias. The ORDER BY clause here
+                 * comes along on the clone, so an orderBy on
+                 * the alias would then reference a column the pluck
+                 * clone no longer has.
+                 */
+            case 'licenses_count':
+                $assets->orderLicensesCount($order);
+                break;
+            case 'components_count':
+                $assets->orderComponentsCount($order);
+                break;
+            case 'maintenances_count':
+                $assets->orderMaintenancesCount($order);
+                break;
+            case 'assigned_assets_count':
+                $assets->orderAssignedAssetsCount($order);
+                break;
+            case 'age':
+                // Age is a monotonic function of purchase_date, so
+                // sorting by age is just sorting by purchase_date with
+                // the direction flipped. Avoids a cross-DB-portability
+                // headache around TIMESTAMPDIFF vs EXTRACT(AGE FROM..)
+                // vs julianday().
+                $assets->orderBy('assets.purchase_date', $order === 'asc' ? 'desc' : 'asc');
+                break;
             default:
                 $numeric_sort = false;
 
@@ -518,6 +554,17 @@ class AssetsController extends Controller
                 ->withTrashed()
                 ->whereIn('assets.id', $ids)
                 ->setEagerLoads($assets->getEagerLoads())
+                // withCount is a SELECT-list correlated subquery, not an
+                // eager load, so it doesn't survive setEagerLoads on the
+                // rehydration pass. Re-apply the per-asset counts
+                // the index exposes so the transformer sees the alias
+                // columns. This is a query optimization.
+                ->withCount([
+                    'licenses as licenses_count',
+                    'components as components_count',
+                    'maintenances as maintenances_count',
+                    'assignedAssets as assigned_assets_count' => fn ($query) => $query->withoutTrashed(),
+                ])
                 ->get()
                 ->sortBy(fn ($model) => $order[$model->getKey()] ?? PHP_INT_MAX)
                 ->values();
@@ -594,7 +641,7 @@ class AssetsController extends Controller
             'location',
             'model.category',
             'model.depreciation',
-            'model.fieldset',
+            'custom_fieldset',
             'model.manufacturer',
             'supplier',
         ]);
@@ -622,8 +669,6 @@ class AssetsController extends Controller
      * Returns JSON with information about an asset for detail view.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     *
-     * @param  int  $assetId
      *
      * @since [v4.0]
      *
@@ -766,8 +811,11 @@ class AssetsController extends Controller
      */
     public function store(StoreAssetRequest $request): JsonResponse
     {
+        // custom_fill resolves defaults together before filling the custom fields.
+        $model = AssetModel::find((int) $request->input('model_id'));
+
         $asset = new Asset;
-        $asset->model()->associate(AssetModel::find((int) $request->input('model_id')));
+        $asset->model()->associate($model);
 
         $asset->fill($request->validated());
         $asset->created_by = auth()->id();
@@ -780,51 +828,10 @@ class AssetsController extends Controller
             $request->offsetSet('image', $request->offsetGet('image_source'));
         }
 
-        $asset = $request->handleImages($asset);
+        $request->handleImages($asset);
 
         // Update custom fields in the database.
-        $model = AssetModel::find($request->input('model_id'));
-
-        // Check that it's an object and not a collection
-        // (Sometimes people send arrays here and they shouldn't
-        if (($model) && ($model instanceof AssetModel) && ($model->fieldset)) {
-            foreach ($model->fieldset->fields as $field) {
-
-                // Set the field value based on what was sent in the request
-                $field_val = $request->input($field->db_column, null);
-
-                // If input value is null, use custom field's default value
-                if ($field_val == null) {
-                    Log::debug('Field value for '.$field->db_column.' is null');
-                    $field_val = $field->defaultValue($request->input('model_id'));
-                    Log::debug('Use the default fieldset value of '.$field->defaultValue($request->input('model_id')));
-                }
-
-                // if the field is set to encrypted, make sure we encrypt the value
-                if ($field->field_encrypted == '1') {
-                    Log::debug('This model field is encrypted in this fieldset.');
-
-                    if (Gate::allows('assets.view.encrypted_custom_fields')) {
-
-                        // If input value is null, use custom field's default value
-                        if (($field_val == null) && ($request->has('model_id') != '')) {
-                            $field_val = Crypt::encrypt($field->defaultValue($request->input('model_id')));
-                        } else {
-                            $field_val = Crypt::encrypt($request->input($field->db_column));
-                        }
-                    } else {
-                        continue;
-                    }
-                }
-                if ($field->element == 'checkbox') {
-                    if (is_array($field_val)) {
-                        $field_val = implode(',', $field_val);
-                    }
-                }
-
-                $asset->{$field->db_column} = $field_val;
-            }
-        }
+        $asset->custom_fill($request, true);
 
         $target = $this->resolveCheckoutTargetForAssetMutation($request);
         $requestedCheckout = $request->filled('assigned_user') || $request->filled('assigned_asset') || $request->filled('assigned_location');
@@ -877,7 +884,7 @@ class AssetsController extends Controller
                 ? trans('admin/hardware/message.create.success_no_checkout')
                 : trans('admin/hardware/message.create.success');
 
-            return response()->json(Helper::formatStandardApiResponse('success', $asset, $message));
+            return response()->json(Helper::formatStandardApiResponse('success', (new AssetsTransformer)->transformAssetForWrite($asset), $message));
 
             // below is what we want the _eventual_ return to look like - in a more standardized format.
             // return response()->json(Helper::formatStandardApiResponse('success', (new AssetsTransformer)->transformAsset($asset), trans('admin/hardware/message.create.success')));
@@ -1008,7 +1015,7 @@ class AssetsController extends Controller
      * response body. Used by update() (default shape) and by buildRowResult()
      * to shape each row of a bulk response.
      *
-     * Kept as a flat asset payload (not through AssetsTransformer) so the
+     * Kept as a flat asset payload through AssetsTransformer so the
      * response continues to match the shape existing integrations rely on.
      */
     private function formatSingleAssetResponse(array $result): array
@@ -1021,7 +1028,7 @@ class AssetsController extends Controller
             return Helper::formatStandardApiResponse('error', null, $result['errors']);
         }
 
-        return Helper::formatStandardApiResponse('success', $result['asset'], trans($result['message']));
+        return Helper::formatStandardApiResponse('success', (new AssetsTransformer)->transformAssetForWrite($result['asset']), trans($result['message']));
     }
 
     /**
@@ -1069,37 +1076,11 @@ class AssetsController extends Controller
             $request->offsetSet('image', $request->offsetGet('image_source'));
         }
 
-        $asset = $request->handleImages($asset);
-        $model = $asset->model;
+        $request->handleImages($asset);
 
         $problems_updating_encrypted_custom_fields = false;
-        if ($model && isset($model->fieldset)) {
-            foreach ($model->fieldset->fields as $field) {
-                if (! $request->has($field->db_column)) {
-                    continue;
-                }
-
-                $field_val = $request->input($field->db_column, null);
-
-                if ($field->element === 'checkbox' && is_array($field_val)) {
-                    $field_val = implode(',', $field_val);
-                }
-
-                if ($field->field_encrypted == '1') {
-                    if (Gate::allows('assets.view.encrypted_custom_fields')) {
-                        $field_val = Crypt::encrypt($field_val);
-                    } else {
-                        // Skip encrypted-field updates for callers without the
-                        // permission, but flag it so the response can nudge them.
-                        $problems_updating_encrypted_custom_fields = true;
-
-                        continue;
-                    }
-                }
-
-                $asset->{$field->db_column} = $field_val;
-            }
-        }
+        $asset->custom_fill($request);
+        $problems_updating_encrypted_custom_fields = $asset->hasSkippedEncryptedCustomFields();
 
         $target = $this->resolveCheckoutTargetForAssetMutation($request, $asset->id);
         $requestedCheckout = $request->filled('assigned_user') || $request->filled('assigned_asset') || $request->filled('assigned_location');
@@ -1275,8 +1256,6 @@ class AssetsController extends Controller
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
-     * @param  int  $assetId
-     *
      * @since [v4.0]
      */
     public function destroy($id): JsonResponse
@@ -1359,8 +1338,6 @@ class AssetsController extends Controller
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
-     * @param  int  $assetId
-     *
      * @since [v4.0]
      */
     public function checkout(AssetCheckoutRequest $request, $asset_id): JsonResponse
@@ -1390,8 +1367,9 @@ class AssetsController extends Controller
         } elseif (request('checkout_to_type') == 'asset') {
             // Resolve unscoped target first so FMCS mismatch can be handled explicitly.
             $target = Asset::withoutGlobalScopes()->where('id', '!=', $asset_id)->find(request('assigned_asset'));
-            // Override with the asset's location_id if it has one
-            $asset->location_id = (($target) && (isset($target->location_id))) ? $target->location_id : '';
+            // Prefer the target's current location, fall back to its RTD (home) location
+            // when the target has no current location. Matches AssetCheckoutService::checkout.
+            $asset->location_id = $target ? ($target->location_id ?: $target->rtd_location_id) : '';
             $error_payload['target_id'] = $request->input('assigned_asset');
             $error_payload['target_type'] = 'asset';
         } elseif (request('checkout_to_type') == 'user') {
@@ -1475,8 +1453,6 @@ class AssetsController extends Controller
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
-     * @param  int  $assetId
-     *
      * @since [v4.0]
      */
     public function checkin(Request $request, $asset_id): JsonResponse
@@ -1491,20 +1467,40 @@ class AssetsController extends Controller
                 ->lockForUpdate()
                 ->first();
 
-            if (!$locked) {
+            if (! $locked) {
                 return ['status' => 'already_checked_in', 'asset' => $asset];
             }
 
             $target = $locked->assignedTo;
-            if (is_null($target)) {
+            $alreadyCheckedIn = is_null($target);
+
+            // The Quickscan Checkin form carries status, location, name,
+            // notes, and clear_name alongside the scan input. When the
+            // operator scans an asset that was never checked out, they
+            // still expect those form fields to apply (issue #19899:
+            // scan a box of returned assets, set them all to Retired in
+            // one pass). Only short-circuit on "already checked in" when
+            // the form carried nothing to update, otherwise fall through
+            // to the field-apply branch so the status / location /
+            // name / notes still land.
+            $hasFieldUpdates = $request->filled('status_id')
+                || $request->filled('location_id')
+                || $request->has('name')
+                || $request->input('clear_name') == '1';
+
+            if ($alreadyCheckedIn && ! $hasFieldUpdates) {
                 return ['status' => 'already_checked_in', 'asset' => $locked];
             }
 
-            $locked->expected_checkin = null;
-            // $locked->last_checkout = null;
-            $locked->last_checkin = now();
-            $locked->assignedTo()->disassociate($locked);
-            $locked->accepted = null;
+            // Checkout-clearing housekeeping only when there is actually
+            // a checkout to clear. The status / location / name / notes
+            // writes below run in both branches.
+            if (! $alreadyCheckedIn) {
+                $locked->expected_checkin = null;
+                $locked->last_checkin = now();
+                $locked->assignedTo()->disassociate($locked);
+                $locked->accepted = null;
+            }
 
             if ($request->input('clear_name') == '1') {
                 $locked->name = null;
@@ -1514,7 +1510,14 @@ class AssetsController extends Controller
 
             $this->migrateLegacyLocations($locked);
 
-            $locked->location_id = $locked->rtd_location_id;
+            // Reset to the default location only on a real checkin.
+            // Overwriting the location on an already-checked-in asset
+            // with its rtd_location_id would be surprising when the
+            // operator only asked for a status change. If they supplied
+            // a location_id on the form, that still applies below.
+            if (! $alreadyCheckedIn) {
+                $locked->location_id = $locked->rtd_location_id;
+            }
 
             if ($request->filled('location_id')) {
                 $locked->location_id = $request->input('location_id');
@@ -1528,43 +1531,53 @@ class AssetsController extends Controller
                 $locked->status_id = $request->input('status_id');
             }
 
-            $checkin_at = $request->filled('checkin_at') ? $request->input('checkin_at') . ' ' . date('H:i:s') : date('Y-m-d H:i:s');
+            $checkin_at = $request->filled('checkin_at') ? $request->input('checkin_at').' '.date('H:i:s') : date('Y-m-d H:i:s');
             $originalValues = $locked->getRawOriginal();
 
             if (($request->filled('checkin_at')) && ($request->input('checkin_at') != date('Y-m-d'))) {
                 $originalValues['action_date'] = $checkin_at;
             }
 
-            $locked->licenseseats->each(function (LicenseSeat $seat) {
-                $seat->update(['assigned_to' => null]);
-            });
-
-            // Get all pending Acceptances for this asset and delete them
-            CheckoutAcceptance::pending()
-                ->whereHasMorph(
-                    'checkoutable',
-                    [Asset::class],
-                    function (Builder $query) use ($locked) {
-                        $query->where('id', $locked->id);
-                    }
-                )
-                ->get()
-                ->map(function ($acceptance) {
-                    $acceptance->delete();
+            // License-seat release and pending-Acceptance cleanup only
+            // on a real checkin. An already-checked-in asset has no
+            // seat to free and nothing is pending acceptance for it.
+            if (! $alreadyCheckedIn) {
+                $locked->licenseseats->each(function (LicenseSeat $seat) {
+                    $seat->update(['assigned_to' => null]);
                 });
 
-            if (!$locked->save()) {
+                CheckoutAcceptance::pending()
+                    ->whereHasMorph(
+                        'checkoutable',
+                        [Asset::class],
+                        function (Builder $query) use ($locked) {
+                            $query->where('id', $locked->id);
+                        }
+                    )
+                    ->get()
+                    ->map(function ($acceptance) {
+                        $acceptance->delete();
+                    });
+            }
+
+            if (! $locked->save()) {
                 return ['status' => 'save_failed', 'asset' => $locked];
             }
 
-            // Update the location of any child assets
-            Asset::where('assigned_type', Asset::class)
-                ->where('assigned_to', $locked->id)
-                ->update(['location_id' => $locked->location_id]);
+            if (! $alreadyCheckedIn) {
+                // Child-asset location propagation only fires on a real
+                // checkin so a status-only update on an already-checked-in
+                // parent does not drag children to its rtd_location.
+                Asset::where('assigned_type', Asset::class)
+                    ->where('assigned_to', $locked->id)
+                    ->update(['location_id' => $locked->location_id]);
 
-            event(new CheckoutableCheckedIn($locked, $target, auth()->user(), $request->input('note'), $checkin_at, $originalValues));
+                event(new CheckoutableCheckedIn($locked, $target, auth()->user(), $request->input('note'), $checkin_at, $originalValues));
 
-            return ['status' => 'success', 'asset' => $locked];
+                return ['status' => 'success', 'asset' => $locked];
+            }
+
+            return ['status' => 'updated_without_checkin', 'asset' => $locked];
         });
 
         $asset = $outcome['asset'];
@@ -1575,6 +1588,14 @@ class AssetsController extends Controller
                 'model' => e($asset->model->name),
                 'model_number' => e($asset->model->model_number),
             ], trans('admin/hardware/message.checkin.already_checked_in')));
+        }
+
+        if ($outcome['status'] === 'updated_without_checkin') {
+            return response()->json(Helper::formatStandardApiResponse('success', [
+                'asset_tag' => e($asset->asset_tag),
+                'model' => e($asset->model->name),
+                'model_number' => e($asset->model->model_number),
+            ], trans('admin/hardware/message.checkin.updated_without_checkin')));
         }
 
         if ($outcome['status'] === 'success') {
@@ -1654,8 +1675,6 @@ class AssetsController extends Controller
      * Mark an asset as audited
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     *
-     * @param  int  $id
      *
      * @since [v4.0]
      */
@@ -1817,35 +1836,10 @@ class AssetsController extends Controller
             'next_audit_date' => Helper::getFormattedDateObject($asset->next_audit_date),
         ];
 
-        if ($asset->model && $asset->model->fieldset) {
-            $payload['custom_fields'] = [];
-            foreach ($asset->model->fieldset->fields as $field) {
-                if ($field->display_audit != '1' || ! $request->has($field->db_column)) {
-                    continue;
-                }
-
-                $value = $request->input($field->db_column);
-                $stored = is_array($value) ? implode(', ', $value) : $value;
-
-                if ($field->field_encrypted == '1') {
-                    // Only writers with the encrypted-view permission can
-                    // set encrypted fields. Other callers get the payload
-                    // echo but no persisted change.
-                    if (Gate::allows('assets.view.encrypted_custom_fields')) {
-                        $asset->{$field->db_column} = Crypt::encrypt($stored);
-                    }
-                } else {
-                    $asset->{$field->db_column} = $stored;
-                }
-
-                $payload['custom_fields'][$field->db_column] = $value;
-            }
+        if ($asset->custom_fieldset) {
+            $payload['custom_fields'] = $asset->custom_fill($request, false, 'display_audit');
         }
-
-        // Merge the model-level base rules with the custom-field rules so
-        // uploaded audit data is checked before we bypass the observer below.
-        $asset->setRules($asset->getRules() + $asset->customFieldValidationRules());
-
+        
         if ($asset->isInvalid()) {
             return [
                 'success' => false,
@@ -1917,11 +1911,47 @@ class AssetsController extends Controller
             return Asset::where('asset_tag', '=', trim($audit_key))->first();
         }
 
+        if ($audit_by_field === '2d_barcode' && $audit_key) {
+            return $this->resolveAssetFrom2dBarcode(trim($audit_key), $settings);
+        }
+
         if ($request->filled('asset_tag')) {
             return Asset::where('asset_tag', '=', $request->input('asset_tag'))->first();
         }
 
         return null;
+    }
+
+    /**
+     * Resolve the asset behind a scanned 2D barcode
+     *
+     * Non-unique targets (model/manufacturer/location name, etc.)
+     * aren't viable audit keys and fall through to null.
+     */
+    private function resolveAssetFrom2dBarcode(string $scanned, Setting $settings): ?Asset
+    {
+        // default 2D barcode format is /hardware/{id} (numeric primary key)
+        if (preg_match('~/hardware/(\d+)(?:[/?#]|$)~', $scanned, $m)) {
+            return Asset::find((int) $m[1]);
+        }
+
+        // legacy 2D barcode format is /ht/{asset_tag} (non-numeric, URL-encoded)
+        if (preg_match('~/ht/([^/?#]+)~', $scanned, $m)) {
+            return Asset::where('asset_tag', '=', urldecode($m[1]))->first();
+        }
+
+        // If the user has configured a custom 2D barcode prefix, strip it off
+        $prefix = (string) ($settings->label2_2d_prefix ?? '');
+        $value = ($prefix !== '' && str_starts_with($scanned, $prefix))
+            ? substr($scanned, strlen($prefix))
+            : $scanned;
+
+        return match ($settings->label2_2d_target) {
+            'plain_asset_id' => ctype_digit($value) ? Asset::find((int) $value) : null,
+            'plain_asset_tag' => Asset::where('asset_tag', '=', $value)->first(),
+            'plain_serial_number' => Asset::where('serial', '=', $value)->first(),
+            default => null,
+        };
     }
 
     /**
@@ -2001,17 +2031,40 @@ class AssetsController extends Controller
                 'assignedTo',
                 'model.category',
                 'model.manufacturer',
-                'model.fieldset',
+                'custom_fieldset',
                 'supplier',
                 'requests'
             );
 
+        // GHSA-799x-8mjm-g656: Restrict fields on requestable searches
         if ($request->filled('search')) {
-            $assets->TextSearch($request->input('search'));
+            $search = $request->input('search');
+            $assets->where(function ($q) use ($search, $all_custom_fields) {
+                $q->where('assets.name', 'LIKE', '%'.$search.'%')
+                    ->orWhere('assets.asset_tag', 'LIKE', '%'.$search.'%')
+                    ->orWhere('assets.serial', 'LIKE', '%'.$search.'%')
+                    ->orWhereHas('model', function ($mq) use ($search) {
+                        $mq->where('models.name', 'LIKE', '%'.$search.'%')
+                            ->orWhere('models.model_number', 'LIKE', '%'.$search.'%');
+                    });
+
+                // Custom fields: only those flagged for the requestable list
+                // AND not encrypted (encrypted values aren't searchable in
+                // the first place, matching Searchable::searchCustomFields).
+                foreach ($all_custom_fields as $field) {
+                    if ($field->show_in_requestable_list == '1' && $field->field_encrypted == '0' && $field->db_column) {
+                        $q->orWhere('assets.'.$field->db_column_name(), 'LIKE', '%'.$search.'%');
+                    }
+                }
+            });
         }
 
-        // Search custom fields by column name
+        // Exact-match custom-field filters: same gate as search above.
+        // Hidden or encrypted fields are not queryable from this endpoint.
         foreach ($all_custom_fields as $field) {
+            if ($field->show_in_requestable_list != '1' || $field->field_encrypted != '0') {
+                continue;
+            }
             if ($request->filled($field->db_column_name())) {
                 $assets->where($field->db_column_name(), '=', $request->input($field->db_column_name()));
             }

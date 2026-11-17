@@ -4,7 +4,7 @@ return [
 
     'assigned_to' => 'Määratud',
     'checkout' => 'Sees väljas',
-    'deleted_at' => 'Deleted at',
+    'deleted_at' => 'Kustutatud',
     'id' => 'ID',
     'license_email' => 'Litsentsi e-post',
     'license_name' => 'Litsentseeritud',

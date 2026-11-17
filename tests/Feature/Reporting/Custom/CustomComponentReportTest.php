@@ -618,6 +618,53 @@ class CustomComponentReportTest extends TestCase
             ->assertSeeTextInStreamedResponse('Deleted Component');
     }
 
+    public function test_archived_component_is_included_by_default()
+    {
+        Component::factory()->archived()->create(['name' => 'Archived Component']);
+        Component::factory()->create(['name' => 'Live Component']);
+
+        $this->sendRequest([
+            'component_name' => '1',
+        ])
+            ->assertOk()
+            ->assertCsvHeader()
+            ->assertSeeTextInStreamedResponse('Live Component')
+            ->assertSeeTextInStreamedResponse('Archived Component');
+    }
+
+    public function test_exclude_archived_filters_out_archived_components()
+    {
+        Component::factory()->archived()->create(['name' => 'Archived Component']);
+        Component::factory()->create(['name' => 'Live Component']);
+
+        $this->sendRequest([
+            'component_name' => '1',
+            'exclude_archived' => '1',
+        ])
+            ->assertOk()
+            ->assertCsvHeader()
+            ->assertSeeTextInStreamedResponse('Live Component')
+            ->assertDontSeeTextInStreamedResponse('Archived Component');
+    }
+
+    public function test_archived_output_column_renders_yes_and_no()
+    {
+        Component::factory()->archived()->create(['name' => 'Archived Row']);
+        Component::factory()->create(['name' => 'Live Row']);
+
+        $response = $this->sendRequest([
+            'component_name' => '1',
+            'archived' => '1',
+        ])
+            ->assertOk()
+            ->assertCsvHeader();
+
+        $body = $response->streamedContent();
+        $this->assertStringContainsString('Archived', $body);
+        $this->assertStringContainsString(trans('general.yes'), $body);
+        $this->assertStringContainsString(trans('general.no'), $body);
+    }
+
     public function test_does_not_included_assignments_by_default()
     {
         [$assetA, $assetB] = Asset::factory()

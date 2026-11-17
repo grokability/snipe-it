@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => '자산이 반입되지 않았습니다. 다시 시도해 주세요.',
         'success' => '자산이 반입되었습니다.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => '잘못된 사용자 입니다. 다시 시도해 주세요.',
         'already_checked_in' => '그 자산은 이미 반입되었습니다.',
         'force_checkin_orphaned_success' => '잘못된 할당이 성공적으로 해제되었습니다.',

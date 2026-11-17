@@ -19,6 +19,6 @@ return [
     ],
     'complete' => [
         'success' => 'Maintenance marked as complete.',
-        'error' => 'There was an issue marking this maintenance as complete. Please try again.',
+        'error' => 'Un problème est survenu lors du marquage de cette maintenance. Veuillez réessayer.',
     ],
 ];

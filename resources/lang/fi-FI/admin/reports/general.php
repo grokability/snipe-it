@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'Lähetä muistutus',
     'cannot_send_reminder' => 'Käyttäjä on poistettu tai hänellä ei ole sähköpostiosoitetta, joten muistutusta ei voi saada',
     'reminder_sent' => 'Muistutus lähetetty',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'Käyttöoikeuspyyntö poistettu',
     'acceptance_request' => 'Käyttöoikeuspyyntö',
     'custom_export' => [

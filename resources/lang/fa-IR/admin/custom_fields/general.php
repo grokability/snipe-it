@@ -16,6 +16,12 @@ return [
     'qty_fields' => 'فیلد های Qty',
     'fieldsets' => 'تنظیمات فیلد',
     'fieldset_name' => 'نام تنظیمات فیلد',
+    'available_fields' => 'Available Fields',
+    'fields_in_fieldset' => 'Fields in this Fieldset',
+    'no_available_fields' => 'No available custom fields to add.',
+    'no_attached_fields' => 'Pick fields from the Available Fields panel on the right to add them to this fieldset.',
+    'optional' => 'Optional',
+    'untitled_fieldset' => 'Untitled Fieldset',
     'field_name' => 'نام فیلد',
     'field_values' => 'ارزشهای میدان',
     'field_values_help' => 'گزینه های انتخابی را اضافه کنید، در هر خط. خطوط خالی به غیر از خط اول نادیده گرفته می شوند.',
@@ -23,6 +29,7 @@ return [
     'field_element_short' => 'عنصر',
     'field_format' => 'شکل دادن',
     'field_format_help' => 'Determines the validation rules that are applied. Some form elements may not be available to all formats.',
+    'enter_format_text' => 'Enter :format text',
     'field_element_help' => 'Determines the UI element displayed in the form.',
     'format_any_with_date_picker_help' => 'Pairing a date/datetime picker with the ANY/NONE format is useful when the field needs to be encrypted (encrypted fields must be stored as text). Otherwise the DATE or DATETIME format is recommended for better sorting and validation.',
     'encrypt_disabled_for_date_format' => 'DATE and DATETIME formats cannot be encrypted because they are stored in native date columns, which only accept valid date values.',
@@ -42,6 +49,7 @@ return [
     'fieldset_does_not_exist' => 'Fieldset :id does not exist',
     'fieldset_updated' => 'Fieldset updated',
     'create_fieldset_title' => 'ایجاد یک عنصر جدید',
+    'clone_fieldset' => 'Clone Fieldset',
     'create_field' => 'فیلد سفارشی جدید',
     'create_field_title' => 'یک فیلد سفارشی جدید ایجاد کنید
 ',
@@ -57,10 +65,8 @@ return [
 ',
     'add_field_to_fieldset' => 'فیلد را به مجموعه فیلد اضافه کنید
 ',
-    'make_optional' => 'مورد نیاز - کلیک کنید تا اختیاری شود
-',
-    'make_required' => 'اختیاری - کلیک کنید تا مورد نیاز است
-',
+    'make_optional' => 'Make Optional',
+    'make_required' => 'Make Required',
     'reorder' => 'سفارش مجدد',
     'db_field' => 'فیلد DB
 ',

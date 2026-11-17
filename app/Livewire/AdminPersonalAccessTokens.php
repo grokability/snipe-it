@@ -34,6 +34,7 @@ class AdminPersonalAccessTokens extends Component
             ->select([
                 'oauth_access_tokens.id',
                 'oauth_access_tokens.name',
+                'oauth_access_tokens.scopes',
                 'oauth_access_tokens.revoked',
                 'oauth_access_tokens.created_at',
                 'oauth_access_tokens.expires_at',

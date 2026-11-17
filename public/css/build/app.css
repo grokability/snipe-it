@@ -503,7 +503,7 @@ a.accordion-header {
   font-size: 13px;
 }
 .main-header {
-  max-height: 150px;
+  max-height: none;
 }
 .navbar-nav > .user-menu > .dropdown-menu {
   width: inherit;
@@ -825,25 +825,12 @@ body {
   }
   body {
     margin: 0 auto;
-    line-height: 1em;
-    word-spacing: 1px;
-    letter-spacing: 0.2px;
-    font: 15px "Times New Roman", Times, serif;
     width: 100%;
     float: none;
   }
   /* avoid page-breaks inside a listingContainer*/
   .listingContainer {
     page-break-inside: avoid;
-  }
-  h1 {
-    font: 28px "Times New Roman", Times, serif;
-  }
-  h2 {
-    font: 24px "Times New Roman", Times, serif;
-  }
-  h3 {
-    font: 20px "Times New Roman", Times, serif;
   }
   /* Improve colour contrast of links */
   a:link,
@@ -856,9 +843,6 @@ body {
     background: transparent;
     color: #333;
     text-decoration: none;
-  }
-  a[href]:after {
-    content: "" !important;
   }
   a[href^="http://"] {
     color: #000;
@@ -1119,15 +1103,23 @@ h4 {
 thead th.css-accessory > .th-inner,
 thead th.css-accessory-alt > .th-inner,
 thead th.css-barcode > .th-inner,
+thead th.css-bell-concierge > .th-inner,
+thead th.css-clipboard-check > .th-inner,
 thead th.css-component > .th-inner,
 thead th.css-consumable > .th-inner,
 thead th.css-envelope > .th-inner,
+thead th.css-eye > .th-inner,
+thead th.css-field-encrypted > .th-inner,
+thead th.css-fingerprint > .th-inner,
 thead th.css-house-flag > .th-inner,
 thead th.css-house-laptop > .th-inner,
 thead th.css-house-user > .th-inner,
 thead th.css-license > .th-inner,
+thead th.css-list > .th-inner,
 thead th.css-location > .th-inner,
 thead th.css-maintenances > .th-inner,
+thead th.css-rotate-left > .th-inner,
+thead th.css-rotate-right > .th-inner,
 thead th.css-users > .th-inner,
 thead th.css-currency > .th-inner,
 thead th.css-child-locations > .th-inner,
@@ -1143,15 +1135,23 @@ thead th.css-location > .th-inner::before,
 thead th.css-accessory > .th-inner::before,
 thead th.css-accessory-alt > .th-inner::before,
 thead th.css-barcode > .th-inner::before,
+thead th.css-bell-concierge > .th-inner::before,
+thead th.css-clipboard-check > .th-inner::before,
 thead th.css-component > .th-inner::before,
 thead th.css-consumable > .th-inner::before,
 thead th.css-envelope > .th-inner::before,
+thead th.css-eye > .th-inner::before,
+thead th.css-field-encrypted > .th-inner::before,
+thead th.css-fingerprint > .th-inner::before,
 thead th.css-house-flag > .th-inner::before,
 thead th.css-house-laptop > .th-inner::before,
 thead th.css-house-user > .th-inner::before,
 thead th.css-license > .th-inner::before,
+thead th.css-list > .th-inner::before,
 thead th.css-location > .th-inner::before,
 thead th.css-maintenances > .th-inner::before,
+thead th.css-rotate-left > .th-inner::before,
+thead th.css-rotate-right > .th-inner::before,
 thead th.css-users > .th-inner::before,
 thead th.css-currency > .th-inner::before,
 thead th.css-child-locations > .th-inner::before,
@@ -1260,6 +1260,54 @@ thead th.css-history > .th-inner::before {
   font-size: 19px;
   margin-bottom: 0px;
 }
+thead th.css-list > .th-inner::before {
+  content: "\f03a";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-eye > .th-inner::before {
+  content: "\f06e";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-bell-concierge > .th-inner::before {
+  content: "\f562";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-fingerprint > .th-inner::before {
+  content: "\f577";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-clipboard-check > .th-inner::before {
+  content: "\f46c";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-rotate-right > .th-inner::before {
+  content: "\f2f9";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-rotate-left > .th-inner::before {
+  content: "\f2ea";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+thead th.css-field-encrypted > .th-inner::before {
+  content: "\f023";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
 .small-box .inner {
   padding-left: 15px;
   padding-right: 15px;
@@ -1296,6 +1344,11 @@ thead th.css-history > .th-inner::before {
   }
   .navbar-custom-menu > .navbar-nav > li > .dropdown-menu {
     margin-right: -39px;
+  }
+}
+@media (max-width: 767px) {
+  .main-sidebar {
+    padding-top: var(--main-header-height, 100px);
   }
 }
 @media screen and (max-width: 992px) {
@@ -1840,6 +1893,15 @@ Radio toggle styles for permission settings and check/uncheck all
     max-width: 1400px;
   }
 }
+.modal-body {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.list-group-item,
+dd {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
 .modal-xl .modal-body {
   max-height: calc(100vh - 200px);
   overflow-y: auto;
@@ -2039,6 +2101,33 @@ whole select in dark mode so pre-selected items stay readable.
 [data-theme="dark"] select[multiple] option {
   background-color: #d2d6de !important;
   color: #373636 !important;
+}
+/*
+Bootstrap's `.img-thumbnail` hard-codes `background-color: #fff`,
+which gives transparent PNG uploads (asset / model / company logos)
+a white backing in dark mode. Theme the colors through the panel
+custom properties so the thumbnail matches the surface it sits in.
+Not gated by `[data-theme="dark"]` because Bootstrap's
+`transition: all 0.2s ease-in-out` on this class interacts badly
+with selector-change-plus-var() on theme toggle, and leaves the
+previous computed color stuck until the next page load. The vars
+already carry the per-theme value so this one rule works in both.
+See #19837.
+ */
+.img-thumbnail {
+  background-color: var(--box-bg);
+  border-color: var(--box-header-top-border-color);
+  transition-property: padding, border-radius, border-width;
+}
+/*
+QR codes need a white backing in both themes so phone scanners pick
+up the high-contrast pattern. Both QR img sites sit inside a wrapping
+div with class `asset-qr-img`, so restore the Bootstrap defaults for
+.img-thumbnail inside that context only.
+ */
+.asset-qr-img .img-thumbnail {
+  background-color: #fff;
+  border-color: #ddd;
 }
 /**
 Site-logo preview swatch on Settings > Branding. Uses the tenant header
@@ -3445,10 +3534,45 @@ tr.danger > td {
   h4 {
     color: black !important;
   }
-  .col-sm-9,
+  .col-md-9,
+  .col-md-3,
   .main-panel {
-    float: left;
+    float: none !important;
     width: 100% !important;
+  }
+  .nav-tabs {
+    display: none !important;
+  }
+  .list-group-item,
+  .box,
+  tr {
+    page-break-inside: avoid;
+  }
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 85%;
+    color: #666;
+  }
+  a[href^="#"]:after,
+  a[href^="javascript:"]:after {
+    content: "";
+  }
+  .tab-pane:has(.no-records-found) {
+    display: none !important;
+  }
+  .table,
+  .table > thead > tr > th,
+  .table > tbody > tr > td,
+  .table > tbody > tr > th,
+  .table > tfoot > tr > td,
+  .table > tfoot > tr > th {
+    border: 1px solid #999 !important;
+  }
+  .table {
+    border-collapse: collapse !important;
+  }
+  .hidden-print-empty-row {
+    display: none !important;
   }
 }
 .list-group-item.subitem {
@@ -3889,7 +4013,7 @@ dl.table-display {
 .label-normal-bold {
   font-weight: bold !important;
   font-size: 11px !important;
-  line-height: 34px !important;
+  line-height: 20px !important;
   padding-left: 3px;
   border: 1px solid var(--main-footer-top-border-color);
 }

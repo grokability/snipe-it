@@ -5,6 +5,7 @@ namespace Tests\Feature\Settings;
 use App\Helpers\Helper;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class OauthSettingsTest extends TestCase
@@ -20,7 +21,9 @@ class OauthSettingsTest extends TestCase
         $createdAt = now()->subHour();
         $expiresAt = now()->addDay();
 
-        $personalClientId = DB::table('oauth_clients')->insertGetId([
+        $personalClientId = (string) Str::uuid();
+        DB::table('oauth_clients')->insert([
+            'id' => $personalClientId,
             'user_id' => null,
             'name' => 'Personal Client',
             'secret' => 'secret',
@@ -32,7 +35,9 @@ class OauthSettingsTest extends TestCase
             'updated_at' => now(),
         ]);
 
-        $nonPersonalClientId = DB::table('oauth_clients')->insertGetId([
+        $nonPersonalClientId = (string) Str::uuid();
+        DB::table('oauth_clients')->insert([
+            'id' => $nonPersonalClientId,
             'user_id' => null,
             'name' => 'OAuth Client',
             'secret' => 'secret',
@@ -85,7 +90,9 @@ class OauthSettingsTest extends TestCase
     {
         $superuser = User::factory()->superuser()->create();
 
-        $personalClientId = DB::table('oauth_clients')->insertGetId([
+        $personalClientId = (string) Str::uuid();
+        DB::table('oauth_clients')->insert([
+            'id' => $personalClientId,
             'user_id' => null,
             'name' => 'Personal Client',
             'secret' => 'secret',
@@ -157,7 +164,9 @@ class OauthSettingsTest extends TestCase
         ]);
         $tokenOwner->delete();
 
-        $personalClientId = DB::table('oauth_clients')->insertGetId([
+        $personalClientId = (string) Str::uuid();
+        DB::table('oauth_clients')->insert([
+            'id' => $personalClientId,
             'user_id' => null,
             'name' => 'Personal Client',
             'secret' => 'secret',
@@ -203,7 +212,9 @@ class OauthSettingsTest extends TestCase
         ]);
         $softDeletedCreator->delete();
 
-        $activeClientId = DB::table('oauth_clients')->insertGetId([
+        $activeClientId = (string) Str::uuid();
+        DB::table('oauth_clients')->insert([
+            'id' => $activeClientId,
             'user_id' => $activeCreator->id,
             'name' => 'Authorized Client Active',
             'secret' => 'secret',
@@ -215,7 +226,9 @@ class OauthSettingsTest extends TestCase
             'updated_at' => now(),
         ]);
 
-        $deletedClientId = DB::table('oauth_clients')->insertGetId([
+        $deletedClientId = (string) Str::uuid();
+        DB::table('oauth_clients')->insert([
+            'id' => $deletedClientId,
             'user_id' => $softDeletedCreator->id,
             'name' => 'Authorized Client Deleted',
             'secret' => 'secret',
@@ -293,7 +306,9 @@ class OauthSettingsTest extends TestCase
     {
         $superuser = User::factory()->superuser()->create();
 
-        $ownedClientId = DB::table('oauth_clients')->insertGetId([
+        $ownedClientId = (string) Str::uuid();
+        DB::table('oauth_clients')->insert([
+            'id' => $ownedClientId,
             'user_id' => $superuser->id,
             'name' => 'Owned OAuth Client',
             'secret' => 'secret',
@@ -305,7 +320,9 @@ class OauthSettingsTest extends TestCase
             'updated_at' => now(),
         ]);
 
-        $otherClientId = DB::table('oauth_clients')->insertGetId([
+        $otherClientId = (string) Str::uuid();
+        DB::table('oauth_clients')->insert([
+            'id' => $otherClientId,
             'user_id' => User::factory()->create()->id,
             'name' => 'Other OAuth Client',
             'secret' => 'secret',
@@ -318,6 +335,7 @@ class OauthSettingsTest extends TestCase
         ]);
 
         DB::table('oauth_clients')->insert([
+            'id' => (string) Str::uuid(),
             'user_id' => null,
             'name' => 'Personal Access Legacy Client',
             'secret' => 'secret',
@@ -330,6 +348,7 @@ class OauthSettingsTest extends TestCase
         ]);
 
         DB::table('oauth_clients')->insert([
+            'id' => (string) Str::uuid(),
             'user_id' => null,
             'name' => 'Password Grant Legacy Client',
             'secret' => 'secret',
@@ -342,6 +361,7 @@ class OauthSettingsTest extends TestCase
         ]);
 
         DB::table('oauth_clients')->insert([
+            'id' => (string) Str::uuid(),
             'user_id' => null,
             'name' => 'Revoked OAuth Legacy Client',
             'secret' => 'secret',
@@ -412,7 +432,9 @@ class OauthSettingsTest extends TestCase
     {
         $superuser = User::factory()->superuser()->create();
 
-        $personalClientId = DB::table('oauth_clients')->insertGetId([
+        $personalClientId = (string) Str::uuid();
+        DB::table('oauth_clients')->insert([
+            'id' => $personalClientId,
             'user_id' => null,
             'name' => 'Personal Client',
             'secret' => 'secret',
@@ -475,7 +497,9 @@ class OauthSettingsTest extends TestCase
 
     public function test_permission_required_to_toggle_oauth_token_state(): void
     {
-        $personalClientId = DB::table('oauth_clients')->insertGetId([
+        $personalClientId = (string) Str::uuid();
+        DB::table('oauth_clients')->insert([
+            'id' => $personalClientId,
             'user_id' => null,
             'name' => 'Personal Client',
             'secret' => 'secret',

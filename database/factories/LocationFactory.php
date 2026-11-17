@@ -22,7 +22,7 @@ class LocationFactory extends Factory
             'created_by' => User::factory()->superuser(),
             'currency' => $this->faker->currencyCode(),
             'image' => rand(1, 9).'.jpg',
-            'name' => $this->faker->city(),
+            'name' => $this->faker->unique()->city(),
             'notes' => 'Created by DB seeder',
             'state' => $this->faker->stateAbbr(),
             'tag_color' => $this->faker->hexColor(),
@@ -30,18 +30,8 @@ class LocationFactory extends Factory
         ];
     }
 
-    // one of these can eventuall go away - left temporarily for conflict resolution
     public function deleted(): self
     {
         return $this->state(['deleted_at' => $this->faker->dateTime()]);
-    }
-
-    public function deletedLocation()
-    {
-        return $this->state(function () {
-            return [
-                'deleted_at' => $this->faker->dateTime(),
-            ];
-        });
     }
 }

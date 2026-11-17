@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+/**
+ * @mixin IdeHelperSCIMGroup
+ */
 class SCIMGroup extends Group
 {
     protected $table = 'permission_groups';

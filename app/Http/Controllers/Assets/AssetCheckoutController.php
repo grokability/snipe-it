@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Assets;
 
 use App\Actions\Acceptances\CreateCheckoutAcceptanceAction;
+use App\Events\CheckoutableCheckedIn;
 use App\Exceptions\CheckoutNotAllowed;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
@@ -11,6 +12,8 @@ use App\Http\Traits\CheckInOutTrait;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
 use App\Models\CheckoutRequest;
+use App\Models\LicenseSeat;
+use App\Models\Location;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -28,8 +31,6 @@ class AssetCheckoutController extends Controller
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
-     * @param  int  $assetId
-     *
      * @since [v1.0]
      *
      * @return View
@@ -43,9 +44,6 @@ class AssetCheckoutController extends Controller
             return redirect()->route('hardware.show', $asset)
                 ->with('error', trans('admin/hardware/general.model_invalid_fix'));
         }
-
-        // Invoke the validation to see if the audit will complete successfully
-        $asset->setRules($asset->getRules() + $asset->customFieldValidationRules());
 
         if ($asset->isInvalid()) {
             // Also flash the specific validation messages via
@@ -131,6 +129,18 @@ class AssetCheckoutController extends Controller
 
             $asset = $this->updateAssetLocation($asset, $target);
 
+            foreach (['location_id', 'rtd_location_id'] as $field) {
+                if (!$request->filled($field)) {
+                    continue;
+                }
+                $submittedLocation = Location::find($request->input($field));
+                if (!$submittedLocation) {
+                    return redirect()->back()->withInput()
+                        ->with('error', trans('admin/hardware/message.create.target_not_found.location'));
+                }
+                $asset->{$field} = $submittedLocation->id;
+            }
+
             $checkout_at = date('Y-m-d H:i:s');
             if (($request->filled('checkout_at')) && ($request->input('checkout_at') != date('Y-m-d'))) {
                 $checkout_at = $request->input('checkout_at');
@@ -153,7 +163,40 @@ class AssetCheckoutController extends Controller
 
             if (! empty($asset->licenseseats->all())) {
                 if (request('checkout_to_type') == 'user') {
+                    // GHSA-9wq4-gp32-rcgj: validate every attached seat
+                    // before writing to any
                     foreach ($asset->licenseseats as $seat) {
+                        if ($seat->unreassignable_seat) {
+                            return redirect()->back()->withInput()->with('error', trans('admin/licenses/message.checkout.unavailable'));
+                        }
+
+                        $isOccupiedByOther = $seat->assigned_to !== null && (int) $seat->assigned_to !== (int) $target->id;
+                        if ($isOccupiedByOther && !$seat->license->reassignable) {
+                            return redirect()->back()->withInput()->with('error', trans('admin/licenses/message.checkout.unavailable'));
+                        }
+                    }
+
+                    // All seats are legally reassignable. Displace any
+                    // current holders through the normal CheckoutableCheckedIn
+                    // event + pending-acceptance cleanup so the audit trail
+                    // reflects the change, then assign to the new holder.
+                    foreach ($asset->licenseseats as $seat) {
+                        $previousHolderId = $seat->assigned_to;
+
+                        if ($previousHolderId !== null && (int) $previousHolderId !== (int) $target->id) {
+                            $displaced = User::withoutGlobalScopes()->find($previousHolderId);
+                            if ($displaced) {
+                                CheckoutAcceptance::pending()
+                                    ->where('checkoutable_type', LicenseSeat::class)
+                                    ->where('checkoutable_id', $seat->id)
+                                    ->where('assigned_to_id', $displaced->id)
+                                    ->get()
+                                    ->each(fn($a) => $a->delete());
+
+                                event(new CheckoutableCheckedIn($seat, $displaced, auth()->user(), null));
+                            }
+                        }
+
                         $seat->assigned_to = $target->id;
                         $seat->save();
                     }
@@ -161,7 +204,7 @@ class AssetCheckoutController extends Controller
             }
 
             // Add any custom fields that should be included in the checkout
-            $asset->customFieldsForCheckinCheckout('display_checkout');
+            $asset->custom_fill($request, false, 'display_checkout');
 
             session()->put([
                 'redirect_option' => $request->input('redirect_option'),
@@ -186,7 +229,13 @@ class AssetCheckoutController extends Controller
                     return false;
                 }
 
-                return (bool) $asset->checkOut($target, $admin, $checkout_at, $expected_checkin, $request->input('note'), $request->input('name'), null, $request->boolean('sign_in_place'));
+                // Pass asset->location_id through so the admin-override set by
+                // the location_id picker (and the target-type default set by
+                // updateAssetLocation) is honored. Without this, checkOut()'s
+                // own fallback (`$target->location->id`) would clobber either
+                // value for user and asset targets. Mirrors Api\AssetsController
+                // line 1505's convention.
+                return (bool) $asset->checkOut($target, $admin, $checkout_at, $expected_checkin, $request->input('note'), $request->input('name'), $asset->location_id, $request->boolean('sign_in_place'));
             });
 
             if ($checkedOut) {

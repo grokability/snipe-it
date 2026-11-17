@@ -27,7 +27,7 @@ class GroupsController extends Controller
 
         $this->authorize('view', Group::class);
 
-        $groups = Group::select(['id', 'name', 'permissions', 'notes', 'created_at', 'updated_at', 'created_by'])->with('adminuser')->withCount('users as users_count');
+        $groups = Group::select(['permission_groups.id', 'permission_groups.name', 'permission_groups.permissions', 'permission_groups.notes', 'permission_groups.created_at', 'permission_groups.updated_at', 'permission_groups.created_by'])->with('adminuser')->withCount('users as users_count');
 
         // This invokes the Searchable model trait scopeTextSearch and will handle input by search or by advanced search filter
         if ($request->filled('filter') || $request->filled('search')) {
@@ -178,7 +178,7 @@ class GroupsController extends Controller
         $groups = Group::select(['id', 'name']);
 
         if ($request->filled('search')) {
-            $groups->where('name', 'LIKE', '%' . $request->input('search') . '%');
+            $groups->where('name', 'LIKE', '%'.$request->input('search').'%');
         }
 
         $sorted = $groups->orderBy('name', 'asc')->get();

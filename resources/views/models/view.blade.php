@@ -36,12 +36,12 @@
 
                 <x-slot:tabpanes>
                     <x-tabs.pane name="assets">
-                        <x-table.assets :route="route('api.assets.index', ['model_id' => $model->id, 'status' => $model->deleted_at!='' ? 'Deleted' : ''])" />
+                        <x-table.assets name="modelAssets" :route="route('api.assets.index', ['model_id' => $model->id, 'status' => $model->deleted_at!='' ? 'Deleted' : ''])" />
                     </x-tabs.pane>
 
                     <!-- start orders tab pane -->
                     <x-tabs.pane name="orders">
-                        <x-table.orders :route="route('api.order-items.index', ['asset_model_id' => $model->id])"/>
+                        <x-table.orders name="modelOrders" :route="route('api.order-items.index', ['asset_model_id' => $model->id])"/>
                     </x-tabs.pane>
                     <!-- end orders tab pane -->
 
@@ -55,7 +55,7 @@
                              per-asset checkout / adjust-quantity flows.
                              `item` is redundant since every row is
                              this same model. --}}
-                        <x-table.history
+                        <x-table.history name="modelHistory"
                             :model="$model"
                             :route="route('api.models.history', $model)"
                             :hide_fields="['order_number', 'target', 'item', 'serial', 'file', 'file_download', 'signature_file', 'quantity']"
@@ -72,7 +72,7 @@
         </x-page-column>
         <x-page-column class="col-md-3">
             <x-box class="side-box expanded">
-                <x-info-panel :infoPanelObj="$model" img_path="{{ app('models_upload_url') }}" :qr_code_url="route('qr_code/common', ['object_type' => 'models', 'id' => $model->id])">
+                <x-info-panel :fieldset="$fieldset" :infoPanelObj="$model" img_path="{{ app('models_upload_url') }}" :qr_code_url="route('qr_code/common', ['object_type' => 'models', 'id' => $model->id])">
                     <x-slot:buttons>
                         <x-button.edit :item="$model" :route="route('models.edit', $model->id)" />
                         <x-button.add :item="\App\Models\Asset::class" :tooltip="trans('general.new_asset')" :route="route('hardware.create', ['model_id' => $model->id])"/>

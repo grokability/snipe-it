@@ -11,6 +11,7 @@ use App\Models\CheckoutRequest;
 use App\Models\Component;
 use App\Models\Consumable;
 use App\Models\License;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 
@@ -287,48 +288,13 @@ class CheckoutRequestsTransformer
             // formatter renders row.custom_fields.<db_column> when
             // present, empty otherwise - so non-asset rows just show
             // blanks for those columns.
-            'custom_fields' => self::customFieldsFor($item),
+            'custom_fields' => (new CustomFieldValuesTransformer)->transform(
+                $item,
+                includeEncrypted: false,
+                filterFieldExpression: 'show_in_requestable_list',
+                valuesOnly: true,
+            ) ?: new \stdClass,
         ];
-    }
-
-    /**
-     * Custom-field values for a requestable. Only Asset has per-
-     * instance fields (via its model's fieldset); every other
-     * requestable type returns an empty stdClass so the JSON
-     * response carries `{}` for consistent shape (an empty array
-     * would serialize to `[]` and break formatters that dot-walk
-     * `row.custom_fields.foo`). Encrypted + non-requestable-flagged
-     * fields are omitted so admin custom fields (SSNs etc) don't
-     * leak into the /requests queue when a random admin brings up
-     * their column-picker.
-     *
-     * @return array<string, string>|\stdClass
-     */
-    private static function customFieldsFor($item): array|\stdClass
-    {
-        if (! $item instanceof Asset || ! $item->model || ! $item->model->fieldset) {
-            return new \stdClass;
-        }
-
-        $values = [];
-        foreach ($item->model->fieldset->fields as $field) {
-            if ($field->field_encrypted == '1' || $field->show_in_requestable_list != '1') {
-                continue;
-            }
-            $raw = $item->{$field->db_column};
-            if (in_array($field->format, ['DATE', 'DATETIME'], true) && $raw !== null && $raw !== '') {
-                $raw = Helper::getFormattedDateObject(
-                    $raw,
-                    $field->format === 'DATETIME' ? 'datetime' : 'date',
-                    false,
-                );
-            }
-            $values[$field->db_column] = $field->element === 'markdown-textarea'
-                ? Helper::renderMarkdown($raw)
-                : e($raw);
-        }
-
-        return $values ?: new \stdClass;
     }
 
     /**

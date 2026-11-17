@@ -246,6 +246,7 @@ class AssetTagPatternTest extends TestCase
                 'fleet_token' => 'fake-token',
                 'fleet_default_category_id' => '',
                 'fleet_default_status_id' => Statuslabel::factory()->rtd()->create()->id,
+                'fleet_create_snipeit_assets_on_pull' => '1',
             ])
             ->assertSessionHasNoErrors()
             ->assertRedirect();

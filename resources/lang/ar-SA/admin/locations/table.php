@@ -12,8 +12,8 @@ return [
     'create' => 'إنشاء موقع',
     'update' => 'تحديث الموقع',
     'print_assigned' => 'طباعة كل الممتلكات',
-    'print_inventory' => 'Print Inventory',
-    'print_all_assigned' => 'Print Inventory and Assigned',
+    'print_inventory' => 'طباعة المخزون',
+    'print_all_assigned' => 'طباعة المخزون والمعين',
     'name' => 'إسم الموقع',
     'address' => 'العنوان',
     'address2' => 'سطر العنوان 2',
@@ -40,5 +40,5 @@ return [
     'signed_by_finance_auditor' => 'موقعة من قبل (مراجع الحسابات المالي):',
     'signed_by_location_manager' => 'توقيع بواسطة (مدير الموقع):',
     'signed_by' => 'تم توقيعه من قبل:',
-    'clone' => 'Clone Location',
+    'clone' => 'استنساخ الموقع',
 ];

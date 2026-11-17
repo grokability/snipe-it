@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Genereer automatisch verhogen van asset Id\'s',
     'auto_increment_prefix' => 'Voorvoegsel (niet verplicht)',
     'auto_incrementing_help' => 'Schakel eerst automatisch verhogen van asset Id\'s in om dit in te stellen',
-    'backups' => 'Back-ups',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Maken, downloaden en herstellen van back-ups ',
     'backups_restoring' => 'Herstellen vanuit back-up',
     'backups_clean' => 'Maak de backed-up database schoon voor herstel',

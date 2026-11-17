@@ -8,6 +8,9 @@ use Illuminate\Support\Str;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
+/**
+ * @mixin IdeHelperCustomUserLabel
+ */
 class CustomUserLabel extends Model
 {
     use SoftDeletes;

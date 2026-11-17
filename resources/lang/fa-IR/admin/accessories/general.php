@@ -21,5 +21,6 @@ return [
 در تنظیمات اضافه کنید',
     'clone' => 'کپی کردن وسیله',
     'delete_disabled' => 'امکان حذف وسیله وجود ندارد چون هنوز تعدادی از آیتم ها تحویل شده اند.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

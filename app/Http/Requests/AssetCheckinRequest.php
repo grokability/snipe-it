@@ -23,6 +23,16 @@ class AssetCheckinRequest extends Request
      */
     public function rules()
     {
+        return static::rulesArray();
+    }
+
+    /**
+     * Statically-callable rules array so non-FormRequest callers (the MCP
+     * CheckinAssetTool, Artisan commands, tests) can validate against the
+     * same shape without constructing a Request instance.
+     */
+    public static function rulesArray(): array
+    {
         $settings = Setting::getSettings();
 
         $rules = [

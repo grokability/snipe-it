@@ -10,7 +10,7 @@ class CompanyFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var string
+     * @var class-string<Company>
      */
     protected $model = Company::class;
 

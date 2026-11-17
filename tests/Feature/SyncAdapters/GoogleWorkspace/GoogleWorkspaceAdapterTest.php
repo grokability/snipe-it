@@ -199,6 +199,41 @@ class GoogleWorkspaceAdapterTest extends TestCase
         $this->assertContains('/Engineering', $ids);
     }
 
+    public function test_pull_succeeds_when_optional_customer_id_is_not_stored(): void
+    {
+        /*
+         * Regression: customer_id is declared `required => false` on
+         * the adapter schema, with a documented fallback to Google's
+         * 'my_customer' sentinel when unset. The base-class
+         * credential() helper throws RuntimeException on a null
+         * stored value, so routing an optional credential through it
+         * turns "admin left the field blank" into a hard sync
+         * failure. The adapter now reads customer_id via
+         * SyncAdapterConfig::get and applies the my_customer default
+         * itself.
+         */
+        $instance = SyncAdapterInstance::where('slug', 'google_workspace')->firstOrFail();
+        SyncAdapterConfig::put($instance->id, 'service_account_email', 'sa@example.iam.gserviceaccount.com');
+        SyncAdapterConfig::put($instance->id, 'impersonate_email', 'admin@example.test');
+        SyncAdapterConfig::put($instance->id, 'private_key', Crypt::encrypt($this->privateKeyPem));
+        // Note the deliberate absence of customer_id.
+        $adapter = new GoogleWorkspaceAdapter($instance->fresh());
+
+        Http::fake([
+            'https://oauth2.googleapis.com/token' => Http::response(['access_token' => 'stub-bearer', 'expires_in' => 3300]),
+            '*/customer/my_customer/devices/chromeos*' => Http::response([
+                'chromeosdevices' => [
+                    $this->chromeDevice(deviceId: 'guid-7', serial: 'SN-7'),
+                ],
+            ]),
+        ]);
+
+        $records = iterator_to_array($adapter->pull());
+
+        $this->assertCount(1, $records);
+        Http::assertSent(fn ($request) => str_contains($request->url(), '/customer/my_customer/devices/chromeos'));
+    }
+
     private function configuredAdapter(): GoogleWorkspaceAdapter
     {
         $instance = SyncAdapterInstance::where('slug', 'google_workspace')->firstOrFail();

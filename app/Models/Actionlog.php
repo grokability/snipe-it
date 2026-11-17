@@ -4,17 +4,20 @@ namespace App\Models;
 
 use App\Enums\ActionType;
 use App\Enums\FileStorage;
+use App\Models\Builders\ActionlogQueryBuilder;
 use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\Searchable;
 use App\Presenters\ActionlogPresenter;
 use App\Presenters\Presentable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
@@ -23,6 +26,8 @@ use Illuminate\Support\Str;
  * checkouts, checkins, and updates).
  *
  * @version v1.0
+ *
+ * @mixin IdeHelperActionlog
  */
 class Actionlog extends SnipeModel
 {
@@ -46,6 +51,175 @@ class Actionlog extends SnipeModel
     protected static ?string $ambientSource = null;
 
     protected $with = ['adminuser'];
+
+    /**
+     * Process-wide cache for scalarCompanyItemTables().
+     *
+     * @var array<class-string, string>|null
+     */
+    private static ?array $scalarCompanyItemTablesCache = null;
+
+    /**
+     * Mask the diff blob on read when it carries license-key values the
+     * current user is not permitted to see.
+     */
+    protected function logMeta(): Attribute
+    {
+        return Attribute::get(function ($value) {
+            if ($value === null || $value === '') {
+                return $value;
+            }
+
+            // Decide mask status by item_type, not by whether $this->item
+            // resolves to a License instance. CompanyableScope filters a
+            // cross-tenant license to null, which would otherwise bypass
+            // the mask via `null instanceof License === false` and return
+            // the raw product-key diff. Fail-closed. When item_type says
+            // License, apply the mask unless the viewer is explicitly
+            // granted viewKeys on the underlying row.
+            // GHSA-m955-p5pg-78mv.
+            if ($this->item_type !== License::class) {
+                return $value;
+            }
+
+            $license = License::withoutGlobalScopes()
+                ->whereKey($this->item_id)
+                ->first();
+
+            if ($license && Gate::allows('viewKeys', $license)) {
+                return $value;
+            }
+
+            $decoded = json_decode($value, true);
+            if (! is_array($decoded) || ! isset($decoded['serial']) || ! is_array($decoded['serial'])) {
+                return $value;
+            }
+
+            if (array_key_exists('old', $decoded['serial'])) {
+                $decoded['serial']['old'] = License::PRODUCT_KEY_MASK;
+            }
+            if (array_key_exists('new', $decoded['serial'])) {
+                $decoded['serial']['new'] = License::PRODUCT_KEY_MASK;
+            }
+
+            return json_encode($decoded);
+        });
+    }
+
+    /**
+     * All App\Models classes that use CompanyableTrait AND whose
+     * underlying table has a scalar company_id column, mapped to the
+     * owning table. The authoritative "is this item tenant-scoped via
+     * a scalar column" signal is the trait plus the schema. Hardcoding
+     * the list drifts (a new Companyable model is easy to add without
+     * remembering to update action_logs scoping).
+     *
+     * Users use the trait too but have no company_id column (pivot-
+     * scoped via company_user), so they fall out of this map by the
+     * schema check. They are still tenant-scoped and handled in a
+     * parallel branch of applyCrossCompanyScope.
+     *
+     * Cached process-wide: the set of Companyable models and their
+     * schemas is stable within a request lifecycle.
+     *
+     * @return array<class-string, string>
+     */
+    public static function scalarCompanyItemTables(): array
+    {
+        if (self::$scalarCompanyItemTablesCache !== null) {
+            return self::$scalarCompanyItemTablesCache;
+        }
+
+        $map = [];
+        foreach (glob(app_path('Models/*.php')) ?: [] as $file) {
+            $class = 'App\\Models\\' . basename($file, '.php');
+
+            // Action logs don't log themselves, so self-reference is a
+            // dead branch. Skipping keeps the subquery list tight.
+            if ($class === self::class) {
+                continue;
+            }
+
+            if (!class_exists($class) || !is_subclass_of($class, Model::class)) {
+                continue;
+            }
+
+            if ((new \ReflectionClass($class))->isAbstract()) {
+                continue;
+            }
+
+            if (!in_array(CompanyableTrait::class, class_uses_recursive($class), true)) {
+                continue;
+            }
+
+            /** @var Model $instance */
+            $instance = app($class);
+            $table = $instance->getTable();
+
+            $hasCompanyColumn = static::$companyColumnCache[$table]
+                ??= Schema::hasColumn($table, 'company_id');
+
+            if (!$hasCompanyColumn) {
+                continue;
+            }
+
+            $map[$class] = $table;
+        }
+
+        return self::$scalarCompanyItemTablesCache = $map;
+    }
+
+    /**
+     * Apply tenant scoping to an action_logs query for the given caller
+     * company IDs. Delegated to from Company::scopeCompanyables so every
+     * reader of the action_logs table (API, UI, MCP, importer) flows
+     * through the same rule set.
+     *
+     * Covers GHSA-mch3-g6rh-gj22 (User-item PII) and
+     * GHSA-m955-p5pg-78mv (scalar-column tenant-scoped NULL-company
+     * historical rows).
+     */
+    public static function applyCrossCompanyScope(Builder $query, array $companyIds): Builder
+    {
+        $userClass = User::class;
+        $scalarCompanyItems = self::scalarCompanyItemTables();
+        $allTenantScopedTypes = array_merge(array_keys($scalarCompanyItems), [$userClass]);
+
+        return $query->where(function ($q) use ($companyIds, $allTenantScopedTypes) {
+            $q->whereIn('action_logs.company_id', $companyIds)
+                ->orWhere(function ($null) use ($allTenantScopedTypes) {
+                    $null->whereNull('action_logs.company_id')
+                        ->where(function ($check) use ($allTenantScopedTypes) {
+                            // Tenant-scoped items (User + every scalar-company
+                            // model): row is visible iff the item is visible
+                            // through its OWN scope. Delegating to the model's
+                            // scoped query honors floater, scope_locations_fmcs,
+                            // company_user pivot share, parent-company
+                            // hierarchy, and anything else the item's scope
+                            // adds in future without this helper needing to
+                            // change.
+                            foreach ($allTenantScopedTypes as $itemType) {
+                                /** @var class-string<\Illuminate\Database\Eloquent\Model> $itemType */
+                                $check->orWhere(function ($scoped) use ($itemType) {
+                                    $scoped->where('action_logs.item_type', $itemType)
+                                        ->whereIn(
+                                            'action_logs.item_id',
+                                            $itemType::query()->select((new $itemType)->getKeyName())
+                                        );
+                                });
+                            }
+
+                            // Safe global config: item_types that are not
+                            // tenant-scoped at all (Category / Manufacturer /
+                            // Statuslabel / ... and null item_type).
+                            $check->orWhere(function ($global) use ($allTenantScopedTypes) {
+                                $global->whereNull('action_logs.item_type')
+                                    ->orWhereNotIn('action_logs.item_type', $allTenantScopedTypes);
+                            });
+                        });
+                });
+        });
+    }
 
     protected $presenter = ActionlogPresenter::class;
 
@@ -83,10 +257,18 @@ class Actionlog extends SnipeModel
      *
      * @var array
      */
+    /*
+     * 'log_meta' is intentionally not listed here. The column IS text-
+     * searchable for every non-License row via advancedTextSearch() below,
+     * which carries an explicit `item_type != License::class` guard. On
+     * License rows log_meta carries the raw product-key diff and must
+     * never be a search target, since the result-count differential
+     * would otherwise be a timing oracle on the masked serial.
+     * GHSA-68gh-qwvc-qccg.
+     */
     protected $searchableAttributes = [
         'action_type',
         'note',
-        'log_meta',
         'created_by',
         'remote_ip',
         'user_agent',
@@ -118,7 +300,10 @@ class Actionlog extends SnipeModel
         'assets.location' => ['name'],
         'assets.defaultLoc' => ['name'],
         'assets.model.manufacturer' => ['name', 'notes'],
-        'licenses' => ['name', 'serial', 'notes', 'license_email', 'license_name', 'purchase_order', 'purchase_date'],
+        // 'serial' intentionally omitted: the activity-report search would
+        // otherwise be a timing / result-count oracle on the real product
+        // key for callers without licenses.keys. GHSA-68gh-qwvc-qccg.
+        'licenses' => ['name', 'notes', 'license_email', 'license_name', 'purchase_order', 'purchase_date'],
         'licenses.category' => ['name', 'notes'],
         'licenses.supplier' => ['name'],
         // consumables / components / accessories no longer expose a
@@ -139,6 +324,116 @@ class Actionlog extends SnipeModel
         'accessories.location' => ['name', 'notes'],
         'accessories.defaultSupplier' => ['name', 'notes'],
     ];
+
+    /**
+     * Advanced-search filterable fields for the activity report.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        $typeOptions = array_map(
+            fn (\App\Enums\ActivityItemType $case) => [
+                'value' => $case->value,
+                'label' => $case->label(),
+            ],
+            \App\Enums\ActivityItemType::cases()
+        );
+
+        $actionTypeOptions = array_map(
+            fn (\App\Enums\ActionType $case) => [
+                'value' => $case->value,
+                'label' => ucwords($case->value),
+            ],
+            \App\Enums\ActionType::cases()
+        );
+
+        return [
+            [
+                'field' => 'item',
+                'type' => 'enum',
+                'options' => $typeOptions,
+                'label' => trans('general.item_type_label'),
+            ],
+            [
+                'field' => 'target',
+                'type' => 'enum',
+                'options' => $typeOptions,
+                'label' => trans('general.target_type_label'),
+            ],
+            [
+                'field' => 'action_type',
+                'type' => 'enum',
+                'column' => 'action_type',
+                'options' => $actionTypeOptions,
+                'label' => trans('general.action_type_label'),
+            ],
+            [
+                'field' => 'action_source',
+                'type' => 'enum',
+                'column' => 'action_source',
+                'options' => [
+                    ['value' => 'gui', 'label' => 'GUI'],
+                    ['value' => 'api', 'label' => 'API'],
+                    ['value' => 'cli/unknown', 'label' => 'CLI'],
+                ],
+                'label' => trans('general.action_source'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'action_date',
+                'type' => 'date-range',
+                'label' => trans('general.action_date'),
+            ],
+        ];
+    }
+
+    /**
+     * Override hook from Searchable. The `item` and `target` filters
+     * carry ActivityItemType short-name tokens from the modal widgets
+     * (asset, accessory, user, ...). action_logs stores the FQCN,
+     * so resolve each short name to its class string before the
+     * whereIn against item_type / target_type.
+     */
+    protected function applyCustomFilter(\Illuminate\Database\Eloquent\Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?\Illuminate\Database\Eloquent\Builder
+    {
+        if ($filterKey !== 'item' && $filterKey !== 'target') {
+            return null;
+        }
+
+        $tokens = array_values(array_filter(array_map('trim', explode(',', $filterValue)), 'strlen'));
+        if ($tokens === []) {
+            return null;
+        }
+
+        $classes = [];
+        foreach ($tokens as $token) {
+            $case = \App\Enums\ActivityItemType::tryFromAny($token);
+            if ($case !== null) {
+                $classes[] = $case->class();
+            }
+        }
+        if ($classes === []) {
+            return null;
+        }
+
+        $column = $filterKey === 'item' ? 'item_type' : 'target_type';
+        $method = $boolean === 'or' ? 'orWhereIn' : 'whereIn';
+        $query->{$method}('action_logs.'.$column, array_values(array_unique($classes)));
+
+        return $query;
+    }
 
     /**
      * Override from Builder to automatically add the company
@@ -236,9 +531,9 @@ class Actionlog extends SnipeModel
      *
      * @since  [v3.0]
      *
-     * @return Relation
+     * @return MorphTo<Model, $this>
      */
-    public function item()
+    public function item(): MorphTo
     {
         return $this->morphTo('item')->withTrashed();
     }
@@ -429,9 +724,9 @@ class Actionlog extends SnipeModel
      *
      * @since  [v3.0]
      *
-     * @return Relation
+     * @return MorphTo<Model, $this>
      */
-    public function target()
+    public function target(): MorphTo
     {
         return $this->morphTo('target')->withTrashed();
     }
@@ -451,9 +746,26 @@ class Actionlog extends SnipeModel
      * the same three assignee morph types (User, Asset, Location)
      * and LIKE across each type's identifier columns.
      */
-    public function advancedTextSearch(Builder $query, array $terms)
+    public function advancedTextSearch(Builder $outer, Builder $nested, array $terms): void
     {
-        return $query->orWhereHasMorph(
+        // log_meta is a JSON diff blob that admins legitimately search
+        // across (who changed status to Lost, when the seat count moved),
+        // so dropping it from search entirely is too destructive. On
+        // License rows the same column carries the raw product-key diff
+        // though, so matching log_meta there turns the result count into
+        // a timing oracle on the masked serial. Scope the LIKE to
+        // item_type != License to keep the admin workflows while shutting
+        // the oracle. GHSA-68gh-qwvc-qccg.
+        $nested->orWhere(function (Builder $metaQuery) use ($terms): void {
+            $metaQuery->where('action_logs.item_type', '!=', License::class)
+                ->where(function (Builder $likeQuery) use ($terms): void {
+                    foreach ($terms as $term) {
+                        $likeQuery->orWhere('action_logs.log_meta', 'LIKE', '%'.$term.'%');
+                    }
+                });
+        });
+
+        $nested->orWhereHasMorph(
             'target',
             [User::class, Asset::class, Location::class],
             function (Builder $targetQuery, string $targetType) use ($terms) {
@@ -498,27 +810,6 @@ class Actionlog extends SnipeModel
                 }
             }
         );
-    }
-
-    /**
-     * Eager load history relations used by the API transformer to avoid N+1 queries.
-     */
-    public function scopeForApiHistory($query)
-    {
-        return $query->with([
-            'adminuser',
-            'location',
-            'item' => function (MorphTo $morphTo) {
-                $morphTo->morphWith([
-                    Asset::class => ['model'],
-                ]);
-            },
-            'target' => function (MorphTo $morphTo) {
-                $morphTo->morphWith([
-                    Asset::class => ['model'],
-                ]);
-            },
-        ]);
     }
 
     /**
@@ -771,52 +1062,8 @@ class Actionlog extends SnipeModel
         $this->source = $source;
     }
 
-    public function scopeOrderByCreatedBy($query, $order)
+    public function newEloquentBuilder($query): ActionlogQueryBuilder
     {
-        return $query->leftJoin('users as admin_sort', 'action_logs.created_by', '=', 'admin_sort.id')->select('action_logs.*')->orderBy('admin_sort.first_name', $order)->orderBy('admin_sort.last_name', $order);
-    }
-
-    // Audit report (issue #9430): the frontend has advertised location
-    // as sortable for a while but the API whitelist didn't include it,
-    // so clicks silently fell back to created_at. action_logs stores
-    // its own location_id snapshot (see the belongsTo above) so this
-    // is a plain leftJoin on locations, no polymorphic asset walk.
-    public function scopeOrderByLocation($query, $order)
-    {
-        return $query->leftJoin('locations as location_sort', 'action_logs.location_id', '=', 'location_sort.id')
-            ->select('action_logs.*')
-            ->orderBy('location_sort.name', $order);
-    }
-
-    // Also for the audit report: next_audit_date lives on the asset
-    // (the log doesn't snapshot it), so we join to assets on the
-    // polymorphic item_id + item_type pair. Non-Asset item_types get
-    // NULL from the leftJoin and sort naturally at the end.
-    public function scopeOrderByAssetNextAuditDate($query, $order)
-    {
-        return $query->leftJoin('assets as asset_sort', function ($join) {
-            $join->on('action_logs.item_id', '=', 'asset_sort.id')
-                ->where('action_logs.item_type', '=', Asset::class);
-        })
-            ->select('action_logs.*')
-            ->orderBy('asset_sort.next_audit_date', $order);
-    }
-
-    // Item name sort for the audit report (#9430). Only Assets get
-    // audited, so the action_type=audit filter upstream guarantees
-    // item_type=Asset here and a straight Asset join is correct.
-    // Sibling activity reports that sort by item on other action_types
-    // (checkout/checkin/etc.) will get NULL names for non-Asset rows
-    // and sort them at the ends; that matches the pre-refactor state
-    // where item sort silently fell back to created_at, and fixing
-    // truly-polymorphic item sort is a bigger separate change.
-    public function scopeOrderByItemName($query, $order)
-    {
-        return $query->leftJoin('assets as asset_item_sort', function ($join) {
-            $join->on('action_logs.item_id', '=', 'asset_item_sort.id')
-                ->where('action_logs.item_type', '=', Asset::class);
-        })
-            ->select('action_logs.*')
-            ->orderBy('asset_item_sort.name', $order);
+        return new ActionlogQueryBuilder($query);
     }
 }

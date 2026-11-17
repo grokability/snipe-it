@@ -62,7 +62,7 @@ class SuppliersController extends Controller
         ];
 
         $suppliers = Supplier::select(
-            ['id', 'name', 'address', 'address2', 'city', 'state', 'country', 'fax', 'phone', 'email', 'contact', 'created_at', 'created_by', 'updated_at', 'deleted_at', 'image', 'notes', 'url', 'zip', 'tag_color'])
+            ['suppliers.id', 'suppliers.name', 'suppliers.address', 'suppliers.address2', 'suppliers.city', 'suppliers.state', 'suppliers.country', 'suppliers.fax', 'suppliers.phone', 'suppliers.email', 'suppliers.contact', 'suppliers.created_at', 'suppliers.created_by', 'suppliers.updated_at', 'suppliers.deleted_at', 'suppliers.image', 'suppliers.notes', 'suppliers.url', 'suppliers.zip', 'suppliers.tag_color'])
             ->withCount('assets as assets_count')
             ->withCount('licenses as licenses_count')
             ->withCount('accessories as accessories_count')
@@ -205,8 +205,6 @@ class SuppliersController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @since [v4.0]
-     *
-     * @param  int  $id
      */
     public function destroy(Supplier $supplier): JsonResponse
     {

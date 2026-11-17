@@ -5,7 +5,7 @@ return [
     'field' => [
         'invalid' => 'Seda välja ei eksisteeri.',
         'already_added' => 'Väli on juba lisatud',
-        'none_selected' => 'No field selected',
+        'none_selected' => 'Ühtegi välja pole valitud',
 
         'create' => [
             'error' => 'Väli ei loodud, proovige uuesti.',
@@ -23,6 +23,9 @@ return [
             'error' => 'Välja jäeti välja küsimus. Palun proovi uuesti.',
             'success' => 'Väli kustutati edukalt.',
             'in_use' => 'Väli on endiselt kasutusel.',
+            'in_use_named' => ':name on endiselt seotud vähemalt ühe väljakomplektiga ning seda ei saa kustutada.',
+            'bulk_success' => 'Välja kustutamine õnnestus.|:count välja kustutamine õnnestus.',
+            'partial_success' => ':count välja kustutamine õnnestus, kuid teisi ei saanud kustutada. Vaata üksikasju allpool.|:count välja kustutamine õnnestus, kuid teisi ei saanud kustutada. Vaata üksikasju allpool.',
         ],
 
     ],
@@ -46,13 +49,20 @@ return [
             'error' => 'Väljaku seade kustutati. Palun proovi uuesti.',
             'success' => 'Väljatrükk on edukalt kustutatud.',
             'in_use' => 'Fieldset on endiselt kasutusel.',
+            'in_use_named' => ':name on endiselt seotud vähemalt ühe vahendimudeliga ning seda ei saa kustutada.',
+            'bulk_success' => 'Väljakomplekti kustutamine õnnestus.|:count väljakomplekti kustutamine õnnestus.',
+            'partial_success' => ':count väljakomplekti kustutamine õnnestus, kuid teisi ei saanud kustutada. Vaata üksikasju allpool.|:count väljakomplekti kustutamine õnnestus, kuid teisi ei saanud kustutada. Vaata üksikasju allpool.',
+        ],
+
+        'clone' => [
+            'success' => 'Väljakomplekti kloonimine õnnestus.',
         ],
 
     ],
 
     'fieldset_default_value' => [
 
-        'error' => 'Error validating default fieldset values.',
+        'error' => 'Väljakomplekti vaikeväärtuste valideerimisel tekkis viga.',
 
     ],
 

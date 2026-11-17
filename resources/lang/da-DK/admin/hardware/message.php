@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Akten blev ikke tjekket ind, prøv igen',
         'success' => 'Asset tjekket ind med succes.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Denne bruger er ugyldig. Prøv igen.',
         'already_checked_in' => 'Det aktiv er allerede kontrolleret.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

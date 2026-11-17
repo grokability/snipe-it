@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use ArieTimmerman\Laravel\SCIMServer\Attribute\Attribute;
+use ArieTimmerman\Laravel\SCIMServer\Attribute\AttributeValue;
 use ArieTimmerman\Laravel\SCIMServer\Attribute\Collection;
 use ArieTimmerman\Laravel\SCIMServer\Attribute\Complex;
 use ArieTimmerman\Laravel\SCIMServer\Attribute\Constant;
@@ -225,6 +226,69 @@ class SnipeRootComplex extends Complex
         }
     }
 
+    // Complex::patch's value-path branch (path like
+    // `employeeNumber[value eq "123"]`) calls getSubNode($attr) on root,
+    // falls back to getSchemaNode() (always the FIRST schema, core) when
+    // that misses, and throws "Unknown path" because employeeNumber
+    // lives on the enterprise schema. Entra ID sends exactly this shape
+    // when it de-provisions a user whose employeeNumber also changed:
+    // one PATCH with ops for `active=false` and `employeeNumber[value eq
+    // "..."]`. See #19347 and #19819.
+    //
+    // Before deferring to the vendor, check whether getSubNode() misses
+    // the attribute on root.
+    // Dropping the leftover `[value eq "X"]` filter is deliberate:
+    // Entra attaches it as "the one whose current value is X" context,
+    // but for a single-valued attribute like employeeNumber there's nothing to filter
+    // against and the Eloquent attribute's patch throws when it sees
+    // any non-empty path anyway.
+    //
+    // When getSubNode DOES resolve the attribute (ie, the attribute is
+    // on the first/core schema), defer to the vendor.
+    public function patch($operation, $value, Model &$object, ?Path $path = null, $removeIfNotSet = false)
+    {
+        if ($path !== null && $path->isNotEmpty() && $this->parent === null) {
+            $valuePathAttributes = $path->getValuePathAttributes();
+            if (! empty($valuePathAttributes) && $this->getSubNode($valuePathAttributes[0]) === null) {
+                $attrName = $valuePathAttributes[0];
+                $attribute = null;
+
+                foreach ($this->subAttributes as $sub) {
+                    if ($sub instanceof AttributeSchema) {
+                        $candidate = $sub->getSubNode($attrName);
+                        if ($candidate !== null) {
+                            $attribute = $candidate;
+                            break;
+                        }
+                    }
+                }
+
+                if ($attribute !== null) {
+                    switch ($operation) {
+                        case 'add':
+                            $attribute->add($value, $object);
+
+                            return;
+                        case 'replace':
+                            $attribute->replace($value, $object);
+
+                            return;
+                        case 'remove':
+                            // Eloquent::patch treats remove as "set to
+                            // null". No public remove() on the Eloquent
+                            // attribute, so emulate it via replace(null)
+                            // which hits the same underlying write.
+                            $attribute->replace(null, $object);
+
+                            return;
+                    }
+                }
+            }
+        }
+
+        parent::patch($operation, $value, $object, $path, $removeIfNotSet);
+    }
+
     // #19347: Complex::applyComparison ignores the schema URN on the
     // filter path and always falls back to the FIRST schema node (core).
     // A filter like:
@@ -236,7 +300,7 @@ class SnipeRootComplex extends Complex
     // Same shape of bug as the URN-blind add()/replace() routing above.
     // If the path carries a schema URN and we have a schema node for it,
     // dispatch the whole path there so its own applyComparison finds the
-    // attribute; otherwise defer to the library.
+    // attribute. Otherwise defer to the library.
     public function applyComparison(Builder &$query, Path $path, $parentAttribute = null)
     {
         $schemaUrn = $path->getAttributePath()?->path?->schema;
@@ -282,8 +346,23 @@ class SnipeMutableCollection extends MutableCollection
 
         return $object->{$this->attribute}()
             ->pluck('users.id')
-            ->map(fn ($id) => ['value' => $id, '$ref' => $ref_prefix.$id, 'display' => null])
+            ->map(fn ($id) => ['value' => (string) $id, '$ref' => $ref_prefix.$id, 'display' => null])
             ->all();
+    }
+
+    // The upstream library never applies ?excludedAttributes= (it's a TODO
+    // there). Entra ID fetches groups with excludedAttributes=members, and
+    // when members come back anyway it removes and re-adds every member on
+    // each sync cycle. See #20046.
+    public function read(&$object, array $attributes = []): ?AttributeValue
+    {
+        $excluded = array_map('trim', explode(',', strtolower((string) request()->query('excludedAttributes'))));
+
+        if (array_intersect([strtolower($this->name), strtolower($this->getFullKey())], $excluded)) {
+            return null;
+        }
+
+        return parent::read($object, $attributes);
     }
 
     public function replace($value, Model &$object, ?Path $path = null)
@@ -735,8 +814,8 @@ class SnipeSCIMConfig
             'class' => SCIMUser::class,
             'singular' => 'User',
 
-            // eager loading
-            'withRelations' => [],
+            // Eager load the relations.
+            'withRelations' => ['companies', 'manager'],
             'description' => 'User Account',
 
             'map' => (new SnipeRootComplex)->withSubAttributes(
@@ -927,8 +1006,11 @@ class SnipeSCIMConfig
 
                         public function doWrite($operation, $subop, $value, Model &$object, ?Path $path = null, $removeIfNotSet = false)
                         {
-                            // TODO - this is validated *just* for 'patch' operations, so this may not work in other write contexts
-                            if ($path->getValuePathFilter() != null) {
+                            // $path is nullable per the signature. Treat a null path the same as a filter-less path:
+                            // fall through to the bulk-replace branch below. Without this guard the next line
+                            // crashes with "Call to a member function getValuePathFilter() on null" on PUT-shaped
+                            // requests from clients that don't send a path (Okta's create-user flow is one).
+                            if ($path !== null && $path->getValuePathFilter() !== null) {
                                 \Log::debug("path for update $path");
                                 // get the part of the $path that we actually care about - something like:
                                 // addresses[type eq "work"]
@@ -988,7 +1070,17 @@ class SnipeSCIMConfig
                     eloquent('title', 'jobtitle'),
                     eloquent('preferredLanguage', 'locale'),
                     (new Collection('groups'))->withSubAttributes(
-                        eloquent('value', 'id'),
+                        (new class('value', 'id') extends Eloquent
+                        {
+                            // RFC 7643 §4.1.2 defines groups[].value as a
+                            // string.
+                            protected function doRead(&$object, $attributes = [])
+                            {
+                                $value = parent::doRead($object, $attributes);
+
+                                return $value === null ? null : (string) $value;
+                            }
+                        }),
                         (new class('$ref') extends Eloquent
                         {
                             protected function doRead(&$object, $attributes = [])

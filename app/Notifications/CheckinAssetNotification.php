@@ -49,10 +49,12 @@ class CheckinAssetNotification extends Notification implements ShouldQueue
     /**
      * Get the notification's delivery channels.
      *
-     * @return array
+     * @return array<class-string>
      */
-    public function via()
+    public function via(): array
     {
+        $notifyBy = [];
+
         if ($this->webhookSource->webhook_selected == 'google' && $this->webhookSource->webhook_endpoint) {
 
             $notifyBy[] = GoogleChatChannel::class;

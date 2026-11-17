@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Hantida lama hubin, fadlan isku day mar kale',
         'success' => 'Hantida si guul leh ayaa loo hubiyay.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Isticmaalahaasi waa khalad Fadlan isku day mar kale.',
         'already_checked_in' => 'Hantidaas mar horeba waa la hubiyay.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

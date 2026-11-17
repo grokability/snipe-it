@@ -53,19 +53,19 @@ class CategoriesController extends Controller
         ];
 
         $categories = Category::select([
-            'category_type',
-            'checkin_email',
-            'created_at',
-            'created_by',
-            'eula_text',
-            'id',
-            'image',
-            'name',
-            'notes',
-            'require_acceptance',
-            'tag_color',
-            'updated_at',
-            'use_default_eula',
+            'categories.category_type',
+            'categories.checkin_email',
+            'categories.created_at',
+            'categories.created_by',
+            'categories.eula_text',
+            'categories.id',
+            'categories.image',
+            'categories.name',
+            'categories.notes',
+            'categories.require_acceptance',
+            'categories.tag_color',
+            'categories.updated_at',
+            'categories.use_default_eula',
         ])
             ->with('adminuser')
             ->withCount('accessories as accessories_count', 'consumables as consumables_count', 'components as components_count', 'licenses as licenses_count', 'models as models_count');
@@ -210,7 +210,7 @@ class CategoriesController extends Controller
         // Don't allow the user to change the category_type once it's been created
         if (($request->filled('category_type')) && ($category->category_type != $request->input('category_type'))) {
             return response()->json(
-                Helper::formatStandardApiResponse('error', null, ['category_type' => trans('admin/categories/message.update.cannot_change_category_type')], 422)
+                Helper::formatStandardApiResponse('error', null, ['category_type' => trans('admin/categories/message.update.cannot_change_category_type')])
             );
         }
         $category->fill($request->all());
@@ -230,7 +230,6 @@ class CategoriesController extends Controller
      *
      * @since [v4.0]
      *
-     * @param  int  $id
      * @return Response
      */
     public function destroy(Category $category): JsonResponse

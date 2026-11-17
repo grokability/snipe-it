@@ -18,9 +18,7 @@ class ExpiringAssetsNotification extends Notification implements ShouldQueue
     public function __construct(
         public $params,
         public $threshold
-    )
-    {
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.
@@ -38,7 +36,6 @@ class ExpiringAssetsNotification extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $asset
      * @return MailMessage
      */
     public function toMail()

@@ -108,6 +108,83 @@ class JamfSchoolAdapterTest extends TestCase
         $this->assertNotNull($record->lastSeen);
     }
 
+    public function test_network_information_surfaces_mac_and_ip(): void
+    {
+        // Regression test for issue #19856. Jamf School nests
+        // Wi-Fi MAC and IP under `networkInformation` on every
+        // device class. The earlier adapter read a top-level
+        // `wifiMacAddress` key that is never present in a Jamf
+        // School payload, so primaryMac + primaryIp both landed
+        // null across every synced device.
+        $adapter = $this->configuredJamfSchoolAdapter();
+
+        Http::fake([
+            '*/devices*' => Http::response([
+                'count' => 1,
+                'devices' => [
+                    $this->jamfSchoolDevice(
+                        udid: 'edu-udid-net',
+                        wifiMac: '02:5c:a1:72:8d:30',
+                        ipAddress: '192.0.2.42',
+                    ),
+                ],
+            ]),
+        ]);
+
+        $records = iterator_to_array($adapter->pull());
+
+        $this->assertSame('02:5c:a1:72:8d:30', $records[0]->primaryMac);
+        $this->assertSame('192.0.2.42', $records[0]->primaryIp);
+    }
+
+    public function test_owner_block_populates_assigned_user_fields()
+    {
+        // Regression test for issue #19856. Jamf School carries the
+        // device's assigned user under `owner`. The adapter has to
+        // surface email + username so the pipeline's user-lookup can
+        // resolve them.
+        $adapter = $this->configuredJamfSchoolAdapter();
+
+        Http::fake([
+            '*/devices*' => Http::response([
+                'count' => 1,
+                'devices' => [
+                    $this->jamfSchoolDevice(
+                        udid: 'edu-udid-9',
+                        owner: [
+                            'username' => 'edu-staff-1',
+                            'email' => 'edu-staff-1@edu.invalid',
+                        ],
+                    ),
+                ],
+            ]),
+        ]);
+
+        $records = iterator_to_array($adapter->pull());
+
+        $this->assertSame('edu-staff-1@edu.invalid', $records[0]->assignedUserEmail);
+        $this->assertSame('edu-staff-1', $records[0]->assignedUserName);
+    }
+
+    public function test_absent_owner_block_leaves_assigned_user_null()
+    {
+        $adapter = $this->configuredJamfSchoolAdapter();
+
+        Http::fake([
+            '*/devices*' => Http::response([
+                'count' => 1,
+                'devices' => [
+                    $this->jamfSchoolDevice(udid: 'edu-udid-10'),
+                ],
+            ]),
+        ]);
+
+        $records = iterator_to_array($adapter->pull());
+
+        $this->assertNull($records[0]->assignedUserEmail);
+        $this->assertNull($records[0]->assignedUserName);
+    }
+
     private function configuredJamfSchoolAdapter(): JamfSchoolAdapter
     {
         $instance = SyncAdapterInstance::where('slug', 'jamf_school')->firstOrFail();
@@ -123,17 +200,22 @@ class JamfSchoolAdapterTest extends TestCase
     /**
      * @return array<string, mixed>
      */
+    /**
+     * @param  array<string, mixed>|null  $owner
+     */
     private function jamfSchoolDevice(
         string $udid,
         string $name = 'device',
         string $modelName = 'iPad',
         ?string $serial = null,
         ?string $wifiMac = null,
+        ?string $ipAddress = null,
         ?string $os = 'iPadOS',
         ?string $osVersion = null,
         ?string $lastCheckin = null,
+        ?array $owner = null,
     ): array {
-        return [
+        $device = [
             'UDID' => $udid,
             'name' => $name,
             'serialNumber' => $serial,
@@ -145,11 +227,22 @@ class JamfSchoolAdapterTest extends TestCase
                 'prefix' => $os,
                 'version' => $osVersion,
             ],
-            'wifiMacAddress' => $wifiMac,
+            // Jamf School nests network info under this key on every
+            // device class (iPhone / iPad / Mac).
+            'networkInformation' => [
+                'WiFiMAC' => $wifiMac,
+                'IPAddress' => $ipAddress,
+            ],
             'lastCheckin' => $lastCheckin,
             'isSupervised' => true,
             'assetTag' => null,
             'locationId' => 1,
         ];
+
+        if ($owner !== null) {
+            $device['owner'] = $owner;
+        }
+
+        return $device;
     }
 }

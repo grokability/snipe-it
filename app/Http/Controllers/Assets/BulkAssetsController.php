@@ -25,11 +25,11 @@ use App\View\Label;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Context;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
@@ -238,7 +238,8 @@ class BulkAssetsController extends Controller
                     return view('hardware/bulk')
                         ->with('assets', $asset_ids)
                         ->with('statuslabel_list', Helper::statusLabelList())
-                        ->with('models', $models->pluck(['model']))
+                        ->with('fieldsets', $models->pluck('custom_fieldset')->filter()->unique('id'))
+                        ->with('fieldLabels', $this->customFieldLabels($models))
                         ->with('modelNames', $modelNames);
             }
         }
@@ -305,6 +306,9 @@ class BulkAssetsController extends Controller
             || ($request->filled('supplier_id'))
             || ($request->filled('warranty_months'))
             || ($request->filled('rtd_location_id'))
+            || ($request->filled('location_id'))
+            || ($request->filled('null_rtd_location_id'))
+            || ($request->filled('null_location_id'))
             || ($request->filled('requestable'))
             || ($request->filled('company_id'))
             || ($request->filled('status_id'))
@@ -348,7 +352,7 @@ class BulkAssetsController extends Controller
                 foreach ($custom_field_columns as $key => $custom_field_column) {
                     $this->conditionallyAddItem($custom_field_column);
                 }
-                foreach ($custom_fields_to_null as $key => $custom_field_to_null) {
+                foreach (array_keys($custom_fields_to_null) as $key) {
                     $this->conditionallyAddItem($key);
                 }
 
@@ -457,32 +461,18 @@ class BulkAssetsController extends Controller
                     }
 
                 }
-
-                /**
-                 * We're changing the location ID - figure out which location we should apply
-                 * this change to:
-                 *
-                 * 0 - RTD location only
-                 * 1 - location ID and RTD location ID
-                 * 2 - location ID only
-                 *
-                 * Note: this is kinda dumb and we should just use human-readable values IMHO. - snipe
-                 */
+                
                 if ($request->filled('rtd_location_id')) {
-
-                    if (($request->filled('update_real_loc')) && (($request->input('update_real_loc')) == '0')) {
-                        $this->update_array['rtd_location_id'] = $request->input('rtd_location_id');
-                    }
-
-                    if (($request->filled('update_real_loc')) && (($request->input('update_real_loc')) == '1')) {
-                        $this->update_array['location_id'] = $request->input('rtd_location_id');
-                        $this->update_array['rtd_location_id'] = $request->input('rtd_location_id');
-                    }
-
-                    if (($request->filled('update_real_loc')) && (($request->input('update_real_loc')) == '2')) {
-                        $this->update_array['location_id'] = $request->input('rtd_location_id');
-                    }
-
+                    $this->update_array['rtd_location_id'] = $request->input('rtd_location_id');
+                }
+                if ($request->input('null_rtd_location_id') == '1') {
+                    $this->update_array['rtd_location_id'] = null;
+                }
+                if ($request->filled('location_id')) {
+                    $this->update_array['location_id'] = $request->input('location_id');
+                }
+                if ($request->input('null_location_id') == '1') {
+                    $this->update_array['location_id'] = null;
                 }
 
                 /**
@@ -506,59 +496,30 @@ class BulkAssetsController extends Controller
                  * Start all the custom fields shenanigans
                  */
 
-                // Does the model have a fieldset?
-                if ($asset->model?->fieldset) {
-                    foreach ($asset->model->fieldset->fields as $field) {
-
-                        // null custom fields
-                        if ($custom_fields_to_null) {
-                            foreach ($custom_fields_to_null as $key => $custom_field_to_null) {
-                                if ($field->db_column == $key) {
-                                    $this->update_array[$field->db_column] = null;
-                                }
-                            }
-                        }
-
-                        if ((array_key_exists($field->db_column, $this->update_array)) && ($field->field_encrypted == '1')) {
-                            if (Gate::allows('admin')) {
-                                $decrypted_old = Helper::gracefulDecrypt($field, $asset->{$field->db_column});
-
-                                /*
-                                 * Check if the decrypted existing value is different from one we just submitted
-                                 * and if not, pull it out of the object since it shouldn't really be updating at all.
-                                 * If we don't do this, it will try to re-encrypt it, and the same value encrypted two
-                                 * different times will have different values, so it will *look* like it was updated
-                                 * but it wasn't.
-                                 */
-                                if ($decrypted_old != $this->update_array[$field->db_column]) {
-                                    $asset->{$field->db_column} = Crypt::encrypt($this->update_array[$field->db_column]);
-                                } else {
-                                    /*
-                                     * Remove the encrypted custom field from the update_array, since nothing changed
-                                     */
-                                    unset($this->update_array[$field->db_column]);
-                                    unset($asset->{$field->db_column});
-                                }
-
-                                /*
-                                 * These custom fields aren't encrypted, just carry on as usual
-                                 */
-                            }
-                        } else {
-
-                            if ((array_key_exists($field->db_column, $this->update_array)) && ($asset->{$field->db_column} != $this->update_array[$field->db_column])) {
-
-                                // Check if this is an array, and if so, flatten it
-                                if (is_array($this->update_array[$field->db_column])) {
-                                    $asset->{$field->db_column} = implode(', ', $this->update_array[$field->db_column]);
-                                } else {
-                                    $asset->{$field->db_column} = $this->update_array[$field->db_column];
-                                }
-                            }
-                        }
-
-                    } // endforeach
+                if (array_key_exists('model_id', $this->update_array)) {
+                    $asset->model_id = $this->update_array['model_id'];
                 }
+
+                // Does the model have a fieldset?
+                if ($asset->custom_fieldset) {
+                    $customValues = array_intersect_key($this->update_array, array_flip($custom_field_columns));
+                    foreach ($custom_fields_to_null as $column => $value) {
+                        $customValues[$column] = null;
+                    }
+
+                    // As much as I would *love* to use custom_fill or something like it here,
+                    // we have historically checked for 'admin' permission here, and I don't want
+                    // to change that
+                    foreach ($asset->custom_fieldset->fields->where('field_encrypted', 1) as $field) {
+                        if (array_key_exists($field->db_column, $customValues) && Gate::allows('admin')) {
+                            $asset->{$field->db_column} = $customValues[$field->db_column];
+                        }
+                        unset($customValues[$field->db_column]);
+                    }
+
+                    $asset->custom_fill($customValues);
+                }
+                $this->update_array = array_diff_key($this->update_array, array_flip($custom_field_columns));
 
                 // Check if it passes validation, and then try to save
                 if (! $asset->update($this->update_array)) {
@@ -702,7 +663,10 @@ class BulkAssetsController extends Controller
             // per-item Asset / Accessory controllers, this method has no
             // downstream session put that would overwrite a bad early value,
             // so this is the sole source of truth.
-            session()->put(['checkout_to_type' => request('checkout_to_type')]);
+            session()->put([
+                'checkout_to_type' => $request->input('checkout_to_type'),
+                'redirect_option' => $request->input('redirect_option', 'index'),
+            ]);
 
             if (! is_array($request->input('selected_assets'))) {
                 return redirect()->route('hardware.bulkcheckout.show')->withInput()->with('error', trans('admin/hardware/message.checkout.no_assets_selected'));
@@ -1253,7 +1217,27 @@ class BulkAssetsController extends Controller
         return view('hardware/bulk')
             ->with('assets', $asset_ids)
             ->with('statuslabel_list', Helper::statusLabelList())
-            ->with('models', $models->pluck(['model']))
+            ->with('fieldsets', $models->pluck('custom_fieldset')->filter()->unique('id'))
+            ->with('fieldLabels', $this->customFieldLabels($models))
             ->with('modelNames', $modelNames);
+    }
+    /**
+     * @param  Collection<int, Asset>  $assets
+     * @return array<int, list<string>>
+     */
+    protected function customFieldLabels(Collection $assets): array
+    {
+        $labels = [];
+
+        foreach ($assets as $asset) {
+            foreach ($asset->custom_fieldset->fields ?? [] as $field) {
+                $name = $asset->model?->name;
+                if ($name !== null && !in_array($name, $labels[$field->id] ?? [], true)) {
+                    $labels[$field->id][] = $name;
+                }
+            }
+        }
+
+        return $labels;
     }
 }

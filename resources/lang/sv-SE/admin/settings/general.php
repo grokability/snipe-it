@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Generera automatisk ökning av tillgångstaggar',
     'auto_increment_prefix' => 'Prefix (frivilligt)',
     'auto_incrementing_help' => 'Aktivera automatisk ökning av tillgångstaggar innan du ställer in detta',
-    'backups' => 'Säkerhetskopior',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Skapa, ladda ned och återställ säkerhetskopior ',
     'backups_restoring' => 'Återställ från säkerhetskopia',
     'backups_clean' => 'Rensa den säkerhetskopierade databasen innan återställning',

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Enums\FileStorage;
 use enshrined\svgSanitize\Sanitizer;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use ZipArchive;
@@ -139,7 +140,7 @@ class SQLStreamer
     {
         $bytes_read = 0;
         if (! $this->input) {
-            throw new \Exception('No Input available for line_aware_piping');
+            throw new Exception('No Input available for line_aware_piping');
         }
 
         while (($buffer = fgets($this->input, SQLStreamer::$buffer_size)) !== false) {
@@ -151,7 +152,7 @@ class SQLStreamer
                     $bytes_written = fwrite($this->output, $cleaned_buffer);
 
                     if ($bytes_written === false) {
-                        throw new \Exception('Unable to write to pipe');
+                        throw new Exception('Unable to write to pipe');
                     }
                 }
             }

@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Varsayılan sözleşmeyi kullan</del> Varsayılan sözleşme tanımlı değil. Lütfen Ayarlar\'dan ekleyiniz.',
     'clone' => 'Aksesuarı çoğalt',
     'delete_disabled' => 'Bu aksesuar henüz silinemiyor çünkü bazı öğeler hâlâ kontrol ediliyor.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

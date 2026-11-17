@@ -299,4 +299,85 @@ class LocationParentCompanyTest extends TestCase
 
         $this->assertTrue($location->save());
     }
+
+    // GHSA-vx68-xhq6-9gmr: cross-company parent rejection used to interpolate
+    // the parent location's name and company name into the error message,
+    // leaking cross-tenant names to any caller with locations.create /
+    // locations.edit permission. The rejection now returns a generic message
+    // when the caller cannot see the parent location. Superusers and callers
+    // whose pivot includes the parent's company still get the detailed
+    // diagnostic.
+
+    public function test_api_store_cross_company_parent_does_not_leak_name_to_non_superuser(): void
+    {
+        $this->settings->enableScopedLocationsWithFullMultipleCompanySupport();
+        $this->settings->disableFloaterMode();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+        $actor = $companyA->users()->save(User::factory()->createLocations()->make());
+
+        $secret = Location::factory()->make(['name' => 'Vault Secret HQ']);
+        $secret->company_id = $companyB->id;
+        $secret->setValidating(false);
+        $secret->save();
+
+        $response = $this->actingAsForApi($actor)->postJson(
+            route('api.locations.store'),
+            [
+                'name' => 'probe',
+                'company_id' => $companyA->id,
+                'parent_id' => $secret->id,
+            ]
+        );
+
+        $response->assertOk()->assertStatusMessageIs('error');
+        $this->assertStringNotContainsString('Vault Secret HQ', (string) $response->json('messages'));
+    }
+
+    public function test_api_store_cross_company_parent_still_discloses_to_superuser(): void
+    {
+        $this->settings->enableScopedLocationsWithFullMultipleCompanySupport();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+        $secret = Location::factory()->create([
+            'name' => 'Vault Secret HQ',
+            'company_id' => $companyB->id,
+        ]);
+
+        $response = $this->actingAsForApi(User::factory()->superuser()->create())->postJson(
+            route('api.locations.store'),
+            [
+                'name' => 'probe',
+                'company_id' => $companyA->id,
+                'parent_id' => $secret->id,
+            ]
+        );
+
+        $response->assertOk()->assertStatusMessageIs('error');
+        $this->assertStringContainsString('Vault Secret HQ', (string) $response->json('messages'));
+    }
+
+    public function test_api_update_cross_company_parent_does_not_leak_name_to_non_superuser(): void
+    {
+        $this->settings->enableScopedLocationsWithFullMultipleCompanySupport();
+        $this->settings->disableFloaterMode();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+        $actor = $companyA->users()->save(User::factory()->editLocations()->make());
+
+        $own = Location::factory()->create(['name' => 'My Loc', 'company_id' => $companyA->id]);
+
+        $secret = Location::factory()->make(['name' => 'Vault Secret HQ']);
+        $secret->company_id = $companyB->id;
+        $secret->setValidating(false);
+        $secret->save();
+
+        $response = $this->actingAsForApi($actor)->patchJson(
+            route('api.locations.update', $own->id),
+            ['parent_id' => $secret->id]
+        );
+
+        $response->assertOk()->assertStatusMessageIs('error');
+        $this->assertStringNotContainsString('Vault Secret HQ', (string) $response->json('messages'));
+    }
 }

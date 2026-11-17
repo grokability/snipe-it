@@ -176,8 +176,6 @@ class DepartmentsController extends Controller
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
-     * @param  int  $locationId
-     *
      * @since [v4.0]
      */
     public function destroy($id): JsonResponse

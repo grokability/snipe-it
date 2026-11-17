@@ -9,11 +9,23 @@ use App\Models\Ldap;
 use App\Models\Location;
 use App\Models\Setting;
 use App\Models\User;
+use App\Traits\LocksLongRunningOperation;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 class LdapSync extends Command
 {
+    use LocksLongRunningOperation;
+
+    /**
+     * Shared mutex key for LDAP sync. Both the scheduled CLI run and the
+     * UI "Sync Now" (which Artisan::call's this command) acquire the
+     * same key, so cron + an admin click can't collide on the same
+     * directory read. Public so the UI controller can read the lock
+     * state via isOperationLocked() without duplicating the string.
+     */
+    public const LDAP_SYNC_LOCK = 'ldap-sync:running';
+
     /**
      * The name and signature of the console command.
      *
@@ -52,15 +64,70 @@ class LdapSync extends Command
             exit();
         }
 
-        // Tag every action_log written during this run (direct writes
-        // and the observer-driven writes User saves trigger) as `ldap`
-        // so the activity report distinguishes LDAP-created entries
-        // from gui / api / sync-adapter origins.
-        return Actionlog::withActionSource('ldap', fn () => $this->runSync());
+        // Shared backup+restore pattern: refuse to start a second sync
+        // when one is already in flight. Covers both the UI sync-now
+        // path (via LDAPImportController's Artisan::call) and a
+        // scheduled cron that fires while a UI run is still open.
+        // Output shape matches the existing JSON-summary branches
+        // below so the UI's result parser doesn't need a special case.
+        if (! $this->acquireOperationLock(self::LDAP_SYNC_LOCK)) {
+            $message = $this->operationAlreadyRunningMessage('general.ldap_sync');
+            if ($this->option('json_summary')) {
+                $this->info(json_encode(['error' => true, 'error_message' => $message, 'summary' => []]));
+            } else {
+                $this->error($message);
+            }
+
+            return 1;
+        }
+
+        Log::channel('ldap')->info('LDAP sync started by ' . $this->describeInitiator() . '.');
+
+        try {
+            // Tag every action_log written during this run (direct writes
+            // and the observer-driven writes User saves trigger) as `ldap`
+            // so the activity report distinguishes LDAP-created entries
+            // from gui / api / sync-adapter origins.
+            return Actionlog::withActionSource('ldap', fn () => $this->runSync());
+        } finally {
+            $this->releaseOperationLock(self::LDAP_SYNC_LOCK);
+        }
     }
 
-    private function runSync()
+    /**
+     * Human-readable description of who kicked off this sync, for the
+     * ldap-channel startup line.
+     */
+    private function describeInitiator(): string
     {
+        if (auth()->check()) {
+            $user = auth()->user();
+            $via = request()->is('api/*') ? 'API' : 'GUI';
+
+            return 'user ' . $user->username . ' (ID ' . $user->id . ') via ' . $via;
+        }
+
+        $script = $_SERVER['argv'][1] ?? '';
+        if (in_array($script, ['schedule:run', 'schedule:work', 'schedule:test'], true)) {
+            return 'the Laravel scheduler or user-initiated CLI';
+        }
+
+        $osUser = function_exists('posix_geteuid')
+            ? (posix_getpwuid(posix_geteuid())['name'] ?? null)
+            : null;
+        $osUser = $osUser ?: (get_current_user() ?: 'unknown');
+
+        return 'CLI as OS user ' . $osUser;
+    }
+
+    /**
+     * Returns an int exit code so the Artisan runner surfaces the
+     * right status to a cron / systemd caller.
+     */
+    private function runSync(): int
+    {
+        $startedAt = microtime(true);
+
         ini_set('max_execution_time', config('app.ldap_time_limit')); // 600 seconds = 10 minutes
         ini_set('memory_limit', config('app.ldap_memory_limit'));
 
@@ -82,9 +149,9 @@ class LdapSync extends Command
                 $json_summary = ['error' => true, 'error_message' => $e->getMessage(), 'summary' => []];
                 $this->info(json_encode($json_summary));
             }
-            Log::info($e);
+            Log::channel('ldap')->info($e);
 
-            return [];
+            return self::FAILURE;
         }
 
         $summary = [];
@@ -100,7 +167,7 @@ class LdapSync extends Command
                 foreach ($this->option('location_id') as $location_id) {
                     $location_ou = Location::where('id', '=', $location_id)->value('ldap_ou');
                     $search_base = $location_ou;
-                    Log::debug('Importing users from specified location OU: \"'.$search_base.'\".');
+                    Log::channel('ldap')->debug('Importing users from specified location OU: \"' . $search_base . '\".');
                 }
             }
 
@@ -110,7 +177,7 @@ class LdapSync extends Command
              */
             if ($this->option('base_dn') != '') {
                 $search_base = $this->option('base_dn');
-                Log::debug('Importing users from specified base DN: \"'.$search_base.'\".');
+                Log::channel('ldap')->debug('Importing users from specified base DN: \"' . $search_base . '\".');
             }
 
             /**
@@ -142,31 +209,31 @@ class LdapSync extends Command
                 $json_summary = ['error' => true, 'error_message' => $e->getMessage(), 'summary' => []];
                 $this->info(json_encode($json_summary));
             }
-            Log::info($e);
+            Log::channel('ldap')->info($e);
 
-            return [];
+            return self::FAILURE;
         }
 
         /* Determine which location to assign users to by default. */
         $default_location = null;
         if ($this->option('location') != '') {
             if ($default_location = Location::where('name', '=', $this->option('location'))->first()) {
-                Log::debug('Location name '.$this->option('location').' passed');
-                Log::debug('Importing to '.$default_location->name.' ('.$default_location->id.')');
+                Log::channel('ldap')->debug('Location name ' . $this->option('location') . ' passed');
+                Log::channel('ldap')->debug('Importing to ' . $default_location->name . ' (' . $default_location->id . ')');
             }
 
         } elseif ($this->option('location_id')) {
             // TODO - figure out how or why this is an array?
             foreach ($this->option('location_id') as $location_id) {
                 if ($default_location = Location::where('id', '=', $location_id)->first()) {
-                    Log::debug('Location ID '.$location_id.' passed');
-                    Log::debug('Importing to '.$default_location->name.' ('.$default_location->id.')');
+                    Log::channel('ldap')->debug('Location ID ' . $location_id . ' passed');
+                    Log::channel('ldap')->debug('Importing to ' . $default_location->name . ' (' . $default_location->id . ')');
                 }
 
             }
         }
         if (! isset($default_location)) {
-            Log::debug('That location is invalid or a location was not provided, so no location will be assigned by default.');
+            Log::channel('ldap')->debug('That location is invalid or a location was not provided, so no location will be assigned by default.');
         }
 
         /* Process locations with explicitly defined OUs, if doing a full import. */
@@ -182,7 +249,7 @@ class LdapSync extends Command
             array_multisort($ldap_ou_lengths, SORT_ASC, $ldap_ou_locations);
 
             if (count($ldap_ou_locations) > 0) {
-                Log::debug('Some locations have special OUs set. Locations will be automatically set for users in those OUs.');
+                Log::channel('ldap')->debug('Some locations have special OUs set. Locations will be automatically set for users in those OUs.');
             }
 
             // Inject location information fields
@@ -200,9 +267,9 @@ class LdapSync extends Command
                         $json_summary = ['error' => true, 'error_message' => trans('admin/users/message.error.ldap_could_not_search').' Location: '.$ldap_loc['name'].' (ID: '.$ldap_loc['id'].') cannot connect to "'.$ldap_loc['ldap_ou'].'" - '.$e->getMessage(), 'summary' => []];
                         $this->info(json_encode($json_summary));
                     }
-                    Log::info($e);
+                    Log::channel('ldap')->info($e);
 
-                    return [];
+                    return self::FAILURE;
                 }
                 $usernames = [];
                 for ($i = 0; $i < $location_users['count']; $i++) {
@@ -222,9 +289,8 @@ class LdapSync extends Command
                     }
                 }
 
-                $global_count = $results['count'];
                 $results = array_merge($location_users, $results);
-                $results['count'] = $global_count;
+                $results['count'] = count(array_filter(array_keys($results), 'is_int'));
             }
         }
 
@@ -290,13 +356,17 @@ class LdapSync extends Command
                         try {
                             $ldap_manager = Ldap::findLdapUsers($item['manager'], -1, $this->option('filter'));
                         } catch (\Exception $e) {
-                            Log::warning('Manager lookup caused an exception: '.$e->getMessage().'. Falling back to direct username lookup');
-                            // Hail-mary for Okta manager 'shortnames' - will only work if
-                            // Okta configuration is using full email-address-style usernames
+                            Log::channel('ldap')->warning('Manager lookup caused an exception: ' . $e->getMessage() . '. Falling back to direct username lookup');
+                            $ldap_manager = ['count' => 0];
+                        }
+
+                        // Hail-mary for directories whose manager attribute holds a bare
+                        // username rather than a DN
+                        if (($ldap_manager['count'] ?? 0) === 0) {
                             $ldap_manager = [
                                 'count' => 1,
                                 0 => [
-                                    $ldap_map['username'] => [$item['manager']],
+                                    $ldap_map['username'] => [(string) $item['manager']],
                                 ],
                             ];
                         }
@@ -316,7 +386,7 @@ class LdapSync extends Command
                                 }
                             } catch (\Exception $e) {
                                 $add_manager_to_cache = false;
-                                \Log::warning('Handling ldap manager '.$item['manager'].' caused an exception: '.$e->getMessage().'. Continuing synchronization.');
+                                \Log::channel('ldap')->warning('Handling ldap manager ' . $item['manager'] . ' caused an exception: ' . $e->getMessage() . '. Continuing synchronization.');
                             }
                         }
                         if ($add_manager_to_cache) {
@@ -328,9 +398,9 @@ class LdapSync extends Command
             }
 
             // Sync activated state for Active Directory.
-            if (! empty($ldap_map['activated'])) { // IF we have an 'active' flag set....
-                // ....then *most* things that are truthy will activate the user. Anything falsey will deactivate them.
-                // (Specifically, we don't handle a value of '0.0' correctly)
+            if (!empty($ldap_map['activated'])) {
+                // IF we have an 'active' flag set, then *most* things that are truthy will activate the user.
+                // Anything falsey will deactivate them. (Specifically, we don't handle a value of '0.0' correctly)
                 $raw_value = @$results[$i][$ldap_map['activated']][0];
                 $filter_var = filter_var($raw_value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
@@ -344,42 +414,10 @@ class LdapSync extends Command
                 }
 
             } elseif (array_key_exists('useraccountcontrol', $results[$i])) {
-                // ....otherwise, (ie if no 'active' LDAP flag is defined), IF the UAC setting exists,
-                // ....then use the UAC setting on the account to determine can-log-in vs. cannot-log-in
+                // No explicit ldap_active_flag is configured, but the LDAP
+                // row carries useraccountcontrol which implies AD.
+                $user->activated = self::isActivatedByUserAccountControl((int) $results[$i]['useraccountcontrol'][0]) ? 1 : 0;
 
-                /* The following is _probably_ the correct logic, but we can't use it because
-                    some users may have been dependent upon the previous behavior, and this
-                    could cause additional access to be available to users they don't want
-                    to allow to log in.
-
-                 $useraccountcontrol = $results[$i]['useraccountcontrol'][0];
-                 if(
-                     // based on MS docs at: https://support.microsoft.com/en-us/help/305144/how-to-use-useraccountcontrol-to-manipulate-user-account-properties
-                     ($useraccountcontrol & 0x200) && // is a NORMAL_ACCOUNT
-                     !($useraccountcontrol & 0x02) && // *and* _not_ ACCOUNTDISABLE
-                     !($useraccountcontrol & 0x10)    // *and* _not_ LOCKOUT
-                 ) {
-                     $user->activated = 1;
-                 } else {
-                     $user->activated = 0;
-                 } */
-                $enabled_accounts = [
-                    '512',    //     0x200 NORMAL_ACCOUNT
-                    '544',    //     0x220 NORMAL_ACCOUNT, PASSWD_NOTREQD
-                    '66048',  //   0x10200 NORMAL_ACCOUNT, DONT_EXPIRE_PASSWORD
-                    '66080',  //   0x10220 NORMAL_ACCOUNT, PASSWD_NOTREQD, DONT_EXPIRE_PASSWORD
-                    '262656', //   0x40200 NORMAL_ACCOUNT, SMARTCARD_REQUIRED
-                    '262688', //   0x40220 NORMAL_ACCOUNT, PASSWD_NOTREQD, SMARTCARD_REQUIRED
-                    '328192', //   0x50200 NORMAL_ACCOUNT, SMARTCARD_REQUIRED, DONT_EXPIRE_PASSWORD
-                    '328224', //   0x50220 NORMAL_ACCOUNT, PASSWD_NOT_REQD, SMARTCARD_REQUIRED, DONT_EXPIRE_PASSWORD
-                    '4194816', //  0x400200 NORMAL_ACCOUNT, DONT_REQ_PREAUTH
-                    '4260352', // 0x410200 NORMAL_ACCOUNT, DONT_EXPIRE_PASSWORD, DONT_REQ_PREAUTH
-                    '1049088', // 0x100200 NORMAL_ACCOUNT, NOT_DELEGATED
-                    '1114624', // 0x110200 NORMAL_ACCOUNT, DONT_EXPIRE_PASSWORD, NOT_DELEGATED,
-                ];
-                $user->activated = (in_array($results[$i]['useraccountcontrol'][0], $enabled_accounts)) ? 1 : 0;
-
-                // If we're not using AD, and there isn't an activated flag set, activate all users
             } /* implied 'else' here - leave the $user->activated flag alone. Newly-created accounts will be active.
             already-existing accounts will be however the administrator has set them */
 
@@ -495,9 +533,16 @@ class LdapSync extends Command
         } elseif ($this->option('json_summary')) {
             $json_summary = ['error' => false, 'error_message' => '', 'summary' => $summary]; // hardcoding the error to false and the error_message to blank seems a bit weird
             $this->info(json_encode($json_summary));
-        } else {
-            return $summary;
         }
+
+        $elapsed = number_format(microtime(true) - $startedAt, 3);
+        $successCount = count(array_filter($summary, fn($row) => ($row['status'] ?? '') === 'success'));
+        Log::channel('ldap')->info(
+            'LDAP sync completed in ' . $elapsed . 's. '
+            . count($summary) . ' users processed (' . $successCount . ' success).',
+        );
+
+        return self::SUCCESS;
     }
 
     /**
@@ -513,5 +558,22 @@ class LdapSync extends Command
         $user = $query->where('username', $username)->first();
 
         return User::verifyExactUsernameMatch($user, $username);
+    }
+
+    /**
+     * Translate an Active Directory userAccountControl integer into
+     * a boolean "is this account activated" per Microsoft's documented
+     * semantics. See https://learn.microsoft.com/windows/win32/adschema/a-useraccountcontrol.
+     *
+     * A user is activated when the UAC value has the NORMAL_ACCOUNT
+     * bit set AND the ACCOUNTDISABLED and LOCKOUT bits unset.
+     */
+    public static function isActivatedByUserAccountControl(int $useraccountcontrol): bool
+    {
+        $isNormalAccount = ($useraccountcontrol & 0x200) !== 0;
+        $isDisabled = ($useraccountcontrol & 0x2) !== 0;
+        $isLockedOut = ($useraccountcontrol & 0x10) !== 0;
+
+        return $isNormalAccount && !$isDisabled && !$isLockedOut;
     }
 }

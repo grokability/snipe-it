@@ -37,38 +37,47 @@ class ReportsController extends Controller
         // fix (Helper::normalizeFullModelName uses ucwords() which
         // mangles CamelCase names, so `licenseseat` used to Fatal on
         // App\Models\Licenseseat::withTrashed()). resolveActivityReportType
-        // returns the canonical fully-qualified class string or null.
-        $targetClass = null;
-        $itemClass = null;
+        // returns the canonical fully-qualified class strings (array)
+        // or null. Toolbar multi-selects submit as ?item_type[]=X&item_type[]=Y
+        // and FilterRequest::prepareForValidation normalizes a scalar
+        // into a single-element array, so downstream handling is
+        // uniformly array-shaped.
+        $targetClasses = null;
+        $itemClasses = null;
 
         if ($request->filled('target_type')) {
-            $targetClass = $this->resolveActivityReportType($request->input('target_type'));
-            if ($targetClass === null) {
+            $targetClasses = $this->resolveActivityReportTypes((array) $request->input('target_type'));
+            if ($targetClasses === null) {
                 return response()->json(Helper::formatStandardApiResponse('error', null, 'Invalid target_type'), 400);
             }
         }
         if ($request->filled('item_type')) {
-            $itemClass = $this->resolveActivityReportType($request->input('item_type'));
-            if ($itemClass === null) {
+            $itemClasses = $this->resolveActivityReportTypes((array) $request->input('item_type'));
+            if ($itemClasses === null) {
                 return response()->json(Helper::formatStandardApiResponse('error', null, 'Invalid item_type'), 400);
             }
         }
 
-        // If the user doesn't have permission to view the item or the target,
-        // then they shouldn't be able to see the activity log for that item or target,
-        // but if they have the general activity view permission,
-        // then they can see all activity logs regardless of the item or target.
-        
-        if ((! Gate::allows('activity.view')) && (($targetClass && $request->filled('target_id')) || ($itemClass && $request->filled('item_id')))) {
+        // Per-row view authz applies when the caller is drilling into
+        // a specific record (item_id / target_id). Those paths only
+        // make sense with a single type, so take the first type for the
+        // view-authz find() call.
 
-            if ($targetClass && $request->filled('target_id')) {
-                $target = $targetClass::withTrashed()->find(request()->input('target_id'));
-                $this->authorize('view', $target ?? $targetClass);
+        if ((! Gate::allows('activity.view')) && (($targetClasses && $request->filled('target_id')) || ($itemClasses && $request->filled('item_id')))) {
+
+            // Authorize EVERY resolved type submitted.
+            if ($targetClasses && $request->filled('target_id')) {
+                foreach ($targetClasses as $targetClass) {
+                    $target = $targetClass::withTrashed()->find(request()->input('target_id'));
+                    $this->authorize('view', $target ?? $targetClass);
+                }
             }
 
-            if ($itemClass && $request->filled('item_id')) {
-                $item = $itemClass::withTrashed()->find(request()->input('item_id'));
-                $this->authorize('view', $item ?? $itemClass);
+            if ($itemClasses && $request->filled('item_id')) {
+                foreach ($itemClasses as $itemClass) {
+                    $item = $itemClass::withTrashed()->find(request()->input('item_id'));
+                    $this->authorize('view', $item ?? $itemClass);
+                }
             }
 
         } else {
@@ -77,20 +86,28 @@ class ReportsController extends Controller
 
         $actionlogs = Actionlog::with('item', 'user', 'adminuser', 'target', 'location');
 
-        if ($targetClass && $request->filled('target_id')) {
+        if ($targetClasses && $request->filled('target_id')) {
             $actionlogs = $actionlogs->where('target_id', '=', $request->input('target_id'))
-                ->where('target_type', '=', $targetClass);
+                ->whereIn('target_type', $targetClasses);
+        } elseif ($targetClasses) {
+            // Toolbar type-only filter (no specific id): narrow to all
+            // rows whose target is of any chosen class. #17288.
+            $actionlogs = $actionlogs->whereIn('target_type', $targetClasses);
         }
 
-        if ($itemClass && $request->filled('item_id')) {
-            $actionlogs = $actionlogs->where(function ($query) use ($request, $itemClass) {
+        if ($itemClasses && $request->filled('item_id')) {
+            $actionlogs = $actionlogs->where(function ($query) use ($request, $itemClasses) {
                 $query->where('item_id', '=', $request->input('item_id'))
-                    ->where('item_type', '=', $itemClass)
-                    ->orWhere(function ($query) use ($request, $itemClass) {
+                    ->whereIn('item_type', $itemClasses)
+                    ->orWhere(function ($query) use ($request, $itemClasses) {
                         $query->where('target_id', '=', $request->input('item_id'))
-                            ->where('target_type', '=', $itemClass);
+                            ->whereIn('target_type', $itemClasses);
                     });
             });
+        } elseif ($itemClasses) {
+            // Toolbar type-only filter (no specific id): narrow to all
+            // rows whose item is of any chosen class. #17288.
+            $actionlogs = $actionlogs->whereIn('item_type', $itemClasses);
         }
 
         // This invokes the Searchable model trait scopeTextSearch and will handle input by search or by advanced search filter
@@ -99,11 +116,21 @@ class ReportsController extends Controller
         }
 
         if ($request->filled('action_type')) {
-            $actionlogs = $actionlogs->where('action_type', '=', $request->input('action_type'));
+            $actionlogs = $actionlogs->whereIn('action_type', (array) $request->input('action_type'));
         }
 
         if ($request->filled('created_by')) {
-            $actionlogs = $actionlogs->where('created_by', '=', $request->input('created_by'));
+            $actionlogs = $actionlogs->whereIn('created_by', (array) $request->input('created_by'));
+        }
+
+        // Toolbar date range on action_logs.created_at. _from gates
+        // start-of-day inclusive, _to gates end-of-day inclusive by
+        // appending the day's last second. #17288.
+        if ($request->filled('created_at_from')) {
+            $actionlogs = $actionlogs->where('action_logs.created_at', '>=', $request->input('created_at_from').' 00:00:00');
+        }
+        if ($request->filled('created_at_to')) {
+            $actionlogs = $actionlogs->where('action_logs.created_at', '<=', $request->input('created_at_to').' 23:59:59');
         }
 
         if ($request->filled('action_source')) {
@@ -160,7 +187,25 @@ class ReportsController extends Controller
                 $actionlogs->OrderByAssetNextAuditDate($order);
                 break;
             case 'item':
-                $actionlogs->OrderByItemName($order);
+                // Three paths, cheapest first:
+                //   1. Audit report (action_type=audit) is asset-only
+                //      and uses the simple asset-name sort.
+                //   2. Toolbar type filter pins a single item_type, so
+                //      we only need to join that one table. Only applies
+                //      when exactly one type is selected (multi-select
+                //      sends an array).
+                //   3. Everything else is polymorphic across every
+                //      entity on the install and uses the per-type
+                //      COALESCE sort.
+                // #17288.
+                $actionTypeInput = (array) $request->input('action_type');
+                if (count($actionTypeInput) === 1 && $actionTypeInput[0] === 'audit') {
+                    $actionlogs->OrderByItemName($order);
+                } elseif ($itemClasses && count($itemClasses) === 1) {
+                    $actionlogs->OrderByFilteredItemName($itemClasses[0], $order);
+                } else {
+                    $actionlogs->OrderByPolymorphicItemName($order);
+                }
                 break;
             default:
                 $sort = in_array($request->input('sort'), $allowed_columns) ? e($request->input('sort')) : 'action_logs.created_at';
@@ -314,24 +359,38 @@ class ReportsController extends Controller
     /**
      * Match caller-supplied item_type / target_type input against the
      * activity-report allowlist and return the canonical class string.
-     * Delegates short-name → FQCN to Helper::normalizeFullModelName so
-     * this endpoint keeps accepting either shape (`asset` or
-     * `App\Models\Asset`), same as every other call site of that helper.
-     * The final match is case-insensitive against the allowlist to
-     * recover from normalizeFullModelName's ucwords() step, which
-     * mangles CamelCase names (`licenseseat` becomes the nonexistent
-     * App\Models\Licenseseat and would have fatal'd downstream).
-     * Null result means the caller should 400.
+     * Delegates to ActivityItemType::tryFromAny which accepts either
+     * shape (short name or FQCN) and recovers from the ucwords mangling
+     * that used to turn `assetmodel` into the nonexistent
+     * App\Models\Assetmodel. Null result means the caller should 400.
      */
     private function resolveActivityReportType(string $type): ?string
     {
-        $candidate = Helper::normalizeFullModelName($type);
-        foreach (self::getActivityReportClassAllowlist() as $allowed) {
-            if (strcasecmp($candidate, $allowed) === 0) {
-                return $allowed;
+        return \App\Enums\ActivityItemType::tryFromAny($type)?->class();
+    }
+
+    /**
+     * Resolve an array of caller-supplied type inputs to fully qualified
+     * class strings. Returns null if any input is invalid so the caller
+     * can 400 the whole request rather than silently dropping bad values.
+     *
+     * @param  array<int, mixed>  $inputs
+     * @return list<class-string>|null
+     */
+    private function resolveActivityReportTypes(array $inputs): ?array
+    {
+        $resolved = [];
+        foreach ($inputs as $input) {
+            if (! is_string($input) || $input === '') {
+                continue;
             }
+            $class = $this->resolveActivityReportType($input);
+            if ($class === null) {
+                return null;
+            }
+            $resolved[] = $class;
         }
 
-        return null;
+        return $resolved === [] ? null : array_values(array_unique($resolved));
     }
 }

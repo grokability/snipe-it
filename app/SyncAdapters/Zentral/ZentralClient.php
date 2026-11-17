@@ -2,6 +2,7 @@
 
 namespace App\SyncAdapters\Zentral;
 
+use App\SyncAdapters\Traits\RetriesTransientHttpErrors;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
@@ -19,6 +20,8 @@ use Illuminate\Support\Facades\Http;
  */
 class ZentralClient
 {
+    use RetriesTransientHttpErrors;
+
     public function __construct(
         private readonly string $baseUrl,
         private readonly string $token,
@@ -57,10 +60,12 @@ class ZentralClient
 
     private function request(): PendingRequest
     {
-        return Http::baseUrl(rtrim($this->baseUrl, '/'))
-            ->withOptions(['allow_redirects' => false])
-            ->withHeaders(['Authorization' => 'Token '.$this->token])
-            ->acceptJson()
-            ->timeout(30);
+        return $this->withTransientRetry(
+            Http::baseUrl(rtrim($this->baseUrl, '/'))
+                ->withOptions(['allow_redirects' => false])
+                ->withHeaders(['Authorization' => 'Token '.$this->token])
+                ->acceptJson()
+                ->timeout(30)
+        );
     }
 }

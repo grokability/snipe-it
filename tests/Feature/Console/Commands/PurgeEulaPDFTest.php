@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Console\Commands;
 
+use App\Enums\FileStorage;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
 use App\Models\Company;
@@ -13,6 +14,7 @@ class PurgeEulaPDFTest extends TestCase
 {
     public function test_only_purges_acceptances_for_deleted_users(): void
     {
+        $disk = Storage::fake();
         $intervalDate = now()->subDays(30);
 
         $company = Company::factory()->create();
@@ -41,8 +43,16 @@ class PurgeEulaPDFTest extends TestCase
             'updated_at' => $intervalDate->copy()->subDay(),
         ]);
 
+        $signaturePath = FileStorage::Signatures->privateStorageKey();
+        $eulaPath = FileStorage::EulaPdfs->privateStorageKey();
+
+        foreach ([$acceptanceToPurge, $acceptanceToKeep] as $acceptance) {
+            $disk->put($signaturePath.$acceptance->signature_filename, 'fake signature');
+            $disk->put($eulaPath.$acceptance->stored_eula_file, 'fake EULA');
+        }
+
         $this->artisan('snipeit:purge-eula-pdfs', [
-            '--older-than-days' => 0,
+            '--older-than-days' => 30,
             '--only-deleted-users' => true,
             '--force' => true,
         ])->assertExitCode(0);
@@ -53,7 +63,13 @@ class PurgeEulaPDFTest extends TestCase
 
         $this->assertDatabaseHas('checkout_acceptances', [
             'id' => $acceptanceToKeep->id,
+            'deleted_at' => null,
         ]);
+
+        $disk->assertMissing($signaturePath.$acceptanceToPurge->signature_filename);
+        $disk->assertMissing($eulaPath.$acceptanceToPurge->stored_eula_file);
+        $disk->assertExists($signaturePath.$acceptanceToKeep->signature_filename);
+        $disk->assertExists($eulaPath.$acceptanceToKeep->stored_eula_file);
     }
 
     public function test_only_purges_records_for_the_given_company(): void

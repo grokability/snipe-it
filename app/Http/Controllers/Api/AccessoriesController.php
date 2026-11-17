@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Events\CheckoutableCheckedIn;
 use App\Events\CheckoutableCheckedOut;
 use App\Helpers\Helper;
+use App\Http\Controllers\Accessories\BulkAccessoriesController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AccessoryCheckoutRequest;
 use App\Http\Requests\AdjustQuantityRequest;
@@ -25,6 +26,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 
 class AccessoriesController extends Controller
 {
@@ -80,6 +83,19 @@ class AccessoriesController extends Controller
         $accessories = Accessory::select('accessories.*')
             ->with('category', 'company', 'manufacturer', 'checkouts', 'location', 'defaultSupplier', 'adminuser', 'orderItems.order.supplier')
             ->withCount('checkouts as checkouts_count');
+
+        // Archived / soft-deleted scope.
+        switch ($request->input('status')) {
+            case 'Archived':
+                $accessories->archived();
+                break;
+            case 'Deleted':
+                $accessories->onlyTrashed();
+                break;
+            default:
+                $accessories->accessoriesForShow();
+                break;
+        }
 
         // This invokes the Searchable model trait scopeTextSearch and will handle input by search or by advanced search filter
         if ($request->filled('filter') || $request->filled('search')) {
@@ -265,7 +281,7 @@ class AccessoriesController extends Controller
      * @since [v4.0]
      *
      * @param  int  $id
-     * @return | array
+     * @return array<string, mixed>
      */
     public function checkedout(Request $request, $id)
     {
@@ -387,10 +403,19 @@ class AccessoriesController extends Controller
     {
         $this->authorize('delete', Accessory::class);
         $accessory = Accessory::withCount('checkouts as checkouts_count')->findOrFail($id);
-        $this->authorize($accessory);
+        $this->authorize('delete', $accessory);
 
-        if ($accessory->checkouts_count > 0) {
-            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/accessories/general.delete_disabled')));
+        // Mirror the web + bulk paths. Active checkouts block destroy
+        // the same way they block archive.
+        if (! $accessory->isDeletable()) {
+            return response()->json(Helper::formatStandardApiResponse(
+                'error',
+                null,
+                trans('general.bulk_delete_associations.assoc_checkouts_no_count', [
+                    'item_name' => $accessory->name,
+                    'item' => trans('general.accessory'),
+                ]),
+            ), 422);
         }
 
         $accessory->delete();
@@ -399,12 +424,251 @@ class AccessoriesController extends Controller
     }
 
     /**
+     * Restore a soft-deleted accessory. API parity for the web
+     * AccessoriesController::postRestore endpoint.
+     */
+    public function restore($id): JsonResponse
+    {
+        $this->authorize('delete', Accessory::class);
+        $accessory = Accessory::withTrashed()->findOrFail($id);
+        $this->authorize('delete', $accessory);
+
+        if ($accessory->deleted_at === null) {
+            return response()->json(Helper::formatStandardApiResponse(
+                'error',
+                null,
+                trans('general.not_deleted', ['item_type' => trans('general.accessory')]),
+            ), 422);
+        }
+
+        if (! $accessory->restore()) {
+            return response()->json(Helper::formatStandardApiResponse(
+                'error',
+                null,
+                trans('general.could_not_restore', ['item_type' => trans('general.accessory'), 'error' => $accessory->getErrors()->first()]),
+            ), 422);
+        }
+
+        return response()->json(Helper::formatStandardApiResponse(
+            'success',
+            null,
+            trans('admin/accessories/message.restore.success'),
+        ));
+    }
+
+    /**
+     * Flip archived off. API parity for the web
+     * AccessoriesController::postUnarchive endpoint.
+     */
+    public function unarchive(Accessory $accessory): JsonResponse
+    {
+        $this->authorize('update', $accessory);
+
+        if (! $accessory->archived) {
+            return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/accessories/message.update.success')));
+        }
+
+        $accessory->archived = false;
+        if (! $accessory->save()) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, $accessory->getErrors()), 422);
+        }
+
+        return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/accessories/message.update.success')));
+    }
+
+    /**
+     * Bulk edit. Mirror of BulkAccessoriesController::update.
+     * Returns JSON instead of a flash redirect, otherwise identical
+     * semantics: writes only non-blank fields, routes company_id
+     * through FMCS, supports null_{field}=1 opt-in null-outs, per-row
+     * Gate check, surfaces partial-success detail in the payload.
+     */
+    public function bulkEdit(Request $request): JsonResponse
+    {
+        $this->authorize('update', Accessory::class);
+
+        if (! $request->filled('ids')) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/accessories/message.bulk.no_accessories_selected')), 422);
+        }
+
+        // Only a superuser may null the company_id in bulk. For non-
+        // superusers, Company::getIdForCurrentUser() in the single-item
+        // update path coerces a null submission back to the actor's own
+        // company and never allows the field to be cleared. The bulk
+        // null-out loop below unconditionally wipes company_id AFTER the
+        // FMCS validation runs, so this gate has to come up front.
+        if ($request->boolean('null_company_id') && ! auth()->user()->isSuperUser()) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.insufficient_permissions')), 422);
+        }
+
+        $accessories = Accessory::whereIn('id', $request->input('ids'))->get();
+        if ($accessories->isEmpty()) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/accessories/message.bulk.no_accessories_selected')), 422);
+        }
+
+        $updateData = [];
+        foreach (BulkAccessoriesController::EDITABLE_FIELDS as $field) {
+            if (! $request->has($field)) {
+                continue;
+            }
+            $value = $request->input($field);
+            if ($value === '' || $value === null) {
+                continue;
+            }
+            $updateData[$field] = $value;
+        }
+
+        if (array_key_exists('company_id', $updateData)) {
+            try {
+                $updateData['company_id'] = Company::getIdForCurrentUser($updateData['company_id']);
+            } catch (ValidationException $e) {
+                return response()->json(Helper::formatStandardApiResponse('error', null, $e->errors()), 422);
+            }
+        }
+
+        foreach (['category_id', 'company_id', 'manufacturer_id', 'location_id', 'default_supplier_id', 'min_amt'] as $field) {
+            if ($request->boolean('null_'.$field)) {
+                if ($field === 'category_id') {
+                    continue;
+                }
+                $updateData[$field] = null;
+            }
+        }
+
+        if (empty($updateData)) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/accessories/message.bulk.no_fields_updated')), 422);
+        }
+
+        $authorized = $accessories->filter(fn (Accessory $a) => Gate::allows('update', $a));
+        $skipped = $accessories->count() - $authorized->count();
+
+        $updated = 0;
+        $failed_rows = [];
+        foreach ($authorized as $accessory) {
+            $accessory->fill($updateData);
+            if ($accessory->save()) {
+                $updated++;
+
+                continue;
+            }
+            $failed_rows[] = $accessory->name.': '.$accessory->getErrors()->first();
+        }
+
+        $failed = count($failed_rows);
+        $payload = ['updated' => $updated, 'skipped_unauthorized' => $skipped, 'failed_rows' => $failed_rows];
+
+        if ($updated === 0 && $failed > 0) {
+            return response()->json(Helper::formatStandardApiResponse(
+                'error',
+                $payload,
+                trans_choice('admin/accessories/message.bulk.update.none_updated', $failed, ['count' => $failed]),
+            ), 422);
+        }
+
+        return response()->json(Helper::formatStandardApiResponse(
+            'success',
+            $payload,
+            trans_choice('admin/accessories/message.bulk.update.success', $updated, ['count' => $updated]),
+        ));
+    }
+
+    /**
+     * Bulk soft-delete. Per-row isDeletable + Gate check mirror the
+     * web controller.
+     */
+    public function bulkDestroy(Request $request): JsonResponse
+    {
+        $this->authorize('delete', Accessory::class);
+
+        $errors = [];
+        $success_count = 0;
+
+        foreach ((array) $request->input('ids', []) as $id) {
+            $accessory = Accessory::find($id);
+            if (is_null($accessory)) {
+                $errors[] = trans('admin/accessories/message.does_not_exist', ['id' => $id]);
+
+                continue;
+            }
+
+            if (! Gate::allows('delete', $accessory)) {
+                $errors[] = trans('general.unauthorized');
+
+                continue;
+            }
+
+            $accessory->loadCount('checkouts as checkouts_count');
+            if (! $accessory->isDeletable()) {
+                $errors[] = trans('general.bulk_delete_associations.assoc_checkouts_no_count', [
+                    'item_name' => $accessory->name,
+                    'item' => trans('general.accessory'),
+                ]);
+
+                continue;
+            }
+
+            $accessory->delete();
+            $success_count++;
+        }
+
+        $payload = ['deleted' => $success_count, 'errors' => $errors];
+        $message = $success_count > 0
+            ? trans_choice('admin/accessories/message.delete.bulk_success', $success_count, ['count' => $success_count])
+            : trans('admin/accessories/message.bulk.no_accessories_selected');
+
+        return response()->json(
+            Helper::formatStandardApiResponse($success_count > 0 ? 'success' : 'error', $payload, $message),
+            $success_count > 0 ? 200 : 422,
+        );
+    }
+
+    /**
+     * Bulk restore. Already-live rows are skipped without erroring so
+     * a stale selection doesn't blow up the whole batch.
+     */
+    public function bulkRestore(Request $request): JsonResponse
+    {
+        $this->authorize('delete', Accessory::class);
+
+        $ids = (array) $request->input('ids', []);
+        if ($ids === []) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/accessories/message.bulk.no_accessories_selected')), 422);
+        }
+
+        $accessories = Accessory::withTrashed()->whereIn('id', $ids)->get();
+
+        $restored = 0;
+        $errors = [];
+
+        foreach ($accessories as $accessory) {
+            if (! Gate::allows('delete', $accessory)) {
+                $errors[] = trans('general.unauthorized');
+
+                continue;
+            }
+
+            if ($accessory->deleted_at === null) {
+                continue;
+            }
+
+            if ($accessory->restore()) {
+                $restored++;
+            }
+        }
+
+        return response()->json(Helper::formatStandardApiResponse(
+            $restored > 0 ? 'success' : 'error',
+            ['restored' => $restored, 'errors' => $errors],
+            trans_choice('admin/accessories/message.bulk.restore.success', $restored, ['count' => $restored]),
+        ), $restored > 0 ? 200 : 422);
+    }
+
+    /**
      * Save the Accessory checkout information.
      *
      * If Slack is enabled and/or asset acceptance is enabled, it will also
      * trigger a Slack message and send an email.
      *
-     * @param  int  $accessoryId
      * @return JsonResponse
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
@@ -485,7 +749,6 @@ class AccessoriesController extends Controller
      * Check in the item so that it can be checked out again to someone else
      *
      * @param  int  $accessoryUserId
-     * @param  string  $backto
      * @return JsonResponse
      *
      * @uses Accessory::checkin_email() to determine if an email can and should be sent
@@ -566,12 +829,18 @@ class AccessoriesController extends Controller
      */
     public function requestable(Request $request): array
     {
+        $this->authorize('viewRequestable', Accessory::class);
+
         $query = Accessory::with('category', 'location', 'company', 'manufacturer', 'requests')
             ->withCount('checkouts as checkouts_count')
             ->Requestable();
 
         if ($request->filled('search')) {
-            $query->TextSearch($request->input('search'));
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('accessories.name', 'LIKE', '%'.$search.'%')
+                    ->orWhere('accessories.model_number', 'LIKE', '%'.$search.'%');
+            });
         }
 
         $total = $query->count();

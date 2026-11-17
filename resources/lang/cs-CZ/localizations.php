@@ -70,6 +70,7 @@ return [
     ],
 
     'select_country' => 'Vyberte zemi',
+    'select_currency' => 'Select a currency',
 
     'countries' => [
         'AC' => 'Ostrov Ascension',

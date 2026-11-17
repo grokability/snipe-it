@@ -4,11 +4,18 @@ namespace Tests\Feature\Importing\Ui;
 
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ImportTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Storage::fake();
+    }
+
     public function test_page_renders()
     {
         $this->actingAs(User::factory()->superuser()->create())

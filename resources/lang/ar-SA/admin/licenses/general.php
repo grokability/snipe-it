@@ -14,7 +14,7 @@ return [
     'info' => 'معلومات الترخيص',
     'license_seats' => 'مقاعد الترخيص',
     'seat' => 'مقعد',
-    'seat_count' => 'Seat :count',
+    'seat_count' => 'وحدة الترخيص :count',
     'seats' => 'مقاعد',
     'software_licenses' => 'تراخيص البرامج',
     'user' => 'مستخدم',
@@ -23,17 +23,17 @@ return [
     'bulk' => [
         'checkin_all' => [
             'button' => 'ادخل جميع المقاعد',
-            'modal' => 'This action will checkin one seat. | This action will checkin all :checkedout_seats_count seats for this license.',
+            'modal' => 'سيؤدي هذا الإجراء إلى إرجاع وحدة ترخيص واحدة. | سيؤدي هذا الإجراء إلى إرجاع جميع وحدات الترخيص البالغ عددها :checkedout_seats_count لهذا الترخيص.',
             'enabled_tooltip' => 'تسجيل جميع مقاعد هذا الترخيص من كل من المستخدمين والأصول',
             'disabled_tooltip' => 'تم تعطيل هذا لأنه لا توجد مقاعد حاليا',
             'disabled_tooltip_reassignable' => 'هذا معطل لأن الترخيص غير قابل لإعادة التعيين',
             'success' => 'تم تسجيل الترخيص بنجاح! <unk> تم تسجيل جميع التراخيص بنجاح!',
-            'log_msg' => 'Checked in via bulk license checkin in license GUI',
+            'log_msg' => 'تم الإرجاع عبر الإرجاع الجماعي للتراخيص في واجهة المستخدم الرسومية للترخيص',
         ],
 
         'checkin_selected' => [
-            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
-            'no_seats_selected' => 'No seats were selected.',
+            'success' => 'تم إرجاع وحدة ترخيص واحدة بنجاح. | تم إرجاع :count وحدات ترخيص بنجاح.',
+            'no_seats_selected' => 'لم يتم تحديد أي وحدات ترخيص.',
         ],
 
         'checkout_all' => [
@@ -50,8 +50,8 @@ return [
         ],
 
         'delete_with_checkin' => [
-            'label' => 'Check in seats and delete',
-            'log_msg' => 'Checked in via bulk delete-with-checkin in license index',
+            'label' => 'إرجاع وحدات الترخيص وحذفها',
+            'log_msg' => 'تم الإرجاع عبر الحذف الجماعي مع الإرجاع في صفحة فهرس التراخيص',
         ],
     ],
 

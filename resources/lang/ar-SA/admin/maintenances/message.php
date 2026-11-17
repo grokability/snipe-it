@@ -19,10 +19,10 @@ return [
     'warranty' => 'الضمان',
     'not_warranty' => 'لا يوجد ضمان',
     'complete' => [
-        'confirm' => 'Are you sure you want to mark this maintenance as complete? This cannot be undone.',
-        'success' => 'Maintenance marked as complete.',
-        'error' => 'There was an issue marking this maintenance as complete. Please try again.',
+        'confirm' => 'هل أنت متأكد من أنك تريد وضع علامة على هذه الصيانة كمكتملة؟ لا يمكن التراجع عن ذلك.',
+        'success' => 'تم وضع علامة على الصيانة كمكتملة.',
+        'error' => 'حدثت مشكلة في وضع علامة على اكتمال هذه الصيانة. الرجاء المحاولة مرة أخرى.',
     ],
-    'bulk_delete' => 'No maintenance records were deleted (:skipped skipped).|Deleted :count maintenance record. (:skipped skipped)|Deleted :count maintenance records. (:skipped skipped)',
-    'bulk_complete' => 'No maintenance records were marked complete (:skipped skipped or already complete).|Marked :count maintenance record complete. (:skipped skipped or already complete)|Marked :count maintenance records complete. (:skipped skipped or already complete)',
+    'bulk_delete' => 'لم يتم حذف أي سجلات صيانة (:skipped تم تخطيها).|تم حذف سجل صيانة واحد. (:skipped تم تخطيها)|تم حذف :count سجلات صيانة. (:skipped تم تخطيها)',
+    'bulk_complete' => 'لم يتم وضع علامة مكتملة على أي سجلات صيانة (:skipped تم تخطيها أو مكتملة مسبقًا).|تم وضع علامة مكتملة على سجل صيانة واحد. (:skipped تم تخطيها أو مكتملة مسبقًا)|تم وضع علامة مكتملة على :count سجلات صيانة. (:skipped تم تخطيها أو مكتملة مسبقًا)',
 ];

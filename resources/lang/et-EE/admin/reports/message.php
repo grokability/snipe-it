@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'about_templates' => 'About Saved Templates',
-    'saving_templates_description' => 'Select your options, then enter the name of your template in the box above and click the \'Save Template\' button. Use the dropdown to select a previously saved template.',
+    'about_templates' => 'Salvestatud mallide teave',
+    'saving_templates_description' => 'Määra valikud, sisesta ülalolevale väljale malli nimi ja klõpsa nuppu „Salvesta mall”. Varem salvestatud malli valimiseks kasuta rippmenüüd.',
     'create' => [
-        'success' => 'Template saved successfully',
+        'success' => 'Malli salvestamine õnnestus',
     ],
     'update' => [
-        'success' => 'Template updated successfully',
+        'success' => 'Malli uuendamine õnnestus',
     ],
     'delete' => [
-        'success' => 'Template deleted',
-        'no_delete_permission' => 'Template does not exist or you do not have permission to delete it.',
+        'success' => 'Mall kustutatud',
+        'no_delete_permission' => 'Malli pole olemas või sul puudub õigus seda kustutada.',
     ],
 ];

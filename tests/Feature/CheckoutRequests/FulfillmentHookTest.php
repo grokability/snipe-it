@@ -12,10 +12,11 @@ use App\Models\Consumable;
 use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 /**
- * FulfillCheckoutRequestListener closes the fulfillment loop when a
+ * CheckoutableCheckedOutLogCheckout closes the fulfillment loop when a
  * checkout event fires. Runs for every checkoutable type via the
  * shared CheckoutableCheckedOut event, so each polymorphic case
  * gets its own assertion here.
@@ -73,6 +74,48 @@ class FulfillmentHookTest extends TestCase
         event(new CheckoutableCheckedOut($consumable, $user, User::factory()->create(), null));
 
         $this->assertSame(CheckoutRequestState::Fulfilled, $request->fresh()->state);
+    }
+
+    public function test_checkout_links_current_log_and_fulfills_only_event_quantity(): void
+    {
+        Mail::fake();
+
+        $user = User::factory()->create();
+        $actor = User::factory()->create();
+        $accessory = Accessory::factory()->create();
+
+        event(new CheckoutableCheckedOut($accessory, $user, $actor, 'Previous checkout'));
+
+        $request = CheckoutRequest::factory()->create([
+            'user_id' => $user->id,
+            'requestable_id' => $accessory->id,
+            'requestable_type' => Accessory::class,
+            'quantity' => 3,
+        ]);
+
+        event(new CheckoutableCheckedOut($accessory, $user, $actor, 'Current checkout', [], 1));
+
+        $request->refresh();
+
+        $this->assertSame(CheckoutRequestState::Pending, $request->state);
+        $this->assertSame(1, $request->fulfilled_quantity);
+
+        event(new CheckoutableCheckedOut($accessory, $user, $actor, 'Completing checkout', [], 2));
+
+        $request->refresh();
+
+        $this->assertSame(CheckoutRequestState::Fulfilled, $request->state);
+        $this->assertSame(3, $request->fulfilled_quantity);
+        $this->assertNotNull($request->checkout_actionlog_id);
+        $this->assertDatabaseHas('action_logs', [
+            'id' => $request->checkout_actionlog_id,
+            'action_type' => 'checkout',
+            'item_type' => Accessory::class,
+            'item_id' => $accessory->id,
+            'target_type' => User::class,
+            'target_id' => $user->id,
+            'note' => 'Completing checkout',
+        ]);
     }
 
     public function test_checkout_fulfills_matching_open_component_request(): void

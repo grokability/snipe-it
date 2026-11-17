@@ -63,7 +63,7 @@ class LocationPresenter extends Presenter
             ], [
                 'field' => 'parent',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/locations/table.parent'),
@@ -258,7 +258,7 @@ class LocationPresenter extends Presenter
             ], [
                 'field' => 'manager',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/users/table.manager'),

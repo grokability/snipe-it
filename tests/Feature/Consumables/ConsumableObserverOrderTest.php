@@ -13,8 +13,8 @@ use App\Models\User;
 use Tests\TestCase;
 
 /**
- * ConsumableObserver::created writes an initial Order + OrderItem for
- * every new consumable. The paired `create` action_log entry links
+ * HasOrders writes an initial Order + OrderItem for a stocked consumable.
+ * Loggable writes the paired `create` action_log entry, linked
  * back to that OrderItem via order_item_id.
  */
 class ConsumableObserverOrderTest extends TestCase

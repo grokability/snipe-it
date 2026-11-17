@@ -38,4 +38,15 @@ class AssetModelPolicy extends SnipePermissionsPolicy
     {
         return $user->hasAccess($this->columnName().'.files');
     }
+
+    /**
+     * Gates /api/v1/account/requestable/models. Reuses the existing
+     * `assets.view.requestable` permission so the five requestable
+     * endpoints share one consistent gate. This is a bit of a hack,
+     * but it works and avoids creating a new permission just for this one endpoint.
+     */
+    public function viewRequestable(User $user, $item = null)
+    {
+        return $user->hasAccess('assets.view.requestable');
+    }
 }

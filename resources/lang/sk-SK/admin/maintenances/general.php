@@ -2,11 +2,11 @@
 
 return [
     'asset_maintenances' => 'Záznamy o údržbe majetku', // not used anymore
-    'maintenances' => 'Opravy',
+    'maintenances' => 'Údržby',
     'create' => 'Vytvoriť záznam o údržbe majetku',
     'edit' => 'Upraviť záznam o údržbe majetku',
     'delete' => 'Odstrániť záznam o údržbe majetku',
-    'view' => 'Zobraziž podrobnosti o údržbe majetku',
+    'view' => 'Zobraziť podrobnosti o údržbe majetku',
     'repair' => 'Oprava',
     'maintenance' => 'Údržba',
     'upgrade' => 'Upgrade',
@@ -15,10 +15,10 @@ return [
     'hardware_support' => 'Hardvérová podpora',
     'configuration_change' => 'Zmena konfigurácie',
     'pat_test' => 'PAT test',
-    'checked_out_to_help' => 'The user, etc that the asset was checked out to at the time of maintenance creation. This is for historical reference and does not affect the current checkout status of the asset.',
-    'show_completed' => 'Show Completed',
-    'show_active' => 'Show Active',
-    'due' => 'Due',
-    'overdue' => 'Overdue',
-    'completed' => 'Completed',
+    'checked_out_to_help' => 'Používateľ a pod., ktorému bol majetok odovzdaný v čase vytvorenia údržby. Slúži ako historický údaj a nemá vplyv na aktuálny stav odovzdania majetku.',
+    'show_completed' => 'Zobraziť dokončené',
+    'show_active' => 'Zobraziť aktívne',
+    'due' => 'Splatné',
+    'overdue' => 'Po termíne',
+    'completed' => 'Dokončené',
 ];

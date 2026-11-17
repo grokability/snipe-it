@@ -55,20 +55,20 @@ class ManufacturersController extends Controller
         ];
 
         $manufacturers = Manufacturer::select([
-            'id',
-            'name',
-            'url',
-            'support_url',
-            'warranty_lookup_url',
-            'support_email',
-            'support_phone',
-            'created_by',
-            'created_at',
-            'updated_at',
-            'image',
-            'deleted_at',
-            'tag_color',
-            'notes',
+            'manufacturers.id',
+            'manufacturers.name',
+            'manufacturers.url',
+            'manufacturers.support_url',
+            'manufacturers.warranty_lookup_url',
+            'manufacturers.support_email',
+            'manufacturers.support_phone',
+            'manufacturers.created_by',
+            'manufacturers.created_at',
+            'manufacturers.updated_at',
+            'manufacturers.image',
+            'manufacturers.deleted_at',
+            'manufacturers.tag_color',
+            'manufacturers.notes',
         ])
             ->with('adminuser')
             ->withCount('assets as assets_count')
@@ -208,8 +208,6 @@ class ManufacturersController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @since [v4.0]
-     *
-     * @param  int  $id
      */
     public function destroy(Manufacturer $manufacturer): JsonResponse
     {

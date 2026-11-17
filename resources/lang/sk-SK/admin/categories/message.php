@@ -21,15 +21,15 @@ return [
         'confirm' => 'Ste si istý, že chceete odstrániť túto kategóriu?',
         'error' => 'Pri odstraňovaní kategórie sa vyskytla chyba. Skúste prosím znovu.',
         'success' => 'Kategória bola úspešne odstránená.',
-        'bulk_success' => 'Category deleted successfully.|:count categories were deleted successfully.',
+        'bulk_success' => 'Kategória bola úspešne odstránená.|:count kategórií bolo úspešne odstránených.',
         'partial_success' => 'Kategória bola úspešne odstránená. Podrobné informácie nižšie. | :count kategórií bolo úspešne odstránených. Podrobné informácie nižšie.',
     ],
 
     'bulkedit' => [
-        'warn' => 'You are about to edit the properties of the following category:|You are about to edit the properties of the following :count categories:',
-        'no_selection' => 'You must select at least one category to edit.',
+        'warn' => 'Chystáte sa upraviť vlastnosti nasledujúcej kategórie:|Chystáte sa upraviť vlastnosti nasledujúcich :count kategórií:',
+        'no_selection' => 'Musíte vybrať aspoň jednu kategóriu na úpravu.',
         'no_changes' => 'Neboli zmenené žiadne polia, preto nebolo nič aktualizované.',
-        'success' => 'Category successfully updated.|:count categories successfully updated.',
+        'success' => 'Kategória bola úspešne aktualizovaná.|:count kategórií bolo úspešne aktualizovaných.',
     ],
 
 ];

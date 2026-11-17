@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\FileStorage;
+use App\Models\Builders\ComponentQueryBuilder;
+use App\Models\Contracts\Importable;
 use App\Models\Traits\Acceptable;
 use App\Models\Traits\AdjustsQuantity;
 use App\Models\Traits\CompanyableTrait;
@@ -13,13 +15,13 @@ use App\Models\Traits\Requestable;
 use App\Models\Traits\Searchable;
 use App\Presenters\ComponentPresenter;
 use App\Presenters\Presentable;
+use App\Rules\RequestableArchivedMutex;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -29,8 +31,10 @@ use Watson\Validating\ValidatingTrait;
  * Model for Components.
  *
  * @version v1.0
+ *
+ * @mixin IdeHelperComponent
  */
-class Component extends SnipeModel
+class Component extends SnipeModel implements Importable
 {
     use HasFactory;
 
@@ -48,6 +52,7 @@ class Component extends SnipeModel
     protected $casts = [
         'purchase_date' => 'datetime',
         'requestable' => 'boolean',
+        'archived' => 'boolean',
     ];
 
     protected $table = 'components';
@@ -68,8 +73,30 @@ class Component extends SnipeModel
         'manufacturer_id' => 'integer|exists:manufacturers,id|nullable',
         'default_supplier_id' => 'nullable|integer|exists:suppliers,id',
         'default_purchase_cost' => 'numeric|nullable|gte:0|max:99999999999999999.99',
-        'requestable' => 'nullable|boolean',
+        'requestable' => ['nullable', 'boolean'],
+        'archived' => ['nullable', 'boolean'],
     ];
+
+    /**
+     * PHP 8.2 blocks `new X` in property defaults, so the rule object
+     * gets spliced in here rather than in $rules above.
+     */
+    public function getRules(): array
+    {
+        $rules = $this->rules ?? [];
+        $mutex = new RequestableArchivedMutex;
+
+        $noArchivingWithCheckouts = function (string $attribute, mixed $value, \Closure $fail): void {
+            if (filter_var($value, FILTER_VALIDATE_BOOLEAN) && $this->exists && $this->numCheckedOut() > 0) {
+                $fail(trans('general.archived_blocked_by_checkouts', ['item_type' => trans('general.component')]));
+            }
+        };
+
+        $rules['requestable'] = array_merge((array) ($rules['requestable'] ?? []), [$mutex]);
+        $rules['archived'] = array_merge((array) ($rules['archived'] ?? []), [$mutex, $noArchivingWithCheckouts]);
+
+        return $rules;
+    }
 
     /**
      * Whether the model should inject it's identifier to the unique
@@ -105,6 +132,7 @@ class Component extends SnipeModel
         'default_supplier_id',
         'default_purchase_cost',
         'requestable',
+        'archived',
     ];
 
     use Searchable;
@@ -130,7 +158,7 @@ class Component extends SnipeModel
         'category' => ['name'],
         'company' => ['name'],
         'location' => ['name'],
-        // Search by the parent's "typical supplier" template — see the
+        // Search by the parent's "typical supplier" template. See the
         // Accessory model for the rationale.
         'defaultSupplier' => ['name'],
         'manufacturer' => ['name'],
@@ -141,6 +169,211 @@ class Component extends SnipeModel
         'orders' => ['order_number'],
     ];
 
+    /**
+     * Advanced-search filterable fields. Same as
+     * Accessory::filterableFields, EXCEPT:
+     * remaining uses SUM(components_assets.assigned_qty) rather than
+     * COUNT(pivot) because each checkout row carries a quantity, so
+     * the "checked out" number is a sum of assigned_qty.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'company',
+                'type' => 'fk',
+                'column' => 'company_id',
+                'endpoint' => 'companies',
+                'label' => trans('admin/companies/table.title'),
+            ],
+            [
+                'field' => 'category',
+                'type' => 'fk',
+                'column' => 'category_id',
+                'endpoint' => 'categories/component',
+                'label' => trans('general.category'),
+            ],
+            [
+                'field' => 'manufacturer',
+                'type' => 'fk',
+                'column' => 'manufacturer_id',
+                'endpoint' => 'manufacturers',
+                'label' => trans('general.manufacturer'),
+            ],
+            [
+                'field' => 'supplier',
+                'type' => 'fk',
+                'column' => 'default_supplier_id',
+                'endpoint' => 'suppliers',
+                'label' => trans('general.supplier'),
+            ],
+            [
+                'field' => 'location',
+                'type' => 'fk',
+                'column' => 'location_id',
+                'endpoint' => 'locations',
+                'label' => trans('general.location'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'requestable',
+                'type' => 'boolean',
+                'label' => trans('admin/hardware/general.requestable'),
+            ],
+            [
+                'field' => 'qty',
+                'type' => 'numeric',
+                'label' => trans('admin/accessories/general.total'),
+            ],
+            [
+                'field' => 'min_amt',
+                'type' => 'numeric',
+                'label' => trans('general.min_amt'),
+            ],
+            [
+                'field' => 'remaining',
+                'type' => 'numeric',
+                'label' => trans('admin/accessories/general.remaining'),
+            ],
+            [
+                'field' => 'purchase_cost',
+                'type' => 'numeric',
+                'label' => trans('general.last_unit_cost'),
+            ],
+            [
+                'field' => 'purchase_date',
+                'type' => 'date-range',
+                'label' => trans('general.last_purchase_date'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
+
+    /**
+     * Override hook from Searchable Trait. purchase_date / purchase_cost
+     * route through correlated subqueries on OrderItem (via the
+     * HasOrders polymorphic pivot). remaining uses
+     * SUM(components_assets.assigned_qty) to match the
+     * numCheckedOut uses on this model. Default list queries never
+     * pay the subquery cost. Only runs when a matching filter key
+     * is on the request.
+     */
+    protected function applyCustomFilter(\Illuminate\Database\Eloquent\Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?\Illuminate\Database\Eloquent\Builder
+    {
+        if ($filterKey === 'purchase_date') {
+            if (! preg_match('/^(\d{4}-\d{2}-\d{2})?\.\.(\d{4}-\d{2}-\d{2})?$/', trim($filterValue), $m)) {
+                return null;
+            }
+            $start = $m[1] !== '' ? $m[1] : null;
+            $end = $m[2] !== '' ? $m[2] : null;
+            if ($start === null && $end === null) {
+                return null;
+            }
+
+            $lastDateSub = \App\Models\OrderItem::query()
+                ->join('orders', 'orders.id', '=', 'order_items.order_id')
+                ->whereColumn('order_items.item_id', 'components.id')
+                ->where('order_items.item_type', static::class)
+                ->orderByDesc('order_items.id')
+                ->limit(1)
+                ->select('orders.purchase_date');
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($lastDateSub, $start, $end) {
+                if ($start !== null && $end !== null) {
+                    $nested->whereBetween($lastDateSub, [$start, $end]);
+                } elseif ($start !== null) {
+                    $nested->where($lastDateSub, '>=', $start);
+                } elseif ($end !== null) {
+                    $nested->where($lastDateSub, '<=', $end);
+                }
+            });
+
+            return $query;
+        }
+
+        if ($filterKey === 'remaining') {
+            $bounds = $this->parseGtLtBounds($filterValue);
+            if ($bounds === null) {
+                return null;
+            }
+            [$gt, $lt] = $bounds;
+
+            // Component checkout is SUM(assigned_qty), not COUNT, so
+            // each pivot row can represent multiple units checked out
+            // to one asset. COALESCE to 0 for components with no
+            // pivot rows (SUM returns NULL).
+            $checkoutSumSub = \Illuminate\Support\Facades\DB::table('components_assets')
+                ->whereColumn('components_assets.component_id', 'components.id')
+                ->selectRaw('COALESCE(SUM(components_assets.assigned_qty), 0)');
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($checkoutSumSub, $gt, $lt) {
+                [$sumSql, $sumBindings] = [$checkoutSumSub->toSql(), $checkoutSumSub->getBindings()];
+                if ($gt !== null) {
+                    $nested->whereRaw(
+                        "(components.qty - ({$sumSql})) > ?",
+                        array_merge($sumBindings, [$gt])
+                    );
+                }
+                if ($lt !== null) {
+                    $nested->whereRaw(
+                        "(components.qty - ({$sumSql})) < ?",
+                        array_merge($sumBindings, [$lt])
+                    );
+                }
+            });
+
+            return $query;
+        }
+
+        if ($filterKey === 'purchase_cost') {
+            $bounds = $this->parseGtLtBounds($filterValue);
+            if ($bounds === null) {
+                return null;
+            }
+            [$gt, $lt] = $bounds;
+
+            $lastCostSub = \App\Models\OrderItem::query()
+                ->whereColumn('order_items.item_id', 'components.id')
+                ->where('order_items.item_type', static::class)
+                ->orderByDesc('order_items.id')
+                ->limit(1)
+                ->select('order_items.price');
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($lastCostSub, $gt, $lt) {
+                if ($gt !== null) {
+                    $nested->where($lastCostSub, '>', $gt);
+                }
+                if ($lt !== null) {
+                    $nested->where($lastCostSub, '<', $lt);
+                }
+            });
+
+            return $query;
+        }
+
+        return null;
+    }
+
     public static function booted()
     {
         static::saving(function ($model) {
@@ -150,6 +383,16 @@ class Component extends SnipeModel
             // aware of. During a save, the quantity may have changed or other aspects may have changed, so
             // "invalidating the 'cache'" seems like a fair choice here.
             unset($model->sum_unconstrained_assets);
+        });
+
+        // Archive-time request cleanup. SaveQuietly so the component update doesn't trigger a cascade of
+        // request updates and emails. The component is already archived, so the requests are now invalid.
+        static::updated(function (self $component): void {
+            if (! $component->wasChanged('archived') || ! $component->archived) {
+                return;
+            }
+
+            $component->openRequests()->get()->each(fn (CheckoutRequest $request) => $request->cancelAndSync());
         });
 
         // On hard-delete, wipe the image file and Files-tab attachments.
@@ -189,7 +432,15 @@ class Component extends SnipeModel
     /**
      * Normalize the requestable form input so an empty string from an
      * unchecked checkbox lands as false rather than a truthy "0" cast
-     * (matches Accessory / Consumable setRequestableAttribute).
+     * (matches Accessory / Consumable).
+     *
+     * Kept as the legacy magic-method form rather than the Attribute
+     * accessor used by `archived()` below: Requestable() is also a
+     * query scope on the ComponentQueryBuilder, and callers like
+     * `Component::Requestable()->count()` resolve to this method via
+     * Model::__callStatic. An `Attribute`-returning method shadows
+     * that forwarder and crashes with "Call to undefined method
+     * Attribute::count()".
      */
     public function setRequestableAttribute($value)
     {
@@ -200,15 +451,13 @@ class Component extends SnipeModel
     }
 
     /**
-     * Scope query to only requestable components. FMCS + location
-     * scoping falls out of the CompanyableTrait global scope, so the
-     * usual "user only sees rows in their reachable companies" rule
-     * applies without any additional wrapping here (matches the
-     * Accessory scope's shape and rationale).
+     * @return Attribute<bool, mixed>
      */
-    public function scopeRequestable($query)
+    protected function archived(): Attribute
     {
-        return $query->where('components.requestable', '1');
+        return Attribute::make(
+            set: fn ($value) => filter_var($value === '' ? null : $value, FILTER_VALIDATE_BOOLEAN),
+        );
     }
 
     /**
@@ -231,10 +480,8 @@ class Component extends SnipeModel
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @since  [v3.0]
-     *
-     * @return Relation
      */
-    public function assets()
+    public function assets(): BelongsToMany
     {
         return $this->belongsToMany(Asset::class, 'components_assets')->withPivot('id', 'assigned_qty', 'created_at', 'created_by', 'note');
     }
@@ -504,110 +751,8 @@ class Component extends SnipeModel
         $this->attributes['qty'] = (! $value) ? 0 : intval($value);
     }
 
-    /**
-     * -----------------------------------------------
-     * BEGIN QUERY SCOPES
-     * -----------------------------------------------
-     **/
-
-    /**
-     * Query builder scope to order on company
-     *
-     * @param  Builder  $query  Query builder instance
-     * @param  string  $order  Order
-     * @return Builder Modified query builder
-     */
-    public function scopeOrderCategory($query, $order)
+    public function newEloquentBuilder($query): ComponentQueryBuilder
     {
-        return $query->join('categories', 'components.category_id', '=', 'categories.id')->orderBy('categories.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on company
-     *
-     * @param  Builder  $query  Query builder instance
-     * @param  string  $order  Order
-     * @return Builder Modified query builder
-     */
-    public function scopeOrderLocation($query, $order)
-    {
-        return $query->leftJoin('locations', 'components.location_id', '=', 'locations.id')->orderBy('locations.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on company
-     *
-     * @param  Builder  $query  Query builder instance
-     * @param  string  $order  Order
-     * @return Builder Modified query builder
-     */
-    public function scopeOrderCompany($query, $order)
-    {
-        return $query->leftJoin('companies', 'components.company_id', '=', 'companies.id')->orderBy('companies.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on supplier
-     *
-     * @param  Builder  $query  Query builder instance
-     * @param  text  $order  Order
-     * @return Builder Modified query builder
-     */
-    public function scopeOrderSupplier($query, $order)
-    {
-        return $query->leftJoin('suppliers', 'components.default_supplier_id', '=', 'suppliers.id')->orderBy('suppliers.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on manufacturer
-     *
-     * @param  Builder  $query  Query builder instance
-     * @param  text  $order  Order
-     * @return Builder Modified query builder
-     */
-    public function scopeOrderManufacturer($query, $order)
-    {
-        return $query->leftJoin('manufacturers', 'components.manufacturer_id', '=', 'manufacturers.id')->orderBy('manufacturers.name', $order);
-    }
-
-    public function scopeOrderByCreatedBy($query, $order)
-    {
-        return $query->leftJoin('users as admin_sort', 'components.created_by', '=', 'admin_sort.id')->select('components.*')->orderBy('admin_sort.first_name', $order)->orderBy('admin_sort.last_name', $order);
-    }
-
-    /**
-     * Query builder scope to sort by the calculated `% remaining` column.
-     *
-     * Mirrors Component::percentRemaining(): (qty - numCheckedOut) / qty * 100.
-     * sum_unconstrained_assets is added by withSum() in the API index()
-     * as the total checked-out quantity. Guards against division by zero
-     * for components with qty of 0.
-     *
-     * PostgreSQL note: references a SELECT-list alias inside a compound
-     * ORDER BY expression, which PostgreSQL rejects per SQL standard.
-     * Snipe-IT officially supports MySQL/MariaDB and tests on SQLite
-     * (both allow this); moving to PostgreSQL would require inlining
-     * the subquery or wrapping the query in an outer SELECT.
-     */
-    public function scopeOrderPercentRemaining($query, $order)
-    {
-        $order = strtolower($order) === 'asc' ? 'asc' : 'desc';
-
-        return $query->orderByRaw('CASE WHEN components.qty = 0 THEN 0 ELSE ((components.qty - COALESCE(sum_unconstrained_assets, 0)) * 100.0 / components.qty) END '.$order);
-    }
-
-    /**
-     * Query builder scope to sort by the raw `remaining` column
-     * (qty minus current checkouts). Same sum_unconstrained_assets
-     * alias as scopeOrderPercentRemaining above; the difference is
-     * that this one sorts by absolute count rather than percentage,
-     * so items with the same absolute stock left group together
-     * regardless of their total qty.
-     */
-    public function scopeOrderRemaining($query, $order)
-    {
-        $order = strtolower($order) === 'asc' ? 'asc' : 'desc';
-
-        return $query->orderByRaw('(components.qty - COALESCE(sum_unconstrained_assets, 0)) '.$order);
+        return new ComponentQueryBuilder($query);
     }
 }

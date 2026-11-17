@@ -65,7 +65,6 @@ class AcceptanceItemAcceptedToUserNotification extends Notification implements S
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
      * @return array
      */
     public function via()
@@ -80,7 +79,6 @@ class AcceptanceItemAcceptedToUserNotification extends Notification implements S
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
      * @return MailMessage
      */
     public function toMail()

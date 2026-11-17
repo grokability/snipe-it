@@ -1,3 +1,5 @@
+@use('App\Models\Location', 'Location')
+
 @extends('layouts/default')
 
 {{-- Page title --}}
@@ -25,8 +27,8 @@
                 <x-callout type="warning" icon="warning" live="assertive">
                     {{ trans_choice('admin/hardware/form.bulk_update_warn', count($assets), ['asset_count' => count($assets)]) }}
 
-                    @if (count($models) > 1)
-                        {{ trans('admin/hardware/form.bulk_update_with_custom_field', ['asset_model_count' => count($models)]) }}
+                    @if (count($modelNames) > 1)
+                        {{ trans('admin/hardware/form.bulk_update_with_custom_field', ['asset_model_count' => count($modelNames)]) }}
                     @endif
                 </x-callout>
 
@@ -149,23 +151,68 @@
                     :selected="old('model_id')"
                 />
 
-                <x-input.location-select
-                    :label="trans('admin/hardware/form.default_location')"
-                    name="rtd_location_id"
-                    :selected="old('rtd_location_id')"
-                />
+                <div class="form-group {{ $errors->has('rtd_location_id') ? ' has-error' : '' }}">
+                    <label for="rtd_location_id" class="col-md-3 control-label">
+                        {{ trans('admin/hardware/form.default_location') }}
+                    </label>
+                    <div class="col-md-4">
+                        <select
+                            class="js-data-ajax"
+                            data-endpoint="locations"
+                            data-placeholder="{{ trans('general.select_location') }}"
+                            name="rtd_location_id"
+                            id="rtd_location_id"
+                            style="width:100%"
+                            aria-label="rtd_location_id"
+                        >
+                            <option value=""></option>
+                            @if (old('rtd_location_id'))
+                                <option value="{{ old('rtd_location_id') }}" selected="selected">
+                                    {{ Location::find(old('rtd_location_id'))?->name }}
+                                </option>
+                            @endif
+                        </select>
+                        <x-form.error name="rtd_location_id"/>
+                    </div>
+                    <div class="col-md-5">
+                        <x-form.checkbox-inline
+                            name="null_rtd_location_id"
+                            :label="trans_choice('general.set_to_null', count($assets), ['selection_count' => count($assets)])"
+                        />
+                    </div>
+                </div>
 
-                {{-- Actual-location update rule (3-way radio) --}}
-                <x-form.radio-row
-                    name="update_real_loc"
-                    :options="[
-                        '1' => trans('admin/hardware/form.asset_location_update_default_current'),
-                        '0' => trans('admin/hardware/form.asset_location_update_default'),
-                        '2' => trans('admin/hardware/form.asset_location_update_actual'),
-                    ]"
-                    selected="1"
-                    input_div_class="col-md-9 col-md-offset-3"
-                />
+                {{-- Current location + nullable checkbox. --}}
+                <div class="form-group {{ $errors->has('location_id') ? ' has-error' : '' }}">
+                    <label for="location_id" class="col-md-3 control-label">
+                        {{ trans('general.location') }}
+                    </label>
+                    <div class="col-md-4">
+                        <select
+                            class="js-data-ajax"
+                            data-endpoint="locations"
+                            data-placeholder="{{ trans('general.select_location') }}"
+                            name="location_id"
+                            id="location_id"
+                            style="width:100%"
+                            aria-label="location_id"
+                        >
+                            <option value=""></option>
+                            @if (old('location_id'))
+                                <option value="{{ old('location_id') }}" selected="selected">
+                                    {{ Location::find(old('location_id'))?->name }}
+                                </option>
+                            @endif
+                        </select>
+                        <x-form.error name="location_id"/>
+                    </div>
+                    <div class="col-md-5">
+                        <x-form.checkbox-inline
+                            name="null_location_id"
+                            :label="trans_choice('general.set_to_null', count($assets), ['selection_count' => count($assets)])"
+                        />
+                    </div>
+                </div>
 
                 {{-- Purchase cost + Order number bulk edits. Assets
                      have no per-row currency column, so if the
@@ -270,7 +317,7 @@
                     :label="trans_choice('general.set_to_null', count($assets), ['selection_count' => count($assets)])"
                 />
 
-                @include('models/custom_fields_form_bulk_edit', ['models' => $models])
+                @include('models/custom_fields_form_bulk_edit', ['fieldsets' => $fieldsets, 'selectionCount' => count($assets)])
 
                 @foreach ($assets as $asset)
                     <input type="hidden" name="ids[]" value="{{ $asset }}">

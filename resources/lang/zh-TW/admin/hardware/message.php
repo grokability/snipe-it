@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => '繳回資產失敗，請重試。',
         'success' => '繳回資產成功。',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => '無效使用者，請重試。',
         'already_checked_in' => '資產已繳回。',
         'force_checkin_orphaned_success' => '無效的分配已成功清除。',

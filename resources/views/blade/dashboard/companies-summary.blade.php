@@ -17,6 +17,7 @@
                         data-height="400"
                         data-pagination="false"
                         data-side-pagination="server"
+                        data-advanced-search="false"
                         data-sort-order="desc"
                         data-show-columns="false"
                         data-sort-field="assets_count"

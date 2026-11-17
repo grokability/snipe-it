@@ -101,6 +101,32 @@ class ActivationLockEnrichmentTest extends TestCase
         $this->assertNull($record->extra['abm_activation_lock_enabled']);
     }
 
+    public function test_activation_lock_false_is_left_null_because_apple_returns_false_for_both_unlocked_and_invisible_devices()
+    {
+        $customField = CustomField::factory()->create(['element' => 'checkbox', 'name' => 'Activation Lock']);
+        $adapter = $this->configuredAdapter();
+        $instance = SyncAdapterInstance::where('slug', 'abm')->firstOrFail();
+        SyncAdapterConfig::put($instance->id, 'mapping.abm_activation_lock_enabled', 'custom:' . $customField->id);
+
+        Http::fake([
+            'account.apple.com/*' => Http::response(['access_token' => 'stub-bearer']),
+            'api-business.apple.com/v1/mdmServers' => Http::response(['data' => []]),
+            'api-business.apple.com/v1/orgDevices/abm-guid-a/activationLockStatus' => Http::response([
+                'data' => [
+                    'id' => 'abm-guid-a',
+                    'type' => 'orgDevice',
+                    'attributes' => ['activationLockEnabled' => false],
+                ],
+            ]),
+            'api-business.apple.com/v1/orgDevices*' => Http::response([
+                'data' => [$this->minimalAbmDevice('abm-guid-a')],
+            ]),
+        ]);
+
+        $record = iterator_to_array($adapter->pull())[0];
+        $this->assertNull($record->extra['abm_activation_lock_enabled']);
+    }
+
     public function test_normalize_populates_device_capacity_wifi_mac_and_cellular_identifiers()
     {
         // Tier 1 coverage: fields that already come back on
@@ -141,7 +167,8 @@ class ActivationLockEnrichmentTest extends TestCase
         $this->assertSame('256GB', $record->extra['abm_device_capacity']);
         $this->assertSame('AA:BB:CC:00:11:22', $record->extra['abm_wifi_mac']);
         $this->assertSame('AA:BB:CC:00:11:23', $record->extra['abm_bluetooth_mac']);
-        $this->assertNull($record->extra['abm_ethernet_mac']);
+        $this->assertNull($record->extra['abm_ethernet_mac_1']);
+        $this->assertNull($record->extra['abm_ethernet_mac_2']);
         $this->assertSame('351234567890123', $record->extra['abm_imei_1']);
         $this->assertNull($record->extra['abm_imei_2']);
         $this->assertSame('35123456789012', $record->extra['abm_meid']);

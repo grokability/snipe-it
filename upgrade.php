@@ -626,6 +626,21 @@ if ((!file_exists('storage/oauth-public.key')) || (!file_exists('storage/oauth-p
     echo $success_icon." OAuth keys detected. Skipping passport install.\n\n";
 }
 
+// Passport v13's league/oauth2-server dependency throws a fatal ErrorException
+// when the key files are not 600 or 660. Older Snipe-IT
+// installs often have these at 770 or looser because the parent
+// storage/ directory is group-writable for the web server.
+foreach (['storage/oauth-public.key', 'storage/oauth-private.key'] as $keyPath) {
+    if (file_exists($keyPath)) {
+        if (chmod($keyPath, 0660)) {
+            echo $success_icon . " Set $keyPath permissions to 660.\n";
+        } else {
+            echo $info_icon . " Could not chmod $keyPath to 660. If OAuth flows fail with a permissions error, run: chmod 660 $keyPath\n";
+        }
+    }
+}
+echo "\n";
+
 
 echo "\e[95m--------------------------------------------------------\n";
 echo "STEP 11: Taking application out of maintenance mode:\n";

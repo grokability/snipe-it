@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Builders\ComponentAssignmentQueryBuilder;
 use App\Models\Traits\Searchable;
 use App\Presenters\ComponentPresenter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * Model for Accessories.
  *
  * @version v1.0
+ * @mixin IdeHelperComponentAssignment
  */
 class ComponentAssignment extends Model
 {
@@ -67,13 +69,8 @@ class ComponentAssignment extends Model
         return $this->belongsTo(User::class, 'created_by')->withTrashed();
     }
 
-    public function scopeOrderByCreatedByName($query, $order)
+    public function newEloquentBuilder($query): ComponentAssignmentQueryBuilder
     {
-        return $query->leftJoin('users as checkout_users_sort', 'components_assets.created_by', '=', 'checkout_users_sort.id')->select('components_assets.*')->orderBy('checkout_users_sort.first_name', $order)->orderBy('checkout_users_sort.last_name', $order);
-    }
-
-    public function scopeOrderByComponentName($query, $order)
-    {
-        return $query->leftJoin('components as component_sort', 'components_assets.id', '=', 'component_sort.id')->select('components_assets.*')->orderBy('component_sort.name', $order);
+        return new ComponentAssignmentQueryBuilder($query);
     }
 }

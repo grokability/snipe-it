@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\FileStorage;
+use App\Models\Builders\AccessoryQueryBuilder;
+use App\Models\Contracts\Importable;
 use App\Models\Traits\Acceptable;
 use App\Models\Traits\AdjustsQuantity;
 use App\Models\Traits\CompanyableTrait;
@@ -13,12 +15,14 @@ use App\Models\Traits\Requestable;
 use App\Models\Traits\Searchable;
 use App\Presenters\AccessoryPresenter;
 use App\Presenters\Presentable;
+use App\Rules\RequestableArchivedMutex;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Watson\Validating\ValidatingTrait;
@@ -27,8 +31,10 @@ use Watson\Validating\ValidatingTrait;
  * Model for Accessories.
  *
  * @version v1.0
+ *
+ * @mixin IdeHelperAccessory
  */
-class Accessory extends SnipeModel
+class Accessory extends SnipeModel implements Importable
 {
     use Acceptable;
     use AdjustsQuantity;
@@ -47,7 +53,9 @@ class Accessory extends SnipeModel
 
     protected $casts = [
         'purchase_date' => 'datetime',
-        'requestable' => 'boolean',    ];
+        'requestable' => 'boolean',
+        'archived' => 'boolean',
+    ];
 
     protected $presenter = AccessoryPresenter::class;
 
@@ -64,6 +72,281 @@ class Accessory extends SnipeModel
     ];
 
     /**
+     * Advanced-search filterable connections.
+     *
+     * Field types:
+     *   - fk: FK dropdown, backed by `column` on this
+     *                   table and `endpoint` for the selectlist.
+     *   - date-range: YYYY-MM-DD..YYYY-MM-DD, backed by `field` on
+     *                   this table (or routed via applyCustomFilter
+     *                   if the column lives on a related table).
+     *   - boolean: Two-checkbox yes/no, backed by `field` on
+     *                   this table.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'company',
+                'type' => 'fk',
+                'column' => 'company_id',
+                'endpoint' => 'companies',
+                'label' => trans('admin/companies/table.title'),
+            ],
+            [
+                'field' => 'category',
+                'type' => 'fk',
+                'column' => 'category_id',
+                'endpoint' => 'categories/accessory',
+                'label' => trans('general.category'),
+            ],
+            [
+                'field' => 'manufacturer',
+                'type' => 'fk',
+                'column' => 'manufacturer_id',
+                'endpoint' => 'manufacturers',
+                'label' => trans('general.manufacturer'),
+            ],
+            // Supplier lives on default_supplier_id, not supplier_id, since
+            // the per-order supplier moved to the Orders table and the parent
+            // column is now the default/template value.
+            [
+                'field' => 'supplier',
+                'type' => 'fk',
+                'column' => 'default_supplier_id',
+                'endpoint' => 'suppliers',
+                'label' => trans('general.supplier'),
+            ],
+            [
+                'field' => 'location',
+                'type' => 'fk',
+                'column' => 'location_id',
+                'endpoint' => 'locations',
+                'label' => trans('general.location'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'requestable',
+                'type' => 'boolean',
+                'label' => trans('admin/hardware/general.requestable'),
+            ],
+            [
+                'field' => 'qty',
+                'type' => 'numeric',
+                'label' => trans('admin/accessories/general.total'),
+            ],
+            [
+                'field' => 'min_amt',
+                'type' => 'numeric',
+                'label' => trans('general.min_amt'),
+            ],
+            // remaining = qty - checkouts_count. Not a column on
+            // accessories. Routed via applyCustomFilter below, same
+            // pattern as purchase_date.
+            [
+                'field' => 'remaining',
+                'type' => 'numeric',
+                'label' => trans('admin/accessories/general.remaining'),
+            ],
+            // purchase_cost = last OrderItem.price for this accessory.
+            // Routed via applyCustomFilter.
+            [
+                'field' => 'purchase_cost',
+                'type' => 'numeric',
+                'label' => trans('general.last_unit_cost'),
+            ],
+            // checkouts_count = COUNT(active checkouts). Routed via
+            // applyCustomFilter.
+            [
+                'field' => 'checkouts_count',
+                'type' => 'numeric',
+                'label' => trans('general.checked_out'),
+            ],
+            // purchase_date is derived from the Orders relation, not a
+            // column on accessories. Routed via Accessory::applyCustomFilter
+            // rather than the standard filterableDateRanges whitelist path.
+            [
+                'field' => 'purchase_date',
+                'type' => 'date-range',
+                'label' => trans('general.last_purchase_date'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
+
+    /**
+     * Override hook from Searchable. Routes advanced-search filter
+     * keys that can't be resolved against a column on the accessories
+     * table (because the value is derived from a related table) to
+     * their matching correlated-subquery predicate. Default list
+     * queries never pay the subquery cost. This only runs when the
+     * matching filter key is on the request.
+     *
+     * Handled keys:
+     *   - purchase_date (date range, YYYY-MM-DD..YYYY-MM-DD): matches
+     *     "the last purchase date" per scopeOrderByLastPurchaseDate.
+     *   - remaining (numeric range, gt:X / lt:Y / gt:X,lt:Y): matches
+     *     qty - COUNT(active checkouts).
+     *   - purchase_cost (same shape as remaining): matches the price
+     *     on the latest OrderItem per scopeOrderByLastPurchaseCost.
+     *   - checkouts_count (same shape as remaining): matches
+     *     COUNT(active checkouts) directly.
+     */
+    protected function applyCustomFilter(\Illuminate\Database\Eloquent\Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?\Illuminate\Database\Eloquent\Builder
+    {
+        if ($filterKey === 'purchase_date') {
+            if (! preg_match('/^(\d{4}-\d{2}-\d{2})?\.\.(\d{4}-\d{2}-\d{2})?$/', trim($filterValue), $m)) {
+                return null;
+            }
+            $start = $m[1] !== '' ? $m[1] : null;
+            $end = $m[2] !== '' ? $m[2] : null;
+            if ($start === null && $end === null) {
+                return null;
+            }
+
+            // Correlated subquery resolving to "the purchase_date of
+            // the Order attached to the latest OrderItem for this
+            // accessory" (mirror of scopeOrderByLastPurchaseDate).
+            $lastDateSub = \App\Models\OrderItem::query()
+                ->join('orders', 'orders.id', '=', 'order_items.order_id')
+                ->whereColumn('order_items.item_id', 'accessories.id')
+                ->where('order_items.item_type', static::class)
+                ->orderByDesc('order_items.id')
+                ->limit(1)
+                ->select('orders.purchase_date');
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($lastDateSub, $start, $end) {
+                if ($start !== null && $end !== null) {
+                    $nested->whereBetween($lastDateSub, [$start, $end]);
+                } elseif ($start !== null) {
+                    $nested->where($lastDateSub, '>=', $start);
+                } elseif ($end !== null) {
+                    $nested->where($lastDateSub, '<=', $end);
+                }
+            });
+
+            return $query;
+        }
+
+        if ($filterKey === 'remaining') {
+            $bounds = $this->parseGtLtBounds($filterValue);
+            if ($bounds === null) {
+                return null;
+            }
+            [$gt, $lt] = $bounds;
+
+            // Correlated subquery resolving to the active-checkout
+            // count for this accessory. The display column is
+            // `qty - checkouts_count`, so the filter compares against
+            // that same expression.
+            $checkoutCountSub = \App\Models\AccessoryCheckout::query()
+                ->whereColumn('accessories_checkout.accessory_id', 'accessories.id')
+                ->selectRaw('COUNT(*)');
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($checkoutCountSub, $gt, $lt) {
+                // "qty - (count)" cannot be built from whereColumn
+                // alone, so whereRaw with the subquery SQL spliced
+                // in. Values are bound as parameters, the comparison
+                // operator is a validated literal from the regex.
+                [$countSql, $countBindings] = [$checkoutCountSub->toSql(), $checkoutCountSub->getBindings()];
+                if ($gt !== null) {
+                    $nested->whereRaw(
+                        "(accessories.qty - ({$countSql})) > ?",
+                        array_merge($countBindings, [$gt])
+                    );
+                }
+                if ($lt !== null) {
+                    $nested->whereRaw(
+                        "(accessories.qty - ({$countSql})) < ?",
+                        array_merge($countBindings, [$lt])
+                    );
+                }
+            });
+
+            return $query;
+        }
+
+        if ($filterKey === 'purchase_cost') {
+            $bounds = $this->parseGtLtBounds($filterValue);
+            if ($bounds === null) {
+                return null;
+            }
+            [$gt, $lt] = $bounds;
+
+            // Correlated subquery resolving to the price on the
+            // latest OrderItem for this accessory, mirror of
+            // scopeOrderByLastPurchaseCost.
+            $lastCostSub = \App\Models\OrderItem::query()
+                ->whereColumn('order_items.item_id', 'accessories.id')
+                ->where('order_items.item_type', static::class)
+                ->orderByDesc('order_items.id')
+                ->limit(1)
+                ->select('order_items.price');
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($lastCostSub, $gt, $lt) {
+                if ($gt !== null) {
+                    $nested->where($lastCostSub, '>', $gt);
+                }
+                if ($lt !== null) {
+                    $nested->where($lastCostSub, '<', $lt);
+                }
+            });
+
+            return $query;
+        }
+
+        if ($filterKey === 'checkouts_count') {
+            $bounds = $this->parseGtLtBounds($filterValue);
+            if ($bounds === null) {
+                return null;
+            }
+            [$gt, $lt] = $bounds;
+
+            // Correlated subquery resolving to the active-checkout
+            // count for this accessory. Same shape as the subquery
+            // the `remaining` filter uses, compared against directly
+            // rather than through the qty - count arithmetic.
+            $checkoutCountSub = \App\Models\AccessoryCheckout::query()
+                ->whereColumn('accessories_checkout.accessory_id', 'accessories.id')
+                ->selectRaw('COUNT(*)');
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($checkoutCountSub, $gt, $lt) {
+                if ($gt !== null) {
+                    $nested->where($checkoutCountSub, '>', $gt);
+                }
+                if ($lt !== null) {
+                    $nested->where($checkoutCountSub, '<', $lt);
+                }
+            });
+
+            return $query;
+        }
+
+        return null;
+    }
+
+    /**
      * The relations and their attributes that should be included when searching the model.
      *
      * @var array
@@ -74,7 +357,7 @@ class Accessory extends SnipeModel
         'location' => ['name'],
         'manufacturer' => ['name'],
         // Search by the parent's "typical supplier" template. Historical
-        // per-order supplier lookups belong on the Orders tab; this join
+        // per-order supplier lookups belong on the Orders tab. This join
         // keeps parent-level list-page search predictable.
         'defaultSupplier' => ['name'],
         // Order numbers moved to a dedicated Orders / OrderItems data
@@ -103,7 +386,39 @@ class Accessory extends SnipeModel
         'purchase_date' => 'date_format:Y-m-d|nullable',
         'default_supplier_id' => 'nullable|integer|exists:suppliers,id',
         'default_purchase_cost' => 'numeric|nullable|gte:0|max:99999999999999999.99',
+        'requestable' => ['nullable', 'boolean'],
+        'archived' => ['nullable', 'boolean'],
     ];
+
+    /**
+     * PHP 8.2 blocks `new X` in property defaults, so the rule object
+     * gets spliced in here rather than in $rules above. Mirrors
+     * Component::getRules() so the mutex and the no-archive-with-
+     * checkouts guard behave identically across checkoutable items.
+     */
+    public function getRules(): array
+    {
+        $rules = $this->rules ?? [];
+        $mutex = new RequestableArchivedMutex;
+
+        $noArchivingWithCheckouts = function (string $attribute, mixed $value, \Closure $fail): void {
+            if (filter_var($value, FILTER_VALIDATE_BOOLEAN) && $this->exists && $this->checkouts()->count() > 0) {
+                // $attribute passed through to trans() so phpmd sees
+                // the param as used. The translation string ignores
+                // the extra key today, but future refinements can
+                // reference it if we want field-specific phrasing.
+                $fail(trans('general.archived_blocked_by_checkouts', [
+                    'item_type' => trans('general.accessory'),
+                    'attribute' => $attribute,
+                ]));
+            }
+        };
+
+        $rules['requestable'] = array_merge((array) ($rules['requestable'] ?? []), [$mutex]);
+        $rules['archived'] = array_merge((array) ($rules['archived'] ?? []), [$mutex, $noArchivingWithCheckouts]);
+
+        return $rules;
+    }
 
     /**
      * Whether the model should inject it's identifier to the unique
@@ -140,6 +455,7 @@ class Accessory extends SnipeModel
         'qty',
         'min_amt',
         'requestable',
+        'archived',
         'notes',
         'default_supplier_id',
         'default_purchase_cost',
@@ -196,19 +512,27 @@ class Accessory extends SnipeModel
 
     public function isDeletable()
     {
-        return $this->checkouts_count === 0;
+        return Gate::allows('delete', $this)
+            && (($this->checkouts_count ?? $this->checkouts()->count()) === 0);
     }
 
     /**
      * Sets the requestable attribute on the accessory
      *
+     * Kept as the legacy magic-method form rather than the modern
+     * Attribute::make accessor. Requestable() is also a query scope on
+     * AccessoryQueryBuilder, and `Accessory::Requestable()` resolves
+     * through Model::__callStatic → __call → forwardCallTo(newQuery(),
+     * ...) only when the method doesn't exist on the model. An
+     * `Attribute`-returning method shadows that forwarder and crashes
+     * with "Call to undefined method Attribute::count()". See
+     * Component::setRequestableAttribute for the same comment.
+     *
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @since  [v4.0]
-     *
-     * @return void
      */
-    public function setRequestableAttribute($value)
+    public function setRequestableAttribute($value): void
     {
         if ($value == '') {
             $value = null;
@@ -217,12 +541,16 @@ class Accessory extends SnipeModel
     }
 
     /**
-     * Scope query to only requestable accessories. Unlike assets, accessories
-     * have no deployable status to check, so the flag is all we need here.
+     * Mirror for the archived flag. Normalizes empty-string / null /
+     * missing-column CSV cells to false so the NOT NULL `archived`
+     * column never receives a literal null.
      */
-    public function scopeRequestable($query)
+    public function setArchivedAttribute($value): void
     {
-        return $query->where('accessories.requestable', '1');
+        if ($value == '') {
+            $value = null;
+        }
+        $this->attributes['archived'] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -485,7 +813,6 @@ class Accessory extends SnipeModel
     /**
      * Run after the checkout acceptance was declined by the user
      *
-     * @param  User  $acceptedBy
      * @param  string  $signature
      */
     public function declinedCheckout(User $declinedBy, $signature)
@@ -533,116 +860,8 @@ class Accessory extends SnipeModel
         $this->attributes['qty'] = (! $value) ? 0 : intval($value);
     }
 
-    /**
-     * -----------------------------------------------
-     * BEGIN QUERY SCOPES
-     * -----------------------------------------------
-     **/
-
-    /**
-     * Query builder scope to order on created_by name
-     */
-    public function scopeOrderByCreatedByName($query, $order)
+    public function newEloquentBuilder($query): AccessoryQueryBuilder
     {
-        return $query->leftJoin('users as admin_sort', 'accessories.created_by', '=', 'admin_sort.id')->select('accessories.*')->orderBy('admin_sort.first_name', $order)->orderBy('admin_sort.last_name', $order);
-    }
-
-    /**
-     * Query builder scope to order on company
-     *
-     * @param  Builder  $query  Query builder instance
-     * @param  text  $order  Order
-     * @return Builder Modified query builder
-     */
-    public function scopeOrderCompany($query, $order)
-    {
-        return $query->leftJoin('companies', 'accessories.company_id', '=', 'companies.id')
-            ->orderBy('companies.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on category
-     *
-     * @param  Builder  $query  Query builder instance
-     * @param  text  $order  Order
-     * @return Builder Modified query builder
-     */
-    public function scopeOrderCategory($query, $order)
-    {
-        return $query->leftJoin('categories', 'accessories.category_id', '=', 'categories.id')
-            ->orderBy('categories.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on location
-     *
-     * @param  Builder  $query  Query builder instance
-     * @param  text  $order  Order
-     * @return Builder Modified query builder
-     */
-    public function scopeOrderLocation($query, $order)
-    {
-        return $query->leftJoin('locations', 'accessories.location_id', '=', 'locations.id')
-            ->orderBy('locations.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on manufacturer
-     *
-     * @param  Builder  $query  Query builder instance
-     * @param  text  $order  Order
-     * @return Builder Modified query builder
-     */
-    public function scopeOrderManufacturer($query, $order)
-    {
-        return $query->leftJoin('manufacturers', 'accessories.manufacturer_id', '=', 'manufacturers.id')->orderBy('manufacturers.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on supplier
-     *
-     * @param  Builder  $query  Query builder instance
-     * @param  text  $order  Order
-     * @return Builder Modified query builder
-     */
-    public function scopeOrderSupplier($query, $order)
-    {
-        return $query->leftJoin('suppliers', 'accessories.default_supplier_id', '=', 'suppliers.id')->orderBy('suppliers.name', $order);
-    }
-
-    /**
-     * Query builder scope to sort by the calculated `% remaining` column.
-     *
-     * Mirrors Accessory::percentRemaining(): (qty - checkouts_count) / qty * 100.
-     * checkouts_count is added by withCount() in the API index() before
-     * this scope runs. Guards against division by zero for accessories
-     * with qty of 0.
-     *
-     * PostgreSQL note: references a SELECT-list alias inside a compound
-     * ORDER BY expression, which PostgreSQL rejects per SQL standard.
-     * Snipe-IT officially supports MySQL/MariaDB and tests on SQLite
-     * (both allow this); moving to PostgreSQL would require inlining
-     * the subquery or wrapping the query in an outer SELECT.
-     */
-    public function scopeOrderPercentRemaining($query, $order)
-    {
-        $order = strtolower($order) === 'asc' ? 'asc' : 'desc';
-
-        return $query->orderByRaw('CASE WHEN accessories.qty = 0 THEN 0 ELSE ((accessories.qty - checkouts_count) * 100.0 / accessories.qty) END '.$order);
-    }
-
-    /**
-     * Query builder scope to sort by the raw `remaining` column
-     * (qty minus current checkouts). Same withCount-added alias as
-     * scopeOrderPercentRemaining above; the difference is that this
-     * one sorts by absolute count rather than percentage, so items
-     * with the same absolute stock left group together regardless
-     * of their total qty.
-     */
-    public function scopeOrderRemaining($query, $order)
-    {
-        $order = strtolower($order) === 'asc' ? 'asc' : 'desc';
-
-        return $query->orderByRaw('(accessories.qty - checkouts_count) '.$order);
+        return new AccessoryQueryBuilder($query);
     }
 }

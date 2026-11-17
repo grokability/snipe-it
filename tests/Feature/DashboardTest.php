@@ -67,33 +67,44 @@ class DashboardTest extends TestCase
 
     public function test_counts_are_loaded_correctly_for_admins(): void
     {
+        // Accessory / Consumable / Component top boxes report
+        // sum(qty) over live non-archived rows, not the parent-row
+        // count, so the dashboard reflects actual inventory volume.
+        // Seed a mix of live + archived + trashed with explicit qty
+        // so the assertions pin the exclusions rather than relying
+        // on factory defaults.
         Asset::factory()->count(2)->create();
-        Accessory::factory()->count(2)->create();
+        Accessory::factory()->create(['qty' => 7]);
+        Accessory::factory()->create(['qty' => 5]);
+        Accessory::factory()->archived()->create(['qty' => 100]);
         License::factory()->count(2)->create();
-        Consumable::factory()->count(2)->create();
-        Component::factory()->count(2)->create();
+        Consumable::factory()->create(['qty' => 10]);
+        Consumable::factory()->create(['qty' => 3]);
+        Consumable::factory()->archived()->create(['qty' => 500]);
+        $trashed = Consumable::factory()->create(['qty' => 999]);
+        $trashed->delete();
+        Component::factory()->create(['qty' => 4]);
+        Component::factory()->create(['qty' => 2]);
+        Component::factory()->archived()->create(['qty' => 50]);
 
         $this->actingAs(User::factory()->admin()->create())
             ->get(route('home'))
             ->assertViewIs('dashboard')
             ->assertViewHas('counts', function ($value) {
-                $accessoryCount = Accessory::count();
                 $assetCount = Asset::count();
-                $componentCount = Component::count();
-                $consumableCount = Consumable::count();
                 $licenseCount = License::assetcount();
                 $userCount = User::count();
 
-                $this->assertEquals($value['accessory'], $accessoryCount, 'Accessory count incorrect.');
+                $this->assertSame(12, $value['accessory'], 'Accessory count should sum qty across live non-archived rows (7 + 5).');
+                $this->assertSame(13, $value['consumable'], 'Consumable count should sum qty across live non-archived rows (10 + 3).');
+                $this->assertSame(6, $value['component'], 'Component count should sum qty across live non-archived rows (4 + 2).');
                 $this->assertEquals($value['asset'], $assetCount, 'Asset count incorrect.');
                 $this->assertEquals($value['license'], $licenseCount, 'License count incorrect.');
-                $this->assertEquals($value['consumable'], $consumableCount, 'Consumable count incorrect.');
-                $this->assertEquals($value['component'], $componentCount, 'Component count incorrect.');
                 $this->assertEquals($value['user'], $userCount, 'User count incorrect.');
-                $this->assertEquals(
+                $this->assertSame(
                     $value['grand_total'],
-                    $accessoryCount + $assetCount + $consumableCount + $licenseCount,
-                    'Grand total count incorrect.'
+                    $value['accessory'] + $value['asset'] + $value['consumable'] + $value['license'],
+                    'Grand total should sum asset + accessory + license + consumable using the same unit-based counts.',
                 );
 
                 return true;

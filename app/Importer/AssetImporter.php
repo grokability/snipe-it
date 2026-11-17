@@ -6,7 +6,6 @@ use App\Events\CheckoutableCheckedIn;
 use App\Models\Asset;
 use App\Models\Statuslabel;
 use App\Models\User;
-use Illuminate\Support\Facades\Crypt;
 
 class AssetImporter extends ItemImporter
 {
@@ -61,6 +60,7 @@ class AssetImporter extends ItemImporter
             ['category_id', 'category', fn ($v) => $this->createOrFetchCategory($v)],
             ['company_id', 'company', fn ($v) => $this->createOrFetchCompany($v)],
             ['location_id', 'location', fn ($v) => $this->createOrFetchLocation($v)],
+            ['rtd_location_id', 'default_location', fn ($v) => $this->createOrFetchLocation($v)],
             ['manufacturer_id', 'manufacturer', fn ($v) => $this->createOrFetchManufacturer($v)],
             ['status_id', 'status', fn ($v) => $this->createOrFetchStatusLabel($v)],
             ['supplier_id', 'supplier', fn ($v) => $this->createOrFetchSupplier($v)],
@@ -165,8 +165,8 @@ class AssetImporter extends ItemImporter
 
                 if (! is_null($customFieldValue)) {
                     if ($customField->field_encrypted == 1) {
-                        $this->item['custom_fields'][$customField->db_column_name()] = Crypt::encrypt($customFieldValue);
-                        $this->log('Custom Field '.$customField->name.': '.Crypt::encrypt($customFieldValue));
+                        $this->item['custom_fields'][$customField->db_column_name()] = $customFieldValue;
+                        $this->log('Custom Field '.$customField->name.': [encrypted]');
                     } else {
                         $this->item['custom_fields'][$customField->db_column_name()] = $customFieldValue;
                         $this->log('Custom Field '.$customField->name.': '.$customFieldValue);
@@ -274,10 +274,9 @@ class AssetImporter extends ItemImporter
 
         $item = $this->sanitizeItemForStoring($asset, $editingAsset);
 
-        // The location id fetched by the csv reader is actually the rtd_location_id.
-        // This will also set location_id, but then that will be overridden by the
-        // checkout method if necessary below.
-        if (isset($this->item['location_id'])) {
+        if (isset($this->item['rtd_location_id'])) {
+            $item['rtd_location_id'] = $this->item['rtd_location_id'];
+        } elseif (isset($this->item['location_id'])) {
             $item['rtd_location_id'] = $this->item['location_id'];
         }
 

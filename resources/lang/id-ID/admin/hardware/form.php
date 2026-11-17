@@ -56,8 +56,6 @@ return [
     'years' => 'tahun',
     'asset_location' => 'Perbarui Lokasi Aset',
     'asset_location_update_default_current' => 'Perbarui lokasi default DAN lokasi sebenarnya',
-    'asset_location_update_default' => 'Perbarui hanya lokasi default',
-    'asset_location_update_actual' => 'Perbarui hanya lokasi yang sebenarnya',
     'asset_not_deployable' => 'Status aset tersebut tidak dapat ditetapkan. Aset ini tidak dapat digunakan.',
     'asset_not_deployable_checkin' => '{1} That asset status is not deployable. Using this status label will check in the asset.|[2,*] That asset status in not deployable. Using this status label will result in no change.',
     'asset_deployable' => '{1} This asset can be checked out.|[2,*] These assets can be checked out.',

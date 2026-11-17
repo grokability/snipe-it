@@ -103,6 +103,45 @@ class IndexAccessoryTest extends TestCase implements TestsFullMultipleCompaniesS
             ->assertJson(fn (AssertableJson $json) => $json->has('rows', 1)->where('rows.0.name', 'Accessory With Two Checkouts')->etc());
     }
 
+    public function test_can_filter_accessories_by_remaining_count()
+    {
+        $this->markIncompleteIfSqlite('This test is not compatible with SQLite');
+        $user = User::factory()->viewAccessories()->create();
+
+        $available = Accessory::factory()->create(['name' => 'Some left', 'qty' => 2]);
+        $empty = Accessory::factory()->create(['name' => 'None left', 'qty' => 1]);
+
+        AccessoryCheckout::factory()->create(['accessory_id' => $available->id]);
+        AccessoryCheckout::factory()->create(['accessory_id' => $empty->id]);
+
+        $this->actingAsForApi($user)
+            ->getJson(route('api.accessories.index', [
+                'filter' => json_encode(['remaining' => 'gt:0']),
+            ]))
+            ->assertOk()
+            ->assertResponseContainsInRows($available)
+            ->assertResponseDoesNotContainInRows($empty);
+    }
+
+    public function test_can_filter_accessories_by_checkouts_count_range()
+    {
+        $this->markIncompleteIfSqlite('This test is not compatible with SQLite');
+        $user = User::factory()->viewAccessories()->create();
+
+        $checkedOut = Accessory::factory()->create(['name' => 'Checked out']);
+        $notCheckedOut = Accessory::factory()->create(['name' => 'Not checked out']);
+
+        AccessoryCheckout::factory()->create(['accessory_id' => $checkedOut->id]);
+
+        $this->actingAsForApi($user)
+            ->getJson(route('api.accessories.index', [
+                'filter' => json_encode(['checkouts_count' => 'gt:0']),
+            ]))
+            ->assertOk()
+            ->assertResponseContainsInRows($checkedOut)
+            ->assertResponseDoesNotContainInRows($notCheckedOut);
+    }
+
     public function test_can_filter_accessories_by_all_supported_exact_fields()
     {
         $user = User::factory()->superuser()->create();
@@ -247,6 +286,54 @@ class IndexAccessoryTest extends TestCase implements TestsFullMultipleCompaniesS
         $this->actingAsForApi($user)
             ->getJson(route('api.accessories.index', [
                 'filter' => json_encode(['orders' => 'ADV-SEARCH-777']),
+            ]))
+            ->assertOk()
+            ->assertResponseContainsInRows($targetAccessory)
+            ->assertResponseDoesNotContainInRows($otherAccessory);
+    }
+
+    public function test_advanced_search_category_csv_of_ids_matches_by_where_in(): void
+    {
+        // Multi-select scrollbox path: the modal widget submits an array
+        // of category ids as the filter value
+        $user = User::factory()->superuser()->create();
+
+        $cat1 = Category::factory()->forAccessories()->create(['name' => 'Peripherals']);
+        $cat2 = Category::factory()->forAccessories()->create(['name' => 'Cables']);
+        $cat3 = Category::factory()->forAccessories()->create(['name' => 'Software']);
+
+        $inCat1 = Accessory::factory()->create(['category_id' => $cat1->id, 'name' => 'Mouse']);
+        $inCat2 = Accessory::factory()->create(['category_id' => $cat2->id, 'name' => 'HDMI']);
+        $inCat3 = Accessory::factory()->create(['category_id' => $cat3->id, 'name' => 'License XYZ']);
+
+        $this->actingAsForApi($user)
+            ->getJson(route('api.accessories.index', [
+                'filter' => json_encode(['category' => $cat1->id . ',' . $cat2->id]),
+            ]))
+            ->assertOk()
+            ->assertResponseContainsInRows($inCat1)
+            ->assertResponseContainsInRows($inCat2)
+            ->assertResponseDoesNotContainInRows($inCat3);
+    }
+
+    public function test_advanced_search_category_single_name_still_matches_via_like_path(): void
+    {
+        // Guard that the new whereIn branch does not swallow single-
+        // value name lookups.
+        $user = User::factory()->superuser()->create();
+
+        $target = Category::factory()->forAccessories()->create(['name' => 'Peripherals']);
+        $other = Category::factory()->forAccessories()->create(['name' => 'Cables']);
+
+        // Pin names so a Faker collision (AccessoryFactory draws from
+        // a 4-value pool) does not false-fail the "other not in rows"
+        // check when both accessories randomly land on the same name.
+        $targetAccessory = Accessory::factory()->create(['category_id' => $target->id, 'name' => 'In-Peripherals Pick']);
+        $otherAccessory = Accessory::factory()->create(['category_id' => $other->id, 'name' => 'In-Cables Pick']);
+
+        $this->actingAsForApi($user)
+            ->getJson(route('api.accessories.index', [
+                'filter' => json_encode(['category' => 'Peripherals']),
             ]))
             ->assertOk()
             ->assertResponseContainsInRows($targetAccessory)

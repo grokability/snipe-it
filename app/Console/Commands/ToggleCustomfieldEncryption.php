@@ -43,7 +43,8 @@ class ToggleCustomfieldEncryption extends Command
     {
         $fieldname = $this->argument('fieldname');
 
-        if ($field = CustomField::where('db_column', $fieldname)->first()) {
+        $field = CustomField::where('db_column', $fieldname)->first();
+        if ($field !== null) {
 
             // If the field is not encrypted, make it encrypted and encrypt the data in the assets table for the
             // corresponding field.
@@ -53,8 +54,8 @@ class ToggleCustomfieldEncryption extends Command
                     $assets = Asset::whereNotNull($field->db_column)->get();
 
                     foreach ($assets as $asset) {
-                        $asset->{$field->db_column} = encrypt($asset->{$field->db_column});
-                        $asset->save();
+                        $ciphertext = encrypt($asset->getRawOriginal($field->db_column));
+                        DB::table($asset->getTable())->where($asset->getKeyName(), $asset->getKey())->update([$field->db_column => $ciphertext]);
                     }
 
                     $field->field_encrypted = 1;

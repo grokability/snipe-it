@@ -145,7 +145,6 @@ class KandjiAdapterTest extends TestCase
         // native-field writer with a datetime payload.
         $reflection = new \ReflectionClass(\App\SyncAdapters\SyncsHostFromRecord::class);
         $writeNative = $reflection->getMethod('writeNative');
-        $writeNative->setAccessible(true);
         $writeNative->invoke(null, $asset, 'purchase_date', '2026-07-23T03:00:00Z', $instance, $record);
 
         // Asset casts purchase_date, so read the raw stored attribute to

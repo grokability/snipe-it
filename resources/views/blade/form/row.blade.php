@@ -10,7 +10,7 @@
     'label' => null,
     'label_class' => 'col-md-3',
     'input_div_class' => 'col-md-7',
-    'help_class' => 'col-md-9 col-md-offset-3',
+    'help_class' => null,
     'input_icon' => null,
     'input_group_addon' => null,
     'maxlength' => null,
@@ -136,14 +136,16 @@
         <div class="clearfix"></div>
     @endif
 
-    {{-- Error + help block width matches the input's width so long
-         lines wrap under the input rather than spilling past into
-         the empty column beyond it. Uses $input_div_class (default
-         col-md-7) plus the label's col-md-offset-3 so it aligns
-         under the input on horizontal-form rows. Stacked layouts
-         (mobile / modal) drop the offset because they're single-
-         column. --}}
-    <div @class([$input_div_class.' col-md-offset-3' => ! $stacked])>
+    {{-- Error + help block width matches the input's width by
+         default so long lines wrap under the input rather than
+         spilling past into the empty column beyond it. For narrow
+         inputs where the matching help column makes the hint
+         unreadable (e.g. a col-md-3 select with a sentence-long
+         help string), callers can pass an explicit `help_class`
+         like "col-md-9 col-md-offset-3" to widen just the help
+         block. Stacked layouts (mobile / modal) drop the offset
+         because they're single-column. --}}
+    <div @class([($help_class ?? $input_div_class.' col-md-offset-3') => ! $stacked])>
         <x-form.error :name="$name" />
 
         @if ($help_text)

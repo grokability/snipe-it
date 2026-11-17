@@ -53,8 +53,8 @@
               <x-form.error name="asset_tags.1" />
           </div>
           <div class="col-md-2 col-sm-12">
-              <button type="button" class="add_field_button btn btn-sm btn-theme" name="add_field_button" onclick="Livewire.dispatch('addTagRow', { firstTag: document.getElementById('asset_tag').value })">
-                  <x-icon type="plus" />
+              <button type="button" class="add_field_button btn btn-theme" name="add_field_button" onclick="Livewire.dispatch('addTagRow', { firstTag: document.getElementById('asset_tag').value })">
+                  <x-icon type="plus" class="fa-fw"/>
                   <span class="sr-only">
                       {{ trans('general.new') }}
                   </span>
@@ -98,7 +98,8 @@
 
     @include ('partials.forms.edit.status', [ 'required' => 'true'])
     @if (!$item->id)
-        @include ('partials.forms.checkout-selector', ['user_select' => 'true','asset_select' => 'true', 'location_select' => 'true', 'style' => 'display:none;'])
+        
+                    @include ('partials.forms.checkout-selector', ['user_select' => 'true','asset_select' => 'true', 'location_select' => 'true', 'style' => 'display:none;', 'optional' => true])
         <x-input.user-select
             :label="trans('general.user')"
             name="assigned_user"
@@ -151,21 +152,11 @@
 
     <div id='custom_fields_content'>
         <!-- Custom Fields -->
-        @if ($item->model && $item->model->fieldset)
-        <?php $model = $item->model; ?>
-        @endif
-        @if (old('model_id'))
-            @php
-                $model = \App\Models\AssetModel::find(old('model_id'));
-            @endphp
-        @elseif (isset($selected_model))
-            @php
-                $model = $selected_model;
-            @endphp
-        @endif
-        @if (isset($model) && $model)
-        @include("models/custom_fields_form",["model" => $model])
-        @endif
+        @include('models/custom_fields_form', [
+            'fieldset' => $fieldset,
+            'defaultValues' => $defaultValues,
+            'item' => $item->exists ? $item : null,
+        ])
     </div>
 
 

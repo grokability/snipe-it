@@ -3,6 +3,7 @@
 namespace Tests\Feature\Licenses;
 
 use App\Models\Actionlog;
+use App\Models\Asset;
 use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\User;
@@ -76,6 +77,84 @@ class LicenseSerialLeakTest extends TestCase
         // Both old and new serial values in log_meta must be masked.
         $this->assertStringNotContainsString('PREVIOUS-'.self::SENTINEL, $body);
         $this->assertStringNotContainsString(self::SENTINEL, $body);
+    }
+
+    public function test_activity_report_search_cannot_oracle_license_serial(): void
+    {
+        // Regression test for GHSA-68gh-qwvc-qccg. Before the fix,
+        // GET /api/v1/reports/activity?item_type=license&item_id=X&search=<sub>
+        // leaked the real product key one character at a time through
+        // result-count differences on licenses.serial. The fix strips serial
+        // from Actionlog::$searchableRelations['licenses'].
+        $license = License::factory()->create(['name' => 'Adobe CC', 'serial' => self::SENTINEL]);
+        LicenseSeat::factory()->for($license)->create();
+        $this->seedCheckoutHistory($license);
+
+        $viewOnly = User::factory()->canViewReports()->viewLicenses()->create();
+
+        $bySerial = $this->actingAsForApi($viewOnly)
+            ->getJson(route('api.activity.index', [
+                'item_type' => 'license',
+                'item_id' => $license->id,
+                'search' => 'SECRET-PRODUCT-KEY',
+            ]))
+            ->assertOk()
+            ->json();
+        $this->assertSame(0, $bySerial['total'], 'Activity report search must not expose license.serial as a text-search column, even for superusers.');
+
+        // viewKeys does not re-open the hole. Unlike the license list, the
+        // activity report has no legitimate caller for serial-substring
+        // search, so the column is stripped unconditionally.
+        $superuser = User::factory()->superuser()->create();
+        $superuserBySerial = $this->actingAsForApi($superuser)
+            ->getJson(route('api.activity.index', [
+                'item_type' => 'license',
+                'item_id' => $license->id,
+                'search' => 'SECRET-PRODUCT-KEY',
+            ]))
+            ->assertOk()
+            ->json();
+        $this->assertSame(0, $superuserBySerial['total']);
+
+        // Search on a non-serial license column still works: proves we
+        // haven't torched search for the licenses relation entirely.
+        $byName = $this->actingAsForApi($superuser)
+            ->getJson(route('api.activity.index', [
+                'item_type' => 'license',
+                'item_id' => $license->id,
+                'search' => 'Adobe',
+            ]))
+            ->assertOk()
+            ->json();
+        $this->assertGreaterThan(0, $byName['total']);
+    }
+
+    public function test_activity_report_search_still_matches_log_meta_on_non_license_rows(): void
+    {
+        // Companion assertion to the serial-oracle regression test above:
+        // the fix removes log_meta from the trait-generic search path, but
+        // re-adds it in advancedTextSearch() scoped to item_type != License.
+        // That preserves "find who changed asset status to Lost" and
+        // similar admin workflows on non-license logs.
+        $asset = Asset::factory()->create();
+        $log = new Actionlog;
+        $log->item_type = Asset::class;
+        $log->item_id = $asset->id;
+        $log->action_type = 'update';
+        $log->log_meta = json_encode([
+            'status_id' => ['old' => 'Ready to Deploy', 'new' => 'ARCHIVED-SENTINEL-STATUS'],
+        ]);
+        $log->save();
+
+        $superuser = User::factory()->superuser()->create();
+
+        $hit = $this->actingAsForApi($superuser)
+            ->getJson(route('api.activity.index', [
+                'search' => 'ARCHIVED-SENTINEL-STATUS',
+            ]))
+            ->assertOk()
+            ->json();
+        $this->assertGreaterThan(0, $hit['total'], 'log_meta search must still match on non-license action logs after the oracle fix.');
     }
 
     public function test_activity_report_api_masks_serial_for_users_without_view_keys(): void

@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Δημιουργία ετικετών στοιχείων ενεργητικού αυτόματης αύξησης',
     'auto_increment_prefix' => 'Πρόθεμα (μη υποχρεωτικό)',
     'auto_incrementing_help' => 'Ενεργοποιήστε πρώτα τις ετικέτες στοιχείων αυτόματης αύξησης για να το ορίσετε',
-    'backups' => 'Αντίγραφα Ασφαλείας',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Δημιουργήστε, κατεβάστε και επαναφέρετε αντίγραφα ασφαλείας ',
     'backups_restoring' => 'Επαναφορά από αντίγραφο ασφαλείας',
     'backups_clean' => 'Clean the backed-up database before restore',

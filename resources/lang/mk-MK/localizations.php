@@ -70,6 +70,7 @@ return [
     ],
 
     'select_country' => 'Иберете Држава',
+    'select_currency' => 'Select a currency',
 
     'countries' => [
         'AC' => 'Вознесение Остров',

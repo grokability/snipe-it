@@ -105,9 +105,9 @@ class UserCompanyMembershipTest extends TestCase
 
         [$companyA, $companyB, $companyC] = Company::factory()->count(3)->create();
 
-        $userInA = User::factory()->forCompany($companyA)->create(['first_name' => 'Alice', 'last_name' => 'Alpha']);
-        $userInB = User::factory()->forCompany($companyB)->create(['first_name' => 'Bob', 'last_name' => 'Beta']);
-        $userInC = User::factory()->forCompany($companyC)->create(['first_name' => 'Carol', 'last_name' => 'Gamma']);
+        $userInA = User::factory()->forCompany($companyA)->create();
+        $userInB = User::factory()->forCompany($companyB)->create();
+        $userInC = User::factory()->forCompany($companyC)->create();
 
         // Acting user belongs to both A and B.
         $actor = User::factory()->viewUsers()->withoutCompany()->create();
@@ -117,11 +117,11 @@ class UserCompanyMembershipTest extends TestCase
             ->getJson(route('api.users.index'))
             ->assertOk();
 
-        $names = collect($response->json('rows'))->pluck('name');
+        $ids = collect($response->json('rows'))->pluck('id');
 
-        $this->assertTrue($names->contains(fn ($n) => str_contains($n, 'Alice')), 'Should see company A user');
-        $this->assertTrue($names->contains(fn ($n) => str_contains($n, 'Bob')), 'Should see company B user');
-        $this->assertFalse($names->contains(fn ($n) => str_contains($n, 'Carol')), 'Should NOT see company C user');
+        $this->assertTrue($ids->contains($userInA->id), 'Should see company A user');
+        $this->assertTrue($ids->contains($userInB->id), 'Should see company B user');
+        $this->assertFalse($ids->contains($userInC->id), 'Should NOT see company C user');
     }
 
     public function test_user_with_no_companies_sees_only_unassigned_users_when_fmcs_enabled()

@@ -14,7 +14,7 @@
     <x-container columns="2">
         <x-page-column class="col-md-9 main-panel">
             <x-box name="assets">
-                <x-table.assets name="assets" :table_header="trans('general.assets')" :route="route('api.assets.index', ['status_id' => $statuslabel->id])"/>
+                <x-table.assets name="statuslabelAssets" :table_header="trans('general.assets')" :route="route('api.assets.index', ['status_id' => $statuslabel->id])"/>
             </x-box>
         </x-page-column>
         <x-page-column class="col-md-3">

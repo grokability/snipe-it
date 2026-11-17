@@ -25,6 +25,10 @@ class IconHelper
             case 'delete':
             case 'upload deleted':
                 return 'fas fa-trash';
+            case 'archived':
+            case 'archive':
+            case 'unarchive':
+                return 'fa-solid fa-ban';
             case 'create':
                 return 'fa-solid fa-plus';
             case 'audit':
@@ -106,6 +110,10 @@ class IconHelper
             case 'request':
             case 'requested':
                 return 'fa-solid fa-bell-concierge';
+            case 'pending-requests':
+                return 'fa-solid fa-boxes-packing';
+            case 'offboarding':
+                return 'fa-solid fa-door-open';
             case 'fulfill_multiple':
                 return 'fa-solid fa-arrows-down-to-people';
             case 'reports':

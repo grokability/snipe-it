@@ -20,6 +20,15 @@
        maxSelectAll : optional per-widget ceiling for ?all=1 (clamped by MAX_UNPAGINATED).
        labelClass   : grid class for the label (default col-md-3).
        inputClass   : grid class for the input column (default col-md-7).
+       includeNull  : opt-in sentinel "No value" row (id='null') prepended to the first
+                      page of selectlist results. Used by the advanced-filter dropdown
+                      widgets to let admins filter rows where the FK is NULL. Default false.
+       idPrefix     : optional prefix prepended to the generated select id + label-for
+                      so one page can render two select2-checkboxes with the same
+                      `name` without id collisions. The advanced-search modal uses
+                      this to scope each filter widget to its owning table, since
+                      the fields index renders one modal per tab and both tabs use
+                      the same `created_by` field name.
 --}}
 @props([
     'name',
@@ -38,10 +47,12 @@
     'maxSelectAll' => null,
     'labelClass' => 'col-md-3',
     'inputClass' => 'col-md-7',
+    'includeNull' => false,
+    'idPrefix' => null,
 ])
 
 @php
-    $selectId = $name.'_select';
+    $selectId = ($idPrefix ? $idPrefix.'_' : '').$name.'_select';
     $selectedIds = collect($selected ?? [])->filter()->values();
     // Pre-fetch the selected models (name + tag_color when available) so
     // the chip strip renders colored squares and real text on initial
@@ -72,6 +83,7 @@
             @if ($companyId) data-company-id="{{ $companyId }}" @endif
             @if ($excludeId) data-exclude-id="{{ $excludeId }}" @endif
             @if ($onlyTopLevel) data-only-top-level="1" @endif
+            @if ($includeNull) data-include-null="1" @endif
             style="width: 100%"
             aria-label="{{ $label }}"
             multiple

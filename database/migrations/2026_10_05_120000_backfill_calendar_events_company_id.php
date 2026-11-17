@@ -44,12 +44,15 @@ return new class extends Migration
 
         // Asset and License store company_id directly. One correlated-
         // subquery UPDATE per source resolves the whole set.
+        $prefix = DB::getTablePrefix();
+        $events = $prefix.'calendar_events';
+
         foreach ([Asset::class, License::class] as $sourceClass) {
-            $table = (new $sourceClass)->getTable();
+            $table = $prefix.(new $sourceClass)->getTable();
             DB::statement(
-                "UPDATE calendar_events SET company_id = (
+                "UPDATE {$events} SET company_id = (
                     SELECT {$table}.company_id FROM {$table}
-                    WHERE {$table}.id = calendar_events.source_id
+                    WHERE {$table}.id = {$events}.source_id
                  ) WHERE source_type = ? AND company_id IS NULL",
                 [$sourceClass],
             );
@@ -59,11 +62,11 @@ return new class extends Migration
         // the parent asset (item_id when item_type matches Asset's
         // class string). Two-hop correlated subquery through assets.
         DB::statement(
-            'UPDATE calendar_events SET company_id = (
-                SELECT a.company_id FROM assets a
-                INNER JOIN maintenances m ON m.item_id = a.id AND m.item_type = ?
-                WHERE m.id = calendar_events.source_id
-             ) WHERE source_type = ? AND company_id IS NULL',
+            "UPDATE {$events} SET company_id = (
+                SELECT a.company_id FROM {$prefix}assets a
+                INNER JOIN {$prefix}maintenances m ON m.item_id = a.id AND m.item_type = ?
+                WHERE m.id = {$events}.source_id
+             ) WHERE source_type = ? AND company_id IS NULL",
             [Asset::class, Maintenance::class],
         );
 

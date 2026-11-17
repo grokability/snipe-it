@@ -23,6 +23,9 @@ return [
             'error' => 'در حذف کردن این فیلد مشکلی وجود داشت. لطفا دوباره تلاش کنید.',
             'success' => 'فیلد با موفقیت حذف شد.',
             'in_use' => 'فیلد همچنان در حال استفاده است.',
+            'in_use_named' => ':name is still attached to at least one fieldset and cannot be deleted.',
+            'bulk_success' => 'Field deleted successfully.|:count fields were deleted successfully.',
+            'partial_success' => ':count field was deleted successfully, but others could not be deleted. See below for details.|:count fields were deleted successfully, but others could not be deleted. See below for details.',
         ],
 
     ],
@@ -46,6 +49,13 @@ return [
             'error' => 'در حذف کردن تنظیمات فیلد مشکلی وجود داشت. لطفا دوباره تلاش کنید.',
             'success' => 'تنظیمات فیلد با موفقیت حذف شد.',
             'in_use' => 'تنظیمات فیلد همچنان در حال استفاده است.',
+            'in_use_named' => ':name is still attached to at least one asset model and cannot be deleted.',
+            'bulk_success' => 'Fieldset deleted successfully.|:count fieldsets were deleted successfully.',
+            'partial_success' => ':count fieldset was deleted successfully, but others could not be deleted. See below for details.|:count fieldsets were deleted successfully, but others could not be deleted. See below for details.',
+        ],
+
+        'clone' => [
+            'success' => 'Fieldset cloned successfully.',
         ],
 
     ],

@@ -19,7 +19,7 @@ class ComponentFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var string
+     * @var class-string<Component>
      */
     protected $model = Component::class;
 
@@ -45,6 +45,11 @@ class ComponentFactory extends Factory
             'serial' => $this->faker->uuid(),
             'default_supplier_id' => Supplier::factory(),
         ];
+    }
+
+    public function archived(): self
+    {
+        return $this->state(fn () => ['archived' => true]);
     }
 
     public function ramCrucial4()

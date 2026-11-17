@@ -2,9 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Enums\FileStorage;
 use App\Models\Import;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\Support\Importing;
 
@@ -248,6 +250,29 @@ class ImportFactory extends Factory
             $attributes['first_row'] = $fileBuilder->firstRow();
 
             return $attributes;
+        });
+    }
+
+    /**
+     * Lay down a trivial CSV at the generated file_path so tests that
+     * hit ItemImportRequest::import() don't 500 on the "file missing
+     * on disk" guard added for S3-backed private disks. Pre-S3, the
+     * importer silently treated a missing path as empty CSV content;
+     * the guard now returns an error early, so permission-style tests
+     * (which only care that the endpoint doesn't 403) need an actual
+     * file behind the Import row. CleansUpImportFiles tears it back
+     * down afterApplicationDestroyed.
+     */
+    public function withStubFile(): static
+    {
+        return $this->afterCreating(function (Import $import) {
+            // Header-only CSV: zero data rows means no per-row
+            // importer validation runs, so the request returns 200
+            // regardless of import type. Enough to prove the file is
+            // reachable - the dedicated per-type tests that assert
+            // actual row shape use ImportFileBuilder for real content.
+            $storedPath = FileStorage::Imports->privateStorageKey().$import->file_path;
+            Storage::put($storedPath, "col\n");
         });
     }
 }

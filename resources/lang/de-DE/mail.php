@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'Eine von ihnen initiierte Herausgabe wurde abgelehnt',
     'inventory_report' => 'Bestandsbericht',
     'item' => 'Gegenstand',
-    'item_checked_reminder' => 'Dies ist eine Erinnerung daran, dass Sie derzeit :count Artikel ausgeliehen haben, die Sie weder angenommen noch abgelehnt haben. Klicken Sie bitte auf den untenstehenden Link, um diese entweder anzunehmen oder abzulehnen.',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => 'Es wird :count Lizenz in den nächsten :threshold Tagen ablaufen oder enden.|Es gibt :count Lizenzen, die in den nächsten :threshold Tagen ablaufen oder enden.',
     'link_to_update_password' => 'Klicken Sie bitte auf den folgenden Link zum Aktualisieren Ihres :web Passworts:',
     'login' => 'Login',

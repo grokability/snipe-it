@@ -32,13 +32,13 @@
                 <x-slot:tabpanes>
                     <!-- start users tab pane -->
                     <x-tabs.pane name="users">
-                        <x-table.users name="users" :route="route('api.users.index', ['company_id' => $company->id, 'expand_company_hierarchy' => 1])"/>
+                        <x-table.users name="companyUsers" :route="route('api.users.index', ['company_id' => $company->id, 'expand_company_hierarchy' => 1])"/>
                     </x-tabs.pane>
                     <!-- end users tab pane -->
 
                     <!-- start assets tab pane -->
                     <x-tabs.pane name="assets">
-                        <x-table.assets name="assets" :route="route('api.assets.index', ['company_id' => $company->id, 'expand_company_hierarchy' => 1])"/>
+                        <x-table.assets name="companyAssets" :route="route('api.assets.index', ['company_id' => $company->id, 'expand_company_hierarchy' => 1])"/>
                     </x-tabs.pane>
                     <!-- end assets tab pane -->
 
@@ -47,31 +47,31 @@
                         <x-slot:bulkactions>
                             <x-table.bulk-licenses />
                         </x-slot:bulkactions>
-                        <x-table.licenses name="licenses" :export_name="$company->name" :route="route('api.licenses.index', ['company_id' => $company->id, 'expand_company_hierarchy' => 1])"/>
+                        <x-table.licenses name="companyLicenses" :export_name="$company->name" :route="route('api.licenses.index', ['company_id' => $company->id, 'expand_company_hierarchy' => 1])"/>
                     </x-tabs.pane>
                     <!-- end licenses tab pane -->
 
                     <!-- start accessory tab pane -->
                     <x-tabs.pane name="accessories">
-                        <x-table.accessories name="accessories" :route="route('api.accessories.index', ['company_id' => $company->id, 'expand_company_hierarchy' => 1])"/>
+                        <x-table.accessories name="companyAccessories" :route="route('api.accessories.index', ['company_id' => $company->id, 'expand_company_hierarchy' => 1])"/>
                     </x-tabs.pane>
                     <!-- end accessory tab pane -->
 
                     <!-- start consumables tab pane -->
                     <x-tabs.pane name="consumables">
-                        <x-table.consumables name="consumables" :route="route('api.consumables.index', ['company_id' => $company->id, 'expand_company_hierarchy' => 1])"/>
+                        <x-table.consumables name="companyConsumables" :route="route('api.consumables.index', ['company_id' => $company->id, 'expand_company_hierarchy' => 1])"/>
                     </x-tabs.pane>
                     <!-- end components tab pane -->
 
                     <!-- start components tab pane -->
                     <x-tabs.pane name="components">
-                        <x-table.components name="components" :route="route('api.components.index', ['company_id' => $company->id, 'expand_company_hierarchy' => 1])"/>
+                        <x-table.components name="companyComponents" :route="route('api.components.index', ['company_id' => $company->id, 'expand_company_hierarchy' => 1])"/>
                     </x-tabs.pane>
 
                     @if ($company->children->isNotEmpty())
                         <!-- start child companies tab pane -->
                         <x-tabs.pane name="companies">
-                            <x-table.companies name="companies" :route="route('api.companies.index', ['parent_id' => $company->id])"/>
+                            <x-table.companies name="companyCompanies" :route="route('api.companies.index', ['parent_id' => $company->id])"/>
                         </x-tabs.pane>
                         <!-- end child companies tab pane -->
                     @endif

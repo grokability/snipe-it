@@ -45,4 +45,42 @@ class PersonalAccessTokensTest extends TestCase
         Livewire::test(PersonalAccessTokens::class)
             ->assertStatus(403);
     }
+
+    public function test_default_has_no_scopes_selected()
+    {
+        // Scopeless PATs remain valid for the REST API. Defaulting to
+        // no scopes means users minting a token for curl against
+        // /api/v1/* can skip the scope checkboxes entirely. MCP users
+        // explicitly check what they need.
+        $this->actingAs(User::factory()->selfApi()->create());
+
+        Livewire::test(PersonalAccessTokens::class)
+            ->assertSet('selectedScopes', []);
+    }
+
+    public function test_rules_do_not_require_a_scope()
+    {
+        // Scopeless PATs stay valid for REST API callers. Testing
+        // the rules() method directly avoids the full Livewire
+        // createToken() path, which needs a seeded Passport personal
+        // access client that this test harness does not have.
+        $this->actingAs(User::factory()->selfApi()->create());
+
+        $component = new PersonalAccessTokens;
+        $rules = $component->rules();
+
+        $this->assertStringNotContainsString('required', (string) $rules['selectedScopes']);
+        $this->assertStringNotContainsString('min:1', (string) $rules['selectedScopes']);
+    }
+
+    public function test_cannot_create_token_with_an_unknown_scope()
+    {
+        $this->actingAs(User::factory()->selfApi()->create());
+
+        Livewire::test(PersonalAccessTokens::class)
+            ->set('name', 'bogus-scope-token')
+            ->set('selectedScopes', ['not:a:real:scope'])
+            ->call('createToken')
+            ->assertHasErrors('selectedScopes.0');
+    }
 }

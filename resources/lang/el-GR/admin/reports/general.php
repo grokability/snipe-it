@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'Αποστολή υπενθύμισης',
     'cannot_send_reminder' => 'User has been deleted or does not have an email address so cannot receive a reminder',
     'reminder_sent' => 'Υπενθύμιση εστάλη',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'Η αίτηση αποδοχής διαγράφηκε',
     'acceptance_request' => 'Αίτημα αποδοχής',
     'custom_export' => [

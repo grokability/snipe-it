@@ -271,7 +271,11 @@
                       <x-form.row :label="trans('general.image_upload')" name="avatar">
                           <x-slot:input>
                               @if ($user->avatar)
-                                  <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url(app('users_upload_path').e($user->avatar)) }}" class="img-responsive" alt="" style="max-width: 300px;">
+                                  @if ($user->isAvatarExternal())
+                                      <img src="{{ $user->avatar }}" class="img-responsive" alt="" style="max-width: 300px;">
+                                  @else
+                                      <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url(app('users_upload_path').e($user->avatar)) }}" class="img-responsive" alt="" style="max-width: 300px;">
+                                  @endif
                               @endif
                               <x-demo-lock :item="$user"/>
                           </x-slot:input>
@@ -595,7 +599,7 @@
                                           name="two_factor_optin"
                                           :label="trans('admin/settings/general.two_factor')"
                                           :item="$user"
-                                          :disabled="!Gate::allows('editableOnDemo')"
+                                          :disabled="!Gate::allows('editableOnDemo') || !Gate::allows('canEditAuthFields', $user)"
                                           :help_text="Gate::allows('editableOnDemo') ? trans('admin/users/general.two_factor_admin_optin_help') : null"
                                       />
                                   @endif

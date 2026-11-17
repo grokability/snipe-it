@@ -11,7 +11,7 @@ class GroupFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var string
+     * @var class-string<Group>
      */
     protected $model = Group::class;
 

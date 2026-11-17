@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'maintenance_types' => 'Maintenance Types',
-    'maintenance_type' => 'maintenance type',
-    'create' => 'Create Maintenance Type',
-    'update' => 'Update Maintenance Type',
+    'maintenance_types' => 'أنواع الصيانة',
+    'maintenance_type' => 'نوع الصيانة',
+    'create' => 'إنشاء نوع صيانة',
+    'update' => 'تحديث نوع الصيانة',
 ];

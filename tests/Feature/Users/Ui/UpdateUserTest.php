@@ -195,6 +195,60 @@ class UpdateUserTest extends TestCase
         $this->assertSame(1, (int) $admin->fresh()->activated, 'Non-admin actor must not be able to deactivate an admin.');
     }
 
+    /**
+     * Two_factor_optin is an auth-sensitive field and must only be writable when canEditAuthFields
+     * passes.
+     */
+    public function test_editing_users_cannot_toggle_admin_two_factor_optin_via_full_valid_payload()
+    {
+        $editing_user = User::factory()->editUsers()->create(['activated' => true]);
+        $admin = User::factory()->admin()->create([
+            'first_name' => 'Admin',
+            'last_name' => 'Target',
+            'username' => 'admin_target_2fa',
+            'email' => 'admin-target-2fa@example.test',
+            'activated' => true,
+            'two_factor_optin' => 1,
+        ]);
+
+        $this->actingAs($editing_user)
+            ->put(route('users.update', $admin), [
+                'first_name' => $admin->first_name,
+                'last_name' => $admin->last_name,
+                'username' => $admin->username,
+                'email' => $admin->email,
+                'activated' => 1,
+                'two_factor_optin' => 0,
+            ]);
+
+        $this->assertSame(1, (int) $admin->fresh()->two_factor_optin, 'Non-admin actor must not be able to clear an admin two_factor_optin.');
+    }
+
+    public function test_superuser_can_toggle_admin_two_factor_optin()
+    {
+        $superuser = User::factory()->superuser()->create();
+        $admin = User::factory()->admin()->create([
+            'first_name' => 'Admin',
+            'last_name' => 'Target',
+            'username' => 'admin_target_2fa_super',
+            'email' => 'admin-target-2fa-super@example.test',
+            'activated' => true,
+            'two_factor_optin' => 1,
+        ]);
+
+        $this->actingAs($superuser)
+            ->put(route('users.update', $admin), [
+                'first_name' => $admin->first_name,
+                'last_name' => $admin->last_name,
+                'username' => $admin->username,
+                'email' => $admin->email,
+                'activated' => 1,
+                'two_factor_optin' => 0,
+            ]);
+
+        $this->assertSame(0, (int) $admin->fresh()->two_factor_optin, 'Superuser must be able to flip an admin two_factor_optin.');
+    }
+
     public function test_editing_users_cannot_edit_escalation_fields_for_admins()
     {
         $editing_user = User::factory()->editUsers()->create(['activated' => true]);

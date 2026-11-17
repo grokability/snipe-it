@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'maintenance_types' => 'Maintenance Types',
-    'maintenance_type' => 'maintenance type',
-    'create' => 'Create Maintenance Type',
+    'maintenance_types' => 'Typy údržby',
+    'maintenance_type' => 'typ údržby',
+    'create' => 'Vytvoriť typ údržby',
     'update' => 'Aktualizovať typ údržby',
 ];

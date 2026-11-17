@@ -5,10 +5,17 @@ namespace Tests\Feature\CheckoutAcceptances\Ui;
 use App\Models\CheckoutAcceptance;
 use App\Models\Component;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ComponentAcceptanceTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Storage::fake();
+    }
+
     public function test_component_checkout_accept_page_renders()
     {
         $checkoutAcceptance = CheckoutAcceptance::factory()

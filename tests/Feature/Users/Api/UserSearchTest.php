@@ -24,6 +24,23 @@ class UserSearchTest extends TestCase
         $this->assertFalse($results->pluck('name')->contains(fn ($text) => str_contains($text, 'Darth')));
     }
 
+    public function test_can_search_by_user_last_and_first_name_order()
+    {
+        // Users in last-first-order locales (Hungarian, CJK, etc.) type
+        // the name in their natural order. Issue #19626.
+        User::factory()->create(['first_name' => 'Luke', 'last_name' => 'Skywalker']);
+        User::factory()->create(['first_name' => 'Darth', 'last_name' => 'Vader']);
+
+        Passport::actingAs(User::factory()->viewUsers()->create());
+        $response = $this->getJson(route('api.users.index', ['search' => 'Skywalker Luke']))->assertOk();
+
+        $results = collect($response->json('rows'));
+
+        $this->assertEquals(1, $results->count());
+        $this->assertTrue($results->pluck('name')->contains(fn ($text) => str_contains($text, 'Luke')));
+        $this->assertFalse($results->pluck('name')->contains(fn ($text) => str_contains($text, 'Darth')));
+    }
+
     public function test_results_when_searching_for_active_users()
     {
         User::factory()->create(['first_name' => 'Active', 'last_name' => 'User']);

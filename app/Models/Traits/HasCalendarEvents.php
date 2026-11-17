@@ -4,6 +4,7 @@ namespace App\Models\Traits;
 
 use App\Models\CalendarEvent;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Opts a model into publishing rows into the calendar_events index
@@ -57,12 +58,19 @@ trait HasCalendarEvents
      */
     public static function bootHasCalendarEvents(): void
     {
+        // Defer the sync via DB::afterCommit so the calendar_events upsert
+        // fires AFTER the enclosing DB::transaction commits
+        //  rather than inside it.
         static::created(function ($model) {
-            $model->forceSyncCalendarEvents();
+            DB::afterCommit(function () use ($model) {
+                $model->forceSyncCalendarEvents();
+            });
         });
 
         static::updated(function ($model) {
-            $model->syncCalendarEvents();
+            DB::afterCommit(function () use ($model) {
+                $model->syncCalendarEvents();
+            });
         });
 
         static::deleted(function ($model) {
@@ -115,8 +123,11 @@ trait HasCalendarEvents
                 // the one-shot cleanup migration's force-deleted
                 // calendar_events (see issue #19760) get rebuilt
                 // from scratch on restore instead of coming back
-                // empty.
-                $model->forceSyncCalendarEvents();
+                // empty. Deferred via afterCommit for the same
+                // deadlock-surface reasoning as created / updated.
+                DB::afterCommit(function () use ($model) {
+                    $model->forceSyncCalendarEvents();
+                });
             });
         }
     }
@@ -244,33 +255,57 @@ trait HasCalendarEvents
         $end = $endField ? $this->{$endField} : null;
         $companyId = $this->calendarEventCompanyId();
 
-        $existing = CalendarEvent::withTrashed()
-            ->where('source_type', static::class)
-            ->where('source_id', $this->getKey())
-            ->where('source_field', $field)
-            ->first();
+        // Single-statement upsert instead of SELECT-then-INSERT/UPDATE.
+        // Compiles to INSERT ... ON DUPLICATE KEY UPDATE on MySQL.
+        //
+        // The observers that call into this method dispatch it through
+        // DB::afterCommit, so when a controller write path has an open
+        // DB::transaction the upsert runs AFTER that transaction commits,
+        // not inside it. The gap locks it takes on the composite unique
+        // index live only for the duration of this single statement, with
+        // no shared window against the enclosing write's row locks, so
+        // the deadlock surface that forced the earlier retry wrapper is
+        // gone. For callers that invoke syncCalendarEvents outside a
+        // transaction (reconcile commands, direct model saves in tests),
+        // DB::afterCommit fires inline, so the behavior is identical to
+        // a direct call.
+        $now = now();
+        CalendarEvent::upsert(
+            [
+                [
+                    'source_type' => static::class,
+                    'source_id' => $this->getKey(),
+                    'source_field' => $field,
+                    'event_type' => $eventType,
+                    'start' => $this->normalizeCalendarEventDate($start),
+                    'end' => $this->normalizeCalendarEventDate($end),
+                    'company_id' => $companyId,
+                    'deleted_at' => null,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ],
+            ],
+            ['source_type', 'source_id', 'source_field'],
+            ['event_type', 'start', 'end', 'company_id', 'deleted_at', 'updated_at']
+        );
+    }
 
-        if ($existing) {
-            $existing->fill([
-                'event_type' => $eventType,
-                'start' => $start,
-                'end' => $end,
-                'company_id' => $companyId,
-                'deleted_at' => null,
-            ])->save();
-
-            return;
+    /**
+     * upsert() bypasses Eloquent's attribute casting, so Carbon /
+     * DateTime values on the source model have to be formatted into
+     * the Y-m-d H:i:s string MySQL's datetime column expects. Scalar
+     * strings pass through, null stays null.
+     */
+    private function normalizeCalendarEventDate(mixed $value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        if ($value instanceof \DateTimeInterface) {
+            return $value->format('Y-m-d H:i:s');
         }
 
-        CalendarEvent::create([
-            'source_type' => static::class,
-            'source_id' => $this->getKey(),
-            'source_field' => $field,
-            'event_type' => $eventType,
-            'start' => $start,
-            'end' => $end,
-            'company_id' => $companyId,
-        ]);
+        return (string) $value;
     }
 
     /**

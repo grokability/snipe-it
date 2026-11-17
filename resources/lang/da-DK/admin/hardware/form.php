@@ -56,8 +56,6 @@ return [
     'years' => 'år',
     'asset_location' => 'Opdater Aktiv Placering',
     'asset_location_update_default_current' => 'Opdater standardplacering OG faktisk placering',
-    'asset_location_update_default' => 'Opdater kun standardplacering',
-    'asset_location_update_actual' => 'Opdater kun den faktiske placering',
     'asset_not_deployable' => 'Denne aktivstatus er ikke implementerbar. Dette aktiv kan ikke tjekkes ud.',
     'asset_not_deployable_checkin' => '{1} That asset status is not deployable. Using this status label will check in the asset.|[2,*] That asset status in not deployable. Using this status label will result in no change.',
     'asset_deployable' => '{1} This asset can be checked out.|[2,*] These assets can be checked out.',

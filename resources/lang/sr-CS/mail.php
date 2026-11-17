@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'Zaduženje koje ste vi pokrenuli je odbijeno',
     'inventory_report' => 'Izveštaj o zalihama',
     'item' => 'Stavka',
-    'item_checked_reminder' => 'Ovo je podsetnik da trenutno imate :count stavki koje su zadužene vama koje niste prihvatili ili odbili. Molim vas kliknite na vezu ispod da bi ste potvrdili vašu odluku.',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => 'Postoji :count licenca koja uskoro ističe ili koja se poništava u narednih :threshold dana.|Postoji :count licenci koje uskoro ističu ili koje se poništavaju u narednih :threshold dana.',
     'link_to_update_password' => 'Kliknite na sledeću vezu kako biste obnovili svoju :web lozinku:',
     'login' => 'Prijava',

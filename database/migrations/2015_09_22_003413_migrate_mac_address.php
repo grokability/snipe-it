@@ -15,7 +15,6 @@ class MigrateMacAddress extends Migration
      */
     public function up()
     {
-        // DB::getDoctrineSchemaManager()->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
 
         $f2 = new CustomFieldset(['name' => 'Asset with MAC Address']);
         $f2->timestamps = false; // when this model was first created, it had no timestamps. But later on it gets them.
@@ -37,9 +36,8 @@ class MigrateMacAddress extends Migration
             $table->renameColumn('mac_address', '_snipeit_mac_address');
         });
 
-        // DB::statement("ALTER TABLE assets CHANGE mac_address _snipeit_mac_address varchar(255)");
 
-        $ans = Schema::table('models', function (Blueprint $table) {
+        Schema::table('models', function (Blueprint $table) {
             $table->renameColumn('show_mac_address', 'deprecated_mac_address');
         });
     }
@@ -63,7 +61,9 @@ class MigrateMacAddress extends Migration
         });
 
         if (Schema::hasColumn('assets', '_snipeit_mac_address')) {
-            DB::statement('ALTER TABLE assets CHANGE _snipeit_mac_address mac_address varchar(255)');
+            Schema::table('assets', function (Blueprint $table) {
+                $table->renameColumn('_snipeit_mac_address', 'mac_address');
+            });
         }
     }
 }

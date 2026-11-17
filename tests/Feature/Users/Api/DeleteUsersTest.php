@@ -158,7 +158,9 @@ class DeleteUsersTest extends TestCase implements TestsFullMultipleCompaniesSupp
     {
         $user = User::factory()->create();
 
-        $clientId = DB::table('oauth_clients')->insertGetId([
+        $clientId = (string) \Illuminate\Support\Str::uuid();
+        DB::table('oauth_clients')->insert([
+            'id' => $clientId,
             'user_id' => null,
             'name' => 'Test Personal Client',
             'secret' => 'secret',
@@ -209,7 +211,9 @@ class DeleteUsersTest extends TestCase implements TestsFullMultipleCompaniesSupp
     {
         $user = User::factory()->create();
 
-        $clientId = DB::table('oauth_clients')->insertGetId([
+        $clientId = (string) \Illuminate\Support\Str::uuid();
+        DB::table('oauth_clients')->insert([
+            'id' => $clientId,
             'user_id' => null,
             'name' => 'Test Personal Client',
             'secret' => 'secret',

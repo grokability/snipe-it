@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Koristi osnovnu, default EULA.</del> Nema primarne, default EULA. Dodajte jednu u Postavke.',
     'clone' => 'Kloniraj pribor',
     'delete_disabled' => 'Pribor za sada ne može biti obrisan jer su neke stavke još uvek zadužene.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'En udlevering, du har startet, blev afvist',
     'inventory_report' => 'Lagerrapport',
     'item' => 'Enhed',
-    'item_checked_reminder' => 'Dette er en påmindelse om, at du i øjeblikket har :count enheder udleveret til dig, som du endnu ikke har accepteret eller afvist. Klik venligst på linket nedenfor for at bekræfte dit valg.',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => 'Der er :count licens, der udløber eller ophører inden for de næste :threshold dage. | Der er :count licenser, der udløber eller ophører inden for de næste :threshold dage.',
     'link_to_update_password' => 'Venligst klik på følgende link for at opdatere din: webadgangskode:',
     'login' => 'Login',

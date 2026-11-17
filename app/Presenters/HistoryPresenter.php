@@ -85,7 +85,7 @@ class HistoryPresenter extends Presenter
                 [
                     'field' => 'action_date',
                     'scope' => 'col',
-                    'searchable' => false,
+                    'searchable' => true,
                     'sortable' => true,
                     'title' => trans('general.action_date'),
                     'visible' => false,

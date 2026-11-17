@@ -5,6 +5,7 @@ namespace Tests\Feature\AssetModels\Api;
 use App\Models\AssetModel;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 /**
@@ -22,6 +23,12 @@ use Tests\TestCase;
  */
 class AssetModelFilesPolicyBypassTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Storage::fake();
+    }
+
     public function test_asset_viewer_can_list_model_files()
     {
         // Seed one file on the model as a superuser so there is something to see.

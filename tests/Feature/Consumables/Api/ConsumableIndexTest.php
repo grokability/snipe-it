@@ -143,4 +143,46 @@ class ConsumableIndexTest extends TestCase
                 ->assertResponseDoesNotContainInRows($otherConsumable);
         }
     }
+
+    public function test_remaining_includes_checkouts_to_users_outside_viewers_company()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+        $userInCompanyB = User::factory()->forCompany($companyB)->create();
+
+        $consumableForCompanyA = Consumable::factory()
+            ->for($companyA)
+            // this can happen if FMCS was toggled on after checkouts
+            ->checkedOutToUser($userInCompanyB)
+            ->checkedOutToUser($userInCompanyB)
+            ->create(['qty' => 3]);
+
+        $this->actingAsForApi(User::factory()->viewConsumables()->forCompany($companyA)->create())
+            ->getJson(route('api.consumables.index'))
+            ->assertOk()
+            ->assertJsonPath('rows.0.id', $consumableForCompanyA->id)
+            ->assertJsonPath('rows.0.remaining', 1);
+    }
+
+    public function test_requestable_remaining_includes_checkouts_to_users_outside_viewers_company()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+        $userInCompanyB = User::factory()->forCompany($companyB)->create();
+
+        $consumableForCompanyA = Consumable::factory()
+            ->for($companyA)
+            // this can happen if FMCS was toggled on after checkouts
+            ->checkedOutToUser($userInCompanyB)
+            ->checkedOutToUser($userInCompanyB)
+            ->create(['qty' => 3, 'requestable' => true]);
+
+        $this->actingAsForApi(User::factory()->viewRequestableAssets()->forCompany($companyA)->create())
+            ->getJson(route('api.consumables.requestable'))
+            ->assertOk()
+            ->assertJsonPath('rows.0.id', $consumableForCompanyA->id)
+            ->assertJsonPath('rows.0.remaining', 1);
+    }
 }

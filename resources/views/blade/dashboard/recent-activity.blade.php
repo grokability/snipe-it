@@ -23,6 +23,7 @@
                         data-cookie-id-table="dashActivityReport"
                         data-pagination="false"
                         data-side-pagination="server"
+                        data-advanced-search="false"
                         data-id-table="dashActivityReport"
                         data-sort-order="desc"
                         data-show-columns="false"

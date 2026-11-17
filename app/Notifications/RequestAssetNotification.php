@@ -16,12 +16,19 @@ class RequestAssetNotification extends Notification implements ShouldQueue
     use Queueable;
 
     public $target;
+
     public $item;
+
     public $item_type;
+
     public $item_quantity;
+
     public $note = '';
+
     public $last_checkout = '';
+
     public $expected_checkin = '';
+
     public $requested_date;
 
     public $start_date;
@@ -70,7 +77,6 @@ class RequestAssetNotification extends Notification implements ShouldQueue
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
      * @return array
      */
     public function via()
@@ -128,8 +134,8 @@ class RequestAssetNotification extends Notification implements ShouldQueue
         $fields = [];
 
         // Check if the item has custom fields associated with it
-        if (($this->item->model) && ($this->item->model->fieldset)) {
-            $fields = $this->item->model->fieldset->fields;
+        if (($this->item->custom_fieldset)) {
+            $fields = $this->item->custom_fieldset->fields;
         }
 
         $message = (new MailMessage)->markdown('notifications.markdown.asset-requested',

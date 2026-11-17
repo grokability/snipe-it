@@ -42,7 +42,11 @@ class UnifiAdapter extends SyncAdapter
 
     public function baseUrlPlaceholder(): ?string
     {
-        return 'https://your-controller:8443';
+        // A local UniFi console / Network Application
+        // reachable from this Snipe-IT install, or `https://api.ui.com`
+        // for the Site Manager cloud API (the latter is what hosted
+        // Snipe-IT installs want when the UniFi consoles are behind NAT).
+        return 'https://your-controller:8443 or https://api.ui.com';
     }
 
     public function settingsSchema(): array

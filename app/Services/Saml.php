@@ -28,7 +28,7 @@ class Saml
     /**
      * OneLogin_Saml2_Auth instance.
      *
-     * @var OneLogin\Saml2\Auth
+     * @var \OneLogin\Saml2\Auth
      */
     private $_auth;
 
@@ -327,7 +327,7 @@ class Saml
      *
      * @since 5.0.0
      *
-     * @return OneLogin\Saml2\Auth
+     * @return \OneLogin\Saml2\Auth
      */
     public function getAuth()
     {

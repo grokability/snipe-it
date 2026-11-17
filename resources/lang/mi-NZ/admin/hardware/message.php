@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Kaore i whakauruhia te taketake, me ngana ano',
         'success' => 'Kua tohua te tahua.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'He muhu te kaiwhakamahi. Tena ngana ano.',
         'already_checked_in' => 'Kua tohua taua taonga i roto i.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

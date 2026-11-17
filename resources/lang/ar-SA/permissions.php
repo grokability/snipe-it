@@ -16,450 +16,450 @@ return [
     */
 
     'superuser' => [
-        'name' => 'Super User',
-        'note' => 'Determines whether the user has full access to all aspects of the admin. This setting overrides ALL more specific and restrictive permissions throughout the system. ',
+        'name' => 'مستخدم ذو صلاحيات عليا',
+        'note' => 'يحدد ما إذا كان للمستخدم وصول كامل إلى جميع جوانب إدارة النظام. يتجاوز هذا الإعداد جميع الصلاحيات الأكثر تحديدًا وتقييدًا في النظام. ',
     ],
     'admin' => [
-        'name' => 'Admin Access',
-        'note' => 'Determines whether the user has access to most aspects of the system EXCEPT the System Admin Settings. These users will be able to manage users, locations, categories, etc, but ARE constrained by Full Multiple Company Support if it is enabled.',
+        'name' => 'وصول المسؤول',
+        'note' => 'يحدد ما إذا كان للمستخدم وصول إلى معظم وظائف النظام، باستثناء إعدادات إدارة النظام. يستطيع هؤلاء المستخدمون إدارة المستخدمين والمواقع والفئات وغيرها، لكنهم يخضعون لقيود دعم الشركات المتعددة الكامل إذا كان مفعّلًا.',
     ],
 
     'import' => [
-        'name' => 'CSV Import',
-        'note' => 'This will allow users to import even if access to users, assets, etc is denied elsewhere.',
+        'name' => 'استيراد CSV',
+        'note' => 'يسمح للمستخدمين بالاستيراد حتى إذا مُنعوا من الوصول إلى المستخدمين أو الأصول أو غيرها من الأقسام من خلال صلاحيات أخرى.',
     ],
 
     'reports' => [
-        'name' => 'Reports Access',
-        'note' => 'Determines whether the user has access to the Reports section of the application.',
+        'name' => 'الوصول إلى التقارير',
+        'note' => 'يحدد ما إذا كان للمستخدم حق الوصول إلى قسم التقارير في التطبيق.',
     ],
 
     'assets' => [
         'name' => 'الأصول',
-        'note' => 'Grants access to the Assets section of the application. ',
+        'note' => 'يمنح حق الوصول إلى قسم الأصول في التطبيق. ',
     ],
 
     'assetsview' => [
-        'name' => 'View Assets',
-        'note' => 'Note that users with this permission will also be able to see (not modify or delete) files uploaded to the asset model as well. This is to make it easier to share common documents like user manuals across assets without having to upload them to every asset, and to avoid having to grant the user permission to modify asset files. Users with this permission will also be able to view edit and checkin history.',
+        'name' => 'عرض الأصول',
+        'note' => 'يمكن للمستخدمين الحاصلين على هذه الصلاحية أيضًا عرض الملفات المرفوعة إلى طراز الأصل، دون تعديلها أو حذفها. يسهّل ذلك مشاركة المستندات المشتركة، مثل أدلة المستخدم، بين الأصول دون رفعها إلى كل أصل على حدة أو منح صلاحية تعديل ملفات الأصول. ويمكنهم أيضًا عرض سجل التعديلات والاستلام.',
     ],
 
     'assetscreate' => [
-        'name' => 'Create New Assets',
+        'name' => 'إنشاء أصول جديدة',
     ],
 
     'assetsedit' => [
-        'name' => 'Edit Assets',
+        'name' => 'تعديل الأصول',
     ],
 
     'assetsdelete' => [
-        'name' => 'Delete Assets',
+        'name' => 'حذف الأصول',
     ],
 
     'assetscheckin' => [
-        'name' => 'Check In',
-        'note' => 'Check assets back into inventory that are currently checked out.',
+        'name' => 'استلام الأصول',
+        'note' => 'استلام الأصول التي سبق تسليمها وإعادتها إلى المخزون.',
     ],
 
     'assetscheckout' => [
-        'name' => 'Check Out',
-        'note' => 'Assign assets in inventory by checking them out.',
+        'name' => 'تسليم الأصول',
+        'note' => 'تخصيص الأصول الموجودة في المخزون عن طريق تسليمها.',
     ],
 
     'assetsaudit' => [
-        'name' => 'Audit Assets',
-        'note' => 'Allows the user to mark an asset as physically inventoried.',
+        'name' => 'تدقيق الأصول',
+        'note' => 'يسمح للمستخدم بتسجيل أن الأصل قد خضع للجرد الفعلي.',
     ],
 
     'assetsviewrequestable' => [
-        'name' => 'View Requestable Items',
-        'note' => 'Allows the user to view items that are marked as requestable.',
+        'name' => 'عرض العناصر القابلة للطلب',
+        'note' => 'يسمح للمستخدم بعرض العناصر المعلّمة بأنها قابلة للطلب.',
     ],
 
     'assetsviewencrypted-custom-fields' => [
-        'name' => 'View Encrypted Custom Fields',
-        'note' => 'Allows the user to view and modify encrypted custom fields on assets.',
+        'name' => 'عرض الحقول المخصصة المشفّرة',
+        'note' => 'يسمح للمستخدم بعرض الحقول المخصصة المشفّرة في الأصول وتعديلها.',
     ],
 
     'accessories' => [
-        'name' => 'ملحقات',
-        'note' => 'Grants access to the Accessories section of the application.',
+        'name' => 'الملحقات',
+        'note' => 'يمنح حق الوصول إلى قسم الملحقات في التطبيق.',
     ],
 
     'accessoriesview' => [
-        'name' => 'View Accessories',
+        'name' => 'عرض الملحقات',
     ],
     'accessoriescreate' => [
-        'name' => 'Create New Accessories',
+        'name' => 'إنشاء ملحقات جديدة',
     ],
     'accessoriesedit' => [
-        'name' => 'Edit Accessories',
+        'name' => 'تعديل الملحقات',
     ],
     'accessoriesdelete' => [
-        'name' => 'Delete Accessories',
+        'name' => 'حذف الملحقات',
     ],
     'accessoriescheckout' => [
-        'name' => 'Check Out Accessories',
-        'note' => 'Assign accessories in inventory by checking them out.',
+        'name' => 'تسليم الملحقات',
+        'note' => 'تخصيص الملحقات الموجودة في المخزون عن طريق تسليمها.',
     ],
     'accessoriescheckin' => [
-        'name' => 'Check In Accessories',
-        'note' => 'Check accessories back into inventory that are currently checked out.',
+        'name' => 'استلام الملحقات',
+        'note' => 'استلام الملحقات التي سبق تسليمها وإعادتها إلى المخزون.',
     ],
     'accessoriesfiles' => [
-        'name' => 'Manage Accessory Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with accessories. (This only makes sense with view privileges or higher.)',
+        'name' => 'إدارة ملفات الملحقات',
+        'note' => 'يسمح للمستخدم برفع الملفات المرتبطة بالملحقات وتنزيلها وحذفها. (لا تكون هذه الصلاحية مفيدة إلا مع صلاحية العرض أو صلاحية أعلى.)',
     ],
 
     'assetsfiles' => [
-        'name' => 'Manage Asset Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with assets. (This only makes sense with view privileges or higher.)',
+        'name' => 'إدارة ملفات الأصول',
+        'note' => 'يسمح للمستخدم برفع الملفات المرتبطة بالأصول وتنزيلها وحذفها. (لا تكون هذه الصلاحية مفيدة إلا مع صلاحية العرض أو صلاحية أعلى.)',
     ],
 
     'usersfiles' => [
-        'name' => 'Manage User Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with users. (This only makes sense with view privileges or higher.)',
+        'name' => 'إدارة ملفات المستخدمين',
+        'note' => 'يسمح للمستخدم برفع الملفات المرتبطة بالمستخدمين وتنزيلها وحذفها. (لا تكون هذه الصلاحية مفيدة إلا مع صلاحية العرض أو صلاحية أعلى.)',
     ],
 
     'modelsfiles' => [
-        'name' => 'Manage Model Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with asset models on both the model view and the asset view screens. (This only makes sense with view privileges or higher.)',
+        'name' => 'إدارة ملفات طُرز الأصول',
+        'note' => 'يسمح للمستخدم برفع الملفات المرتبطة بطُرز الأصول وتنزيلها وحذفها من شاشتي عرض الطراز وعرض الأصل. (لا تكون هذه الصلاحية مفيدة إلا مع صلاحية العرض أو صلاحية أعلى.)',
     ],
 
     'departmentsfiles' => [
-        'name' => 'Manage Department Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with departments. (This only makes sense with view privileges or higher.)',
+        'name' => 'إدارة ملفات الأقسام',
+        'note' => 'يسمح للمستخدم برفع الملفات المرتبطة بالأقسام وتنزيلها وحذفها. (لا تكون هذه الصلاحية مفيدة إلا مع صلاحية العرض أو صلاحية أعلى.)',
     ],
 
     'suppliersfiles' => [
-        'name' => 'Manage Supplier Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with suppliers. (This only makes sense with view privileges or higher.)',
+        'name' => 'إدارة ملفات المورّدين',
+        'note' => 'يسمح للمستخدم برفع الملفات المرتبطة بالمورّدين وتنزيلها وحذفها. (لا تكون هذه الصلاحية مفيدة إلا مع صلاحية العرض أو صلاحية أعلى.)',
     ],
 
     'locationsfiles' => [
-        'name' => 'Manage Location Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with locations.(This only makes sense with view privileges or higher.)',
+        'name' => 'إدارة ملفات المواقع',
+        'note' => 'يسمح للمستخدم برفع الملفات المرتبطة بالمواقع وتنزيلها وحذفها. (لا تكون هذه الصلاحية مفيدة إلا مع صلاحية العرض أو صلاحية أعلى.)',
     ],
 
     'companiesfiles' => [
-        'name' => 'Manage Company Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with companies. (This only makes sense with view privileges or higher.)',
+        'name' => 'إدارة ملفات الشركات',
+        'note' => 'يسمح للمستخدم برفع الملفات المرتبطة بالشركات وتنزيلها وحذفها. (لا تكون هذه الصلاحية مفيدة إلا مع صلاحية العرض أو صلاحية أعلى.)',
     ],
 
     'consumablesfiles' => [
-        'name' => 'Manage Consumable Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with consumables. (This only makes sense with view privileges or higher.)',
+        'name' => 'إدارة ملفات المستهلكات',
+        'note' => 'يسمح للمستخدم برفع الملفات المرتبطة بالمستهلكات وتنزيلها وحذفها. (لا تكون هذه الصلاحية مفيدة إلا مع صلاحية العرض أو صلاحية أعلى.)',
     ],
 
     'consumables' => [
-        'name' => 'المواد الاستهلاكية',
-        'note' => 'Grants access to the Consumables section of the application.',
+        'name' => 'المستهلكات',
+        'note' => 'يمنح حق الوصول إلى قسم المستهلكات في التطبيق.',
     ],
     'consumablesview' => [
-        'name' => 'View Consumables',
+        'name' => 'عرض المستهلكات',
     ],
     'consumablescreate' => [
-        'name' => 'Create New Consumables',
+        'name' => 'إنشاء مستهلكات جديدة',
     ],
     'consumablesedit' => [
-        'name' => 'Edit Consumables',
+        'name' => 'تعديل المستهلكات',
     ],
     'consumablesdelete' => [
-        'name' => 'Delete Consumables',
+        'name' => 'حذف المستهلكات',
     ],
     'consumablescheckout' => [
-        'name' => 'Check Out Consumables',
-        'note' => 'Assign consumables in inventory by checking them out.',
+        'name' => 'تسليم المستهلكات',
+        'note' => 'تخصيص المستهلكات الموجودة في المخزون عن طريق تسليمها.',
     ],
 
     'licenses' => [
         'name' => 'التراخيص',
-        'note' => 'Grants access to the Licenses section of the application.',
+        'note' => 'يمنح حق الوصول إلى قسم التراخيص في التطبيق.',
     ],
     'licensesview' => [
-        'name' => 'View Licenses',
+        'name' => 'عرض التراخيص',
     ],
     'licensescreate' => [
-        'name' => 'Create New Licenses',
+        'name' => 'إنشاء تراخيص جديدة',
     ],
     'licensesedit' => [
-        'name' => 'Edit Licenses',
+        'name' => 'تعديل التراخيص',
     ],
     'licensesdelete' => [
-        'name' => 'Delete Licenses',
+        'name' => 'حذف التراخيص',
     ],
     'licensescheckout' => [
-        'name' => 'Assign Licenses',
-        'note' => 'Allows the user to assign licenses to assets or users.',
+        'name' => 'تخصيص التراخيص',
+        'note' => 'يسمح للمستخدم بتخصيص التراخيص للأصول أو المستخدمين.',
     ],
     'licensescheckin' => [
-        'name' => 'Unassign Licenses',
-        'note' => 'Allows the user to unassign licenses from assets or users.',
+        'name' => 'إلغاء تخصيص التراخيص',
+        'note' => 'يسمح للمستخدم بإلغاء تخصيص التراخيص من الأصول أو المستخدمين.',
     ],
     'licensesfiles' => [
-        'name' => 'Manage License Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with licenses.',
+        'name' => 'إدارة ملفات التراخيص',
+        'note' => 'يسمح للمستخدم برفع الملفات المرتبطة بالتراخيص وتنزيلها وحذفها.',
     ],
     'componentsfiles' => [
-        'name' => 'Manage Component Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with components.',
+        'name' => 'إدارة ملفات المكوّنات',
+        'note' => 'يسمح للمستخدم برفع الملفات المرتبطة بالمكوّنات وتنزيلها وحذفها.',
     ],
 
     'licenseskeys' => [
-        'name' => 'Manage License Keys',
-        'note' => 'Allows the user to view product keys associated with licenses.',
+        'name' => 'إدارة مفاتيح التراخيص',
+        'note' => 'يسمح للمستخدم بعرض مفاتيح المنتجات المرتبطة بالتراخيص.',
     ],
     'components' => [
-        'name' => 'المكونات',
-        'note' => 'Grants access to the Components section of the application.',
+        'name' => 'المكوّنات',
+        'note' => 'يمنح حق الوصول إلى قسم المكوّنات في التطبيق.',
     ],
     'componentsview' => [
-        'name' => 'View Components',
+        'name' => 'عرض المكوّنات',
     ],
     'componentscreate' => [
-        'name' => 'Create New Components',
+        'name' => 'إنشاء مكوّنات جديدة',
     ],
     'componentsedit' => [
-        'name' => 'Edit Components',
+        'name' => 'تعديل المكوّنات',
     ],
     'componentsdelete' => [
-        'name' => 'Delete Components',
+        'name' => 'حذف المكوّنات',
     ],
 
     'componentscheckout' => [
-        'name' => 'Check Out Components',
-        'note' => 'Assign components in inventory by checking them out.',
+        'name' => 'تسليم المكوّنات',
+        'note' => 'تخصيص المكوّنات الموجودة في المخزون عن طريق تسليمها.',
     ],
     'componentscheckin' => [
-        'name' => 'Check In Components',
-        'note' => 'Check components back into inventory that are currently checked out.',
+        'name' => 'استلام المكوّنات',
+        'note' => 'استلام المكوّنات التي سبق تسليمها وإعادتها إلى المخزون.',
     ],
     'kits' => [
-        'name' => 'مجموعات محددة مسبقاً',
-        'note' => 'Grants access to the Predefined Kits section of the application.',
+        'name' => 'المجموعات المعرّفة مسبقًا',
+        'note' => 'يمنح حق الوصول إلى قسم المجموعات المعرّفة مسبقًا في التطبيق.',
     ],
     'kitsview' => [
-        'name' => 'View Predefined Kits',
+        'name' => 'عرض المجموعات المعرّفة مسبقًا',
     ],
     'kitscreate' => [
-        'name' => 'Create New Predefined Kits',
+        'name' => 'إنشاء مجموعات معرّفة مسبقًا جديدة',
     ],
     'kitsedit' => [
-        'name' => 'Edit Predefined Kits',
+        'name' => 'تعديل المجموعات المعرّفة مسبقًا',
     ],
     'kitsdelete' => [
-        'name' => 'Delete Predefined Kits',
+        'name' => 'حذف المجموعات المعرّفة مسبقًا',
     ],
     'users' => [
-        'name' => 'المستخدمين',
-        'note' => 'Grants access to the Users section of the application.',
+        'name' => 'المستخدمون',
+        'note' => 'يمنح حق الوصول إلى قسم المستخدمين في التطبيق.',
     ],
     'usersview' => [
         'name' => 'عرض المستخدمين',
-        'note' => 'Note that users with this permission will also be able to see (not modify or delete) files uploaded to the user as well. Users with this permission will also be able to view edit and checkin history.',
+        'note' => 'يمكن للمستخدمين الحاصلين على هذه الصلاحية أيضًا عرض سجل التعديلات والاستلام. وتخضع الملفات المرفوعة إلى حساب المستخدم لصلاحية منفصلة هي «إدارة ملفات المستخدمين».',
     ],
     'userscreate' => [
-        'name' => 'Create New Users',
+        'name' => 'إنشاء مستخدمين جدد',
     ],
     'usersedit' => [
-        'name' => 'Edit Users',
+        'name' => 'تعديل المستخدمين',
     ],
     'usersdelete' => [
-        'name' => 'Delete Users',
+        'name' => 'حذف المستخدمين',
     ],
     'models' => [
-        'name' => 'Models',
-        'note' => 'Grants access to the Models section of the application.',
+        'name' => 'طُرز الأصول',
+        'note' => 'يمنح حق الوصول إلى قسم طُرز الأصول في التطبيق.',
     ],
     'modelsview' => [
-        'name' => 'عرض الموديلات',
+        'name' => 'عرض طُرز الأصول',
     ],
 
     'modelscreate' => [
-        'name' => 'Create New Models',
+        'name' => 'إنشاء طُرز أصول جديدة',
     ],
     'modelsedit' => [
-        'name' => 'Edit Models',
+        'name' => 'تعديل طُرز الأصول',
     ],
     'modelsdelete' => [
-        'name' => 'Delete Models',
+        'name' => 'حذف طُرز الأصول',
     ],
     'categories' => [
-        'name' => 'التصنيفات',
-        'note' => 'Grants access to the Categories section of the application.',
+        'name' => 'الفئات',
+        'note' => 'يمنح حق الوصول إلى قسم الفئات في التطبيق.',
     ],
     'categoriesview' => [
-        'name' => 'View Categories',
+        'name' => 'عرض الفئات',
     ],
     'categoriescreate' => [
-        'name' => 'Create New Categories',
+        'name' => 'إنشاء فئات جديدة',
     ],
     'categoriesedit' => [
-        'name' => 'Edit Categories',
+        'name' => 'تعديل الفئات',
     ],
     'categoriesdelete' => [
-        'name' => 'Delete Categories',
+        'name' => 'حذف الفئات',
     ],
     'departments' => [
-        'name' => 'الإدارات',
-        'note' => 'Grants access to the Departments section of the application.',
+        'name' => 'الأقسام',
+        'note' => 'يمنح حق الوصول إلى قسم الأقسام في التطبيق.',
     ],
     'departmentsview' => [
-        'name' => 'View Departments',
+        'name' => 'عرض الأقسام',
     ],
     'departmentscreate' => [
-        'name' => 'Create New Departments',
+        'name' => 'إنشاء أقسام جديدة',
     ],
     'departmentsedit' => [
-        'name' => 'Edit Departments',
+        'name' => 'تعديل الأقسام',
     ],
     'departmentsdelete' => [
-        'name' => 'Delete Departments',
+        'name' => 'حذف الأقسام',
     ],
     'locations' => [
         'name' => 'المواقع',
-        'note' => 'Grants access to the Locations section of the application.',
+        'note' => 'يمنح حق الوصول إلى قسم المواقع في التطبيق.',
     ],
     'locationsview' => [
-        'name' => 'View Locations',
+        'name' => 'عرض المواقع',
     ],
     'locationscreate' => [
-        'name' => 'Create New Locations',
+        'name' => 'إنشاء مواقع جديدة',
     ],
     'locationsedit' => [
-        'name' => 'Edit Locations',
+        'name' => 'تعديل المواقع',
     ],
     'locationsdelete' => [
-        'name' => 'Delete Locations',
+        'name' => 'حذف المواقع',
     ],
     'status-labels' => [
         'name' => 'تسميات الحالة',
-        'note' => 'Grants access to the Status Labels section of the application used by Assets.',
+        'note' => 'يمنح حق الوصول إلى قسم تسميات الحالة التي تستخدمها الأصول في التطبيق.',
     ],
     'statuslabelsview' => [
-        'name' => 'View Status Labels',
+        'name' => 'عرض تسميات الحالة',
     ],
     'statuslabelscreate' => [
-        'name' => 'Create New Status Labels',
+        'name' => 'إنشاء تسميات حالة جديدة',
     ],
     'statuslabelsedit' => [
-        'name' => 'Edit Status Labels',
+        'name' => 'تعديل تسميات الحالة',
     ],
     'statuslabelsdelete' => [
-        'name' => 'Delete Status Labels',
+        'name' => 'حذف تسميات الحالة',
     ],
     'custom-fields' => [
-        'name' => 'حقول مخصصة',
-        'note' => 'Grants access to the Custom Fields section of the application used by Assets.',
+        'name' => 'الحقول المخصصة',
+        'note' => 'يمنح حق الوصول إلى قسم الحقول المخصصة التي تستخدمها الأصول في التطبيق.',
     ],
     'customfieldsview' => [
-        'name' => 'View Custom Fields',
+        'name' => 'عرض الحقول المخصصة',
     ],
     'customfieldscreate' => [
-        'name' => 'Create New Custom Fields',
+        'name' => 'إنشاء حقول مخصصة جديدة',
     ],
     'customfieldsedit' => [
-        'name' => 'Edit Custom Fields',
+        'name' => 'تعديل الحقول المخصصة',
     ],
     'customfieldsdelete' => [
-        'name' => 'Delete Custom Fields',
+        'name' => 'حذف الحقول المخصصة',
     ],
     'suppliers' => [
-        'name' => 'الموردون',
-        'note' => 'Grants access to the Suppliers section of the application.',
+        'name' => 'المورّدون',
+        'note' => 'يمنح حق الوصول إلى قسم المورّدين في التطبيق.',
     ],
     'suppliersview' => [
-        'name' => 'View Suppliers',
+        'name' => 'عرض المورّدين',
     ],
     'supplierscreate' => [
-        'name' => 'Create New Suppliers',
+        'name' => 'إنشاء مورّدين جدد',
     ],
     'suppliersedit' => [
-        'name' => 'Edit Suppliers',
+        'name' => 'تعديل المورّدين',
     ],
     'suppliersdelete' => [
-        'name' => 'Delete Suppliers',
+        'name' => 'حذف المورّدين',
     ],
     'manufacturers' => [
-        'name' => 'الشركات المصنعة',
-        'note' => 'Grants access to the Manufacturers section of the application.',
+        'name' => 'الشركات المصنّعة',
+        'note' => 'يمنح حق الوصول إلى قسم الشركات المصنّعة في التطبيق.',
     ],
     'manufacturersview' => [
-        'name' => 'View Manufacturers',
+        'name' => 'عرض الشركات المصنّعة',
     ],
     'manufacturerscreate' => [
-        'name' => 'Create New Manufacturers',
+        'name' => 'إنشاء شركات مصنّعة جديدة',
     ],
     'manufacturersedit' => [
-        'name' => 'Edit Manufacturers',
+        'name' => 'تعديل الشركات المصنّعة',
     ],
     'manufacturersdelete' => [
-        'name' => 'Delete Manufacturers',
+        'name' => 'حذف الشركات المصنّعة',
     ],
     'companies' => [
         'name' => 'الشركات',
-        'note' => 'Grants access to the Companies section of the application.',
+        'note' => 'يمنح حق الوصول إلى قسم الشركات في التطبيق.',
     ],
     'companiesview' => [
-        'name' => 'View Companies',
+        'name' => 'عرض الشركات',
     ],
     'companiescreate' => [
-        'name' => 'Create New Companies',
+        'name' => 'إنشاء شركات جديدة',
     ],
     'companiesedit' => [
-        'name' => 'Edit Companies',
+        'name' => 'تعديل الشركات',
     ],
     'companiesdelete' => [
-        'name' => 'Delete Companies',
+        'name' => 'حذف الشركات',
     ],
     'user-self-accounts' => [
-        'name' => 'User Self Accounts',
-        'note' => 'Grants non-admin users the ability to manage certain aspects of their own user accounts.',
+        'name' => 'الإدارة الذاتية لحسابات المستخدمين',
+        'note' => 'يتيح للمستخدمين غير المسؤولين إدارة بعض جوانب حساباتهم الشخصية.',
     ],
     'selftwo-factor' => [
-        'name' => 'Manage Two-Factor Authentication',
-        'note' => 'Allows users to enable, disable, and manage two-factor authentication for their own accounts.',
+        'name' => 'إدارة المصادقة الثنائية',
+        'note' => 'يسمح للمستخدمين بتفعيل المصادقة الثنائية لحساباتهم أو تعطيلها وإدارتها.',
     ],
     'selfapi' => [
-        'name' => 'Manage API Tokens',
-        'note' => 'Allows users to create, view, and revoke their own API tokens. User tokens will have the same permissions as the user who created them.',
+        'name' => 'إدارة رموز API',
+        'note' => 'يسمح للمستخدمين بإنشاء رموز API الخاصة بهم وعرضها وإلغائها. وتكون لهذه الرموز الصلاحيات نفسها التي يتمتع بها المستخدم الذي أنشأها.',
     ],
     'selfedit-location' => [
-        'name' => 'Edit Location',
-        'note' => 'Allows users to edit the location associated with their own user account.',
+        'name' => 'تعديل الموقع',
+        'note' => 'يسمح للمستخدمين بتعديل الموقع المرتبط بحساباتهم.',
     ],
     'selfcheckout-assets' => [
-        'name' => 'Self Check Out Assets',
-        'note' => 'Allows users to check out assets to themselves without admin intervention.',
+        'name' => 'تسليم الأصول للنفس',
+        'note' => 'يسمح للمستخدمين بتسليم الأصول إلى أنفسهم دون تدخل المسؤول.',
     ],
     'selfview-purchase-cost' => [
-        'name' => 'View Purchase Cost',
-        'note' => 'Allows users to view the purchase cost of items in their account view.',
+        'name' => 'عرض تكلفة الشراء',
+        'note' => 'يسمح للمستخدمين بعرض تكلفة شراء العناصر في صفحة حساباتهم.',
     ],
 
     'depreciations' => [
-        'name' => 'Depreciation Management',
-        'note' => 'Allows users to manage and view asset depreciation details.',
+        'name' => 'إدارة الإهلاك',
+        'note' => 'يسمح للمستخدمين بإدارة تفاصيل إهلاك الأصول وعرضها.',
     ],
     'depreciationsview' => [
-        'name' => 'View Depreciation Details',
+        'name' => 'عرض تفاصيل الإهلاك',
     ],
     'depreciationsedit' => [
-        'name' => 'Edit Depreciation Settings',
+        'name' => 'تعديل إعدادات الإهلاك',
     ],
     'depreciationsdelete' => [
-        'name' => 'Delete Depreciation Records',
+        'name' => 'حذف سجلات الإهلاك',
     ],
     'depreciationscreate' => [
-        'name' => 'Create Depreciation Records',
+        'name' => 'إنشاء سجلات الإهلاك',
     ],
 
-    'grant_all' => 'Grant all permissions for :area',
-    'deny_all' => 'Deny all permissions for :area',
-    'inherit_all' => 'Inherit all permissions for :area from permission groups',
-    'grant' => 'Grant Permission for :area',
-    'deny' => 'Deny Permission for :area',
-    'inherit' => 'Inherit Permission for :area from permission groups',
-    'use_groups' => 'We strongly suggest using Permission Groups instead of assigning individual permissions for easier management.',
+    'grant_all' => 'منح جميع الصلاحيات لـ :area',
+    'deny_all' => 'رفض جميع الصلاحيات لـ :area',
+    'inherit_all' => 'وراثة جميع صلاحيات :area من مجموعات الصلاحيات',
+    'grant' => 'منح صلاحية لـ :area',
+    'deny' => 'رفض صلاحية لـ :area',
+    'inherit' => 'وراثة صلاحية :area من مجموعات الصلاحيات',
+    'use_groups' => 'نوصي بشدة باستخدام مجموعات الصلاحيات بدلًا من تعيين صلاحيات فردية لتسهيل إدارتها.',
 
 ];

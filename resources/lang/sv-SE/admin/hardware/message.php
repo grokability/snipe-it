@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Tillgången kunde inte checkas in, försök igen',
         'success' => 'Tillgången har checkats in.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Användaren är ogiltig. Var god försök igen.',
         'already_checked_in' => 'Tillgången är redan incheckad.',
         'force_checkin_orphaned_success' => 'Ogiltig tilldelning har rensats.',

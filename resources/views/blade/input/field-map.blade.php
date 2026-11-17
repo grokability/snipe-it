@@ -4,6 +4,7 @@
     'stored' => [],
     'direction_name' => null,
     'direction_options' => [],
+    'direction_icons' => [],
     'stored_directions' => [],
 ])
 
@@ -40,17 +41,15 @@
                     </td>
                     @if ($showDirection)
                         <td>
-                            <select
-                                name="{{ $direction_name }}[{{ $storedKey }}]"
-                                class="select2 field-map-row-direction"
-                                style="width: 100%"
+                            <x-input.icon-select
+                                :name="$direction_name . '[' . $storedKey . ']'"
+                                :options="$direction_options"
+                                :icons="$direction_icons"
+                                :selected="$stored_directions[$storedKey] ?? 'pull'"
+                                class="field-map-row-direction"
                                 data-minimum-results-for-search="Infinity"
-                                aria-label="{{ $options[$storedKey] ?? $storedKey }} direction"
-                            >
-                                @foreach ($direction_options as $dirValue => $dirLabel)
-                                    <option value="{{ $dirValue }}" @if ((string) $dirValue === (string) ($stored_directions[$storedKey] ?? 'pull')) selected @endif>{{ $dirLabel }}</option>
-                                @endforeach
-                            </select>
+                                :aria-label="($options[$storedKey] ?? $storedKey) . ' direction'"
+                            />
                         </td>
                     @endif
                     <td>
@@ -99,17 +98,15 @@
                 </td>
                 @if ($showDirection)
                     <td>
-                        <select
-                            id="{{ $widgetId }}-direction"
-                            name="{{ $direction_name }}_pending[value]"
-                            class="select2 field-map-new-direction"
-                            style="width: 100%"
+                        <x-input.icon-select
+                            :id="$widgetId . '-direction'"
+                            :name="$direction_name . '_pending[value]'"
+                            :options="$direction_options"
+                            :icons="$direction_icons"
+                            selected="pull"
+                            class="field-map-new-direction"
                             data-minimum-results-for-search="Infinity"
-                        >
-                            @foreach ($direction_options as $dirValue => $dirLabel)
-                                <option value="{{ $dirValue }}" @if ($dirValue === 'pull') selected @endif>{{ $dirLabel }}</option>
-                            @endforeach
-                        </select>
+                        />
                     </td>
                 @endif
                 <td>
@@ -135,7 +132,7 @@
         </td>
         @if ($showDirection)
             <td>
-                <select name="{{ $direction_name }}[__KEY__]" class="select2 field-map-row-direction" style="width: 100%" data-minimum-results-for-search="Infinity" aria-label="__LABEL__ direction">
+                <select name="{{ $direction_name }}[__KEY__]" class="select2 js-icon-select field-map-row-direction" style="width: 100%" data-minimum-results-for-search="Infinity" aria-label="__LABEL__ direction">
                     __DIRECTION_OPTIONS__
                 </select>
             </td>
@@ -162,12 +159,24 @@ document.addEventListener('DOMContentLoaded', function () {
     var $addBtn = $widget.find('.field-map-add');
     var template = $('[data-field-map-template="' + widgetId + '"]').html();
     var directionOptionsMap = @json((object) $direction_options);
+    var directionIconsMap = @json((object) $direction_icons);
 
     function initSelect2($el, opts) {
         if ($el.hasClass('select2-hidden-accessible')) {
             $el.select2('destroy');
         }
         $el.select2(opts || {});
+    }
+
+    // Direction selects carry .js-icon-select from the icon-select component
+    // (server-rendered rows + picker row) and from the template string
+    // emitted below (dynamic rows). The sync-adapter form's shared
+    // snipeApplyIconRenderer handles them: page-load for anything
+    // present at render, this helper for anything added later.
+    function applyIconsToNewContent($scope) {
+        if (typeof window.snipeApplyIconRenderer === 'function') {
+            window.snipeApplyIconRenderer($scope.find('.js-icon-select'));
+        }
     }
 
     function destroySelect2($el) {
@@ -196,7 +205,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 continue;
             }
             var sel = String(value) === String(selected) ? ' selected' : '';
-            html += '<option value="' + encode(value) + '"' + sel + '>' + encode(map[value]) + '</option>';
+            var icon = directionIconsMap && directionIconsMap[value] ? ' data-icon="' + encode(directionIconsMap[value]) + '"' : '';
+            html += '<option value="' + encode(value) + '"' + icon + sel + '>' + encode(map[value]) + '</option>';
         }
         return html;
     }
@@ -222,9 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         var $newRow = $(html);
         $empty.before($newRow);
-        $newRow.find('.field-map-row-direction').each(function () {
-            initSelect2($(this), {minimumResultsForSearch: Infinity});
-        });
+        applyIconsToNewContent($newRow);
         $selected.remove();
         $picker.val('').trigger('change');
         $newValue.val('');
@@ -268,16 +276,13 @@ document.addEventListener('DOMContentLoaded', function () {
         notifyFormOfStructuralChange();
     });
 
-    // Initialize select2 on rendered rows and picker inputs.
+    // The field-picker select2 still needs its own init because it is
+    // NOT an .js-icon-select. The direction picker + each row's
+    // direction select ARE js-icon-select and get picked up by the
+    // parent form's shared snipeApplyIconRenderer on page load.
     initSelect2($picker, {
         placeholder: @json((string) trans('admin/settings/sync_adapters.field_map_pick_field')),
         allowClear: true,
-    });
-    if ($newDirection.length) {
-        initSelect2($newDirection, {minimumResultsForSearch: Infinity});
-    }
-    $rows.find('.field-map-row-direction').each(function () {
-        initSelect2($(this), {minimumResultsForSearch: Infinity});
     });
 
     function refreshAddEnabled() {

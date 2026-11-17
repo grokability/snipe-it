@@ -185,6 +185,7 @@ return [
     'ulid' => 'El campo :attribute debe ser un ULID válido.',
     'uuid' => 'El campo :attribute debe ser un UUID válido.',
     'valid_css_color' => 'El campo :attribute debe ser un color CSS válido (hex, rgb, rgba, hsl, o hsla).',
+    'eloquent_model_class' => 'The :attribute field must be the fully-qualified class name of an Eloquent model.',
     'fmcs_company' => 'The :attribute field is required because full multiple companies support is enabled and floaters are not allowed.',
     'fmcs_location' => 'Location ":location" belongs to :location_company, which does not match the selected company.',
     'is_unique_across_company_and_location' => 'El campo :attribute debe ser único en la compañía y ubicación seleccionadas.',

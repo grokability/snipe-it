@@ -21,6 +21,7 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\MailTest;
 use App\Rules\CssColor;
+use App\Traits\LocksLongRunningOperation;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -47,6 +48,18 @@ use ZipArchive;
  */
 class SettingsController extends Controller
 {
+    use LocksLongRunningOperation;
+
+    /**
+     * Shared mutex key for backup + restore. Both operations acquire
+     * the same key so they're mutually exclusive. Restore is
+     * backup-plus-more (it optionally takes a pre-restore backup, wipes, replays),
+     * so a concurrent plain backup firing while a restore holds this
+     * lock would race the pre-restore backup write against the
+     * concurrent backup's write to the same backup disk.
+     */
+    private const BACKUP_RESTORE_LOCK = 'backup-restore:running';
+
     /**
      * Return a view that shows some of the key settings.
      *
@@ -193,7 +206,7 @@ class SettingsController extends Controller
                 'Item Location',
                 'Location Company',
                 'Location Company ID',
-            ]);
+            ], escape: '\\', eol: "\r\n");
 
             // Formula-escape data rows using the same helper + setting as
             // ReportsController's exports. Row values include user-editable
@@ -205,9 +218,9 @@ class SettingsController extends Controller
             $formatter = new EscapeFormula('`');
             foreach ($mismatched as $row) {
                 if (config('app.escape_formulas') === false) {
-                    fputcsv($out, $row);
+                    fputcsv($out, $row, escape: '\\', eol: "\r\n");
                 } else {
-                    fputcsv($out, $formatter->escapeRecord($row));
+                    fputcsv($out, $formatter->escapeRecord($row), escape: '\\', eol: "\r\n");
                 }
             }
             fclose($out);
@@ -925,7 +938,13 @@ class SettingsController extends Controller
         // Reverse the array so it lists oldest first
         $files = array_reverse($files_raw);
 
-        return view('settings/backups', compact('files'));
+        // Belt-and-suspenders UI feedback for the shared backup+restore
+        // mutex. The write-side rejects a concurrent trigger regardless,
+        // this just stops the admin from clicking a button that will
+        // immediately bounce.
+        $backupRestoreRunning = $this->isOperationLocked(self::BACKUP_RESTORE_LOCK);
+
+        return view('settings/backups', compact('files', 'backupRestoreRunning'));
     }
 
     /**
@@ -937,7 +956,16 @@ class SettingsController extends Controller
      */
     public function postBackups(): RedirectResponse
     {
-        if (! config('app.lock_passwords')) {
+        if (config('app.lock_passwords')) {
+            return redirect()->route('settings.backups.index')->with('error', trans('general.feature_disabled'));
+        }
+
+        if (! $this->acquireOperationLock(self::BACKUP_RESTORE_LOCK)) {
+            return redirect()->route('settings.backups.index')
+                ->with('error', $this->operationAlreadyRunningMessage('general.backup_or_restore'));
+        }
+
+        try {
             Artisan::call('snipeit:backup', ['--filename' => 'manual-backup-'.date('Y-m-d-H-i-s')]);
             $output = Artisan::output();
 
@@ -955,9 +983,9 @@ class SettingsController extends Controller
             }
 
             return redirect()->route('settings.backups.index')->with('error', $formatted_output);
+        } finally {
+            $this->releaseOperationLock(self::BACKUP_RESTORE_LOCK);
         }
-
-        return redirect()->route('settings.backups.index')->with('error', trans('general.feature_disabled'));
     }
 
     /**
@@ -1097,6 +1125,11 @@ class SettingsController extends Controller
 
         if (config('app.lock_passwords')) {
             return redirect()->route('settings.backups.index')->with('error', trans('general.feature_disabled'));
+        }
+
+        if (! $this->acquireOperationLock(self::BACKUP_RESTORE_LOCK)) {
+            return redirect()->route('settings.backups.index')
+                ->with('error', $this->operationAlreadyRunningMessage('general.backup_or_restore'));
         }
 
         // Path inside the backup disk mirrors getBackups / downloadFile /
@@ -1256,6 +1289,30 @@ class SettingsController extends Controller
                 ]));
             }
 
+            // Check that the last migration in the migrations dir actually ran.
+            $migrationFiles = glob(database_path('migrations/*.php'));
+            if ($migrationFiles !== false && $migrationFiles !== []) {
+                sort($migrationFiles);
+                $newestMigration = basename((string) end($migrationFiles), '.php');
+                $migrationApplied = DB::table('migrations')
+                    ->where('migration', $newestMigration)
+                    ->exists();
+                if (! $migrationApplied) {
+                    Log::error(
+                        'Migrate reported success after restore, but the newest migration ('
+                        .$newestMigration
+                        .') is not recorded in the migrations table. Schema is out of date. Pre-restore backup available at '
+                        .$preBackupHint
+                    );
+
+                    Auth::logout();
+
+                    return redirect()->route('login')->with('error', trans('admin/settings/message.restore.failed_with_backup', [
+                        'backup' => $preRestoreBackupFilename,
+                    ]));
+                }
+            }
+
             $find_user = DB::table('users')->where('username', $user->username)->exists();
 
             if (! $find_user) {
@@ -1281,6 +1338,7 @@ class SettingsController extends Controller
             if ($localTempPath !== null && file_exists($localTempPath)) {
                 @unlink($localTempPath);
             }
+            $this->releaseOperationLock(self::BACKUP_RESTORE_LOCK);
         }
     }
 

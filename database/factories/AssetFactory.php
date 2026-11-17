@@ -17,7 +17,7 @@ class AssetFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var string
+     * @var class-string<Asset>
      */
     protected $model = Asset::class;
 

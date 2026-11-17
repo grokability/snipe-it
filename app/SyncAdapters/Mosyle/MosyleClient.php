@@ -2,6 +2,7 @@
 
 namespace App\SyncAdapters\Mosyle;
 
+use App\SyncAdapters\Traits\RetriesTransientHttpErrors;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
@@ -33,6 +34,8 @@ use Illuminate\Support\Facades\Http;
  */
 class MosyleClient
 {
+    use RetriesTransientHttpErrors;
+
     // Mosyle Manager splits devices by OS, which is a required option
     // on /listdevices. A full-tenant pull iterates each OS.
     private const DEVICE_OSES = [
@@ -161,11 +164,13 @@ class MosyleClient
 
     private function request(): PendingRequest
     {
-        return Http::baseUrl(rtrim($this->baseUrl, '/'))
-            ->withOptions(['allow_redirects' => false])
-            ->withToken($this->bearer())
-            ->acceptJson()
-            ->asJson()
-            ->timeout(30);
+        return $this->withTransientRetry(
+            Http::baseUrl(rtrim($this->baseUrl, '/'))
+                ->withOptions(['allow_redirects' => false])
+                ->withToken($this->bearer())
+                ->acceptJson()
+                ->asJson()
+                ->timeout(30)
+        );
     }
 }

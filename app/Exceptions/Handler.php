@@ -30,7 +30,7 @@ class Handler extends ExceptionHandler
     /**
      * A list of the exception types that are not reported.
      *
-     * @var array
+     * @var array<int, class-string<\Throwable>>
      */
     protected $dontReport = [
         AuthenticationException::class,
@@ -222,6 +222,10 @@ class Handler extends ExceptionHandler
                 $route = 'fields.index';
             } elseif ($route == 'actionlogs.index') {
                 $route = 'home';
+            } elseif ($route === 'customuserlabels.index') {
+                $route = 'settings.labels.index';
+            } elseif ($route === 'maintenancetypes.index') {
+                $route = 'maintenance-types.index';
             }
 
             // Normalize the space-separated derived name to underscore
@@ -268,7 +272,7 @@ class Handler extends ExceptionHandler
     /**
      * A list of the inputs that are never flashed for validation exceptions.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $dontFlash = [
         'current_password',

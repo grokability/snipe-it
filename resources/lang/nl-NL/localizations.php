@@ -70,6 +70,7 @@ return [
     ],
 
     'select_country' => 'Selecteer een Land',
+    'select_currency' => 'Select a currency',
 
     'countries' => [
         'AC' => 'Ascensie Eiland',

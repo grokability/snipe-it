@@ -169,6 +169,14 @@
                                     <ul class="list-unstyled adapter-catalog" aria-label="{{ trans('admin/settings/sync_adapters.catalog_caption') }}">
                                         @foreach ($adapterCatalog as $slug => $entry)
                                             <li class="adapter-catalog-item">
+                                                @php
+                                                    $directionLabel = trans('admin/settings/sync_adapters.catalog_direction_'.$entry['direction']);
+                                                    $directionIcon = $entry['direction'] === 'both' ? 'fa-solid fa-arrow-right-arrow-left fa-rotate-90' : 'fa-solid fa-arrow-down-long';
+                                                @endphp
+                                                <span class="adapter-catalog-direction tooltip-base" data-placement="top" title="{{ trans('admin/settings/sync_adapters.catalog_direction_tooltip', ['direction' => $directionLabel]) }}">
+                                                    <i class="{{ $directionIcon }} fa-fw" aria-hidden="true"></i>
+                                                    <span class="sr-only">{{ $directionLabel }}</span>
+                                                </span>
                                                 <span class="adapter-catalog-docs">
                                                     @if ($entry['docs_url'])
                                                         @php

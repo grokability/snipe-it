@@ -56,8 +56,6 @@ return [
     'years' => '年',
     'asset_location' => '更新資產位置',
     'asset_location_update_default_current' => '更新預設位置和實際位置',
-    'asset_location_update_default' => '只更新預設位置',
-    'asset_location_update_actual' => '只更新實際位置',
     'asset_not_deployable' => '該資產狀態無法部署。此資產無法被借出。',
     'asset_not_deployable_checkin' => '{1} 該資產狀態無法部署。使用此狀態標籤將繳回該資產。|[2,*] 該資產狀態無法部署。使用此狀態標籤不會有任何變更。',
     'asset_deployable' => '{1} 此資產可以被借出。|[2,*] 這些資產可以被借出。',

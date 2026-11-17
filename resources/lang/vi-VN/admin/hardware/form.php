@@ -56,8 +56,6 @@ return [
     'years' => 'năm',
     'asset_location' => 'Cập nhật vị trí tài sản',
     'asset_location_update_default_current' => 'Cập nhật vị trí tài sản mặc định VÀ vị trí thực tế',
-    'asset_location_update_default' => 'Chỉ cập nhật vị trí tài sản mặc định',
-    'asset_location_update_actual' => 'Chỉ cập nhật vị trí thực tế',
     'asset_not_deployable' => 'Trạng thái tài sản là không cho phép cấp phát. Tài sản này không thể bàn giao.',
     'asset_not_deployable_checkin' => '{1} That asset status is not deployable. Using this status label will check in the asset.|[2,*] That asset status in not deployable. Using this status label will result in no change.',
     'asset_deployable' => '{1} This asset can be checked out.|[2,*] These assets can be checked out.',

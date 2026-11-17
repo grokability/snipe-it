@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Ifa alizange lihlolwe, sicela uzame futhi',
         'success' => 'Ifa lihlolwe ngempumelelo.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Lo msebenzisi awuvumelekile. Ngicela uzame futhi.',
         'already_checked_in' => 'Le mali isivele ihlolwe.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

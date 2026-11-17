@@ -7,6 +7,7 @@ use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Company;
 use App\Models\CustomField;
+use App\Models\CustomFieldset;
 use App\Models\Import;
 use App\Models\User;
 use Carbon\Carbon;
@@ -46,7 +47,7 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     {
         $this->actingAsForApi(User::factory()->canImport()->create());
 
-        $import = Import::factory()->asset()->create();
+        $import = Import::factory()->asset()->withStubFile()->create();
 
         $this->importFileResponse(['import' => $import->id])->assertOk();
     }
@@ -143,8 +144,8 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     #[Test]
     public function csv_import_rejects_asset_row_without_serial_when_model_requires_serial(): void
     {
-        $modelName = 'RequireSerialModel-' . Str::random(6);
-        $modelNumber = 'MN-' . Str::random(6);
+        $modelName = 'RequireSerialModel-'.Str::random(6);
+        $modelNumber = 'MN-'.Str::random(6);
         AssetModel::factory()->create([
             'name' => $modelName,
             'model_number' => $modelNumber,
@@ -177,8 +178,8 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     #[Test]
     public function csv_import_accepts_asset_row_without_serial_when_model_does_not_require_serial(): void
     {
-        $modelName = 'OptionalSerialModel-' . Str::random(6);
-        $modelNumber = 'MN-' . Str::random(6);
+        $modelName = 'OptionalSerialModel-'.Str::random(6);
+        $modelNumber = 'MN-'.Str::random(6);
         AssetModel::factory()->create([
             'name' => $modelName,
             'model_number' => $modelNumber,
@@ -822,13 +823,21 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
             $customField->save();
         }
 
+        AssetModel::factory()
+            ->for(CustomFieldset::factory()->hasEncryptedCustomField($customField), 'custom_fieldset')
+            ->create([
+                'name' => $row['model'],
+                'model_number' => $row['modelNumber'],
+            ]);
+
         $import = Import::factory()->asset()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
 
         $this->actingAsForApi(User::factory()->superuser()->create());
         $this->importFileResponse(['import' => $import->id])->assertOk();
 
         $asset = Asset::query()->where('serial', $importFileBuilder->firstRow()['serialNumber'])->sole();
-        $encryptedMacAddress = $asset->getAttribute($customField->db_column);
+        // Read the raw stored value, not the cast-decrypted one.
+        $encryptedMacAddress = $asset->getRawOriginal($customField->db_column);
 
         $this->assertNotEquals($encryptedMacAddress, $macAddress);
     }

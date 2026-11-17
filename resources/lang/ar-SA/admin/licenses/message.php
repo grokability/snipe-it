@@ -37,33 +37,33 @@ return [
         'confirm' => 'هل أنت متأكد من رغبتك في حذف هذا الترخيص؟',
         'error' => 'حدثت مشكلة أثناء حذف الترخيص. يرجى إعادة المحاولة.',
         'success' => 'تم حذف الترخيص بنجاح.',
-        'bulk_success' => 'The selected licenses were deleted successfully.',
-        'partial_success' => 'License deleted successfully. See additional information below. | :count licenses were deleted successfully. See additional information below.',
-        'bulk_checkout_warning' => ':license_name has seats that are currently checked out and cannot be deleted. Please check in all seats before deleting.',
+        'bulk_success' => 'تم حذف التراخيص المحددة بنجاح.',
+        'partial_success' => 'تم حذف الترخيص بنجاح. راجع المعلومات الإضافية أدناه. | :count تراخيص تم حذفها بنجاح. راجع المعلومات الإضافية أدناه.',
+        'bulk_checkout_warning' => ':license_name يحتوي على وحدات ترخيص مُستلمة حاليًا ولا يمكن حذفه. يُرجى إرجاع جميع وحدات الترخيص قبل الحذف.',
     ],
 
     'delete_with_checkin' => [
-        'bulk_success' => ':count licenses were deleted successfully after checking in :seats seats.',
-        'partial_success' => ':count licenses were deleted successfully after checking in :seats seats. See additional information below.',
+        'bulk_success' => 'تم حذف :count تراخيص بنجاح بعد إرجاع :seats وحدة ترخيص.',
+        'partial_success' => 'تم حذف :count تراخيص بنجاح بعد إرجاع :seats وحدة ترخيص. راجع المعلومات الإضافية أدناه.',
     ],
 
     'checkout' => [
         'error' => 'حدثت مشكلة أثناء اخراج الترخيص. يرجى إعادة المحاولة.',
         'success' => 'تم اخراج الترخيص بنجاح',
         'not_enough_seats' => 'لا توجد مقاعد ترخيص كافية متاحة للدفع',
-        'mismatch' => 'The license seat provided does not match the license',
-        'unavailable' => 'This seat is not available for checkout.',
-        'license_is_inactive' => 'This license is expired or terminated.',
+        'mismatch' => 'وحدة الترخيص المقدَّمة لا تطابق الترخيص',
+        'unavailable' => 'وحدة الترخيص هذه غير متاحة للاستلام.',
+        'license_is_inactive' => 'هذا الترخيص منتهي الصلاحية أو تم إنهاءه.',
     ],
 
     'checkin' => [
         'error' => 'حدثت مشكلة في التحقق من الترخيص. يرجى إعادة المحاولة.',
-        'not_reassignable' => 'Seat has been used',
+        'not_reassignable' => 'تم استخدام وحدة الترخيص',
         'success' => 'تم ادخال الترخيص بنجاح',
     ],
 
     'import' => [
-        'no_free_seats' => 'License ":license" has no free seats. ":target" was not assigned to a seat.',
+        'no_free_seats' => 'الترخيص ":license" ليس لديه وحدات ترخيص مجانية. لم يتم تعيين ":target" إلى أي وحدة ترخيص.',
     ],
 
 ];

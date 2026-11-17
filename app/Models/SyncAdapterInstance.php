@@ -15,6 +15,8 @@ use Illuminate\Support\Str;
  * Slugs auto-generate from the label at create time and are immutable
  * after, because asset_external_sources.source references them and reassigning
  * slugs later would orphan assets.
+ *
+ * @mixin IdeHelperSyncAdapterInstance
  */
 class SyncAdapterInstance extends Model
 {
@@ -58,6 +60,19 @@ class SyncAdapterInstance extends Model
     public function adapter(): ?SyncAdapter
     {
         return SyncAdapter::factory($this);
+    }
+
+    /**
+     * Shared mutex key for an in-flight sync operation on this
+     * instance. Pull and Push on the same instance acquire the same
+     * key, so one blocks the other, but Fleet pulling doesn't block
+     * Jamf pulling. CLI (snipeit:pull-inventory / snipeit:push-inventory)
+     * and the UI controller methods both acquire via this key, so cron
+     * + admin click can't collide on the same vendor.
+     */
+    public function lockKey(): string
+    {
+        return 'sync-adapter:'.$this->slug.':running';
     }
 
     private static function generateUniqueSlug(string $label): string

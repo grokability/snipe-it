@@ -45,4 +45,8 @@
 @section('moar_scripts')
 @include ('partials.bootstrap-table', ['exportFile' => 'models-export', 'search' => true])
 
+<x-table.advanced-search
+    tableId="modelsListingTable"
+    :model="\App\Models\AssetModel::class"
+/>
 @stop

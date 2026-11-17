@@ -59,6 +59,52 @@ class IntuneSettingsPageTest extends TestCase
         $this->assertSame('plaintext-client-secret', Crypt::decrypt($storedSecret));
     }
 
+    public function test_unchecking_create_snipeit_assets_on_pull_persists_as_off()
+    {
+        // Regression for #19917. The write-side default on
+        // $request->boolean(..., true) flipped unchecked checkboxes back
+        // to '1' on every save, silently re-enabling asset creation. The
+        // "default on when never set" semantic lives on the read side
+        // (createsSnipeitAssetsOnPull), so the write side must honor the
+        // submitted value as-is.
+        $intune = SyncAdapterInstance::where('slug', 'intune')->firstOrFail();
+        SyncAdapterConfig::put($intune->id, 'create_snipeit_assets_on_pull', '1');
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('settings.adapters.save', $intune), [
+                'intune_url' => 'https://graph.microsoft.com',
+                'intune_tenant_id' => 'contoso.onmicrosoft.com',
+                'intune_client_id' => '00000000-0000-0000-0000-000000000001',
+                'intune_client_secret' => 'plaintext-client-secret',
+                'intune_default_category_id' => Category::factory()->create()->id,
+                'intune_default_status_id' => Statuslabel::factory()->rtd()->create()->id,
+                // Checkbox absent, mirroring an unchecked form submit.
+            ])
+            ->assertRedirect(route('settings.adapters.index', ['adapter' => $intune->slug]));
+
+        $this->assertSame('0', SyncAdapterConfig::get($intune->id, 'create_snipeit_assets_on_pull'));
+    }
+
+    public function test_checking_create_snipeit_assets_on_pull_persists_as_on()
+    {
+        $intune = SyncAdapterInstance::where('slug', 'intune')->firstOrFail();
+        SyncAdapterConfig::put($intune->id, 'create_snipeit_assets_on_pull', '0');
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('settings.adapters.save', $intune), [
+                'intune_url' => 'https://graph.microsoft.com',
+                'intune_tenant_id' => 'contoso.onmicrosoft.com',
+                'intune_client_id' => '00000000-0000-0000-0000-000000000001',
+                'intune_client_secret' => 'plaintext-client-secret',
+                'intune_default_category_id' => Category::factory()->create()->id,
+                'intune_default_status_id' => Statuslabel::factory()->rtd()->create()->id,
+                'intune_create_snipeit_assets_on_pull' => '1',
+            ])
+            ->assertRedirect(route('settings.adapters.index', ['adapter' => $intune->slug]));
+
+        $this->assertSame('1', SyncAdapterConfig::get($intune->id, 'create_snipeit_assets_on_pull'));
+    }
+
     public function test_blank_credentials_on_save_fail_validation()
     {
         $intune = SyncAdapterInstance::where('slug', 'intune')->firstOrFail();

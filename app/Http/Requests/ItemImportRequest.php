@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\FileStorage;
 use App\Models\Import;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ItemImportRequest extends FormRequest
 {
@@ -35,7 +37,37 @@ class ItemImportRequest extends FormRequest
         ini_set('max_execution_time', config('importer.time_limit')); // 600 seconds = 10 minutes
         ini_set('memory_limit', config('importer.memory_limit'));
 
-        $filename = config('app.private_uploads').'/imports/'.$import->file_path;
+        // Pull the stored CSV through the Storage abstraction so S3-backed
+        // private disks work the same as local filesystems. The Importer
+        // constructor's local-vs-string branch would silently treat the
+        // stored path string as CSV content when the file is on S3 (because
+        // is_file() returns false), producing a zero-row import with no
+        // error. Download once per slice to a local temp file and feed
+        // that to the Importer.
+        $storedPath = FileStorage::Imports->privateStorageKey().$import->file_path;
+        if (! Storage::exists($storedPath)) {
+            $this->errorCallback($import, 'file', [trans('admin/hardware/message.import.file_missing_on_disk')]);
+
+            return $this->errors;
+        }
+
+        $filename = tempnam(sys_get_temp_dir(), 'snipeit-import-');
+        $readStream = Storage::readStream($storedPath);
+        if ($readStream === null) {
+            $this->errorCallback($import, 'file', [trans('admin/hardware/message.import.file_missing_on_disk')]);
+
+            return $this->errors;
+        }
+        file_put_contents($filename, $readStream);
+        if (is_resource($readStream)) {
+            fclose($readStream);
+        }
+        register_shutdown_function(static function () use ($filename) {
+            if (is_file($filename)) {
+                @unlink($filename);
+            }
+        });
+
         $import->import_type = $this->input('import-type');
         $class = ucfirst($import->import_type);
         $classString = "App\\Importer\\{$class}Importer";

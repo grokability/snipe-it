@@ -137,6 +137,11 @@ class CompaniesController extends Controller
     public function store(ImageUploadRequest $request): JsonResponse
     {
         $this->authorize('create', Company::class);
+
+        if ($denied = $this->rejectUnauthorizedWebhookFields($request)) {
+            return $denied;
+        }
+
         $company = new Company;
         $company->fill($request->all());
         $company->created_by = auth()->id();
@@ -191,6 +196,11 @@ class CompaniesController extends Controller
         $this->authorize('update', Company::class);
         $company = Company::findOrFail($id);
         $this->authorize('update', $company);
+
+        if ($denied = $this->rejectUnauthorizedWebhookFields($request)) {
+            return $denied;
+        }
+
         $company->fill($request->all());
         $company = $request->handleImages($company);
 
@@ -322,5 +332,38 @@ class CompaniesController extends Controller
         }
 
         return (new SelectlistTransformer)->transformSelectlist(Helper::paginateCollectionOrAll($sorted));
+    }
+
+    /**
+     * Fail-loud guard for GHSA-x9rj-mmg2-wcfv. Webhook configuration on
+     * a company drives outbound HTTP POSTs on every subsequent asset
+     * checkout / checkin, so the Livewire integration-settings form
+     * gates it on isSuperUser(). This REST path must enforce the same
+     * control: if the caller sent any of Company::GATED_WEBHOOK_FIELDS
+     * and is not a superuser, fail with an error naming the fields that
+     * were refused rather than silently stripping them (silent stripping
+     * returned success and misrepresented what persisted, which was the
+     * exact anti-pattern the User::GATED_AUTH_FIELDS fix called out).
+     * Returns null when nothing to reject so callers can early-return
+     * on the first truthy response.
+     */
+    private function rejectUnauthorizedWebhookFields(Request $request): ?JsonResponse
+    {
+        $requested = array_values(array_intersect(
+            Company::GATED_WEBHOOK_FIELDS,
+            array_keys($request->all())
+        ));
+
+        if (empty($requested) || auth()->user()->isSuperUser()) {
+            return null;
+        }
+
+        return response()->json(Helper::formatStandardApiResponse(
+            'error',
+            null,
+            trans('admin/companies/message.webhook_fields_require_superuser', [
+                'fields' => implode(', ', $requested),
+            ])
+        ));
     }
 }

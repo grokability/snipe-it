@@ -28,13 +28,16 @@ class AccessoryCheckoutController extends Controller
      * Return the form to checkout an Accessory to a user.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     *
-     * @param  int  $id
      */
     public function create(Request $request, Accessory $accessory): View|RedirectResponse
     {
 
         $this->authorize('checkout', $accessory);
+
+        if ($accessory->archived) {
+            return redirect()->route('accessories.index')
+                ->with('error', trans('general.cannot_checkout_archived', ['item_type' => trans('general.accessory')]));
+        }
 
         if ($accessory->category) {
             // Make sure there is at least one available to checkout
@@ -79,6 +82,11 @@ class AccessoryCheckoutController extends Controller
     {
 
         $this->authorize('checkout', $accessory);
+
+        if ($accessory->archived) {
+            return redirect()->route('accessories.index')
+                ->with('error', trans('general.cannot_checkout_archived', ['item_type' => trans('general.accessory')]));
+        }
 
         $target = $this->determineCheckoutTarget();
 

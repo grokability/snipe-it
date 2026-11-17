@@ -8,14 +8,29 @@ namespace App\Presenters;
 class ConsumablePresenter extends Presenter
 {
     /**
-     * Json Column Layout for bootstrap table
+     * JSON column layout for bootstrap-table.
      *
+     * @param  bool  $showDeletedAt  Make the deleted_at column visible
+     *                               by default. Passed from the Deleted-index view so admins
+     *                               see when each row was deleted. Still switchable elsewhere.
+     * @param  array<int, string>  $hide_fields  Column `field` names to drop
+     *                               from the layout entirely. The Archived and Deleted index
+     *                               views hide `remaining` + `percent_remaining` here because
+     *                               neither applies to retired or soft-deleted rows.
      * @return string
      */
-    public static function dataTableLayout()
+    public static function dataTableLayout(bool $showDeletedAt = false, array $hide_fields = [])
     {
         $layout = [
             [
+                'field' => 'checkbox',
+                'scope' => 'col',
+                'checkbox' => true,
+                'formatter' => 'checkboxEnabledFormatter',
+                'titleTooltip' => trans('general.select_all_none'),
+                'printIgnore' => true,
+                'class' => 'hidden-print',
+            ], [
                 'field' => 'id',
                 'scope' => 'col',
                 'searchable' => false,
@@ -121,8 +136,12 @@ class ConsumablePresenter extends Presenter
                 'scope' => 'col',
                 'searchable' => false,
                 'sortable' => true,
+                'switchable' => true,
                 'title' => trans('admin/components/general.total'),
-                'visible' => true,
+                // Total-ever-stocked is nice-to-have but Remaining +
+                // Outstanding carry the daily signal. Admins who want
+                // it toggle it on via the column picker.
+                'visible' => false,
                 'class' => 'text-right text-padding-number-cell',
                 'footerFormatter' => 'qtySumFormatter',
             ], [
@@ -131,6 +150,26 @@ class ConsumablePresenter extends Presenter
                 'searchable' => false,
                 'sortable' => true,
                 'title' => trans('admin/components/general.remaining'),
+                'visible' => true,
+                'class' => 'text-right text-padding-number-cell',
+                'footerFormatter' => 'qtySumFormatter',
+            ], [
+                'field' => 'checked_out',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => false,
+                'switchable' => true,
+                'title' => trans('general.checked_out'),
+                'visible' => true,
+                'class' => 'text-right text-padding-number-cell',
+                'footerFormatter' => 'qtySumFormatter',
+            ], [
+                'field' => 'consumed',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => false,
+                'switchable' => true,
+                'title' => trans('general.consumed'),
                 'visible' => true,
                 'class' => 'text-right text-padding-number-cell',
                 'footerFormatter' => 'qtySumFormatter',
@@ -188,6 +227,15 @@ class ConsumablePresenter extends Presenter
                 'title' => trans('admin/hardware/general.requestable'),
                 'formatter' => 'trueFalseFormatter',
             ], [
+                'field' => 'archived',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'visible' => false,
+                'title' => trans('general.archived'),
+                'formatter' => 'trueFalseFormatter',
+            ], [
                 'field' => 'created_by',
                 'scope' => 'col',
                 'searchable' => false,
@@ -212,6 +260,15 @@ class ConsumablePresenter extends Presenter
                 'title' => trans('general.updated_at'),
                 'formatter' => 'dateDisplayFormatter',
             ], [
+                'field' => 'deleted_at',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'visible' => $showDeletedAt,
+                'title' => trans('general.deleted_at'),
+                'formatter' => 'dateDisplayFormatter',
+            ], [
                 'field' => 'change',
                 'scope' => 'col',
                 'searchable' => false,
@@ -234,13 +291,28 @@ class ConsumablePresenter extends Presenter
             ],
         ];
 
+        if ($hide_fields !== []) {
+            $layout = array_values(array_filter(
+                $layout,
+                fn (array $col) => ! in_array($col['field'], $hide_fields, true),
+            ));
+        }
+
         return json_encode($layout);
     }
 
     public static function checkedOut()
     {
         $layout = [
-
+            [
+                'field' => 'checkbox',
+                'scope' => 'col',
+                'checkbox' => true,
+                'formatter' => 'checkboxEnabledFormatter',
+                'titleTooltip' => trans('general.select_all_none'),
+                'printIgnore' => true,
+                'class' => 'hidden-print',
+            ],
             [
                 'field' => 'avatar',
                 'scope' => 'col',
@@ -268,7 +340,6 @@ class ConsumablePresenter extends Presenter
                 'visible' => true,
                 'formatter' => 'dateDisplayFormatter',
             ],
-
             [
                 'field' => 'note',
                 'scope' => 'col',
@@ -277,7 +348,6 @@ class ConsumablePresenter extends Presenter
                 'title' => trans('general.notes'),
                 'visible' => true,
             ],
-
             [
                 'field' => 'created_by',
                 'scope' => 'col',
@@ -287,7 +357,17 @@ class ConsumablePresenter extends Presenter
                 'visible' => true,
                 'formatter' => 'usersLinkObjFormatter',
             ],
-
+            [
+                'field' => 'available_actions',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => false,
+                'switchable' => false,
+                'title' => trans('table.actions'),
+                'formatter' => 'consumablesConsumeActionFormatter',
+                'printIgnore' => true,
+                'class' => 'hidden-print',
+            ],
         ];
 
         return json_encode($layout);

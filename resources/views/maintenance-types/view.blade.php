@@ -15,6 +15,11 @@
     <x-container columns="2">
         <x-page-column class="col-md-9 main-panel">
             <x-box name="maintenances">
+
+                <x-slot:bulkactions>
+                    <x-table.bulk-maintenances name="maintenances" />
+                </x-slot:bulkactions>
+
                 <x-table.maintenances
                     name="maintenances"
                     :table_header="trans('admin/maintenances/general.maintenances')"

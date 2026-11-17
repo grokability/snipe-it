@@ -101,12 +101,14 @@ class MappingTargets
 
         return match ($type) {
             'native' => match ($id) {
-                'purchase_date', 'order_number' => trans('general.' . $id),
-                default => trans('admin/settings/sync_adapters.target_native_' . $id),
+                'purchase_date', 'order_number' => trans('general.'.$id),
+                'model_number' => trans('general.model_no'),
+                'eol_date' => trans('admin/hardware/form.eol_date'),
+                default => trans('admin/settings/sync_adapters.target_native_'.$id),
             },
             'external' => trans('admin/settings/sync_adapters.target_external_'.$id),
             'custom' => trans('admin/settings/sync_adapters.target_custom_prefix').': '
-                .(CustomField::find((int) $id)?->name ?? '?'),
+                .(CustomField::nameMap()->get((int) $id) ?? '?'),
             default => $target,
         };
     }
@@ -133,40 +135,44 @@ class MappingTargets
     {
         $options = [];
 
-        // Adapter-declared text-type extras can also route into native
-        // asset columns that hold arbitrary strings. Admins whose
-        // vendor stores per-device metadata in a labels / blueprint /
-        // team field may want that landing in asset_tag or notes
-        // rather than a custom field. asset_tag is uniqueness-
-        // constrained so the sync path relies on the vendor value
-        // being unique per host when this target is picked. native:
-        // model is here so admins can route a vendor's friendlier
-        // "marketing name" field (Fleet's hardware_marketing_name,
-        // ABM's deviceModel) to the standard AssetModel column when
-        // the vendor's default `hardwareModel` value would be the
-        // less-friendly SMBIOS identifier or SKU. Not appropriate
-        // for list-typed extras like fleet_labels which stringify to
-        // comma-joined sets. Boolean-typed extras stay custom-only
-        // because no native asset column carries a boolean semantic.
-        // Admin-defined extras stay custom-only for the same reason
-        // (arbitrary tenant-labeled data doesn't belong in native
-        // slots).
-        if ($type !== 'boolean' && ! $adminDefined) {
-            foreach (['asset_tag', 'model', 'notes', 'purchase_date', 'order_number'] as $nativeColumn) {
-                $options['native:' . $nativeColumn] = self::labelFor('native:' . $nativeColumn);
+        // Target pool is scoped by extra type so a non-date vendor
+        // value can't be routed into a Snipe-IT date column.
+        // text natives:
+        //   asset_tag, model, model_number, notes, order_number.
+        //   model_number updates the resolved AssetModel. model lands
+        //   on AssetModel.name via resolveModelIdByName.
+        //
+        // date natives:
+        //   purchase_date, eol_date. eol_date sets eol_explicit so
+        //   the derived "purchase_date + model.eol" default yields
+        //   to the sync-sourced value.
+        //
+        // boolean native: byod.
+        //
+        // Admin-defined extras stay custom-only across every type
+        // because arbitrary tenant-labeled data doesn't carry a
+        // semantic that maps to native asset columns.
+        if (! $adminDefined) {
+            if ($type === 'boolean') {
+                $options['native:byod'] = self::labelFor('native:byod');
+            } else {
+                if ($type === 'date') {
+                    foreach (['purchase_date', 'eol_date'] as $nativeColumn) {
+                        $options['native:'.$nativeColumn] = self::labelFor('native:'.$nativeColumn);
+                    }
+                }
+                foreach (['asset_tag', 'model', 'model_number', 'notes', 'order_number'] as $nativeColumn) {
+                    $options['native:'.$nativeColumn] = self::labelFor('native:'.$nativeColumn);
+                }
             }
         }
 
-        // Boolean-typed extras only have one native column that matches
-        // (assets.byod). Admin-defined boolean extras stay custom-only
-        // because arbitrary tenant-labeled toggles don't have a
-        // universal semantic mapping to native columns.
-        if ($type === 'boolean' && ! $adminDefined) {
-            $options['native:byod'] = trans('admin/settings/sync_adapters.target_native_byod');
-        }
-
+        // Date extras can also land in text custom fields (ISO date
+        // strings are text-shaped), so merge the two pools for the
+        // date type. Boolean stays checkbox-only.
         $customFields = match ($type) {
             'boolean' => self::checkboxCustomFields(),
+            'date' => self::dateLikeCustomFields()->concat(self::textLikeCustomFields())->unique('id')->sortBy('name')->values(),
             default => self::textLikeCustomFields(),
         };
 
@@ -187,18 +193,13 @@ class MappingTargets
      */
     private static function compatibleCustomFields(string $field): \Illuminate\Support\Collection
     {
-        $textLike = ['text', 'textarea', 'markdown-textarea'];
-        $dateLike = ['date_picker', 'datetime_picker'];
-
-        $accepted = match ($field) {
-            'last_seen' => $dateLike,
-            default => $textLike,
-        };
-
-        return CustomField::query()
-            ->whereIn('element', $accepted)
-            ->orderBy('name')
-            ->get();
+        // `last_seen` is the only normalized field that wants a date
+        // custom field. Everything else wants text, so reuse the two
+        // memoized per-request pools below instead of hitting the DB
+        // afresh per (field, adapter) pair.
+        return $field === 'last_seen'
+            ? self::dateLikeCustomFields()
+            : self::textLikeCustomFields();
     }
 
     /**
@@ -206,14 +207,20 @@ class MappingTargets
      * Extras are stringified before write so any text-like field can
      * hold whatever the vendor emits.
      *
+     * Memoized per-request via once(): every adapter tab-pane walks
+     * MappingTargets::options() for its mapping widgets AND
+     * optionsForExtra() for its extras, each of which hits this pool
+     * for every field. Without the cache that's dozens of identical
+     * queries per page load (see the debugbar dump).
+     *
      * @return \Illuminate\Support\Collection<int, CustomField>
      */
-    private static function textLikeCustomFields(): \Illuminate\Support\Collection
+    public static function textLikeCustomFields(): \Illuminate\Support\Collection
     {
-        return CustomField::query()
+        return once(fn () => CustomField::query()
             ->whereIn('element', ['text', 'textarea', 'markdown-textarea'])
             ->orderBy('name')
-            ->get();
+            ->get());
     }
 
     /**
@@ -222,11 +229,26 @@ class MappingTargets
      *
      * @return \Illuminate\Support\Collection<int, CustomField>
      */
-    private static function checkboxCustomFields(): \Illuminate\Support\Collection
+    public static function checkboxCustomFields(): \Illuminate\Support\Collection
     {
-        return CustomField::query()
+        return once(fn () => CustomField::query()
             ->where('element', 'checkbox')
             ->orderBy('name')
-            ->get();
+            ->get());
+    }
+
+    /**
+     * Date-shaped custom fields, used as the target pool for date-
+     * typed extras (AppleCare end date, enrollment time, management-
+     * certificate expiration, etc).
+     *
+     * @return \Illuminate\Support\Collection<int, CustomField>
+     */
+    public static function dateLikeCustomFields(): \Illuminate\Support\Collection
+    {
+        return once(fn () => CustomField::query()
+            ->whereIn('element', ['date_picker', 'datetime_picker'])
+            ->orderBy('name')
+            ->get());
     }
 }

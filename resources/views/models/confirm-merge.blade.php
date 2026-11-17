@@ -53,8 +53,8 @@
                                 <td>{{ $model->manufacturer?->name }}</td>
                                 <td>{{ $model->category?->name }}</td>
                                 <td>
-                                    @if ($model->fieldset)
-                                        <a href="{{ route('fieldsets.show', $model->fieldset->id) }}">{{ $model->fieldset->name }}</a>
+                                    @if ($fieldsets->has($model->fieldset_id))
+                                        <a href="{{ route('fieldsets.show', $model->fieldset_id) }}">{{ $fieldsets->get($model->fieldset_id)->name }}</a>
                                     @endif
                                 </td>
                                 <td class="text-right">{{ number_format($model->assets_count) }}</td>

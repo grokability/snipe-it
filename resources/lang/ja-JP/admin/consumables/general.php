@@ -12,4 +12,9 @@ return [
     'exclude_deleted' => '削除済み消耗品を除外',
     'include_deleted' => '削除済み消耗品を含める',
     'only_deleted' => '削除済み消耗品のみ',
+    'mark_consumed' => '消費済みにする',
+    'bulk_consume' => '選択したものを消費済みにする',
+    'bulk_consume_warn' => ':count件の払い出しを消費済みにしようとしています。|:count件の払い出しを消費済みにしようとしています。',
+    'bulk_consume_help' => '払い出しを完了させ、元の消耗品の未消費数に数えないようにします。この操作は元に戻せません。',
+    'consumed_at' => '消費日',
 ];

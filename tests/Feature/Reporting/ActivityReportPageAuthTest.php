@@ -80,22 +80,4 @@ class ActivityReportPageAuthTest extends TestCase
             ->assertOk()
             ->assertSee(route('reports.index').'"', false);
     }
-
-    public function test_scoped_viewer_unaccepted_acceptance_breadcrumb_does_not_link_to_reports_index()
-    {
-        // Same fix retroactively applied to the acceptances report
-        // widened in an earlier batch.
-        $this->actingAs(User::factory()->viewComponents()->create())
-            ->get(route('reports/unaccepted_assets'))
-            ->assertOk()
-            ->assertDontSee(route('reports.index').'"', false);
-    }
-
-    public function test_reports_view_holder_unaccepted_acceptance_breadcrumb_links_to_reports_index()
-    {
-        $this->actingAs(User::factory()->canViewReports()->create())
-            ->get(route('reports/unaccepted_assets'))
-            ->assertOk()
-            ->assertSee(route('reports.index').'"', false);
-    }
 }

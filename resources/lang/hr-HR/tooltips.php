@@ -18,7 +18,7 @@ return [
     ],
 
     'checkin_all' => [
-        'user' => 'Checkin all items for this user and optionally delete them. You will be able to confirm this on the next page.',
+        'user' => 'Razdužite svu opremu zaduženu ovom korisniku i po želji je obrišite. Ovu radnju moći ćete potvrditi na sljedećoj stranici.',
     ],
 
 ];

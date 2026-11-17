@@ -17,7 +17,7 @@ return [
     'last_login' => 'Posledné prihlásenie',
     'last_name' => 'Priezvisko',
     'location' => 'Lokalita',
-    'lock_passwords' => 'Some user details cannot be changed on the demo. Try creating a new user instead.',
+    'lock_passwords' => 'Niektoré údaje používateľa nie je možné v ukážkovej verzii zmeniť. Skúste namiesto toho vytvoriť nového používateľa.',
     'manager' => 'Manažér',
     'managed_locations' => 'Spravované lokality',
     'managed_users' => 'Manažovaní používatelia',

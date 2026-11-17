@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Asset was not checked in, please try again',
         'success' => 'Asset checked in successfully.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'That user is invalid. Please try again.',
         'already_checked_in' => 'That asset is already checked in.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

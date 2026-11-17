@@ -2,25 +2,30 @@
 
 namespace Tests\Feature\Notifications\Email;
 
-use App\Mail\CheckoutAccessoryMail;
-use App\Mail\CheckoutAssetMail;
-use App\Mail\CheckoutConsumableMail;
-use App\Mail\CheckoutLicenseMail;
 use App\Models\Accessory;
-use App\Models\AccessoryCheckout;
-use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
 use App\Models\Consumable;
-use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\User;
+use App\Notifications\UnacceptedAssetReminderNotification;
 use Generator;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
+/**
+ * Reminder-send coverage for the single-row path on
+ * /unaccepted-acceptances/send-reminder.
+ *
+ * Post-v8.9 refactor: every reminder flow (console command,
+ * per-user button, bulk UI, API) dispatches
+ * UnacceptedAssetReminderNotification. These tests pin that the
+ * per-row controller endpoint still fires a notification for each
+ * checkoutable type and bails cleanly on the empty-email + missing-
+ * acceptance edge cases.
+ */
 class AcceptanceReminderTest extends TestCase
 {
     private User $admin;
@@ -31,9 +36,11 @@ class AcceptanceReminderTest extends TestCase
     {
         parent::setUp();
 
-        Mail::fake();
+        Notification::fake();
 
-        $this->admin = User::factory()->canViewReports()->create();
+        // Any checkout grant passes canCheckoutAtLeastOneItemType,
+        // which is what the moved endpoint gates on now.
+        $this->admin = User::factory()->checkoutAccessories()->create();
         $this->assignee = User::factory()->create();
     }
 
@@ -43,22 +50,22 @@ class AcceptanceReminderTest extends TestCase
         $userWithoutPermission = User::factory()->create();
 
         $this->actingAs($userWithoutPermission)
-            ->post(route('reports/unaccepted_assets_sent_reminder', [
+            ->post(route('unaccepted-acceptances.send-reminder', [
                 'acceptance_id' => $checkoutAcceptance->id,
             ]))
             ->assertForbidden();
 
-        Mail::assertNotSent(CheckoutAssetMail::class);
+        Notification::assertNothingSent();
     }
 
     public function test_reminder_not_sent_if_acceptance_does_not_exist()
     {
         $this->actingAs($this->admin)
-            ->post(route('reports/unaccepted_assets_sent_reminder', [
+            ->post(route('unaccepted-acceptances.send-reminder', [
                 'acceptance_id' => 999999,
             ]));
 
-        Mail::assertNotSent(CheckoutAssetMail::class);
+        Notification::assertNothingSent();
     }
 
     public function test_reminder_not_sent_if_acceptance_already_accepted()
@@ -66,11 +73,11 @@ class AcceptanceReminderTest extends TestCase
         $checkoutAcceptanceAlreadyAccepted = CheckoutAcceptance::factory()->accepted()->create();
 
         $this->actingAs($this->admin)
-            ->post(route('reports/unaccepted_assets_sent_reminder', [
+            ->post(route('unaccepted-acceptances.send-reminder', [
                 'acceptance_id' => $checkoutAcceptanceAlreadyAccepted->id,
             ]));
 
-        Mail::assertNotSent(CheckoutAssetMail::class);
+        Notification::assertNothingSent();
     }
 
     public static function checkoutAcceptancesToUsersWithoutEmailAddresses(): Generator
@@ -100,141 +107,69 @@ class AcceptanceReminderTest extends TestCase
         $checkoutAcceptance = $callback();
 
         $this->actingAs($this->admin)
-            ->post(route('reports/unaccepted_assets_sent_reminder', [
+            ->post(route('unaccepted-acceptances.send-reminder', [
                 'acceptance_id' => $checkoutAcceptance->id,
             ]))
-            // check we didn't crash...
+            // check we didn't crash
             ->assertRedirect();
 
-        Mail::assertNotSent(CheckoutAssetMail::class);
+        Notification::assertNothingSent();
     }
 
     public function test_reminder_is_sent_to_user_for_accessory()
     {
         $accessory = Accessory::factory()->requiringAcceptance()->create();
-
         $acceptance = $this->createCheckoutAcceptance($accessory, $this->assignee);
 
-        $this->createActionLogEntry($accessory, $this->admin, $this->assignee, $acceptance);
-
-        // Match the pivot's created_at to the acceptance's so the reminder
-        // controller's `WHERE created_at = ?` join lands. Accessory::checkouts()
-        // reads the accessories_checkouts pivot (unlike Asset/Consumable/License
-        // which read action_logs), and DATETIME second precision means two
-        // separate `now()` calls straddle a boundary often enough under PHP
-        // 8.2 CI load to flake the equality check.
-        AccessoryCheckout::factory()
-            ->for($this->admin, 'adminuser')
-            ->for($accessory)
-            ->for($this->assignee, 'assignedTo')
-            ->create(['created_at' => $acceptance->created_at]);
-
         $this->actingAs($this->admin)
-            ->post(route('reports/unaccepted_assets_sent_reminder', [
+            ->post(route('unaccepted-acceptances.send-reminder', [
                 'acceptance_id' => $acceptance->id,
             ]))
-            ->assertRedirect(route('reports/unaccepted_assets'));
+            ->assertRedirect(route('unaccepted-acceptances.index'));
 
-        Mail::assertSent(CheckoutAccessoryMail::class, 1);
-
-        Mail::assertSent(CheckoutAccessoryMail::class, function (CheckoutAccessoryMail $mail) {
-            return $mail->hasTo($this->assignee);
-        });
-
-        Mail::assertSent(CheckoutAccessoryMail::class, function (CheckoutAccessoryMail $mail) {
-            return $mail->hasSubject(trans('mail.unaccepted_asset_reminder'));
-        });
-
-        Mail::assertSent(CheckoutAccessoryMail::class, function (CheckoutAccessoryMail $mail) {
-            return str_contains($mail->render(), trans('mail.recent_item_checked'));
-        });
+        Notification::assertSentTo($this->assignee, UnacceptedAssetReminderNotification::class);
     }
 
     public function test_reminder_is_sent_to_user_for_asset()
     {
         $asset = Asset::factory()->requiresAcceptance()->create();
-
         $acceptance = $this->createCheckoutAcceptance($asset, $this->assignee);
 
-        $this->createActionLogEntry($asset, $this->admin, $this->assignee, $acceptance);
-
         $this->actingAs($this->admin)
-            ->post(route('reports/unaccepted_assets_sent_reminder', [
+            ->post(route('unaccepted-acceptances.send-reminder', [
                 'acceptance_id' => $acceptance->id,
             ]))
-            ->assertRedirect(route('reports/unaccepted_assets'));
+            ->assertRedirect(route('unaccepted-acceptances.index'));
 
-        Mail::assertSent(CheckoutAssetMail::class, 1);
-
-        Mail::assertSent(CheckoutAssetMail::class, function (CheckoutAssetMail $mail) {
-            return $mail->hasTo($this->assignee);
-        });
-
-        Mail::assertSent(CheckoutAssetMail::class, function (CheckoutAssetMail $mail) {
-            return $mail->hasSubject(trans('mail.unaccepted_asset_reminder'));
-        });
-
-        Mail::assertSent(CheckoutAssetMail::class, function (CheckoutAssetMail $mail) {
-            return str_contains($mail->render(), trans('mail.recent_item_checked'));
-        });
+        Notification::assertSentTo($this->assignee, UnacceptedAssetReminderNotification::class);
     }
 
     public function test_reminder_is_sent_to_user_for_consumable()
     {
         $consumable = Consumable::factory()->requiringAcceptance()->create();
-
         $acceptance = $this->createCheckoutAcceptance($consumable, $this->assignee);
 
-        $this->createActionLogEntry($consumable, $this->admin, $this->assignee, $acceptance);
-
         $this->actingAs($this->admin)
-            ->post(route('reports/unaccepted_assets_sent_reminder', [
+            ->post(route('unaccepted-acceptances.send-reminder', [
                 'acceptance_id' => $acceptance->id,
             ]))
-            ->assertRedirect(route('reports/unaccepted_assets'));
+            ->assertRedirect(route('unaccepted-acceptances.index'));
 
-        Mail::assertSent(CheckoutConsumableMail::class, 1);
-
-        Mail::assertSent(CheckoutConsumableMail::class, function (CheckoutConsumableMail $mail) {
-            return $mail->hasTo($this->assignee);
-        });
-
-        Mail::assertSent(CheckoutConsumableMail::class, function (CheckoutConsumableMail $mail) {
-            return $mail->hasSubject(trans('mail.unaccepted_asset_reminder'));
-        });
-
-        Mail::assertSent(CheckoutConsumableMail::class, function (CheckoutConsumableMail $mail) {
-            return str_contains($mail->render(), trans('mail.recent_item_checked'));
-        });
+        Notification::assertSentTo($this->assignee, UnacceptedAssetReminderNotification::class);
     }
 
     public function test_reminder_is_sent_to_user_for_license_seat()
     {
         $licenseSeat = LicenseSeat::factory()->requiringAcceptance()->create();
-
         $acceptance = $this->createCheckoutAcceptance($licenseSeat, $this->assignee);
 
-        $this->createActionLogEntry($licenseSeat, $this->admin, $this->assignee, $acceptance);
-
         $this->actingAs($this->admin)
-            ->post(route('reports/unaccepted_assets_sent_reminder', [
+            ->post(route('unaccepted-acceptances.send-reminder', [
                 'acceptance_id' => $acceptance->id,
             ]))
-            ->assertRedirect(route('reports/unaccepted_assets'));
+            ->assertRedirect(route('unaccepted-acceptances.index'));
 
-        Mail::assertSent(CheckoutLicenseMail::class, 1);
-
-        Mail::assertSent(CheckoutLicenseMail::class, function (CheckoutLicenseMail $mail) {
-            return $mail->hasTo($this->assignee);
-        });
-
-        Mail::assertSent(CheckoutLicenseMail::class, function (CheckoutLicenseMail $mail) {
-            return $mail->hasSubject(trans('mail.unaccepted_asset_reminder'));
-        });
-
-        Mail::assertSent(CheckoutLicenseMail::class, function (CheckoutLicenseMail $mail) {
-            return str_contains($mail->render(), trans('mail.recent_item_checked'));
-        });
+        Notification::assertSentTo($this->assignee, UnacceptedAssetReminderNotification::class);
     }
 
     private function createCheckoutAcceptance(Model $item, Model $assignee): CheckoutAcceptance
@@ -245,26 +180,5 @@ class AcceptanceReminderTest extends TestCase
             ->withoutActionLog()
             ->pending()
             ->create();
-    }
-
-    private function createActionLogEntry(Model $item, Model $admin, Model $assignee, CheckoutAcceptance $acceptance): Actionlog
-    {
-        $itemId = $item->id;
-        $itemType = get_class($item);
-
-        if (get_class($item) === LicenseSeat::class) {
-            $itemId = $item->license->id;
-            $itemType = License::class;
-        }
-
-        return Actionlog::factory()
-            ->for($admin, 'adminuser')
-            ->for($assignee, 'target')
-            ->create([
-                'action_type' => 'checkout',
-                'item_id' => $itemId,
-                'item_type' => $itemType,
-                'created_at' => $acceptance->created_at,
-            ]);
     }
 }

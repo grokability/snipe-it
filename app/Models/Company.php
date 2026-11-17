@@ -4,12 +4,15 @@ namespace App\Models;
 
 use App\Enums\FileStorage;
 use App\Http\Traits\UniqueUndeletedTrait;
+use App\Models\Builders\CompanyQueryBuilder;
 use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\HasUploads;
 use App\Models\Traits\Loggable;
 use App\Models\Traits\Searchable;
 use App\Presenters\CompanyPresenter;
 use App\Presenters\Presentable;
+use App\Rules\ExternalUrl;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -26,6 +29,8 @@ use Watson\Validating\ValidatingTrait;
  * Model for Companies.
  *
  * @version v1.8
+ *
+ * @mixin IdeHelperCompany
  */
 final class Company extends SnipeModel
 {
@@ -38,14 +43,45 @@ final class Company extends SnipeModel
 
     protected $table = 'companies';
 
-    // Declare the rules for the model validation
+    /**
+     * Fields that configure a per-company outbound webhook. These are the
+     * same fields the Livewire IntegrationSettingsForm gates on
+     * isSuperUser(), so the REST API must enforce the same control. Any
+     * controller / importer / job that mass-assigns from user input needs
+     * to reject the write when the user lacks superuser, rather than
+     * silently dropping the fields.
+     */
+    public const GATED_WEBHOOK_FIELDS = [
+        'webhook_selected',
+        'webhook_endpoint',
+        'webhook_channel',
+        'webhook_botname',
+    ];
+
+    // Declare the rules for the model validation. The ExternalUrl rule
+    // for webhook_endpoint is layered on in getRules() below because PHP
+    // rejects `new` in a property-default array initializer.
     protected $rules = [
         'name' => 'required|max:255|unique_undeleted_in_scope:parent_id',
         'fax' => 'min:7|max:35|nullable',
         'phone' => 'min:7|max:35|nullable',
         'email' => 'email|max:150|nullable',
         'parent_id' => 'nullable|integer|exists:companies,id|parent_must_be_top_level:companies,id|must_have_no_children:companies,id|parent_within_scope',
+        'webhook_selected' => 'nullable|string|in:slack,general,google,microsoft',
+        'webhook_channel' => 'nullable|string',
+        'webhook_botname' => 'nullable|string|max:255',
     ];
+
+    /**
+     * PHP 8.2 doesn't allow `new` in a property default, so the ExternalUrl rule is added on here.
+     */
+    public function getRules()
+    {
+        $rules = $this->rules;
+        $rules['webhook_endpoint'] = ['nullable', 'url', new ExternalUrl('app.webhook_allow_internal_targets')];
+
+        return $rules;
+    }
 
     protected $casts = [
         'parent_id' => 'integer',
@@ -105,9 +141,44 @@ final class Company extends SnipeModel
     ];
 
     /**
+     * Advanced-search filterable fields.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'parent',
+                'type' => 'fk',
+                'column' => 'parent_id',
+                'endpoint' => 'companies',
+                'label' => trans('admin/companies/table.parent'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'name',
@@ -133,6 +204,54 @@ final class Company extends SnipeModel
      * @var array<int, array<int>>
      */
     private static array $companyIdsCache = [];
+
+    /**
+     * Per-process memoization for Schema::hasColumn(). Keyed by "table::column".
+     * Called on every row from isCurrentUserHasAccess() and every scoped query
+     * from scopeCompanyablesDirectly(). Laravel 12 does not cache hasColumn, so
+     * without this each call issues a separate information_schema.columns query.
+     * Schema cannot change inside a request, so a plain static map is enough.
+     * Reset in tests via flushCompanyColumnCache(). Reported in #19918.
+     *
+     * @var array<string, bool>
+     */
+    private static array $hasCompanyColumnCache = [];
+
+    /**
+     * Per-request memoization for User-target visibility in isCurrentUserHasAccess().
+     * Keyed by "actor_id::target_id" because CompanyableScope resolves against the
+     * currently authenticated user. Transformers call Gate::allows() per row for
+     * every User reference (created_by, assigned_to, manager, etc.), and without
+     * this each call issues the FMCS pivot-subquery exists() check again against
+     * the same target id. Reset in tests via flushUserVisibilityCache(). #19918.
+     *
+     * @var array<string, bool>
+     */
+    private static array $userIsVisibleCache = [];
+
+    /**
+     * Return hasColumn($table, $column) from the per-process memo. Only
+     * consulted inside the FMCS hot path, which only ever asks about the
+     * company_id column, but the signature stays generic so the two call
+     * sites can share one entry.
+     */
+    private static function tableHasCompanyColumn(string $table, string $column = 'company_id'): bool
+    {
+        return self::$hasCompanyColumnCache[$table.'::'.$column]
+            ??= Schema::hasColumn($table, $column);
+    }
+
+    /**
+     * Return whether $target is visible to the current actor, from the
+     * per-request memo. Falls back to the FMCS pivot-subquery exists()
+     * check on first lookup. Only called from the User branch of
+     * isCurrentUserHasAccess() with an authenticated non-superuser actor.
+     */
+    private static function userIsVisibleToActor(int $actorId, int $targetId): bool
+    {
+        return self::$userIsVisibleCache[$actorId.'::'.$targetId]
+            ??= User::where('users.id', $targetId)->exists();
+    }
 
     /**
      * Return the current user's company IDs by querying the pivot table directly.
@@ -183,6 +302,25 @@ final class Company extends SnipeModel
     public static function flushCompanyIdsCache(): void
     {
         self::$companyIdsCache = [];
+    }
+
+    /**
+     * Reset the per-process hasColumn memo. Called from TestCase::setUp(). The
+     * schema is stable at runtime, but migrations can add or drop columns in
+     * tests, so wipe between cases.
+     */
+    public static function flushCompanyColumnCache(): void
+    {
+        self::$hasCompanyColumnCache = [];
+    }
+
+    /**
+     * Reset the per-request user-visibility memo. Called from TestCase::setUp()
+     * for the same test-isolation reason as flushCompanyIdsCache().
+     */
+    public static function flushUserVisibilityCache(): void
+    {
+        self::$userIsVisibleCache = [];
     }
 
     /**
@@ -365,7 +503,7 @@ final class Company extends SnipeModel
                 // This is primarily for the gate:allows-check in location->isDeletable()
                 // Locations don't have a company_id so without this it isn't possible to delete locations with FullMultipleCompanySupport enabled
                 // because this function is called by SnipePermissionsPolicy->before()
-                if (! Schema::hasColumn($company_table, 'company_id')) {
+                if (! self::tableHasCompanyColumn($company_table)) {
                     return true;
                 }
 
@@ -388,7 +526,7 @@ final class Company extends SnipeModel
             // per-target path, which left actors able to see users they
             // couldn't then edit. One check, one query, same logic as the list.
             if ($companyable instanceof User) {
-                return User::where('users.id', $companyable->id)->exists();
+                return self::userIsVisibleToActor((int) auth()->id(), (int) $companyable->id);
             }
 
             $userCompanyIds = self::getCurrentUserCompanyIds();
@@ -438,9 +576,9 @@ final class Company extends SnipeModel
             return $requestedIds;
         }
 
-        $current_user = auth()->user();
-
-        if ($current_user->isSuperUser()) {
+        // CLI contexts (snipeit:import, scheduled tasks) run without an
+        // auth user.
+        if (! Auth::hasUser() || auth()->user()->isSuperUser()) {
             return $requestedIds;
         }
 
@@ -549,22 +687,6 @@ final class Company extends SnipeModel
     public function children()
     {
         return $this->hasMany(self::class, 'parent_id')->withoutGlobalScopes([CompanyableScope::class]);
-    }
-
-    /**
-     * Sort the company list by the parent company's name. Left join so that
-     * top-level companies (parent_id IS NULL) still appear in the results.
-     *
-     * Use addSelect (not select) so prior withCount subqueries on the query
-     * survive — select() replaces the whole columns list and would strip the
-     * eager *_count columns, forcing isDeletable() and the transformer into a
-     * 7-query-per-row N+1.
-     */
-    public function scopeOrderParent($query, $order)
-    {
-        return $query->leftJoin('companies as parent_co', 'companies.parent_id', '=', 'parent_co.id')
-            ->addSelect('companies.*')
-            ->orderBy('parent_co.name', $order);
     }
 
     public function assets()
@@ -706,7 +828,7 @@ final class Company extends SnipeModel
         }
 
         // If the column exists in the table, use it to scope the query
-        if ($query && $query->getModel() && Schema::hasColumn($query->getModel()->getTable(), $column)) {
+        if ($query && $query->getModel() && self::tableHasCompanyColumn($query->getModel()->getTable(), $column)) {
             $table = ($table_name) ? $table_name.'.' : $query->getModel()->getTable().'.';
 
             if (empty($companyIds)) {
@@ -718,41 +840,19 @@ final class Company extends SnipeModel
                 return $query->whereNull($table.$column);
             }
 
-            // action_logs: a NULL company_id means the logged object's table has no
-            // company_id column. For most of those (AssetModel, Category, Manufacturer,
-            // Statuslabel, Location, etc.) the row is admin-authored global config
-            // that is safe to show cross-company. But User is also a table without a
-            // scalar company_id column (users belong to companies via the company_user
-            // pivot), and User-item action_logs carry PII in their log_meta diff
-            // (email, phone, employee_num, notes, address, jobtitle, etc.) written by
-            // UserObserver on every profile edit. Treating those as globally visible
-            // leaks cross-company PII, per GHSA-mch3-g6rh-gj22.
-            //
-            // Split by item_type: non-User rows keep the existing "null is safe" rule;
-            // User-item rows only fall through when the viewer shares at least one
-            // company with the target user via the company_user pivot (same visibility
-            // rule the users list itself applies under FMCS).
+            // action_logs has its own compound visibility rule:
+            //   - rows whose company_id matches the caller are always visible
+            //   - rows with NULL company_id dispatch by item_type (user-pivot
+            //     match for User-item, current-owner match for tenant-scoped
+            //     items like Asset/License/..., plain cross-company allow for
+            //     global-config types like AssetModel/Category/Manufacturer).
+            // The full tree lives alongside the model it describes so any new
+            // tenant-scoped item_type is a one-line addition to the map in
+            // Actionlog, not a hunt through Company. Covers GHSA-mch3-g6rh-gj22
+            // (User-item PII) and GHSA-m955-p5pg-78mv (tenant-scoped NULL-company
+            // historical rows).
             if ($query->getModel()->getTable() === 'action_logs') {
-                $userClass = User::class;
-
-                return $query->where(function ($q) use ($table, $column, $companyIds, $userClass) {
-                    $q->whereIn($table.$column, $companyIds)
-                        ->orWhere(function ($null) use ($table, $column, $companyIds, $userClass) {
-                            $null->whereNull($table.$column)
-                                ->where(function ($check) use ($companyIds, $userClass) {
-                                    // Non-User item (or null item_type): safe global config, existing behavior.
-                                    $check->where('action_logs.item_type', '!=', $userClass)
-                                        ->orWhereNull('action_logs.item_type')
-                                        // User-item: viewer must share a company with the target user via pivot.
-                                        ->orWhere(function ($userItem) use ($companyIds, $userClass) {
-                                            $userItem->where('action_logs.item_type', $userClass)
-                                                ->whereIn('action_logs.item_id', function ($sub) use ($companyIds) {
-                                                    $sub->select('user_id')->from('company_user')->whereIn('company_id', $companyIds);
-                                                });
-                                        });
-                                });
-                        });
-                });
+                return Actionlog::applyCrossCompanyScope($query, $companyIds);
             }
 
             // Floater: null-company items are visible to users from any company.
@@ -830,17 +930,8 @@ final class Company extends SnipeModel
         }
     }
 
-    /**
-     * Query builder scope to order on the user that created it.
-     *
-     * Use addSelect (not select) so prior withCount subqueries on the query
-     * survive — see scopeOrderParent() for the same rationale.
-     */
-    public function scopeOrderByCreatedBy($query, $order)
+    public function newEloquentBuilder($query): CompanyQueryBuilder
     {
-        return $query->leftJoin('users as admin_sort', 'companies.created_by', '=', 'admin_sort.id')
-            ->addSelect('companies.*')
-            ->orderBy('admin_sort.first_name', $order)
-            ->orderBy('admin_sort.last_name', $order);
+        return new CompanyQueryBuilder($query);
     }
 }

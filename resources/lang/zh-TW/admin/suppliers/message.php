@@ -4,6 +4,7 @@ return [
 
     'deleted' => '已刪除的供應商',
     'does_not_exist' => '供應商不存在',
+    'assoc_items' => 'This supplier is currently associated with at least one asset, accessory, consumable, component, license, or maintenance record and cannot be deleted. Please update those items to no longer reference this supplier and try again. ',
 
     'create' => [
         'error' => '新增供應商失敗，請重試',

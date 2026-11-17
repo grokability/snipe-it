@@ -70,6 +70,7 @@ return [
     ],
 
     'select_country' => 'Ընտրել երկիրը',
+    'select_currency' => 'Select a currency',
 
     'countries' => [
         'AC' => 'Ասենսիոն կղզի',

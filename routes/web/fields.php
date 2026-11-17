@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\BulkCustomFieldsController;
+use App\Http\Controllers\BulkCustomFieldsetsController;
 use App\Http\Controllers\CustomFieldsController;
 use App\Http\Controllers\CustomFieldsetsController;
 use App\Livewire\CustomFieldEditor;
@@ -10,6 +12,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['prefix' => 'fields', 'middleware' => ['auth']], function () {
+
+    Route::post('bulk/delete', [BulkCustomFieldsController::class, 'destroy'])
+        ->name('fields.bulk.delete');
+
+    Route::post('fieldsets/bulk/delete', [BulkCustomFieldsetsController::class, 'destroy'])
+        ->name('fieldsets.bulk.delete');
 
     Route::post(
         'required/{fieldset_id}/{field_id}',
@@ -35,15 +43,23 @@ Route::group(['prefix' => 'fields', 'middleware' => ['auth']], function () {
     )->where('id', '[0-9]+')
         ->name('fieldsets.associate');
 
+    // Registered explicitly before the resource because the resource
+    // below excludes 'create' - without this route the GET /fieldsets/create
+    // URL 404s.
+    Route::get(
+        'fieldsets/create',
+        [CustomFieldsetsController::class, 'create']
+    )->name('fieldsets.create');
+
     Route::resource('fieldsets', CustomFieldsetsController::class, [
         'parameters' => [
             'fieldset' => 'fieldset',
             'field' => 'field_id',
         ],
-        'except' => ['show', 'view'],
+        'except' => ['show', 'view', 'create'],
     ]);
 
-    // This is a shim to handle bootstrap tables
+    // Shim to handle bootstrap tables
     // @todo: normalize this in the JS
     Route::get(
         'fieldsets/{fieldset}/edit',
@@ -65,6 +81,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     // index + destroy remain on the controller (the Livewire component
     // handles saves via wire:submit -> save(), so store/update are gone).
-    Route::get('fields', [CustomFieldsController::class, 'index'])->name('fields.index');
+    Route::get('fields', [CustomFieldsController::class, 'index'])
+        ->name('fields.index');
     Route::delete('fields/{field}', [CustomFieldsController::class, 'destroy'])->name('fields.destroy');
 });

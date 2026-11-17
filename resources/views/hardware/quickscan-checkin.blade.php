@@ -195,6 +195,10 @@
                 },
                 complete: function () {
                     $('#checkin-loader').hide();
+                    // Quickscan is a tight scan loop. Restore the submit
+                    // button immediately so the next scan can fire without
+                    // waiting for the global double-submit safety timeout.
+                    window.enableSubmitsIn('#checkin-form');
                 },
             });
 

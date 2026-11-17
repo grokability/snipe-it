@@ -3,26 +3,26 @@
 return [
     'not_found' => 'Hľadaný záznam o údržbe majetku nebol nájdený!',
     'delete' => [
-        'confirm' => 'Ste si istý, že chcete zmazať tento záznam o údržbe majetku?',
-        'error' => 'Pri odstrňovaní záznamu o údržbe majetku nastala chyba. Prosím skúste znovu.',
+        'confirm' => 'Naozaj chcete odstrániť tento záznam o údržbe majetku?',
+        'error' => 'Pri odstraňovaní záznamu o údržbe majetku nastala chyba. Skúste to znova.',
         'success' => 'Záznam o údržbe majetku bol úspešne odstránený.',
     ],
     'create' => [
-        'error' => 'Záznam o údržba majetku nebol vytvorený, prosím skúste znovu.',
+        'error' => 'Záznam o údržbe majetku nebol vytvorený, skúste to znova.',
         'success' => 'Záznam o údržbe majetku bol úspešne vytvorený.',
     ],
     'edit' => [
-        'error' => 'Záznam o údržba majetku nebol upravený, prosím skúste znovu.',
+        'error' => 'Záznam o údržbe majetku nebol upravený, skúste to znova.',
         'success' => 'Záznam o údržbe majetku bol úspešne upravený.',
     ],
     'asset_maintenance_incomplete' => 'Zatiaľ nedokončené',
     'warranty' => 'Záruka',
     'not_warranty' => 'Bez záruky',
     'complete' => [
-        'confirm' => 'Are you sure you want to mark this maintenance as complete? This cannot be undone.',
-        'success' => 'Maintenance marked as complete.',
-        'error' => 'There was an issue marking this maintenance as complete. Please try again.',
+        'confirm' => 'Naozaj chcete označiť túto údržbu ako dokončenú? Túto akciu nie je možné vrátiť späť.',
+        'success' => 'Údržba bola označená ako dokončená.',
+        'error' => 'Pri označovaní tejto údržby ako dokončenej sa vyskytol problém. Skúste to znova.',
     ],
-    'bulk_delete' => 'No maintenance records were deleted (:skipped skipped).|Deleted :count maintenance record. (:skipped skipped)|Deleted :count maintenance records. (:skipped skipped)',
-    'bulk_complete' => 'No maintenance records were marked complete (:skipped skipped or already complete).|Marked :count maintenance record complete. (:skipped skipped or already complete)|Marked :count maintenance records complete. (:skipped skipped or already complete)',
+    'bulk_delete' => 'Neboli odstránené žiadne záznamy údržby (preskočené: :skipped).|Odstránený :count záznam údržby. (preskočené: :skipped)|Odstránených :count záznamov údržby. (preskočené: :skipped)',
+    'bulk_complete' => 'Žiadne záznamy údržby neboli označené ako dokončené (preskočené alebo už dokončené: :skipped).|Ako dokončený bol označený :count záznam údržby. (preskočené alebo už dokončené: :skipped)|Ako dokončené bolo označených :count záznamov údržby. (preskočené alebo už dokončené: :skipped)',
 ];

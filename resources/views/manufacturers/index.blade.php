@@ -36,6 +36,7 @@
                         buttons="manufacturerButtons"
                         fixed_right_number="1"
                         fixed_number="1"
+                        show_advanced_search="true"
                         api_url="{{ route('api.manufacturers.index') }}"
                         :presenter="\App\Presenters\ManufacturerPresenter::dataTableLayout()"
                         export_filename="export-manufacturers-{{ date('Y-m-d') }}"
@@ -54,4 +55,9 @@
 
 
   @include ('partials.bootstrap-table')
+
+<x-table.advanced-search
+    tableId="manufacturerListingTable"
+    :model="\App\Models\Manufacturer::class"
+/>
 @stop

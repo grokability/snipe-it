@@ -122,7 +122,7 @@ return [
     ],
 
     'modelsfiles' => [
-        'name' => 'Manage Model Files',
+        'name' => '管理型号的文件',
         'note' => 'Allows the user to upload, download, and delete files associated with asset models on both the model view and the asset view screens. (This only makes sense with view privileges or higher.)',
     ],
 
@@ -256,7 +256,7 @@ return [
     ],
     'usersview' => [
         'name' => '查看用户',
-        'note' => 'Note that users with this permission will also be able to see (not modify or delete) files uploaded to the user as well. Users with this permission will also be able to view edit and checkin history.',
+        'note' => 'Users with this permission will also be able to view edit and checkin history. Access to files uploaded to a user is gated separately by the Manage User Files permission.',
     ],
     'userscreate' => [
         'name' => '创建新用户',

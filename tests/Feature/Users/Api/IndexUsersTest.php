@@ -202,4 +202,56 @@ class IndexUsersTest extends TestCase
             ])
             ->assertJson(fn (AssertableJson $json) => $json->has('rows', 0)->etc());
     }
+
+    public function test_end_date_within_filters_to_users_leaving_in_window(): void
+    {
+        // Regression test for issue #19809. The dashboard's offboarding
+        // tile links to users.index?end_date_within=30, so the API has
+        // to narrow by range on end_date rather than equality.
+        $leavingSoon = User::factory()->create([
+            'first_name' => 'Leaving',
+            'end_date' => now()->addDays(10)->format('Y-m-d'),
+        ]);
+        User::factory()->create([
+            'first_name' => 'Leaving Later',
+            'end_date' => now()->addDays(60)->format('Y-m-d'),
+        ]);
+        User::factory()->create([
+            'first_name' => 'Staying',
+            'end_date' => null,
+        ]);
+
+        $response = $this->actingAsForApi(User::factory()->viewUsers()->create())
+            ->getJson(route('api.users.index', ['end_date_within' => 30]))
+            ->assertOk();
+
+        $response->assertJson(function (AssertableJson $json) use ($leavingSoon) {
+            $json->has('rows', 1)
+                ->where('rows.0.id', $leavingSoon->id)
+                ->etc();
+        });
+    }
+
+    public function test_with_assignments_filters_to_users_holding_at_least_one_item(): void
+    {
+        // Issue #19809. The offboarding tile narrows to users who are
+        // leaving AND still hold an assigned item, so the API filter
+        // backs the same cut.
+        $withAsset = User::factory()->create(['first_name' => 'Has Asset']);
+        Asset::factory()->create([
+            'assigned_to' => $withAsset->id,
+            'assigned_type' => User::class,
+        ]);
+        User::factory()->create(['first_name' => 'Has Nothing']);
+
+        $response = $this->actingAsForApi(User::factory()->viewUsers()->create())
+            ->getJson(route('api.users.index', ['with_assignments' => 1]))
+            ->assertOk();
+
+        $response->assertJson(function (AssertableJson $json) use ($withAsset) {
+            $json->has('rows', 1)
+                ->where('rows.0.id', $withAsset->id)
+                ->etc();
+        });
+    }
 }

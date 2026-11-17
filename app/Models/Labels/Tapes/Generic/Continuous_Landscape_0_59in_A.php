@@ -224,7 +224,7 @@ class Continuous_Landscape_0_59in_A extends Continuous_Landscape_0_59in
                         $pdf, $labelText,
                         $currentX, $fieldY,
                         'freesans', 'B', $this->labelSize * 1.2, 'L', // Increased label size by 20% and made bold
-                        $labelWidth, $labelHeight, false, 0,
+                        $fieldWidth, $labelHeight, false, 0,
                     );
                     $fieldY += ($labelHeight + $labelSpacing) + 0.01;
 

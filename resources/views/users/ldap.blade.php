@@ -12,6 +12,12 @@
     @if ($snipeSettings->ldap_enabled == 0)
         {{ trans('admin/users/message.ldap_not_configured') }}
     @else
+        @if ($ldapSyncRunning)
+            <x-callout type="warning" icon="warning" live="assertive">
+                {{ trans('general.operation_already_running', ['operation' => trans('general.ldap_sync')]) }}
+            </x-callout>
+        @endif
+
         <x-form id="ldap-form">
             <x-box>
                 <x-callout type="legend" icon="tip" class="col-md-12">
@@ -19,7 +25,7 @@
                         <strong>
                             {!! trans('admin/users/general.ldap_sync_intro', ['link' => 'https://snipe-it.readme.io/docs/ldap-sync#/']) !!}
                         </strong>
-                   
+
                 </x-callout>
 
                 <x-input.location-select
@@ -37,10 +43,12 @@
                             <a class="btn btn-link" href="{{ route('users.index') }}">{{ trans('button.cancel') }}</a>
                         </div>
                         <div class="text-right col-md-6">
-                            <x-input.button class="btn-primary" id="sync">
-                                <i id="sync-button-icon" class="fas fa-sync-alt icon-white" aria-hidden="true"></i>
-                                <span id="sync-button-text">{{ trans('general.synchronize') }}</span>
-                            </x-input.button>
+                            <span @if ($ldapSyncRunning) data-tooltip="true" title="{{ trans('general.operation_already_running', ['operation' => trans('general.ldap_sync')]) }}" @endif>
+                                <button type="submit" class="btn btn-primary" id="sync" @disabled($ldapSyncRunning)>
+                                    <i id="sync-button-icon" class="fas fa-sync-alt icon-white" aria-hidden="true"></i>
+                                    <span id="sync-button-text">{{ trans('general.synchronize') }}</span>
+                                </button>
+                            </span>
                         </div>
                     </div>
                 </x-slot:customfooter>

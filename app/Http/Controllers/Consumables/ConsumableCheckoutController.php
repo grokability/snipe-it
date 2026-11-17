@@ -6,9 +6,11 @@ use App\Actions\Acceptances\CreateCheckoutAcceptanceAction;
 use App\Events\CheckoutableCheckedOut;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Models\Actionlog;
 use App\Models\CheckoutAcceptance;
 use App\Models\CheckoutRequest;
 use App\Models\Consumable;
+use App\Models\ConsumableAssignment;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\View\View;
@@ -374,5 +376,135 @@ class ConsumableCheckoutController extends Controller
         return redirect()->route('requests.index')
             ->with($fulfilled > 0 ? 'success' : 'warning', $summary)
             ->with('multi_error_messages', $errors);
+    }
+
+    /**
+     * Mark a single consumable_users pivot row as consumed. One-way:
+     * once set, consumed_at never clears, so an already-consumed row
+     * no-op redirects. Gated on consumables.checkout per the design
+     * decision to let the same permission that distributes units also
+     * close them out. Writes an audit-log entry so the lifecycle shows
+     * up in the item's history tab.
+     */
+    public function consume(Consumable $consumable, ConsumableAssignment $assignment): RedirectResponse
+    {
+        $this->authorize('checkout', $consumable);
+
+        if ($assignment->consumable_id !== $consumable->id) {
+            abort(404);
+        }
+
+        if ($assignment->isConsumed()) {
+            return redirect()->route('consumables.show', $consumable)
+                ->with('warning', trans('admin/consumables/message.consumed.already'));
+        }
+
+        $assignment->consumed_at = now();
+        if (! $assignment->save()) {
+            return redirect()->route('consumables.show', $consumable)
+                ->with('error', trans('admin/consumables/message.consumed.error'));
+        }
+
+        $this->writeConsumeLog($consumable, $assignment);
+
+        return redirect()->route('consumables.show', $consumable)
+            ->with('success', trans('admin/consumables/message.consumed.success'));
+    }
+
+    /**
+     * Confirmation view for marking several pivot rows consumed at
+     * once. The POST comes from the bootstrap-table bulk-actions
+     * dropdown on the consumable show page's assigned tab. Already-
+     * consumed rows and cross-consumable rows are filtered out here
+     * so the confirmation page only lists valid targets.
+     */
+    public function bulkConsumeShow(Request $request): View|RedirectResponse
+    {
+        $pivotIds = (array) $request->input('ids', []);
+        if ($pivotIds === []) {
+            return redirect()->back()
+                ->with('error', trans('admin/consumables/message.consumed.no_rows_selected'));
+        }
+
+        $assignments = ConsumableAssignment::with('consumable', 'user')
+            ->whereIn('id', $pivotIds)
+            ->whereNull('consumed_at')
+            ->get();
+
+        if ($assignments->isEmpty()) {
+            return redirect()->back()
+                ->with('error', trans('admin/consumables/message.consumed.no_rows_selected'));
+        }
+
+        // Every row has to belong to the same parent consumable since
+        // this flow runs off the show page's assigned tab. Mixed-parent
+        // submissions are a sign the UI was tampered with, so bail.
+        $consumableIds = $assignments->pluck('consumable_id')->unique();
+        if ($consumableIds->count() !== 1) {
+            return redirect()->back()
+                ->with('error', trans('admin/consumables/message.consumed.no_rows_selected'));
+        }
+
+        $consumable = $assignments->first()->consumable;
+        $this->authorize('checkout', $consumable);
+
+        return view('consumables.bulk-consume', [
+            'consumable' => $consumable,
+            'assignments' => $assignments,
+            'ids' => $assignments->pluck('id')->all(),
+        ]);
+    }
+
+    public function bulkConsumeStore(Request $request): RedirectResponse
+    {
+        $pivotIds = (array) $request->input('ids', []);
+        if ($pivotIds === []) {
+            return redirect()->route('consumables.index')
+                ->with('error', trans('admin/consumables/message.consumed.no_rows_selected'));
+        }
+
+        $assignments = ConsumableAssignment::with('consumable')
+            ->whereIn('id', $pivotIds)
+            ->whereNull('consumed_at')
+            ->get();
+
+        if ($assignments->isEmpty()) {
+            return redirect()->route('consumables.index')
+                ->with('error', trans('admin/consumables/message.consumed.no_rows_selected'));
+        }
+
+        $consumableIds = $assignments->pluck('consumable_id')->unique();
+        if ($consumableIds->count() !== 1) {
+            return redirect()->route('consumables.index')
+                ->with('error', trans('admin/consumables/message.consumed.no_rows_selected'));
+        }
+
+        $consumable = $assignments->first()->consumable;
+        $this->authorize('checkout', $consumable);
+
+        $now = now();
+        $consumed = 0;
+        foreach ($assignments as $assignment) {
+            $assignment->consumed_at = $now;
+            if ($assignment->save()) {
+                $consumed++;
+                $this->writeConsumeLog($consumable, $assignment);
+            }
+        }
+
+        return redirect()->route('consumables.show', $consumable)
+            ->with('success', trans_choice('admin/consumables/message.consumed.bulk_success', $consumed, ['count' => $consumed]));
+    }
+
+    private function writeConsumeLog(Consumable $consumable, ConsumableAssignment $assignment): void
+    {
+        $log = new Actionlog;
+        $log->item_type = Consumable::class;
+        $log->item_id = $consumable->id;
+        $log->target_type = User::class;
+        $log->target_id = $assignment->assigned_to;
+        $log->created_at = date('Y-m-d H:i:s');
+        $log->created_by = auth()->id();
+        $log->logaction('consumed');
     }
 }

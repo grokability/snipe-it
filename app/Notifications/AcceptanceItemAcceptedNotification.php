@@ -14,16 +14,27 @@ class AcceptanceItemAcceptedNotification extends Notification implements ShouldQ
     use Queueable;
 
     public $item_tag;
+
     public $item_name;
+
     public $item_model;
+
     public $item_serial;
+
     public $item_status;
+
     public $accepted_date;
+
     public $assigned_to;
+
     public $company_name;
+
     public $file;
+
     public $qty;
+
     public $note;
+
     public $custom_fields;
 
     /**
@@ -51,7 +62,6 @@ class AcceptanceItemAcceptedNotification extends Notification implements ShouldQ
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
      * @return array
      */
     public function via()
@@ -67,13 +77,12 @@ class AcceptanceItemAcceptedNotification extends Notification implements ShouldQ
     {
         $settings = Setting::getSettings();
 
-        return ($settings->alerts_enabled && !empty($settings->admin_cc_email));
+        return $settings->alerts_enabled && ! empty($settings->admin_cc_email);
     }
 
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
      * @return MailMessage
      */
     public function toMail()

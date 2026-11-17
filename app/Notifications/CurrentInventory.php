@@ -20,14 +20,11 @@ class CurrentInventory extends Notification implements ShouldQueue
      */
     public function __construct(
         public User $user
-    )
-    {
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
      * @return array
      */
     public function via()

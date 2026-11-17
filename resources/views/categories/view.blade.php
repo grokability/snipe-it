@@ -44,13 +44,13 @@
                     @if ($category->category_type=='asset')
                         @can('view', \App\Models\Asset::class)
                             <x-tabs.pane name="assets">
-                                <x-table.assets :route="route('api.assets.index', ['category_id' => $category->id, 'itemtype' => 'assets'])"/>
+                                <x-table.assets name="categoryAssets" :route="route('api.assets.index', ['category_id' => $category->id, 'itemtype' => 'assets'])"/>
                             </x-tabs.pane>
                         @endcan
 
                             @can('view', \App\Models\AssetModel::class)
                             <x-tabs.pane name="models">
-                                <x-table.models :route="route('api.models.index', ['status' => e(request('status')), 'category_id' => $category->id])"/>
+                                <x-table.models name="categoryModels" :route="route('api.models.index', ['status' => e(request('status')), 'category_id' => $category->id])"/>
                             </x-tabs.pane>
                         @endcan
 
@@ -62,7 +62,7 @@
                                 </x-slot:bulkactions>
                                 <x-table.licenses
                                     show_footer="true"
-                                    name="licenses"
+                                    name="categoryLicenses"
                                     :export_name="$category->name"
                                     :route="route('api.licenses.index', ['category_id' => $category->id])"/>
                             </x-tabs.pane>
@@ -71,21 +71,21 @@
                     @elseif ($category->category_type=='accessory')
                         @can('view', \App\Models\Accessory::class)
                             <x-tabs.pane name="accessories">
-                                <x-table.accessories name="accessories" :route="route('api.accessories.index', ['category_id' => $category->id])"/>
+                                <x-table.accessories name="categoryAccessories" :route="route('api.accessories.index', ['category_id' => $category->id])"/>
                             </x-tabs.pane>
                         @endcan
 
                     @elseif ($category->category_type=='consumable')
                         @can('view', \App\Models\Consumable::class)
                             <x-tabs.pane name="consumables">
-                                <x-table.consumables :route="route('api.consumables.index', ['category_id' => $category->id])"/>
+                                <x-table.consumables name="categoryConsumables" :route="route('api.consumables.index', ['category_id' => $category->id])"/>
                             </x-tabs.pane>
                         @endcan
 
                     @elseif ($category->category_type=='component')
                         @can('view', \App\Models\Component::class)
                             <x-tabs.pane name="components">
-                                <x-table.components :route="route('api.components.index', ['category_id' => $category->id])" />
+                                <x-table.components name="categoryComponents" :route="route('api.components.index', ['category_id' => $category->id])" />
                             </x-tabs.pane>
                         @endcan
                     @endif

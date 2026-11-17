@@ -1,5 +1,6 @@
 @use('App\Helpers\Helper')
 @use('Illuminate\Support\Facades\Storage')
+@use('Illuminate\Support\Str')
 
 @props([
     'item' => null,
@@ -40,7 +41,11 @@
     {{-- Existing image thumbnail. Also no label column. --}}
     <div class="form-group" id="existing-image">
         <div class="col-md-8 col-md-offset-3">
-            <img src="{{ Storage::disk('public')->url($imagePath.e($existing_image)) }}" class="img-responsive" alt="">
+            @if (Str::startsWith($existing_image, ['http://', 'https://']))
+                <img src="{{ $existing_image }}" class="img-responsive" alt="">
+            @else
+                <img src="{{ Storage::disk('public')->url($imagePath.e($existing_image)) }}" class="img-responsive" alt="">
+            @endif
             <x-form.error name="image_delete" />
         </div>
     </div>

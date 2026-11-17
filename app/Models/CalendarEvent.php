@@ -18,6 +18,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * path and for the read-path range/type filter query; consumers that
  * want to render events read the source model live via ->source
  * rather than pulling values off this row.
+ *
+ * @mixin IdeHelperCalendarEvent
  */
 class CalendarEvent extends Model
 {

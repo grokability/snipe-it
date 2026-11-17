@@ -1,7 +1,7 @@
 @component('mail::message')
 # {{ $dryRun ? '[Dry Run] ' : '' }}Bulk Check-in/Delete Report
 
-**Run by:** {{ $admin->first_name }} {{ $admin->last_name }} ({{ $admin->username }})<br>
+**Run by:** {{ $admin->full_name }} ({{ $admin->username }})<br>
 **Date:** {{ $runAt->format('Y-m-d H:i:s') }}<br>
 **Mode:** {{ $dryRun ? 'Dry run (no changes made)' : 'Live run' }}<br>
 **Delete type:** {{ ucfirst($deleteType) }}<br>

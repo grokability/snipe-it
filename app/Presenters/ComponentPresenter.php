@@ -8,14 +8,25 @@ namespace App\Presenters;
 class ComponentPresenter extends Presenter
 {
     /**
-     * Json Column Layout for bootstrap table
+     * JSON column layout for bootstrap-table.
      *
+     * @param  bool  $showDeletedAt  Make the deleted_at column visible
+     *                               by default. Passed from the Deleted-index view so admins
+     *                               see when each row was deleted. Still switchable elsewhere.
      * @return string
      */
-    public static function dataTableLayout()
+    public static function dataTableLayout(bool $showDeletedAt = false)
     {
         $layout = [
             [
+                'field' => 'checkbox',
+                'scope' => 'col',
+                'checkbox' => true,
+                'formatter' => 'checkboxEnabledFormatter',
+                'titleTooltip' => trans('general.select_all_none'),
+                'printIgnore' => true,
+                'class' => 'hidden-print',
+            ], [
                 'field' => 'id',
                 'scope' => 'col',
                 'searchable' => false,
@@ -188,6 +199,15 @@ class ComponentPresenter extends Presenter
                 'title' => trans('admin/hardware/general.requestable'),
                 'formatter' => 'trueFalseFormatter',
             ], [
+                'field' => 'archived',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'visible' => false,
+                'title' => trans('general.archived'),
+                'formatter' => 'trueFalseFormatter',
+            ], [
                 'field' => 'created_by',
                 'scope' => 'col',
                 'searchable' => false,
@@ -210,6 +230,15 @@ class ComponentPresenter extends Presenter
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('general.updated_at'),
+                'formatter' => 'dateDisplayFormatter',
+            ], [
+                'field' => 'deleted_at',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'visible' => $showDeletedAt,
+                'title' => trans('general.deleted_at'),
                 'formatter' => 'dateDisplayFormatter',
             ],
         ];
@@ -244,7 +273,15 @@ class ComponentPresenter extends Presenter
     public static function checkedOut()
     {
         $layout = [
-
+            [
+                'field' => 'checkbox',
+                'scope' => 'col',
+                'checkbox' => true,
+                'formatter' => 'checkboxEnabledFormatter',
+                'titleTooltip' => trans('general.select_all_none'),
+                'printIgnore' => true,
+                'class' => 'hidden-print',
+            ],
             [
                 'field' => 'name',
                 'scope' => 'col',

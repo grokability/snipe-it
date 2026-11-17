@@ -56,8 +56,6 @@ return [
     'years' => 'années',
     'asset_location' => 'Mettre à jour l\'emplacement de l\'actif',
     'asset_location_update_default_current' => 'Mettre à jour l\'emplacement par défaut ET l\'emplacement réel',
-    'asset_location_update_default' => 'Mettre à jour uniquement l\'emplacement par défaut',
-    'asset_location_update_actual' => 'Mettre à jour uniquement l\'emplacement actuel',
     'asset_not_deployable' => 'L\'actif n\'est pas déployable. L\'actif ne peut pas être affecté.',
     'asset_not_deployable_checkin' => '{1} That asset status is not deployable. Using this status label will check in the asset.|[2,*] That asset status in not deployable. Using this status label will result in no change.',
     'asset_deployable' => '{1} This asset can be checked out.|[2,*] These assets can be checked out.',

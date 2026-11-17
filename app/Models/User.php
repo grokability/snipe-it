@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Enums\FileStorage;
 use App\Http\Traits\UniqueUndeletedTrait;
+use App\Models\Builders\UserQueryBuilder;
+use App\Models\Contracts\Importable;
 use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\HasCalendarEvents;
 use App\Models\Traits\HasImageUpload;
@@ -22,6 +24,7 @@ use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -33,10 +36,14 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
 use Watson\Validating\ValidatingTrait;
 
-class User extends SnipeModel implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, HasLocalePreference
+/**
+ * @mixin IdeHelperUser
+ */
+class User extends SnipeModel implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, HasLocalePreference, Importable, OAuthenticatable
 {
     use CompanyableTrait;
     use HasCalendarEvents;
@@ -72,6 +79,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         'email',
         'activated',
         'permissions',
+        'two_factor_optin',
     ];
 
     protected $hidden = [
@@ -88,12 +96,42 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
 
     protected $injectUniqueIdentifier = true;
 
-    /**
-     * Transient (non-persisted) ID of the Actionlog entry written by UserObserver::updating()
-     * during the current request. syncCompaniesWithLogging() merges company changes into this
-     * entry instead of creating a separate one, so a single edit session produces one log row.
-     */
-    public ?int $currentUpdateLogId = null;
+    protected $masked_fields = ['password'];
+
+    protected $allowed_fields = [
+        'email',
+        'activated',
+        'first_name',
+        'last_name',
+        'website',
+        'country',
+        'gravatar',
+        'location_id',
+        'phone',
+        'jobtitle',
+        'manager_id',
+        'employee_num',
+        'username',
+        'notes',
+        'ldap_import',
+        'locale',
+        'two_factor_enrolled',
+        'two_factor_optin',
+        'display_name',
+        'department_id',
+        'address',
+        'address2',
+        'city',
+        'state',
+        'zip',
+        'remote',
+        'start_date',
+        'end_date',
+        'autoassign_licenses',
+        'vip',
+        'password',
+        'permissions',
+    ];
 
     protected $fillable = [
         'activated',
@@ -152,8 +190,9 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         'password' => 'required|min:8',
         'locale' => 'max:10|nullable',
         'website' => 'url|nullable|max:191',
-        'manager_id' => 'nullable|exists:users,id|cant_manage_self',
-        'location_id' => 'exists:locations,id|nullable',
+        'manager_id' => 'nullable|exists:users,id|cant_manage_self|non_circular:users,id|fmcs_manager',
+        'location_id' => 'exists:locations,id|nullable|fmcs_location',
+        'department_id' => 'nullable|integer|exists:departments,id|fmcs_department',
         'start_date' => 'nullable|date_format:Y-m-d',
         'end_date' => 'nullable|date_format:Y-m-d|after_or_equal:start_date',
         'autoassign_licenses' => 'boolean',
@@ -205,6 +244,398 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         'manager' => ['first_name', 'last_name', 'username', 'display_name'],
         'adminuser' => ['first_name', 'last_name', 'display_name'],
     ];
+
+    /**
+     * @return list<string>
+     */
+    protected function maskedLogFields(): array
+    {
+        return $this->masked_fields;
+    }
+
+    /**
+     * @return list<string>|null
+     */
+    protected function allowedLogFields(): ?array
+    {
+        return $this->allowed_fields;
+    }
+
+    /**
+     * Advanced-search filterable fields.
+     *
+     * Scope for v1 rollout: direct-column FK dropdowns, date-range
+     * widgets on the four built-in date columns, boolean widgets on
+     * the common user flags.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                // Field name matches the bs-table column.field in
+                // UserPresenter so the modal's auto-generated carrier
+                // input is keyed as `companies`. Backend
+                // applyCustomFilter branches off that exact key.
+                'field' => 'companies',
+                'type' => 'fk',
+                // Column is unused for this entry. User-to-company
+                // runs through the company_user pivot under FMCS, so
+                // applyCustomFilter intercepts the 'companies' key
+                // and emits a semi-join rather than a
+                // legacy_company_id whereIn.
+                'column' => null,
+                'endpoint' => 'companies',
+                'label' => trans('general.company'),
+            ],
+            [
+                'field' => 'groups',
+                'type' => 'fk',
+                // Column is unused for this entry. User-to-group runs
+                // through the users_groups pivot. applyCustomFilter
+                // intercepts the 'groups' key and semi-joins.
+                'column' => null,
+                'endpoint' => 'groups',
+                'label' => trans('general.groups'),
+            ],
+            [
+                'field' => 'location',
+                'type' => 'fk',
+                'column' => 'location_id',
+                'endpoint' => 'locations',
+                'label' => trans('general.location'),
+            ],
+            [
+                'field' => 'department',
+                'type' => 'fk',
+                'column' => 'department_id',
+                'endpoint' => 'departments',
+                'label' => trans('general.department'),
+            ],
+            [
+                'field' => 'manager',
+                'type' => 'fk',
+                'column' => 'manager_id',
+                'endpoint' => 'users',
+                'label' => trans('admin/users/table.manager'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'vip',
+                'type' => 'boolean',
+                'label' => trans('admin/users/general.vip_label'),
+            ],
+            [
+                'field' => 'remote',
+                'type' => 'boolean',
+                'label' => trans('admin/users/general.remote'),
+            ],
+            [
+                'field' => 'activated',
+                'type' => 'boolean',
+                'label' => trans('general.login_enabled'),
+            ],
+            [
+                'field' => 'autoassign_licenses',
+                'type' => 'boolean',
+                'label' => trans('general.autoassign_licenses'),
+            ],
+            [
+                'field' => 'ldap_import',
+                'type' => 'boolean',
+                'label' => trans('admin/settings/general.ldap_enabled'),
+            ],
+            [
+                'field' => 'two_factor_enrolled',
+                'type' => 'boolean',
+                'label' => trans('admin/users/general.two_factor_enrolled'),
+            ],
+            [
+                'field' => 'two_factor_optin',
+                'type' => 'boolean',
+                'label' => trans('admin/users/general.two_factor_active'),
+            ],
+            [
+                'field' => 'show_in_list',
+                'type' => 'boolean',
+                'label' => trans('general.show_in_list'),
+            ],
+            // admin / superuser live in the permissions JSON column
+            // rather than as direct columns, so applyCustomFilter
+            // intercepts both keys and inlines the LIKE patterns
+            // UserQueryBuilder's onlyAdminsAndSuperAdmins /
+            // onlySuperAdmins scopes use.
+            [
+                'field' => 'admin',
+                'type' => 'boolean',
+                'label' => trans('general.admin_label'),
+            ],
+            [
+                'field' => 'superuser',
+                'type' => 'boolean',
+                'label' => trans('general.superuser'),
+            ],
+            [
+                'field' => 'assets_count',
+                'type' => 'numeric',
+                'label' => trans('general.assets'),
+            ],
+            [
+                'field' => 'accessories_count',
+                'type' => 'numeric',
+                'label' => trans('general.accessories'),
+            ],
+            [
+                'field' => 'consumables_count',
+                'type' => 'numeric',
+                'label' => trans('general.consumables'),
+            ],
+            [
+                'field' => 'licenses_count',
+                'type' => 'numeric',
+                'label' => trans('general.licenses'),
+            ],
+            [
+                'field' => 'manages_users_count',
+                'type' => 'numeric',
+                'label' => trans('admin/users/table.managed_users'),
+            ],
+            [
+                'field' => 'manages_locations_count',
+                'type' => 'numeric',
+                'label' => trans('admin/users/table.managed_locations'),
+            ],
+            [
+                'field' => 'start_date',
+                'type' => 'date-range',
+                'label' => trans('general.start_date'),
+            ],
+            [
+                'field' => 'end_date',
+                'type' => 'date-range',
+                'label' => trans('general.end_date'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+            [
+                'field' => 'last_login',
+                'type' => 'date-range',
+                'label' => trans('general.last_login'),
+            ],
+            [
+                'field' => 'activated_at',
+                'type' => 'date-range',
+                'label' => trans('general.activated_at'),
+            ],
+        ];
+    }
+
+    /**
+     * Override hook from Searchable. Routes count-column filter keys
+     * (assets_count, licenses_count, etc.) to correlated subqueries
+     * that mirror the withCount() shape UsersController@index uses to
+     * populate those columns on the API response. Default list
+     * queries never pay the subquery cost. This only runs when a
+     * matching filter key is on the request.
+     *
+     * Semantics match the displayed column exactly:
+     *   - assets_count counts non-trashed assets whose polymorphic
+     *     assigned_type/assigned_to pair points at this user, same
+     *     as the controller's `assets as assets_count` withCount
+     *     with a `withoutTrashed()` closure.
+     *   - accessories_count / consumables_count / licenses_count
+     *     count rows in the pivot tables that the matching
+     *     belongsToMany relation uses.
+     *   - manages_users_count / manages_locations_count count
+     *     records whose `manager_id` points at this user.
+     */
+    protected function applyCustomFilter(\Illuminate\Database\Eloquent\Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?\Illuminate\Database\Eloquent\Builder
+    {
+        // admin / superuser live on the permissions JSON column and
+        // can also be granted via a user's groups. Mirror the LIKE
+        // patterns UserQueryBuilder's onlySuperAdmins /
+        // onlyAdminsAndSuperAdmins scopes use. For a Yes-match we
+        // apply the matching scope. For a No-match we invert: users
+        // whose id does NOT appear in the matching-ids subquery.
+        $permissionBranches = [
+            'superuser' => [
+                'user_patterns' => ['%"superuser":"1"%', '%"superuser":1%'],
+                'group_patterns' => ['%"superuser":"1"%', '%"superuser":1%'],
+            ],
+            'admin' => [
+                'user_patterns' => ['%"superuser":"1"%', '%"superuser":1%', '%"admin":1%', '%"admin":"1"%'],
+                'group_patterns' => ['%"superuser":"1"%', '%"superuser":1%', '%"admin":1%', '%"admin":"1"%'],
+            ],
+        ];
+
+        if (array_key_exists($filterKey, $permissionBranches)) {
+            $normalized = strtolower(trim($filterValue));
+            $trueTokens = ['1', 'true', 'yes'];
+            $falseTokens = ['0', 'false', 'no'];
+            if (! in_array($normalized, array_merge($trueTokens, $falseTokens), true)) {
+                return null;
+            }
+            $wantMatch = in_array($normalized, $trueTokens, true);
+            $patterns = $permissionBranches[$filterKey];
+
+            // Subquery returning user ids that match the permission.
+            // Direct permission on users.permissions OR permission
+            // granted via a user's group.
+            $matchingIds = function ($q) use ($patterns) {
+                $q->from('users')
+                    ->select('users.id')
+                    ->where(function ($inner) use ($patterns) {
+                        foreach ($patterns['user_patterns'] as $i => $p) {
+                            if ($i === 0) {
+                                $inner->where('users.permissions', 'LIKE', $p);
+                            } else {
+                                $inner->orWhere('users.permissions', 'LIKE', $p);
+                            }
+                        }
+                    })
+                    ->orWhereIn('users.id', function ($inner) use ($patterns) {
+                        $inner->from('users_groups')
+                            ->select('users_groups.user_id')
+                            ->whereIn('users_groups.group_id', function ($pg) use ($patterns) {
+                                $pg->from('permission_groups')
+                                    ->select('permission_groups.id')
+                                    ->where(function ($pginner) use ($patterns) {
+                                        foreach ($patterns['group_patterns'] as $i => $p) {
+                                            if ($i === 0) {
+                                                $pginner->where('permission_groups.permissions', 'LIKE', $p);
+                                            } else {
+                                                $pginner->orWhere('permission_groups.permissions', 'LIKE', $p);
+                                            }
+                                        }
+                                    });
+                            });
+                    });
+            };
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($matchingIds, $wantMatch) {
+                if ($wantMatch) {
+                    $nested->whereIn('users.id', $matchingIds);
+                } else {
+                    $nested->whereNotIn('users.id', $matchingIds);
+                }
+            });
+
+            return $query;
+        }
+
+        // M2M-via-pivot FK filters. 'company' and 'groups' both carry
+        // the usual CSV-of-ids (with optional "null" sentinel) that
+        // Searchable's matchFilterableRelationIds accepts, but the
+        // relationship lives on a pivot table rather than a direct
+        // column on users. Semi-join through the pivot. Null sentinel
+        // matches users with no pivot row (users not in any company /
+        // not in any group).
+        $pivotBranches = [
+            'companies' => ['table' => 'company_user', 'column' => 'company_id'],
+            'groups' => ['table' => 'users_groups', 'column' => 'group_id'],
+        ];
+
+        if (array_key_exists($filterKey, $pivotBranches)) {
+            $parsed = $this->parseIdsAndNullSentinel($filterValue);
+            if ($parsed === null) {
+                return null;
+            }
+            [$ids, $includeNull] = $parsed;
+            $pivot = $pivotBranches[$filterKey];
+
+            $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+            $query->{$outerBoolean}(function ($nested) use ($pivot, $ids, $includeNull) {
+                if (! empty($ids)) {
+                    $nested->whereIn('users.id', function ($q) use ($pivot, $ids) {
+                        $q->from($pivot['table'])
+                            ->whereIn($pivot['table'].'.'.$pivot['column'], $ids)
+                            ->select($pivot['table'].'.user_id');
+                    });
+                }
+                if ($includeNull) {
+                    $nullMatcher = function ($q) use ($pivot) {
+                        $q->whereNotIn('users.id', function ($sub) use ($pivot) {
+                            $sub->from($pivot['table'])->select($pivot['table'].'.user_id');
+                        });
+                    };
+                    if (empty($ids)) {
+                        $nullMatcher($nested);
+                    } else {
+                        $nested->orWhereNotIn('users.id', function ($sub) use ($pivot) {
+                            $sub->from($pivot['table'])->select($pivot['table'].'.user_id');
+                        });
+                    }
+                }
+            });
+
+            return $query;
+        }
+
+        $countBranches = [
+            'assets_count' => fn () => \App\Models\Asset::query()
+                ->whereColumn('assets.assigned_to', 'users.id')
+                ->where('assets.assigned_type', self::class)
+                ->whereNull('assets.deleted_at')
+                ->selectRaw('COUNT(*)'),
+            'accessories_count' => fn () => \Illuminate\Support\Facades\DB::table('accessories_checkout')
+                ->whereColumn('accessories_checkout.assigned_to', 'users.id')
+                ->where('accessories_checkout.assigned_type', self::class)
+                ->selectRaw('COUNT(*)'),
+            'consumables_count' => fn () => \Illuminate\Support\Facades\DB::table('consumables_users')
+                ->whereColumn('consumables_users.assigned_to', 'users.id')
+                ->selectRaw('COUNT(*)'),
+            'licenses_count' => fn () => \Illuminate\Support\Facades\DB::table('license_seats')
+                ->whereColumn('license_seats.assigned_to', 'users.id')
+                ->selectRaw('COUNT(*)'),
+            'manages_users_count' => fn () => \Illuminate\Support\Facades\DB::table('users as managed_users')
+                ->whereColumn('managed_users.manager_id', 'users.id')
+                ->whereNull('managed_users.deleted_at')
+                ->selectRaw('COUNT(*)'),
+            'manages_locations_count' => fn () => \Illuminate\Support\Facades\DB::table('locations')
+                ->whereColumn('locations.manager_id', 'users.id')
+                ->whereNull('locations.deleted_at')
+                ->selectRaw('COUNT(*)'),
+        ];
+
+        if (! array_key_exists($filterKey, $countBranches)) {
+            return null;
+        }
+
+        $bounds = $this->parseGtLtBounds($filterValue);
+        if ($bounds === null) {
+            return null;
+        }
+        [$gt, $lt] = $bounds;
+
+        $sub = $countBranches[$filterKey]();
+        $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+        $query->{$outerBoolean}(function ($nested) use ($sub, $gt, $lt) {
+            if ($gt !== null) {
+                $nested->where($sub, '>', $gt);
+            }
+            if ($lt !== null) {
+                $nested->where($sub, '<', $lt);
+            }
+        });
+
+        return $query;
+    }
 
     protected $searchableCounts = [
         'accessories_count',
@@ -562,6 +993,30 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
     }
 
     /**
+     * True when the user carries an explicit "-1" on the given
+     * permission section at the user level. Group permissions do not
+     * express "deny", only "grant", so an explicit user-level "-1" is
+     * the only way an operator can shut off a specific action for an
+     * account. Callers that treat a deny as absolute (beating implicit
+     * grants that would otherwise return true via related permissions)
+     * use this to short-circuit before the normal has-access check.
+     */
+    public function isPermissionExplicitlyDenied(string $section): bool
+    {
+        if (! is_string($this->permissions) || $this->permissions === '') {
+            return false;
+        }
+
+        $permissions = json_decode($this->permissions, true);
+
+        if (! is_array($permissions)) {
+            return false;
+        }
+
+        return ($permissions[$section] ?? null) === '-1';
+    }
+
+    /**
      * Checks if the user is a SuperUser
      *
      * @author A. Gianotto <snipe@snipe.net>
@@ -739,7 +1194,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
      * the legacy_company_id mirror, which is kept in sync with the pivot but is
      * not authoritative and may be dropped in a future release.
      */
-    public function company()
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class, 'legacy_company_id');
     }
@@ -815,8 +1270,8 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
     /**
      * Sync company pivot membership and log the change if the set of companies changed.
      *
-     * When called after $user->save() in the same request, UserObserver::updating() will
-     * have already written an Actionlog row and stored its ID in $this->currentUpdateLogId.
+     * When called after $user->save() in the same request, Loggable::log_lifecycle_events() will
+     * have already written an Actionlog row and stored it in $this->currentActionLog.
      * In that case we merge the company change into that existing entry so that a single
      * edit session (field changes + company changes) produces one log row, not two.
      */
@@ -844,11 +1299,11 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
 
         $companyChange = ['companies' => ['old' => $oldIds, 'new' => $newIds]];
 
-        if ($this->currentUpdateLogId && ($existing = Actionlog::find($this->currentUpdateLogId))) {
-            $meta = json_decode($existing->log_meta ?? '{}', true) ?: [];
-            $existing->log_meta = json_encode(array_merge($meta, $companyChange));
-            $existing->save();
-            $this->currentUpdateLogId = null;
+        if ($this->currentActionLog !== null && $this->currentActionLog->action_type === 'update') {
+            $meta = json_decode($this->currentActionLog->log_meta ?? '{}', true) ?: [];
+            $this->currentActionLog->log_meta = json_encode(array_merge($meta, $companyChange));
+            $this->currentActionLog->save();
+            $this->currentActionLog = null;
 
             return;
         }
@@ -858,7 +1313,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         $logAction->item_id = $this->id;
         $logAction->target_type = static::class;
         $logAction->target_id = $this->id;
-        $logAction->created_at = date('Y-m-d H:i:s');
+        $logAction->created_at = now();
         $logAction->created_by = auth()->id();
         $logAction->log_meta = json_encode($companyChange);
         $logAction->logaction('update');
@@ -867,9 +1322,9 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
     /**
      * Sync group pivot membership and log the change if the set of groups changed.
      *
-     * Same as syncCompaniesWithLogging(): if UserObserver::updating()
+     * Same as syncCompaniesWithLogging(): if Loggable::log_lifecycle_events()
      * already wrote an Actionlog for this edit session (via
-     * $this->currentUpdateLogId), the group diff is merged into that
+     * $this->currentActionLog), the group diff is merged into that
      * existing row so a single edit produces one log entry, not two.
      * Otherwise a standalone Actionlog is written.
      */
@@ -970,7 +1425,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
 
     /**
      * Write (or merge into) an Actionlog for a groups pivot change.
-     * Merges into $this->currentUpdateLogId when the observer already
+     * Merges into $this->currentActionLog when Loggable already
      * opened a log row for this edit session so field + group
      * changes stay in one log entry. Otherwise writes a standalone
      * 'update' Actionlog row.
@@ -978,7 +1433,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
      * @param  array<int, array{id: int, name: string}>  $oldSnapshot
      * @param  array<int, array{id: int, name: string}>  $newSnapshot
      */
-    private function recordGroupsChange(array $oldSnapshot, array $newSnapshot): void
+    protected function recordGroupsChange(array $oldSnapshot, array $newSnapshot): void
     {
         if ($oldSnapshot === $newSnapshot) {
             return;
@@ -986,11 +1441,11 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
 
         $groupChange = ['groups' => ['old' => $oldSnapshot, 'new' => $newSnapshot]];
 
-        if ($this->currentUpdateLogId && ($existing = Actionlog::find($this->currentUpdateLogId))) {
-            $meta = json_decode($existing->log_meta ?? '{}', true) ?: [];
-            $existing->log_meta = json_encode(array_merge($meta, $groupChange));
-            $existing->save();
-            $this->currentUpdateLogId = null;
+        if ($this->currentActionLog !== null && $this->currentActionLog->action_type === 'update') {
+            $meta = json_decode($this->currentActionLog->log_meta ?? '{}', true) ?: [];
+            $this->currentActionLog->log_meta = json_encode(array_merge($meta, $groupChange));
+            $this->currentActionLog->save();
+            $this->currentActionLog = null;
 
             return;
         }
@@ -1000,7 +1455,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         $logAction->item_id = $this->id;
         $logAction->target_type = static::class;
         $logAction->target_id = $this->id;
-        $logAction->created_at = date('Y-m-d H:i:s');
+        $logAction->created_at = now();
         $logAction->created_by = auth()->id();
         $logAction->log_meta = json_encode($groupChange);
         $logAction->logaction('update');
@@ -1062,7 +1517,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         $editorChildren = empty($editorDirect) ? [] : DB::table('companies')
             ->whereIn('parent_id', $editorDirect)
             ->pluck('id')
-            ->map(fn($id) => (int) $id)
+            ->map(fn ($id) => (int) $id)
             ->all();
         $editorVisible = array_values(array_unique(array_merge($editorDirect, $editorChildren)));
 
@@ -1093,8 +1548,8 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
      *
      * Call this after any write to the company_user pivot so the mirror
      * stays consistent. Writes via the query builder so it doesn't trigger
-     * the User model's save events (which would recurse through
-     * UserObserver::updating and produce a spurious change log entry).
+     * the User model's save events and produce a spurious entry through
+     * Loggable::log_lifecycle_events().
      */
     public function syncLegacyCompanyIdMirror(): void
     {
@@ -1283,10 +1738,8 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
      * @author A. Gianotto <snipe@snipe.net>
      *
      * @since  [v2.0]
-     *
-     * @return Relation
      */
-    public function accessories()
+    public function accessories(): BelongsToMany
     {
         return $this->belongsToMany(Accessory::class, 'accessories_checkout', 'assigned_to', 'accessory_id')
             ->where('assigned_type', '=', 'App\Models\User')
@@ -1299,10 +1752,8 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
      * @author A. Gianotto <snipe@snipe.net>
      *
      * @since  [v3.0]
-     *
-     * @return Relation
      */
-    public function consumables()
+    public function consumables(): BelongsToMany
     {
         return $this->belongsToMany(Consumable::class, 'consumables_users', 'assigned_to', 'consumable_id')->withPivot('id', 'created_at', 'note')->withTrashed();
     }
@@ -1313,10 +1764,8 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
      * @author A. Gianotto <snipe@snipe.net>
      *
      * @since  [v1.0]
-     *
-     * @return Relation
      */
-    public function licenses()
+    public function licenses(): BelongsToMany
     {
         return $this->belongsToMany(License::class, 'license_seats', 'assigned_to', 'license_id')->withPivot('id', 'created_at', 'updated_at');
     }
@@ -1346,19 +1795,15 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
      * @author J. Vinsmoke
      *
      * @since  [v6.1]
-     *
-     * @return Relation
      */
-    public function allAssignedCount()
+    public function allAssignedCount(): int
     {
         $assetsCount = $this->assets()->count();
         $licensesCount = $this->licenses()->count();
         $accessoriesCount = $this->accessories()->count();
         $consumablesCount = $this->consumables()->count();
 
-        $totalCount = $assetsCount + $licensesCount + $accessoriesCount + $consumablesCount;
-
-        return (int) $totalCount;
+        return $assetsCount + $licensesCount + $accessoriesCount + $consumablesCount;
     }
 
     /**
@@ -1455,10 +1900,8 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
      * @author A. Gianotto <snipe@snipe.net>
      *
      * @since  [v1.0]
-     *
-     * @return Relation
      */
-    public function groups()
+    public function groups(): BelongsToMany
     {
         return $this->belongsToMany(Group::class, 'users_groups');
     }
@@ -1571,40 +2014,6 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
     }
 
     /**
-     * Query builder scope to return NOT-deleted users
-     *
-     * @author A. Gianotto <snipe@snipe.net>
-     *
-     * @since  [v2.0]
-     *
-     * @param  string  $query
-     * @return \Illuminate\Database\Query\Builder
-     */
-    public function scopeGetNotDeleted($query)
-    {
-        return $query->whereNull('deleted_at');
-    }
-
-    /**
-     * Query builder scope to return users by email or username
-     *
-     * @author A. Gianotto <snipe@snipe.net>
-     *
-     * @since  [v2.0]
-     *
-     * @param  string  $query
-     * @param  string  $user_username
-     * @param  string  $user_email
-     * @return \Illuminate\Database\Query\Builder
-     */
-    public function scopeMatchEmailOrUsername($query, $user_username, $user_email)
-    {
-        return $query->where('email', '=', $user_email)
-            ->orWhere('username', '=', $user_username)
-            ->orWhere('username', '=', $user_email);
-    }
-
-    /**
      * Generate email from full name
      *
      * @author A. Gianotto <snipe@snipe.net>
@@ -1654,7 +2063,13 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
             $username = $users_name;
         } else {
 
-            [$first_name, $last_name] = explode(' ', $users_name, 2);
+            // Respect name_display_format when splitting a joined full
+            // name into first and last.
+            if (Setting::getSettings()?->name_display_format === 'last_first') {
+                [$last_name, $first_name] = explode(' ', $users_name, 2);
+            } else {
+                [$first_name, $last_name] = explode(' ', $users_name, 2);
+            }
 
             // Assume filastname by default
             $username = str_slug(substr($first_name, 0, 1).$last_name);
@@ -1803,180 +2218,31 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
     }
 
     /**
-     * Query builder scope to search user by name with spaces in it.
-     * We don't use the advancedTextSearch() scope because that searches
-     * all of the relations as well, which is more than what we need.
+     * Run additional, advanced searches. Overrides advancedTextSearch
+     * on the Searchable trait to also search user name with spaces in
+     * it via orWhereMultipleColumns.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  array  $terms  The search terms
-     * @return \Illuminate\Database\Query\Builder
-     */
-    public function scopeSimpleNameSearch($query, $search)
-    {
-        return $query->where('first_name', 'LIKE', '%'.$search.'%')
-            ->orWhere('last_name', 'LIKE', '%'.$search.'%')
-            ->orWhere('display_name', 'LIKE', '%'.$search.'%')
-            ->orWhereMultipleColumns(
-                [
-                    'users.first_name',
-                    'users.last_name',
-                ], $search
-            );
-    }
-
-    /**
-     * Run additional, advanced searches.
+     * Both column orders are tried so a user named "John Doe" matches
+     * both "John Doe" and "Doe John" regardless of the install's
+     * name_display_format. Issue #19626.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  array  $terms  The search terms
-     * @return Builder
+     * @param  array<int, string>  $terms  The search terms
      */
-    public function advancedTextSearch(Builder $query, array $terms)
+    public function advancedTextSearch(Builder $outer, Builder $nested, array $terms): void
     {
         foreach ($terms as $term) {
-            $query->orWhereMultipleColumns(
+            $nested->orWhereMultipleColumns(
                 [
                     'users.first_name',
                     'users.last_name',
                 ], $term
+            )->orWhereMultipleColumns(
+                [
+                    'users.last_name',
+                    'users.first_name',
+                ], $term
             );
         }
-
-        return $query;
-    }
-
-    /**
-     * Query builder scope to return users by group
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  int  $id
-     * @return \Illuminate\Database\Query\Builder
-     */
-    public function scopeByGroup($query, $id)
-    {
-        return $query->whereHas(
-            'groups', function ($query) use ($id) {
-                $query->where('permission_groups.id', '=', $id);
-            }
-        );
-    }
-
-    /**
-     * Return only admins and superusers
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     */
-    public function scopeOnlySuperAdmins($query)
-    {
-
-        return $query->where('users.permissions', 'LIKE', '%"superuser":"1"%')
-            ->orWhere('users.permissions', 'LIKE', '%"superuser":1%')
-            ->orWhereHas(
-                'groups', function ($query) {
-                    $query->where('permission_groups.permissions', 'LIKE', '%"superuser":"1"%')
-                        ->orWhere('permission_groups.permissions', 'LIKE', '%"superuser":1%');
-                }
-            );
-
-    }
-
-    /**
-     * Return only admins and superusers
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     */
-    public function scopeOnlyAdminsAndSuperAdmins($query)
-    {
-
-        return $query->where('users.permissions', 'LIKE', '%"superuser":"1"%')
-            ->orWhere('users.permissions', 'LIKE', '%"superuser":1%')
-            ->orWhere('users.permissions', 'LIKE', '%"admin":1%')
-            ->orWhere('users.permissions', 'LIKE', '%"admin":"1"%')
-            ->orWhereHas(
-                'groups', function ($query) {
-                    $query->where('permission_groups.permissions', 'LIKE', '%"superuser":"1"%')
-                        ->orWhere('permission_groups.permissions', 'LIKE', '%"superuser":1%')
-                        ->orWhere('permission_groups.permissions', 'LIKE', '%"admin":1%')
-                        ->orWhere('permission_groups.permissions', 'LIKE', '%"admin":"1"%');
-                }
-            );
-
-    }
-
-    /**
-     * Query builder scope to order on manager
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  string  $order  Order
-     * @return \Illuminate\Database\Query\Builder Modified query builder
-     */
-    public function scopeOrderManager($query, $order)
-    {
-        // Left join here, or it will only return results with parents
-        return $query->leftJoin('users as users_manager', 'users.manager_id', '=', 'users_manager.id')->orderBy('users_manager.first_name', $order)->orderBy('users_manager.last_name', $order);
-    }
-
-    /**
-     * Query builder scope to order on company
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  string  $order  Order
-     * @return \Illuminate\Database\Query\Builder Modified query builder
-     */
-    public function scopeOrderLocation($query, $order)
-    {
-        return $query->leftJoin('locations as locations_users', 'users.location_id', '=', 'locations_users.id')->orderBy('locations_users.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on department
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  string  $order  Order
-     * @return \Illuminate\Database\Query\Builder Modified query builder
-     */
-    public function scopeOrderDepartment($query, $order)
-    {
-        return $query->leftJoin('departments as departments_users', 'users.department_id', '=', 'departments_users.id')->orderBy('departments_users.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on admin user
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  string  $order  Order
-     * @return \Illuminate\Database\Query\Builder Modified query builder
-     */
-    public function scopeOrderByCreatedBy($query, $order)
-    {
-        // Left join here, or it will only return results with parents
-        return $query->leftJoin('users as admin_user', 'users.created_by', '=', 'admin_user.id')
-            ->orderBy('admin_user.first_name', $order)
-            ->orderBy('admin_user.last_name', $order);
-    }
-
-    /**
-     * Query builder scope to order on company
-     *
-     * @param  Illuminate\Database\Query\Builder  $query  Query builder instance
-     * @param  text  $order  Order
-     * @return Illuminate\Database\Query\Builder Modified query builder
-     */
-    public function scopeOrderCompany($query, $order)
-    {
-        // The MIN(...) aggregate has to go through DB::raw, which bypasses
-        // Laravel's grammar — so the `companies` table reference inside the
-        // raw string won't get DB_PREFIX applied automatically. Same pattern
-        // as Api\AssetsController::index's natural-sort branch.
-        $prefix = DB::getTablePrefix();
-        $sub = DB::table('company_user')
-            ->join('companies', 'companies.id', '=', 'company_user.company_id')
-            ->select('company_user.user_id', DB::raw('MIN('.$prefix.'companies.name) as min_company_name'))
-            ->groupBy('company_user.user_id');
-
-        return $query
-            ->leftJoinSub($sub, 'companies_sort', 'companies_sort.user_id', '=', 'users.id')
-            ->orderBy('companies_sort.min_company_name', $order);
     }
 
     /**
@@ -2066,103 +2332,9 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         return $total;
     }
 
-    public function scopeUserLocation($query, $location, $search)
+    public function newEloquentBuilder($query): UserQueryBuilder
     {
-
-        return $query->where('location_id', '=', $location)
-            ->where('users.first_name', 'LIKE', '%'.$search.'%')
-            ->orWhere('users.email', 'LIKE', '%'.$search.'%')
-            ->orWhere('users.last_name', 'LIKE', '%'.$search.'%')
-            ->orWhere('users.permissions', 'LIKE', '%'.$search.'%')
-            ->orWhere('users.country', 'LIKE', '%'.$search.'%')
-            ->orWhere('users.phone', 'LIKE', '%'.$search.'%')
-            ->orWhere('users.jobtitle', 'LIKE', '%'.$search.'%')
-            ->orWhere('users.employee_num', 'LIKE', '%'.$search.'%')
-            ->orWhere('users.username', 'LIKE', '%'.$search.'%')
-            ->orWhere('users.display_name', 'LIKE', '%'.$search.'%')
-            ->orWhereRaw('CONCAT(users.first_name," ",users.last_name) LIKE ?', [$search.'%']);
-
-    }
-
-    public function scopeWithInventoryRelations(
-        $query,
-        int $id,
-        bool $withAssets = true,
-        bool $withLicenses = true,
-        bool $withAccessories = true,
-        bool $withConsumables = true,
-        bool $withComponents = true,
-    ) {
-        $with = [];
-
-        if ($withAssets) {
-            $with = array_merge($with, [
-                'assets.log' => fn ($query) => $query->withTrashed()
-                    ->where('target_type', User::class)
-                    ->where('target_id', $id)
-                    ->where('action_type', 'accepted'),
-                'assets.defaultLoc',
-                'assets.location',
-                'assets.model.category',
-                'assets.assignedAssets.log' => fn ($query) => $query->withTrashed()
-                    ->where('target_type', User::class)
-                    ->where('target_id', $id)
-                    ->where('action_type', 'accepted'),
-                'assets.assignedAssets.assignedTo',
-                'assets.assignedAssets.defaultLoc',
-                'assets.assignedAssets.location',
-                'assets.assignedAssets.model.category',
-            ]);
-
-            if ($withComponents) {
-                $with[] = 'assets.components.category';
-            }
-
-            if ($withLicenses) {
-                $with = array_merge($with, [
-                    'assets.licenses',
-                    'assets.licenses.category',
-                ]);
-            }
-
-            if ($withAccessories) {
-                $with = array_merge($with, [
-                    'assets.assignedAccessories',
-                    'assets.assignedAccessories.accessory.category',
-                ]);
-            }
-        }
-
-        if ($withLicenses) {
-            $with = array_merge($with, [
-                'directLicenses.category',
-                'licenses.category',
-            ]);
-        }
-
-        if ($withAccessories) {
-            $with = array_merge($with, [
-                'accessories.log' => fn ($query) => $query->withTrashed()
-                    ->where('target_type', User::class)
-                    ->where('target_id', $id)
-                    ->where('action_type', 'accepted'),
-                'accessories.category',
-                'accessories.manufacturer',
-            ]);
-        }
-
-        if ($withConsumables) {
-            $with = array_merge($with, [
-                'consumables.log' => fn ($query) => $query->withTrashed()
-                    ->where('target_type', User::class)
-                    ->where('target_id', $id)
-                    ->where('action_type', 'accepted'),
-                'consumables.category',
-                'consumables.manufacturer',
-            ]);
-        }
-
-        return $query->where('id', $id)->with($with)->withTrashed();
+        return new UserQueryBuilder($query);
     }
 
     /**
@@ -2219,13 +2391,21 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
             return false;
         }
 
-        // Eager load manager relationship to potentially reduce queries in the loop
+        // User::$rules prevents new cycles via non_circular on manager_id,
+        // but legacy rows or two-pass CSV imports can still exist in the DB.
+        // The depth cap of 50 matches the default in the non_circular validator.
+        $visited = [$userToCheck->id => true];
         $manager = $userToCheck->load('manager')->manager;
-        while ($manager) {
+        $hops = 0;
+
+        while ($manager && $hops++ < 50) {
             if ($manager->id === $this->id) {
                 return true;
             }
-            // Move up the hierarchy (load relationship if not already loaded)
+            if (isset($visited[$manager->id])) {
+                return false;
+            }
+            $visited[$manager->id] = true;
             $manager = $manager->load('manager')->manager;
         }
 

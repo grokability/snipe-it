@@ -4,6 +4,7 @@ namespace App\SyncAdapters\JamfPlatform;
 
 use App\SyncAdapters\HostInventoryRecord;
 use App\SyncAdapters\SyncAdapter;
+use App\SyncAdapters\Traits\UsesAppleDbEnrichment;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 
@@ -24,6 +25,8 @@ use Illuminate\Support\Arr;
  */
 class JamfPlatformAdapter extends SyncAdapter
 {
+    use UsesAppleDbEnrichment;
+
     public static function typeLabel(): string
     {
         return 'Jamf Platform';
@@ -63,16 +66,19 @@ class JamfPlatformAdapter extends SyncAdapter
                 'label' => trans('admin/settings/sync_adapters.label_environment_id'),
                 'help' => trans('admin/settings/sync_adapters.jamf_platform_environment_id_help'),
             ],
+            $this->appleDbSettingsField(),
         ];
     }
 
     public function extraFields(): array
     {
         return [
+            ...$this->appleDbExtraFieldsDeclaration(),
             'jamf_platform_udid' => ['label_key' => 'admin/settings/sync_adapters.extra_udid'],
             'jamf_platform_device_type' => ['label_key' => 'admin/settings/sync_adapters.extra_device_type'],
             'jamf_platform_supervised' => ['label_key' => 'admin/settings/sync_adapters.extra_supervised', 'type' => 'boolean'],
             'jamf_platform_blueprint_id' => ['label_key' => 'admin/settings/sync_adapters.extra_blueprint_id'],
+            'jamf_platform_model_identifier' => ['label_key' => 'admin/settings/sync_adapters.extra_model_identifier'],
         ];
     }
 
@@ -103,9 +109,40 @@ class JamfPlatformAdapter extends SyncAdapter
     {
         $client = $this->buildClient();
 
+        $enrichmentEnabled = $this->appleDbEnrichmentEnabled();
+        $enrichmentHandled = [];
+
         foreach ($client->devices() as $device) {
-            yield $this->normalize($device);
+            $record = $this->normalize($device);
+            if ($enrichmentEnabled) {
+                $enrichmentHandled = $this->enrichFromAppleDb($record, $enrichmentHandled);
+            }
+            yield $record;
         }
+    }
+
+    /**
+     * Pass the Platform device record to the shared enrichment flow.
+     * modelIdentifier is on the top-level device payload (no detail
+     * fetch needed), already captured as jamf_platform_model_identifier
+     * in extras during normalize.
+     *
+     * @param  array<string, bool>  $handled
+     * @return array<string, bool>
+     */
+    private function enrichFromAppleDb(HostInventoryRecord $record, array $handled): array
+    {
+        $modelName = $record->hardwareModel;
+        if (! is_string($modelName) || $modelName === '') {
+            return $handled;
+        }
+
+        $productType = $record->extra['jamf_platform_model_identifier'] ?? null;
+        if (! is_string($productType) || $productType === '') {
+            return $handled;
+        }
+
+        return $this->enrichModelFromAppleDb($modelName, $productType, null, $handled);
     }
 
     private function buildClient(): JamfPlatformClient
@@ -131,12 +168,17 @@ class JamfPlatformAdapter extends SyncAdapter
      */
     private function normalize(array $device): HostInventoryRecord
     {
+        $productType = Arr::get($device, 'modelIdentifier');
+        $modelName = Arr::get($device, 'model');
+        $canonical = $this->canonicalIdentityFor($productType, $modelName);
+        $appleDbExtras = $this->appleDbExtrasFor($productType, $modelName);
+
         return new HostInventoryRecord(
             sourceKey: $this->name(),
             sourceId: (string) Arr::get($device, 'udid'),
             hostname: Arr::get($device, 'name'),
             hardwareSerial: Arr::get($device, 'serialNumber'),
-            hardwareModel: Arr::get($device, 'model'),
+            hardwareModel: $modelName,
             manufacturer: 'Apple',
             primaryMac: Arr::get($device, 'wifiMacAddress'),
             primaryIp: null,
@@ -146,11 +188,15 @@ class JamfPlatformAdapter extends SyncAdapter
             assetTag: Arr::get($device, 'assetTag'),
             vendorGroupId: Arr::has($device, 'blueprintId') ? (string) Arr::get($device, 'blueprintId') : null,
             extra: [
+                ...$appleDbExtras,
                 'jamf_platform_udid' => Arr::get($device, 'udid'),
                 'jamf_platform_device_type' => Arr::get($device, 'deviceType'),
                 'jamf_platform_supervised' => Arr::get($device, 'isSupervised'),
                 'jamf_platform_blueprint_id' => Arr::get($device, 'blueprintId'),
+                'jamf_platform_model_identifier' => $productType,
             ],
+            canonicalMarketingName: $canonical['canonicalMarketingName'],
+            canonicalModelNumber: $canonical['canonicalModelNumber'],
         );
     }
 

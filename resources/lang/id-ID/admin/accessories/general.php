@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Gunakan primary default EULA sebagai gantinya.</del> Tidak ada primary default yang diatur. Silahkan tambahkan di Pengaturan.',
     'clone' => 'Duplikat Aksesori',
     'delete_disabled' => 'Aksesori ini belum dapat dihapus karena beberapa item masih dipinjam/diambil.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

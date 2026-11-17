@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'Pošlji opomnik',
     'cannot_send_reminder' => 'Uporabnik je bil izbrisan ali nima e-poštnega naslova, zato ne more prejeti opomnika',
     'reminder_sent' => 'Opomnik poslan',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'Zahteva za sprejem izbrisana',
     'acceptance_request' => 'Zahteva za sprejem',
     'custom_export' => [

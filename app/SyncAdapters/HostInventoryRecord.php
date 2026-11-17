@@ -45,5 +45,12 @@ readonly class HostInventoryRecord
         // device or the adapter doesn't emit group data.
         public ?string $vendorGroupId = null,
         public array $extra = [],
+        // Shared identity hints produced by AppleDB enrichment (null
+        // for non-Apple adapters and whenever enrichment is off).
+        // Each Apple-capable adapter populates these during normalize()
+        // via the UsesAppleDbEnrichment trait's canonicalIdentityFor
+        // helper when the per-instance toggle is on.
+        public ?string $canonicalMarketingName = null,
+        public ?string $canonicalModelNumber = null,
     ) {}
 }

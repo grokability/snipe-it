@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Builders\DepreciationQueryBuilder;
 use App\Models\Traits\Searchable;
 use App\Presenters\DepreciationPresenter;
 use App\Presenters\Presentable;
@@ -10,6 +11,9 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
 use Watson\Validating\ValidatingTrait;
 
+/**
+ * @mixin IdeHelperDepreciation
+ */
 class Depreciation extends SnipeModel
 {
     use HasFactory;
@@ -38,7 +42,7 @@ class Depreciation extends SnipeModel
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'name',
@@ -65,6 +69,50 @@ class Depreciation extends SnipeModel
     protected $searchableRelations = [
         'adminuser' => ['first_name', 'last_name', 'display_name'],
     ];
+
+    /**
+     * Advanced-search filterable fields. depreciation_type (amount or
+     * percent) is only populated for diminishing-balance depreciations,
+     * so rows left on straight-line will not match either option.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'depreciation_type',
+                'type' => 'enum',
+                'options' => [
+                    ['value' => 'amount', 'label' => trans('general.depreciation_options.amount')],
+                    ['value' => 'percent', 'label' => trans('general.depreciation_options.percent')],
+                ],
+                'label' => trans('general.depreciation_type'),
+            ],
+            [
+                'field' => 'months',
+                'type' => 'numeric',
+                'label' => trans('admin/depreciations/general.number_of_months'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
 
     public function isDeletable()
     {
@@ -131,13 +179,8 @@ class Depreciation extends SnipeModel
         return $this->belongsTo(User::class, 'created_by')->withTrashed();
     }
 
-    /**
-     * -----------------------------------------------
-     * BEGIN QUERY SCOPES
-     * -----------------------------------------------
-     **/
-    public function scopeOrderByCreatedBy($query, $order)
+    public function newEloquentBuilder($query): DepreciationQueryBuilder
     {
-        return $query->leftJoin('users as admin_sort', 'depreciations.created_by', '=', 'admin_sort.id')->select('depreciations.*')->orderBy('admin_sort.first_name', $order)->orderBy('admin_sort.last_name', $order);
+        return new DepreciationQueryBuilder($query);
     }
 }

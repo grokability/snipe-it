@@ -239,6 +239,50 @@ class NeedsAttentionTest extends TestCase implements TestsFullMultipleCompaniesS
             ->assertSet('pendingRequestsCount', 1);
     }
 
+    public function test_users_offboarding_count_requires_at_least_one_assignment(): void
+    {
+        // Regression test for issue #19809. The tile is meant to flag
+        // offboarding users who still hold items, so a leaver with
+        // nothing on record shouldn't inflate the count. Narrowing to
+        // users-with-assignments also matches the ?with_assignments=1
+        // filter the tile forwards to users.index.
+        //
+        // Formatted as Y-m-d because the User model's $rules enforce
+        // date_format:Y-m-d via Watson Validating. Passing a Carbon
+        // directly fails validation silently and never persists.
+        $withinWindow = now()->addDays(10)->format('Y-m-d');
+
+        // No assignments at all. Shouldn't register.
+        User::factory()->create(['end_date' => $withinWindow]);
+
+        // One asset assigned. Should register.
+        $leaverWithAsset = User::factory()->create(['end_date' => $withinWindow]);
+        Asset::factory()->create([
+            'assigned_to' => $leaverWithAsset->id,
+            'assigned_type' => User::class,
+        ]);
+
+        Livewire::withoutLazyLoading();
+        Livewire::actingAs(User::factory()->superuser()->create())
+            ->test(NeedsAttention::class)
+            ->assertSet('usersOffboardingSoon', 1);
+    }
+
+    public function test_users_offboarding_count_excludes_leavers_outside_window(): void
+    {
+        // Only end_dates within the 30-day window should count.
+        $assetOwner = User::factory()->create(['end_date' => now()->addDays(60)->format('Y-m-d')]);
+        Asset::factory()->create([
+            'assigned_to' => $assetOwner->id,
+            'assigned_type' => User::class,
+        ]);
+
+        Livewire::withoutLazyLoading();
+        Livewire::actingAs(User::factory()->superuser()->create())
+            ->test(NeedsAttention::class)
+            ->assertSet('usersOffboardingSoon', 0);
+    }
+
     public function test_adheres_to_full_multiple_companies_support_scoping()
     {
         [$companyA, $companyB] = Company::factory()->count(2)->create();

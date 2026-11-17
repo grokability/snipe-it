@@ -24,7 +24,6 @@ class NotesController extends Controller
      * and fetches related action log entries of type 'note added', including
      * user information for each note. Returns a JSON response with the notes or errors.
      *
-     * @param  Request  $request  The incoming HTTP request.
      * @param  Asset  $asset  The ID of the asset whose notes to retrieve.
      */
     public function index(Asset $asset): JsonResponse

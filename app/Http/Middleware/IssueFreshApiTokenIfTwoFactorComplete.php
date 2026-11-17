@@ -3,7 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
 use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Wrapper around Laravel Passport's CreateFreshApiToken that refuses to
@@ -17,11 +19,9 @@ use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
  */
 class IssueFreshApiTokenIfTwoFactorComplete extends CreateFreshApiToken
 {
-    public function handle($request, Closure $next, $guard = null)
+    public function handle(Request $request, Closure $next, ?string $guard = null): Response
     {
         if (! CheckForTwoFactor::isComplete($request)) {
-            // Skip the cookie issuance entirely; the rest of the pipeline runs
-            // as if Passport's middleware weren't installed for this request.
             return $next($request);
         }
 

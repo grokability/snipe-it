@@ -96,7 +96,7 @@ a.accordion-header {
   font-size: 13px;
 }
 .main-header {
-  max-height: 150px;
+  max-height: none;
 }
 
 
@@ -427,10 +427,6 @@ body {
 
   body {
     margin: 0 auto;
-    line-height: 1em;
-    word-spacing:1px;
-    letter-spacing:0.2px;
-    font: 15px "Times New Roman", Times, serif;
     width: 100%;
     float: none;
   }
@@ -438,18 +434,6 @@ body {
   /* avoid page-breaks inside a listingContainer*/
   .listingContainer {
     page-break-inside: avoid;
-  }
-
-  h1 {
-    font: 28px "Times New Roman", Times, serif;
-  }
-
-  h2 {
-    font: 24px "Times New Roman", Times, serif;
-  }
-
-  h3 {
-    font: 20px "Times New Roman", Times, serif;
   }
 
   /* Improve colour contrast of links */
@@ -462,10 +446,6 @@ body {
     background: transparent;
     color:#333;
     text-decoration:none;
-  }
-
-  a[href]:after {
-    content: "" !important;
   }
 
   a[href^="http://"] {
@@ -766,18 +746,33 @@ h4 {
 
  See https://github.com/grokability/snipe-it/issues/7989
  */
+// css-padlock is deliberately NOT here. On the assets index,
+// AssetPresenter uses that class on encrypted custom-field columns
+// to prefix the title with a padlock icon (via the existing css-padlock
+// ::before block further down) while the column's real field name stays
+// visible. Zeroing .th-inner here would hide that field name and leave
+// admins with just a padlock icon (used in the custom fields presenter)
+// with no title, which is meaningless in the asset listing view.
 thead th.css-accessory > .th-inner,
 thead th.css-accessory-alt > .th-inner,
 thead th.css-barcode > .th-inner,
+thead th.css-bell-concierge > .th-inner,
+thead th.css-clipboard-check > .th-inner,
 thead th.css-component > .th-inner,
 thead th.css-consumable > .th-inner,
 thead th.css-envelope > .th-inner,
+thead th.css-eye > .th-inner,
+thead th.css-field-encrypted > .th-inner,
+thead th.css-fingerprint > .th-inner,
 thead th.css-house-flag > .th-inner,
 thead th.css-house-laptop > .th-inner,
 thead th.css-house-user > .th-inner,
 thead th.css-license > .th-inner,
+thead th.css-list > .th-inner,
 thead th.css-location > .th-inner,
 thead th.css-maintenances > .th-inner,
+thead th.css-rotate-left > .th-inner,
+thead th.css-rotate-right > .th-inner,
 thead th.css-users > .th-inner,
 thead th.css-currency > .th-inner,
 thead th.css-child-locations > .th-inner,
@@ -796,15 +791,23 @@ thead th.css-location > .th-inner::before,
 thead th.css-accessory > .th-inner::before,
 thead th.css-accessory-alt > .th-inner::before,
 thead th.css-barcode > .th-inner::before,
+thead th.css-bell-concierge > .th-inner::before,
+thead th.css-clipboard-check > .th-inner::before,
 thead th.css-component > .th-inner::before,
 thead th.css-consumable > .th-inner::before,
 thead th.css-envelope > .th-inner::before,
+thead th.css-eye > .th-inner::before,
+thead th.css-field-encrypted > .th-inner::before,
+thead th.css-fingerprint > .th-inner::before,
 thead th.css-house-flag > .th-inner::before,
 thead th.css-house-laptop > .th-inner::before,
 thead th.css-house-user > .th-inner::before,
 thead th.css-license > .th-inner::before,
+thead th.css-list > .th-inner::before,
 thead th.css-location > .th-inner::before,
 thead th.css-maintenances > .th-inner::before,
+thead th.css-rotate-left > .th-inner::before,
+thead th.css-rotate-right > .th-inner::before,
 thead th.css-users > .th-inner::before,
 thead th.css-currency > .th-inner::before,
 thead th.css-child-locations > .th-inner::before,
@@ -918,6 +921,72 @@ thead th.css-history > .th-inner::before {
   margin-bottom: 0px;
 }
 
+// Icon headers used by the custom fields index. One header per visibility
+// flag column so the on-screen glyph matches the icon used in the field
+// editor and the column-chooser still shows the readable text label.
+thead th.css-list > .th-inner::before {
+  content: "\f03a";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+
+thead th.css-eye > .th-inner::before {
+  content: "\f06e";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+
+thead th.css-bell-concierge > .th-inner::before {
+  content: "\f562";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+
+thead th.css-fingerprint > .th-inner::before {
+  content: "\f577";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+
+thead th.css-clipboard-check > .th-inner::before {
+  content: "\f46c";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+
+thead th.css-rotate-right > .th-inner::before {
+  content: "\f2f9";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+
+thead th.css-rotate-left > .th-inner::before {
+  content: "\f2ea";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+
+// Dedicated to the Custom Fields admin index. Same glyph as
+// css-padlock, but the Assets list has a `td.css-padlock` click-to-
+// reveal handler in default.blade.php that masks every TD it finds.
+// bs-table applies `column.class` to both TH and TD, so sharing the
+// class would hijack the boolean indicator on the fields admin page
+// with asterisks. Distinct class keeps the asset-list behavior
+// untouched.
+thead th.css-field-encrypted > .th-inner::before {
+  content: "\f023";
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  margin-bottom: 0px;
+}
+
 
 .small-box .inner {
   padding-left: 15px;
@@ -967,10 +1036,27 @@ thead th.css-history > .th-inner::before {
 // .firstnav { padding-top: 120px !important } that used to be inside
 // the max-width: 520px block below. All three were double-counted on
 // top of the dynamic .main-sidebar padding-top: var(--main-header-height)
-// rule further down that measures the actual header height at runtime,
+// rule just below that measures the actual header height at runtime,
 // producing 200px+ visual gaps above Dashboard at those breakpoints.
 // The dynamic measurement covers all these cases correctly, so the
 // static compensation is deleted.
+
+// Dynamic sidebar compensation for the mobile breakpoint (#19826 et
+// al.). AdminLTE 2 pads the mobile sidebar with a static 100px to
+// clear its own 100px header, but on narrow viewports Snipe-IT's
+// navbar wraps the logo, hamburger, search, nav icons and user menu
+// to several rows and the real header runs taller than the static
+// pad. snipeit.js measures .main-header's live height on load /
+// resize / mutation and publishes it as --main-header-height, so the
+// sidebar padding can track it instead of guessing at a static
+// number. The 100px fallback matches AdminLTE's base so pre-JS
+// renders are no worse than they were before.
+@media (max-width: 767px) {
+  .main-sidebar {
+    padding-top: var(--main-header-height, 100px);
+  }
+}
+
 @media screen and (max-width: 992px){
   .info-stack-container {
     flex-direction: column;
@@ -1573,6 +1659,24 @@ Radio toggle styles for permission settings and check/uncheck all
   }
 }
 
+// Long unbroken identifiers (asset tags with no separators, pasted
+// uuids, serial numbers that are one big token) have no whitespace for
+// the default word-break: normal to wrap on, so they overflow modal
+// bodies horizontally and bleed past the modal's right edge.
+.modal-body {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+// Set overflow info-panel rows on detail pages, so they don't
+// get cut off when the content is too long and get jammed in under
+// the neighboring well
+.list-group-item,
+dd {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 // Long wizard content (dozens of mapping rows) can push the modal past
 // the viewport. Bootstrap 3 doesn't scroll the modal-body by default, so
 // the footer buttons (Back / Next / Preview / Process) end up below the
@@ -1858,6 +1962,46 @@ whole select in dark mode so pre-selected items stay readable.
 [data-theme="dark"] select[multiple] option {
   background-color: #d2d6de !important;
   color: #373636 !important;
+}
+
+/*
+Bootstrap's `.img-thumbnail` hard-codes `background-color: #fff`,
+which gives transparent PNG uploads (asset / model / company logos)
+a white backing in dark mode. Theme the colors through the panel
+custom properties so the thumbnail matches the surface it sits in.
+Not gated by `[data-theme="dark"]` because Bootstrap's
+`transition: all 0.2s ease-in-out` on this class interacts badly
+with selector-change-plus-var() on theme toggle, and leaves the
+previous computed color stuck until the next page load. The vars
+already carry the per-theme value so this one rule works in both.
+See #19837.
+ */
+.img-thumbnail {
+  background-color: var(--box-bg);
+  // Use the top-border custom property so the thumbnail border reads
+  // at roughly the same visual weight as Bootstrap's default `#ddd`
+  // (`--box-header-top-border-color` is `#d2d6de` in light mode and
+  // `#605e5e` in dark). The bottom-border variant is near-white in
+  // light mode which made the thumbnail look like it had no border.
+  border-color: var(--box-header-top-border-color);
+  // Bootstrap applies `transition: all 0.2s ease-in-out` on this
+  // class. Combined with a `var()`-based color and the theme toggle
+  // flipping `--box-bg` on <html>, Chrome's transition engine can
+  // leave the previous computed color stuck until the next full
+  // repaint. Narrow the transition to geometry-only so theme flips
+  // repaint the thumbnail color immediately.
+  transition-property: padding, border-radius, border-width;
+}
+
+/*
+QR codes need a white backing in both themes so phone scanners pick
+up the high-contrast pattern. Both QR img sites sit inside a wrapping
+div with class `asset-qr-img`, so restore the Bootstrap defaults for
+.img-thumbnail inside that context only.
+ */
+.asset-qr-img .img-thumbnail {
+  background-color: #fff;
+  border-color: #ddd;
 }
 
 /**
@@ -3262,12 +3406,84 @@ tr.danger > td {
     color: black !important;
   }
 
-  .col-sm-9,
+  // Stack the detail-page columns so each uses the full page width in
+  // print instead of being pinned to the 9/12 + 3/12 grid. Fixes the
+  // ~20% empty right margin on the main panel and the narrow
+  // left-column strip the info-panel renders into on paper
+  .col-md-9,
+  .col-md-3,
   .main-panel {
-    float: left;
+    float: none !important;
     width: 100% !important;
   }
 
+  // Nav-tab headers are redundant on paper because the existing rule
+  // above forces every `.tab-pane` visible, so the whole tab content
+  // prints in sequence. Hide the clickable header strip since it
+  // can't do anything on paper.
+  .nav-tabs {
+    display: none !important;
+  }
+
+  // Avoid awkward page breaks mid-row and mid-item on the info-panel
+  // list, section boxes, and table rows. The existing rule covers
+  // `.listingContainer` only.
+  .list-group-item,
+  .box,
+  tr {
+    page-break-inside: avoid;
+  }
+
+  // Show the destination for every real inline link so a printed
+  // audit copy stays navigable. In-page anchors (`#foo`) and
+  // javascript: hrefs don't carry useful info on paper, so they're
+  // excluded.
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 85%;
+    color: #666;
+  }
+
+  a[href^="#"]:after,
+  a[href^="javascript:"]:after {
+    content: "";
+  }
+
+  // Hide tab panes whose only content is a bootstrap-table empty
+  // state. The pane wrapper carries the heading, bulk-actions
+  // toolbar, table, and footer, so dropping the whole pane removes
+  // the "Licenses / No matching records found / 0.00" placeholder
+  // stack without leaving the heading orphaned. Narrow enough that
+  // the Details pane (no bs-tables) is unaffected.
+  .tab-pane:has(.no-records-found) {
+    display: none !important;
+  }
+
+  // Give every table a visible outer border and cell gridlines on
+  // paper. Bootstrap's default `.table` renders only inter-row
+  // horizontal lines, which prints as an unframed stack of text once
+  // column spacing lands at paper widths. Mirrors the `table-bordered`
+  // look so columns are readable in both color and B&W.
+  .table,
+  .table > thead > tr > th,
+  .table > tbody > tr > td,
+  .table > tbody > tr > th,
+  .table > tfoot > tr > td,
+  .table > tfoot > tr > th {
+    border: 1px solid #999 !important;
+  }
+
+  .table {
+    border-collapse: collapse !important;
+  }
+
+  // Hide empty `<x-data-row>` pairs in print. The component tags both
+  // the <dt> label and the <dd> value with .hidden-print-empty-row when
+  // the slot is empty, so we drop both sides together and avoid a
+  // stripe of "Field: No value" lines on paper.
+  .hidden-print-empty-row {
+    display: none !important;
+  }
 }
 
 .list-group-item.subitem {
@@ -4023,7 +4239,7 @@ dl.table-display {
 .label-normal-bold {
   font-weight: bold !important;
   font-size: 11px !important;
-  line-height: 34px !important;
+  line-height: 20px !important;
   padding-left: 3px;
   border: 1px solid var(--main-footer-top-border-color);
 }

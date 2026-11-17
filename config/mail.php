@@ -92,8 +92,8 @@ return [
             | stay compatible with the Mailgun e-mail application by default.
             |
             */
-
-            'port' => env('MAIL_PORT', 587),
+            
+            'port' => (int) env('MAIL_PORT', 587),
 
             /*
             |--------------------------------------------------------------------------
@@ -229,10 +229,10 @@ return [
             |
             | Uses modern app authentication for Microsoft 365 tenants instead of the
             | less secure SMTP authenticaion.
-            | 
+            |
             | Instructions can be found here:
             | https://learn.microsoft.com/en-us/graph/auth-register-app-v2
-            | 
+            |
             | It's also recommended that you configure RBAC to limit this application's
             | scope to approved mailboxes.
             | https://learn.microsoft.com/en-us/exchange/permissions-exo/application-rbac
@@ -256,7 +256,7 @@ return [
             |--------------------------------------------------------------------------
             |
             | You will need to create a client secret for the Entra App Registration.
-            | The instructions are found at the URL above under 'Add credentials' 
+            | The instructions are found at the URL above under 'Add credentials'
             | option 2.
             |
             */
@@ -275,7 +275,7 @@ return [
             | Save to Sent Items
             |--------------------------------------------------------------------------
             |
-            | This controls whether or not mail sent using this driver is saved in the 
+            | This controls whether or not mail sent using this driver is saved in the
             | mailbox's Sent folder. Defaults to false.
             |
             */

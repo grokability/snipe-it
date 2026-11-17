@@ -14,6 +14,7 @@ enum ActionType: string
     case Checkout = 'checkout';
     case CheckinFrom = 'checkin from';
     case ForceCheckin = 'force checkin';
+    case Consumed = 'consumed';
     case Requested = 'requested';
     case RequestCanceled = 'request canceled';
     // Note: no RequestFulfilled - fulfillment piggybacks on the

@@ -12,7 +12,7 @@
 <li {{ $attributes->merge(['class' => 'snipetab']) }} role="presentation">
 
 
-    <a href="#{{ $name ?? 'details' }}" data-toggle="tab" data-tooltip="true" title="{{ $tooltip ?? $label }}">
+    <a href="#{{ $name ?? 'details' }}" data-toggle="tab" data-tooltip="true" title="{{ $tooltip ?? $label }}" data-breadcrumb-label="{{ $label }}">
 
         @if ($icon_type || $icon)
 

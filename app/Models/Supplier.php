@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Enums\FileStorage;
 use App\Http\Traits\UniqueUndeletedTrait;
+use App\Models\Builders\SupplierQueryBuilder;
+use App\Models\Contracts\Importable;
 use App\Models\Traits\HasUploads;
 use App\Models\Traits\Loggable;
 use App\Models\Traits\Searchable;
@@ -17,7 +19,10 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Watson\Validating\ValidatingTrait;
 
-class Supplier extends SnipeModel
+/**
+ * @mixin IdeHelperSupplier
+ */
+class Supplier extends SnipeModel implements Importable
 {
     use HasFactory;
     use HasUploads;
@@ -73,9 +78,38 @@ class Supplier extends SnipeModel
     protected $searchableRelations = [];
 
     /**
+     * Advanced-search filterable fields. Suppliers have no company_id or
+     * other model-level FKs beyond created_by.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = ['name', 'address', 'address2', 'city', 'state', 'country', 'zip', 'phone', 'fax', 'email', 'contact', 'url', 'tag_color', 'notes'];
 
@@ -92,6 +126,20 @@ class Supplier extends SnipeModel
             && (($this->licenses_count ?? $this->licenses()->count()) === 0)
             && (($this->maintenances_count ?? $this->maintenances()->count()) === 0)
             && ($this->deleted_at == '');
+    }
+
+    /**
+     * Whether the sidebar info-panel disclosure for this supplier has
+     * anything to reveal. Gates the "+" button so rows with only a name
+     * don't offer an empty expander.
+     */
+    public function hasInfoPanelDetails(): bool
+    {
+        return (bool) ($this->contact
+            || $this->phone
+            || $this->email
+            || $this->url
+            || trim($this->present()->displayAddress()));
     }
 
     /**
@@ -288,11 +336,8 @@ class Supplier extends SnipeModel
         return $url;
     }
 
-    /**
-     * Query builder scope to order on the user that created it
-     */
-    public function scopeOrderByCreatedByName($query, $order)
+    public function newEloquentBuilder($query): SupplierQueryBuilder
     {
-        return $query->leftJoin('users as admin_sort', 'suppliers.created_by', '=', 'admin_sort.id')->select('suppliers.*')->orderBy('admin_sort.first_name', $order)->orderBy('admin_sort.last_name', $order);
+        return new SupplierQueryBuilder($query);
     }
 }

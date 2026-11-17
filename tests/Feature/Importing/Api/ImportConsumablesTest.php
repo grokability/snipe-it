@@ -42,7 +42,7 @@ class ImportConsumablesTest extends ImportDataTestCase implements TestsPermissio
     {
         $this->actingAsForApi(User::factory()->canImport()->create());
 
-        $import = Import::factory()->consumable()->create();
+        $import = Import::factory()->consumable()->withStubFile()->create();
 
         $this->importFileResponse(['import' => $import->id])->assertOk();
     }

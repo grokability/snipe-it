@@ -27,7 +27,7 @@
 
                     <!-- start assets tab pane -->
                     <x-tabs.pane name="assets">
-                        <x-table.assets name="assets" :route="route('api.assets.index', ['depreciation_id' => $depreciation->id])"/>
+                        <x-table.assets name="depreciationAssets" :route="route('api.assets.index', ['depreciation_id' => $depreciation->id])"/>
                     </x-tabs.pane>
                     <!-- end assets tab pane -->
 
@@ -37,14 +37,14 @@
                         <x-slot:bulkactions>
                             <x-table.bulk-licenses />
                         </x-slot:bulkactions>
-                        <x-table.licenses name="licenses" :export_name="$depreciation->name" :route="route('api.licenses.index', ['depreciation_id' => $depreciation->id])"/>
+                        <x-table.licenses name="depreciationLicenses" :export_name="$depreciation->name" :route="route('api.licenses.index', ['depreciation_id' => $depreciation->id])"/>
                     </x-tabs.pane>
                     <!-- end licenses tab pane -->
 
                     <!-- start models tab pane -->
                     @can('view', \App\Models\AssetModel::class)
                         <x-tabs.pane name="models">
-                            <x-table.models :route="route('api.models.index', ['status' => e(request('status')), 'depreciation_id' => $depreciation->id])"/>
+                            <x-table.models name="depreciationModels" :route="route('api.models.index', ['status' => e(request('status')), 'depreciation_id' => $depreciation->id])"/>
                         </x-tabs.pane>
                     @endcan
                     <!-- end licenses tab pane -->

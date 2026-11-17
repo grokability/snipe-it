@@ -56,8 +56,6 @@ return [
     'years' => 'yıl',
     'asset_location' => 'Varlık konumunu güncelle',
     'asset_location_update_default_current' => 'Varsayılan konumu ve gerçek konumu güncelle',
-    'asset_location_update_default' => 'Sadece varsayılan konumu güncelle',
-    'asset_location_update_actual' => 'Sadece geçerli konumu güncelle',
     'asset_not_deployable' => 'Bu demirbaş dağıtılabilir durumda değil. Çıkışı yapılamaz.',
     'asset_not_deployable_checkin' => '{1} Bu varlık durumu dağıtıma uygun değil. Bu durum etiketi kullanıldığında varlık geri alınacaktır.|[2,*] Bu varlık durumu dağıtıma uygun değil. Bu durum etiketi kullanıldığında herhangi bir değişiklik yapılmayacaktır.',
     'asset_deployable' => '{1} Bu varlık çıkış yapılabilir.|[2,*] Bu varlıklar çıkış yapılabilir.',

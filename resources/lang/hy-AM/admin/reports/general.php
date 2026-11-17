@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'Ուղարկել հիշեցում',
     'cannot_send_reminder' => 'Օգտատերը ջնջվել է կամ չունի էլեկտրոնային փոստի հասցե, ուստի չի կարող ստանալ հիշեցումներ',
     'reminder_sent' => 'Հիշեցումն ուղարկվեց',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'Ընդունման հարցումը ջնջված է',
     'acceptance_request' => 'Ընդունման հարցում',
     'custom_export' => [

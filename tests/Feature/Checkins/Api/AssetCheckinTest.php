@@ -215,4 +215,102 @@ class AssetCheckinTest extends TestCase
 
         $this->assertEquals('My Asset Name', $asset->refresh()->name);
     }
+
+    public function test_status_update_on_not_checked_out_asset_still_applies()
+    {
+        // Issue #19899: operator in Quickscan Checkin scans a box of
+        // returned assets to retire them. Scanning an asset that was
+        // never checked out used to short-circuit, dropping the status
+        // change the form carried. Now the status / location / name /
+        // notes still apply when the asset was already checked in.
+        Event::fake([CheckoutableCheckedIn::class]);
+
+        $retired = Statuslabel::factory()->create();
+        $asset = Asset::factory()->create(['status_id' => Statuslabel::factory()->readyToDeploy()->create()->id]);
+
+        $this->actingAsForApi(User::factory()->checkinAssets()->create())
+            ->postJson(route('api.asset.checkin', $asset), [
+                'status_id' => $retired->id,
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+
+        $this->assertSame($retired->id, $asset->refresh()->status_id);
+        // No real checkin happened, so CheckoutableCheckedIn must not
+        // fire. That event drives expiration-alert cascades, notification
+        // mail, and action-log 'checkin from' writes, none of which make
+        // sense when there was never a checkout.
+        Event::assertNotDispatched(CheckoutableCheckedIn::class);
+    }
+
+    public function test_location_update_on_not_checked_out_asset_still_applies()
+    {
+        $newLocation = Location::factory()->create();
+        $originalLocation = Location::factory()->create();
+        $asset = Asset::factory()->create([
+            'location_id' => $originalLocation->id,
+            'rtd_location_id' => $originalLocation->id,
+        ]);
+
+        $this->actingAsForApi(User::factory()->checkinAssets()->create())
+            ->postJson(route('api.asset.checkin', $asset), [
+                'location_id' => $newLocation->id,
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+
+        $this->assertSame($newLocation->id, $asset->refresh()->location_id);
+    }
+
+    public function test_name_update_on_not_checked_out_asset_still_applies()
+    {
+        $asset = Asset::factory()->create(['name' => 'Old Name']);
+
+        $this->actingAsForApi(User::factory()->checkinAssets()->create())
+            ->postJson(route('api.asset.checkin', $asset), [
+                'name' => 'New Name',
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+
+        $this->assertSame('New Name', $asset->refresh()->name);
+    }
+
+    public function test_empty_body_on_not_checked_out_asset_still_errors()
+    {
+        // Preserves the pre-19899 behavior for the no-op case: if the
+        // operator scanned an already-checked-in asset with no form
+        // fields set, we still want to surface the "already checked in"
+        // error rather than silently save-with-no-changes.
+        $asset = Asset::factory()->create(['name' => 'Untouched']);
+
+        $this->actingAsForApi(User::factory()->checkinAssets()->create())
+            ->postJson(route('api.asset.checkin', $asset))
+            ->assertStatusMessageIs('error');
+
+        $this->assertSame('Untouched', $asset->refresh()->name);
+    }
+
+    public function test_location_is_not_reset_to_rtd_when_only_status_changes_on_not_checked_out_asset()
+    {
+        // Operator changing a not-checked-out asset's status should not
+        // trigger the "reset location to RTD" behavior that only makes
+        // sense for a real checkin. Current location stays put unless
+        // the operator supplies location_id explicitly.
+        $rtd = Location::factory()->create();
+        $current = Location::factory()->create();
+        $retired = Statuslabel::factory()->create();
+        $asset = Asset::factory()->create([
+            'rtd_location_id' => $rtd->id,
+            'location_id' => $current->id,
+        ]);
+
+        $this->actingAsForApi(User::factory()->checkinAssets()->create())
+            ->postJson(route('api.asset.checkin', $asset), [
+                'status_id' => $retired->id,
+            ])
+            ->assertOk();
+
+        $this->assertSame($current->id, $asset->refresh()->location_id);
+    }
 }

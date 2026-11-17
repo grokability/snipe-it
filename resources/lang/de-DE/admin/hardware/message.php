@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Asset konnte nicht zurückgenommen werden. Bitte versuchen Sie es erneut',
         'success' => 'Asset wurde erfolgreich zurückgenommen.',
+        'updated_without_checkin' => 'Asset wurde bereits eingecheckt, aber die von Ihnen festgelegten Formularfelder (Status, Lage, Name, Notizen) wurden trotzdem angewendet.',
         'user_does_not_exist' => 'Dieser Benutzer existiert nicht. Bitte versuchen Sie es erneut.',
         'already_checked_in' => 'Dieses Asset ist bereits zurückgenommen.',
         'force_checkin_orphaned_success' => 'Ungültige Zuordnung erfolgreich gelöscht.',

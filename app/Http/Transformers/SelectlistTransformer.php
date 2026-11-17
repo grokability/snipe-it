@@ -41,6 +41,24 @@ class SelectlistTransformer
             $items_array[] = $row;
         }
 
+        // Prepend a "No value" row when the request opts in
+        // via ?includeNull=1. Mostly (for now) used by the advanced
+        // search modal to allow searching on "no value" for
+        // a column with no value.
+        // Only prepends on the first page of results, otherwise
+        // it would be repeated on each "next page" load.
+        if (request()->boolean('includeNull')
+            && !request()->filled('search')
+            && $select_items->currentPage() === 1
+        ) {
+            array_unshift($items_array, [
+                'id' => 'null',
+                'text' => trans('general.no_value'),
+                'image' => null,
+                'tag_color' => null,
+            ]);
+        }
+
         $results = [
             'results' => $items_array,
             'pagination' => [

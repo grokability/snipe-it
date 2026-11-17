@@ -21,7 +21,7 @@ class ComponentRequestTest extends TestCase
             ->assertOk()
             ->assertViewHas('counts', fn ($counts) => ($counts['components'] ?? 0) > 0);
 
-        $rows = $this->actingAsForApi(User::factory()->create())
+        $rows = $this->actingAsForApi(User::factory()->viewRequestableAssets()->create())
             ->getJson(route('api.components.requestable'))
             ->assertOk()
             ->json('rows');

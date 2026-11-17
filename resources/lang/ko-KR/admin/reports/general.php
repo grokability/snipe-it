@@ -6,6 +6,7 @@ return [
     'send_reminder' => '알림 보내기',
     'cannot_send_reminder' => '사용자가 삭제되었거나 이메일 주소가 없어 알림을 받을 수 없음',
     'reminder_sent' => '알림 전송됨',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => '수락 요청 삭제됨',
     'acceptance_request' => '수락 요청',
     'custom_export' => [

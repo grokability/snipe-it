@@ -256,7 +256,7 @@ return [
     ],
     'usersview' => [
         'name' => 'Visa användare',
-        'note' => 'Användare med den här behörigheten kan även visa, men inte ändra eller ta bort, filer som laddats upp till användaren. De kan också se redigerings- och incheckningshistorik.',
+        'note' => 'Users with this permission will also be able to view edit and checkin history. Access to files uploaded to a user is gated separately by the Manage User Files permission.',
     ],
     'userscreate' => [
         'name' => 'Skapa nya användare',

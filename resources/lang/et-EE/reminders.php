@@ -16,6 +16,6 @@ return [
     'password' => 'Parool peab olema kuus tähemärki ja peab klappima kinnitusega.',
     'user' => 'Kasutajanimi või parool on vale',
     'token' => 'See parooli taastamise sessioon on kehtetu, aegunud või ei vasta sisestatud kasutajanimele.',
-    'sent' => 'If a matching user with a valid email address exists in our system, a password recovery email has been sent.',
+    'sent' => 'Kui meie süsteemis leidub vastav kehtiva e-posti aadressiga kasutaja, on talle saadetud parooli taastamise kiri.',
 
 ];

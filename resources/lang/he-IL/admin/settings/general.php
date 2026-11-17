@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'צור תגי נכס בסדר עולה',
     'auto_increment_prefix' => 'קידומת (אופציונלי)',
     'auto_incrementing_help' => 'Enable auto-incrementing asset tags first to set this',
-    'backups' => 'גיבויים',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Create, download, and restore backups ',
     'backups_restoring' => 'משחזר מגיבוי',
     'backups_clean' => 'Clean the backed-up database before restore',

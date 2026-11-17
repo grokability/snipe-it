@@ -2,8 +2,10 @@
 
 namespace App\SyncAdapters;
 
+use App\Models\Actionlog;
 use App\Models\Asset;
-use App\Models\CustomField;
+use App\Models\AssetExternalSource;
+use App\Models\Statuslabel;
 use App\Models\SyncAdapterConfig;
 use App\Models\SyncAdapterInstance;
 use App\Rules\ExternalUrl;
@@ -153,14 +155,17 @@ abstract class SyncAdapter
     }
 
     /**
-     * Type slug -> {label, docs_url} catalog. Powers the help pane's
-     * table of supported adapters so admins can jump into either the
-     * "Add adapter" modal with the type pre-selected or the docs page
-     * (vendor's own for named adapters, Snipe-IT's own for Custom
-     * HTTP). docs_url is null for adapters whose vendor has no stable
-     * public reference URL or gates its docs behind a login.
+     * Type slug -> {label, docs_url, direction} catalog. Powers the
+     * help pane's list of supported adapters so admins can jump into
+     * either the "Add adapter" modal with the type pre-selected or
+     * the docs page (vendor's own for named adapters, Snipe-IT's own
+     * for Custom HTTP). docs_url is null for adapters whose vendor
+     * has no stable public reference URL or gates its docs behind a
+     * login. direction is derived from whether the class extends
+     * PushableSyncAdapter so the catalog UI reflects reality without
+     * a separate list for admins or docs to drift from.
      *
-     * @return array<string, array{label: string, docs_url: ?string}>
+     * @return array<string, array{label: string, docs_url: ?string, direction: 'pull'|'both'}>
      */
     public static function typeCatalog(): array
     {
@@ -169,6 +174,7 @@ abstract class SyncAdapter
             $out[$slug] = [
                 'label' => $class::typeLabel(),
                 'docs_url' => $class::docsUrl(),
+                'direction' => is_subclass_of($class, PushableSyncAdapter::class) ? 'both' : 'pull',
             ];
         }
 
@@ -359,12 +365,23 @@ abstract class SyncAdapter
     public function customExtrasDestinationOptions(): array
     {
         $options = [
+            // native:asset_tag lets admins route a vendor field (Intune's
+            // deviceName, Jamf's name, etc.) to the asset_tag column.
+            // writeNative() prevents blank vendor values overwriting an
+            // admin-curated asset_tag.
+            'native:asset_tag' => MappingTargets::labelFor('native:asset_tag'),
             'native:notes' => trans('admin/settings/sync_adapters.target_native_notes'),
             'native:purchase_date' => MappingTargets::labelFor('native:purchase_date'),
             'native:order_number' => MappingTargets::labelFor('native:order_number'),
         ];
 
-        foreach (\App\Models\CustomField::whereIn('element', ['text', 'textarea', 'markdown-textarea', 'checkbox'])->orderBy('name')->get() as $cf) {
+        // Merge the two memoized MappingTargets pools instead
+        // of firing a third element-set query.
+        $customFields = MappingTargets::textLikeCustomFields()
+            ->concat(MappingTargets::checkboxCustomFields())
+            ->sortBy('name')
+            ->values();
+        foreach ($customFields as $cf) {
             $options['custom:'.$cf->id] = trans('admin/settings/sync_adapters.target_custom_prefix').': '.$cf->name;
         }
 
@@ -485,6 +502,16 @@ abstract class SyncAdapter
         return $this->instance->label;
     }
 
+    /**
+     * Public accessor for the backing instance. Blade views that need to
+     * reason about per-instance state (lock keys, mapping tables, etc)
+     * use through this vs relying on the protected constructor property.
+     */
+    public function instance(): SyncAdapterInstance
+    {
+        return $this->instance;
+    }
+
     public function companyId(): ?int
     {
         return $this->instance->company_id;
@@ -567,6 +594,28 @@ abstract class SyncAdapter
             $slug.'_user_match_strategy' => ['nullable', 'string', 'in:none,email,username,username_then_email'],
             $slug.'_adopt_by_serial' => ['nullable', 'boolean'],
             $slug.'_create_snipeit_assets_on_pull' => ['nullable', 'boolean'],
+            // Auto-archive opt-in
+            $slug.'_archive_missing_enabled' => ['nullable', 'boolean'],
+            $slug.'_archive_missing_threshold' => [
+                'nullable',
+                'integer',
+                'min:1',
+                "required_if:{$slug}_archive_missing_enabled,1",
+            ],
+            $slug.'_archive_missing_status_id' => [
+                'nullable',
+                'integer',
+                "required_if:{$slug}_archive_missing_enabled,1",
+                'exists:status_labels,id,deployable,0',
+            ],
+            // Optional second picker. Same non-deployable constraint
+            // so admins can't accidentally pick Ready to Deploy as the
+            // "under review" state for a checked-out asset.
+            $slug.'_archive_missing_review_status_id' => [
+                'nullable',
+                'integer',
+                'exists:status_labels,id,deployable,0',
+            ],
         ];
 
         // Admin-defined extras widget. Posts as an associative array
@@ -804,7 +853,7 @@ abstract class SyncAdapter
      * Grouped here so saveConfig() reads as a list of intent rather
      * than a wall of SyncAdapterConfig::put() calls.
      */
-    private function persistOperationalSettings(Request $request, string $slug): void
+    protected function persistOperationalSettings(Request $request, string $slug): void
     {
         SyncAdapterConfig::put(
             $this->instance->id,
@@ -892,14 +941,11 @@ abstract class SyncAdapter
         );
 
         // Opt-out: skip asset creation on pull when the vendor record
-        // has no existing Snipe-IT counterpart. Default on so existing
-        // installs keep the "vendor row with no match creates a fresh
-        // asset" behavior. Off = update rows already linked via
-        // asset_external_sources, log and skip anything with no match.
+        // has no existing Snipe-IT counterpart.
         SyncAdapterConfig::put(
             $this->instance->id,
             'create_snipeit_assets_on_pull',
-            $request->boolean($slug.'_create_snipeit_assets_on_pull', true) ? '1' : '0',
+            $request->boolean($slug.'_create_snipeit_assets_on_pull') ? '1' : '0',
         );
 
         // Per-device enrichment opt-in. Only persisted for adapters
@@ -914,37 +960,62 @@ abstract class SyncAdapter
             );
         }
 
-        // Push dry-run flag. When on, adapters log the push payload
-        // instead of sending it, so admins can verify mapping +
-        // direction config against real assets without any vendor
-        // side effect.
+        // Pull dry-run flag. When on, Sync Now still calls pull() so
+        // vendor-side fetch, mapping, and normalization all run - but
+        // the consumer logs each HostInventoryRecord instead of handing
+        // it to syncFromRecord, so no asset is created, updated, or
+        // linked. Mirror of push_dry_run on the other direction.
         SyncAdapterConfig::put(
             $this->instance->id,
-            'push_dry_run',
-            $request->boolean($slug.'_push_dry_run') ? '1' : '0',
+            'pull_dry_run',
+            $request->boolean($slug.'_pull_dry_run') ? '1' : '0',
         );
 
-        // Push notes template. Blade-ish {placeholder} string that
-        // adapters with a notes-shape vendor field (Intune, Kandji,
-        // Jamf, etc.) render + push to that field. Blank = don't push
-        // a notes field. Empty-string save clears the template.
+        // Auto-archive opt-in: when a linked asset drops out of pull
+        // results for N consecutive successful non-empty pulls, set
+        // the asset status to the configured label.
         SyncAdapterConfig::put(
             $this->instance->id,
-            'push_notes_template',
-            (string) $request->input($slug.'_push_notes_template', ''),
+            'archive_missing_enabled',
+            $request->boolean($slug.'_archive_missing_enabled') ? '1' : '0',
         );
 
-        // Optional override for which vendor field the composed
-        // notes get pushed to. Blank = use the adapter's default
-        // (Kandji: notes, Jamf: general.notes, Intune: notes, etc.).
-        // Admin sets this when their vendor has multiple candidate
-        // fields (Kandji's `notes` vs a specific custom field, WS1's
-        // Custom Attribute name, Ninja's Custom Field name).
+        $threshold = (int) $request->input($slug.'_archive_missing_threshold');
         SyncAdapterConfig::put(
             $this->instance->id,
-            'push_notes_target',
-            (string) $request->input($slug.'_push_notes_target', ''),
+            'archive_missing_threshold',
+            (string) ($threshold < 1 ? 3 : $threshold),
         );
+
+        $statusInput = $request->input($slug.'_archive_missing_status_id');
+        $this->putOrForgetPositiveInt(
+            'archive_missing_status_id',
+            ($statusInput === null || $statusInput === '') ? 0 : (int) $statusInput,
+        );
+
+        // Optional "flag for review" status for still-checked-out
+        // assets (#20015 followup). Blank clears the config so a
+        // later pull falls back to skip-and-warn.
+        $reviewInput = $request->input($slug.'_archive_missing_review_status_id');
+        $this->putOrForgetPositiveInt(
+            'archive_missing_review_status_id',
+            ($reviewInput === null || $reviewInput === '') ? 0 : (int) $reviewInput,
+        );
+    }
+
+    /**
+     * Shared pattern used by persistOperationalSettings: a positive int
+     * is stored under $key, anything else forgets the key entirely.
+     */
+    private function putOrForgetPositiveInt(string $key, int $value): void
+    {
+        if ($value > 0) {
+            SyncAdapterConfig::put($this->instance->id, $key, (string) $value);
+
+            return;
+        }
+
+        SyncAdapterConfig::forget($this->instance->id, $key);
     }
 
     /**
@@ -1023,13 +1094,17 @@ abstract class SyncAdapter
      * Per-field direction (pull / push / skip). Orthogonal to the
      * target column stored above so admins can flip direction without
      * re-picking the target. Only meaningful for adapters that
-     * implement PushableAdapter. For pull-only adapters the form
-     * doesn't render the direction column, and the default is always pull.
+     * implement PushableSyncAdapter. For pull-only adapters the form
+     * doesn't render the direction column, and the default is always pull, and
+     * this method is a no-op.
      *
      * @param  array<int, string>  $validFields
      */
-    private function persistFieldDirections(Request $request, string $slug, array $validFields): void
+    protected function persistFieldDirections(Request $request, string $slug, array $validFields): void
     {
+        \Log::debug("This should never be called - there's no such thing as 'direction' for pull-only SyncAdapters");
+        // Though, maybe, there is? 'skip' is a direction, and you might use that?
+        // TODO - this is copypasta from PushableSyncAdapter, but without it, tests won't pass
         $posted = (array) $request->input($slug.'_direction', []);
 
         // Widgets' picker rows submit their unfinished pair under
@@ -1052,12 +1127,26 @@ abstract class SyncAdapter
             }
         }
 
+        // Standard-field pushability gate. Adapters that only know
+        // how to push a subset of fields (CustomHttp) coerce
+        // push/both on non-pushable standard fields down to pull so
+        // we don't persist an unenforceable direction. Extras are
+        // defined by the adapter and assumed pushable.
+        $pushable = MappingTargets::FIELDS;
+
         foreach ($posted as $field => $direction) {
             if (! in_array($field, $validFields, true)) {
                 continue;
             }
             if (! in_array($direction, ['pull', 'push', 'skip', 'both'], true)) {
                 continue;
+            }
+            if (
+                in_array($field, MappingTargets::FIELDS, true)
+                && ! in_array($field, $pushable, true)
+                && in_array($direction, ['push', 'both'], true)
+            ) {
+                $direction = 'pull';
             }
             SyncAdapterConfig::put($this->instance->id, 'direction.'.$field, (string) $direction);
         }
@@ -1086,59 +1175,41 @@ abstract class SyncAdapter
     }
 
     /**
-     * Dry-run mode for push: when true, PushableAdapter::push()
-     * implementations should build the payload and log it via the
-     * sync-adapters channel but skip the actual vendor API call.
-     * Lets admins verify their mapping + direction configuration
-     * end-to-end without touching the vendor. Off by default.
+     * Dry-run mode for pull: when true, Sync Now still fetches from
+     * the vendor and runs the adapter's normalization, but the pull
+     * consumers (PullInventory CLI + SyncAdapterController UI) log
+     * each HostInventoryRecord instead of handing it to
+     * SyncFromRecord. No asset is created, updated, or linked.
+     * Mirror of isPushDryRun() on the other direction. Off by default.
      */
-    public function isPushDryRun(): bool
+    public function isPullDryRun(): bool
     {
-        return SyncAdapterConfig::get($this->instance->id, 'push_dry_run') === '1';
+        if ($this->pullDryRunOverride !== null) {
+            return $this->pullDryRunOverride;
+        }
+
+        return SyncAdapterConfig::get($this->instance->id, 'pull_dry_run') === '1';
     }
 
     /**
-     * Valid placeholder keys for the composed-notes push template.
-     * Admins wrap these tokens in {curly-braces} inside their
-     * push_notes_template to build a single-field notes blob from
-     * many Snipe-IT fields. `{custom.Field Name}` accesses any
-     * CustomField by its exact display name (case-sensitive).
-     * Unknown placeholders and null values render as empty so a
-     * template referencing missing fields degrades gracefully.
-     *
-     * Admin-facing descriptions of each placeholder live in the
-     * `push_notes_template_help` translation, not here, so the
-     * catalog stays translator-friendly.
-     *
-     * @var array<int, string>
+     * Per-request override for the dry-run flags. Set by callers that
+     * want to force a dry run without flipping the persisted config
+     * (CLI --dry-run flag on snipeit:pull-inventory, UI toggle inside a
+     * single click, etc.).
+     * Null means "fall back to the persisted config value". Lives on
+     * the adapter instance so it's scoped to one adapter object for
+     * the current request.
      */
-    public const NOTES_TEMPLATE_PLACEHOLDERS = [
-        'asset_tag',
-        'name',
-        'serial',
-        'model',
-        'model_number',
-        'manufacturer',
-        'category',
-        'status',
-        'status_type',
-        'assigned_to',
-        'assigned_to_email',
-        'assigned_to_username',
-        'location',
-        'company',
-        'supplier',
-        'last_checkout',
-        'last_checkin',
-        'expected_checkin',
-        'notes',
-        'order_number',
-        'purchase_date',
-        'purchase_cost',
-        'warranty_months',
-        'warranty_expires',
-    ];
+    protected ?bool $pullDryRunOverride = null;
 
+    public function withPullDryRunOverride(?bool $override): static
+    {
+        $this->pullDryRunOverride = $override;
+
+        return $this;
+    }
+
+    // FIXME - do we want to do this differently here versus elsewhere?
     public function directionFor(string $field): string
     {
         $stored = SyncAdapterConfig::get($this->instance->id, 'direction.'.$field);
@@ -1147,377 +1218,17 @@ abstract class SyncAdapter
     }
 
     /**
-     * Enumeration of source-field names currently directed 'push' or
-     * 'both' on this instance. Used by push() implementations to
-     * build the PATCH payload without scanning every possible field.
-     *
-     * @return array<int, string>
+     * Whether this adapter's settings form should render the
+     * "<Adapter>-specific fields" mapping-picker section. True by
+     * default - the picker lets admins route adapter-declared extras
+     * to Snipe-IT slots. CustomHttp returns false because its extras
+     * are admin-defined via the field_paths widget rather than
+     * declared statically by the adapter: the picker there would just
+     * duplicate what Vendor Response Paths already captures.
      */
-    public function pushDirectedFields(): array
+    public function rendersExtrasPicker(): bool
     {
-        $out = [];
-        $candidates = array_merge(MappingTargets::FIELDS, array_keys($this->extraFields()));
-        foreach ($candidates as $field) {
-            if (in_array($this->directionFor($field), ['push', 'both'], true)) {
-                $out[] = $field;
-            }
-        }
-
-        return $out;
-    }
-
-    /**
-     * Resolve one of the standard source-field names (hostname,
-     * asset_tag, serial, model, notes, etc.) to the matching value
-     * on the asset. Push implementations call this when building
-     * their outgoing payload so every adapter reads Snipe-IT values
-     * the same way. Returns null for unknown source-field names,
-     * for extras (vendor-specific keys the base class can't map),
-     * or when the asset has no value for that field.
-     *
-     * Adapters with a vendor-specific extra that needs pushing
-     * override in the subclass, call parent for the standard fields,
-     * and handle the vendor-specific keys in the child branch.
-     */
-    protected function assetValueForSourceField(Asset $asset, string $field): mixed
-    {
-        return match ($field) {
-            'hostname' => $asset->name,
-            'name' => $asset->name,
-            'serial' => $asset->serial,
-            'asset_tag' => $asset->asset_tag,
-            'model' => $asset->model?->name,
-            'notes' => $asset->notes,
-            default => null,
-        };
-    }
-
-    /**
-     * Standard push() implementation for single-endpoint adapters. An
-     * adapter whose push() writes one payload to one endpoint (Kandji,
-     * Jamf, NinjaOne) overrides two hooks (buildPushPayload,
-     * dispatchPush) and delegates push() to this template.
-     *
-     * Adapters with split-endpoint pushes (Mosyle posts asset_tag and
-     * notes to separate operations, Workspace ONE splits device fields
-     * from Custom Attributes) implement push() directly and don't call
-     * this. CustomHttp also implements push() directly because its
-     * dry-run log and dispatch depend on admin-configured HTTP method
-     * and endpoint that the template can't parameterize.
-     *
-     * Success and dry-run log lines use typeLabel() plus the flat
-     * $touched list (falling back to array_keys($payload) when the
-     * adapter builds a flat-keyed payload and doesn't populate
-     * $touched). Adapters wanting vendor-specific log wording override
-     * push() directly instead of using the template.
-     *
-     * @param  array<int, string>  $changedFields
-     */
-    protected function pushViaSinglePayload(Asset $asset, array $changedFields): bool
-    {
-        $externalSource = $this->pushPrologue($asset, $changedFields);
-        if ($externalSource === null) {
-            return false;
-        }
-
-        [$payload, $touched] = $this->buildPushPayload($asset);
-        $this->applyComposedNotesToPayload($asset, $payload, $touched);
-
-        if ($payload === []) {
-            return false;
-        }
-
-        $written = $touched !== [] ? $touched : array_keys($payload);
-
-        if ($this->isPushDryRun()) {
-            Log::channel('sync-adapters')->info(sprintf(
-                '%s push [dry-run]: would send %s to %s device %s',
-                $this->name(),
-                json_encode($payload, JSON_UNESCAPED_SLASHES),
-                static::typeLabel(),
-                $externalSource->external_id,
-            ));
-
-            return true;
-        }
-
-        $this->dispatchPush($externalSource, $payload);
-
-        Log::channel('sync-adapters')->info(sprintf(
-            '%s push: updated %s device %s [%s]',
-            $this->name(),
-            static::typeLabel(),
-            $externalSource->external_id,
-            implode(', ', $written),
-        ));
-
         return true;
-    }
-
-    /**
-     * Build the outgoing vendor payload for pushViaSinglePayload().
-     * Adapters that call pushViaSinglePayload() override this to
-     * return their payload and the flat list of dot-paths / keys that
-     * were written (for the post-push audit log). Empty payload signals
-     * "nothing to send" and the template short-circuits.
-     *
-     * @return array{0: array<string, mixed>, 1: array<int, string>}
-     */
-    protected function buildPushPayload(Asset $asset): array
-    {
-        throw new \LogicException(static::class.' calls pushViaSinglePayload() but does not override buildPushPayload().');
-    }
-
-    /**
-     * Fire the vendor HTTP call for pushViaSinglePayload(). Adapters
-     * that call pushViaSinglePayload() override this. Failures throw
-     * (the outer controller catches and renders a red-flash summary,
-     * matching the pull path). No return value: presence of the call
-     * is enough, the template logs success on its own.
-     *
-     * @param  array<string, mixed>  $payload
-     */
-    protected function dispatchPush(\App\Models\AssetExternalSource $externalSource, array $payload): void
-    {
-        throw new \LogicException(static::class.' calls pushViaSinglePayload() but does not override dispatchPush().');
-    }
-
-    /**
-     * Shared prologue for every PushableAdapter::push() implementation.
-     * Runs the three identical guards each adapter's push() started with
-     * and returns the AssetExternalSource row when the push should
-     * proceed, or null when any guard rejects it. Callers early-return
-     * on null.
-     *
-     * The three guards, in order:
-     *  1. pushDirectedFields is empty AND no composed-notes template is
-     *     configured (nothing to send, skip).
-     *  2. Caller-provided $changedFields is non-empty but doesn't
-     *     intersect pushDirectedFields (the caller told us which
-     *     fields changed and none of them are push-directed on this
-     *     instance, so skip the vendor call).
-     *  3. asset_external_sources row missing (the asset was never
-     *     synced from this instance, so we have no vendor device id
-     *     to write against).
-     *
-     * @param  array<int, string>  $changedFields
-     */
-    public function pushPrologue(Asset $asset, array $changedFields): ?\App\Models\AssetExternalSource
-    {
-        $pushFields = $this->pushDirectedFields();
-        $notesConfigured = $this->hasComposedNotesConfigured();
-
-        if ($pushFields === [] && ! $notesConfigured) {
-            return null;
-        }
-
-        if ($pushFields !== [] && $changedFields !== []
-            && array_intersect($changedFields, $pushFields) === []) {
-            return null;
-        }
-
-        return \App\Models\AssetExternalSource::query()
-            ->where('asset_id', $asset->id)
-            ->where('source', $this->name())
-            ->first();
-    }
-
-    /**
-     * Composed notes payload for a push, or null when nothing to
-     * push. Reads the admin's push_notes_template from config,
-     * resolves the target vendor field (admin override or
-     * PushableAdapter::notesFieldTarget() default), then substitutes
-     * every {placeholder} against the given asset.
-     *
-     * Placeholders are enumerated in NOTES_TEMPLATE_PLACEHOLDERS.
-     * `{custom.Field Name}` resolves any CustomField by exact
-     * display name. Unknown keys and null values render as empty,
-     * so a template referencing missing fields degrades gracefully
-     * instead of throwing.
-     *
-     * Adapter push() implementations call this and check for null:
-     * non-null returns give both the vendor field name (`target`)
-     * and the rendered string (`value`), so the caller can splice
-     * both into its payload in one hit.
-     *
-     * @return array{target: string, value: string}|null
-     */
-    public function composeNotesForPush(Asset $asset): ?array
-    {
-        $template = (string) SyncAdapterConfig::get($this->instance->id, 'push_notes_template');
-        if (trim($template) === '') {
-            return null;
-        }
-
-        $target = $this->resolveComposedNotesTarget();
-        if ($target === null) {
-            return null;
-        }
-
-        // Match anything between braces that isn't itself a brace.
-        // Permissive so custom-field names with spaces or punctuation
-        // ({custom.Cost Center}, {custom.Warranty (extended)}) match
-        // cleanly. The inner match block below decides validity.
-        $value = preg_replace_callback(
-            '/\{([^{}]+)\}/',
-            function (array $m) use ($asset): string {
-                $key = $m[1];
-
-                if (str_starts_with($key, 'custom.')) {
-                    $field = CustomField::query()->where('name', substr($key, 7))->first();
-                    if ($field === null || $field->db_column === null) {
-                        return '';
-                    }
-                    $stored = $asset->getAttribute($field->db_column);
-
-                    return $stored === null ? '' : (string) $stored;
-                }
-
-                return match ($key) {
-                    'asset_tag' => (string) ($asset->asset_tag ?? ''),
-                    'name' => (string) ($asset->name ?? ''),
-                    'serial' => (string) ($asset->serial ?? ''),
-                    'model' => (string) ($asset->model?->name ?? ''),
-                    'model_number' => (string) ($asset->model?->model_number ?? ''),
-                    'manufacturer' => (string) ($asset->model?->manufacturer?->name ?? ''),
-                    'category' => (string) ($asset->model?->category?->name ?? ''),
-                    'status' => (string) ($asset->status?->name ?? ''),
-                    'status_type' => (string) ($asset->status?->getStatuslabelType() ?? ''),
-                    'assigned_to' => (string) ($asset->assignedTo?->present()?->name() ?? ''),
-                    'assigned_to_email' => (string) ($asset->assignedTo?->email ?? ''),
-                    'assigned_to_username' => (string) ($asset->assignedTo?->username ?? ''),
-                    'location' => (string) ($asset->location?->name ?? ''),
-                    'company' => (string) ($asset->company?->name ?? ''),
-                    'supplier' => (string) ($asset->supplier?->name ?? ''),
-                    'last_checkout' => (string) ($asset->last_checkout ?? ''),
-                    'last_checkin' => (string) ($asset->last_checkin ?? ''),
-                    'expected_checkin' => (string) ($asset->expected_checkin ?? ''),
-                    'notes' => (string) ($asset->notes ?? ''),
-                    'order_number' => (string) ($asset->order_number ?? ''),
-                    'purchase_date' => (string) ($asset->purchase_date ?? ''),
-                    'purchase_cost' => (string) ($asset->purchase_cost ?? ''),
-                    'warranty_months' => (string) ($asset->warranty_months ?? ''),
-                    'warranty_expires' => (string) ($asset->warranty_expires ?? ''),
-                    default => '',
-                };
-            },
-            $template,
-        ) ?? '';
-
-        return ['target' => $target, 'value' => $value];
-    }
-
-    /**
-     * Splice the composed-notes payload (from composeNotesForPush)
-     * into an outgoing vendor payload. Returns true when composed
-     * notes were configured and spliced, false when there was
-     * nothing to send. Callers that track which fields they pushed
-     * (for post-push logging or event dispatch) pass their $touched
-     * array by reference. The target field name gets appended to
-     * it on success.
-     *
-     * Uses Arr::set so dotted target paths (Jamf's "general.notes"
-     * shape) branch into nested payload structures rather than
-     * writing a literal key with a dot in it.
-     *
-     * @param  array<mixed>  $payload
-     * @param  array<int, string>  $touched
-     */
-    public function applyComposedNotesToPayload(Asset $asset, array &$payload, array &$touched = []): bool
-    {
-        $composedNotes = $this->composeNotesForPush($asset);
-        if ($composedNotes === null) {
-            return false;
-        }
-
-        \Illuminate\Support\Arr::set($payload, $composedNotes['target'], $composedNotes['value']);
-        $touched[] = $composedNotes['target'];
-
-        return true;
-    }
-
-    /**
-     * Stored composed-notes template + target-override, exposed for
-     * the settings-page form so it can pre-fill the two inputs.
-     * Runtime callers use composeNotesForPush() instead, which
-     * resolves the effective target (falling back to
-     * PushableAdapter::notesFieldTarget()) and does the substitution
-     * in one hit.
-     *
-     * @return array{template: string, target_override: ?string}
-     */
-    public function storedPushNotesConfig(): array
-    {
-        $template = (string) SyncAdapterConfig::get($this->instance->id, 'push_notes_template');
-        $target = (string) SyncAdapterConfig::get($this->instance->id, 'push_notes_target');
-
-        return [
-            'template' => $template,
-            'target_override' => $target === '' ? null : $target,
-        ];
-    }
-
-    /**
-     * True when this instance has ANY push configuration in place
-     * (at least one field directed 'push' OR a composed-notes
-     * template + target). Used by the controller's Push Now handler
-     * to abort with a clear error before iterating asset rows when
-     * the admin hit the button on a fresh or incorrectly-configured
-     * adapter, instead of iterating N rows that each silent-no-op
-     * and reporting an inaccurate success.
-     */
-    public function hasPushConfiguration(): bool
-    {
-        return $this->pushDirectedFields() !== [] || $this->hasComposedNotesConfigured();
-    }
-
-    /**
-     * Cheap "should we bother trying to push composed notes?" check
-     * used by pushPrologue to gate the vendor call without paying
-     * the cost of rendering the template. True when the admin has a
-     * non-blank push_notes_template AND a resolvable target field.
-     */
-    private function hasComposedNotesConfigured(): bool
-    {
-        $template = (string) SyncAdapterConfig::get($this->instance->id, 'push_notes_template');
-
-        return trim($template) !== '' && $this->resolveComposedNotesTarget() !== null;
-    }
-
-    /**
-     * Vendor field name for the composed-notes push. Admin's
-     * override (push_notes_target config key) wins if set. Falls
-     * back to the adapter's suggested default via
-     * PushableAdapter::notesFieldTarget(). Null when neither is
-     * set (adapter has no notes concept AND admin didn't name a
-     * target field).
-     */
-    private function resolveComposedNotesTarget(): ?string
-    {
-        $stored = (string) SyncAdapterConfig::get($this->instance->id, 'push_notes_target');
-        if ($stored !== '') {
-            return $stored;
-        }
-
-        return $this instanceof PushableAdapter
-            ? $this->notesFieldTarget()
-            : null;
-    }
-
-    /**
-     * Whether the composed-notes push UI should appear on this
-     * adapter's settings page. Default is "yes if the adapter is
-     * pushable at all" so existing adapters stay unchanged. Adapters
-     * targeting APIs that have no notes-like field anywhere in their
-     * push payload (Mosyle Manager v2's push elements, for example)
-     * override this to false so admins don't fill in a template that
-     * can never land. notesFieldTarget() returning null doesn't carry
-     * this meaning (Workspace ONE / NinjaOne return null legitimately
-     * because the admin picks the target).
-     */
-    public function supportsComposedNotesPush(): bool
-    {
-        return $this instanceof PushableAdapter && $this->canPush();
     }
 
     /**
@@ -1672,6 +1383,332 @@ abstract class SyncAdapter
     public function checksInOnNullUser(): bool
     {
         return SyncAdapterConfig::get($this->instance->id, 'checkin_on_null_user') === '1';
+    }
+
+    /**
+     * Whether this instance auto-changes the status on linked assets
+     * that drop out of pull results.
+     */
+    public function archivesMissingLinks(): bool
+    {
+        return SyncAdapterConfig::get($this->instance->id, 'archive_missing_enabled') === '1';
+    }
+
+    /**
+     * Minimum consecutive successful non-empty pulls that must pass
+     * without seeing a record.
+     */
+    public function archiveMissingThreshold(): int
+    {
+        $stored = SyncAdapterConfig::get($this->instance->id, 'archive_missing_threshold');
+        $value = $stored === null ? 3 : (int) $stored;
+
+        return $value < 1 ? 1 : $value;
+    }
+
+    /**
+     * Status label id applied when the auto-archive action fires on
+     * an asset that is NOT currently checked out. Null means "not
+     * configured, feature is effectively off."
+     */
+    public function archiveMissingStatusId(): ?int
+    {
+        $stored = SyncAdapterConfig::get($this->instance->id, 'archive_missing_status_id');
+        if ($stored === null || $stored === '') {
+            return null;
+        }
+        $id = (int) $stored;
+
+        return $id > 0 ? $id : null;
+    }
+
+    /**
+     * Optional "flag for review" status label id applied when the
+     * auto-archive threshold is reached but the asset is still
+     * checked out to a user. The assigned_to stays intact so the
+     * admin sees `user=X, status=Pending Review` and can decide
+     * whether to contact the user, write off the device, or recover
+     * it. Null falls back to the "skip and warn" behavior.
+     */
+    public function archiveMissingReviewStatusId(): ?int
+    {
+        $stored = SyncAdapterConfig::get($this->instance->id, 'archive_missing_review_status_id');
+        if ($stored === null || $stored === '') {
+            return null;
+        }
+        $id = (int) $stored;
+
+        return $id > 0 ? $id : null;
+    }
+
+    /**
+     * Optional per-adapter confirmation hook. Fires per link when the
+     * missing-pull counter reaches the threshold. Subclasses override
+     * to re-verify absence against a per-record vendor endpoint (AxM
+     * does this via the single-device endpoint). Default trusts the
+     * pull-side signal and returns true unconditionally.
+     */
+    public function confirmRecordRemoved(string $externalId): bool
+    {
+        unset($externalId);
+
+        return true;
+    }
+
+    /**
+     * Per-record "vendor says this is gone" hook. Kandji / AxM override
+     * to flag records with is_missing / releasedFromOrgDateTime. Default
+     * returns false so adapters without a per-record missing flag keep
+     * today's behavior.
+     */
+    public function recordReportsRemoved(HostInventoryRecord $record): bool
+    {
+        unset($record);
+
+        return false;
+    }
+
+    /**
+     * Reconcile link rows against the set of external ids that this
+     * pull cycle returned. Called from PullInventory after a successful
+     * non-empty pull completes.
+     *
+     * For each link row attached to this instance:
+     *   - Seen this pull: reset counter + missing_archived_at.
+     *   - Not seen: increment counter. If counter >= threshold AND the
+     *     row hasn't already been archived in the current miss streak
+     *     AND the adapter's confirmRecordRemoved hook agrees, apply the
+     *     configured status label and stamp missing_archived_at.
+     *
+     * Returns a counts payload {reconciled, archived, flagged_for_review,
+     * skipped_confirm, skipped_checked_out} so the caller can surface
+     * it in the pull summary and the sync-adapters log.
+     *
+     * @param  array<int, string>  $seenExternalIds
+     * @return array{reconciled: int, archived: int, flagged_for_review: int, skipped_confirm: int, skipped_checked_out: int}
+     */
+    public function reconcileMissingLinks(array $seenExternalIds): array
+    {
+        $result = [
+            'reconciled' => 0,
+            'archived' => 0,
+            'flagged_for_review' => 0,
+            'skipped_confirm' => 0,
+            'skipped_checked_out' => 0,
+        ];
+
+        if (! $this->archivesMissingLinks()) {
+            return $result;
+        }
+
+        $statuses = $this->resolveArchiveStatuses();
+        if ($statuses === null) {
+            return $result;
+        }
+        [$status, $reviewStatus] = $statuses;
+
+        $threshold = $this->archiveMissingThreshold();
+        $seen = array_fill_keys(array_map('strval', $seenExternalIds), true);
+
+        AssetExternalSource::query()
+            ->where('source', $this->instance->slug)
+            ->chunkById(500, function ($links) use (&$result, $seen, $threshold, $status, $reviewStatus) {
+                foreach ($links as $link) {
+                    $this->reconcileLink($link, $seen, $threshold, $status, $reviewStatus, $result);
+                }
+            });
+
+        return $result;
+    }
+
+    /**
+     * Pre-resolve the target archive status label (and optional
+     * review-status for still-checked-out assets) so the per-row loop
+     * in reconcileMissingLinks doesn't eat DB lookups per link.
+     * Returns null when the main status is unresolvable (config not
+     * set or id points at a deleted row), which short-circuits the
+     * whole reconcile.
+     *
+     * @return array{0: Statuslabel, 1: ?Statuslabel}|null
+     */
+    private function resolveArchiveStatuses(): ?array
+    {
+        $statusId = $this->archiveMissingStatusId();
+        if ($statusId === null) {
+            return null;
+        }
+
+        $status = Statuslabel::find($statusId);
+        if ($status === null) {
+            Log::channel('sync-adapters')->warning(
+                $this->instance->slug.': auto-archive configured with status id '.$statusId.' which no longer exists, skipping reconcile',
+            );
+
+            return null;
+        }
+
+        $reviewStatus = null;
+        $reviewStatusId = $this->archiveMissingReviewStatusId();
+        if ($reviewStatusId !== null) {
+            $reviewStatus = Statuslabel::find($reviewStatusId);
+            if ($reviewStatus === null) {
+                Log::channel('sync-adapters')->warning(
+                    $this->instance->slug.': auto-archive review-status id '.$reviewStatusId.' no longer exists, checked-out assets will be skipped this run',
+                );
+            }
+        }
+
+        return [$status, $reviewStatus];
+    }
+
+    /**
+     * Per-row branch of reconcileMissingLinks. Split out of the chunk
+     * callback to keep that method's cyclomatic complexity sane.
+     *
+     * @param  array<string, true>  $seen
+     * @param  array{reconciled: int, archived: int, flagged_for_review: int, skipped_confirm: int, skipped_checked_out: int}  $result
+     */
+    private function reconcileLink(
+        AssetExternalSource $link,
+        array $seen,
+        int $threshold,
+        Statuslabel $status,
+        ?Statuslabel $reviewStatus,
+        array &$result,
+    ): void {
+        $result['reconciled']++;
+
+        if (isset($seen[(string) $link->external_id])) {
+            // Record returned this pull. Clear any in-flight missing
+            // streak so a future disappearance starts fresh.
+            if ($link->consecutive_missing_pulls !== 0 || $link->missing_archived_at !== null) {
+                $link->consecutive_missing_pulls = 0;
+                $link->missing_archived_at = null;
+                $link->save();
+            }
+
+            return;
+        }
+
+        $link->consecutive_missing_pulls = ((int) $link->consecutive_missing_pulls) + 1;
+
+        if ($link->missing_archived_at !== null) {
+            // Already archived earlier in this miss streak.
+            $link->save();
+
+            return;
+        }
+
+        if ($link->consecutive_missing_pulls < $threshold) {
+            $link->save();
+
+            return;
+        }
+
+        if (! $this->confirmRecordRemoved((string) $link->external_id)) {
+            $result['skipped_confirm']++;
+            $link->save();
+
+            return;
+        }
+
+        $asset = $link->asset;
+        if ($asset !== null && $asset->assigned_to !== null) {
+            $this->handleCheckedOutLink($link, $asset, $reviewStatus, $result);
+
+            return;
+        }
+
+        $this->applyArchiveStatus($link, $status);
+        $link->missing_archived_at = now();
+        $link->save();
+        $result['archived']++;
+    }
+
+    /**
+     * Still-checked-out branch of reconcileLink. assigned_to is
+     * polymorphic so this fires for user, asset, and location
+     * checkouts alike. With a configured review-status label, flip to
+     * that and keep the assignment intact so the admin sees
+     * target=X, status=Pending Review in reports. Without one, fall
+     * back to skip-and-warn and let the admin manually check in
+     * before the next pull archives.
+     *
+     * @param  array{reconciled: int, archived: int, flagged_for_review: int, skipped_confirm: int, skipped_checked_out: int}  $result
+     */
+    private function handleCheckedOutLink(
+        AssetExternalSource $link,
+        Asset $asset,
+        ?Statuslabel $reviewStatus,
+        array &$result,
+    ): void {
+        if ($reviewStatus !== null) {
+            $this->applyArchiveStatus($link, $reviewStatus);
+            $link->missing_archived_at = now();
+            $link->save();
+            $result['flagged_for_review']++;
+
+            return;
+        }
+
+        $result['skipped_checked_out']++;
+        $link->save();
+        Log::channel('sync-adapters')->warning(
+            $this->instance->slug.': auto-archive skipped for asset '.$asset->id
+            .' (external id '.$link->external_id.'): still checked out to '
+            .(string) $asset->assigned_type.' id '.(string) $asset->assigned_to
+            .'. Check it in manually, next pull will archive.',
+        );
+    }
+
+    /**
+     * Status-change + actionlog pair that fires once per link when the
+     * missing threshold is reached, the confirmation hook agrees, and
+     * the asset is not currently checked out. The checked-out safety
+     * gate lives in the caller (reconcileMissingLinks) because that's
+     * where we also update the counts payload for the pull summary.
+     *
+     * saveQuietly avoids AssetObserver::updating writing a redundant
+     * generic `update` row alongside the rich entry we emit here.
+     * Matches the pattern used by SyncsHostFromRecord for the same
+     * reason.
+     */
+    private function applyArchiveStatus(AssetExternalSource $link, Statuslabel $status): void
+    {
+        $asset = $link->asset;
+        if ($asset === null) {
+            Log::channel('sync-adapters')->warning(sprintf(
+                '%s: auto-archive wanted to touch asset_external_sources id %d, but the backing asset is gone',
+                $this->instance->slug,
+                $link->id,
+            ));
+
+            return;
+        }
+
+        $previousStatusId = $asset->status_id;
+        if ($previousStatusId !== $status->id) {
+            $asset->status_id = $status->id;
+            $asset->saveQuietly();
+        }
+
+        $log = new Actionlog;
+        $log->item_id = $asset->id;
+        $log->item_type = Asset::class;
+        $log->created_at = now();
+        $log->created_by = null;
+        $log->note = trans('admin/settings/sync_adapters.archive_missing_actionlog_note', [
+            'adapter' => $this->instance->label,
+            'count' => (int) $link->consecutive_missing_pulls,
+            'status' => $status->name,
+        ]);
+        $log->log_meta = json_encode([
+            'status_id' => [
+                'old' => $previousStatusId,
+                'new' => $status->id,
+            ],
+        ]);
+        $log->logaction('update');
     }
 
     /**

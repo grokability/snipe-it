@@ -10,11 +10,13 @@ namespace App\Presenters;
 class MaintenancesPresenter extends Presenter
 {
     /**
-     * Json Column Layout for bootstrap table
+     * Json Column Layout for bootstrap table. Pass fields to drop
+     * from the layout in $hide_fields.
      *
+     * @param  array<int, string>  $hide_fields
      * @return string
      */
-    public static function dataTableLayout()
+    public static function dataTableLayout(array $hide_fields = [])
     {
         $layout = [
             [
@@ -66,7 +68,7 @@ class MaintenancesPresenter extends Presenter
             ], [
                 'field' => 'asset_name',
                 'scope' => 'col',
-                'searchable' => true,
+                'searchable' => false,
                 'sortable' => true,
                 'title' => trans('admin/maintenances/table.asset_name'),
                 'formatter' => 'assetNameLinkFormatter',
@@ -80,7 +82,7 @@ class MaintenancesPresenter extends Presenter
             ], [
                 'field' => 'serial',
                 'scope' => 'col',
-                'searchable' => true,
+                'searchable' => false,
                 'sortable' => true,
                 'title' => trans('admin/hardware/table.serial'),
                 'formatter' => 'assetSerialLinkFormatter',
@@ -163,7 +165,7 @@ class MaintenancesPresenter extends Presenter
             ], [
                 'field' => 'completed_at',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/maintenances/form.completed_at'),
@@ -172,7 +174,7 @@ class MaintenancesPresenter extends Presenter
             ], [
                 'field' => 'completed_by',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => false,
                 'switchable' => true,
                 'title' => trans('admin/maintenances/form.completed_by'),
@@ -223,7 +225,7 @@ class MaintenancesPresenter extends Presenter
             ], [
                 'field' => 'created_by',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.created_by'),
                 'visible' => false,
@@ -259,6 +261,13 @@ class MaintenancesPresenter extends Presenter
             ],
         ];
 
+        if ($hide_fields !== []) {
+            $layout = array_values(array_filter(
+                $layout,
+                fn (array $col) => ! in_array($col['field'], $hide_fields, true),
+            ));
+        }
+
         return json_encode($layout);
     }
 
@@ -284,7 +293,7 @@ class MaintenancesPresenter extends Presenter
             [
                 'field' => 'asset_name',
                 'scope' => 'col',
-                'searchable' => true,
+                'searchable' => false,
                 'sortable' => true,
                 'title' => trans('admin/maintenances/table.asset_name'),
             ],
@@ -310,7 +319,7 @@ class MaintenancesPresenter extends Presenter
             [
                 'field' => 'serial',
                 'scope' => 'col',
-                'searchable' => true,
+                'searchable' => false,
                 'sortable' => true,
                 'title' => trans('admin/hardware/table.serial'),
             ], [

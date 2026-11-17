@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\CheckoutRequests\FulfillCheckoutRequestAction;
+use App\Enums\FileStorage;
 use App\Helpers\Helper;
 use App\Http\Requests\ImageUploadRequest;
 use App\Http\Requests\StoreAssetModelRequest;
@@ -10,6 +11,8 @@ use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\CheckoutRequest;
 use App\Models\CustomField;
+use App\Models\CustomFieldDefault;
+use App\Models\CustomFieldset;
 use App\Models\SnipeModel;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -19,8 +22,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\MessageBag;
 
 /**
  * This class controls all actions related to asset models for
@@ -32,8 +33,6 @@ use Illuminate\Support\MessageBag;
  */
 class AssetModelsController extends Controller
 {
-    protected MessageBag $validatorErrors;
-
     /**
      * Returns a view that invokes the ajax tables which actually contains
      * the content for the accessories listing, which is generated in getDatatable.
@@ -96,23 +95,27 @@ class AssetModelsController extends Controller
         }
 
         if ($request->has('use_cloned_image')) {
-            $cloned_model_img = AssetModel::select('image')->find($request->input('clone_image_from_id'));
-            if ($cloned_model_img) {
-                $new_image_name = 'clone-'.date('U').'-'.$cloned_model_img->image;
-                $new_image = 'models/'.$new_image_name;
-                Storage::disk('public')->copy('models/'.$cloned_model_img->image, $new_image);
+            // Authorize the source first
+            $cloned = AssetModel::findOrFail($request->input('clone_image_from_id'));
+            $this->authorize('clone', $cloned);
+
+            $source_image = $cloned->image;
+            if ($source_image) {
+                $new_image_name = 'clone-' . date('U') . '-' . $source_image;
+                Storage::disk('public')->copy(
+                    FileStorage::Models->publicPath() . $source_image,
+                    FileStorage::Models->publicPath() . $new_image_name,
+                );
                 $model->image = $new_image_name;
             }
 
         } else {
-            $model = $request->handleImages($model);
+            $request->handleImages($model);
         }
 
         if ($model->save()) {
             if ($this->shouldAddDefaultValues($request->input())) {
-                if (! $this->assignCustomFieldsDefaultValues($model, $request->input('default_values'))) {
-                    return redirect()->back()->withInput()->with('error', trans('admin/custom_fields/message.fieldset_default_value.error'));
-                }
+                CustomFieldDefault::saveFor($model, $model->custom_fieldset, $request->input('default_values'));
             }
 
             return redirect()->route('models.index')->with('success', trans('admin/models/message.create.success'));
@@ -152,7 +155,7 @@ class AssetModelsController extends Controller
     {
         $this->authorize('update', AssetModel::class);
 
-        $model = $request->handleImages($model);
+        $request->handleImages($model);
         $model->depreciation_id = $request->input('depreciation_id');
         $model->eol = $request->input('eol');
         $model->name = $request->input('name');
@@ -166,12 +169,10 @@ class AssetModelsController extends Controller
         $model->fieldset_id = $request->input('fieldset_id');
 
         if ($model->save()) {
-            $this->removeCustomFieldsDefaultValues($model);
-
             if ($this->shouldAddDefaultValues($request->input())) {
-                if (! $this->assignCustomFieldsDefaultValues($model, $request->input('default_values'))) {
-                    return redirect()->back()->withInput()->withErrors($this->validatorErrors);
-                }
+                CustomFieldDefault::saveFor($model, $model->custom_fieldset, $request->input('default_values'));
+            } else {
+                CustomFieldDefault::saveFor($model, null, []);
             }
 
             if ($model->wasChanged('eol')) {
@@ -242,7 +243,7 @@ class AssetModelsController extends Controller
 
             if ($model->restore()) {
                 // The `restore` action_log entry is written by
-                // AssetModelObserver::restoring, no manual write here.
+                // Loggable during restore, no manual write here.
 
                 // Redirect them to the deleted page if there are more, otherwise the section index
                 $deleted_models = AssetModel::onlyTrashed()->count();
@@ -272,7 +273,7 @@ class AssetModelsController extends Controller
     {
         $this->authorize('view', AssetModel::class);
 
-        return view('models/view', compact('model'));
+        return view('models/view', ['model' => $model, 'fieldset' => CustomFieldset::find($model->fieldset_id)]);
     }
 
     /**
@@ -312,7 +313,7 @@ class AssetModelsController extends Controller
      *
      * @param  int  $modelId
      */
-    public function getCustomFields($modelId): View
+    public function getCustomFields(int|string $modelId): View
     {
         // Endpoint fires from the asset create/edit form's model-select
         // change handler (hardware/edit.blade.php's fetchCustomFields
@@ -333,7 +334,12 @@ class AssetModelsController extends Controller
             abort(403);
         }
 
-        return view('models.custom_fields_form')->with('model', AssetModel::find($modelId));
+        $model = AssetModel::with('defaultValues')->find($modelId);
+
+        return view('models.custom_fields_form', [
+            'fieldset' => CustomFieldset::with('fields')->find($model?->fieldset_id),
+            'defaultValues' => CustomFieldDefault::valuesFor($model),
+        ]);
     }
 
     /**
@@ -469,65 +475,6 @@ class AssetModelsController extends Controller
         return ! empty($input['add_default_values'])
             && ! empty($input['default_values'])
             && ! empty($input['fieldset_id']);
-    }
-
-    /**
-     * Adds default values to a model (as long as they are truthy)
-     *
-     * @param  AssetModel  $model
-     */
-    private function assignCustomFieldsDefaultValues(AssetModel|SnipeModel $model, array $defaultValues): bool
-    {
-        $data = [];
-        foreach ($defaultValues as $customFieldId => $defaultValue) {
-            $customField = CustomField::find($customFieldId);
-
-            $data[$customField->db_column] = $defaultValue;
-        }
-
-        $allRules = $model->fieldset->validation_rules();
-        $rules = [];
-
-        foreach ($allRules as $field => $validation) {
-            // If the field is marked as required, eliminate the rule so it doesn't interfere with the default values
-            // (we are at model level, the rule still applies when creating a new asset using this model)
-            $index = array_search('required', $validation);
-            if ($index !== false) {
-                $validation[$index] = 'nullable';
-            }
-            $rules[$field] = $validation;
-        }
-
-        $attributes = [];
-        foreach ($model->fieldset->fields as $field) {
-            $attributes[$field->db_column] = trim(preg_replace('/_+|snipeit|\d+/', ' ', $field->db_column));
-        }
-
-        $validator = Validator::make($data, $rules)->setAttributeNames($attributes);
-
-        if ($validator->fails()) {
-            $this->validatorErrors = $validator->errors();
-
-            return false;
-        }
-
-        foreach ($defaultValues as $customFieldId => $defaultValue) {
-            if (is_array($defaultValue)) {
-                $model->defaultValues()->attach($customFieldId, ['default_value' => implode(', ', $defaultValue)]);
-            } elseif ($defaultValue) {
-                $model->defaultValues()->attach($customFieldId, ['default_value' => $defaultValue]);
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Removes all default values
-     */
-    private function removeCustomFieldsDefaultValues(AssetModel|SnipeModel $model): void
-    {
-        $model->defaultValues()->detach();
     }
 
     /**

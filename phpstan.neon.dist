@@ -8,6 +8,14 @@ parameters:
         - config
         - database
         - routes
+        # Larastan reads @property / @method / @mixin annotations from
+        # the ide-helper-generated model stub so magic Eloquent column
+        # access and scope dispatch resolve to concrete types instead
+        # of the base Model (which was most of the baseline). Keep this
+        # file regenerated via `php artisan ide-helper:models
+        # --write-mixin` after any migration that adds, removes, or
+        # retypes a column.
+        - _ide_helper_models.php
 
     # Level 4 catches dead code branches, always-false instanceof,
     # unreachable code after return, and most type-mismatch classes
@@ -51,3 +59,17 @@ parameters:
             message: '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder#'
             paths:
                 - app/Models/*.php
+        # ide-helper generates one empty IdeHelperXxx stub class per
+        # model with a long list of `@method static Builder<static>|Xxx
+        # whereYyy()` docblock tags. The stub classes don't extend
+        # Model, so PHPStan complains that the generic `static` in
+        # Builder<static> isn't a subtype of the Builder's TModel
+        # template bound (which requires Model). The method tags are
+        # there for IDE autocomplete via @mixin, not for PHPStan's own
+        # type system — the real resolution happens on the actual
+        # model class that carries the @mixin phpdoc. Suppressing the
+        # category for the stub file keeps the useful column /
+        # scope-method knowledge without the variance noise.
+        -
+            identifier: generics.notSubtype
+            path: _ide_helper_models.php

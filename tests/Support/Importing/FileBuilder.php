@@ -217,7 +217,7 @@ abstract class FileBuilder
                     }
                     $row = $newrow;
                 }
-                fputcsv($stream, $row);
+                fputcsv($stream, $row, escape: '\\');
             }
 
             return $filename;

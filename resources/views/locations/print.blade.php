@@ -94,7 +94,7 @@
     <tr>
     <td>{{ $counter }}</td>
     <td>{{ ($user) ? $user->companies->pluck('name')->implode(', ') : '' }}</td>
-    <td>{{ ($user)  ? $user->first_name .' '. $user->last_name : '' }}</td>
+    <td>{{ ($user) ? $user->full_name : '' }}</td>
     <td>{{ ($user)  ? $user->employee_num : '' }}</td>
     <td>{{ (($user) && ($user->department)) ? $user->department->name : '' }}</td>
     <td>{{ (($user) && ($user->location)) ? $user->location->name : '' }}</td>

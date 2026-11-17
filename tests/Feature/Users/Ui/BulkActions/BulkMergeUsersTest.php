@@ -154,4 +154,85 @@ class BulkMergeUsersTest extends TestCase
 
         $this->assertEquals($admin->id, $asset->fresh()->assigned_to);
     }
+
+
+    public function test_scoped_actor_merging_shared_user_does_not_inherit_foreign_company_memberships()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $companyA = Company::factory()->create();
+        $companyB = Company::factory()->create();
+
+        $actor = User::factory()->deleteUsers()->viewUsers()->forCompany($companyA)->create();
+        $shared = User::factory()->withoutCompany()->create();
+
+        DB::table('company_user')->insert([
+            ['company_id' => $companyA->id, 'user_id' => $shared->id, 'created_at' => now(), 'updated_at' => now()],
+            ['company_id' => $companyB->id, 'user_id' => $shared->id, 'created_at' => now(), 'updated_at' => now()],
+        ]);
+
+        $this->actingAs($actor)
+            ->post(route('users.merge.save'), [
+                'ids_to_merge' => [$shared->id],
+                'merge_into_id' => $actor->id,
+            ])
+            ->assertRedirect(route('users.index'))
+            ->assertSessionHas('success');
+
+        $this->assertSoftDeleted($shared);
+
+        $actorCompanyIds = DB::table('company_user')
+            ->where('user_id', $actor->id)
+            ->pluck('company_id')
+            ->map(fn($id) => (int) $id)
+            ->sort()
+            ->values()
+            ->all();
+
+        $this->assertSame(
+            [$companyA->id],
+            $actorCompanyIds,
+            'Scoped actor must not inherit the foreign-company membership from a shared merged user (GHSA-83xp-vf89-f9gc).',
+        );
+    }
+
+    public function test_superuser_merging_shared_user_still_carries_every_pivot_membership()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $companyA = Company::factory()->create();
+        $companyB = Company::factory()->create();
+
+        $superuser = User::factory()->superuser()->withoutCompany()->create();
+        $target = User::factory()->withoutCompany()->create();
+        $source = User::factory()->withoutCompany()->create();
+
+        DB::table('company_user')->insert([
+            ['company_id' => $companyA->id, 'user_id' => $source->id, 'created_at' => now(), 'updated_at' => now()],
+            ['company_id' => $companyB->id, 'user_id' => $source->id, 'created_at' => now(), 'updated_at' => now()],
+        ]);
+
+        $this->actingAs($superuser)
+            ->post(route('users.merge.save'), [
+                'ids_to_merge' => [$source->id],
+                'merge_into_id' => $target->id,
+            ])
+            ->assertRedirect(route('users.index'))
+            ->assertSessionHas('success');
+
+        $targetCompanyIds = DB::table('company_user')
+            ->where('user_id', $target->id)
+            ->pluck('company_id')
+            ->map(fn($id) => (int) $id)
+            ->sort()
+            ->values()
+            ->all();
+
+        $expected = collect([$companyA->id, $companyB->id])->sort()->values()->all();
+        $this->assertSame(
+            $expected,
+            $targetCompanyIds,
+            'Superuser merge must carry every pivot row. The scope filter added for GHSA-83xp-vf89-f9gc is a no-op for superusers.',
+        );
+    }
 }

@@ -45,6 +45,9 @@ class AssetModelsController extends Controller
                 'image',
                 'name',
                 'model_number',
+                'mfg_marketing_name',
+                'mfg_release_date',
+                'mfg_discontinued_date',
                 'min_amt',
                 'eol',
                 'notes',
@@ -73,6 +76,9 @@ class AssetModelsController extends Controller
             'models.image',
             'models.name',
             'models.model_number',
+            'models.mfg_marketing_name',
+            'models.mfg_release_date',
+            'models.mfg_discontinued_date',
             'models.min_amt',
             'models.eol',
             'models.created_by',
@@ -87,7 +93,7 @@ class AssetModelsController extends Controller
             'models.updated_at',
             'models.require_serial',
         ])
-            ->with('category', 'depreciation', 'manufacturer', 'fieldset.fields.defaultValues', 'adminuser')
+            ->with('category', 'depreciation', 'manufacturer', 'adminuser')
             ->withCount('assets as assets_count')
             ->withCount('availableAssets as remaining')
             ->withCount('assignedAssets as assets_assigned_count')
@@ -200,7 +206,7 @@ class AssetModelsController extends Controller
      *
      * @param  int  $id
      */
-    public function show($id): array
+    public function show(int|string $id): array
     {
         $this->authorize('view', AssetModel::class);
         $assetmodel = AssetModel::withCount('assets as assets_count')->findOrFail($id);
@@ -235,7 +241,7 @@ class AssetModelsController extends Controller
                 'model.category',
                 'model.manufacturer',
                 'model.depreciation',
-                'model.fieldset',
+                'custom_fieldset',
                 'location',
                 'defaultLoc',
                 'status',
@@ -265,7 +271,7 @@ class AssetModelsController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update(StoreAssetModelRequest $request, $id): JsonResponse
+    public function update(StoreAssetModelRequest $request, int|string $id): JsonResponse
     {
         $this->authorize('update', AssetModel::class);
         $assetmodel = AssetModel::findOrFail($id);
@@ -335,7 +341,7 @@ class AssetModelsController extends Controller
                 return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.not_deleted', ['item_type' => trans('general.asset_model')])), 200);
             }
 
-            // The `restore` action_log entry is written by AssetModelObserver::restoring
+            // The `restore` action_log entry is written by Loggable during restore
             if ($assetmodel->restore()) {
                 return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/models/message.restore.success')), 200);
             }
@@ -422,12 +428,18 @@ class AssetModelsController extends Controller
      */
     public function requestable(Request $request): array
     {
+        $this->authorize('viewRequestable', AssetModel::class);
+
         $query = AssetModel::with('category', 'manufacturer', 'requests')
             ->withCount('availableAssets as remaining')
             ->Requestable();
 
         if ($request->filled('search')) {
-            $query->TextSearch($request->input('search'));
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('models.name', 'LIKE', '%'.$search.'%')
+                    ->orWhere('models.model_number', 'LIKE', '%'.$search.'%');
+            });
         }
 
         $total = $query->count();
@@ -439,6 +451,6 @@ class AssetModelsController extends Controller
 
         $rows = $query->orderBy($sort, $order)->skip($offset)->take($limit)->get();
 
-        return (new AssetModelsTransformer)->transformAssetModels($rows, $total);
+        return (new AssetModelsTransformer)->transformRequestedModels($rows, $total);
     }
 }

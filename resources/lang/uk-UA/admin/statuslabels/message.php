@@ -20,8 +20,8 @@ return [
         'confirm' => 'Ви впевнені, що хочете видалити цю мітку?',
         'error' => 'Виникла проблема при видаленні мітки статусу. Будь ласка, спробуйте ще раз.',
         'success' => 'Мітку статусу успішно видалено.',
-        'bulk_success' => 'Status Label deleted successfully.|:count status labels were deleted successfully.',
-        'partial_success' => 'Status Label deleted successfully. See additional information below. | :count status labels were deleted successfully. See additional information below.',
+        'bulk_success' => 'Мітку статусу успішно видалено.|Успішно видалено міток статусу:count.',
+        'partial_success' => 'Мітку статусу успішно видалено. Додаткову інформацію наведено нижче.|Успішно видалено :count міток статусу. Додаткову інформацію наведено нижче.',
     ],
 
     'help' => [

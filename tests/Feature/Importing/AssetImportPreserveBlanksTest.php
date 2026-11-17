@@ -10,8 +10,8 @@ use App\Models\Import;
 use App\Models\Location;
 use App\Models\Statuslabel;
 use App\Models\User;
-use Illuminate\Http\UploadedFile;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Support\Importing\CleansUpImportFiles;
 use Tests\TestCase;
 
 /**
@@ -23,6 +23,8 @@ use Tests\TestCase;
  */
 class AssetImportPreserveBlanksTest extends TestCase
 {
+    use CleansUpImportFiles;
+
     #[Test]
     public function default_update_clears_db_value_when_csv_cell_is_blank()
     {
@@ -136,7 +138,7 @@ class AssetImportPreserveBlanksTest extends TestCase
     {
         $this->actingAsForApi($actor)
             ->postJson(route('api.imports.store'), [
-                'files' => [$this->fakeUploadedFile('test.csv', $csv)],
+                'files' => [$this->tempUploadedFile('test.csv', $csv)],
             ])
             ->assertSuccessful();
 
@@ -145,13 +147,5 @@ class AssetImportPreserveBlanksTest extends TestCase
         $this->actingAsForApi($actor)
             ->postJson(route('api.imports.importFile', $import->id), $processPayload)
             ->assertSuccessful();
-    }
-
-    private function fakeUploadedFile(string $filename, string $content): UploadedFile
-    {
-        $path = tempnam(sys_get_temp_dir(), 'csv');
-        file_put_contents($path, $content);
-
-        return new UploadedFile($path, $filename, 'text/csv', null, true);
     }
 }

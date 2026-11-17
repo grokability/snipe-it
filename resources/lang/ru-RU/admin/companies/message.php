@@ -3,7 +3,7 @@
 return [
     'does_not_exist' => 'Компания не существует.',
     'deleted' => 'Удалённая компания',
-    'assoc_users' => 'Эта компания связана с одной или несколькими моделями и не может быть удалена. Измените модели, чтобы они не ссылались на эту компанию, и попробуйте снова. ',
+    'assoc_users' => 'This company is currently associated with at least one other item (location, user, license, asset, etc.) in Snipe-IT and cannot be deleted. Please update your models to no longer reference this company and try again. ',
     'create' => [
         'error' => 'Компания не была создана, попробуйте снова.',
         'success' => 'Компания создана.',
@@ -19,4 +19,5 @@ return [
         'bulk_success' => 'Компания успешно удалена.|:count компаний были успешно удалены.',
         'partial_success' => 'Компания успешно удалена. Смотрите дополнительную информацию ниже. | :count компаний были удалены. Смотрите дополнительную информацию ниже.',
     ],
+    'webhook_fields_require_superuser' => 'Webhook configuration fields (:fields) can only be modified by a superuser.',
 ];

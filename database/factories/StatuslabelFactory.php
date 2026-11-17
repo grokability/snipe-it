@@ -11,7 +11,7 @@ class StatuslabelFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var string
+     * @var class-string<Statuslabel>
      */
     protected $model = Statuslabel::class;
 

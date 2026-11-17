@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => '資産はチェックインされませんでした。もう一度、やり直して下さい。',
         'success' => '資産は正常にチェックインされました。',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'その利用者は不正です。もう一度、やり直して下さい。',
         'already_checked_in' => 'その資産はすでにチェックインしています。',
         'force_checkin_orphaned_success' => '不正な割り当てを解除しました。',

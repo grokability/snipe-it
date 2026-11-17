@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Gerar etiquetas de artigos com incremento automático',
     'auto_increment_prefix' => 'Prefixo (opcional)',
     'auto_incrementing_help' => 'Permitir o incremento automático de etiquetas de artigos antes de configurar isto',
-    'backups' => 'Cópias de segurança',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Criar, baixar e restaurar cópias de segurança ',
     'backups_restoring' => 'Restaurar da cópia de segurança',
     'backups_clean' => 'Clean the backed-up database before restore',

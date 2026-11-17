@@ -194,19 +194,10 @@ class AssetPresenter extends Presenter
             //                'formatter' => 'dateDisplayFormatter',
             //            ],
             [
-                'field' => 'last_checkout',
+                'field' => 'age',
                 'scope' => 'col',
                 'searchable' => true,
                 'sortable' => true,
-                'visible' => false,
-                'title' => trans('general.last_checkout'),
-                'formatter' => 'dateDisplayFormatter',
-            ],
-            [
-                'field' => 'age',
-                'scope' => 'col',
-                'searchable' => false,
-                'sortable' => false,
                 'visible' => false,
                 'title' => trans('general.age'),
             ], [
@@ -259,7 +250,7 @@ class AssetPresenter extends Presenter
             ], [
                 'field' => 'warranty_expires',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => false,
                 'visible' => false,
                 'title' => trans('admin/hardware/form.warranty_expires'),
@@ -267,7 +258,7 @@ class AssetPresenter extends Presenter
             ], [
                 'field' => 'requestable',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('admin/hardware/general.requestable'),
@@ -306,9 +297,53 @@ class AssetPresenter extends Presenter
                 'title' => trans('general.user_requests_count'),
 
             ], [
-                'field' => 'created_by',
+                'field' => 'licenses_count',
                 'scope' => 'col',
                 'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'class' => 'css-license',
+                'visible' => false,
+                'title' => trans('general.licenses_count'),
+                'titleTooltip' => trans('general.licenses_count'),
+
+            ], [
+                'field' => 'components_count',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'class' => 'css-component',
+                'visible' => false,
+                'title' => trans('general.components_count'),
+                'titleTooltip' => trans('general.components_count'),
+
+            ], [
+                'field' => 'maintenances_count',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'class' => 'css-maintenances',
+                'visible' => false,
+                'title' => trans('general.maintenances_count'),
+                'titleTooltip' => trans('general.maintenances_count'),
+
+            ], [
+                'field' => 'assigned_assets_count',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'class' => 'css-barcode',
+                'visible' => false,
+                'title' => trans('general.assigned_assets_count'),
+                'titleTooltip' => trans('general.assigned_assets_count'),
+
+            ], [
+                'field' => 'created_by',
+                'scope' => 'col',
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.created_by'),
                 'visible' => false,
@@ -352,7 +387,7 @@ class AssetPresenter extends Presenter
             [
                 'field' => 'last_checkout',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('admin/hardware/table.checkout_date'),
@@ -360,7 +395,7 @@ class AssetPresenter extends Presenter
             ], [
                 'field' => 'last_checkin',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('admin/hardware/table.last_checkin_date'),
@@ -376,7 +411,7 @@ class AssetPresenter extends Presenter
             ], [
                 'field' => 'last_audit_date',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('general.last_audit'),
@@ -384,7 +419,7 @@ class AssetPresenter extends Presenter
             ], [
                 'field' => 'next_audit_date',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('general.next_audit_date'),
@@ -392,7 +427,7 @@ class AssetPresenter extends Presenter
             ], [
                 'field' => 'byod',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'visible' => false,
                 'title' => trans('general.byod'),
@@ -409,19 +444,27 @@ class AssetPresenter extends Presenter
         // models. We only pass the fieldsets that pertain to each asset (via their model) so that we
         // don't junk up the REST API with tons of custom fields that don't apply
 
-        $fields = CustomField::whereHas('fieldset', function ($query) {
-            $query->whereHas('models');
-        })->get();
+        $fields = CustomField::assignedToInUseFieldsets()->get();
 
         foreach ($fields as $field) {
             $layout[] = [
                 'field' => $field->db_column,
                 'scope' => 'col',
-                'searchable' => true,
-                'sortable' => true,
+                // Encrypted values would sort by ciphertext and only ever
+                // substring-match the ciphertext. Drop both so the header
+                // doesn't suggest an ordering / search the data can't
+                // deliver.
+                'searchable' => ($field->field_encrypted == '1') ? false : true,
+                'sortable' => ($field->field_encrypted == '1') ? false : true,
                 'switchable' => true,
                 'title' => e($field->name),
                 'formatter' => 'customFieldsFormatter',
+                // Use tableExport attributes on the TD so dot-containing
+                // text values (e.g. "79.99" in a text field) stop being
+                // misread as EU-locale thousands numbers on export. See
+                // issue #19595 and the customFieldsCellStyle definition
+                // in bootstrap-table.
+                'cellStyle' => 'customFieldsCellStyle',
                 'escape' => true,
                 'class' => ($field->field_encrypted == '1') ? 'css-padlock' : '',
                 'visible' => ($field->show_in_listview == '1') ? true : false,
@@ -963,9 +1006,7 @@ class AssetPresenter extends Presenter
         // asset layout uses (see dataTableLayout above) so the JS
         // side doesn't ask for row properties that never travel over
         // the REST API.
-        $fields = CustomField::whereHas('fieldset', function ($query) {
-            $query->whereHas('models');
-        })->where('field_encrypted', 0)
+        $fields = CustomField::assignedToInUseFieldsets()->where('field_encrypted', 0)
             ->where('show_in_requestable_list', 1)
             ->get();
 

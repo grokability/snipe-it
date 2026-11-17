@@ -30,7 +30,7 @@
 @section('content')
     <x-container>
         <x-box name="users" sr_only_title>
-            <x-table.users :route="route('api.users.index',
+            <x-table.users name="users" :route="route('api.users.index',
                 [
                     'status' => is_scalar(request('status')) ? request('status') : null,
                     'deleted'=> (request('status')=='deleted') ? 'true' : 'false',
@@ -39,6 +39,8 @@
                     'admins' => is_scalar(request('admins')) ? request('admins') : null,
                     'superadmins' => is_scalar(request('superadmins')) ? request('superadmins') : null,
                     'activated' => is_scalar(request('activated')) ? request('activated') : null,
+                    'end_date_within' => is_scalar(request('end_date_within')) ? (int) request('end_date_within') : null,
+                    'with_assignments' => request()->boolean('with_assignments') ? 1 : null,
                ])"/>
         </x-box>
         <x-shiftclick/>
@@ -50,5 +52,10 @@
 @section('moar_scripts')
 
     @include ('partials.bootstrap-table')
+
+    <x-table.advanced-search
+        tableId="usersListingTable"
+        :model="\App\Models\User::class"
+    />
 
 @stop

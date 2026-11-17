@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'select_type' => 'Select Maintenance Type',
+    'select_type' => 'اختر نوع الصيانة',
     'asset_maintenance_type' => 'نوعر صيانة الأصل',
     'title' => 'المسمى',
     'start_date' => 'تاريخ البداية',

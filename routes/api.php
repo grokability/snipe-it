@@ -67,6 +67,12 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
     Route::get('requests', [Api\CheckoutRequest::class, 'index'])
         ->name('api.requests.index');
 
+    Route::get('unaccepted-acceptances', [Api\UnacceptedAcceptancesController::class, 'index'])
+        ->name('api.unaccepted-acceptances.index');
+
+    Route::post('unaccepted-acceptances/send-reminders', [Api\UnacceptedAcceptancesController::class, 'sendReminders'])
+        ->name('api.unaccepted-acceptances.send-reminders');
+
     /**
      * Account routes
      */
@@ -210,6 +216,26 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
             ]
         )->name('api.accessories.selectlist');
 
+        Route::post('{id}/restore',
+            [Api\AccessoriesController::class, 'restore']
+        )->where('id', '[0-9]+')->name('api.accessories.restore');
+
+        Route::post('{accessory}/unarchive',
+            [Api\AccessoriesController::class, 'unarchive']
+        )->where('accessory', '[0-9]+')->name('api.accessories.unarchive');
+
+        Route::post('bulkedit',
+            [Api\AccessoriesController::class, 'bulkEdit']
+        )->name('api.accessories.bulkedit');
+
+        Route::post('bulkdelete',
+            [Api\AccessoriesController::class, 'bulkDestroy']
+        )->name('api.accessories.bulkdelete');
+
+        Route::post('bulkrestore',
+            [Api\AccessoriesController::class, 'bulkRestore']
+        )->name('api.accessories.bulkrestore');
+
     }); // end accessories group
 
     Route::resource('accessories',
@@ -329,6 +355,26 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
             ]
         )->name('api.components.assets');
 
+        Route::post('{id}/restore',
+            [Api\ComponentsController::class, 'restore']
+        )->where('id', '[0-9]+')->name('api.components.restore');
+
+        Route::post('{component}/unarchive',
+            [Api\ComponentsController::class, 'unarchive']
+        )->where('component', '[0-9]+')->name('api.components.unarchive');
+
+        Route::post('bulkedit',
+            [Api\ComponentsController::class, 'bulkEdit']
+        )->name('api.components.bulkedit');
+
+        Route::post('bulkdelete',
+            [Api\ComponentsController::class, 'bulkDestroy']
+        )->name('api.components.bulkdelete');
+
+        Route::post('bulkrestore',
+            [Api\ComponentsController::class, 'bulkRestore']
+        )->name('api.components.bulkrestore');
+
     });
     Route::post('components/{id}/checkin',
         [
@@ -404,6 +450,35 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
                 'adjustQuantity',
             ]
         )->name('api.consumables.adjust-quantity');
+
+        Route::post('{id}/restore',
+            [Api\ConsumablesController::class, 'restore']
+        )->where('id', '[0-9]+')->name('api.consumables.restore');
+
+        Route::post('{consumable}/unarchive',
+            [Api\ConsumablesController::class, 'unarchive']
+        )->where('consumable', '[0-9]+')->name('api.consumables.unarchive');
+
+        Route::post('{consumable}/consume/{assignment}',
+            [Api\ConsumablesController::class, 'consume']
+        )->where(['consumable' => '[0-9]+', 'assignment' => '[0-9]+'])
+            ->name('api.consumables.consume');
+
+        Route::post('bulkconsume',
+            [Api\ConsumablesController::class, 'bulkConsume']
+        )->name('api.consumables.bulkconsume');
+
+        Route::post('bulkedit',
+            [Api\ConsumablesController::class, 'bulkEdit']
+        )->name('api.consumables.bulkedit');
+
+        Route::post('bulkdelete',
+            [Api\ConsumablesController::class, 'bulkDestroy']
+        )->name('api.consumables.bulkdelete');
+
+        Route::post('bulkrestore',
+            [Api\ConsumablesController::class, 'bulkRestore']
+        )->name('api.consumables.bulkrestore');
 
     });
 
@@ -781,6 +856,13 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
     /**
      * Maintenance types API routes
      */
+    Route::get('maintenance-types/selectlist',
+        [
+            Api\MaintenanceTypesController::class,
+            'selectlist',
+        ]
+    )->name('api.maintenance-types.selectlist');
+
     Route::resource('maintenance-types',
         Api\MaintenanceTypesController::class,
         ['names' => [
@@ -1134,6 +1216,27 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
             'parameters' => ['setting' => 'setting_id'],
         ]
     ); // end settings API
+
+    /**
+     * Saved searches API routes. Private-only CRUD for v1. Each
+     * authenticated user manages their own named filter-presets per
+     * listing table.
+     */
+    Route::get('saved-searches',
+        [Api\SavedSearchesController::class, 'index']
+    )->name('api.saved-searches.index');
+
+    Route::post('saved-searches',
+        [Api\SavedSearchesController::class, 'store']
+    )->name('api.saved-searches.store');
+
+    Route::put('saved-searches/{savedSearch}',
+        [Api\SavedSearchesController::class, 'update']
+    )->name('api.saved-searches.update');
+
+    Route::delete('saved-searches/{savedSearch}',
+        [Api\SavedSearchesController::class, 'destroy']
+    )->name('api.saved-searches.destroy');
 
     /**
      * Status labels API routes

@@ -138,7 +138,7 @@ class ImporterEncodingTest extends TestCase
         // overwhelming common case) the reader has to be built via
         // Reader::createFromPath so League CSV streams from disk instead
         // of holding the entire file in memory.
-        $tmp = tempnam(sys_get_temp_dir(), 'snipeit_encoding_');
+        $tmp = $this->trackTempFile(tempnam(sys_get_temp_dir(), 'snipeit_encoding_'));
         file_put_contents($tmp, "name,note\ntest,greeting\n");
 
         try {
@@ -172,7 +172,7 @@ class ImporterEncodingTest extends TestCase
         // memory is proportional to filesize but the tradeoff is
         // unavoidable for encoding conversion.
         $gbkBody = str_repeat("\xC4\xE3\xBA\xC3", 8);
-        $tmp = tempnam(sys_get_temp_dir(), 'snipeit_encoding_');
+        $tmp = $this->trackTempFile(tempnam(sys_get_temp_dir(), 'snipeit_encoding_'));
         file_put_contents($tmp, "name,note\n{$gbkBody},{$gbkBody}\n");
 
         try {
@@ -211,8 +211,6 @@ class ImporterEncodingTest extends TestCase
 
         $method = (new ReflectionClass($importer))
             ->getMethod('convertToUtf8IfNeeded');
-        $method->setAccessible(true);
-
         // Empty string is not "not UTF-8" (mb_check_encoding returns true
         // for empty), so it short-circuits to unchanged, verifying the
         // helper never invents content that wasn't there.

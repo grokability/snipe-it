@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\StatusLabelType;
 use App\Http\Traits\UniqueUndeletedTrait;
+use App\Models\Builders\StatuslabelQueryBuilder;
 use App\Models\Traits\Searchable;
 use App\Presenters\Presentable;
 use App\Presenters\StatusLabelPresenter;
@@ -11,11 +13,13 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Watson\Validating\ValidatingTrait;
 
+/**
+ * @mixin IdeHelperStatuslabel
+ */
 class Statuslabel extends SnipeModel
 {
     use HasFactory;
@@ -56,7 +60,7 @@ class Statuslabel extends SnipeModel
     protected function color(): Attribute
     {
         return Attribute::make(
-            get: fn(?string $value) => CssColor::sanitize($value, ''),
+            get: fn (?string $value) => CssColor::sanitize($value, ''),
         );
     }
 
@@ -119,6 +123,99 @@ class Statuslabel extends SnipeModel
      */
     protected $searchableRelations = [];
 
+    /**
+     * Advanced-search filterable fields.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'type',
+                'type' => 'enum',
+                'options' => [
+                    ['value' => 'deployable', 'label' => trans('admin/statuslabels/table.deployable')],
+                    ['value' => 'pending', 'label' => trans('admin/statuslabels/table.pending')],
+                    ['value' => 'undeployable', 'label' => trans('admin/statuslabels/table.undeployable')],
+                    ['value' => 'archived', 'label' => trans('admin/statuslabels/table.archived')],
+                ],
+                'label' => trans('admin/statuslabels/table.status_type'),
+            ],
+            [
+                'field' => 'show_in_nav',
+                'type' => 'boolean',
+                'label' => trans('admin/statuslabels/table.show_in_nav'),
+            ],
+            [
+                'field' => 'default_label',
+                'type' => 'boolean',
+                'label' => trans('admin/statuslabels/table.default_label'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
+
+    /**
+     * Override hook from Searchable. The `type` filter is a four-way
+     * enum (deployable / pending / undeployable / archived) that
+     * decomposes into a WHERE on the stored (deployable, pending,
+     * archived) tuple. Multi-select is supported by OR-combining the
+     * per-value triples inside a single scope so a sibling AND
+     * continues to compose cleanly.
+     */
+    protected function applyCustomFilter(\Illuminate\Database\Eloquent\Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?\Illuminate\Database\Eloquent\Builder
+    {
+        if ($filterKey !== 'type') {
+            return null;
+        }
+
+        $tokens = array_values(array_filter(array_map('trim', explode(',', $filterValue)), 'strlen'));
+        if ($tokens === []) {
+            return null;
+        }
+
+        $tuples = [
+            'deployable' => [1, 0, 0],
+            'pending' => [0, 1, 0],
+            'undeployable' => [0, 0, 0],
+            'archived' => [0, 0, 1],
+        ];
+        $matched = array_values(array_intersect_key($tuples, array_flip($tokens)));
+        if ($matched === []) {
+            return null;
+        }
+
+        $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+        $query->{$outerBoolean}(function ($nested) use ($matched) {
+            foreach ($matched as $triple) {
+                $nested->orWhere(function ($row) use ($triple) {
+                    $row->where('deployable', $triple[0])
+                        ->where('pending', $triple[1])
+                        ->where('archived', $triple[2]);
+                });
+            }
+        });
+
+        return $query;
+    }
+
     public function isDeletable()
     {
         return Gate::allows('delete', $this)
@@ -146,109 +243,40 @@ class Statuslabel extends SnipeModel
     }
 
     /**
-     * Gets the status label type
-     *
-     * @author A. Gianotto <snipe@snipe.net>
-     *
-     * @since  [v1.0]
+     * Gets the status label type as its canonical string value.
+     * Delegates to the StatusLabelType enum to keep the semantic
+     * mapping in one place. Returns string for back-compat with
+     * callers that concatenate / compare against string literals.
      *
      * @return string
      */
     public function getStatuslabelType()
     {
-        if (($this->pending == '1') && ($this->archived == '0') && ($this->deployable == '0')) {
-            return 'pending';
-        } elseif (($this->pending == '0') && ($this->archived == '1') && ($this->deployable == '0')) {
-            return 'archived';
-        } elseif (($this->pending == '0') && ($this->archived == '0') && ($this->deployable == '0')) {
-            return 'undeployable';
-        }
-
-        return 'deployable';
+        return StatusLabelType::fromModel($this)->value;
     }
 
     /**
-     * Query builder scope to for pending status types
+     * Accepts a semantic type (enum or string) and returns the three
+     * deployable/pending/archived boolean columns the DB stores.
+     * String overload stays for back-compat with existing callers
+     * that read `$request->input('statuslabel_types')` unchanged.
      *
-     * @return Builder Modified query builder
-     */
-    public function scopePending()
-    {
-        return $this->where('pending', '=', 1)
-            ->where('archived', '=', 0)
-            ->where('deployable', '=', 0);
-    }
-
-    /**
-     * Query builder scope for archived status types
-     *
-     * @return Builder Modified query builder
-     */
-    public function scopeArchived()
-    {
-        return $this->where('pending', '=', 0)
-            ->where('archived', '=', 1)
-            ->where('deployable', '=', 0);
-    }
-
-    /**
-     * Query builder scope for deployable status types
-     *
-     * @return Builder Modified query builder
-     */
-    public function scopeDeployable()
-    {
-        return $this->where('pending', '=', 0)
-            ->where('archived', '=', 0)
-            ->where('deployable', '=', 1);
-    }
-
-    /**
-     * Query builder scope for undeployable status types
-     *
-     * @return Builder Modified query builder
-     */
-    public function scopeUndeployable()
-    {
-        return $this->where('pending', '=', 0)
-            ->where('archived', '=', 0)
-            ->where('deployable', '=', 0);
-    }
-
-    /**
-     * Helper function to determine type attributes
-     *
-     * @author A. Gianotto <snipe@snipe.net>
-     *
-     * @since  [v1.0]
-     *
-     * @return string
+     * @param  StatusLabelType|string  $type
+     * @return array{deployable: int, pending: int, archived: int}
      */
     public static function getStatuslabelTypesForDB($type)
     {
-        $statustype['pending'] = 0;
-        $statustype['deployable'] = 0;
-        $statustype['archived'] = 0;
+        $enum = $type instanceof StatusLabelType
+            ? $type
+            : StatusLabelType::tryFrom((string) $type);
 
-        if ($type == 'pending') {
-            $statustype['pending'] = 1;
-            $statustype['deployable'] = 0;
-            $statustype['archived'] = 0;
-        } elseif ($type == 'deployable') {
-            $statustype['pending'] = 0;
-            $statustype['deployable'] = 1;
-            $statustype['archived'] = 0;
-        } elseif ($type == 'archived') {
-            $statustype['pending'] = 0;
-            $statustype['deployable'] = 0;
-            $statustype['archived'] = 1;
-        }
-
-        return $statustype;
+        // Unknown strings land here as "none of the above" so existing
+        // callers see the same all-zeros row they did before the enum.
+        return $enum?->toDbColumns() ?? ['deployable' => 0, 'pending' => 0, 'archived' => 0];
     }
 
-    public function scopeOrderByCreatedBy($query, $order)
+    public function newEloquentBuilder($query): StatuslabelQueryBuilder
     {
-        return $query->leftJoin('users as admin_sort', 'status_labels.created_by', '=', 'admin_sort.id')->select('status_labels.*')->orderBy('admin_sort.first_name', $order)->orderBy('admin_sort.last_name', $order);
+        return new StatuslabelQueryBuilder($query);
     }
 }

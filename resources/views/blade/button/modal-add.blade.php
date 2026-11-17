@@ -2,10 +2,18 @@
     'type' => null,
     'target',
     'routeArgs' => null,
+    'queryParams' => [],
 ])
 
+@php
+    $modalHref = route('modal.show', $routeArgs ?? $type);
+    if (! empty($queryParams)) {
+        $modalHref .= (str_contains($modalHref, '?') ? '&' : '?').http_build_query($queryParams);
+    }
+@endphp
+
 <a
-    href="{{ route('modal.show', $routeArgs ?? $type) }}"
+    href="{{ $modalHref }}"
     data-toggle="modal"
     data-target="#createModal"
     data-select="{{ $target }}"

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\CustomFieldsets\Api;
 
+use App\Models\AssetModel;
 use App\Models\CustomField;
 use App\Models\CustomFieldset;
 use App\Models\User;
@@ -63,5 +64,20 @@ class DeleteCustomFieldsetsTest extends TestCase implements TestsPermissionsRequ
             ->assertStatusMessageIs('success');
 
         $this->assertDatabaseMissing('custom_fieldsets', ['id' => $customFieldset->id]);
+    }
+
+    public function test_cannot_delete_custom_fieldset_with_soft_deleted_model(): void
+    {
+        $fieldset = CustomFieldset::factory()->create();
+        $model = AssetModel::factory()->create(['fieldset_id' => $fieldset->id]);
+        $model->delete();
+
+        $this->assertSoftDeleted($model);
+
+        $this->actingAsForApi(User::factory()->deleteCustomFieldsets()->create())
+            ->deleteJson(route('api.fieldsets.destroy', $fieldset))
+            ->assertStatusMessageIs('error');
+
+        $this->assertDatabaseHas('custom_fieldsets', ['id' => $fieldset->id]);
     }
 }

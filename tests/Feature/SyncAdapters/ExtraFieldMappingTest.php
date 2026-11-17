@@ -108,9 +108,11 @@ class ExtraFieldMappingTest extends TestCase
         ]);
     }
 
-    public function test_extra_field_options_include_native_and_custom_targets_for_text_type()
+    public function test_text_extra_field_options_include_text_natives_but_not_date_or_boolean_targets()
     {
         CustomField::factory()->create(['element' => 'text', 'name' => 'Team Assignment']);
+        CustomField::factory()->create(['element' => 'date_picker', 'name' => 'Warranty Expires']);
+        CustomField::factory()->create(['element' => 'checkbox', 'name' => 'Flagged']);
 
         $options = MappingTargets::optionsForExtra('text');
 
@@ -119,38 +121,85 @@ class ExtraFieldMappingTest extends TestCase
         // available list, not as a committed row with target='skip'.
         $this->assertArrayNotHasKey('skip', $options);
 
-        // Text-type extras can route to native asset_tag / model /
-        // notes so admins whose vendor stores per-device metadata in
-        // labels / blueprints / teams / marketing names can land it
-        // in a native column instead of forcing a custom field.
-        // Everything else must be custom:{id}.
+        // Text-type extras route to text-shaped native asset columns
+        // only. Date and boolean targets are excluded (#19953): an
+        // ABM Product Family (text) must not be mappable to EOL Date.
+        $this->assertArrayHasKey('native:asset_tag', $options);
+        $this->assertArrayHasKey('native:model', $options);
+        $this->assertArrayHasKey('native:model_number', $options);
+        $this->assertArrayHasKey('native:notes', $options);
+        $this->assertArrayHasKey('native:order_number', $options);
+        $this->assertArrayNotHasKey('native:purchase_date', $options);
+        $this->assertArrayNotHasKey('native:eol_date', $options);
+        $this->assertArrayNotHasKey('native:byod', $options);
+
+        // Date and checkbox custom fields must not appear in the text
+        // pool either.
+        foreach ($options as $target => $label) {
+            if (str_starts_with($target, 'custom:')) {
+                $this->assertStringNotContainsString('Warranty Expires', $label);
+                $this->assertStringNotContainsString('Flagged', $label);
+            }
+        }
+    }
+
+    public function test_date_extra_field_options_include_date_natives_text_natives_and_both_text_and_date_custom_fields()
+    {
+        // Date extras route to date-shaped targets AND fall through
+        // to text ones so admins can keep landing an ISO date string
+        // in notes or a text custom field for display reasons. Only
+        // non-date extras are blocked from date targets.
+        CustomField::factory()->create(['element' => 'text', 'name' => 'Team Assignment']);
+        CustomField::factory()->create(['element' => 'date_picker', 'name' => 'Warranty Expires']);
+        CustomField::factory()->create(['element' => 'datetime_picker', 'name' => 'Last Audit']);
+        CustomField::factory()->create(['element' => 'checkbox', 'name' => 'Flagged']);
+
+        $options = MappingTargets::optionsForExtra('date');
+
+        $this->assertArrayHasKey('native:purchase_date', $options);
+        $this->assertArrayHasKey('native:eol_date', $options);
         $this->assertArrayHasKey('native:asset_tag', $options);
         $this->assertArrayHasKey('native:model', $options);
         $this->assertArrayHasKey('native:notes', $options);
-        $this->assertArrayHasKey('native:purchase_date', $options);
-        $this->assertArrayHasKey('native:order_number', $options);
-        $nativeTargets = ['native:asset_tag', 'native:model', 'native:notes', 'native:purchase_date', 'native:order_number'];
-        foreach (array_keys($options) as $target) {
-            if (in_array($target, $nativeTargets, true)) {
-                continue;
+
+        $customLabels = [];
+        foreach ($options as $target => $label) {
+            if (str_starts_with($target, 'custom:')) {
+                $customLabels[] = $label;
             }
-            $this->assertStringStartsWith('custom:', $target);
+        }
+        $this->assertStringContainsString('Team Assignment', implode(' ', $customLabels));
+        $this->assertStringContainsString('Warranty Expires', implode(' ', $customLabels));
+        $this->assertStringContainsString('Last Audit', implode(' ', $customLabels));
+        foreach ($customLabels as $label) {
+            $this->assertStringNotContainsString('Flagged', $label);
         }
     }
 
     public function test_boolean_extra_field_options_stay_custom_only()
     {
         CustomField::factory()->create(['element' => 'checkbox', 'name' => 'Flagged']);
+        CustomField::factory()->create(['element' => 'text', 'name' => 'Team Assignment']);
+        CustomField::factory()->create(['element' => 'date_picker', 'name' => 'Warranty Expires']);
 
         $options = MappingTargets::optionsForExtra('boolean');
 
-        // Boolean-typed extras stay custom-fields-only because no
-        // native asset column carries a boolean semantic. Also no
+        // Boolean-typed extras route to byod only on the native side,
+        // and checkbox custom fields only on the custom side. Also no
         // 'skip' entry: unmap via ×, not via a stored 'skip' target.
         $this->assertArrayNotHasKey('skip', $options);
+        $this->assertArrayHasKey('native:byod', $options);
         $this->assertArrayNotHasKey('native:asset_tag', $options);
         $this->assertArrayNotHasKey('native:model', $options);
         $this->assertArrayNotHasKey('native:notes', $options);
+        $this->assertArrayNotHasKey('native:purchase_date', $options);
+        $this->assertArrayNotHasKey('native:eol_date', $options);
+
+        foreach ($options as $target => $label) {
+            if (str_starts_with($target, 'custom:')) {
+                $this->assertSame('Target: Flagged', $label);
+            }
+        }
     }
 
     public function test_extra_can_route_to_native_purchase_date()
@@ -243,6 +292,137 @@ class ExtraFieldMappingTest extends TestCase
             'name' => 'host-4',
             'order_number' => 'PO-12345',
         ]);
+    }
+
+    public function test_extra_can_route_to_native_eol_date()
+    {
+        // Repro of issue #19953: AppleCare End Date (text-shaped extra
+        // from the ABM adapter, delivered as YYYY-MM-DD after Carbon
+        // normalization) now lands in Snipe-IT's asset_eol_date column
+        // with eol_explicit set so the eolDate accessor returns the
+        // vendor-sourced value.
+        $fleet = $this->configuredFleetInstance();
+        SyncAdapterConfig::put($fleet->id, 'mapping.fleet_team', 'native:eol_date');
+
+        $record = new \App\SyncAdapters\HostInventoryRecord(
+            sourceKey: 'fleet',
+            sourceId: 'eol-1',
+            hostname: 'host-eol',
+            hardwareSerial: 'SN-EOL',
+            hardwareModel: 'MacBook Pro',
+            extra: ['fleet_team' => '2027-09-30'],
+        );
+
+        SyncAdapter::syncFromRecord($record);
+
+        $this->assertDatabaseHas('assets', [
+            'name' => 'host-eol',
+            'asset_eol_date' => '2027-09-30',
+            'eol_explicit' => 1,
+        ]);
+    }
+
+    public function test_eol_date_accepts_iso_8601_datetime()
+    {
+        // ABM's AppleCare endDateTime arrives as ISO 8601 with a time
+        // component. Mirrors the purchase_date normalization: we strip
+        // to YYYY-MM-DD after an app-timezone rotation.
+        $fleet = $this->configuredFleetInstance();
+        SyncAdapterConfig::put($fleet->id, 'mapping.fleet_team', 'native:eol_date');
+
+        $record = new \App\SyncAdapters\HostInventoryRecord(
+            sourceKey: 'fleet',
+            sourceId: 'eol-2',
+            hostname: 'host-eol-iso',
+            hardwareSerial: 'SN-EOL-ISO',
+            hardwareModel: 'MacBook Pro',
+            extra: ['fleet_team' => '2027-09-30T00:00:00Z'],
+        );
+
+        SyncAdapter::syncFromRecord($record);
+
+        $this->assertDatabaseHas('assets', [
+            'name' => 'host-eol-iso',
+            'asset_eol_date' => '2027-09-30',
+        ]);
+    }
+
+    public function test_unparseable_eol_date_is_skipped_not_crashed()
+    {
+        $fleet = $this->configuredFleetInstance();
+        SyncAdapterConfig::put($fleet->id, 'mapping.fleet_team', 'native:eol_date');
+
+        $record = new \App\SyncAdapters\HostInventoryRecord(
+            sourceKey: 'fleet',
+            sourceId: 'eol-bad',
+            hostname: 'host-eol-bad',
+            hardwareSerial: 'SN-EOL-BAD',
+            hardwareModel: 'MacBook Pro',
+            extra: ['fleet_team' => 'not-a-date'],
+        );
+
+        SyncAdapter::syncFromRecord($record);
+
+        $this->assertDatabaseHas('assets', ['name' => 'host-eol-bad']);
+        $this->assertDatabaseMissing('assets', ['name' => 'host-eol-bad', 'asset_eol_date' => 'not-a-date']);
+    }
+
+    public function test_extra_can_route_to_native_model_number()
+    {
+        // Repro of issue #19953: ABM Part Number lands on the resolved
+        // AssetModel row's model_number column. The normalized `model`
+        // field writes first (resolveModelIdByName creates or matches
+        // the AssetModel), then the extras pass updates its
+        // model_number.
+        $fleet = $this->configuredFleetInstance();
+        SyncAdapterConfig::put($fleet->id, 'mapping.fleet_team', 'native:model_number');
+
+        $record = new \App\SyncAdapters\HostInventoryRecord(
+            sourceKey: 'fleet',
+            sourceId: 'mn-1',
+            hostname: 'host-mn',
+            hardwareSerial: 'SN-MN',
+            hardwareModel: 'MacBook Pro',
+            extra: ['fleet_team' => 'MXTM3LL/A'],
+        );
+
+        SyncAdapter::syncFromRecord($record);
+
+        $this->assertDatabaseHas('models', [
+            'name' => 'MacBook Pro',
+            'model_number' => 'MXTM3LL/A',
+        ]);
+    }
+
+    public function test_model_number_write_reuses_existing_asset_model_when_value_matches()
+    {
+        // Second sync of the same device must not touch the AssetModel
+        // row when the model_number already matches. Skipping the save
+        // keeps every sync pass idempotent against the Watson
+        // name+model_number uniqueness rule, which otherwise fires
+        // against the row itself.
+        $fleet = $this->configuredFleetInstance();
+        SyncAdapterConfig::put($fleet->id, 'mapping.fleet_team', 'native:model_number');
+
+        $record = new \App\SyncAdapters\HostInventoryRecord(
+            sourceKey: 'fleet',
+            sourceId: 'mn-idempotent',
+            hostname: 'host-mn-idem',
+            hardwareSerial: 'SN-MN-IDEM',
+            hardwareModel: 'MacBook Air',
+            extra: ['fleet_team' => 'MLY33LL/A'],
+        );
+
+        SyncAdapter::syncFromRecord($record);
+        SyncAdapter::syncFromRecord($record);
+
+        $this->assertSame(
+            1,
+            \App\Models\AssetModel::where('name', 'MacBook Air')
+                ->where('model_number', 'MLY33LL/A')
+                ->count(),
+            'Second sync pass must not create a duplicate AssetModel row.',
+        );
     }
 
     public function test_asset_tag_native_target_overwrites_the_asset_tag_column()

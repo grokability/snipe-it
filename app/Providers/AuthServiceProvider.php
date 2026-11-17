@@ -21,6 +21,7 @@ use App\Models\Maintenance;
 use App\Models\MaintenanceType;
 use App\Models\Manufacturer;
 use App\Models\PredefinedKit;
+use App\Models\SavedSearch;
 use App\Models\Statuslabel;
 use App\Models\Supplier;
 use App\Models\User;
@@ -42,6 +43,7 @@ use App\Policies\MaintenancePolicy;
 use App\Policies\MaintenanceTypePolicy;
 use App\Policies\ManufacturerPolicy;
 use App\Policies\PredefinedKitPolicy;
+use App\Policies\SavedSearchPolicy;
 use App\Policies\StatuslabelPolicy;
 use App\Policies\SupplierPolicy;
 use App\Policies\UserPolicy;
@@ -61,7 +63,7 @@ class AuthServiceProvider extends ServiceProvider
      *
      * See SnipePermissionsPolicy for additional information.
      *
-     * @var array
+     * @var array<class-string, class-string>
      */
     protected $policies = [
         Accessory::class => AccessoryPolicy::class,
@@ -80,6 +82,7 @@ class AuthServiceProvider extends ServiceProvider
         Maintenance::class => MaintenancePolicy::class,
         MaintenanceType::class => MaintenanceTypePolicy::class,
         PredefinedKit::class => PredefinedKitPolicy::class,
+        SavedSearch::class => SavedSearchPolicy::class,
         Statuslabel::class => StatuslabelPolicy::class,
         Supplier::class => SupplierPolicy::class,
         User::class => UserPolicy::class,
@@ -109,6 +112,12 @@ class AuthServiceProvider extends ServiceProvider
         Passport::personalAccessTokensExpireIn(CarbonInterval::years($expirationYears));
 
         Passport::cookie(config('passport.cookie_name'));
+
+        // Register the MCP scopes so Passport recognizes them during
+        // token issuance (OAuth consent and PATs). Tool-level
+        // enforcement lives in the SnipeMcpTool trait, which calls
+        // $user->tokenCan('mcp:read') (etc.) per request.
+        Passport::tokensCan(\App\Enums\McpScope::forPassport());
 
         // Federated identity: a provider-agnostic OIDC bearer guard, layered
         // alongside Passport via the `auth:oidc,api` multi-guard. Inert until

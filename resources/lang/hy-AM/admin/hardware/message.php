@@ -172,6 +172,7 @@ return [
     'checkin' => [
         'error' => 'Ակտիվը չի վերադարձվել, խնդրում ենք կրկին փորձել։',
         'success' => 'Ակտիվը հաջողությամբ վերադարձվել է։',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Այդ օգտատերն անվավեր է։ Խնդրում ենք կրկին փորձել։',
         'already_checked_in' => 'Այդ ակտիվն արդեն վերադարձվել է։',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

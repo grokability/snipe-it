@@ -12,8 +12,8 @@ use App\Models\User;
 use Tests\TestCase;
 
 /**
- * ComponentObserver::created writes an initial Order + OrderItem for
- * every new component. The paired `create` action_log entry links back
+ * HasOrders writes an initial Order + OrderItem for a stocked component.
+ * Loggable writes the paired `create` action_log entry, linked back
  * to that OrderItem via order_item_id.
  */
 class ComponentObserverOrderTest extends TestCase

@@ -15,7 +15,7 @@ class ActionlogFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var string
+     * @var class-string<Actionlog>
      */
     protected $model = Actionlog::class;
 

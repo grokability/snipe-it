@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => 'crwdns1219:0crwdne1219:0',
     'clone' => 'crwdns11443:0crwdne11443:0',
     'delete_disabled' => 'crwdns11597:0crwdne11597:0',
+    'accessory_deleted_warning' => 'crwdns17793:0crwdne17793:0',
 
 ];

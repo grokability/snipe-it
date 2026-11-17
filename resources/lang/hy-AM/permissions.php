@@ -257,7 +257,7 @@ return [
     ],
     'usersview' => [
         'name' => 'Դիտել օգտատերերին',
-        'note' => 'Note that users with this permission will also be able to see (not modify or delete) files uploaded to the user as well. Users with this permission will also be able to view edit and checkin history.',
+        'note' => 'Users with this permission will also be able to view edit and checkin history. Access to files uploaded to a user is gated separately by the Manage User Files permission.',
     ],
     'userscreate' => [
         'name' => 'Ստեղծել նոր օգտատերեր',

@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 /**
@@ -81,6 +82,19 @@ class ProfileController extends Controller
         }
 
         if (Gate::allows('self.edit_location') && (! config('app.lock_passwords'))) {
+            /*
+             * Check that the location they're trying to update is one they have access to.
+             */
+            Validator::make(
+                [
+                    'location_id' => $request->input('location_id'),
+                    'company_ids' => $user->companies()->pluck('companies.id')->toArray(),
+                ],
+                [
+                    'location_id' => 'nullable|integer|exists:locations,id|fmcs_location',
+                ],
+            )->validate();
+
             $user->location_id = $request->input('location_id');
         }
 

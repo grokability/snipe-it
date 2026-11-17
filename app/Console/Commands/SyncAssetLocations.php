@@ -40,101 +40,130 @@ class SyncAssetLocations extends Command
      */
     public function handle()
     {
-        $output['info'] = [];
-        $output['warn'] = [];
-        $output['error'] = [];
+        $outputLevel = $this->option('output');
 
-        $total_assets = Asset::whereNull('deleted_at')->get();
-        $bar = $this->output->createProgressBar(count($total_assets));
+        $total_assets = Asset::whereNull('deleted_at')->count();
+        $bar = $this->output->createProgressBar($total_assets);
 
         // Unassigned
-        $rtd_assets = Asset::whereNull('assigned_to')->whereNull('deleted_at')->with('defaultLoc')->get();
-        $output['info'][] = 'There are '.$rtd_assets->count().' unassigned assets.';
+        $rtd_count = Asset::whereNull('assigned_to')->whereNull('deleted_at')->count();
+        $this->writeInfo($outputLevel, 'There are '.$rtd_count.' unassigned assets.');
 
-        foreach ($rtd_assets as $rtd_asset) {
-            $output['info'][] = 'Setting Unassigned Asset '.$rtd_asset->id.' ('.$rtd_asset->asset_tag.') to  location: '.$rtd_asset->rtd_location_id.' because their default location is: '.$rtd_asset->rtd_location_id;
-            $rtd_asset->location_id = $rtd_asset->rtd_location_id;
-            $rtd_asset->unsetEventDispatcher();
-            $rtd_asset->save();
-            $bar->advance();
-        }
+        Asset::whereNull('assigned_to')
+            ->whereNull('deleted_at')
+            ->with('defaultLoc')
+            ->chunkById(500, function ($chunk) use ($bar, $outputLevel) {
+                foreach ($chunk as $rtd_asset) {
+                    $this->writeInfo($outputLevel, 'Setting Unassigned Asset '.$rtd_asset->id.' ('.$rtd_asset->asset_tag.') to  location: '.$rtd_asset->rtd_location_id.' because their default location is: '.$rtd_asset->rtd_location_id);
+                    $rtd_asset->location_id = $rtd_asset->rtd_location_id;
+                    $rtd_asset->unsetEventDispatcher();
+                    $rtd_asset->save();
+                    $bar->advance();
+                }
+            });
 
-        $assigned_user_assets = Asset::where('assigned_type', User::class)->whereNotNull('assigned_to')->whereNull('deleted_at')->get();
-        $output['info'][] = 'There are '.$assigned_user_assets->count().' assets checked out to users.';
-        foreach ($assigned_user_assets as $assigned_user_asset) {
-            if (($assigned_user_asset->assignedTo) && ($assigned_user_asset->assignedTo->userLoc)) {
-                $new_location = $assigned_user_asset->assignedTo->userLoc->id;
-                $output['info'][] = 'Setting User Asset '.$assigned_user_asset->id.' ('.$assigned_user_asset->asset_tag.') to  '.$assigned_user_asset->assignedTo->userLoc->name.' which is id: '.$new_location;
-            } else {
-                $output['warn'][] = 'Asset '.$assigned_user_asset->id.' ('.$assigned_user_asset->asset_tag.') still has no location! ';
-                $new_location = $assigned_user_asset->rtd_location_id;
-            }
-            $assigned_user_asset->location_id = $new_location;
-            $assigned_user_asset->unsetEventDispatcher();
-            $assigned_user_asset->save();
-            $bar->advance();
-        }
+        $user_asset_count = Asset::where('assigned_type', User::class)
+            ->whereNotNull('assigned_to')
+            ->whereNull('deleted_at')
+            ->count();
+        $this->writeInfo($outputLevel, 'There are '.$user_asset_count.' assets checked out to users.');
 
-        $assigned_location_assets = Asset::where('assigned_type', Location::class)
-            ->whereNotNull('assigned_to')->whereNull('deleted_at')->get();
-        $output['info'][] = 'There are '.$assigned_location_assets->count().' assets checked out to locations.';
+        Asset::where('assigned_type', User::class)
+            ->whereNotNull('assigned_to')
+            ->whereNull('deleted_at')
+            ->with('assignedTo.userLoc')
+            ->chunkById(500, function ($chunk) use ($bar, $outputLevel) {
+                foreach ($chunk as $assigned_user_asset) {
+                    if (($assigned_user_asset->assignedTo) && ($assigned_user_asset->assignedTo->userLoc)) {
+                        $new_location = $assigned_user_asset->assignedTo->userLoc->id;
+                        $this->writeInfo($outputLevel, 'Setting User Asset '.$assigned_user_asset->id.' ('.$assigned_user_asset->asset_tag.') to  '.$assigned_user_asset->assignedTo->userLoc->name.' which is id: '.$new_location);
+                    } else {
+                        $this->writeWarn($outputLevel, 'Asset '.$assigned_user_asset->id.' ('.$assigned_user_asset->asset_tag.') still has no location! ');
+                        $new_location = $assigned_user_asset->rtd_location_id;
+                    }
+                    $assigned_user_asset->location_id = $new_location;
+                    $assigned_user_asset->unsetEventDispatcher();
+                    $assigned_user_asset->save();
+                    $bar->advance();
+                }
+            });
 
-        foreach ($assigned_location_assets as $assigned_location_asset) {
-            if ($assigned_location_asset->assignedTo) {
-                $assigned_location_asset->location_id = $assigned_location_asset->assignedTo->id;
-                $output['info'][] = 'Setting Location Assigned  asset '.$assigned_location_asset->id.' ('.$assigned_location_asset->asset_tag.') that is checked out to '.$assigned_location_asset->assignedTo->name.' (#'.$assigned_location_asset->assignedTo->id.') to location: '.$assigned_location_asset->assetLoc()->id;
-                $assigned_location_asset->unsetEventDispatcher();
-                $assigned_location_asset->save();
-            } else {
-                $output['warn'][] = 'Asset '.$assigned_location_asset->id.' ('.$assigned_location_asset->asset_tag.') did not return a valid associated location - perhaps it was deleted?';
-            }
-            $bar->advance();
-        }
+        $location_asset_count = Asset::where('assigned_type', Location::class)
+            ->whereNotNull('assigned_to')
+            ->whereNull('deleted_at')
+            ->count();
+        $this->writeInfo($outputLevel, 'There are '.$location_asset_count.' assets checked out to locations.');
 
-        // Assigned to assets
-        $assigned_asset_assets = Asset::where('assigned_type', Asset::class)
-            ->whereNotNull('assigned_to')->whereNull('deleted_at')->get();
-        $output['info'][] = 'Asset-assigned assets: '.$assigned_asset_assets->count();
+        Asset::where('assigned_type', Location::class)
+            ->whereNotNull('assigned_to')
+            ->whereNull('deleted_at')
+            ->with('assignedTo')
+            ->chunkById(500, function ($chunk) use ($bar, $outputLevel) {
+                foreach ($chunk as $assigned_location_asset) {
+                    if ($assigned_location_asset->assignedTo) {
+                        $assigned_location_asset->location_id = $assigned_location_asset->assignedTo->id;
+                        $this->writeInfo($outputLevel, 'Setting Location Assigned  asset '.$assigned_location_asset->id.' ('.$assigned_location_asset->asset_tag.') that is checked out to '.$assigned_location_asset->assignedTo->name.' (#'.$assigned_location_asset->assignedTo->id.') to location: '.$assigned_location_asset->assetLoc()->id);
+                        $assigned_location_asset->unsetEventDispatcher();
+                        $assigned_location_asset->save();
+                    } else {
+                        $this->writeWarn($outputLevel, 'Asset '.$assigned_location_asset->id.' ('.$assigned_location_asset->asset_tag.') did not return a valid associated location - perhaps it was deleted?');
+                    }
+                    $bar->advance();
+                }
+            });
 
-        foreach ($assigned_asset_assets as $assigned_asset_asset) {
+        $asset_asset_count = Asset::where('assigned_type', Asset::class)
+            ->whereNotNull('assigned_to')
+            ->whereNull('deleted_at')
+            ->count();
+        $this->writeInfo($outputLevel, 'Asset-assigned assets: '.$asset_asset_count);
 
-            // Check to make sure there aren't any invalid relationships
-            if ($assigned_asset_asset->assetLoc()) {
-                $assigned_asset_asset->location_id = $assigned_asset_asset->assetLoc()->id;
-                $output['info'][] = 'Setting Asset Assigned asset '.$assigned_asset_asset->assetLoc()->id.' ('.$assigned_asset_asset->asset_tag.') location to: '.$assigned_asset_asset->assetLoc()->id;
-                $assigned_asset_asset->unsetEventDispatcher();
-                $assigned_asset_asset->save();
-            } else {
-                $output['warn'][] = 'Asset Assigned asset '.$assigned_asset_asset->id.' ('.$assigned_asset_asset->asset_tag.') does not seem to have a valid location';
-            }
+        Asset::where('assigned_type', Asset::class)
+            ->whereNotNull('assigned_to')
+            ->whereNull('deleted_at')
+            ->with('assignedTo')
+            ->chunkById(500, function ($chunk) use ($bar, $outputLevel) {
+                foreach ($chunk as $assigned_asset_asset) {
+                    // Check to make sure there aren't any invalid relationships
+                    if ($assigned_asset_asset->assetLoc()) {
+                        $assigned_asset_asset->location_id = $assigned_asset_asset->assetLoc()->id;
+                        $this->writeInfo($outputLevel, 'Setting Asset Assigned asset '.$assigned_asset_asset->assetLoc()->id.' ('.$assigned_asset_asset->asset_tag.') location to: '.$assigned_asset_asset->assetLoc()->id);
+                        $assigned_asset_asset->unsetEventDispatcher();
+                        $assigned_asset_asset->save();
+                    } else {
+                        $this->writeWarn($outputLevel, 'Asset Assigned asset '.$assigned_asset_asset->id.' ('.$assigned_asset_asset->asset_tag.') does not seem to have a valid location');
+                    }
+                    $bar->advance();
+                }
+            });
 
-            $bar->advance();
-        }
+        $unlocated_count = Asset::whereNull('location_id')->whereNull('deleted_at')->count();
+        $this->writeInfo($outputLevel, 'Assets still without a location: '.$unlocated_count);
 
-        $unlocated_assets = Asset::whereNull('location_id')->whereNull('deleted_at')->get();
-        $output['info'][] = 'Assets still without a location: '.$unlocated_assets->count();
-        foreach ($unlocated_assets as $unlocated_asset) {
-            $output['warn'][] = 'Asset: '.$unlocated_asset->id.' still has no location. ';
-            $bar->advance();
-        }
+        Asset::whereNull('location_id')
+            ->whereNull('deleted_at')
+            ->chunkById(500, function ($chunk) use ($bar, $outputLevel) {
+                foreach ($chunk as $unlocated_asset) {
+                    $this->writeWarn($outputLevel, 'Asset: '.$unlocated_asset->id.' still has no location. ');
+                    $bar->advance();
+                }
+            });
 
         $bar->finish();
         $this->info("\n");
+    }
 
-        if (($this->option('output') == 'all') || ($this->option('output') == 'info')) {
-            foreach ($output['info'] as $key => $output_text) {
-                $this->info($output_text);
-            }
+    private function writeInfo(?string $outputLevel, string $message): void
+    {
+        if ($outputLevel === 'all' || $outputLevel === 'info') {
+            $this->info($message);
         }
-        if (($this->option('output') == 'all') || ($this->option('output') == 'warn')) {
-            foreach ($output['warn'] as $key => $output_text) {
-                $this->warn($output_text);
-            }
-        }
-        if (($this->option('output') == 'all') || ($this->option('output') == 'error')) {
-            foreach ($output['error'] as $key => $output_text) {
-                $this->error($output_text);
-            }
+    }
+
+    private function writeWarn(?string $outputLevel, string $message): void
+    {
+        if ($outputLevel === 'all' || $outputLevel === 'warn') {
+            $this->warn($message);
         }
     }
 }

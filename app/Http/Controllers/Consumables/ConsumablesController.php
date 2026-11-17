@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Consumables;
 
+use App\Enums\FileStorage;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdjustQuantityRequest;
@@ -61,7 +62,8 @@ class ConsumablesController extends Controller
         $this->authorize('create', Consumable::class);
 
         return view('consumables.edit')->with('category_type', 'consumable')
-            ->with('item', new Consumable);
+            ->with('item', new Consumable)
+            ->with('pendingRequestCount', 0);
     }
 
     /**
@@ -98,16 +100,23 @@ class ConsumablesController extends Controller
         // absence to false so the flag really flips off. The setter
         // normalizes the truthy branch.
         $consumable->requestable = $request->input('requestable', false);
+        $consumable->archived = $request->input('archived', 0);
         // Seed the template supplier from the initial-acquisition
-        // supplier on the create form; editable afterwards.
+        // supplier on the create form, editable afterwards.
         $consumable->default_supplier_id = $request->input('default_supplier_id', $request->input('supplier_id'));
 
         if ($request->has('use_cloned_image')) {
-            $cloned_model_img = Consumable::select('image')->find($request->input('clone_image_from_id'));
-            if ($cloned_model_img) {
-                $new_image_name = 'clone-'.date('U').'-'.$cloned_model_img->image;
-                $new_image = 'consumables/'.$new_image_name;
-                Storage::disk('public')->copy('consumables/'.$cloned_model_img->image, $new_image);
+            // Authorize the source first
+            $cloned = Consumable::findOrFail($request->input('clone_image_from_id'));
+            $this->authorize('clone', $cloned);
+
+            $source_image = $cloned->image;
+            if ($source_image) {
+                $new_image_name = 'clone-' . date('U') . '-' . $source_image;
+                Storage::disk('public')->copy(
+                    FileStorage::Consumables->publicPath() . $source_image,
+                    FileStorage::Consumables->publicPath() . $new_image_name,
+                );
                 $consumable->image = $new_image_name;
             }
 
@@ -136,8 +145,6 @@ class ConsumablesController extends Controller
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
-     * @param  int  $consumableId
-     *
      * @see ConsumablesController::postEdit() method that stores the form data.
      * @since [v1.0]
      */
@@ -150,7 +157,8 @@ class ConsumablesController extends Controller
 
         return view('consumables/edit')
             ->with('item', $consumable)
-            ->with('category_type', 'consumable');
+            ->with('category_type', 'consumable')
+            ->with('pendingRequestCount', $consumable->openRequests()->count());
 
     }
 
@@ -160,7 +168,6 @@ class ConsumablesController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @param  ImageUploadRequest  $request
-     * @param  int  $consumableId
      * @return RedirectResponse
      *
      * @throws AuthorizationException
@@ -191,9 +198,10 @@ class ConsumablesController extends Controller
         // controller for the parent-as-template rationale.
         $consumable->default_supplier_id = $request->input('default_supplier_id');
         $consumable->notes = $request->input('notes');
-        // Unchecked checkbox is omitted from the POST body; coerce
+        // Unchecked checkbox is omitted from the POST body. Coerce
         // absence to false so unchecking really turns the flag off.
         $consumable->requestable = $request->input('requestable', false);
+        $consumable->archived = $request->input('archived', 0);
 
         $consumable = $request->handleImages($consumable);
 
@@ -234,6 +242,55 @@ class ConsumablesController extends Controller
     }
 
     /**
+     * Restore a soft-deleted consumable. Mirrors AccessoriesController::postRestore
+     * (restoring is a delete-tier action across the project).
+     */
+    public function postRestore($id): RedirectResponse
+    {
+        if ($consumable = Consumable::withTrashed()->find($id)) {
+            // Per-instance authorize so the policy's before() hook runs
+            // its FMCS isCurrentUserHasAccess check against the actual
+            // row, not just the class.
+            $this->authorize('delete', $consumable);
+
+            if ($consumable->deleted_at == '') {
+                return redirect()->back()->with('error', trans('general.not_deleted', ['item_type' => trans('general.consumable')]));
+            }
+
+            if ($consumable->restore()) {
+                return redirect()->route('consumables.show', $consumable)
+                    ->with('success', trans('admin/consumables/message.restore.success'));
+            }
+
+            return redirect()->back()->with('error', trans('general.could_not_restore', ['item_type' => trans('general.consumable'), 'error' => $consumable->getErrors()->first()]));
+        }
+
+        return redirect()->route('consumables.index')->with('error', trans('admin/consumables/message.does_not_exist'));
+    }
+
+    /**
+     * Flip a consumable back to live inventory. Mirrors postRestore's
+     * auth shape so unarchiving goes through the same per-instance
+     * authorize path as restore from soft-delete.
+     */
+    public function postUnarchive(Consumable $consumable): RedirectResponse
+    {
+        $this->authorize('update', $consumable);
+
+        if (! $consumable->archived) {
+            return redirect()->back()->with('error', trans('admin/consumables/message.does_not_exist'));
+        }
+
+        $consumable->archived = false;
+
+        if ($consumable->save()) {
+            return redirect()->back()->with('success', trans('general.unarchive_success', ['item_type' => trans('general.consumable')]));
+        }
+
+        return redirect()->back()->withErrors($consumable->getErrors());
+    }
+
+    /**
      * Return a view to display component information.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
@@ -241,14 +298,19 @@ class ConsumablesController extends Controller
      * @see ConsumablesController::getDataView() method that generates the JSON response
      * @since [v1.0]
      *
-     * @param  int  $consumableId
      * @return View
      *
      * @throws AuthorizationException
      */
     public function show(Consumable $consumable)
     {
-        $consumable = Consumable::withCount('users as users_consumables')->find($consumable->id);
+        // Route-model binding resolves soft-deleted rows via
+        // withTrashed(['show']) on the resource route, so re-fetch
+        // with withTrashed() as well. Without it the show page 404s
+        // for admins following a link from the Deleted index view.
+        $consumable = Consumable::withTrashed()
+            ->withCount('users as users_consumables')
+            ->find($consumable->id);
         $this->authorize($consumable);
 
         return view('consumables/view', compact('consumable'));
@@ -272,7 +334,8 @@ class ConsumablesController extends Controller
 
         return view('consumables/edit')
             ->with('cloned_model', $consumable_to_close)
-            ->with('item', $consumable);
+            ->with('item', $consumable)
+            ->with('pendingRequestCount', 0);
     }
 
     /**

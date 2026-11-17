@@ -10,26 +10,14 @@ use Tests\TestCase;
 
 class AllowedUploadExtensionTest extends TestCase
 {
-    private array $tempFiles = [];
-
-    protected function tearDown(): void
-    {
-        foreach ($this->tempFiles as $path) {
-            @unlink($path);
-        }
-
-        parent::tearDown();
-    }
-
     // Real UploadedFile pointed at a real temp file. UploadedFile::fake()
     // bypasses finfo (its getMimeType() reads MimeType::from($name), which
     // is extension-only), so it can't reproduce the sniff-vs-extension
     // mismatch this rule exists to tolerate.
     private function realUpload(string $clientName, string $content): UploadedFile
     {
-        $path = tempnam(sys_get_temp_dir(), 'snipeit_rule_');
+        $path = $this->trackTempFile(tempnam(sys_get_temp_dir(), 'snipeit_rule_'));
         file_put_contents($path, $content);
-        $this->tempFiles[] = $path;
 
         return new UploadedFile($path, $clientName, null, null, true);
     }

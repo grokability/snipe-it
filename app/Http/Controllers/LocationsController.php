@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\FileStorage;
 use App\Helpers\Helper;
 use App\Http\Requests\ImageUploadRequest;
 use App\Models\Accessory;
@@ -108,20 +109,22 @@ class LocationsController extends Controller
             // ValidationServiceProvider::fmcs_location for the sibling fix.
             $parent = $location->parent_id ? Location::withoutGlobalScopes()->find($location->parent_id) : null;
             if ($parent && $parent->company_id != $location->company_id) {
-                return redirect()->back()->withInput()->with('error', trans('general.error_location_parent_company', [
-                    'parent' => $parent->name,
-                    'parent_company' => $parent->company?->name ?? trans('general.unassigned'),
-                    'location_company' => $location->company?->name ?? trans('general.unassigned'),
-                ]));
+                return redirect()->back()->withInput()->with('error', Location::parentCompanyMismatchMessage($parent, $location->company?->name));
             }
         }
 
         if ($request->has('use_cloned_image')) {
-            $cloned_model_img = Location::select('image')->find($request->input('clone_image_from_id'));
-            if ($cloned_model_img) {
-                $new_image_name = 'clone-'.date('U').'-'.$cloned_model_img->image;
-                $new_image = 'locations/'.$new_image_name;
-                Storage::disk('public')->copy('locations/'.$cloned_model_img->image, $new_image);
+            // Authorize the source first
+            $cloned = Location::findOrFail($request->input('clone_image_from_id'));
+            $this->authorize('clone', $cloned);
+
+            $source_image = $cloned->image;
+            if ($source_image) {
+                $new_image_name = 'clone-'.date('U').'-'.$source_image;
+                Storage::disk('public')->copy(
+                    FileStorage::Locations->publicPath().$source_image,
+                    FileStorage::Locations->publicPath().$new_image_name,
+                );
                 $location->image = $new_image_name;
             }
 
@@ -142,9 +145,6 @@ class LocationsController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @see LocationsController::postCreate() method that validates and stores
-     *
-     * @param  int  $locationId
-     *
      * @since [v1.0]
      */
     public function edit(Location $location): View|RedirectResponse
@@ -160,9 +160,6 @@ class LocationsController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @see LocationsController::getEdit() method that makes the form view
-     *
-     * @param  int  $locationId
-     *
      * @since [v1.0]
      */
     public function update(ImageUploadRequest $request, Location $location): RedirectResponse
@@ -210,11 +207,7 @@ class LocationsController extends Controller
             // ValidationServiceProvider::fmcs_location for the sibling fix.
             $parent = $location->parent_id ? Location::withoutGlobalScopes()->find($location->parent_id) : null;
             if ($parent && $parent->company_id != $location->company_id) {
-                return redirect()->back()->withInput()->with('error', trans('general.error_location_parent_company', [
-                    'parent' => $parent->name,
-                    'parent_company' => $parent->company?->name ?? trans('general.unassigned'),
-                    'location_company' => $location->company?->name ?? trans('general.unassigned'),
-                ]));
+                return redirect()->back()->withInput()->with('error', Location::parentCompanyMismatchMessage($parent, $location->company?->name));
             }
         }
 
@@ -276,8 +269,6 @@ class LocationsController extends Controller
      * the content for the locations detail page.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
-     *
-     * @param  int  $id
      *
      * @since [v1.0]
      */
@@ -393,8 +384,6 @@ class LocationsController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @since [v1.0]
-     *
-     * @param  int  $id
      */
     public function postRestore(Location $location): RedirectResponse
     {

@@ -23,6 +23,9 @@ return [
             'error' => 'Имаше проблем со бришење на полето. Обидете се повторно.',
             'success' => 'Полето беше успешно избришано.',
             'in_use' => 'Полето е сеуште во употреба.',
+            'in_use_named' => ':name is still attached to at least one fieldset and cannot be deleted.',
+            'bulk_success' => 'Field deleted successfully.|:count fields were deleted successfully.',
+            'partial_success' => ':count field was deleted successfully, but others could not be deleted. See below for details.|:count fields were deleted successfully, but others could not be deleted. See below for details.',
         ],
 
     ],
@@ -46,6 +49,13 @@ return [
             'error' => 'Се појави проблем при бришењето на овој Fieldset. Обидете се повторно.',
             'success' => 'Fieldset успешно избришан.',
             'in_use' => 'Fieldset е сеуште во употреба.',
+            'in_use_named' => ':name is still attached to at least one asset model and cannot be deleted.',
+            'bulk_success' => 'Fieldset deleted successfully.|:count fieldsets were deleted successfully.',
+            'partial_success' => ':count fieldset was deleted successfully, but others could not be deleted. See below for details.|:count fieldsets were deleted successfully, but others could not be deleted. See below for details.',
+        ],
+
+        'clone' => [
+            'success' => 'Fieldset cloned successfully.',
         ],
 
     ],

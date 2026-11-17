@@ -40,19 +40,19 @@ return [
 
     'bulkdelete' => [
         'error' => 'Neboli vybrané ziadne modely, preto nebolo nič odmazané.',
-        'nothing_deletable' => 'None of the selected models can be deleted because they still have assets associated with them.',
+        'nothing_deletable' => 'Žiadny z vybraných modelov nie je možné odstrániť, pretože sú k nim stále priradené položky majetku.',
         'success' => 'Model zmazaný!|:success_count_models modelov zmazaných!',
         'success_partial' => ':success_count model(y) odstránené, avšak :fail_count nebolo možné odstrániť pretože stále majú priradené majetky.',
     ],
 
     'merge' => [
-        'min_two' => 'Select at least two models to merge.',
-        'no_target' => 'Select which model to keep before merging.',
-        'not_found' => 'One or more of the selected models could not be loaded. Refresh the models list and try again.',
-        'information' => 'You are about to merge :count models. Pick the model you want to keep. Every asset attached to the other models will be reassigned to the model you pick, then the source models will be deleted.',
-        'warning' => 'This cannot be undone. Reassigned assets will inherit the surviving model\'s category, fieldset, and depreciation settings.',
-        'pick_target' => 'Which model do you want to keep?',
-        'success' => 'Merged :source_count model(s) into ":target". :asset_count asset(s) were reassigned.',
+        'min_two' => 'Na zlúčenie vyberte aspoň dva modely.',
+        'no_target' => 'Pred zlúčením vyberte, ktorý model sa má zachovať.',
+        'not_found' => 'Jeden alebo viacero vybraných modelov sa nepodarilo načítať. Obnovte zoznam modelov a skúste to znova.',
+        'information' => 'Chystáte sa zlúčiť :count modelov. Vyberte model, ktorý chcete zachovať. Všetky položky majetku priradené k ostatným modelom budú preradené k vybranému modelu a zdrojové modely potom budú odstránené.',
+        'warning' => 'Túto akciu nie je možné vrátiť späť. Preradený majetok prevezme kategóriu, skupinu polí a nastavenia odpisov zachovaného modelu.',
+        'pick_target' => 'Ktorý model chcete zachovať?',
+        'success' => 'Do modelu ":target" boli zlúčené modely (:source_count). Preradené boli položky majetku (:asset_count).',
     ],
 
 ];

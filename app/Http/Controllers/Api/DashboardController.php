@@ -141,16 +141,22 @@ class DashboardController extends Controller
             $query->withCount('showableAssets as assets_count');
             $countSortColumns[] = 'assets_count';
         }
+        // Accessory / Consumable / Component counts are sum(qty) over
+        // live non-archived children to match the top-box semantic on
+        // the main dashboard. SoftDeletes auto-excludes trashed rows,
+        // notArchived() excludes retired-but-live ones. License stays
+        // as a parent-row count because licensesController hasn't been
+        // audited for the same semantic yet.
         if (Gate::allows('view', Accessory::class)) {
-            $query->withCount('accessories as accessories_count');
+            $query->withSum(['accessories as accessories_count' => fn ($q) => $q->notArchived()], 'qty');
             $countSortColumns[] = 'accessories_count';
         }
         if (Gate::allows('view', Consumable::class)) {
-            $query->withCount('consumables as consumables_count');
+            $query->withSum(['consumables as consumables_count' => fn ($q) => $q->notArchived()], 'qty');
             $countSortColumns[] = 'consumables_count';
         }
         if (Gate::allows('view', Component::class)) {
-            $query->withCount('components as components_count');
+            $query->withSum(['components as components_count' => fn ($q) => $q->notArchived()], 'qty');
             $countSortColumns[] = 'components_count';
         }
         if (Gate::allows('view', License::class)) {
@@ -163,6 +169,10 @@ class DashboardController extends Controller
         // categories.view stay unfiltered.
         if (! Gate::allows('view', Category::class)) {
             $query->whereIn('category_type', $viewableTypeKeys);
+        }
+
+        if ($request->filled('search')) {
+            $query->TextSearch($request->input('search'));
         }
 
         $this->applyBoundedSort($query, $request, array_merge(['name', 'category_type'], $countSortColumns), 'name');
@@ -221,16 +231,18 @@ class DashboardController extends Controller
             $query->withCount(['assets as assets_count' => fn ($q) => $q->AssetsForShow()]);
             $countSortColumns[] = 'assets_count';
         }
+        // See categories() above for the sum(qty) rationale on the
+        // three checkoutable types.
         if (Gate::allows('view', Accessory::class)) {
-            $query->withCount('accessories as accessories_count');
+            $query->withSum(['accessories as accessories_count' => fn ($q) => $q->notArchived()], 'qty');
             $countSortColumns[] = 'accessories_count';
         }
         if (Gate::allows('view', Consumable::class)) {
-            $query->withCount('consumables as consumables_count');
+            $query->withSum(['consumables as consumables_count' => fn ($q) => $q->notArchived()], 'qty');
             $countSortColumns[] = 'consumables_count';
         }
         if (Gate::allows('view', Component::class)) {
-            $query->withCount('components as components_count');
+            $query->withSum(['components as components_count' => fn ($q) => $q->notArchived()], 'qty');
             $countSortColumns[] = 'components_count';
         }
         if (Gate::allows('view', License::class)) {
@@ -240,6 +252,10 @@ class DashboardController extends Controller
         if (Gate::allows('view', User::class)) {
             $query->withCount('users as users_count');
             $countSortColumns[] = 'users_count';
+        }
+
+        if ($request->filled('search')) {
+            $query->TextSearch($request->input('search'));
         }
 
         $this->applyBoundedSort($query, $request, array_merge(['name'], $countSortColumns), 'name');
@@ -287,21 +303,27 @@ class DashboardController extends Controller
             $countSortColumns[] = 'assets_count';
             $countSortColumns[] = 'assigned_assets_count';
         }
+        // See categories() above for the sum(qty) rationale on the
+        // three checkoutable types.
         if (Gate::allows('view', Accessory::class)) {
-            $query->withCount('accessories as accessories_count');
+            $query->withSum(['accessories as accessories_count' => fn ($q) => $q->notArchived()], 'qty');
             $countSortColumns[] = 'accessories_count';
         }
         if (Gate::allows('view', Consumable::class)) {
-            $query->withCount('consumables as consumables_count');
+            $query->withSum(['consumables as consumables_count' => fn ($q) => $q->notArchived()], 'qty');
             $countSortColumns[] = 'consumables_count';
         }
         if (Gate::allows('view', Component::class)) {
-            $query->withCount('components as components_count');
+            $query->withSum(['components as components_count' => fn ($q) => $q->notArchived()], 'qty');
             $countSortColumns[] = 'components_count';
         }
         if (Gate::allows('view', User::class)) {
             $query->withCount('users as users_count');
             $countSortColumns[] = 'users_count';
+        }
+
+        if ($request->filled('search')) {
+            $query->TextSearch($request->input('search'));
         }
 
         $this->applyBoundedSort($query, $request, array_merge(['name'], $countSortColumns), 'name');
@@ -315,8 +337,14 @@ class DashboardController extends Controller
                     'view' => Gate::allows('view', $location),
                 ],
             ];
+            // array_key_exists on getAttributes() rather than isset
+            // because withSum sets the alias to null when the relation
+            // has no matching children, and isset would drop the key
+            // in that case (yielding a row with a missing column that
+            // the admin reads as "zero but hidden"). The key must stay
+            // visible as 0 so the dashboard column always renders.
             foreach (['assets_count', 'assigned_assets_count', 'accessories_count', 'consumables_count', 'components_count', 'users_count'] as $key) {
-                if (isset($location->{$key})) {
+                if (array_key_exists($key, $location->getAttributes())) {
                     $row[$key] = (int) $location->{$key};
                 }
             }

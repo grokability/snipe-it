@@ -19,5 +19,6 @@ return [
     'use_default_eula_disabled' => '<del>Notaðu frekar sjálfgefna notendaskilmálana.</del>Sjálfgefnu notendaskilmálarnir eru ekki í notkun. Vinsamlegast bættu einhverjum notendaskilmálum við í undir "Stillingar"',
     'clone' => 'Klóna aukabúnað',
     'delete_disabled' => 'Ekki hægt að eyða búnaði, þar sem hann er ennþá í skráður út.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

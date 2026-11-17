@@ -3,7 +3,7 @@
 return [
 
     'does_not_exist' => 'Osakonda ei eksisteeri.',
-    'department_already_exists' => 'A department already exists with that name at this company location. Or choose a more specific name for this department. ',
+    'department_already_exists' => 'Selle nimega osakond on selles ettevõtte asukohas juba olemas. Vali osakonnale täpsem nimi. ',
     'assoc_users' => 'See osakond on praegu seotud vähemalt ühe kasutajaga ja seda ei saa kustutada. Palun uuendage oma kasutajaid, et enam seda osakonda viideteta, ja proovige uuesti.',
     'create' => [
         'error' => 'Osakonda ei loodud, proovige uuesti.',
@@ -17,8 +17,8 @@ return [
         'confirm' => 'Kas olete kindel, et soovite selle osakonna kustutada?',
         'error' => 'Osakonna kustutamisel tekkis küsimus. Palun proovi uuesti.',
         'success' => 'Osakond kustutati edukalt.',
-        'bulk_success' => 'Department deleted successfully.|:count departments were deleted successfully.',
-        'partial_success' => 'Department deleted successfully. See additional information below. | :count departments were deleted successfully. See additional information below.',
+        'bulk_success' => 'Osakonna kustutamine õnnestus.|:count osakonna kustutamine õnnestus.',
+        'partial_success' => 'Osakonna kustutamine õnnestus. Vaata lisateavet allpool. | :count osakonna kustutamine õnnestus. Vaata lisateavet allpool.',
     ],
 
 ];

@@ -43,10 +43,19 @@ Route::group(['prefix' => 'licenses', 'middleware' => ['auth']], function () {
     )->where('licenseId', '[0-9]+')
         ->name('licenses.bulkcheckin');
 
+    // Bulk check-in from the hardware or user show page's licenses
+    // tab. The `.show` route renders the confirmation interstitial
+    // where the admin picks the shared note. `.store` applies the
+    // checkin.
     Route::post(
-        'bulkcheckin/selected',
-        [Licenses\LicenseCheckinController::class, 'bulkCheckinSelected']
-    )->name('licenses.bulkcheckin.selected');
+        'bulkcheckin/show',
+        [Licenses\LicenseCheckinController::class, 'bulkCheckinShow']
+    )->name('licenses.bulkcheckin.show');
+
+    Route::post(
+        'bulkcheckin/store',
+        [Licenses\LicenseCheckinController::class, 'bulkCheckinStore']
+    )->name('licenses.bulkcheckin.store');
 
     Route::post(
         '{licenseId}/bulkcheckout',

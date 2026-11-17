@@ -256,7 +256,7 @@ return [
     ],
     'usersview' => [
         'name' => 'Kullanıcıları Görüntüle',
-        'note' => 'Bu izne sahip kullanıcıların kullanıcı profiline yüklenen dosyaları da görebileceğini unutmayın (değiştiremez veya silemezler). Bu kullanıcılar düzenleme ve teslim alma geçmişini de görüntüleyebilir.',
+        'note' => 'Users with this permission will also be able to view edit and checkin history. Access to files uploaded to a user is gated separately by the Manage User Files permission.',
     ],
     'userscreate' => [
         'name' => 'Yeni Kullanıcılar Oluştur',

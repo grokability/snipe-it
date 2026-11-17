@@ -159,6 +159,11 @@
                             </label>
 
                             <label class="form-control">
+                                <input type="checkbox" name="archived" value="1" @checked($template->checkmarkValue('archived')) />
+                                {{ trans('general.archived') }}
+                            </label>
+
+                            <label class="form-control">
                                 <input type="checkbox" name="notes" value="1" @checked($template->checkmarkValue('notes')) />
                                 {{ trans('general.notes') }}
                             </label>
@@ -387,6 +392,13 @@
                                         <x-form.error name="last_updated_before" />
                                     </div>
                                 @endif
+                            </div>
+
+                            <div class="col-md-9 col-md-offset-3">
+                                <label class="form-control">
+                                    <input type="checkbox" name="exclude_archived" value="1" @checked($template->checkmarkValue('exclude_archived', '0')) />
+                                    {{ trans('general.exclude_archived') }}
+                                </label>
                             </div>
 
                             <div class="col-md-9 col-md-offset-3">

@@ -77,7 +77,7 @@ return [
     'initiated_declined' => '반출을 시작한 항목이 거부됨',
     'inventory_report' => '재고 보고서',
     'item' => '항목',
-    'item_checked_reminder' => '현재 수락 또는 거부하지 않은 반출 항목이 :count개 있습니다. 아래 링크를 클릭하여 결정을 확인하세요.',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => ':threshold일 이내에 만료되거나 종료되는 라이선스가 :count건 있습니다.|:threshold일 이내에 만료되거나 종료되는 라이선스가 :count건 있습니다.',
     'link_to_update_password' => ':web 비밀번호를 수정하려면 다음 링크를 클릭하세요:',
     'login' => '로그인',

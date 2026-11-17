@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'A checkout you initiated was declined',
     'inventory_report' => 'Informe de inventario',
     'item' => 'Elemento',
-    'item_checked_reminder' => 'Este es un recordatorio de que actualmente tiene :count elemento(s) asignado(s) que no ha aceptado o rechazado. Haga clic en el siguiente enlace para confirmar su decisión.',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => 'There is :count license expiring or terminating in the next :threshold days.|There are :count licenses expiring or terminating in the next :threshold days.',
     'link_to_update_password' => 'Por favor, haga clic en el siguiente enlace para actualizar su contraseña de :web :',
     'login' => 'Iniciar sesión',

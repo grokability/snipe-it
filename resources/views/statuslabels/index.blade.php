@@ -24,6 +24,7 @@
                     buttons="statuslabelButtons"
                     fixed_right_number="1"
                     fixed_number="1"
+                    show_advanced_search="true"
                     api_url="{{ route('api.statuslabels.index') }}"
                     :presenter="\App\Presenters\StatusLabelPresenter::dataTableLayout()"
                     export_filename="export-statuslabels-{{ date('Y-m-d') }}"
@@ -61,6 +62,11 @@
 
 @section('moar_scripts')
 @include ('partials.bootstrap-table')
+
+<x-table.advanced-search
+    tableId="statuslabelListingTable"
+    :model="\App\Models\Statuslabel::class"
+/>
 
   <script nonce="{{ csrf_token() }}">
 

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\Helper;
+use App\Models\Builders\CheckoutAcceptanceQueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +13,9 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use TCPDF;
+/**
+ * @mixin IdeHelperCheckoutAcceptance
+ */
 class CheckoutAcceptance extends Model
 {
     use HasFactory, Notifiable, SoftDeletes;
@@ -48,6 +52,35 @@ class CheckoutAcceptance extends Model
             Consumable::class => trans('general.consumable'),
             default => class_basename($type),
         };
+    }
+
+    /**
+     * FMCS tenant check for the acceptance's checkoutable. The row
+     * itself has no company_id and does not use CompanyableTrait /
+     * CompanyableChildTrait, so Company::isCurrentUserHasAccess has
+     * to be routed through the polymorphic parent. LicenseSeat is
+     * company-less too, so hop up to its license. Bypasses global
+     * scopes on the lookup so a scope-filtered foreign row still
+     * resolves for the check (otherwise FMCS admins would see a
+     * silent true for anything their own scope filters out).
+     */
+    public function isAccessibleToCurrentUser(): bool
+    {
+        if (!Company::isFullMultipleCompanySupportEnabled()) {
+            return true;
+        }
+
+        if (auth()->user()?->isSuperUser()) {
+            return true;
+        }
+
+        $checkoutable = $this->checkoutable_type::withoutGlobalScopes()->find($this->checkoutable_id);
+
+        if ($checkoutable instanceof LicenseSeat) {
+            $checkoutable = License::withoutGlobalScopes()->find($checkoutable->license_id);
+        }
+
+        return Company::isCurrentUserHasAccess($checkoutable);
     }
 
     /**
@@ -188,29 +221,9 @@ class CheckoutAcceptance extends Model
         return true;
     }
 
-    /**
-     * Filter checkout acceptences by the user
-     *
-     * @return Builder
-     */
-    public function scopeForUser(Builder $query, User $user)
+    public function newEloquentBuilder($query): CheckoutAcceptanceQueryBuilder
     {
-        return $query->where('assigned_to_id', $user->id);
-    }
-
-    /**
-     * Filter to only get pending acceptances
-     *
-     * @return Builder
-     */
-    public function scopePending(Builder $query)
-    {
-        return $query->whereNull('accepted_at')->whereNull('declined_at');
-    }
-
-    public function scopeDeclined(Builder $query)
-    {
-        return $query->whereNull('accepted_at')->whereNotNull('declined_at');
+        return new CheckoutAcceptanceQueryBuilder($query);
     }
 
     /**

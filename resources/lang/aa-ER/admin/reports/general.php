@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'crwdns6701:0crwdne6701:0',
     'cannot_send_reminder' => 'crwdns12947:0crwdne12947:0',
     'reminder_sent' => 'crwdns6703:0crwdne6703:0',
+    'reminder_sent_count' => 'crwdns17923:0{0}crwdnd17923:0{1}crwdne17923:0',
     'acceptance_deleted' => 'crwdns6705:0crwdne6705:0',
     'acceptance_request' => 'crwdns6707:0crwdne6707:0',
     'custom_export' => [

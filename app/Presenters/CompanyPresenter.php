@@ -43,7 +43,7 @@ class CompanyPresenter extends Presenter
             ], [
                 'field' => 'parent',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'switchable' => true,
                 'title' => trans('admin/companies/table.parent'),
@@ -169,7 +169,7 @@ class CompanyPresenter extends Presenter
             ], [
                 'field' => 'created_by',
                 'scope' => 'col',
-                'searchable' => false,
+                'searchable' => true,
                 'sortable' => true,
                 'title' => trans('general.created_by'),
                 'visible' => false,

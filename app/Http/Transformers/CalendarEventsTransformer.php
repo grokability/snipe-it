@@ -76,7 +76,7 @@ class CalendarEventsTransformer
             'id' => $row->id,
             'title' => $this->titleFor($source, $row->event_type),
             'start' => $this->formatDate($row->start, $allDay),
-            'end' => $this->formatDate($row->end, $allDay),
+            'end' => $this->formatDate($row->end, $allDay, isEnd: true),
             'allDay' => $allDay,
             'url' => $this->urlFor($source),
             'color' => $this->colorFor($source),
@@ -93,8 +93,13 @@ class CalendarEventsTransformer
      * Display name prefixed with the human-readable event-type label
      * so a viewer can tell why a row is on the calendar ("Audit due:
      * Laptop #7" vs. just "Laptop #7"). Presenter's name() is the
-     * canonical Snipe-IT accessor; falls through to common attribute
+     * canonical Snipe-IT accessor, with a fallback to common attribute
      * names for models without a presenter wired up yet.
+     *
+     * Source models can expose a `calendarTitlePrefix()` method to
+     * stamp a state marker at the front of the title (completed
+     * maintenances use "✓ ", for example). Returning null or an
+     * empty string leaves the title untouched.
      */
     private function titleFor(Model $source, string $eventType): string
     {
@@ -108,8 +113,11 @@ class CalendarEventsTransformer
         $name ??= (string) ($source->display_name ?? $source->name ?? (class_basename($source).'#'.$source->getKey()));
 
         $label = $this->eventTypeLabel($eventType);
+        $title = $label ? sprintf('%s: %s', $label, $name) : $name;
 
-        return $label ? sprintf('%s: %s', $label, $name) : $name;
+        $prefix = method_exists($source, 'calendarTitlePrefix') ? (string) $source->calendarTitlePrefix() : '';
+
+        return $prefix.$title;
     }
 
     private function eventTypeLabel(string $eventType): string
@@ -152,8 +160,15 @@ class CalendarEventsTransformer
      * not on DateTimeInterface). All-day events serialize as
      * `YYYY-MM-DD` (no time component) so FullCalendar doesn't
      * reinterpret them as UTC midnight in the browser's local zone.
+     *
+     * FullCalendar treats all-day `end` as EXCLUSIVE: an event with
+     * end=2026-10-15 renders only through 2026-10-14. Range events
+     * (maintenance, request reservations) therefore need end+1 so a
+     * same-day completion still paints on that day. Only applied
+     * when $isEnd is true so starts stay anchored on the day they
+     * actually begin.
      */
-    private function formatDate(mixed $date, bool $allDay): ?string
+    private function formatDate(mixed $date, bool $allDay, bool $isEnd = false): ?string
     {
         if ($date === null || $date === '') {
             return null;
@@ -162,6 +177,10 @@ class CalendarEventsTransformer
         $date = $date instanceof Carbon
             ? $date
             : ($date instanceof DateTimeInterface ? Carbon::instance($date) : Carbon::parse($date));
+
+        if ($allDay && $isEnd) {
+            $date = $date->copy()->addDay();
+        }
 
         return $allDay ? $date->format('Y-m-d') : $date->toIso8601String();
     }

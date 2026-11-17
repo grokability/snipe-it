@@ -10,7 +10,7 @@ return [
     'support_email' => 'Kasutajatoe E-mail',
     'support_phone' => 'Kasutajatoe telefon',
     'support_url' => 'Kasutajatoe URL',
-    'warranty_lookup_url' => 'Warranty Lookup URL',
+    'warranty_lookup_url' => 'Garantii kontrollimise URL',
     'update' => 'Uuenda tootjat',
 
 ];

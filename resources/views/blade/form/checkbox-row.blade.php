@@ -38,6 +38,7 @@
     'help_text' => null,
     'help_html' => null,
     'help_icon' => null,
+    'help_class' => null,
     'info_tooltip_text' => null,
     'section_label' => null,
     'checked' => null,
@@ -172,7 +173,7 @@
 
     @if ($help_text)
         <div class="col-md-8 col-md-offset-3">
-            <x-form.help :name="$name" :icon="$help_icon">{!! $help_text !!}</x-form.help>
+            <x-form.help :name="$name" :icon="$help_icon" :class="$help_class">{!! $help_text !!}</x-form.help>
         </div>
     @elseif ($help_html)
         {{-- Raw HTML help. Caller has opted in via help_html rather than

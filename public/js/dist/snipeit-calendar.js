@@ -14979,6 +14979,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fullcalendar_interaction__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fullcalendar/interaction */ "./node_modules/@fullcalendar/interaction/index.js");
 /* harmony import */ var _fullcalendar_list__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @fullcalendar/list */ "./node_modules/@fullcalendar/list/index.js");
 /* harmony import */ var _fullcalendar_timegrid__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @fullcalendar/timegrid */ "./node_modules/@fullcalendar/timegrid/index.js");
+var _excluded = ["urlState", "limit", "onFetchMeta", "filter", "filterMulti", "filterButtons", "phpDateFormat", "events"];
+function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var n = Object.getOwnPropertySymbols(e); for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
+function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (-1 !== e.indexOf(n)) continue; t[n] = r[n]; } return t; }
 function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
@@ -15364,6 +15367,24 @@ function init(elementId, config) {
     filterButtonNodes = built.buttonNodes;
     el.parentNode.insertBefore(filterContainer, el);
   }
+
+  // Peel the wrapper-only keys out of `config` before we spread the
+  // rest into FullCalendar's options. FC treats anything it doesn't
+  // recognize as an unknown option and warns to the console. These
+  // are all consumed above or below (state.filter, state.limit,
+  // state.onFetchMeta, the buildFilterButtons branch, the
+  // phpDateFormat -> dayPopoverFormat translation, our wrapped
+  // eventsSource overriding config.events). `fcConfig` carries just
+  // the FC-recognized overrides the caller wants to apply.
+  var _urlState = config.urlState,
+    _limit = config.limit,
+    _onFetchMeta = config.onFetchMeta,
+    _filter = config.filter,
+    _filterMulti = config.filterMulti,
+    _filterButtons = config.filterButtons,
+    _phpDateFormat = config.phpDateFormat,
+    _events = config.events,
+    fcConfig = _objectWithoutProperties(config, _excluded);
   var options = Object.assign({
     initialView: urlState.view || 'dayGridMonth',
     initialDate: urlState.date || undefined,
@@ -15411,7 +15432,7 @@ function init(elementId, config) {
     }
   },
   // Allow per-page overrides for any of the above.
-  config);
+  fcConfig);
 
   // plugins + events are always set by us - callers can't drop the
   // plugins without breaking the calendar, and the wrapped events

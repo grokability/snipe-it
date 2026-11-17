@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Níor seiceáladh an tsócmhainn, déan iarracht arís',
         'success' => 'Seiceáil seiceáil go rathúil.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Tá an úsáideoir neamhbhailí. Arís, le d\'thoil.',
         'already_checked_in' => 'Déantar an sócmhainn sin a sheiceáil cheana féin.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

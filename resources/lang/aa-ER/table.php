@@ -11,6 +11,8 @@ return [
     'load_error_body' => 'crwdns15137:0crwdne15137:0',
     'load_error_http_status' => 'crwdns15139:0crwdne15139:0',
     'load_error_session_expired' => 'crwdns15141:0crwdne15141:0',
-    'shift_select' => 'crwdns16163:0crwdne16163:0'
+    'shift_select' => 'crwdns16163:0crwdne16163:0',
+    'reset_column_order' => 'crwdns18305:0crwdne18305:0',
+    'reset_column_order_tooltip' => 'crwdns18307:0crwdne18307:0',
 
 ];

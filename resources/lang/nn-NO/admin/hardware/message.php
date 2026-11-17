@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Eiendel ble ikke sjekket inn. Prøv igjen',
         'success' => 'Vellykket innsjekk av eiendel.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Denne brukeren er ugyldig. Vennligst prøv igjen.',
         'already_checked_in' => 'Den eiendelen er allerede sjekket inn.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

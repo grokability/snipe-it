@@ -98,6 +98,68 @@ class WorkspaceOneAdapterTest extends TestCase
         $this->assertNotNull($record->lastSeen);
     }
 
+    /**
+     * Regression for issue #20003. The vendor renamed from VMware to
+     * Omnissa and the OAuth token hosts migrated from
+     * *.vmwservices.com to *.workspaceone.com. The old hosts no longer
+     * resolve, which left every pre-fix tenant failing with a cURL 28
+     * DNS-timeout on first token exchange. Assert the per-region auth
+     * host that goes out on the wire so a future rename or typo in the
+     * derived URL gets caught at test time.
+     *
+     * Each case covers one branch of the match in
+     * WorkspaceOneAdapter::deriveAuthBaseUrl, keyed off the first
+     * three chars of the API host.
+     *
+     * @return array<string, array{apiHost: string, expectedAuthHost: string}>
+     */
+    public static function regionAuthHostCases(): array
+    {
+        return [
+            'na default (asXXX)' => [
+                'apiHost' => 'as123.awmdm.com',
+                'expectedAuthHost' => 'na.uemauth.workspaceone.com',
+            ],
+            'na default (dsXXX)' => [
+                'apiHost' => 'ds456.awmdm.com',
+                'expectedAuthHost' => 'na.uemauth.workspaceone.com',
+            ],
+            'apac' => [
+                'apiHost' => 'apac789.awmdm.com',
+                'expectedAuthHost' => 'apac.uemauth.workspaceone.com',
+            ],
+            'emea' => [
+                'apiHost' => 'emea101.awmdm.com',
+                'expectedAuthHost' => 'emea.uemauth.workspaceone.com',
+            ],
+            'uat' => [
+                'apiHost' => 'uat202.awmdm.com',
+                'expectedAuthHost' => 'uat.uemauth.workspaceone.com',
+            ],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('regionAuthHostCases')]
+    public function test_oauth_token_request_hits_the_rebranded_omnissa_host(string $apiHost, string $expectedAuthHost): void
+    {
+        $instance = SyncAdapterInstance::where('slug', 'workspace_one')->firstOrFail();
+        SyncAdapterConfig::put($instance->id, 'url', 'https://'.$apiHost);
+        SyncAdapterConfig::put($instance->id, 'tenant_code', 'stub-tenant');
+        SyncAdapterConfig::put($instance->id, 'client_id', 'stub-client');
+        SyncAdapterConfig::put($instance->id, 'client_secret', Crypt::encrypt('fake-secret'));
+        $adapter = new WorkspaceOneAdapter($instance->fresh());
+
+        Http::fake([
+            '*/connect/token' => Http::response(['access_token' => 'stub-bearer', 'expires_in' => 3600]),
+            '*/api/mdm/devices/search*' => Http::response(['Total' => 0, 'PageSize' => 500, 'Page' => 0, 'Devices' => []]),
+        ]);
+
+        iterator_to_array($adapter->pull());
+
+        Http::assertSent(fn ($request) => str_contains($request->url(), 'https://'.$expectedAuthHost.'/connect/token'));
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), 'vmwservices.com'));
+    }
+
     private function configuredAdapter(): WorkspaceOneAdapter
     {
         $instance = SyncAdapterInstance::where('slug', 'workspace_one')->firstOrFail();

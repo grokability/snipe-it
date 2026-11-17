@@ -89,8 +89,6 @@ final class CompaniesController extends Controller
      * @author [Abdullah Alansari] [<ahimta@gmail.com>]
      *
      * @since [v1.8]
-     *
-     * @param  int  $companyId
      */
     public function edit(Company $company): View|RedirectResponse
     {
@@ -105,8 +103,6 @@ final class CompaniesController extends Controller
      * @author [Abdullah Alansari] [<ahimta@gmail.com>]
      *
      * @since [v1.8]
-     *
-     * @param  int  $companyId
      */
     public function update(ImageUploadRequest $request, Company $company): RedirectResponse
     {

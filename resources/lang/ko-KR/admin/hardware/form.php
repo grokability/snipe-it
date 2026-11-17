@@ -56,8 +56,6 @@ return [
     'years' => '년',
     'asset_location' => '자산 위치 업데이트',
     'asset_location_update_default_current' => '기본 위치와 실제 위치 모두 업데이트',
-    'asset_location_update_default' => '기본 위치만 업데이트',
-    'asset_location_update_actual' => '실제 위치만 업데이트',
     'asset_not_deployable' => '해당 자산 상태는 배포할 수 없음. 이 자산은 반출할 수 없음.',
     'asset_not_deployable_checkin' => '{1} 해당 자산 상태는 배포할 수 없습니다. 이 상태 라벨을 사용하면 자산이 반입됩니다.|[2,*] 해당 자산 상태는 배포할 수 없습니다. 이 상태 라벨을 사용해도 변경되지 않습니다.',
     'asset_deployable' => '{1} 이 자산은 반출할 수 있습니다.|[2,*] 이 자산들은 반출할 수 있습니다.',

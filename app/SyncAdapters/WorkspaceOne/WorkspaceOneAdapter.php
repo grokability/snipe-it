@@ -4,8 +4,7 @@ namespace App\SyncAdapters\WorkspaceOne;
 
 use App\Models\Asset;
 use App\SyncAdapters\HostInventoryRecord;
-use App\SyncAdapters\PushableAdapter;
-use App\SyncAdapters\SyncAdapter;
+use App\SyncAdapters\PushableSyncAdapter;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -18,8 +17,11 @@ use Illuminate\Support\Facades\Log;
  * device-update endpoint.
  *
  * Modern Workspace ONE tenants use OAuth 2.0 client credentials
- * against a per-region auth endpoint (na.uemauth.vmwservices.com,
- * emea.uemauth.vmwservices.com, apac.uemauth.vmwservices.com, etc.).
+ * against a per-region auth endpoint (na.uemauth.workspaceone.com,
+ * emea.uemauth.workspaceone.com, apac.uemauth.workspaceone.com, etc.).
+ * The vendor renamed from VMware to Omnissa in 2024 and the auth
+ * hosts moved from *.vmwservices.com to *.workspaceone.com. Full
+ * regional list: https://kb.omnissa.com/s/article/6000867.
  * The access token is carried as `Authorization: Bearer` on Dashboard
  * API calls plus an `aw-tenant-code` header identifying which tenant
  * to scope the call to. tenant_code and client_id are non-secret.
@@ -34,7 +36,7 @@ use Illuminate\Support\Facades\Log;
  * sibling with a different schema is the right shape rather than
  * making this schema conditional on auth mode.
  */
-class WorkspaceOneAdapter extends SyncAdapter implements PushableAdapter
+class WorkspaceOneAdapter extends PushableSyncAdapter
 {
     public static function typeLabel(): string
     {
@@ -98,24 +100,30 @@ class WorkspaceOneAdapter extends SyncAdapter implements PushableAdapter
     /**
      * Derive the region-scoped OAuth token host from the API host.
      * Workspace ONE uses a per-region auth endpoint. asXXX.awmdm.com
-     * → na.uemauth.vmwservices.com etc. The mapping is inferred from
-     * the first two chars of the API host (as-, ds-, uat-).
+     * → na.uemauth.workspaceone.com etc. The mapping is inferred from
+     * the first three chars of the API host (as-, ds-, uat-).
      * Falls back to the NA endpoint when the base URL doesn't parse.
+     *
+     * Hosts migrated from *.vmwservices.com to *.workspaceone.com
+     * following the Omnissa rebrand. Older vmwservices.com URLs no
+     * longer resolve. If Omnissa adds a region beyond APAC / EMEA /
+     * NA / UAT, add it here and reference the published list at
+     * https://kb.omnissa.com/s/article/6000867.
      */
     private function deriveAuthBaseUrl(string $apiBaseUrl): string
     {
         $host = parse_url($apiBaseUrl, PHP_URL_HOST);
         if (! is_string($host)) {
-            return 'https://na.uemauth.vmwservices.com';
+            return 'https://na.uemauth.workspaceone.com';
         }
 
         $prefix = strtolower(substr($host, 0, 3));
 
         return match ($prefix) {
-            'apa' => 'https://apac.uemauth.vmwservices.com',
-            'eme' => 'https://emea.uemauth.vmwservices.com',
-            'uat' => 'https://uat.uemauth.vmwservices.com',
-            default => 'https://na.uemauth.vmwservices.com',
+            'apa' => 'https://apac.uemauth.workspaceone.com',
+            'eme' => 'https://emea.uemauth.workspaceone.com',
+            'uat' => 'https://uat.uemauth.workspaceone.com',
+            default => 'https://na.uemauth.workspaceone.com',
         };
     }
 

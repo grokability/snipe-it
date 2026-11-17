@@ -146,10 +146,8 @@ class UserImporter extends ItemImporter
      * to their basename, mirroring how AssetImporter and AccessoryImporter
      * treat their `image` column. Absolute http(s) URLs are preserved so
      * OAuth-sourced avatars (Google, Microsoft, Gravatar) still render
-     * correctly when a user record is re-imported. Without the basename step,
-     * a value like `../barcodes/target.png` reaches the profile image-delete
-     * sink and Flysystem normalizes the composed key into a cross-directory
-     * delete inside the public uploads tree.
+     * correctly when a user record is re-imported, but a URL carrying a
+     * `..` segment in its path is rejected.
      */
     private function sanitizeAvatarFromCsv(array $row): void
     {
@@ -165,9 +163,22 @@ class UserImporter extends ItemImporter
             return;
         }
 
-        $this->item['avatar'] = preg_match('#^https?://#i', $raw) === 1
-            ? $raw
-            : basename($raw);
+        if (preg_match('#^https?://#i', $raw) === 1) {
+            $parsed = parse_url($raw);
+            $path = is_array($parsed) ? ($parsed['path'] ?? '') : '';
+
+            if (!is_array($parsed) || empty($parsed['host']) || str_contains($path, '..')) {
+                $this->item['avatar'] = null;
+
+                return;
+            }
+
+            $this->item['avatar'] = $raw;
+
+            return;
+        }
+
+        $this->item['avatar'] = basename($raw);
     }
 
     /**

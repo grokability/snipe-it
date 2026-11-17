@@ -24,7 +24,7 @@
         :$presenter
         :$fixed_right_number
         show_column_search="true"
-        show_advanced_search="false"
+        show_advanced_search="true"
         buttons="locationButtons"
         api_url="{{ $route }}"
         export_filename="export-{{ $export_name ? str_slug($export_name).'-' : '' }}locations-{{ date('Y-m-d') }}"

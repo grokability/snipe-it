@@ -70,6 +70,7 @@ return [
     ],
 
     'select_country' => 'Valitse maa',
+    'select_currency' => 'Select a currency',
 
     'countries' => [
         'AC' => 'Ascension saari',

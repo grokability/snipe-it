@@ -2,11 +2,12 @@
 
 namespace Tests\Feature\Console;
 
-use App\Mail\UnacceptedAssetReminderMail;
 use App\Models\CheckoutAcceptance;
 use App\Models\User;
+use App\Notifications\UnacceptedAssetReminderNotification;
+use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Mockery;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Tests\TestCase;
@@ -15,7 +16,7 @@ class SendAcceptanceReminderTest extends TestCase
 {
     public function test_acceptance_reminder_command()
     {
-        Mail::fake();
+        Notification::fake();
         $userA = User::factory()->create(['email' => 'userA@test.com']);
         $userB = User::factory()->create(['email' => 'userB@test.com']);
 
@@ -28,20 +29,14 @@ class SendAcceptanceReminderTest extends TestCase
 
         $this->artisan('snipeit:acceptance-reminder')->assertExitCode(0);
 
-        Mail::assertSent(UnacceptedAssetReminderMail::class, function ($mail) {
-            return $mail->hasTo('userA@test.com');
-        });
-
-        Mail::assertSent(UnacceptedAssetReminderMail::class, function ($mail) {
-            return $mail->hasTo('userB@test.com');
-        });
-
-        Mail::assertSent(UnacceptedAssetReminderMail::class, 2);
+        Notification::assertSentTo($userA, UnacceptedAssetReminderNotification::class);
+        Notification::assertSentTo($userB, UnacceptedAssetReminderNotification::class);
+        Notification::assertSentTimes(UnacceptedAssetReminderNotification::class, 2);
     }
 
     public function test_acceptance_reminder_command_handles_user_without_email()
     {
-        Mail::fake();
+        Notification::fake();
         $userA = User::factory()->create(['email' => '']);
 
         CheckoutAcceptance::factory()->pending()->create([
@@ -56,7 +51,7 @@ class SendAcceptanceReminderTest extends TestCase
             ->expectsTable($headers, $rows)
             ->assertExitCode(0);
 
-        Mail::assertNotSent(UnacceptedAssetReminderMail::class);
+        Notification::assertNotSentTo($userA, UnacceptedAssetReminderNotification::class);
     }
 
     public function test_survives_transport_exception_and_logs_warning(): void
@@ -64,9 +59,13 @@ class SendAcceptanceReminderTest extends TestCase
         $user = User::factory()->create(['email' => 'transport-fail@test.com']);
         CheckoutAcceptance::factory()->pending()->create(['assigned_to_id' => $user->id]);
 
-        $pending = Mockery::mock();
-        $pending->shouldReceive('send')->andThrow(new TransportException('SMTP auth failed'));
-        Mail::shouldReceive('to')->andReturn($pending);
+        // Mock the notification channel manager so the mail driver
+        // throws a transport exception on dispatch. The console
+        // command catches TransportException and logs a warning
+        // rather than bubbling up.
+        $channelManager = Mockery::mock(ChannelManager::class);
+        $channelManager->shouldReceive('send')->andThrow(new TransportException('SMTP auth failed'));
+        $this->app->instance(ChannelManager::class, $channelManager);
 
         Log::spy();
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Events\CheckoutableCheckedOut;
 use App\Helpers\Helper;
+use App\Http\Controllers\Consumables\BulkConsumablesController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdjustQuantityRequest;
 use App\Http\Requests\FilterRequest;
@@ -13,14 +14,18 @@ use App\Http\Traits\HandlesAdjustQuantity;
 use App\Http\Transformers\ActionlogsTransformer;
 use App\Http\Transformers\ConsumablesTransformer;
 use App\Http\Transformers\SelectlistTransformer;
+use App\Models\Actionlog;
 use App\Models\Company;
 use App\Models\Consumable;
+use App\Models\ConsumableAssignment;
 use App\Models\Setting;
 use App\Models\User;
 use DomainException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 
 class ConsumablesController extends Controller
 {
@@ -38,8 +43,19 @@ class ConsumablesController extends Controller
         $this->authorize('index', Consumable::class);
 
         // See ComponentsController for the orderItems.order.supplier eager-load rationale.
+        // consumables_users_count feeds the stockroom-remaining math (qty minus total ever
+        // distributed, unchanged by mark-consumed). outstanding_assignments_count feeds
+        // isDeletable() and the archive guard so neither fires a per-row count query.
+        //
+        // Both counts walk the consumableAssignments hasMany directly (which wraps
+        // consumables_users) rather than the unconstrainedUsers belongsToMany, so the
+        // subquery is a single-table COUNT against consumables_users.consumable_id
+        // instead of INNER JOIN users. The users JOIN was dead weight here anyway
+        // (we only want a count of pivot rows), and dropping it is a measurable win
+        // on hundreds-of-thousands-of-consumables fleets.
         $consumables = Consumable::with('company', 'location', 'category', 'defaultSupplier', 'manufacturer', 'orderItems.order.supplier')
-            ->withCount('users as consumables_users_count');
+            ->withCount('consumableAssignments as consumables_users_count')
+            ->withCount('outstandingAssignments as outstanding_assignments_count');
 
         // This array is what determines which fields should be allowed to be sorted on ON the table itself.
         // These must match a column on the consumables table directly.
@@ -68,6 +84,19 @@ class ConsumablesController extends Controller
             'manufacturer',
         ];
 
+        // Archived / soft-deleted scope.
+        switch ($request->input('status')) {
+            case 'Archived':
+                $consumables->archived();
+                break;
+            case 'Deleted':
+                $consumables->onlyTrashed();
+                break;
+            default:
+                $consumables->consumablesForShow();
+                break;
+        }
+
         // This invokes the Searchable model trait scopeTextSearch and will handle input by search or by advanced search filter
         if ($request->filled('filter') || $request->filled('search')) {
             $consumables->TextSearch($request->input('filter') ? $request->input('filter') : $request->input('search'));
@@ -75,6 +104,14 @@ class ConsumablesController extends Controller
 
         if ($request->filled('name')) {
             $consumables->where('consumables.name', '=', $request->input('name'));
+        }
+
+        if ($request->input('requestable') == 'true') {
+            $consumables->where('consumables.requestable', '=', '1');
+        }
+
+        if ($request->input('archived') == 'true') {
+            $consumables->archived();
         }
 
         if ($request->filled('company_id')) {
@@ -298,9 +335,77 @@ class ConsumablesController extends Controller
         $this->authorize('delete', Consumable::class);
         $consumable = Consumable::findOrFail($id);
         $this->authorize('delete', $consumable);
+
+        // Mirror the web + bulk paths. Outstanding distributions
+        // block destroy the same way they block archive.
+        $consumable->loadCount('outstandingAssignments as outstanding_assignments_count');
+        if (! $consumable->isDeletable()) {
+            return response()->json(Helper::formatStandardApiResponse(
+                'error',
+                null,
+                trans('general.bulk_delete_associations.assoc_checkouts_no_count', [
+                    'item_name' => $consumable->name,
+                    'item' => trans('general.consumable'),
+                ]),
+            ), 422);
+        }
+
         $consumable->delete();
 
         return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/consumables/message.delete.success')));
+    }
+
+    /**
+     * Restore a soft-deleted consumable. API parity for the web
+     * ConsumablesController::postRestore endpoint.
+     */
+    public function restore($id): JsonResponse
+    {
+        $this->authorize('delete', Consumable::class);
+        $consumable = Consumable::withTrashed()->findOrFail($id);
+        $this->authorize('delete', $consumable);
+
+        if ($consumable->deleted_at === null) {
+            return response()->json(Helper::formatStandardApiResponse(
+                'error',
+                null,
+                trans('general.not_deleted', ['item_type' => trans('general.consumable')]),
+            ), 422);
+        }
+
+        if (! $consumable->restore()) {
+            return response()->json(Helper::formatStandardApiResponse(
+                'error',
+                null,
+                trans('general.could_not_restore', ['item_type' => trans('general.consumable'), 'error' => $consumable->getErrors()->first()]),
+            ), 422);
+        }
+
+        return response()->json(Helper::formatStandardApiResponse(
+            'success',
+            null,
+            trans('admin/consumables/message.restore.success'),
+        ));
+    }
+
+    /**
+     * Flip archived off. API parity for the web
+     * ConsumablesController::postUnarchive endpoint.
+     */
+    public function unarchive(Consumable $consumable): JsonResponse
+    {
+        $this->authorize('update', $consumable);
+
+        if (! $consumable->archived) {
+            return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/consumables/message.update.success')));
+        }
+
+        $consumable->archived = false;
+        if (! $consumable->save()) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, $consumable->getErrors()), 422);
+        }
+
+        return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/consumables/message.update.success')));
     }
 
     /**
@@ -315,8 +420,12 @@ class ConsumablesController extends Controller
      */
     public function getDataView($consumableId): array
     {
+        // Only outstanding pivot rows surface on the Assigned tab.
+        // Rows marked consumed drop out of the checkouts view because
+        // they are no longer "currently distributed." The audit trail
+        // for each consume still lives on the item's History tab.
         $consumable = Consumable::with(['consumableAssignments' => function ($query) {
-            $query->orderBy($query->getModel()->getTable().'.created_at', 'DESC');
+            $query->outstanding()->orderBy($query->getModel()->getTable().'.created_at', 'DESC');
         },
             'consumableAssignments.adminuser' => function ($query) {},
             'consumableAssignments.user' => function ($query) {},
@@ -328,8 +437,12 @@ class ConsumablesController extends Controller
         $this->authorize('view', Consumable::class);
         $rows = [];
 
+        $canConsume = Gate::allows('checkout', $consumable);
+
         foreach ($consumable->consumableAssignments as $consumable_assignment) {
             $rows[] = [
+                'id' => (int) $consumable_assignment->id,
+                'consumable_id' => (int) $consumable_assignment->consumable_id,
                 'avatar' => ($consumable_assignment->user) ? e($consumable_assignment->user->present()->gravatar) : '',
                 'user' => ($consumable_assignment->user) ? [
                     'id' => (int) $consumable_assignment->user->id,
@@ -341,13 +454,16 @@ class ConsumablesController extends Controller
                     'id' => (int) $consumable_assignment->adminuser->id,
                     'name' => e($consumable_assignment->adminuser->display_name),
                 ] : null,
+                'available_actions' => [
+                    'consume' => $canConsume,
+                    'bulk_selectable' => [
+                        'consume' => $canConsume,
+                    ],
+                ],
             ];
         }
 
-        $consumableCount = $consumable->users->count();
-        $data = ['total' => $consumableCount, 'rows' => $rows];
-
-        return $data;
+        return ['total' => count($rows), 'rows' => $rows];
     }
 
     /**
@@ -506,12 +622,19 @@ class ConsumablesController extends Controller
      */
     public function requestable(Request $request): array
     {
+        $this->authorize('viewRequestable', Consumable::class);
+
         $query = Consumable::with('category', 'location', 'company', 'manufacturer', 'requests')
-            ->withCount('users as consumables_users_count')
+            ->withCount('consumableAssignments as consumables_users_count')
+            ->withCount('outstandingAssignments as outstanding_assignments_count')
             ->Requestable();
 
         if ($request->filled('search')) {
-            $query->TextSearch($request->input('search'));
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('consumables.name', 'LIKE', '%'.$search.'%')
+                    ->orWhere('consumables.model_number', 'LIKE', '%'.$search.'%');
+            });
         }
 
         $total = $query->count();
@@ -524,5 +647,277 @@ class ConsumablesController extends Controller
         $rows = $query->orderBy($sort, $order)->skip($offset)->take($limit)->get();
 
         return (new ConsumablesTransformer)->transformRequestedConsumables($rows, $total);
+    }
+
+    /**
+     * Mark one pivot row consumed. API parity for the web
+     * ConsumableCheckoutController::consume endpoint. One-way: an
+     * already-consumed row no-ops.
+     */
+    public function consume(Consumable $consumable, ConsumableAssignment $assignment): JsonResponse
+    {
+        $this->authorize('checkout', $consumable);
+
+        if ($assignment->consumable_id !== $consumable->id) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/consumables/message.does_not_exist')), 404);
+        }
+
+        if ($assignment->isConsumed()) {
+            return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/consumables/message.consumed.already')));
+        }
+
+        $assignment->consumed_at = now();
+        if (! $assignment->save()) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/consumables/message.consumed.error')), 422);
+        }
+
+        $this->writeConsumeLog($consumable, $assignment);
+
+        return response()->json(Helper::formatStandardApiResponse('success', null, trans('admin/consumables/message.consumed.success')));
+    }
+
+    /**
+     * Bulk mark pivot rows consumed. Mixed-parent submissions are
+     * rejected because the show-page flow guarantees a single parent
+     * and the API honors that invariant too.
+     */
+    public function bulkConsume(Request $request): JsonResponse
+    {
+        $pivotIds = (array) $request->input('ids', []);
+        if ($pivotIds === []) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/consumables/message.consumed.no_rows_selected')), 422);
+        }
+
+        $assignments = ConsumableAssignment::with('consumable')
+            ->whereIn('id', $pivotIds)
+            ->whereNull('consumed_at')
+            ->get();
+
+        if ($assignments->isEmpty()) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/consumables/message.consumed.no_rows_selected')), 422);
+        }
+
+        $consumableIds = $assignments->pluck('consumable_id')->unique();
+        if ($consumableIds->count() !== 1) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/consumables/message.consumed.no_rows_selected')), 422);
+        }
+
+        $consumable = $assignments->first()->consumable;
+        $this->authorize('checkout', $consumable);
+
+        $now = now();
+        $consumed = 0;
+        foreach ($assignments as $assignment) {
+            $assignment->consumed_at = $now;
+            if ($assignment->save()) {
+                $consumed++;
+                $this->writeConsumeLog($consumable, $assignment);
+            }
+        }
+
+        return response()->json(Helper::formatStandardApiResponse(
+            'success',
+            ['consumed' => $consumed],
+            trans_choice('admin/consumables/message.consumed.bulk_success', $consumed, ['count' => $consumed]),
+        ));
+    }
+
+    /**
+     * Bulk edit. Mirror of BulkConsumablesController::update.
+     * Returns JSON instead of a flash redirect, otherwise identical
+     * semantics: writes only non-blank fields, routes company_id
+     * through FMCS, supports null_{field}=1 opt-in null-outs, per-row
+     * Gate check, surfaces partial-success detail in the payload.
+     */
+    public function bulkEdit(Request $request): JsonResponse
+    {
+        $this->authorize('update', Consumable::class);
+
+        if (! $request->filled('ids')) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/consumables/message.bulk.no_consumables_selected')), 422);
+        }
+
+        // Only a superuser may null the company_id in bulk. For non-
+        // superusers, Company::getIdForCurrentUser() in the single-item
+        // update path coerces a null submission back to the actor's own
+        // company and never allows the field to be cleared. The bulk
+        // null-out loop below unconditionally wipes company_id AFTER the
+        // FMCS validation runs, so this gate has to come up front.
+        if ($request->boolean('null_company_id') && ! auth()->user()->isSuperUser()) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('general.insufficient_permissions')), 422);
+        }
+
+        $consumables = Consumable::whereIn('id', $request->input('ids'))->get();
+        if ($consumables->isEmpty()) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/consumables/message.bulk.no_consumables_selected')), 422);
+        }
+
+        $updateData = [];
+        foreach (BulkConsumablesController::EDITABLE_FIELDS as $field) {
+            if (! $request->has($field)) {
+                continue;
+            }
+            $value = $request->input($field);
+            if ($value === '' || $value === null) {
+                continue;
+            }
+            $updateData[$field] = $value;
+        }
+
+        if (array_key_exists('company_id', $updateData)) {
+            try {
+                $updateData['company_id'] = Company::getIdForCurrentUser($updateData['company_id']);
+            } catch (ValidationException $e) {
+                return response()->json(Helper::formatStandardApiResponse('error', null, $e->errors()), 422);
+            }
+        }
+
+        foreach (['category_id', 'company_id', 'manufacturer_id', 'location_id', 'default_supplier_id', 'min_amt'] as $field) {
+            if ($request->boolean('null_'.$field)) {
+                if ($field === 'category_id') {
+                    continue;
+                }
+                $updateData[$field] = null;
+            }
+        }
+
+        if (empty($updateData)) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/consumables/message.bulk.no_fields_updated')), 422);
+        }
+
+        $authorized = $consumables->filter(fn (Consumable $c) => Gate::allows('update', $c));
+        $skipped = $consumables->count() - $authorized->count();
+
+        $updated = 0;
+        $failed_rows = [];
+        foreach ($authorized as $consumable) {
+            $consumable->fill($updateData);
+            if ($consumable->save()) {
+                $updated++;
+
+                continue;
+            }
+            $failed_rows[] = $consumable->name.': '.$consumable->getErrors()->first();
+        }
+
+        $failed = count($failed_rows);
+        $payload = ['updated' => $updated, 'skipped_unauthorized' => $skipped, 'failed_rows' => $failed_rows];
+
+        if ($updated === 0 && $failed > 0) {
+            return response()->json(Helper::formatStandardApiResponse(
+                'error',
+                $payload,
+                trans_choice('admin/consumables/message.bulk.update.none_updated', $failed, ['count' => $failed]),
+            ), 422);
+        }
+
+        return response()->json(Helper::formatStandardApiResponse(
+            'success',
+            $payload,
+            trans_choice('admin/consumables/message.bulk.update.success', $updated, ['count' => $updated]),
+        ));
+    }
+
+    /**
+     * Bulk soft-delete. Per-row isDeletable + Gate check mirror the
+     * web controller.
+     */
+    public function bulkDestroy(Request $request): JsonResponse
+    {
+        $this->authorize('delete', Consumable::class);
+
+        $errors = [];
+        $success_count = 0;
+
+        foreach ((array) $request->input('ids', []) as $id) {
+            $consumable = Consumable::find($id);
+            if (is_null($consumable)) {
+                $errors[] = trans('admin/consumables/message.does_not_exist', ['id' => $id]);
+
+                continue;
+            }
+
+            if (! Gate::allows('delete', $consumable)) {
+                $errors[] = trans('general.unauthorized');
+
+                continue;
+            }
+
+            $consumable->loadCount('outstandingAssignments as outstanding_assignments_count');
+            if (! $consumable->isDeletable()) {
+                $errors[] = trans('general.bulk_delete_associations.assoc_checkouts_no_count', [
+                    'item_name' => $consumable->name,
+                    'item' => trans('general.consumable'),
+                ]);
+
+                continue;
+            }
+
+            $consumable->delete();
+            $success_count++;
+        }
+
+        $payload = ['deleted' => $success_count, 'errors' => $errors];
+        $message = $success_count > 0
+            ? trans_choice('admin/consumables/message.delete.bulk_success', $success_count, ['count' => $success_count])
+            : trans('admin/consumables/message.bulk.no_consumables_selected');
+
+        return response()->json(
+            Helper::formatStandardApiResponse($success_count > 0 ? 'success' : 'error', $payload, $message),
+            $success_count > 0 ? 200 : 422,
+        );
+    }
+
+    /**
+     * Bulk restore. Already-live rows are skipped without erroring so
+     * a stale selection doesn't blow up the whole batch.
+     */
+    public function bulkRestore(Request $request): JsonResponse
+    {
+        $this->authorize('delete', Consumable::class);
+
+        $ids = (array) $request->input('ids', []);
+        if ($ids === []) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/consumables/message.bulk.no_consumables_selected')), 422);
+        }
+
+        $consumables = Consumable::withTrashed()->whereIn('id', $ids)->get();
+
+        $restored = 0;
+        $errors = [];
+
+        foreach ($consumables as $consumable) {
+            if (! Gate::allows('delete', $consumable)) {
+                $errors[] = trans('general.unauthorized');
+
+                continue;
+            }
+
+            if ($consumable->deleted_at === null) {
+                continue;
+            }
+
+            if ($consumable->restore()) {
+                $restored++;
+            }
+        }
+
+        return response()->json(Helper::formatStandardApiResponse(
+            $restored > 0 ? 'success' : 'error',
+            ['restored' => $restored, 'errors' => $errors],
+            trans_choice('admin/consumables/message.bulk.restore.success', $restored, ['count' => $restored]),
+        ), $restored > 0 ? 200 : 422);
+    }
+
+    private function writeConsumeLog(Consumable $consumable, ConsumableAssignment $assignment): void
+    {
+        $log = new Actionlog;
+        $log->item_type = Consumable::class;
+        $log->item_id = $consumable->id;
+        $log->target_type = User::class;
+        $log->target_id = $assignment->assigned_to;
+        $log->created_at = date('Y-m-d H:i:s');
+        $log->created_by = auth()->id();
+        $log->logaction('consumed');
     }
 }

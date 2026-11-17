@@ -85,7 +85,6 @@ class PredefinedKitsController extends Controller
      *
      * @since [v1.0]
      *
-     * @param  int  $kit_id
      * @return View
      */
     public function edit(PredefinedKit $kit)
@@ -107,7 +106,6 @@ class PredefinedKitsController extends Controller
      *
      * @since [v1.0]
      *
-     * @param  int  $kit_id
      * @return RedirectResponse
      */
     public function update(ImageUploadRequest $request, PredefinedKit $kit)
@@ -160,7 +158,6 @@ class PredefinedKitsController extends Controller
      *
      * @since [v1.0]
      *
-     * @param  int  $modelId
      * @return View
      */
     public function show(PredefinedKit $kit)
@@ -196,7 +193,6 @@ class PredefinedKitsController extends Controller
      *
      * @author [D. Minaev] [<dmitriy.minaev.v@gmail.com>]
      *
-     * @param  int  $modelId
      * @return RedirectResponse
      */
     public function updateModel(Request $request, $kit_id, $model_id)
@@ -237,7 +233,6 @@ class PredefinedKitsController extends Controller
      *
      * @author [D. Minaev] [<dmitriy.minaev.v@gmail.com>]
      *
-     * @param  int  $modelId
      * @return View
      */
     public function detachModel($kit_id, $model_id)
@@ -351,7 +346,6 @@ class PredefinedKitsController extends Controller
      * @author [D. Minaev] [<dmitriy.minaev.v@gmail.com>]
      *
      * @param  int  $kit_id
-     * @param  int  $accessoryId
      * @return View
      */
     public function editAccessory($kit_id, $accessory_id)
@@ -466,7 +460,6 @@ class PredefinedKitsController extends Controller
      * @author [D. Minaev] [<dmitriy.minaev.v@gmail.com>]
      *
      * @param  int  $kit_id
-     * @param  int  $consumableId
      * @return RedirectResponse
      */
     public function updateConsumable(Request $request, $kit_id, $consumable_id)

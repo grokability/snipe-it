@@ -40,6 +40,33 @@ class GoogleLoginTest extends TestCase
     }
 
     #[Test]
+    public function long_google_avatar_url_is_stored_intact(): void
+    {
+        // Regression test for issue #19620. Google Workspace avatar URLs
+        // like `https://lh3.googleusercontent.com/a-/ALV-Uj...` routinely
+        // run 260+ characters. The users.avatar column was previously
+        // varchar(191), so MySQL in non-strict mode silently truncated
+        // the stored URL, leaving a malformed token that 400s on fetch
+        // and renders as a broken image.
+        $user = User::factory()->create(['username' => 'me@example.org']);
+
+        $longUrl = 'https://lh3.googleusercontent.com/a-/'.str_repeat('ALV-Uj0123456789', 15).'=s96-c';
+        $this->assertGreaterThan(191, strlen($longUrl));
+
+        $socialUser = Mockery::mock(SocialiteUser::class);
+        $socialUser->shouldReceive('getEmail')->andReturn('me@example.org');
+        $socialUser->avatar = $longUrl;
+
+        $driver = Mockery::mock();
+        $driver->shouldReceive('user')->andReturn($socialUser);
+        Socialite::shouldReceive('driver')->with('google')->andReturn($driver);
+
+        $this->get(route('google.callback', ['code' => 'google-oauth-code']));
+
+        $this->assertSame($longUrl, $user->fresh()->avatar);
+    }
+
+    #[Test]
     public function callback_without_code_redirects_to_login_without_hitting_google(): void
     {
         // Satisfies Setting::setupCompleted() so CheckForSetup lets the request through.

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Depreciation;
+use App\Models\Setting;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Models\Setting;
 use Illuminate\Validation\Rule;
 
 /**
@@ -113,9 +113,6 @@ class DepreciationsController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net]
      *
      * @see DepreciationsController::postEdit()
-     *
-     * @param  int  $depreciationId
-     *
      * @since [v1.0]
      */
     public function edit(Depreciation $depreciation): RedirectResponse|View
@@ -132,9 +129,6 @@ class DepreciationsController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net]
      *
      * @see DepreciationsController::getEdit()
-     *
-     * @param  int  $depreciationId
-     *
      * @since [v1.0]
      */
     public function update(Request $request, Depreciation $depreciation): RedirectResponse
@@ -220,9 +214,6 @@ class DepreciationsController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net]
      *
      * @see DepreciationsController::postEdit()
-     *
-     * @param  int  $depreciationId
-     *
      * @since [v1.0]
      */
     public function show(Depreciation $depreciation): View|RedirectResponse

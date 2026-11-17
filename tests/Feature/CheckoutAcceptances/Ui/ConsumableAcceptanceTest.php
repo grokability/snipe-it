@@ -5,10 +5,17 @@ namespace Tests\Feature\CheckoutAcceptances\Ui;
 use App\Models\CheckoutAcceptance;
 use App\Models\Consumable;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ConsumableAcceptanceTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Storage::fake();
+    }
+
     public function test_can_accept_consumable_checkout()
     {
         $assignee = User::factory()->create();

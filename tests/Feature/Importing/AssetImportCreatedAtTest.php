@@ -10,12 +10,14 @@ use App\Models\Import;
 use App\Models\Location;
 use App\Models\Statuslabel;
 use App\Models\User;
-use Illuminate\Http\UploadedFile;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Support\Importing\CleansUpImportFiles;
 use Tests\TestCase;
 
 class AssetImportCreatedAtTest extends TestCase
 {
+    use CleansUpImportFiles;
+
     /**
      * Test that importing assets doesn't modify created_at timestamps on existing assets
      * This test addresses the reported bug where large imports caused random created_at changes
@@ -54,7 +56,7 @@ class AssetImportCreatedAtTest extends TestCase
         $this->actingAsForApi($importer)
             ->postJson(route('api.imports.store'), [
                 'files' => [
-                    $this->createFakeUploadedFile('test.csv', $csv),
+                    $this->tempUploadedFile('test.csv', $csv),
                 ],
             ])
             ->assertSuccessful();
@@ -128,7 +130,7 @@ class AssetImportCreatedAtTest extends TestCase
         $this->actingAsForApi($importer)
             ->postJson(route('api.imports.store'), [
                 'files' => [
-                    $this->createFakeUploadedFile('test1.csv', $csv),
+                    $this->tempUploadedFile('test1.csv', $csv),
                 ],
             ])
             ->assertSuccessful();
@@ -151,7 +153,7 @@ class AssetImportCreatedAtTest extends TestCase
         $this->actingAsForApi($importer)
             ->postJson(route('api.imports.store'), [
                 'files' => [
-                    $this->createFakeUploadedFile('test2.csv', $csv),
+                    $this->tempUploadedFile('test2.csv', $csv),
                 ],
             ])
             ->assertSuccessful();
@@ -179,22 +181,5 @@ class AssetImportCreatedAtTest extends TestCase
                 "Asset {$asset->asset_tag} created_at changed between imports"
             );
         }
-    }
-
-    /**
-     * Helper method to create a fake uploaded file
-     */
-    protected function createFakeUploadedFile(string $filename, string $content)
-    {
-        $path = tempnam(sys_get_temp_dir(), 'csv');
-        file_put_contents($path, $content);
-
-        return new UploadedFile(
-            $path,
-            $filename,
-            'text/csv',
-            null,
-            true
-        );
     }
 }

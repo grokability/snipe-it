@@ -6,6 +6,6 @@ return [
     'months' => 'Kuud',
     'term' => 'Tähtaeg',
     'title' => 'Nimi',
-    'depreciation_min' => 'Floor Value',
+    'depreciation_min' => 'Jääkväärtuse alampiir',
 
 ];

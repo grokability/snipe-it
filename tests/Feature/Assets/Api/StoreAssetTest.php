@@ -6,11 +6,13 @@ use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Company;
 use App\Models\CustomField;
+use App\Models\CustomFieldset;
 use App\Models\Location;
 use App\Models\Statuslabel;
 use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\Fluent\AssertableJson;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -771,6 +773,69 @@ class StoreAssetTest extends TestCase
             ->assertMessagesContains('serial');
     }
 
+    public function test_asset_store_does_not_lazy_load_custom_field_default_values_per_field()
+    {
+        // Regression test for the N+1 on `CustomField::defaultValue($modelId)`.
+        // The store() controller used to call `AssetModel::find($model_id)`
+        // without eager loading, then iterate `$model->fieldset->fields` and
+        // call `$field->defaultValue($model_id)` inside the loop. Each call
+        // lazy-loaded `$this->defaultValues` which is
+        // `belongsToMany(AssetModel::class, 'models_custom_fields')`, firing
+        // one `SELECT models.*  INNER JOIN models_custom_fields` per field.
+        // custom_fill resolves the defaults together as a column/value map,
+        // so that pivot walk fires once.
+        $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
+
+        $status = Statuslabel::factory()->readyToDeploy()->create();
+        $superuser = User::factory()->superuser()->create();
+
+        $fieldA = CustomField::factory()->macAddress()->create();
+        $fieldB = CustomField::factory()->ram()->create();
+        $fieldC = CustomField::factory()->cpu()->create();
+
+        $fieldset = CustomFieldset::factory()->create();
+        $fieldset->fields()->attach([
+            $fieldA->id => ['order' => 1, 'required' => false],
+            $fieldB->id => ['order' => 2, 'required' => false],
+            $fieldC->id => ['order' => 3, 'required' => false],
+        ]);
+
+        $model = AssetModel::factory()->create(['fieldset_id' => $fieldset->id]);
+        $model->defaultValues()->attach([
+            $fieldA->id => ['default_value' => 'aa:bb:cc:dd:ee:ff'],
+            $fieldB->id => ['default_value' => 'default-ram'],
+            $fieldC->id => ['default_value' => 'default-cpu'],
+        ]);
+
+        DB::enableQueryLog();
+
+        $this->actingAsForApi($superuser)
+            ->postJson(route('api.assets.store'), [
+                'model_id' => $model->id,
+                'status_id' => $status->id,
+                'asset_tag' => 'n-plus-one-probe',
+            ])
+            ->assertStatusMessageIs('success');
+
+        $queries = DB::getQueryLog();
+        DB::disableQueryLog();
+
+        // Count queries that walk the models_custom_fields pivot from the
+        // CustomField::defaultValue() side. Pre-fix fired once per custom
+        // field (three times here). Post-fix fires once, from the eager
+        // load in custom_fill. Threshold is one, more
+        // than that means the lazy-load pattern crept back in.
+        $pivotWalks = collect($queries)
+            ->filter(fn ($q) => str_contains($q['query'], 'models_custom_fields'))
+            ->count();
+
+        $this->assertLessThanOrEqual(
+            1,
+            $pivotWalks,
+            'Asset store fired '.$pivotWalks.' models <-> models_custom_fields pivot queries. Expected at most 1 (the eager load upfront).'
+        );
+    }
+
     public function test_encrypted_custom_field_can_be_stored()
     {
         $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
@@ -788,11 +853,12 @@ class StoreAssetTest extends TestCase
                 'asset_tag' => '1234',
             ])
             ->assertStatusMessageIs('success')
+            ->assertJsonPath('payload.'.$field->db_column_name(), 'This is encrypted field')
             ->assertOk()
             ->json();
 
         $asset = Asset::findOrFail($response['payload']['id']);
-        $this->assertEquals('This is encrypted field', Crypt::decrypt($asset->{$field->db_column_name()}));
+        $this->assertEquals('This is encrypted field', Crypt::decrypt($asset->getRawOriginal($field->db_column_name())));
     }
 
     public function test_encrypted_custom_field_validation_passes()
@@ -821,9 +887,9 @@ class StoreAssetTest extends TestCase
             ->json();
 
         $asset = Asset::findOrFail($response['payload']['id']);
-        $this->assertEquals('Thisisencryptedfield', Crypt::decrypt($asset->{$alphaField->db_column_name()}));
-        $this->assertEquals('1234567890', Crypt::decrypt($asset->{$numericField->db_column_name()}));
-        $this->assertEquals('poop@poop.com', Crypt::decrypt($asset->{$emailField->db_column_name()}));
+        $this->assertEquals('Thisisencryptedfield', Crypt::decrypt($asset->getRawOriginal($alphaField->db_column_name())));
+        $this->assertEquals('1234567890', Crypt::decrypt($asset->getRawOriginal($numericField->db_column_name())));
+        $this->assertEquals('poop@poop.com', Crypt::decrypt($asset->getRawOriginal($emailField->db_column_name())));
     }
 
     public function test_encrypted_custom_field_validation_fails()
@@ -837,7 +903,6 @@ class StoreAssetTest extends TestCase
         $fields = [$alphaField, $numericField, $emailField];
         $superuser = User::factory()->superuser()->create();
         $assetData = Asset::factory()->hasMultipleCustomFields($fields)->make();
-        $cleaned_name = trim(preg_replace('/_+|snipeit|\d+/', ' ', $alphaField->db_column_name()));
 
         $response = $this->actingAsForApi($superuser)
             ->postJson(route('api.assets.store'), [
@@ -847,7 +912,7 @@ class StoreAssetTest extends TestCase
                 'asset_tag' => '1234',
             ])
             ->assertStatusMessageIs('error')
-            ->assertJsonPath('messages.'.$alphaField->db_column_name(), [trans('validation.alpha', ['attribute' => $cleaned_name])])
+            ->assertJsonPath('messages.'.$alphaField->db_column_name(), [trans('validation.alpha', ['attribute' => $alphaField->name])])
             ->assertOk()
             ->json();
     }
@@ -876,7 +941,7 @@ class StoreAssetTest extends TestCase
             ->json();
 
         $asset = Asset::findOrFail($response['payload']['id']);
-        $this->assertEquals('This is encrypted field', Crypt::decrypt($asset->{$field->db_column_name()}));
+        $this->assertEquals('This is encrypted field', Crypt::decrypt($asset->getRawOriginal($field->db_column_name())));
     }
 
     public function test_base64_asset_images()

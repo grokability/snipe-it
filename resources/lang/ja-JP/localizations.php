@@ -70,6 +70,7 @@ return [
     ],
 
     'select_country' => '国を選択',
+    'select_currency' => '通貨を選択',
 
     'countries' => [
         'AC' => 'Ascension Island',

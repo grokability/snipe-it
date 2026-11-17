@@ -1,4 +1,4 @@
-FROM alpine:3.23
+FROM alpine:3.24
 # Apache + PHP
 RUN  apk add --no-cache \
         apache2 \
@@ -35,8 +35,9 @@ RUN  apk add --no-cache \
         wget \
         vim \
         git \
-        mysql-client \
-        tini
+        mariadb-client \
+        tini \
+    && ln -sf /usr/bin/php84 /usr/bin/php
 
 COPY docker/column-statistics.cnf /etc/mysql/conf.d/column-statistics.cnf
 
@@ -51,6 +52,11 @@ COPY  docker/apache-limits.conf /etc/apache2/conf.d/limits.conf
 
 # Enable mod_rewrite
 RUN sed -i '/LoadModule rewrite_module/s/^#//g' /etc/apache2/httpd.conf
+
+# Suppress Apache version + OS from the Server response header and from
+# the default error-page footer.
+RUN sed -i 's/^ServerTokens.*/ServerTokens Prod/' /etc/apache2/httpd.conf \
+    && sed -i 's/^ServerSignature.*/ServerSignature Off/' /etc/apache2/httpd.conf
 
 COPY . /var/www/html
 
@@ -77,7 +83,7 @@ RUN mkdir -p /var/www/.composer && chown apache /var/www/.composer
 
 # Install dependencies
 USER apache
-RUN COMPOSER_CACHE_DIR=/dev/null composer install --working-dir=/var/www/html
+RUN COMPOSER_CACHE_DIR=/dev/null composer install --no-dev --working-dir=/var/www/html
 
 USER root
 

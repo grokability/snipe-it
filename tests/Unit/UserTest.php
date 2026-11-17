@@ -17,6 +17,19 @@ class UserTest extends TestCase
         $this->assertEquals($expected_lastname, $user['last_name']);
     }
 
+    public function test_name_split_respects_last_first_display_format()
+    {
+        // On a last-first install (e.g. Hungarian), a CSV full_name of
+        // "Doe John" parses to last=Doe, first=John instead of the
+        // default explode's first=Doe, last=John. Issue #19626.
+        $this->settings->set(['name_display_format' => 'last_first']);
+
+        $user = User::generateFormattedNameFromFullName('Doe John', 'firstname');
+
+        $this->assertEquals('John', $user['first_name']);
+        $this->assertEquals('Doe', $user['last_name']);
+    }
+
     public function test_first_name()
     {
         $fullname = "Natalia Allanovna Romanova-O'Shostakova";

@@ -36,6 +36,9 @@
 @if ($item->location)
 | **{{ trans('general.location') }}** | {{ $item->location->name }} |
 @endif
+@if ($item->defaultLoc)
+| **{{ trans('admin/hardware/form.default_location') }}** | {{ $item->defaultLoc->name }} |
+@endif
 @if (isset($last_checkout))
 | **{{ trans('mail.checkout_date') }}** | {{ $last_checkout }} |
 @endif

@@ -70,6 +70,7 @@ return [
     ],
 
     'select_country' => 'Izaberite državu',
+    'select_currency' => 'Select a currency',
 
     'countries' => [
         'AC' => 'Asension',

@@ -2,6 +2,7 @@
 
 namespace App\SyncAdapters\Intune;
 
+use App\SyncAdapters\Traits\RetriesTransientHttpErrors;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
@@ -13,17 +14,40 @@ use Illuminate\Support\Facades\Http;
  * Auth model: Azure app registration with a tenant + client_id +
  * client_secret. Token exchange POSTs to the tenant-scoped OAuth 2.0
  * token endpoint with scope `https://graph.microsoft.com/.default`.
- * The returned bearer is valid for ~60 minutes. A single sync run
- * stays inside that window so we don't refresh mid-run.
+ * The returned bearer is valid for ~60 minutes. Pulls that iterate
+ * thousands of devices + per-device detail fetches outlast that
+ * window, so the bearer is proactively refreshed via expires_in once
+ * it enters the TOKEN_REFRESH_WINDOW_SECONDS runway before expiry.
  *
  * Sovereign clouds swap both hosts. The `graphBaseUrl` and
  * `loginBaseUrl` constructor args let the adapter derive the login
  * host from the Graph host so the settings-page URL field controls
  * both endpoints.
+ *
+ * Graph API version: the unfiltered device pull uses `/v1.0/`, the
+ * stable surface. Two call sites fall over to `/beta/` because the
+ * stable version does not expose the data they need: the
+ * composed-notes push on `updateManagedDevice()` (notes is a
+ * beta-only writable field), and the entire scope-tag filter flow
+ * (roleScopeTags resource and the roleScopeTagIds filter on
+ * managedDevices). Microsoft does not guarantee beta stability, so a
+ * Graph side change can break those paths without warning.
  */
 class IntuneClient
 {
+    use RetriesTransientHttpErrors;
+
+    /**
+     * Refresh the bearer when it has fewer than this many seconds of
+     * validity left. 60s is enough to cover the HTTP request round-trip
+     * plus any retry backoff on the next Graph call, while staying tight
+     * enough that we only re-fetch when there is a real risk of expiry.
+     */
+    private const TOKEN_REFRESH_WINDOW_SECONDS = 60;
+
     private ?string $token = null;
+
+    private ?int $tokenExpiresAt = null;
 
     public function __construct(
         private readonly string $graphBaseUrl,
@@ -37,39 +61,31 @@ class IntuneClient
      * Iterate every managed device visible to the app registration.
      * Uses Graph's `@odata.nextLink` for cursor pagination.
      *
-     * When $scopeTagIds is non-empty, appends an OData `$filter` that
-     * only returns devices whose `roleScopeTagIds` array intersects the
-     * caller's list. Pushes the filter server-side so large tenants
-     * with distributed-IT separation don't pay the pagination cost for
-     * devices they don't even care about.
-     * See https://learn.microsoft.com/en-us/intune/fundamentals/role-based-access-control/scope-tags.
+     * Server-side scope-tag filtering (via `$filter=roleScopeTagIds/any(...)`)
+     * was tried first but Microsoft rejects the clause on both v1.0
+     * and beta managedDevices endpoints (BadRequest, see #19849).
+     * Scope-tag filtering is now applied client-side by the adapter
+     * via per-device beta detail fetches, so this method stays on the
+     * stable list surface and returns every device.
      *
-     * @param  array<int, string>|null  $scopeTagIds  Null = no filter. Empty array = no filter.
      * @return iterable<int, array<string, mixed>>
      */
-    public function managedDevices(?array $scopeTagIds = null): iterable
+    public function managedDevices(): iterable
     {
         $graphOrigin = $this->origin($this->graphBaseUrl);
         $url = rtrim($this->graphBaseUrl, '/').'/v1.0/deviceManagement/managedDevices';
 
-        $query = [];
-        if (is_array($scopeTagIds) && $scopeTagIds !== []) {
-            // Graph expects: $filter=roleScopeTagIds/any(x: x eq 'id1' or x eq 'id2')
-            // Quote each id and OR them inside a single any() clause.
-            $clauses = array_map(fn (string $id) => "x eq '".addslashes($id)."'", $scopeTagIds);
-            $query['$filter'] = 'roleScopeTagIds/any(x: '.implode(' or ', $clauses).')';
-        }
-
         do {
-            $response = $this->request()->get($url, $query)->throw()->json();
+            // Pass no second argument. Laravel forwards it as Guzzle's
+            // `query` option, which replaces the URL's query string even
+            // when empty, stripping the $skiptoken off `@odata.nextLink`.
+            // Tenants with more than one page would loop on page 1 forever.
+            // See #19916.
+            $response = $this->request()->get($url)->throw()->json();
 
             foreach (($response['value'] ?? []) as $device) {
                 yield $device;
             }
-
-            // Query only on the first page. Graph's nextLink carries
-            // the filter forward in its own cursor opaquely.
-            $query = [];
 
             $url = $this->rebasedCursor($response['@odata.nextLink'] ?? null, $graphOrigin);
         } while ($url !== null);
@@ -88,7 +104,10 @@ class IntuneClient
     public function roleScopeTags(): array
     {
         $graphOrigin = $this->origin($this->graphBaseUrl);
-        $url = rtrim($this->graphBaseUrl, '/').'/v1.0/deviceManagement/roleScopeTags';
+        // The roleScopeTag resource is only exposed on /beta/. The
+        // stable v1.0 surface returns a 400 "Resource not found for
+        // the segment 'roleScopeTags'" so there is no fallback.
+        $url = rtrim($this->graphBaseUrl, '/').'/beta/deviceManagement/roleScopeTags';
 
         $out = [];
         do {
@@ -161,16 +180,22 @@ class IntuneClient
      * caller-chosen $select set. Used for properties the LIST
      * endpoint always returns null for (ethernetMacAddress,
      * physicalMemoryInBytes, etc. - Microsoft docs explicitly flag
-     * these as "requires per-device GET"). Returns the attributes
-     * array on success. Fails soft to null on 4xx/5xx so one bad
-     * device doesn't abort the enclosing enrichment pass.
+     * these as "requires per-device GET"), and for roleScopeTagIds,
+     * which the list surface also returns empty regardless of $select
+     * (see #19849). Returns the attributes array on success. Fails
+     * soft to null on 4xx/5xx so one bad device doesn't abort the
+     * enclosing enrichment pass.
+     *
+     * $apiVersion is passed through so callers can hit `beta` for
+     * fields that only populate there (roleScopeTagIds). Default
+     * stays on v1.0 for the existing enrichment call sites.
      *
      * @param  array<int, string>  $select
      * @return array<string, mixed>|null
      */
-    public function managedDeviceDetail(string $deviceId, array $select): ?array
+    public function managedDeviceDetail(string $deviceId, array $select, string $apiVersion = 'v1.0'): ?array
     {
-        $url = rtrim($this->graphBaseUrl, '/').'/v1.0/deviceManagement/managedDevices/'.rawurlencode($deviceId);
+        $url = rtrim($this->graphBaseUrl, '/').'/'.$apiVersion.'/deviceManagement/managedDevices/'.rawurlencode($deviceId);
 
         try {
             return $this->request()
@@ -184,12 +209,18 @@ class IntuneClient
 
     /**
      * Fetch (or reuse) a bearer token via OAuth 2.0 client-credentials
-     * against the tenant-scoped token endpoint. Token is cached on
-     * this instance for the life of the sync run.
+     * against the tenant-scoped token endpoint. The token is cached on
+     * this instance across requests. When the cached token has fewer
+     * than TOKEN_REFRESH_WINDOW_SECONDS of validity left, re-exchange
+     * so a long-running pull (thousands of devices + per-device detail
+     * calls, routinely 60+ minutes) doesn't trip Microsoft's
+     * "InvalidAuthenticationToken: Invalid token lifetime" error part
+     * way through.
      */
     private function bearer(): string
     {
-        if ($this->token !== null) {
+        if ($this->token !== null && $this->tokenExpiresAt !== null
+            && $this->tokenExpiresAt - time() > self::TOKEN_REFRESH_WINDOW_SECONDS) {
             return $this->token;
         }
 
@@ -206,6 +237,13 @@ class IntuneClient
             ])
             ->throw()
             ->json();
+
+        // expires_in is seconds from issue (RFC 6749). Fall back to a
+        // conservative 55 minutes if the server omits it, matching the
+        // old implicit assumption but still letting the refresh window
+        // kick in before the real expiry.
+        $expiresIn = (int) ($response['expires_in'] ?? 3300);
+        $this->tokenExpiresAt = time() + $expiresIn;
 
         return $this->token = (string) ($response['access_token'] ?? '');
     }
@@ -234,9 +272,11 @@ class IntuneClient
 
     private function request(): PendingRequest
     {
-        return Http::withToken($this->bearer())
-            ->withOptions(['allow_redirects' => false])
-            ->acceptJson()
-            ->timeout(30);
+        return $this->withTransientRetry(
+            Http::withToken($this->bearer())
+                ->withOptions(['allow_redirects' => false])
+                ->acceptJson()
+                ->timeout(30)
+        );
     }
 }

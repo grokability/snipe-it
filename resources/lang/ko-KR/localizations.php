@@ -70,6 +70,7 @@ return [
     ],
 
     'select_country' => '국가 선택',
+    'select_currency' => 'Select a currency',
 
     'countries' => [
         'AC' => '어센션 섬',

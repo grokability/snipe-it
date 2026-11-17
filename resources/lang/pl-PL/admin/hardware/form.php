@@ -56,8 +56,6 @@ return [
     'years' => 'rok',
     'asset_location' => 'Zaktualizuj lokalizację środka',
     'asset_location_update_default_current' => 'Aktualizuj domyślną i aktualną lokalizację',
-    'asset_location_update_default' => 'Aktualizuj tylko domyślną lokalizację',
-    'asset_location_update_actual' => 'Aktualizuj tylko bieżącą lokalizację',
     'asset_not_deployable' => 'Ten status oznacza brak możliwości wydania. Ten środek nie może zostać przypisany do użytkownika.',
     'asset_not_deployable_checkin' => '{1} That asset status is not deployable. Using this status label will check in the asset.|[2,*] That asset status in not deployable. Using this status label will result in no change.',
     'asset_deployable' => '{1} This asset can be checked out.|[2,*] These assets can be checked out.',

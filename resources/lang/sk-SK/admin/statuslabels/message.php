@@ -20,8 +20,8 @@ return [
         'confirm' => 'Ste si istý, že chcete odstrániť tento stav?',
         'error' => 'Pri odstraňovaní stavu sa vyskytla chyba. Skúste prosím znovu.',
         'success' => 'Stav bol úspečne odstránený.',
-        'bulk_success' => 'Status Label deleted successfully.|:count status labels were deleted successfully.',
-        'partial_success' => 'Status Label deleted successfully. See additional information below. | :count status labels were deleted successfully. See additional information below.',
+        'bulk_success' => 'Stav bol úspešne odstránený.|:count stavov bolo úspešne odstránených.',
+        'partial_success' => 'Stav bol úspešne odstránený. Ďalšie informácie nájdete nižšie. | :count stavov bolo úspešne odstránených. Ďalšie informácie nájdete nižšie.',
     ],
 
     'help' => [

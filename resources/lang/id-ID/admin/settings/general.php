@@ -30,7 +30,7 @@ return [
     'auto_increment_assets' => 'Buat tag aset yang bertambah otomatis',
     'auto_increment_prefix' => 'Awalan (pilihan)',
     'auto_incrementing_help' => 'Aktifkan tag aset yang bertambah otomatis terlebih dahulu untuk mengatur ini',
-    'backups' => 'Cadangan',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'Buat, unduh, dan pulihkan cadangan ',
     'backups_restoring' => 'Memulihkan dari Cadangan',
     'backups_clean' => 'Bersihkan database yang dicadangkan sebelum pemulihan',

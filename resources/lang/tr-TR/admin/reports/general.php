@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'Hatırlatma gönder',
     'cannot_send_reminder' => 'Kullanıcı silinmiştir veya e-posta adresi olmadığı için hatırlatma alamamaktadır',
     'reminder_sent' => 'Hatırlatıcı gönderildi',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'Kabul talebi silindi',
     'acceptance_request' => 'Kabul talebi',
     'custom_export' => [

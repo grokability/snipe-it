@@ -1,5 +1,5 @@
 @component('mail::message')
-# {{ trans('mail.hello').' '.$target.','}}
+# {{ trans('mail.hello').' '.$target->display_name.','}}
 
 {{ $introduction_line }}
 
@@ -16,8 +16,8 @@
 @if (isset($license->category))
 | **{{ trans('general.category') }}** | {{ $license->category->name }} |
 @endif
-@if (($target instanceof \App\Models\User && $target->can('view', $license)) || ($target instanceof \App\Models\Asset && $license_seat->user?->can('view', $license)))
-| **Key** | {{ $license->serial }} |
+@if (($target instanceof \App\Models\User && Gate::forUser($target)->allows('viewKeys', $license)) || ($target instanceof \App\Models\Asset && $license_seat->user && Gate::forUser($license_seat->user)->allows('viewKeys', $license)))
+| **Key** | {{ $license->getRawOriginal('serial') }} |
 @endif
 @if ($note)
 | **{{ trans('mail.additional_notes') }}** | {{ $note }} |

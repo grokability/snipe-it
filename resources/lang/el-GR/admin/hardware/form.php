@@ -56,8 +56,6 @@ return [
     'years' => 'έτη',
     'asset_location' => 'Ενημέρωση Θέσης Περιουσιακών Στοιχείων',
     'asset_location_update_default_current' => 'Ενημέρωση προεπιλεγμένης τοποθεσίας ΚΑΙ πραγματικής τοποθεσίας',
-    'asset_location_update_default' => 'Ενημέρωση μόνο προεπιλεγμένης τοποθεσίας',
-    'asset_location_update_actual' => 'Ενημέρωση μόνο πραγματικής τοποθεσίας',
     'asset_not_deployable' => 'Αυτή η κατάσταση ενεργητικού δεν μπορεί να αναπτυχθεί. Αυτό το στοιχείο δεν μπορεί να ελεγχθεί.',
     'asset_not_deployable_checkin' => '{1} That asset status is not deployable. Using this status label will check in the asset.|[2,*] That asset status in not deployable. Using this status label will result in no change.',
     'asset_deployable' => '{1} This asset can be checked out.|[2,*] These assets can be checked out.',

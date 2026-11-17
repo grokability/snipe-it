@@ -38,7 +38,7 @@ return [
     'auto_increment_prefix' => 'پیشوند (اختیاری)',
     'auto_incrementing_help' => 'برای تنظیم، ابتدا برچسب‌های دارایی افزایش خودکار را فعال کنید
 ',
-    'backups' => 'پشتیبان گیری',
+    'backups' => 'Backups & Restore',
     'backups_help' => 'ایجاد، دانلود و بازیابی نسخه پشتیبان
 ',
     'backups_restoring' => 'بازیابی از پشتیبان گیری

@@ -5,10 +5,17 @@ namespace Tests\Feature\Assets\Api;
 use App\Models\Asset;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class AssetFilesTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Storage::fake();
+    }
+
     public function test_asset_api_accepts_file_upload()
     {
         // Upload a file to an asset

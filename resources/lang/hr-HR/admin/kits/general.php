@@ -36,7 +36,7 @@ return [
     'accessory_updated' => 'Accessory was successfully updated',
     'accessory_detached' => 'Accessory was successfully detached',
     'accessory_error' => 'Accessory already attached to kit',
-    'accessory_deleted' => 'Delete was successful',
+    'accessory_deleted' => 'Brisanje je uspješno izvršeno',
     'accessory_none' => 'Dodatak ne postoji',
     'checkout_success' => 'Checkout was successful',
     'checkout_error' => 'Checkout error',

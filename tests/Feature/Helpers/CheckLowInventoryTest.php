@@ -178,6 +178,21 @@ class CheckLowInventoryTest extends TestCase
         $this->assertSame(0, (int) $rows[$component->id]['remaining']);
     }
 
+    public function test_archived_component_is_excluded_even_when_below_min_amt()
+    {
+        // Archived components are retired from active inventory and
+        // should not drive low-stock alerts even when they fall below
+        // their min_amt threshold.
+        $this->settings->set(['alert_threshold' => 0]);
+
+        $component = Component::factory()->archived()->create(['qty' => 1, 'min_amt' => 5]);
+
+        $this->assertNotContains(
+            $component->id,
+            $this->idsForType(Helper::checkLowInventory(), 'components'),
+        );
+    }
+
     /**
      * Sums across multiple pivot rows too: 4 + 3 = 7 units shipped, so
      * a qty=10 component reports remaining=3, not 8 (row-count) or

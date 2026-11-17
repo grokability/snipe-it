@@ -81,8 +81,6 @@ class SuppliersController extends Controller
 
     /**
      * Supplier update.
-     *
-     * @param  int  $supplierId
      */
     public function edit(Supplier $supplier): View|RedirectResponse
     {
@@ -93,8 +91,6 @@ class SuppliersController extends Controller
 
     /**
      * Supplier update form processing page.
-     *
-     * @param  int  $supplierId
      */
     public function update(ImageUploadRequest $request, Supplier $supplier): RedirectResponse
     {
@@ -125,8 +121,6 @@ class SuppliersController extends Controller
 
     /**
      * Delete the given supplier.
-     *
-     * @param  int  $supplierId
      */
     public function destroy(Supplier $supplier): RedirectResponse
     {
@@ -169,7 +163,6 @@ class SuppliersController extends Controller
     /**
      *  Get the asset information to present to the supplier view page
      *
-     * @param  null  $supplierId
      *
      * @internal param int $assetId
      */

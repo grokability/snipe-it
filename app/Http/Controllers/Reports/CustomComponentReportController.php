@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Reports;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomComponentReportRequest;
 use App\Models\Actionlog;
+use App\Models\Builders\ComponentQueryBuilder;
 use App\Models\Component;
 use App\Models\ReportTemplate;
 use Carbon\Carbon;
@@ -61,7 +62,7 @@ class CustomComponentReportController extends Controller
             $headerRow = $this->generateHeaders($request, $mappings);
 
             Log::debug('Adding headers: '.$this->getExecutionTime());
-            fputcsv($handle, $headerRow);
+            fputcsv($handle, $headerRow, escape: '\\', eol: "\r\n");
             Log::debug('Added headers: '.$this->getExecutionTime());
 
             $this->buildQuery($request)->orderBy('components.id', 'ASC')->chunk(500, function ($components) use ($handle, $request, $mappings) {
@@ -87,11 +88,11 @@ class CustomComponentReportController extends Controller
 
                         // CSV_ESCAPE_FORMULAS is set to false in the .env
                         if (config('app.escape_formulas') === false) {
-                            fputcsv($handle, $row);
+                            fputcsv($handle, $row, escape: '\\', eol: "\r\n");
 
                             // CSV_ESCAPE_FORMULAS is set to true or is not set in the .env
                         } else {
-                            fputcsv($handle, $formatter->escapeRecord($row));
+                            fputcsv($handle, $formatter->escapeRecord($row), escape: '\\', eol: "\r\n");
                         }
 
                         Log::debug('-- Record '.$count.' Component ID:'.$component->id.' in '.$this->getExecutionTime());
@@ -246,6 +247,10 @@ class CustomComponentReportController extends Controller
                 'headers' => [trans('general.deleted')],
                 'values' => fn ($component, $i) => [$component->deleted_at ?? ''],
             ],
+            'archived' => [
+                'headers' => [trans('general.archived')],
+                'values' => fn ($component, $i) => [$component->archived ? trans('general.yes') : trans('general.no')],
+            ],
             'notes' => [
                 'headers' => [trans('general.notes')],
                 'values' => fn ($component, $i) => [$component->notes],
@@ -266,7 +271,7 @@ class CustomComponentReportController extends Controller
         return $headers;
     }
 
-    private function buildQuery(Request $request): Builder
+    private function buildQuery(Request $request): ComponentQueryBuilder
     {
         $query = Component::select('components.*')
             ->with([
@@ -376,6 +381,10 @@ class CustomComponentReportController extends Controller
                 ->pluck('item_id');
 
             $query->whereIn('components.id', $componentIdsWithinCheckoutRange);
+        }
+
+        if ($request->filled('exclude_archived')) {
+            $query->notArchived();
         }
 
         if ($request->input('deleted_components') === 'include_deleted') {

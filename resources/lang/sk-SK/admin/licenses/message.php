@@ -37,14 +37,14 @@ return [
         'confirm' => 'Ste si istý, že chcete odstrániť túto licenciu?',
         'error' => 'Pri odstraňovaní licencie nastala chyba. Skúste prosím znovu.',
         'success' => 'Licencia bola úspešne odstránená.',
-        'bulk_success' => 'The selected licenses were deleted successfully.',
-        'partial_success' => 'License deleted successfully. See additional information below. | :count licenses were deleted successfully. See additional information below.',
-        'bulk_checkout_warning' => ':license_name has seats that are currently checked out and cannot be deleted. Please check in all seats before deleting.',
+        'bulk_success' => 'Vybrané licencie boli úspešne odstránené.',
+        'partial_success' => 'Licencia bola úspešne odstránená. Ďalšie informácie nájdete nižšie. | :count licencií bolo úspešne odstránených. Ďalšie informácie nájdete nižšie.',
+        'bulk_checkout_warning' => ':license_name má momentálne odovzdané licenčné miesta, a preto ju nie je možné odstrániť. Pred odstránením prevezmite všetky licenčné miesta.',
     ],
 
     'delete_with_checkin' => [
-        'bulk_success' => ':count licenses were deleted successfully after checking in :seats seats.',
-        'partial_success' => ':count licenses were deleted successfully after checking in :seats seats. See additional information below.',
+        'bulk_success' => ':count licencií bolo úspešne odstránených po prevzatí :seats licenčných miest.',
+        'partial_success' => ':count licencií bolo úspešne odstránených po prevzatí :seats licenčných miest. Ďalšie informácie nájdete nižšie.',
     ],
 
     'checkout' => [
@@ -63,7 +63,7 @@ return [
     ],
 
     'import' => [
-        'no_free_seats' => 'License ":license" has no free seats. ":target" was not assigned to a seat.',
+        'no_free_seats' => 'Licencia ":license" nemá voľné licenčné miesta. Cieľu ":target" nebolo priradené žiadne licenčné miesto.',
     ],
 
 ];

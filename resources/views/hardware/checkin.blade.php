@@ -194,7 +194,8 @@
 
                     {{-- Custom fields --}}
                     @include('models/custom_fields_form', [
-                        'model' => $asset->model,
+                        'fieldset' => $asset->custom_fieldset,
+                        'defaultValues' => \App\Models\CustomFieldDefault::valuesFor($asset),
                         'show_custom_fields_type' => 'checkin',
                     ])
 

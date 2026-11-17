@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 
 class ModalController extends Controller
 {
@@ -19,7 +20,7 @@ class ModalController extends Controller
      *
      * @return View
      */
-    public function show($type, $itemId = null)
+    public function show(Request $request, $type, $itemId = null)
     {
 
         // These values should correspond to a file in resources/views/modals/
@@ -42,10 +43,14 @@ class ModalController extends Controller
         ];
 
         if (in_array($type, $allowed_types)) {
+            if (in_array($type, ['kit-model', 'kit-license', 'kit-consumable', 'kit-accessory']) && empty($itemId)) {
+                abort(404, 'Kit modal requires a kit id');
+            }
+
             $view = view("blade.modals.{$type}");
 
             if ($type == 'statuslabel') {
-                $view->with('statuslabel_types', Helper::statusTypeList());
+                $view->with('statuslabel_types', Helper::statusTypeList($request->query('scope')));
             }
 
             if (in_array($type, ['kit-model', 'kit-license', 'kit-consumable', 'kit-accessory'])) {

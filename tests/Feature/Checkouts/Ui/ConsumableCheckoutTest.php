@@ -5,6 +5,7 @@ namespace Tests\Feature\Checkouts\Ui;
 use App\Mail\CheckoutConsumableMail;
 use App\Models\Actionlog;
 use App\Models\CheckoutAcceptance;
+use App\Models\Company;
 use App\Models\Consumable;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
@@ -248,5 +249,30 @@ class ConsumableCheckoutTest extends TestCase
             ]);
 
         $response->assertSessionHas('sign_in_place', true);
+    }
+
+    public function test_cannot_check_out_more_than_physically_remain_when_units_are_held_outside_viewers_company()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+        $userInCompanyA = User::factory()->forCompany($companyA)->create();
+        $userInCompanyB = User::factory()->forCompany($companyB)->create();
+
+        $consumable = Consumable::factory()
+            ->for($companyA)
+            // this can happen if FMCS was toggled on after checkouts
+            ->checkedOutToUser($userInCompanyB)
+            ->checkedOutToUser($userInCompanyB)
+            ->create(['qty' => 2]);
+
+        $this->assertDatabaseCount('consumables_users', 2);
+
+        $this->actingAs(User::factory()->checkoutConsumables()->forCompany($companyA)->create())
+            ->post(route('consumables.checkout.store', $consumable), [
+                'assigned_user' => $userInCompanyA->id,
+            ]);
+
+        $this->assertDatabaseCount('consumables_users', 2);
     }
 }

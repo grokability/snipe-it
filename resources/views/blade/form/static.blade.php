@@ -2,6 +2,7 @@
 
 @props([
     'label',
+    'content_class' => 'col-md-6',
 ])
 
 @php
@@ -10,7 +11,7 @@
 
 <div class="form-group">
     <label id="{{ $labelId }}" class="col-sm-3 control-label">{{ $label }}</label>
-    <div class="col-md-6">
+    <div class="{{ $content_class }}">
         <p class="form-control-static" aria-labelledby="{{ $labelId }}">{{ $slot }}</p>
     </div>
 </div>

@@ -191,7 +191,6 @@ class MaintenancesController extends Controller
      * @author  Vincent Sposato <vincent.sposato@gmail.com>
      *
      * @param  Request  $request
-     * @param  int  $maintenanceId
      *
      * @version v1.0
      *
@@ -383,8 +382,6 @@ class MaintenancesController extends Controller
      *
      * @author  Vincent Sposato <vincent.sposato@gmail.com>
      *
-     * @param  int  $maintenanceId
-     *
      * @version v1.0
      *
      * @since [v1.8]
@@ -405,8 +402,6 @@ class MaintenancesController extends Controller
      *  View an asset maintenance
      *
      * @author  Vincent Sposato <vincent.sposato@gmail.com>
-     *
-     * @param  int  $maintenanceId
      *
      * @version v1.0
      *

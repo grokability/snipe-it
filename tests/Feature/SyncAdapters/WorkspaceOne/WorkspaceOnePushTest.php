@@ -7,7 +7,7 @@ use App\Models\AssetExternalSource;
 use App\Models\Statuslabel;
 use App\Models\SyncAdapterConfig;
 use App\Models\SyncAdapterInstance;
-use App\SyncAdapters\PushableAdapter;
+use App\SyncAdapters\PushableSyncAdapter;
 use App\SyncAdapters\WorkspaceOne\WorkspaceOneAdapter;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
@@ -28,7 +28,7 @@ class WorkspaceOnePushTest extends TestCase
 
     public function test_workspace_one_adapter_implements_pushable_interface()
     {
-        $this->assertInstanceOf(PushableAdapter::class, $this->configuredWs1());
+        $this->assertInstanceOf(PushableSyncAdapter::class, $this->configuredWs1());
     }
 
     public function test_push_asset_tag_puts_asset_number_field()

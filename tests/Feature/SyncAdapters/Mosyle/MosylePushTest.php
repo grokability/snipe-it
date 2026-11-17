@@ -8,7 +8,7 @@ use App\Models\Statuslabel;
 use App\Models\SyncAdapterConfig;
 use App\Models\SyncAdapterInstance;
 use App\SyncAdapters\Mosyle\MosyleAdapter;
-use App\SyncAdapters\PushableAdapter;
+use App\SyncAdapters\PushableSyncAdapter;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -29,7 +29,7 @@ class MosylePushTest extends TestCase
 
     public function test_mosyle_adapter_implements_pushable_interface(): void
     {
-        $this->assertInstanceOf(PushableAdapter::class, $this->configuredMosyle());
+        $this->assertInstanceOf(PushableSyncAdapter::class, $this->configuredMosyle());
     }
 
     public function test_push_asset_tag_sends_elements_array_keyed_by_serial(): void

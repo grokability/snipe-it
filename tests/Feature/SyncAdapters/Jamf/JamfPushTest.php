@@ -8,16 +8,16 @@ use App\Models\Statuslabel;
 use App\Models\SyncAdapterConfig;
 use App\Models\SyncAdapterInstance;
 use App\SyncAdapters\Jamf\JamfAdapter;
-use App\SyncAdapters\PushableAdapter;
+use App\SyncAdapters\PushableSyncAdapter;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 /**
  * End-to-end coverage for the Jamf Pro push path. Verifies the
- * PushableAdapter interface, the PATCH payload shape (nested
- * userAndLocation.assetTag path per Jamf's inventory-detail JSON),
- * and dry-run behavior.
+ * PushableSyncAdapter interface, the PATCH payload shape (asset_tag
+ * writes to general.assetTag per Jamf's ComputerGeneralUpdate
+ * schema), and dry-run behavior.
  */
 class JamfPushTest extends TestCase
 {
@@ -29,11 +29,16 @@ class JamfPushTest extends TestCase
 
     public function test_jamf_adapter_implements_pushable_interface()
     {
-        $this->assertInstanceOf(PushableAdapter::class, $this->configuredJamf());
+        $this->assertInstanceOf(PushableSyncAdapter::class, $this->configuredJamf());
     }
 
-    public function test_push_asset_tag_sends_patch_with_nested_user_and_location_path()
+    public function test_push_asset_tag_writes_to_general_asset_tag_path()
     {
+        // Regression pin for issue #19851. Jamf Pro's PATCH /api/v1/
+        // computers-inventory-detail accepts assetTag only on the
+        // `general` object (ComputerGeneralUpdate), never on
+        // `userAndLocation`. A push to the wrong path would be a
+        // silent no-op against a real tenant.
         $adapter = $this->configuredJamf();
         $instance = SyncAdapterInstance::where('slug', 'jamf')->firstOrFail();
         SyncAdapterConfig::put($instance->id, 'direction.asset_tag', 'push');
@@ -61,7 +66,8 @@ class JamfPushTest extends TestCase
         Http::assertSent(function ($request) {
             return $request->method() === 'PATCH'
                 && str_contains($request->url(), '/api/v1/computers-inventory-detail/jamf-computer-id-42')
-                && ($request->data()['userAndLocation']['assetTag'] ?? null) === 'SNIPE-JAMF-42';
+                && ($request->data()['general']['assetTag'] ?? null) === 'SNIPE-JAMF-42'
+                && ! isset($request->data()['userAndLocation']['assetTag']);
         });
     }
 

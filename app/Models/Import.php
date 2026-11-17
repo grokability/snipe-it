@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
+/**
+ * @mixin IdeHelperImport
+ */
 class Import extends Model
 {
     use HasFactory;
@@ -28,5 +31,16 @@ class Import extends Model
     public function adminuser()
     {
         return $this->belongsTo(User::class, 'created_by')->withTrashed();
+    }
+
+    /**
+     * Shared mutex key for an in-flight import of this specific file. Scoped by
+     * file id so different files can be processed in parallel: admin A
+     * importing accessories.csv does not block admin B importing
+     * assets-batch-2.csv. Same file can't be processed concurrently.
+     */
+    public function lockKey(): string
+    {
+        return 'import:'.$this->id.':running';
     }
 }

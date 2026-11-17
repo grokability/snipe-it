@@ -12,4 +12,9 @@ return [
     'exclude_deleted' => 'crwdns16149:0crwdne16149:0',
     'include_deleted' => 'crwdns16151:0crwdne16151:0',
     'only_deleted' => 'crwdns16153:0crwdne16153:0',
+    'mark_consumed' => 'crwdns17859:0crwdne17859:0',
+    'bulk_consume' => 'crwdns17861:0crwdne17861:0',
+    'bulk_consume_warn' => 'crwdns17863:0crwdne17863:0',
+    'bulk_consume_help' => 'crwdns17865:0crwdne17865:0',
+    'consumed_at' => 'crwdns17867:0crwdne17867:0',
 ];

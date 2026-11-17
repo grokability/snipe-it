@@ -3,7 +3,7 @@
 return [
 
     'does_not_exist' => 'Olekumärki pole olemas.',
-    'deleted_label' => 'Deleted Status Label',
+    'deleted_label' => 'Kustutatud olekusilt',
     'assoc_assets' => 'See olekuala märgis on praegu seotud vähemalt ühe varaga ja seda ei saa kustutada. Palun uuendage oma vara, et seda olekut enam mitte näidata, ja proovige uuesti.',
 
     'create' => [
@@ -20,8 +20,8 @@ return [
         'confirm' => 'Kas olete kindel, et soovite selle oleku märgendi kustutada?',
         'error' => 'Staatuse märgi kustutamisel tekkis probleem. Palun proovi uuesti.',
         'success' => 'Staatuse märgis kustutati edukalt.',
-        'bulk_success' => 'Status Label deleted successfully.|:count status labels were deleted successfully.',
-        'partial_success' => 'Status Label deleted successfully. See additional information below. | :count status labels were deleted successfully. See additional information below.',
+        'bulk_success' => 'Olekusildi kustutamine õnnestus.|:count olekusildi kustutamine õnnestus.',
+        'partial_success' => 'Olekusildi kustutamine õnnestus. Vaata lisateavet allpool. | :count olekusildi kustutamine õnnestus. Vaata lisateavet allpool.',
     ],
 
     'help' => [

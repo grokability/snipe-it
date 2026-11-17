@@ -2,7 +2,9 @@
 
 namespace Tests\Unit;
 
+use App\Models\Company;
 use App\Models\Consumable;
+use App\Models\User;
 use Tests\TestCase;
 
 class ConsumableTest extends TestCase
@@ -35,5 +37,29 @@ class ConsumableTest extends TestCase
         $consumable->consumables_users_count = 5;
 
         $this->assertEqualsWithDelta(-66.66666666666667, $consumable->percentRemaining(), 0.0000000001);
+    }
+
+    public function test_num_checked_out_does_not_scope_by_company()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        [$companyA, $companyB] = Company::factory()->count(2)->create();
+        $userInCompanyB = User::factory()->forCompany($companyB)->create();
+
+        $consumableForCompanyA = Consumable::factory()
+            ->for($companyA)
+            // this can happen if FMCS was toggled on after checkouts
+            ->checkedOutToUser($userInCompanyB)
+            ->checkedOutToUser($userInCompanyB)
+            ->create(['qty' => 3]);
+
+        $this->actingAs(User::factory()->superuser()->create());
+        $this->assertEquals(2, $consumableForCompanyA->fresh()->numCheckedOut());
+
+        $this->actingAs(User::factory()->admin()->forCompany($companyA)->create());
+        $this->assertEquals(2, $consumableForCompanyA->fresh()->numCheckedOut());
+
+        $this->actingAs(User::factory()->forCompany($companyA)->create());
+        $this->assertEquals(2, $consumableForCompanyA->fresh()->numCheckedOut());
     }
 }

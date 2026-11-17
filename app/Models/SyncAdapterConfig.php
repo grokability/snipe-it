@@ -100,6 +100,23 @@ class SyncAdapterConfig
         self::$instanceCache = [];
     }
 
+    /**
+     * Seed the per-instance cache from a caller that has already
+     * hydrated the SyncAdapterInstance rows (typically the settings
+     * controller, which pulls every instance up-front to render the
+     * tab strip). Without this hint, each per-tab SyncAdapterConfig::get
+     * call fires its own SyncAdapterInstance::find and the page ends
+     * up with one duplicate SELECT per adapter.
+     */
+    public static function warmInstanceCache(iterable $instances): void
+    {
+        foreach ($instances as $instance) {
+            if ($instance instanceof SyncAdapterInstance) {
+                self::$instanceCache[(int) $instance->id] = $instance;
+            }
+        }
+    }
+
     private static function instance(int $instanceId): ?SyncAdapterInstance
     {
         if (array_key_exists($instanceId, self::$instanceCache)) {

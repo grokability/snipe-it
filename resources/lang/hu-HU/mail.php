@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'Az Önnek kiadottak elutasítva',
     'inventory_report' => 'Készlet Jelentés',
     'item' => 'Tétel',
-    'item_checked_reminder' => 'Ez egy emlékeztető arról, hogy jelenleg :count számú jóváhagyásra váró eszköze van. Kérem, az alábbi linken döntsön ezek elfogadásáról, vagy elutasításáról.',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => 'Van :count licenc, amely a következő :threshold napban lejár vagy megszűnik.|Van :count licenc, amely a következő :threshold napban lejár vagy megszűnik.',
     'link_to_update_password' => 'Kérjük, kattintson a következő linkre a frissítéshez: webes jelszó:',
     'login' => 'Belépés',

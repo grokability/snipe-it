@@ -37,7 +37,7 @@
 
                     <!-- start assets tab pane -->
                     <x-tabs.pane name="assets">
-                        <x-table.assets name="assets" :route="route('api.assets.index', ['supplier_id' => $supplier->id, 'itemtype' => 'assets'])"/>
+                        <x-table.assets name="supplierAssets" :route="route('api.assets.index', ['supplier_id' => $supplier->id, 'itemtype' => 'assets'])"/>
                     </x-tabs.pane>
                     <!-- end assets tab pane -->
 
@@ -47,25 +47,25 @@
                         <x-slot:bulkactions>
                             <x-table.bulk-licenses />
                         </x-slot:bulkactions>
-                        <x-table.licenses name="licenses" :export_name="$supplier->name" :route="route('api.licenses.index', ['supplier_id' => $supplier->id])"/>
+                        <x-table.licenses name="supplierLicenses" :export_name="$supplier->name" :route="route('api.licenses.index', ['supplier_id' => $supplier->id])"/>
                     </x-tabs.pane>
                     <!-- end licenses tab pane -->
 
                     <!-- start accessories tab pane -->
                     <x-tabs.pane name="accessories">
-                        <x-table.accessories :name="$supplier->name" :route="route('api.accessories.index', ['supplier_id' => $supplier->id])"/>
+                        <x-table.accessories name="supplierAccessories" :route="route('api.accessories.index', ['supplier_id' => $supplier->id])"/>
                     </x-tabs.pane>
                     <!-- end accessories tab pane -->
 
                     <!-- start components tab pane -->
                     <x-tabs.pane name="components">
-                        <x-table.accessories :name="$supplier->name" :route="route('api.components.index', ['supplier_id' => $supplier->id])"/>
+                        <x-table.components name="supplierComponents" :route="route('api.components.index', ['supplier_id' => $supplier->id])"/>
                     </x-tabs.pane>
                     <!-- end components tab pane -->
 
                     <!-- start consumables tab pane -->
                     <x-tabs.pane name="consumables">
-                        <x-table.consumables :name="$supplier->name" :route="route('api.consumables.index', ['supplier_id' => $supplier->id])"/>
+                        <x-table.consumables name="supplierConsumables" :route="route('api.consumables.index', ['supplier_id' => $supplier->id])"/>
                     </x-tabs.pane>
                     <!-- end consumables tab pane -->
 
@@ -78,6 +78,7 @@
                             </x-slot:table_header>
 
                                 <x-table
+                                        name="supplierMaintenances"
                                         buttons="maintenanceButtons"
                                         api_url="{{ route('api.maintenances.index', ['supplier_id' => $supplier->id]) }}"
                                         :presenter="\App\Presenters\MaintenancesPresenter::dataTableLayout()"

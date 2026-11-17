@@ -44,7 +44,7 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
     {
         $this->actingAsForApi(User::factory()->canImport()->create());
 
-        $import = Import::factory()->component()->create();
+        $import = Import::factory()->component()->withStubFile()->create();
 
         $this->importFileResponse(['import' => $import->id])->assertOk();
     }
@@ -349,6 +349,25 @@ class ImportComponentsTest extends ImportDataTestCase implements TestsPermission
             ->where('name', $row['itemName'])
             ->sole();
         $this->assertTrue((bool) $component->requestable);
+    }
+
+    #[Test]
+    public function import_persists_the_archived_flag_from_csv(): void
+    {
+        $this->actingAsForApi(User::factory()->superuser()->create());
+
+        $importFileBuilder = ImportFileBuilder::new(['archived' => 'TRUE']);
+        $row = $importFileBuilder->firstRow();
+        $import = Import::factory()->component()->create([
+            'file_path' => $importFileBuilder->saveToImportsDirectory(),
+        ]);
+
+        $this->importFileResponse(['import' => $import->id])->assertOk();
+
+        $component = Component::query()
+            ->where('name', $row['itemName'])
+            ->sole();
+        $this->assertTrue((bool) $component->archived);
     }
 
     #[Test]

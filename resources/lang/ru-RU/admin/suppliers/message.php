@@ -4,6 +4,7 @@ return [
 
     'deleted' => 'Удаленный поставщик',
     'does_not_exist' => 'Поставщик не существует.',
+    'assoc_items' => 'This supplier is currently associated with at least one asset, accessory, consumable, component, license, or maintenance record and cannot be deleted. Please update those items to no longer reference this supplier and try again. ',
 
     'create' => [
         'error' => 'Поставщик не был создан, попробуйте еще раз.',

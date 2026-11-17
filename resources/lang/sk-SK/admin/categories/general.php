@@ -17,11 +17,11 @@ return [
     'name' => 'Názov kategórie',
     'require_acceptance' => 'Vyžadovať od používateľov aby potvrdili prijatie majetku v tejto kategórii.',
     'required_acceptance' => 'Tomuto používateľovi bude zaslaný mailom odkaz na potvrdenie prijatia tejto položky.',
-    'global_signature_required_notice' => 'The global "Require Signature" setting is on. Signatures only apply when this category also has "Require acceptance" turned on: enable both to require users to sign when accepting items from this category.',
+    'global_signature_required_notice' => 'Globálne nastavenie "Vyžadovať podpis" je zapnuté. Podpisy sa uplatnia iba vtedy, ak má táto kategória zapnuté aj "Vyžadovať akceptáciu": zapnite obe, ak chcete, aby používatelia pri prijímaní položiek z tejto kategórie podpisovali.',
     'required_eula' => 'Tomuto používateľovi bude zaslaná kópia dokumentu EULA',
-    'required_acceptance_component' => 'If the target asset is currently assigned to a user, that user will be emailed with a link to confirm acceptance of this component.',
-    'required_eula_component' => 'If the target asset is currently assigned to a user, that user will be emailed a copy of the EULA.',
-    'required_signature' => 'This user will be required to sign to confirm acceptance of this item.',
+    'required_acceptance_component' => 'Ak je cieľový majetok momentálne priradený používateľovi, tento používateľ dostane e-mail s odkazom na potvrdenie prijatia tohto komponentu.',
+    'required_eula_component' => 'Ak je cieľový majetok momentálne priradený používateľovi, tento používateľ dostane e-mailom kópiu EULA.',
+    'required_signature' => 'Tento používateľ bude musieť prijatie tejto položky potvrdiť podpisom.',
     'no_default_eula' => 'Žiaden predvolený EULA dokument nebol nájdený. Pridajte nový v Nastaveniach.',
     'update' => 'Upraviť kategóriu',
     'use_default_eula' => 'Použiť <a href="#" data-toggle="modal" data-target="#eulaModal">predvolený dokument EULA</a> namiesto toho.',
@@ -31,6 +31,6 @@ return [
     'import_checkin_email' => 'Poslať email o prevzatí',
     'import_eula_text' => 'Znenie EULA',
     'import_category_type' => 'Typ kategórie',
-    'import_alert_on_response' => 'Alert on Response',
+    'import_alert_on_response' => 'Upozorniť pri odpovedi',
 
 ];

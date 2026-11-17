@@ -4,6 +4,7 @@ return [
 
     'deleted' => '삭제된 공급업체',
     'does_not_exist' => '공급자가 존재하지 않습니다.',
+    'assoc_items' => 'This supplier is currently associated with at least one asset, accessory, consumable, component, license, or maintenance record and cannot be deleted. Please update those items to no longer reference this supplier and try again. ',
 
     'create' => [
         'error' => '공급자가 생성되지 않았습니다. 다시 시도해 주세요.',

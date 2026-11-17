@@ -41,7 +41,25 @@ class SyncErrorFormatter
             return $e->getMessage();
         }
 
-        return class_basename($e);
+        /*
+         * Generic throwable fallback. A bare class_basename alone is
+         * useless to admins debugging ("RuntimeException" tells them
+         * nothing), so append the exception's own message when it has
+         * one. Covers the long-tail: JWT key-parse failures from
+         * firebase/php-jwt (RuntimeException "OpenSSL unable to..."),
+         * OpenSSL key-import errors (ValueError), JSON decode failures,
+         * etc. Truncate so a verbose message doesn't nuke the UI.
+         */
+        $class = class_basename($e);
+        $message = trim((string) $e->getMessage());
+        if ($message === '') {
+            return $class;
+        }
+        if (mb_strlen($message) > 200) {
+            $message = mb_substr($message, 0, 200) . '…';
+        }
+
+        return $class . ': ' . $message;
     }
 
     /**

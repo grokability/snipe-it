@@ -23,6 +23,9 @@ return [
             'error' => 'Ocorreu um problema ao remover o campo. Por favor tente novamente.',
             'success' => 'O campo foi apagado com sucesso.',
             'in_use' => 'Campo continua em uso.',
+            'in_use_named' => ':name is still attached to at least one fieldset and cannot be deleted.',
+            'bulk_success' => 'Field deleted successfully.|:count fields were deleted successfully.',
+            'partial_success' => ':count field was deleted successfully, but others could not be deleted. See below for details.|:count fields were deleted successfully, but others could not be deleted. See below for details.',
         ],
 
     ],
@@ -46,6 +49,13 @@ return [
             'error' => 'Ocorreu um problema ao apagar o conjunto de campos. Por favor tente novamente.',
             'success' => 'O conjunto de campos foi eliminado com sucesso.',
             'in_use' => 'Conjunto de campos continua em uso.',
+            'in_use_named' => ':name is still attached to at least one asset model and cannot be deleted.',
+            'bulk_success' => 'Fieldset deleted successfully.|:count fieldsets were deleted successfully.',
+            'partial_success' => ':count fieldset was deleted successfully, but others could not be deleted. See below for details.|:count fieldsets were deleted successfully, but others could not be deleted. See below for details.',
+        ],
+
+        'clone' => [
+            'success' => 'Fieldset cloned successfully.',
         ],
 
     ],

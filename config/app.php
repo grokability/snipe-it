@@ -6,7 +6,6 @@ use App\Helpers\StorageHelper;
 use App\Providers\AppServiceProvider;
 use App\Providers\BladeServiceProvider;
 use App\Providers\BreadcrumbsServiceProvider;
-use App\Providers\EventServiceProvider;
 use App\Providers\LivewireServiceProvider;
 use App\Providers\RouteServiceProvider;
 use App\Providers\SamlServiceProvider;
@@ -503,7 +502,6 @@ return [
         */
         AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        EventServiceProvider::class,
         RouteServiceProvider::class,
         SettingsServiceProvider::class,
         App\Providers\ValidationServiceProvider::class,
@@ -631,6 +629,21 @@ return [
   */
 
     'max_unpaginated_records' => env('MAX_UNPAGINATED', '10000'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Acceptance Signature Max Dimension
+    |--------------------------------------------------------------------------
+    | Upper bound (in pixels) on the width AND height of a signature PNG
+    | uploaded on asset acceptance. The 6000 default covers typical retina
+    | and 5K displays with headroom. Operators whose users produce
+    | signatures above this ceiling (8K / scaled high-DPI panels) can
+    | raise it via ACCEPTANCE_SIGNATURE_MAX_DIMENSION in .env. Each pixel
+    | adds proportional memory per acceptance because the flatten path
+    | allocates one same-size buffer during server-side re-encoding.
+    */
+
+    'acceptance_signature_max_dimension' => (int) env('ACCEPTANCE_SIGNATURE_MAX_DIMENSION', 6000),
 
     /*
     |--------------------------------------------------------------------------

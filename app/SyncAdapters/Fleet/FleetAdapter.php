@@ -4,6 +4,7 @@ namespace App\SyncAdapters\Fleet;
 
 use App\SyncAdapters\HostInventoryRecord;
 use App\SyncAdapters\SyncAdapter;
+use App\SyncAdapters\Traits\UsesAppleDbEnrichment;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 
@@ -21,6 +22,16 @@ use Illuminate\Support\Arr;
  */
 class FleetAdapter extends SyncAdapter
 {
+    use UsesAppleDbEnrichment;
+
+    /**
+     * Fleet platform values treated as Apple hardware. Non-Apple
+     * hosts have hardware_model strings that will never match an
+     * appledb.dev entry, so gating here saves a wasted network call
+     * per non-Apple host on every sync.
+     */
+    private const APPLE_PLATFORMS = ['darwin', 'ios', 'ipados'];
+
     public static function typeLabel(): string
     {
         return 'Fleet';
@@ -45,12 +56,14 @@ class FleetAdapter extends SyncAdapter
                 'secret' => true,
                 'help' => trans('admin/settings/sync_adapters.fleet_token_help'),
             ],
+            $this->appleDbSettingsField(),
         ];
     }
 
     public function extraFields(): array
     {
         return [
+            ...$this->appleDbExtraFieldsDeclaration(),
             'fleet_team' => ['label_key' => 'admin/settings/sync_adapters.extra_team'],
             'fleet_labels' => ['label_key' => 'admin/settings/sync_adapters.extra_labels'],
             'fleet_uuid' => ['label_key' => 'admin/settings/sync_adapters.extra_uuid'],
@@ -150,6 +163,9 @@ class FleetAdapter extends SyncAdapter
         // work with. Pays an N+1 API cost per sync, only when needed.
         $needsDetail = $this->userMatchStrategy() !== 'none';
 
+        $enrichmentEnabled = $this->appleDbEnrichmentEnabled();
+        $enrichmentHandled = [];
+
         foreach ($client->hosts() as $host) {
             if ($needsDetail && isset($host['id'])) {
                 $detail = $client->hostDetail((int) $host['id']);
@@ -158,8 +174,55 @@ class FleetAdapter extends SyncAdapter
                 }
             }
 
-            yield $this->normalize($host);
+            $record = $this->normalize($host);
+
+            if ($enrichmentEnabled && $this->isAppleHost($host)) {
+                $enrichmentHandled = $this->enrichFromAppleDb($record, $enrichmentHandled);
+            }
+
+            yield $record;
         }
+    }
+
+    /**
+     * Resolve the Fleet record's AssetModel name + AppleDB-shape
+     * productType and delegate to the shared enrichment helper.
+     *
+     * Fleet's hardware_model is osquery's raw sysctl value which is
+     * already the AppleDB identifier shape ("MacBookPro18,3") on
+     * Apple devices. hardware_marketing_name is the human-readable
+     * name, used as the AssetModel name when the admin routes
+     * fleet_model_marketing_name to native:model.
+     *
+     * @param  array<string, bool>  $handled
+     * @return array<string, bool>
+     */
+    private function enrichFromAppleDb(HostInventoryRecord $record, array $handled): array
+    {
+        $modelName = $this->mappingFor('fleet_model_marketing_name') === 'native:model'
+            ? ($record->extra['fleet_model_marketing_name'] ?? $record->hardwareModel)
+            : $record->hardwareModel;
+
+        if (! is_string($modelName) || $modelName === '') {
+            return $handled;
+        }
+
+        $productType = $record->hardwareModel;
+        if (! is_string($productType) || $productType === '') {
+            return $handled;
+        }
+
+        return $this->enrichModelFromAppleDb($modelName, $productType, null, $handled);
+    }
+
+    /**
+     * @param  array<string, mixed>  $host
+     */
+    private function isAppleHost(array $host): bool
+    {
+        $platform = Arr::get($host, 'platform');
+
+        return is_string($platform) && in_array($platform, self::APPLE_PLATFORMS, true);
     }
 
     /**
@@ -172,6 +235,25 @@ class FleetAdapter extends SyncAdapter
      */
     private function normalize(array $host): HostInventoryRecord
     {
+        // Only Apple hosts have hardware_model values that resolve on
+        // AppleDB. Non-Apple hosts carry strings like "ThinkPad X1
+        // Carbon" that the service would always return null for.
+        //
+        // Pass the AssetModel name the framework will use (mirrors
+        // the mapping ensureModelImage uses later in pull) so the
+        // trait can short-circuit the AppleDB info call when an
+        // existing row already has every enrichable field set.
+        $modelName = $this->mappingFor('fleet_model_marketing_name') === 'native:model'
+            ? (Arr::get($host, 'hardware_marketing_name') ?? Arr::get($host, 'hardware_model'))
+            : Arr::get($host, 'hardware_model');
+        $isAppleHost = $this->isAppleHost($host);
+        $canonical = $isAppleHost
+            ? $this->canonicalIdentityFor(Arr::get($host, 'hardware_model'), $modelName)
+            : ['canonicalMarketingName' => null, 'canonicalModelNumber' => null];
+        $appleDbExtras = $isAppleHost
+            ? $this->appleDbExtrasFor(Arr::get($host, 'hardware_model'), $modelName)
+            : ['appledb_marketing_name' => null, 'appledb_model_number' => null, 'appledb_release_date' => null, 'appledb_discontinued_date' => null];
+
         return new HostInventoryRecord(
             sourceKey: $this->name(),
             sourceId: (string) Arr::get($host, 'id'),
@@ -188,6 +270,7 @@ class FleetAdapter extends SyncAdapter
             assignedUserName: $this->extractUserName($host),
             vendorGroupId: Arr::has($host, 'team_id') ? (string) Arr::get($host, 'team_id') : null,
             extra: [
+                ...$appleDbExtras,
                 'fleet_team' => Arr::get($host, 'team_name'),
                 'fleet_labels' => Arr::get($host, 'labels'),
                 'fleet_uuid' => Arr::get($host, 'uuid'),
@@ -199,6 +282,8 @@ class FleetAdapter extends SyncAdapter
                 // non-MDM hosts) is treated as not-BYOD.
                 'fleet_byod' => Arr::get($host, 'mdm.enrollment_status') === 'On (personal)',
             ],
+            canonicalMarketingName: $canonical['canonicalMarketingName'],
+            canonicalModelNumber: $canonical['canonicalModelNumber'],
         );
     }
 

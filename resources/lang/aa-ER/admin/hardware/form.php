@@ -56,8 +56,6 @@ return [
     'years' => 'crwdns722:0crwdne722:0',
     'asset_location' => 'crwdns6543:0crwdne6543:0',
     'asset_location_update_default_current' => 'crwdns6545:0crwdne6545:0',
-    'asset_location_update_default' => 'crwdns6547:0crwdne6547:0',
-    'asset_location_update_actual' => 'crwdns11852:0crwdne11852:0',
     'asset_not_deployable' => 'crwdns6549:0crwdne6549:0',
     'asset_not_deployable_checkin' => 'crwdns14556:0{1}crwdne14556:0',
     'asset_deployable' => 'crwdns14558:0{1}crwdne14558:0',

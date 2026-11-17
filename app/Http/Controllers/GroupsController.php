@@ -93,9 +93,6 @@ class GroupsController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net]
      *
      * @see GroupsController::postEdit()
-     *
-     * @param  int  $id
-     *
      * @since [v1.0]
      */
     public function edit(Group $group): View|RedirectResponse
@@ -123,9 +120,6 @@ class GroupsController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net]
      *
      * @see GroupsController::getEdit()
-     *
-     * @param  int  $id
-     *
      * @since [v1.0]
      */
     public function update(Request $request, Group $group): RedirectResponse

@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Sredstev ni bilo prevzeto, poskusite znova',
         'success' => 'Sredstev je bilo uspešno prevzeta.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Ta uporabnik je neveljaven. Prosim poskusite ponovno.',
         'already_checked_in' => 'Ta sredstev je že izdana.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

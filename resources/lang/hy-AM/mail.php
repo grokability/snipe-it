@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'Ձեր նախաձեռնած վճարումը մերժվել է',
     'inventory_report' => 'Գույքագրման հաշվետվություն',
     'item' => 'Տարր',
-    'item_checked_reminder' => 'Սա հիշեցում է, որ դուք ներկայումս ունեք :count տարրեր, որոնք չեք ընդունել կամ մերժել։ Խնդրում ենք սեղմել ստորև նշված հղման վրա՝ ձեր որոշումը հաստատելու համար։',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => 'Կա :count լիցենզիայի ժամկետը լրանում կամ դադարեցվում է հաջորդ :threshold օրերին։ Կան :count լիցենզիաների ժամկետը լրանում կամ դադարեցվում է հաջորդ :threshold օրերին։',
     'link_to_update_password' => 'Խնդրում ենք սեղմել հետևյալ հղմանը՝ ձեր :web գաղտնաբառը թարմացնելու համար։',
     'login' => 'Մուտք',

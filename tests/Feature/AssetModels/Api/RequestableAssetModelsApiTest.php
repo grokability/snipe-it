@@ -26,7 +26,7 @@ class RequestableAssetModelsApiTest extends TestCase
         $requestable = AssetModel::factory()->create(['requestable' => 1]);
         $notRequestable = AssetModel::factory()->create(['requestable' => 0]);
 
-        $rows = $this->actingAsForApi(User::factory()->create())
+        $rows = $this->actingAsForApi(User::factory()->viewRequestableAssets()->create())
             ->getJson(route('api.assetmodels.requestable'))
             ->assertOk()
             ->json('rows');
@@ -38,7 +38,7 @@ class RequestableAssetModelsApiTest extends TestCase
 
     public function test_row_carries_assigned_to_self_true_when_user_has_open_request(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->viewRequestableAssets()->create();
         $model = AssetModel::factory()->create(['requestable' => 1]);
         CheckoutRequest::factory()->create([
             'user_id' => $user->id,
@@ -60,7 +60,7 @@ class RequestableAssetModelsApiTest extends TestCase
 
     public function test_row_carries_assigned_to_self_false_for_other_users_requests(): void
     {
-        $me = User::factory()->create();
+        $me = User::factory()->viewRequestableAssets()->create();
         $someoneElse = User::factory()->create();
         $model = AssetModel::factory()->create(['requestable' => 1]);
         // Not my request.
@@ -84,7 +84,7 @@ class RequestableAssetModelsApiTest extends TestCase
     {
         // Cancel semantics: a canceled row shouldn't leave the user
         // stuck seeing a cancel button they can't act on.
-        $user = User::factory()->create();
+        $user = User::factory()->viewRequestableAssets()->create();
         $model = AssetModel::factory()->create(['requestable' => 1]);
         CheckoutRequest::factory()->create([
             'user_id' => $user->id,
@@ -111,7 +111,7 @@ class RequestableAssetModelsApiTest extends TestCase
         // eager-loaded requests collection is already scoped to this
         // model - but codify the isolation with a test so a future
         // refactor doesn't regress it.
-        $user = User::factory()->create();
+        $user = User::factory()->viewRequestableAssets()->create();
         AssetModel::factory()->create(['requestable' => 1]);
         $accessory = Accessory::factory()->create();
         CheckoutRequest::factory()->create([
@@ -136,8 +136,8 @@ class RequestableAssetModelsApiTest extends TestCase
         // a user without it gets view=false.
         AssetModel::factory()->create(['requestable' => 1]);
 
-        $withView = User::factory()->viewAssetModels()->create();
-        $withoutView = User::factory()->create();
+        $withView = User::factory()->viewRequestableAssets()->viewAssetModels()->create();
+        $withoutView = User::factory()->viewRequestableAssets()->create();
 
         $rowWith = $this->actingAsForApi($withView)
             ->getJson(route('api.assetmodels.requestable'))
@@ -149,7 +149,7 @@ class RequestableAssetModelsApiTest extends TestCase
         $this->assertTrue($rowWith['available_actions']['view']);
         $this->assertFalse($rowWithout['available_actions']['view']);
     }
-    
+
     public function test_remaining_reflects_deployable_asset_count(): void
     {
         $model = AssetModel::factory()->create(['requestable' => 1]);
@@ -169,7 +169,7 @@ class RequestableAssetModelsApiTest extends TestCase
             'assigned_type' => User::class,
         ]);
 
-        $row = $this->actingAsForApi(User::factory()->create())
+        $row = $this->actingAsForApi(User::factory()->viewRequestableAssets()->create())
             ->getJson(route('api.assetmodels.requestable'))
             ->assertOk()
             ->json('rows.0');

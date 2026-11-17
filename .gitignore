@@ -69,7 +69,10 @@ phpmd\.xml
 /public/storage
 _ide_helper.php
 .phpstorm.meta.php
-_ide_helper_models.php
+# _ide_helper_models.php is checked in on purpose. CI runs
+# `composer analyse:phpstan` without a DB connection and can't
+# regenerate the stub, so the committed file is the source of truth
+# for PHPStan's model-type knowledge.
 /.phplint-cache
 storage/ldap_client_tls.cert
 storage/ldap_client_tls.key

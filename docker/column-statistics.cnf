@@ -1,2 +1,7 @@
 [mysqldump]
-column-statistics=0
+# `loose-` prefix: unknown-variable error becomes a warning, so this file is
+# safe to ship to both mysqldump (Oracle MySQL 8.0 client needs
+# column-statistics=0 to dump an older server without blowing up on the
+# information_schema.column_statistics query) and mariadb-dump (which
+# doesn't know about the variable at all).
+loose-column-statistics=0

@@ -2,6 +2,7 @@
 
 namespace App\SyncAdapters\UnifiAccess;
 
+use App\SyncAdapters\Traits\RetriesTransientHttpErrors;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
@@ -29,6 +30,8 @@ use Illuminate\Support\Facades\Http;
  */
 class UnifiAccessClient
 {
+    use RetriesTransientHttpErrors;
+
     public function __construct(
         private readonly string $baseUrl,
         private readonly string $apiToken,
@@ -66,10 +69,12 @@ class UnifiAccessClient
 
     private function request(): PendingRequest
     {
-        return Http::baseUrl(rtrim($this->baseUrl, '/'))
-            ->withOptions(['allow_redirects' => false])
-            ->withToken($this->apiToken)
-            ->acceptJson()
-            ->timeout(30);
+        return $this->withTransientRetry(
+            Http::baseUrl(rtrim($this->baseUrl, '/'))
+                ->withOptions(['allow_redirects' => false])
+                ->withToken($this->apiToken)
+                ->acceptJson()
+                ->timeout(30)
+        );
     }
 }

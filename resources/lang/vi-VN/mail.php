@@ -77,7 +77,7 @@ return [
     'initiated_declined' => 'A checkout you initiated was declined',
     'inventory_report' => 'Báo cáo kho',
     'item' => 'Mục',
-    'item_checked_reminder' => 'This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
+    'item_checked_reminder' => '{1}This is a reminder that you currently have one item checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.|[2,*]This is a reminder that you currently have :count items checked out to you that you have not accepted or declined. Please click the link below to confirm your decision.',
     'license_expiring_alert' => 'There is :count license expiring or terminating in the next :threshold days.|There are :count licenses expiring or terminating in the next :threshold days.',
     'link_to_update_password' => 'Vui lòng nhấp vào liên kết sau để cập nhật: mật khẩu web:',
     'login' => 'Đăng nhập',

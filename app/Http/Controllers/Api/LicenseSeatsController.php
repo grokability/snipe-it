@@ -55,6 +55,9 @@ class LicenseSeatsController extends Controller
                 $seats->orderBy('updated_at', $order);
             }
 
+            // tie-breaker for stabling pagination with duplicate sort values
+            $seats->orderBy('license_seats.id', $order);
+
             $total = $seats->count();
 
             // Make sure the offset and limit are actually integers and do not exceed system limits

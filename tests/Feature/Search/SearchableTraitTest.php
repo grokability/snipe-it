@@ -983,6 +983,107 @@ class SearchableTraitTest extends TestCase
     }
 
     /**
+     * Regression coverage for the follow-up half of #19708. The "Title"
+     * column on the hardware list renders users.jobtitle via the
+     * assignedTo polymorphic morph, but the trait had no plumbing for
+     * "column on a related table surfaced as a top-level filter key",
+     * so is:null / is:not_null (and plain LIKE) silently dropped the
+     * filter and returned every row. The fix routes `jobtitle` through
+     * whereHasMorph on assignedTo so all three operators work the way
+     * the UI implies.
+     */
+    public function test_jobtitle_filter_matches_assigned_user_jobtitle()
+    {
+        $ts = now()->timestamp;
+
+        $engineer = User::factory()->create(['jobtitle' => 'Site Engineer '.$ts]);
+        $designer = User::factory()->create(['jobtitle' => 'Senior Designer '.$ts]);
+
+        $engineerAsset = Asset::factory()->assignedToUser($engineer)->create();
+        $designerAsset = Asset::factory()->assignedToUser($designer)->create();
+
+        $superuser = User::factory()->viewAssets()->create();
+
+        $response = $this->actingAsForApi($superuser)
+            ->getJson(route('api.assets.index', ['filter' => json_encode(['jobtitle' => 'Engineer'])]))
+            ->assertOk();
+
+        $returnedIds = collect($response->json('rows'))->pluck('id')->map(fn ($id) => (int) $id)->all();
+
+        $this->assertContains((int) $engineerAsset->id, $returnedIds);
+        $this->assertNotContains((int) $designerAsset->id, $returnedIds);
+    }
+
+    public function test_is_not_null_filter_on_jobtitle_relation_column_matches_assets_with_titled_assignee()
+    {
+        $ts = now()->timestamp;
+
+        $withTitle = User::factory()->create(['jobtitle' => 'VP Operations '.$ts]);
+        $withoutTitle = User::factory()->create(['jobtitle' => null]);
+        $withEmptyTitle = User::factory()->create(['jobtitle' => '']);
+
+        $titledAsset = Asset::factory()->assignedToUser($withTitle)->create();
+        $nullTitleAsset = Asset::factory()->assignedToUser($withoutTitle)->create();
+        $emptyTitleAsset = Asset::factory()->assignedToUser($withEmptyTitle)->create();
+        $unassignedAsset = Asset::factory()->create([
+            'assigned_to' => null,
+            'assigned_type' => null,
+        ]);
+
+        $superuser = User::factory()->viewAssets()->create();
+
+        $response = $this->actingAsForApi($superuser)
+            ->getJson(route('api.assets.index', ['filter' => json_encode(['jobtitle' => 'is:not_null'])]))
+            ->assertOk();
+
+        $returnedIds = collect($response->json('rows'))->pluck('id')->map(fn ($id) => (int) $id)->all();
+
+        $this->assertContains((int) $titledAsset->id, $returnedIds);
+        $this->assertNotContains(
+            (int) $nullTitleAsset->id,
+            $returnedIds,
+            'Assignee with a NULL jobtitle must not surface as "has title".'
+        );
+        $this->assertNotContains(
+            (int) $emptyTitleAsset->id,
+            $returnedIds,
+            'Assignee with an empty-string jobtitle must not surface as "has title", the way admins read the UI column.',
+        );
+        $this->assertNotContains((int) $unassignedAsset->id, $returnedIds);
+    }
+
+    public function test_is_null_filter_on_jobtitle_relation_column_matches_untitled_and_unassigned()
+    {
+        $ts = now()->timestamp;
+
+        $withTitle = User::factory()->create(['jobtitle' => 'Director of Something '.$ts]);
+        $withoutTitle = User::factory()->create(['jobtitle' => null]);
+
+        $titledAsset = Asset::factory()->assignedToUser($withTitle)->create();
+        $nullTitleAsset = Asset::factory()->assignedToUser($withoutTitle)->create();
+        $unassignedAsset = Asset::factory()->create([
+            'assigned_to' => null,
+            'assigned_type' => null,
+        ]);
+
+        $superuser = User::factory()->viewAssets()->create();
+
+        $response = $this->actingAsForApi($superuser)
+            ->getJson(route('api.assets.index', ['filter' => json_encode(['jobtitle' => 'is:null'])]))
+            ->assertOk();
+
+        $returnedIds = collect($response->json('rows'))->pluck('id')->map(fn ($id) => (int) $id)->all();
+
+        $this->assertNotContains((int) $titledAsset->id, $returnedIds);
+        $this->assertContains((int) $nullTitleAsset->id, $returnedIds);
+        $this->assertContains(
+            (int) $unassignedAsset->id,
+            $returnedIds,
+            'An asset with no assignee should present as "no title" from the UI column standpoint.',
+        );
+    }
+
+    /**
      * Test custom field partial match via filter.
      */
     public function test_custom_field_filter_partial_match()
@@ -1308,6 +1409,107 @@ class SearchableTraitTest extends TestCase
                     'location' => 'HQ-East',
                 ]),
                 'filter_operator' => 'and',
+            ]))
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) => $json->has('rows', 1)->etc());
+    }
+
+    /**
+     * Regression: ?filter[field]=value URL-array form must apply the
+     * structured filter instead of degrading to free-text. Before the
+     * fix in scopeTextSearch, the array was imploded to the value
+     * only (keys discarded), so the field constraint was lost and the
+     * value matched any searchable attribute.
+     */
+    public function test_array_form_filter_applies_as_structured_filter()
+    {
+        Asset::factory()->create(['name' => 'MacBook Pro 15"', 'serial' => 'SN-UNIQUE-NAME']);
+        Asset::factory()->create(['name' => 'MacBook Pro 16"', 'serial' => 'SN-OTHER']);
+
+        $this->actingAsForApi(User::factory()->viewAssets()->create())
+            ->getJson(route('api.assets.index', [
+                'filter' => ['serial' => 'SN-UNIQUE-NAME'],
+            ]))
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) => $json->has('rows', 1)->etc());
+    }
+
+    /**
+     * Array-form filter with multiple fields defaults to AND semantics.
+     */
+    public function test_array_form_filter_combines_fields_with_and_by_default()
+    {
+        Asset::factory()->create(['name' => 'MacBook', 'serial' => 'SN-MATCH']);
+        Asset::factory()->create(['name' => 'MacBook', 'serial' => 'SN-OTHER']);
+        Asset::factory()->create(['name' => 'Dell', 'serial' => 'SN-MATCH']);
+
+        $this->actingAsForApi(User::factory()->viewAssets()->create())
+            ->getJson(route('api.assets.index', [
+                'filter' => [
+                    'name' => 'MacBook',
+                    'serial' => 'SN-MATCH',
+                ],
+            ]))
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) => $json->has('rows', 1)->etc());
+    }
+
+    /**
+     * Array-form filter honors ?filter_operator=or.
+     */
+    public function test_array_form_filter_honors_or_operator()
+    {
+        Asset::factory()->create(['name' => 'OnlyNameMatch-Alpha']);
+        Asset::factory()->create(['name' => 'OtherAsset', 'serial' => 'OnlySerialMatch-Beta']);
+        Asset::factory()->create(['name' => 'Unrelated', 'serial' => 'SomethingElse']);
+
+        $this->actingAsForApi(User::factory()->viewAssets()->create())
+            ->getJson(route('api.assets.index', [
+                'filter' => [
+                    'name' => 'OnlyNameMatch-Alpha',
+                    'serial' => 'OnlySerialMatch-Beta',
+                ],
+                'filter_operator' => 'or',
+            ]))
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) => $json->has('rows', 2)->etc());
+    }
+
+    /**
+     * Empty values in the array-form filter are dropped (so clearing an
+     * input in the UI does not emit a noisy no-op filter that
+     * accidentally narrows the result set).
+     */
+    public function test_array_form_filter_ignores_empty_values()
+    {
+        Asset::factory()->create(['name' => 'KeeperAsset']);
+        Asset::factory()->create(['name' => 'OtherAsset']);
+
+        $this->actingAsForApi(User::factory()->viewAssets()->create())
+            ->getJson(route('api.assets.index', [
+                'filter' => [
+                    'name' => 'KeeperAsset',
+                    'serial' => '',
+                ],
+            ]))
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) => $json->has('rows', 1)->etc());
+    }
+
+    /**
+     * Array-form filter also works on relation keys, not just direct
+     * attributes, confirming the full structured-filter pipeline
+     * engages, not just the attribute path.
+     */
+    public function test_array_form_filter_resolves_relation_keys()
+    {
+        $supplier = Supplier::factory()->create(['name' => 'ArrayFormSupplier-'.now()->timestamp]);
+        Asset::factory()->create(['name' => 'A', 'supplier_id' => $supplier->id]);
+        Asset::factory()->create(['name' => 'B']);
+
+        $this->actingAsForApi(User::factory()->viewAssets()->create())
+            ->getJson(route('api.assets.index', [
+                'filter' => ['supplier' => 'ArrayFormSupplier'],
             ]))
             ->assertOk()
             ->assertJson(fn (AssertableJson $json) => $json->has('rows', 1)->etc());

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Users;
 
+use App\Console\Commands\LdapSync;
 use App\Http\Controllers\Controller;
+use App\Traits\LocksLongRunningOperation;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -13,6 +15,8 @@ use Illuminate\Support\Facades\Artisan;
 
 class LDAPImportController extends Controller
 {
+    use LocksLongRunningOperation;
+
     /**
      * Return view for LDAP import.
      *
@@ -35,7 +39,13 @@ class LDAPImportController extends Controller
             abort(403);
         }
 
-        return view('users/ldap');
+        // Belt-and-suspenders UI for the shared LDAP sync lock.
+        // The command itself refuses a concurrent trigger, this just
+        // stops the admin from clicking a button that will immediately
+        // fail.
+        $ldapSyncRunning = $this->isOperationLocked(LdapSync::LDAP_SYNC_LOCK);
+
+        return view('users/ldap', compact('ldapSyncRunning'));
     }
 
     /**

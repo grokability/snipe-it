@@ -41,7 +41,7 @@ return [
 
     'assetsview' => [
         'name' => 'Zobraziť Majetky',
-        'note' => 'Note that users with this permission will also be able to see (not modify or delete) files uploaded to the asset model as well. This is to make it easier to share common documents like user manuals across assets without having to upload them to every asset, and to avoid having to grant the user permission to modify asset files. Users with this permission will also be able to view edit and checkin history.',
+        'note' => 'Upozorňujeme, že používatelia s týmto oprávnením budú môcť zobraziť (nie upravovať ani odstraňovať) aj súbory nahrané k modelu majetku. Uľahčuje to zdieľanie bežných dokumentov, ako sú používateľské príručky, naprieč majetkom bez nutnosti nahrávať ich ku každému majetku a bez nutnosti udeľovať používateľovi oprávnenie upravovať súbory majetku. Používatelia s týmto oprávnením budú môcť zobraziť aj históriu úprav a prevzatí.',
     ],
 
     'assetscreate' => [
@@ -72,8 +72,8 @@ return [
     ],
 
     'assetsviewrequestable' => [
-        'name' => 'View Requestable Items',
-        'note' => 'Allows the user to view items that are marked as requestable.',
+        'name' => 'Zobraziť položky na vyžiadanie',
+        'note' => 'Umožňuje používateľovi zobraziť položky označené ako dostupné na vyžiadanie.',
     ],
 
     'assetsviewencrypted-custom-fields' => [
@@ -104,362 +104,362 @@ return [
     ],
     'accessoriescheckin' => [
         'name' => 'Prevziať príslušenstvo',
-        'note' => 'Check accessories back into inventory that are currently checked out.',
+        'note' => 'Prevziať späť do skladu príslušenstvo, ktoré je momentálne odovzdané.',
     ],
     'accessoriesfiles' => [
-        'name' => 'Manage Accessory Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with accessories. (This only makes sense with view privileges or higher.)',
+        'name' => 'Spravovať súbory príslušenstva',
+        'note' => 'Umožňuje používateľovi nahrávať, sťahovať a odstraňovať súbory priradené k príslušenstvu. (Má to zmysel iba s oprávnením na zobrazenie alebo vyšším.)',
     ],
 
     'assetsfiles' => [
-        'name' => 'Manage Asset Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with assets. (This only makes sense with view privileges or higher.)',
+        'name' => 'Spravovať súbory majetku',
+        'note' => 'Umožňuje používateľovi nahrávať, sťahovať a odstraňovať súbory priradené k majetku. (Má to zmysel iba s oprávnením na zobrazenie alebo vyšším.)',
     ],
 
     'usersfiles' => [
-        'name' => 'Manage User Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with users. (This only makes sense with view privileges or higher.)',
+        'name' => 'Spravovať súbory používateľov',
+        'note' => 'Umožňuje používateľovi nahrávať, sťahovať a odstraňovať súbory priradené k používateľom. (Má to zmysel iba s oprávnením na zobrazenie alebo vyšším.)',
     ],
 
     'modelsfiles' => [
-        'name' => 'Manage Model Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with asset models on both the model view and the asset view screens. (This only makes sense with view privileges or higher.)',
+        'name' => 'Spravovať súbory modelov',
+        'note' => 'Umožňuje používateľovi nahrávať, sťahovať a odstraňovať súbory priradené k modelom majetku na obrazovke zobrazenia modelu aj majetku. (Má to zmysel iba s oprávnením na zobrazenie alebo vyšším.)',
     ],
 
     'departmentsfiles' => [
-        'name' => 'Manage Department Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with departments. (This only makes sense with view privileges or higher.)',
+        'name' => 'Spravovať súbory oddelení',
+        'note' => 'Umožňuje používateľovi nahrávať, sťahovať a odstraňovať súbory priradené k oddeleniam. (Má to zmysel iba s oprávnením na zobrazenie alebo vyšším.)',
     ],
 
     'suppliersfiles' => [
-        'name' => 'Manage Supplier Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with suppliers. (This only makes sense with view privileges or higher.)',
+        'name' => 'Spravovať súbory dodávateľov',
+        'note' => 'Umožňuje používateľovi nahrávať, sťahovať a odstraňovať súbory priradené k dodávateľom. (Má to zmysel iba s oprávnením na zobrazenie alebo vyšším.)',
     ],
 
     'locationsfiles' => [
-        'name' => 'Manage Location Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with locations.(This only makes sense with view privileges or higher.)',
+        'name' => 'Spravovať súbory lokalít',
+        'note' => 'Umožňuje používateľovi nahrávať, sťahovať a odstraňovať súbory priradené k lokalitám. (Má to zmysel iba s oprávnením na zobrazenie alebo vyšším.)',
     ],
 
     'companiesfiles' => [
-        'name' => 'Manage Company Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with companies. (This only makes sense with view privileges or higher.)',
+        'name' => 'Spravovať súbory spoločností',
+        'note' => 'Umožňuje používateľovi nahrávať, sťahovať a odstraňovať súbory priradené k spoločnostiam. (Má to zmysel iba s oprávnením na zobrazenie alebo vyšším.)',
     ],
 
     'consumablesfiles' => [
-        'name' => 'Manage Consumable Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with consumables. (This only makes sense with view privileges or higher.)',
+        'name' => 'Spravovať súbory spotrebného materiálu',
+        'note' => 'Umožňuje používateľovi nahrávať, sťahovať a odstraňovať súbory priradené k spotrebnému materiálu. (Má to zmysel iba s oprávnením na zobrazenie alebo vyšším.)',
     ],
 
     'consumables' => [
         'name' => 'Spotrebný materiál',
-        'note' => 'Grants access to the Consumables section of the application.',
+        'note' => 'Udeľuje prístup do sekcie Spotrebný materiál v aplikácii.',
     ],
     'consumablesview' => [
-        'name' => 'View Consumables',
+        'name' => 'Zobraziť spotrebný materiál',
     ],
     'consumablescreate' => [
-        'name' => 'Create New Consumables',
+        'name' => 'Vytvárať nový spotrebný materiál',
     ],
     'consumablesedit' => [
-        'name' => 'Edit Consumables',
+        'name' => 'Upravovať spotrebný materiál',
     ],
     'consumablesdelete' => [
-        'name' => 'Delete Consumables',
+        'name' => 'Odstraňovať spotrebný materiál',
     ],
     'consumablescheckout' => [
-        'name' => 'Check Out Consumables',
-        'note' => 'Assign consumables in inventory by checking them out.',
+        'name' => 'Odovzdávať spotrebný materiál',
+        'note' => 'Priraďovať spotrebný materiál zo skladu jeho odovzdaním.',
     ],
 
     'licenses' => [
         'name' => 'Licencie',
-        'note' => 'Grants access to the Licenses section of the application.',
+        'note' => 'Udeľuje prístup do sekcie Licencie v aplikácii.',
     ],
     'licensesview' => [
-        'name' => 'View Licenses',
+        'name' => 'Zobraziť licencie',
     ],
     'licensescreate' => [
-        'name' => 'Create New Licenses',
+        'name' => 'Vytvárať nové licencie',
     ],
     'licensesedit' => [
-        'name' => 'Edit Licenses',
+        'name' => 'Upravovať licencie',
     ],
     'licensesdelete' => [
-        'name' => 'Delete Licenses',
+        'name' => 'Odstraňovať licencie',
     ],
     'licensescheckout' => [
-        'name' => 'Assign Licenses',
-        'note' => 'Allows the user to assign licenses to assets or users.',
+        'name' => 'Priraďovať licencie',
+        'note' => 'Umožňuje používateľovi priraďovať licencie k majetku alebo používateľom.',
     ],
     'licensescheckin' => [
-        'name' => 'Unassign Licenses',
-        'note' => 'Allows the user to unassign licenses from assets or users.',
+        'name' => 'Rušiť priradenie licencií',
+        'note' => 'Umožňuje používateľovi zrušiť priradenie licencií k majetku alebo používateľom.',
     ],
     'licensesfiles' => [
-        'name' => 'Manage License Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with licenses.',
+        'name' => 'Spravovať súbory licencií',
+        'note' => 'Umožňuje používateľovi nahrávať, sťahovať a odstraňovať súbory priradené k licenciám.',
     ],
     'componentsfiles' => [
-        'name' => 'Manage Component Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with components.',
+        'name' => 'Spravovať súbory komponentov',
+        'note' => 'Umožňuje používateľovi nahrávať, sťahovať a odstraňovať súbory priradené ku komponentom.',
     ],
 
     'licenseskeys' => [
-        'name' => 'Manage License Keys',
-        'note' => 'Allows the user to view product keys associated with licenses.',
+        'name' => 'Spravovať licenčné kľúče',
+        'note' => 'Umožňuje používateľovi zobraziť produktové kľúče priradené k licenciám.',
     ],
     'components' => [
         'name' => 'Komponenty',
-        'note' => 'Grants access to the Components section of the application.',
+        'note' => 'Udeľuje prístup do sekcie Komponenty v aplikácii.',
     ],
     'componentsview' => [
-        'name' => 'View Components',
+        'name' => 'Zobraziť komponenty',
     ],
     'componentscreate' => [
-        'name' => 'Create New Components',
+        'name' => 'Vytvárať nové komponenty',
     ],
     'componentsedit' => [
-        'name' => 'Edit Components',
+        'name' => 'Upravovať komponenty',
     ],
     'componentsdelete' => [
-        'name' => 'Delete Components',
+        'name' => 'Odstraňovať komponenty',
     ],
 
     'componentscheckout' => [
-        'name' => 'Check Out Components',
-        'note' => 'Assign components in inventory by checking them out.',
+        'name' => 'Odovzdávať komponenty',
+        'note' => 'Priraďovať komponenty zo skladu ich odovzdaním.',
     ],
     'componentscheckin' => [
-        'name' => 'Check In Components',
-        'note' => 'Check components back into inventory that are currently checked out.',
+        'name' => 'Preberať komponenty',
+        'note' => 'Prevziať späť do skladu komponenty, ktoré sú momentálne odovzdané.',
     ],
     'kits' => [
         'name' => 'Predvolené sady',
-        'note' => 'Grants access to the Predefined Kits section of the application.',
+        'note' => 'Udeľuje prístup do sekcie Preddefinované sady v aplikácii.',
     ],
     'kitsview' => [
-        'name' => 'View Predefined Kits',
+        'name' => 'Zobraziť preddefinované sady',
     ],
     'kitscreate' => [
-        'name' => 'Create New Predefined Kits',
+        'name' => 'Vytvárať nové preddefinované sady',
     ],
     'kitsedit' => [
-        'name' => 'Edit Predefined Kits',
+        'name' => 'Upravovať preddefinované sady',
     ],
     'kitsdelete' => [
-        'name' => 'Delete Predefined Kits',
+        'name' => 'Odstraňovať preddefinované sady',
     ],
     'users' => [
         'name' => 'Používatelia',
-        'note' => 'Grants access to the Users section of the application.',
+        'note' => 'Udeľuje prístup do sekcie Používatelia v aplikácii.',
     ],
     'usersview' => [
         'name' => 'Zobraziť používateľa',
-        'note' => 'Note that users with this permission will also be able to see (not modify or delete) files uploaded to the user as well. Users with this permission will also be able to view edit and checkin history.',
+        'note' => 'Používatelia s týmto oprávnením budú môcť zobraziť aj históriu úprav a prevzatí. Prístup k súborom nahraným k používateľovi sa riadi samostatne oprávnením Spravovať súbory používateľov.',
     ],
     'userscreate' => [
-        'name' => 'Create New Users',
+        'name' => 'Vytvárať nových používateľov',
     ],
     'usersedit' => [
-        'name' => 'Edit Users',
+        'name' => 'Upravovať používateľov',
     ],
     'usersdelete' => [
-        'name' => 'Delete Users',
+        'name' => 'Odstraňovať používateľov',
     ],
     'models' => [
-        'name' => 'Models',
-        'note' => 'Grants access to the Models section of the application.',
+        'name' => 'Modely',
+        'note' => 'Udeľuje prístup do sekcie Modely v aplikácii.',
     ],
     'modelsview' => [
         'name' => 'Zobraziť modely',
     ],
 
     'modelscreate' => [
-        'name' => 'Create New Models',
+        'name' => 'Vytvárať nové modely',
     ],
     'modelsedit' => [
-        'name' => 'Edit Models',
+        'name' => 'Upravovať modely',
     ],
     'modelsdelete' => [
-        'name' => 'Delete Models',
+        'name' => 'Odstraňovať modely',
     ],
     'categories' => [
         'name' => 'Kategórie',
-        'note' => 'Grants access to the Categories section of the application.',
+        'note' => 'Udeľuje prístup do sekcie Kategórie v aplikácii.',
     ],
     'categoriesview' => [
-        'name' => 'View Categories',
+        'name' => 'Zobraziť kategórie',
     ],
     'categoriescreate' => [
-        'name' => 'Create New Categories',
+        'name' => 'Vytvárať nové kategórie',
     ],
     'categoriesedit' => [
-        'name' => 'Edit Categories',
+        'name' => 'Upravovať kategórie',
     ],
     'categoriesdelete' => [
-        'name' => 'Delete Categories',
+        'name' => 'Odstraňovať kategórie',
     ],
     'departments' => [
         'name' => 'Oddelenia',
-        'note' => 'Grants access to the Departments section of the application.',
+        'note' => 'Udeľuje prístup do sekcie Oddelenia v aplikácii.',
     ],
     'departmentsview' => [
-        'name' => 'View Departments',
+        'name' => 'Zobraziť oddelenia',
     ],
     'departmentscreate' => [
-        'name' => 'Create New Departments',
+        'name' => 'Vytvárať nové oddelenia',
     ],
     'departmentsedit' => [
-        'name' => 'Edit Departments',
+        'name' => 'Upravovať oddelenia',
     ],
     'departmentsdelete' => [
-        'name' => 'Delete Departments',
+        'name' => 'Odstraňovať oddelenia',
     ],
     'locations' => [
         'name' => 'Lokality',
-        'note' => 'Grants access to the Locations section of the application.',
+        'note' => 'Udeľuje prístup do sekcie Lokality v aplikácii.',
     ],
     'locationsview' => [
-        'name' => 'View Locations',
+        'name' => 'Zobraziť lokality',
     ],
     'locationscreate' => [
-        'name' => 'Create New Locations',
+        'name' => 'Vytvárať nové lokality',
     ],
     'locationsedit' => [
-        'name' => 'Edit Locations',
+        'name' => 'Upravovať lokality',
     ],
     'locationsdelete' => [
-        'name' => 'Delete Locations',
+        'name' => 'Odstraňovať lokality',
     ],
     'status-labels' => [
         'name' => 'Stavy',
-        'note' => 'Grants access to the Status Labels section of the application used by Assets.',
+        'note' => 'Udeľuje prístup do sekcie Stavy v aplikácii, ktorú používa majetok.',
     ],
     'statuslabelsview' => [
-        'name' => 'View Status Labels',
+        'name' => 'Zobraziť stavy',
     ],
     'statuslabelscreate' => [
-        'name' => 'Create New Status Labels',
+        'name' => 'Vytvárať nové stavy',
     ],
     'statuslabelsedit' => [
-        'name' => 'Edit Status Labels',
+        'name' => 'Upravovať stavy',
     ],
     'statuslabelsdelete' => [
-        'name' => 'Delete Status Labels',
+        'name' => 'Odstraňovať stavy',
     ],
     'custom-fields' => [
         'name' => 'Vlastné polia',
-        'note' => 'Grants access to the Custom Fields section of the application used by Assets.',
+        'note' => 'Udeľuje prístup do sekcie Vlastné polia v aplikácii, ktorú používa majetok.',
     ],
     'customfieldsview' => [
-        'name' => 'View Custom Fields',
+        'name' => 'Zobraziť vlastné polia',
     ],
     'customfieldscreate' => [
-        'name' => 'Create New Custom Fields',
+        'name' => 'Vytvárať nové vlastné polia',
     ],
     'customfieldsedit' => [
-        'name' => 'Edit Custom Fields',
+        'name' => 'Upravovať vlastné polia',
     ],
     'customfieldsdelete' => [
-        'name' => 'Delete Custom Fields',
+        'name' => 'Odstraňovať vlastné polia',
     ],
     'suppliers' => [
         'name' => 'Dodávatelia',
-        'note' => 'Grants access to the Suppliers section of the application.',
+        'note' => 'Udeľuje prístup do sekcie Dodávatelia v aplikácii.',
     ],
     'suppliersview' => [
-        'name' => 'View Suppliers',
+        'name' => 'Zobraziť dodávateľov',
     ],
     'supplierscreate' => [
-        'name' => 'Create New Suppliers',
+        'name' => 'Vytvárať nových dodávateľov',
     ],
     'suppliersedit' => [
-        'name' => 'Edit Suppliers',
+        'name' => 'Upravovať dodávateľov',
     ],
     'suppliersdelete' => [
-        'name' => 'Delete Suppliers',
+        'name' => 'Odstraňovať dodávateľov',
     ],
     'manufacturers' => [
         'name' => 'Výrobcovia',
-        'note' => 'Grants access to the Manufacturers section of the application.',
+        'note' => 'Udeľuje prístup do sekcie Výrobcovia v aplikácii.',
     ],
     'manufacturersview' => [
-        'name' => 'View Manufacturers',
+        'name' => 'Zobraziť výrobcov',
     ],
     'manufacturerscreate' => [
-        'name' => 'Create New Manufacturers',
+        'name' => 'Vytvárať nových výrobcov',
     ],
     'manufacturersedit' => [
-        'name' => 'Edit Manufacturers',
+        'name' => 'Upravovať výrobcov',
     ],
     'manufacturersdelete' => [
-        'name' => 'Delete Manufacturers',
+        'name' => 'Odstraňovať výrobcov',
     ],
     'companies' => [
         'name' => 'Spoločnosti',
-        'note' => 'Grants access to the Companies section of the application.',
+        'note' => 'Udeľuje prístup do sekcie Spoločnosti v aplikácii.',
     ],
     'companiesview' => [
-        'name' => 'View Companies',
+        'name' => 'Zobraziť spoločnosti',
     ],
     'companiescreate' => [
-        'name' => 'Create New Companies',
+        'name' => 'Vytvárať nové spoločnosti',
     ],
     'companiesedit' => [
-        'name' => 'Edit Companies',
+        'name' => 'Upravovať spoločnosti',
     ],
     'companiesdelete' => [
-        'name' => 'Delete Companies',
+        'name' => 'Odstraňovať spoločnosti',
     ],
     'user-self-accounts' => [
-        'name' => 'User Self Accounts',
-        'note' => 'Grants non-admin users the ability to manage certain aspects of their own user accounts.',
+        'name' => 'Vlastné účty používateľov',
+        'note' => 'Umožňuje používateľom bez administrátorských práv spravovať niektoré aspekty vlastného používateľského účtu.',
     ],
     'selftwo-factor' => [
-        'name' => 'Manage Two-Factor Authentication',
-        'note' => 'Allows users to enable, disable, and manage two-factor authentication for their own accounts.',
+        'name' => 'Spravovať dvojfaktorové overenie',
+        'note' => 'Umožňuje používateľom zapínať, vypínať a spravovať dvojfaktorové overenie vo vlastnom účte.',
     ],
     'selfapi' => [
-        'name' => 'Manage API Tokens',
-        'note' => 'Allows users to create, view, and revoke their own API tokens. User tokens will have the same permissions as the user who created them.',
+        'name' => 'Spravovať API tokeny',
+        'note' => 'Umožňuje používateľom vytvárať, zobrazovať a rušiť vlastné API tokeny. Tokeny používateľa budú mať rovnaké oprávnenia ako používateľ, ktorý ich vytvoril.',
     ],
     'selfedit-location' => [
-        'name' => 'Edit Location',
-        'note' => 'Allows users to edit the location associated with their own user account.',
+        'name' => 'Upraviť lokalitu',
+        'note' => 'Umožňuje používateľom upraviť lokalitu priradenú k ich vlastnému používateľskému účtu.',
     ],
     'selfcheckout-assets' => [
-        'name' => 'Self Check Out Assets',
-        'note' => 'Allows users to check out assets to themselves without admin intervention.',
+        'name' => 'Samoobslužné odovzdanie majetku',
+        'note' => 'Umožňuje používateľom odovzdať si majetok sami sebe bez zásahu administrátora.',
     ],
     'selfview-purchase-cost' => [
-        'name' => 'View Purchase Cost',
-        'note' => 'Allows users to view the purchase cost of items in their account view.',
+        'name' => 'Zobraziť nákupnú cenu',
+        'note' => 'Umožňuje používateľom zobraziť nákupnú cenu položiek v zobrazení ich účtu.',
     ],
 
     'depreciations' => [
-        'name' => 'Depreciation Management',
-        'note' => 'Allows users to manage and view asset depreciation details.',
+        'name' => 'Správa odpisov',
+        'note' => 'Umožňuje používateľom spravovať a zobrazovať podrobnosti o odpisoch majetku.',
     ],
     'depreciationsview' => [
-        'name' => 'View Depreciation Details',
+        'name' => 'Zobraziť podrobnosti odpisov',
     ],
     'depreciationsedit' => [
-        'name' => 'Edit Depreciation Settings',
+        'name' => 'Upravovať nastavenia odpisov',
     ],
     'depreciationsdelete' => [
-        'name' => 'Delete Depreciation Records',
+        'name' => 'Odstraňovať záznamy odpisov',
     ],
     'depreciationscreate' => [
-        'name' => 'Create Depreciation Records',
+        'name' => 'Vytvárať záznamy odpisov',
     ],
 
-    'grant_all' => 'Grant all permissions for :area',
-    'deny_all' => 'Deny all permissions for :area',
-    'inherit_all' => 'Inherit all permissions for :area from permission groups',
-    'grant' => 'Grant Permission for :area',
-    'deny' => 'Deny Permission for :area',
-    'inherit' => 'Inherit Permission for :area from permission groups',
-    'use_groups' => 'We strongly suggest using Permission Groups instead of assigning individual permissions for easier management.',
+    'grant_all' => 'Udeliť všetky oprávnenia pre :area',
+    'deny_all' => 'Zamietnuť všetky oprávnenia pre :area',
+    'inherit_all' => 'Zdediť všetky oprávnenia pre :area zo skupín oprávnení',
+    'grant' => 'Udeliť oprávnenie pre :area',
+    'deny' => 'Zamietnuť oprávnenie pre :area',
+    'inherit' => 'Zdediť oprávnenie pre :area zo skupín oprávnení',
+    'use_groups' => 'Pre jednoduchšiu správu dôrazne odporúčame namiesto priraďovania jednotlivých oprávnení používať skupiny oprávnení.',
 
 ];

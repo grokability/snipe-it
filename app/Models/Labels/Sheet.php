@@ -2,6 +2,9 @@
 
 namespace App\Models\Labels;
 
+use Illuminate\Support\Collection;
+use TCPDF;
+
 abstract class Sheet extends Label
 {
     protected int $indexOffset = 0;

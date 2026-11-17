@@ -2,6 +2,7 @@
 
 namespace App\SyncAdapters\GoogleWorkspace;
 
+use App\SyncAdapters\Traits\RetriesTransientHttpErrors;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
@@ -30,6 +31,8 @@ use Illuminate\Support\Facades\Http;
  */
 class GoogleWorkspaceClient
 {
+    use RetriesTransientHttpErrors;
+
     private const TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token';
 
     private const ADMIN_SDK_BASE_URL = 'https://admin.googleapis.com/admin/directory/v1';
@@ -177,12 +180,12 @@ class GoogleWorkspaceClient
 
     private function request(): PendingRequest
     {
-        return Http::baseUrl(self::ADMIN_SDK_BASE_URL)
-            ->withToken($this->bearer())
-            ->withOptions(['allow_redirects' => false])
-            ->acceptJson()
-            ->timeout(30)
-            ->retry(3, 500, fn (\Exception $e) => $e instanceof \Illuminate\Http\Client\ConnectionException
-                || ($e instanceof \Illuminate\Http\Client\RequestException && $e->response->status() === 429));
+        return $this->withTransientRetry(
+            Http::baseUrl(self::ADMIN_SDK_BASE_URL)
+                ->withToken($this->bearer())
+                ->withOptions(['allow_redirects' => false])
+                ->acceptJson()
+                ->timeout(30)
+        );
     }
 }

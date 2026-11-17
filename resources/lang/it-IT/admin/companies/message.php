@@ -3,7 +3,7 @@
 return [
     'does_not_exist' => 'L\'azienda non esiste.',
     'deleted' => 'Azienda eliminata',
-    'assoc_users' => 'Questa azienda è attualmente associata con almeno un modello e non può essere cancellata. Aggiorna i tuoi modelli perchè non facciano più riferimento a questa azienda e riprova. ',
+    'assoc_users' => 'This company is currently associated with at least one other item (location, user, license, asset, etc.) in Snipe-IT and cannot be deleted. Please update your models to no longer reference this company and try again. ',
     'create' => [
         'error' => 'L\'azienda non è stata creata, riprova.',
         'success' => 'Azienda creata con successo.',
@@ -19,4 +19,5 @@ return [
         'bulk_success' => 'Azienda eliminata con successo.|:count aziende sono state eliminate con successo.',
         'partial_success' => 'Azienda eliminata con successo. Vedi ulteriori informazioni qui sotto. | :count aziende sono state eliminate con successo. Vedi ulteriori informazioni qui sotto.',
     ],
+    'webhook_fields_require_superuser' => 'Webhook configuration fields (:fields) can only be modified by a superuser.',
 ];

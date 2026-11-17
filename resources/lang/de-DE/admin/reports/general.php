@@ -6,6 +6,7 @@ return [
     'send_reminder' => 'Erinnerung senden',
     'cannot_send_reminder' => 'Benutzer wurde gelöscht oder hat keine E-Mail-Adresse, daher kann keine Erinnerung empfangen',
     'reminder_sent' => 'Erinnerung gesendet',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => 'Akzeptanzanfrage gelöscht',
     'acceptance_request' => 'Akzeptierungsanfrage',
     'custom_export' => [

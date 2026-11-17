@@ -26,7 +26,7 @@
                 <x-slot:tabpanes>
                     <!-- start users tab pane -->
                     <x-tabs.pane name="users">
-                        <x-table.users name="users" :route="route('api.users.index', ['department_id' => $department->id])"/>
+                        <x-table.users name="departmentUsers" :route="route('api.users.index', ['department_id' => $department->id])"/>
                     </x-tabs.pane>
                     <!-- end users tab pane -->
 

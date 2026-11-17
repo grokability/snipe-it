@@ -71,7 +71,6 @@ class UploadedFilesController extends Controller
      * Check for permissions and display the file.
      * This isn't currently used, but is here for future use.
      *
-     * @param  UploadFileRequest  $request
      * @param  string  $object_type  the type of object to upload the file to
      * @param  int  $id  the ID of the object to delete from so we can check permisisons
      * @param  $file_id  the ID of the file to show from the action_logs table
@@ -116,7 +115,6 @@ class UploadedFilesController extends Controller
     /**
      * Delete the associated file
      *
-     * @param  UploadFileRequest  $request
      * @param  string  $object_type  the type of object to upload the file to
      * @param  int  $id  the ID of the object to delete from so we can check permisisons
      * @param  $file_id  the ID of the file to delete from the action_logs table

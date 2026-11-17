@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'ទ្រព្យសកម្មមិនត្រូវ checked in ទេ, សូមព្យាយាមម្តងទៀត',
         'success' => 'ទ្រព្យសកម្មបាន checked in ជោគជ័យ។',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'អ្នកប្រើប្រាស់នោះមិនត្រឹមត្រូវទេ។ សូម​ព្យាយាម​ម្តង​ទៀត។',
         'already_checked_in' => 'ទ្រព្យសកម្មនោះត្រូវ checked in រួចហើយ។',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

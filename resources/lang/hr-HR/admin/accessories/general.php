@@ -13,11 +13,12 @@ return [
     'no_default_eula' => 'Nisu pronađeni primarni standardni EULA. Dodajte jednu u Postavke.',
     'total' => 'ukupno',
     'remaining' => 'Dobitak',
-    'requestable' => 'Users may request this accessory',
+    'requestable' => 'Korisnici mogu zatražiti ovu dodatnu opremu',
     'update' => 'Ažuriranje dodatne opreme',
     'use_default_eula' => 'Umjesto toga upotrijebite <a href="#" data-toggle="modal" data-target="#eulaModal">primarnu postavku EULA</a>.',
     'use_default_eula_disabled' => '<del>Uporedi primarnu zadanu EULA.</del> Nije postavljena primarna zadana EULA. Dodajte jednu u Postavke.',
     'clone' => 'Klonirajte dodatnu opremu',
     'delete_disabled' => 'Ova dodatna oprema se trenutno ne može obrisati, obzirom da su neki predmeti i dalje odjavljeni.',
+    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
 
 ];

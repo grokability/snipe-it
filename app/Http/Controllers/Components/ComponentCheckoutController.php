@@ -29,16 +29,20 @@ class ComponentCheckoutController extends Controller
      * @since [v3.0]
      *
      * @param  int  $id
-     * @return View
      *
      * @throws AuthorizationException
      */
-    public function create(Request $request, $id)
+    public function create(Request $request, $id): View|RedirectResponse
     {
 
         if ($component = Component::find($id)) {
 
             $this->authorize('checkout', $component);
+
+            if ($component->archived) {
+                return redirect()->route('components.index')
+                    ->with('error', trans('general.cannot_checkout_archived', ['item_type' => trans('general.component')]));
+            }
 
             // Make sure the category is valid
             if ($component->category) {
@@ -106,6 +110,11 @@ class ComponentCheckoutController extends Controller
         }
 
         $this->authorize('checkout', $component);
+
+        if ($component->archived) {
+            return redirect()->route('components.index')
+                ->with('error', trans('general.cannot_checkout_archived', ['item_type' => trans('general.component')]));
+        }
 
         $max_to_checkout = $component->numRemaining();
 

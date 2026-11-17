@@ -25,7 +25,7 @@ class AccessoryRequestTest extends TestCase
             ->assertOk()
             ->assertViewHas('counts', fn ($counts) => ($counts['accessories'] ?? 0) > 0);
 
-        $rows = $this->actingAsForApi(User::factory()->create())
+        $rows = $this->actingAsForApi(User::factory()->viewRequestableAssets()->create())
             ->getJson(route('api.accessories.requestable'))
             ->assertOk()
             ->json('rows');

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Builders\GroupQueryBuilder;
 use App\Models\Traits\Searchable;
 use App\Presenters\GroupPresenter;
 use App\Presenters\Presentable;
@@ -10,6 +11,9 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
 use Watson\Validating\ValidatingTrait;
 
+/**
+ * @mixin IdeHelperGroup
+ */
 class Group extends SnipeModel
 {
     use HasFactory;
@@ -60,6 +64,35 @@ class Group extends SnipeModel
     protected $searchableRelations = [
         'adminuser' => ['first_name', 'last_name', 'display_name'],
     ];
+
+    /**
+     * Advanced-search filterable fields. Groups has no model-level FKs
+     * beyond created_by, so the filter set is narrow.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
 
     /**
      * Detach all users_groups pivot rows when a group is deleted.
@@ -134,13 +167,8 @@ class Group extends SnipeModel
 
     }
 
-    /**
-     * -----------------------------------------------
-     * BEGIN QUERY SCOPES
-     * -----------------------------------------------
-     **/
-    public function scopeOrderByCreatedBy($query, $order)
+    public function newEloquentBuilder($query): GroupQueryBuilder
     {
-        return $query->leftJoin('users as admin_sort', 'permission_groups.created_by', '=', 'admin_sort.id')->select('permission_groups.*')->orderBy('admin_sort.first_name', $order)->orderBy('admin_sort.last_name', $order);
+        return new GroupQueryBuilder($query);
     }
 }

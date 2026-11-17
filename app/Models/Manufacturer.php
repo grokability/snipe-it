@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\FileStorage;
+use App\Models\Builders\ManufacturerQueryBuilder;
+use App\Models\Contracts\Importable;
 use App\Models\Traits\Searchable;
 use App\Presenters\ManufacturerPresenter;
 use App\Presenters\Presentable;
@@ -13,7 +15,10 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Watson\Validating\ValidatingTrait;
 
-class Manufacturer extends SnipeModel
+/**
+ * @mixin IdeHelperManufacturer
+ */
+class Manufacturer extends SnipeModel implements Importable
 {
     use HasFactory;
 
@@ -49,7 +54,7 @@ class Manufacturer extends SnipeModel
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'name',
@@ -72,6 +77,11 @@ class Manufacturer extends SnipeModel
      */
     protected $searchableAttributes = [
         'name',
+        'url',
+        'support_url',
+        'support_email',
+        'support_phone',
+        'warranty_lookup_url',
         'created_at',
         'notes',
     ];
@@ -84,6 +94,34 @@ class Manufacturer extends SnipeModel
     protected $searchableRelations = [
         'adminuser' => ['first_name', 'last_name', 'display_name'],
     ];
+
+    /**
+     * Advanced-search filterable fields.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
 
     /**
      * On hard-delete, wipe the image file. Soft-delete leaves it alone so a
@@ -111,6 +149,21 @@ class Manufacturer extends SnipeModel
             && (($this->accessories_count ?? $this->accessories()->count()) === 0)
             && (($this->components_count ?? $this->components()->count()) === 0)
             && ($this->deleted_at == '');
+    }
+
+    /**
+     * Whether the sidebar info-panel disclosure for this manufacturer
+     * has anything to reveal. Gates the "+" button so rows with only a
+     * name don't offer an empty expander.
+     */
+    public function hasInfoPanelDetails(): bool
+    {
+        return (bool) ($this->support_phone
+            || $this->support_email
+            || $this->warranty_lookup_url
+            || $this->url
+            || $this->support_url
+            || trim($this->present()->displayAddress()));
     }
 
     public function assets()
@@ -143,11 +196,8 @@ class Manufacturer extends SnipeModel
         return $this->hasMany(Component::class, 'manufacturer_id');
     }
 
-    /**
-     * Query builder scope to order on the user that created it
-     */
-    public function scopeOrderByCreatedBy($query, $order)
+    public function newEloquentBuilder($query): ManufacturerQueryBuilder
     {
-        return $query->leftJoin('users as admin_sort', 'manufacturers.created_by', '=', 'admin_sort.id')->select('manufacturers.*')->orderBy('admin_sort.first_name', $order)->orderBy('admin_sort.last_name', $order);
+        return new ManufacturerQueryBuilder($query);
     }
 }

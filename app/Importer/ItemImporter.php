@@ -416,11 +416,8 @@ class ItemImporter extends Importer
      *
      * @since 3.0
      *
-     * @param array
-     * @param  $row  Row
+     * @param  array<string, mixed>  $row
      * @return int Id of asset model created/found
-     *
-     * @internal param $asset_modelno string
      */
     public function createOrFetchAssetModel(array $row)
     {

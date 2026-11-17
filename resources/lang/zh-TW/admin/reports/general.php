@@ -6,6 +6,7 @@ return [
     'send_reminder' => '傳送提醒',
     'cannot_send_reminder' => '使用者已被刪除或沒有電子郵件地址，因此無法接收提醒',
     'reminder_sent' => '已發送提醒',
+    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
     'acceptance_deleted' => '接收申請已刪除',
     'acceptance_request' => '接收申請',
     'custom_export' => [

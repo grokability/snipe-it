@@ -82,11 +82,18 @@
 
                 <x-form.row
                     :label="trans('admin/locations/table.currency')"
-                    :$item
                     name="currency"
-                    :maxlength="3"
-                    input_div_class="col-md-2"
-                />
+                    input_div_class="col-md-3"
+                    help_class="col-md-7 col-md-offset-3"
+                    :help_text="trans('general.currency_manually_entered_help')"
+                >
+                    <x-slot:input>
+                        <x-input.currency-select
+                            name="currency"
+                            :selected="old('currency', $item->currency ?? null)"
+                        />
+                    </x-slot:input>
+                </x-form.row>
 
                 <x-form.address :item="$item" />
 

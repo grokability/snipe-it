@@ -5,10 +5,17 @@ namespace Tests\Feature\Consumables\Api;
 use App\Models\Consumable;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ConsumableFileTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Storage::fake();
+    }
+
     public function test_consumable_api_accepts_file_upload()
     {
         // Upload a file to a model

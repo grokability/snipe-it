@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\StatusLabelType;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FilterRequest;
@@ -16,6 +17,7 @@ use App\Rules\CssColor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class StatuslabelsController extends Controller
 {
@@ -51,17 +53,17 @@ class StatuslabelsController extends Controller
             $statuslabels->where('name', '=', $request->input('name'));
         }
 
-        // if a status_type is passed, filter by that
+        // Filter by the semantic status_type (StatusLabelType enum
+        // value). Unknown values fall through to the full list rather
+        // than erroring, matching pre-enum behavior.
         if ($request->filled('status_type')) {
-            if (strtolower($request->input('status_type')) == 'pending') {
-                $statuslabels = $statuslabels->Pending();
-            } elseif (strtolower($request->input('status_type')) == 'archived') {
-                $statuslabels = $statuslabels->Archived();
-            } elseif (strtolower($request->input('status_type')) == 'deployable') {
-                $statuslabels = $statuslabels->Deployable();
-            } elseif (strtolower($request->input('status_type')) == 'undeployable') {
-                $statuslabels = $statuslabels->Undeployable();
-            }
+            match (StatusLabelType::tryFrom(strtolower((string) $request->input('status_type')))) {
+                StatusLabelType::Pending => $statuslabels->Pending(),
+                StatusLabelType::Archived => $statuslabels->Archived(),
+                StatusLabelType::Deployable => $statuslabels->Deployable(),
+                StatusLabelType::Undeployable => $statuslabels->Undeployable(),
+                default => null,
+            };
         }
 
         // Make sure the offset and limit are actually integers and do not exceed system limits
@@ -98,12 +100,10 @@ class StatuslabelsController extends Controller
         $this->authorize('create', Statuslabel::class);
         $request->except('deployable', 'pending', 'archived');
 
-        if (! $request->filled('type')) {
-
-            return response()->json(Helper::formatStandardApiResponse('error', null, ['type' => ['Status label type is required.']]));
-        }
-
-        $request->validate(['color' => ['nullable', new CssColor]]);
+        $request->validate([
+            'type' => ['required', 'string', Rule::enum(StatusLabelType::class)],
+            'color' => ['nullable', new CssColor],
+        ]);
 
         $statuslabel = new Statuslabel;
         $statuslabel->fill($request->all());
@@ -165,12 +165,10 @@ class StatuslabelsController extends Controller
 
         $request->except('deployable', 'pending', 'archived');
 
-        if (! $request->filled('type')) {
-            return response()->json(Helper::formatStandardApiResponse('error', null, 'Status label type is required.'));
-        }
-
-        // See color-validation comment in store() above.
-        $request->validate(['color' => ['nullable', new CssColor]]);
+        $request->validate([
+            'type' => ['required', 'string', Rule::enum(StatusLabelType::class)],
+            'color' => ['nullable', new CssColor],
+        ]);
 
         $statuslabel->fill($request->all());
 
@@ -228,7 +226,7 @@ class StatuslabelsController extends Controller
      */
     public function getAssetCountByStatuslabel(): array
     {
-        
+
         abort_unless(Gate::allows('view', Statuslabel::class) || Gate::allows('view', Asset::class), 403);
 
         if (Setting::getSettings()->show_archived_in_list == 0) {

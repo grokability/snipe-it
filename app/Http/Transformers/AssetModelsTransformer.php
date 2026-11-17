@@ -6,34 +6,39 @@ use App\Enums\FileStorage;
 use App\Helpers\Helper;
 use App\Models\Asset;
 use App\Models\AssetModel;
+use App\Models\CustomFieldDefault;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class AssetModelsTransformer
 {
-    public function transformAssetModels(Collection $assetmodels, $total)
+    /** @param Collection<int, AssetModel> $assetmodels */
+    public function transformAssetModels(Collection $assetmodels, int $total): array
     {
         $array = [];
+        $assetmodels->loadMissing(['custom_fieldset.fields', 'defaultValues']);
         foreach ($assetmodels as $assetmodel) {
-            $array[] = self::transformAssetModel($assetmodel);
+            $array[] = $this->transformAssetModel($assetmodel);
         }
 
         return (new DatatablesTransformer)->transformDatatables($array, $total);
     }
 
-    public function transformAssetModel(AssetModel $assetmodel)
+    public function transformAssetModel(AssetModel $assetmodel): array
     {
-
+        $fieldset = $assetmodel->custom_fieldset;
         $default_field_values = [];
+        $defaults = CustomFieldDefault::valuesFor($assetmodel);
 
-        // Reach into the custom fields and models_custom_fields pivot table to find the default values for this model
-        if ($assetmodel->fieldset) {
-            foreach ($assetmodel->fieldset->fields as $field) {
+        // Include the defaults belonging to this model for each field in its fieldset.
+        if ($fieldset) {
+            foreach ($fieldset->fields as $field) {
+                $defaultValue = $defaults[$field->db_column] ?? null;
                 $default_field_values[] = [
                     'name' => e($field->name),
                     'db_column_name' => e($field->db_column_name()),
-                    'default_value' => ($field->defaultValue($assetmodel->id)) ? e($field->defaultValue($assetmodel->id)) : null,
+                    'default_value' => $defaultValue !== null ? e($defaultValue) : null,
                     'format' => e($field->format),
                     'required' => ($field->pivot->required == '1') ? true : false,
                 ];
@@ -52,6 +57,9 @@ class AssetModelsTransformer
             'qr_code_url' => route('qr_code/common', ['object_type' => 'models', 'id' => $assetmodel->id]),
             'model_number' => ($assetmodel->model_number ? e($assetmodel->model_number) : null),
             'min_amt' => ($assetmodel->min_amt) ? (int) $assetmodel->min_amt : null,
+            'mfg_marketing_name' => ($assetmodel->mfg_marketing_name) ? e($assetmodel->mfg_marketing_name) : null,
+            'mfg_release_date' => Helper::getFormattedDateObject($assetmodel->mfg_release_date, 'date'),
+            'mfg_discontinued_date' => Helper::getFormattedDateObject($assetmodel->mfg_discontinued_date, 'date'),
 
             'depreciation' => ($assetmodel->depreciation) ? [
                 'id' => (int) $assetmodel->depreciation->id,
@@ -69,9 +77,9 @@ class AssetModelsTransformer
                 'name' => e($assetmodel->category->name),
                 'tag_color' => ($assetmodel->category->tag_color) ? e($assetmodel->category->tag_color) : null,
             ] : null,
-            'fieldset' => ($assetmodel->fieldset) ? [
-                'id' => (int) $assetmodel->fieldset->id,
-                'name' => e($assetmodel->fieldset->name),
+            'fieldset' => ($fieldset) ? [
+                'id' => (int) $fieldset->id,
+                'name' => e($fieldset->name),
             ] : null,
             'default_fieldset_values' => $default_field_values,
             'eol' => ($assetmodel->eol > 0) ? $assetmodel->eol.' months' : 'None',
@@ -128,6 +136,39 @@ class AssetModelsTransformer
         $array += $permissions_array;
 
         return $array;
+    }
+
+    public function transformRequestedModels(Collection $assetmodels, $total)
+    {
+        $array = [];
+        foreach ($assetmodels as $assetmodel) {
+            $array[] = self::transformRequestedModel($assetmodel);
+        }
+
+        return (new DatatablesTransformer)->transformDatatables($array, $total);
+    }
+
+    public function transformRequestedModel(AssetModel $assetmodel)
+    {
+        $userHasOpenRequest = auth()->check() && $assetmodel->relationLoaded('requests') && $assetmodel->requests->contains(
+            fn (\App\Models\CheckoutRequest $request) => $request->user_id === auth()->id() && $request->canceled_at === null
+        );
+
+        return [
+            'id' => (int) $assetmodel->id,
+            'name' => e($assetmodel->name),
+            'image' => ($assetmodel->image != '') ? Storage::disk('public')->url(FileStorage::Models->publicPath().e($assetmodel->image)) : null,
+            'model_number' => ($assetmodel->model_number) ? e($assetmodel->model_number) : null,
+            'remaining' => $assetmodel->remaining !== null
+                ? (int) $assetmodel->remaining
+                : (int) ($assetmodel->assets_count - (int) $assetmodel->assets_assigned_count) - (int) $assetmodel->assets_archived_count,
+            'assigned_to_self' => $userHasOpenRequest,
+            'available_actions' => [
+                'view' => Gate::allows('view', $assetmodel),
+                'request' => ! $userHasOpenRequest,
+                'cancel' => $userHasOpenRequest,
+            ],
+        ];
     }
 
     public function transformAssetModelFiles($assetmodel, $total)

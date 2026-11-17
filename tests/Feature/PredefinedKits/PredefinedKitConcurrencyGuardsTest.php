@@ -151,8 +151,6 @@ class PredefinedKitConcurrencyGuardsTest extends TestCase
         array $accessories,
     ): array {
         $method = new ReflectionMethod($service, 'saveToDb');
-        $method->setAccessible(true);
-
         return $method->invoke(
             $service,
             $user,

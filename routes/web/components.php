@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Components;
+use App\Http\Controllers\Components\BulkComponentsController;
 use App\Models\Component;
 use Illuminate\Support\Facades\Route;
 use Tabuna\Breadcrumbs\Trail;
@@ -38,15 +39,34 @@ Route::group(['prefix' => 'components', 'middleware' => ['auth']], function () {
     )->where('componentID', '[0-9]+')
         ->name('components.checkin.store');
 
+    // Bulk check-in from the component's assigned tab. The `.show`
+    // route renders the confirmation interstitial where the admin
+    // picks the shared note. `.store` applies the checkin.
+    Route::post(
+        'bulkcheckin/show',
+        [Components\ComponentCheckinController::class, 'bulkCheckinShow']
+    )->name('components.bulkcheckin.show');
+
+    Route::post(
+        'bulkcheckin/store',
+        [Components\ComponentCheckinController::class, 'bulkCheckinStore']
+    )->name('components.bulkcheckin.store');
+
     Route::get('{component}/clone',
         [Components\ComponentsController::class, 'getClone']
     )->where('component', '[0-9]+')
-        ->name('components.clone.create');
+        ->name('components.clone.create')
+        ->withTrashed();
 
     Route::post('{component}/adjust-quantity',
         [Components\ComponentsController::class, 'adjustQuantity']
     )->where('component', '[0-9]+')
         ->name('components.adjust-quantity');
+
+    Route::post('{componentID}/restore',
+        [Components\ComponentsController::class, 'postRestore']
+    )->where('componentID', '[0-9]+')
+        ->name('components.restore');
 
     // Bulk-fulfill queue for this component. Distinct from the
     // sibling user-target bulk-fulfill routes (accessories/
@@ -68,9 +88,31 @@ Route::group(['prefix' => 'components', 'middleware' => ['auth']], function () {
     )->where('component', '[0-9]+')
         ->name('components.fulfill-requests.store');
 
+    // Bulk-select
+    Route::post('bulkedit',
+        [BulkComponentsController::class, 'edit']
+    )->name('components.bulkedit.show')
+        ->breadcrumbs(function (Trail $trail) {
+            $label = match (request()->input('bulk_actions')) {
+                'edit' => trans('general.bulk_edit'),
+                'delete' => trans('general.bulk_delete'),
+                default => trans('general.bulk_actions'),
+            };
+
+            return $trail->parent('components.index')->push($label, route('components.index'));
+        });
+
+    Route::post('bulksave',
+        [BulkComponentsController::class, 'update']
+    )->name('components.bulkedit.store');
+
+    Route::post('bulkdelete',
+        [BulkComponentsController::class, 'destroy']
+    )->name('components.bulkdelete.store');
+
 });
 
 Route::resource('components', Components\ComponentsController::class, [
     'middleware' => ['auth'],
     'parameters' => ['component' => 'component_id'],
-]);
+])->withTrashed(['show']);

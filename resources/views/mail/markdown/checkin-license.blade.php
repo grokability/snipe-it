@@ -10,8 +10,8 @@
 @if (isset($license->manufacturer))
 | **{{ trans('general.manufacturer') }}** | {{ $license->manufacturer->name }} |
 @endif
-@if (($target instanceof \App\Models\User && $target->can('view', $license)) ||($target instanceof \App\Models\Asset && $license_seat->user?->can('view', $license)))
-| **Key** | {{ $license->serial }} |
+@if (($target instanceof \App\Models\User && Gate::forUser($target)->allows('viewKeys', $license)) || ($target instanceof \App\Models\Asset && $license_seat->user && Gate::forUser($license_seat->user)->allows('viewKeys', $license)))
+| **Key** | {{ $license->getRawOriginal('serial') }} |
 @endif
 @if (isset($item->category))
 | **{{ trans('general.category') }}** | {{ $license->category->name }} |

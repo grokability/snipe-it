@@ -17,8 +17,8 @@ return [
         'confirm' => 'هل أنت متأكد من رغبتك في حذف هذا القسم؟',
         'error' => 'حدثت مشكلة اثناء عملية حذف القسم الاداري. الرجاء المحاولة مرة اُخرى.',
         'success' => 'تم حذف القسم الاداري بنجاح.',
-        'bulk_success' => 'Department deleted successfully.|:count departments were deleted successfully.',
-        'partial_success' => 'Department deleted successfully. See additional information below. | :count departments were deleted successfully. See additional information below.',
+        'bulk_success' => 'تم حذف القسم بنجاح.|:count أقسام تم حذفها بنجاح.',
+        'partial_success' => 'تم حذف القسم بنجاح. راجع المعلومات الإضافية أدناه. | :count أقسام تم حذفها بنجاح. راجع المعلومات الإضافية أدناه.',
     ],
 
 ];

@@ -24,4 +24,8 @@
 @section('moar_scripts')
 @include ('partials.bootstrap-table', ['exportFile' => 'locations-export', 'search' => true])
 
+<x-table.advanced-search
+    tableId="locationsListingTable"
+    :model="\App\Models\Location::class"
+/>
 @stop

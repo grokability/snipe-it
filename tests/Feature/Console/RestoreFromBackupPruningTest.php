@@ -48,7 +48,6 @@ class RestoreFromBackupPruningTest extends TestCase
         file_put_contents($privateDir.'/.gitkeep', '');
 
         $prune = new ReflectionMethod(RestoreFromBackup::class, 'pruneUploadDirectories');
-        $prune->setAccessible(true);
         $prune->invoke(null, [$publicDir], [$privateDir]);
 
         $this->assertFileDoesNotExist($publicDir.'/asset-1.png');
@@ -64,7 +63,6 @@ class RestoreFromBackupPruningTest extends TestCase
         $missing = $this->sandbox.'/does/not/exist';
 
         $prune = new ReflectionMethod(RestoreFromBackup::class, 'pruneUploadDirectories');
-        $prune->setAccessible(true);
         // Should not throw even when the enumerated directory does not exist.
         $prune->invoke(null, [$missing], []);
 
@@ -89,7 +87,6 @@ class RestoreFromBackupPruningTest extends TestCase
         file_put_contents($uploadsRoot.'/unrelated.txt', 'bytes');
 
         $prune = new ReflectionMethod(RestoreFromBackup::class, 'pruneUploadFiles');
-        $prune->setAccessible(true);
         $prune->invoke(null, [
             $uploadsRoot.'/Setting-*',
             $uploadsRoot.'/setting-*',
@@ -121,7 +118,6 @@ class RestoreFromBackupPruningTest extends TestCase
         file_put_contents($nested.'/nested.png', 'bytes');
 
         $prune = new ReflectionMethod(RestoreFromBackup::class, 'pruneUploadDirectories');
-        $prune->setAccessible(true);
         $prune->invoke(null, [$dir], []);
 
         $this->assertFileDoesNotExist($dir.'/top-level.png');

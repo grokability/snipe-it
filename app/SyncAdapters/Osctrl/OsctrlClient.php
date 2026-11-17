@@ -2,6 +2,7 @@
 
 namespace App\SyncAdapters\Osctrl;
 
+use App\SyncAdapters\Traits\RetriesTransientHttpErrors;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
@@ -21,6 +22,8 @@ use Illuminate\Support\Facades\Http;
  */
 class OsctrlClient
 {
+    use RetriesTransientHttpErrors;
+
     public function __construct(
         private readonly string $baseUrl,
         private readonly string $token,
@@ -51,10 +54,12 @@ class OsctrlClient
 
     private function request(): PendingRequest
     {
-        return Http::baseUrl(rtrim($this->baseUrl, '/'))
-            ->withOptions(['allow_redirects' => false])
-            ->withToken($this->token)
-            ->acceptJson()
-            ->timeout(30);
+        return $this->withTransientRetry(
+            Http::baseUrl(rtrim($this->baseUrl, '/'))
+                ->withOptions(['allow_redirects' => false])
+                ->withToken($this->token)
+                ->acceptJson()
+                ->timeout(30)
+        );
     }
 }

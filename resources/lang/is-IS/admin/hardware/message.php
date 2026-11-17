@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Eigninni var ekki skilað, vinsamlegast reyndu aftur',
         'success' => 'Eigninni var skilað.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Þessi notandi er ónothæfur, vinsamlegast reyndu aftur.',
         'already_checked_in' => 'Þessari eign hefur þegar verið skilað.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

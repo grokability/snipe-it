@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Основното средство не беше раздолжено, обидете се повторно',
         'success' => 'Основното средство е раздолжено.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Корисникот е неважечки. Обидете се повторно.',
         'already_checked_in' => 'Основното средство е веќе задолжено.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

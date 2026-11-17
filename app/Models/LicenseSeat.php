@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Builders\LicenseSeatQueryBuilder;
+use App\Models\Contracts\CompanyableChild;
 use App\Models\Traits\Acceptable;
 use App\Models\Traits\CompanyableChildTrait;
 use App\Models\Traits\Loggable;
@@ -12,9 +14,11 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Query\Builder;
 
-class LicenseSeat extends SnipeModel implements ICompanyableChild
+/**
+ * @mixin IdeHelperLicenseSeat
+ */
+class LicenseSeat extends SnipeModel implements CompanyableChild
 {
     use Acceptable;
     use CompanyableChildTrait;
@@ -37,7 +41,7 @@ class LicenseSeat extends SnipeModel implements ICompanyableChild
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'assigned_to',
@@ -205,39 +209,8 @@ class LicenseSeat extends SnipeModel implements ICompanyableChild
         return $this->hasMany(Actionlog::class, 'item_id')->where('item_type', self::class)->orderBy('created_at', 'desc')->withTrashed();
     }
 
-    /**
-     * Query builder scope to order on department
-     *
-     * @param  Builder  $query  Query builder instance
-     * @param  text  $order  Order
-     * @return Builder Modified query builder
-     */
-    public function scopeOrderDepartments($query, $order)
+    public function newEloquentBuilder($query): LicenseSeatQueryBuilder
     {
-        return $query->leftJoin('users as license_seat_users', 'license_seats.assigned_to', '=', 'license_seat_users.id')
-            ->leftJoin('departments as license_user_dept', 'license_user_dept.id', '=', 'license_seat_users.department_id')
-            ->whereNotNull('license_seats.assigned_to')
-            ->orderBy('license_user_dept.name', $order);
-    }
-
-    public function scopeOrderCompany($query, $order)
-    {
-
-        return $query->leftJoin('users as license_seat_users', 'license_seats.assigned_to', '=', 'license_seat_users.id')
-            ->leftJoin('companies as license_user_company', 'license_user_company.id', '=', 'license_seat_users.company_id')
-            ->whereNotNull('license_seats.assigned_to')
-            ->orderBy('license_user_company.name', $order);
-    }
-
-    public function scopeByAssigned($query)
-    {
-
-        return $query->where(
-            function ($query) {
-                $query->whereNotNull('assigned_to')
-                    ->orWhereNotNull('asset_id');
-            }
-        );
-
+        return new LicenseSeatQueryBuilder($query);
     }
 }

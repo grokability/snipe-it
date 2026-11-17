@@ -57,6 +57,7 @@
     <x-container>
         <x-box name="assets" sr_only_title>
             <x-table.assets
+                name="assets"
                 :route="route('api.assets.index', array(
                     'status_type' => is_scalar($requestStatusType) ? $requestStatusType : null,
                     'order_number' => is_scalar($requestOrderNumber) ? strval($requestOrderNumber) : null,
@@ -74,4 +75,8 @@
 @section('moar_scripts')
 @include('partials.bootstrap-table')
 
+<x-table.advanced-search
+    tableId="assetsListingTable"
+    :model="\App\Models\Asset::class"
+/>
 @stop

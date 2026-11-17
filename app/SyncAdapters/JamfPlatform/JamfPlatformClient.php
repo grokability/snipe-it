@@ -2,6 +2,7 @@
 
 namespace App\SyncAdapters\JamfPlatform;
 
+use App\SyncAdapters\Traits\RetriesTransientHttpErrors;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
@@ -36,6 +37,8 @@ use Illuminate\Support\Facades\Http;
  */
 class JamfPlatformClient
 {
+    use RetriesTransientHttpErrors;
+
     private ?string $accessToken = null;
 
     public function __construct(
@@ -111,12 +114,14 @@ class JamfPlatformClient
      */
     private function request(): PendingRequest
     {
-        return Http::baseUrl(rtrim($this->baseUrl, '/'))
-            ->withOptions(['allow_redirects' => false])
-            ->withToken($this->bearer())
-            ->withHeaders(['X-Environment-Id' => $this->environmentId])
-            ->acceptJson()
-            ->timeout(60);
+        return $this->withTransientRetry(
+            Http::baseUrl(rtrim($this->baseUrl, '/'))
+                ->withOptions(['allow_redirects' => false])
+                ->withToken($this->bearer())
+                ->withHeaders(['X-Environment-Id' => $this->environmentId])
+                ->acceptJson()
+                ->timeout(60)
+        );
     }
 
     /**

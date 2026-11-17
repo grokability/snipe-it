@@ -2,6 +2,7 @@
 
 namespace App\SyncAdapters\NinjaOne;
 
+use App\SyncAdapters\Traits\RetriesTransientHttpErrors;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
@@ -13,15 +14,18 @@ use Illuminate\Support\Facades\Http;
  *
  * Auth model: OAuth application (client_id + client_secret) issued
  * from Administration -> Apps -> API in the NinjaOne dashboard.
- * Token exchange POSTs to /ws/oauth/token with scope=monitoring.
- * The returned bearer is valid for ~60 minutes and is cached on
- * this instance for the life of the sync run.
+ * Token exchange POSTs to /ws/oauth/token with scope=monitoring+management
+ * so the single cached bearer works for both pull (devices read) and
+ * push (custom-field PATCH). The returned bearer is valid for ~60
+ * minutes and is cached on this instance for the life of the sync run.
  *
  * Pagination: /v2/devices returns a flat array. Cursor forward using
  * `?after=<lastId>&pageSize=N` until a short page comes back.
  */
 class NinjaOneClient
 {
+    use RetriesTransientHttpErrors;
+
     private ?string $token = null;
 
     public function __construct(
@@ -66,9 +70,9 @@ class NinjaOneClient
 
     /**
      * Fetch (or reuse) a bearer token via OAuth 2.0 client-credentials.
-     * The scope=monitoring value is the minimum needed for read access
-     * to the devices endpoint. Broader scopes (management, control)
-     * aren't required because sync is pull-only.
+     * `monitoring` is enough for pulling /v2/devices, but pushing the
+     * asset tag onto a NinjaOne custom field via
+     * PATCH /v2/device/{id}/custom-fields needs `management` as well.
      */
     private function bearer(): string
     {
@@ -83,7 +87,7 @@ class NinjaOneClient
                 'grant_type' => 'client_credentials',
                 'client_id' => $this->clientId,
                 'client_secret' => $this->clientSecret,
-                'scope' => 'monitoring',
+                'scope' => 'monitoring management',
             ])
             ->throw()
             ->json();
@@ -111,10 +115,12 @@ class NinjaOneClient
 
     private function request(): PendingRequest
     {
-        return Http::baseUrl(rtrim($this->baseUrl, '/'))
-            ->withOptions(['allow_redirects' => false])
-            ->withToken($this->bearer())
-            ->acceptJson()
-            ->timeout(30);
+        return $this->withTransientRetry(
+            Http::baseUrl(rtrim($this->baseUrl, '/'))
+                ->withOptions(['allow_redirects' => false])
+                ->withToken($this->bearer())
+                ->acceptJson()
+                ->timeout(30)
+        );
     }
 }

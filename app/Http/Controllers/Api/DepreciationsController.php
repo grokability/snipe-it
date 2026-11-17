@@ -34,7 +34,7 @@ class DepreciationsController extends Controller
             'licenses_count',
         ];
 
-        $depreciations = Depreciation::select(['id', 'name', 'months', 'depreciation_min', 'depreciation_type', 'created_at', 'updated_at', 'created_by'])
+        $depreciations = Depreciation::select(['depreciations.id', 'depreciations.name', 'depreciations.months', 'depreciations.depreciation_min', 'depreciations.depreciation_type', 'depreciations.created_at', 'depreciations.updated_at', 'depreciations.created_by'])
             ->with('adminuser')
             ->withCount('assets as assets_count')
             ->withCount('models as models_count')

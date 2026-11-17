@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\AssetModel;
 use App\Models\CustomField;
+use App\Models\CustomFieldDefault;
 use App\Models\CustomFieldset;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
@@ -37,8 +38,9 @@ class CustomFieldSetDefaultValuesForModel extends Component
     {
         $this->model_id = $model_id;
         $this->fieldset_id = $this->model?->fieldset_id;
-        $this->add_default_values = ($this->model?->defaultValues->count() > 0);
 
+        $defaults = CustomFieldDefault::valuesFor($this->model);
+        $this->add_default_values = $defaults !== [];
         $this->initializeSelectedValuesArray();
         if (session()->has('errors')) {
             $errors = session('errors')->keys();
@@ -47,7 +49,7 @@ class CustomFieldSetDefaultValuesForModel extends Component
                 $this->add_default_values = true;
             }
         }
-        $this->populatedSelectedValuesArray();
+        $this->populatedSelectedValuesArray($defaults);
     }
 
     #[Computed]
@@ -94,11 +96,13 @@ class CustomFieldSetDefaultValuesForModel extends Component
     /**
      * Populate the selectedValues array with the
      * default values or old input for each field.
+     *
+     * @param array<string, mixed> $defaults
      */
-    private function populatedSelectedValuesArray(): void
+    protected function populatedSelectedValuesArray(array $defaults): void
     {
-        $this->fields->each(function ($field) {
-            $this->selectedValues[$field->db_column] = $this->getSelectedValueForField($field);
+        $this->fields->each(function ($field) use ($defaults) {
+            $this->selectedValues[$field->db_column] = $this->getSelectedValueForField($field, $defaults[$field->db_column] ?? null);
 
             // if the element is a checkbox and the value was just sent to null, make it
             // an array since Livewire can't bind to non-array values for checkboxes.
@@ -108,10 +112,8 @@ class CustomFieldSetDefaultValuesForModel extends Component
         });
     }
 
-    private function getSelectedValueForField(CustomField $field)
+    protected function getSelectedValueForField(CustomField $field, mixed $defaultValue): mixed
     {
-        $defaultValue = $field->defaultValue($this->model_id);
-
         // if old() contains a value for default_values that means
         // the user has submitted the form and we were redirected
         // back with the old input.

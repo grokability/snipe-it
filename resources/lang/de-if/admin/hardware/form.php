@@ -56,8 +56,6 @@ return [
     'years' => 'Jahre',
     'asset_location' => 'Standort des Assets aktualisieren',
     'asset_location_update_default_current' => 'Standardort und aktuellen Standort aktualisieren',
-    'asset_location_update_default' => 'Nur den Standardort aktualisieren',
-    'asset_location_update_actual' => 'Nur eigentlichen Standort aktualisieren',
     'asset_not_deployable' => 'Dieses Asset ist nicht verfügbar und kann nicht herausgegeben werden.',
     'asset_not_deployable_checkin' => '{1} Dieser Asset-Status ist nicht einsetzbar. Mit dieser Statusbezeichnung wird das Asset eingechecked. [2,*] Dieser Asset-Status ist nicht zuweisbar. Die Verwendung dieser Statusbezeichnung führt zu keiner Änderung.',
     'asset_deployable' => '{1} Dieses Asset kann zugewiesen werden.|[2,*] Diese Assets können zugewiesen werden.',

@@ -2,6 +2,7 @@
 
 namespace App\SyncAdapters\Landscape;
 
+use App\SyncAdapters\Traits\RetriesTransientHttpErrors;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
@@ -14,11 +15,12 @@ use Illuminate\Support\Facades\Http;
  */
 class LandscapeClient
 {
+    use RetriesTransientHttpErrors;
+
     public function __construct(
         private readonly string $baseUrl,
         private readonly string $token,
-    ) {
-    }
+    ) {}
 
     /**
      * Stream every computer in the account, one page at a time.
@@ -51,17 +53,19 @@ class LandscapeClient
             // and null once the caller has walked the full list. Prefer
             // that signal over offset arithmetic so we stop as soon as
             // the server says we are done.
-            $hasNext = !empty($response['next'] ?? null);
+            $hasNext = ! empty($response['next'] ?? null);
             $offset += $perPage;
         } while ($hasNext);
     }
 
     private function request(): PendingRequest
     {
-        return Http::baseUrl(rtrim($this->baseUrl, '/'))
-            ->withOptions(['allow_redirects' => false])
-            ->withToken($this->token)
-            ->acceptJson()
-            ->timeout(60);
+        return $this->withTransientRetry(
+            Http::baseUrl(rtrim($this->baseUrl, '/'))
+                ->withOptions(['allow_redirects' => false])
+                ->withToken($this->token)
+                ->acceptJson()
+                ->timeout(60)
+        );
     }
 }

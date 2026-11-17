@@ -61,12 +61,6 @@
         </div>
 
         <div class="col-md-3 col-sm-6">
-            <a href="{{ url('reports/unaccepted_assets') }}" class="btn btn-theme btn-block" style="margin-bottom: 10px; white-space: normal; text-align: left; padding-left: 15px;">
-                <x-icon type="assets" class="fa-fw"/> {{ trans('general.unaccepted_asset_report') }}
-            </a>
-        </div>
-
-        <div class="col-md-3 col-sm-6">
             <a href="{{ url('reports/accessories') }}" class="btn btn-theme btn-block" style="margin-bottom: 10px; white-space: normal; text-align: left; padding-left: 15px;">
                 <x-icon type="accessories" class="fa-fw"/> {{ trans('general.accessory_report') }}
             </a>
@@ -139,25 +133,12 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-lg-3 col-sm-6">
-                        <a href="{{ route('reports/unaccepted_assets') }}">
-                            <div class="info-box {{ $pending_acceptance_count > 0 ? 'bg-yellow' : 'bg-green' }}">
-                                    <span class="info-box-icon" aria-hidden="true">
-                                        <x-icon type="assets"/>
-                                    </span>
-                                <div class="info-box-content">
-                                    <span class="info-box-text">{{ trans('general.unaccepted_asset_report') }}</span>
-                                    <span class="info-box-number">{{ number_format($pending_acceptance_count) }}
-                                    <span class="info-box-more" id="progress-acceptance-label">&nbsp;</span>
-                                    </span>
-                                    <div class="progress" style="height:6px;">
-                                        <div class="progress-bar" id="progress-acceptance" data-count="{{ $pending_acceptance_count }}" style="width: 0%"></div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </a>
-                    </div>
+                    {{-- The unaccepted-acceptances tile used to live
+                         here but moved out in v8.9: the surface isn't
+                         a report (it sends mail and deletes rows), so
+                         it belongs on the primary sidenav instead,
+                         gated on canCheckoutAtLeastOneItemType. See
+                         UnacceptedAcceptancesController. --}}
                     <div class="col-lg-3 col-sm-6">
                         <a href="{{ url('reports/licenses') }}">
                             <div class="info-box {{ $licenses_low_count > 0 ? 'bg-red' : 'bg-green' }}">
@@ -514,10 +495,9 @@ function loadCharts(params) {
             var p = d.prev_label;
 
             // Info-box progress bars
-            setInfoBar('audit',      trendPct(d.asset_checkouts,   d.prev_asset_checkouts),   p);
-            setInfoBar('checkin',    trendPct(d.asset_checkins,    d.prev_asset_checkins),    p);
-            setInfoBar('acceptance', trendPct(d.asset_checkouts,   d.prev_asset_checkouts),   p);
-            setInfoBar('licenses',   trendPct(d.license_checkouts, d.prev_license_checkouts), p);
+            setInfoBar('audit',    trendPct(d.asset_checkouts,   d.prev_asset_checkouts),   p);
+            setInfoBar('checkin',  trendPct(d.asset_checkins,    d.prev_asset_checkins),    p);
+            setInfoBar('licenses', trendPct(d.license_checkouts, d.prev_license_checkouts), p);
 
             makeChartMulti('chart-users', d.labels, [
                 {

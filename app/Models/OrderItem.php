@@ -16,6 +16,8 @@ use Watson\Validating\ValidatingTrait;
  * single Order can span multiple item types. qty is the number of units
  * on this line. Price is the per-unit cost (matches the semantic that
  * the existing purchase_cost columns use across the codebase).
+ *
+ * @mixin IdeHelperOrderItem
  */
 class OrderItem extends Model
 {

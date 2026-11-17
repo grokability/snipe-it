@@ -19,28 +19,16 @@ use Tests\TestCase;
 // these tests use real temp files.
 class UploadFileValidationTest extends TestCase
 {
-    private array $tempFiles = [];
-
     protected function setUp(): void
     {
         parent::setUp();
         Storage::fake();
     }
 
-    protected function tearDown(): void
-    {
-        foreach ($this->tempFiles as $path) {
-            @unlink($path);
-        }
-
-        parent::tearDown();
-    }
-
     private function realUpload(string $clientName, string $content): UploadedFile
     {
-        $path = tempnam(sys_get_temp_dir(), 'snipeit_upload_');
+        $path = $this->trackTempFile(tempnam(sys_get_temp_dir(), 'snipeit_upload_'));
         file_put_contents($path, $content);
-        $this->tempFiles[] = $path;
 
         return new UploadedFile($path, $clientName, null, null, true);
     }

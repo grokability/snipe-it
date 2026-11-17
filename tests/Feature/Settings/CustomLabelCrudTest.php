@@ -14,14 +14,7 @@ class CustomLabelCrudTest extends TestCase
             'name' => 'My Sheet Label',
             'template' => 'DefaultLabel',
             'type' => 'sheet',
-            'content' => [
-                'tag_font' => 'freemono',
-                'title_font' => 'freesans',
-                'field_label_font' => 'freesans',
-                'field_value_font' => 'freemono',
-                'barcode_size' => 3.81,
-                'barcode_margin' => 0.3,
-            ],
+            'content' => $this->contentPayload(),
             'supports' => [
                 'asset_tag' => false,
                 'barcode_1d' => true,
@@ -56,20 +49,42 @@ class CustomLabelCrudTest extends TestCase
         ], $overrides);
     }
 
+    private function contentPayload(array $overrides = []): array
+    {
+        return array_replace([
+            'tag_font' => 'freemono',
+            'title_font' => 'freesans',
+            'field_label_font' => 'freesans',
+            'field_value_font' => 'freemono',
+
+            'barcode_size' => 6,
+            'barcode_margin' => 1,
+            'barcode_2d_size' => 6,
+            'barcode2D_h_align' => 'C',
+            'barcode2D_v_align' => 'C',
+
+            'tag_alignment' => 'L',
+            'tag_font_size' => 10,
+            'tag_offset_x' => 0,
+            'tag_offset_y' => 0,
+
+            'title_font_size' => 10,
+            'title_margin' => 0,
+            'title_offset_x' => 0,
+
+            'field_label_font_size' => 8,
+            'field_label_margin' => 0,
+            'field_value_font_size' => 8,
+            'field_value_margin' => 0,
+        ], $overrides);
+    }
     private function tapePayload(array $overrides = []): array
     {
         return array_replace_recursive([
             'name' => 'My Tape Label',
             'template' => 'StandardTape',
             'type' => 'tape',
-            'content' => [
-                'tag_font' => 'freemono',
-                'title_font' => 'freesans',
-                'field_label_font' => 'freesans',
-                'field_value_font' => 'freemono',
-                'barcode_size' => 6,
-                'barcode_margin' => 1,
-            ],
+            'content' => $this->contentPayload(),
             'supports' => [
                 'asset_tag' => true,
                 'barcode_1d' => true,

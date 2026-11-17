@@ -17,6 +17,10 @@
         {{ $table_header }}
     </x-slot:table_header>
 
+    <x-slot:bulkactions>
+        <x-table.bulk-consumables />
+    </x-slot:bulkactions>
+
     <x-table
         :$presenter
         :$fixed_right_number

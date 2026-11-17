@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Īpašums netika reģistrēts, lūdzu, mēģiniet vēlreiz',
         'success' => 'Aktīvs ir pārbaudīts veiksmīgi.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Šis lietotājs ir nederīgs. Lūdzu mēģiniet vēlreiz.',
         'already_checked_in' => 'Šis aktīvs jau ir reģistrēts.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

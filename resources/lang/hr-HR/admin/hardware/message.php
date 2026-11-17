@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Prijava nije provjerena. Pokušajte ponovo',
         'success' => 'Asset je uspješno prijavio.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Taj je korisnik nevažeći. Molim te pokušaj ponovno.',
         'already_checked_in' => 'Taj je entitet već prijavljen.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

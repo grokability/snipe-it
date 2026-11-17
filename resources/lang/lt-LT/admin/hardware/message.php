@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Turtas nebuvo paimtas, bandykite dar kartą',
         'success' => 'Turtas sėkmingai paimtas.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Neteisingas naudotojas. Bandykite dar kartą.',
         'already_checked_in' => 'Šis turtas jau yra paimtas.',
         'force_checkin_orphaned_success' => 'Neteisingas priskyrimas sėkmingai ištrintas.',

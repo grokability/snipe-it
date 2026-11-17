@@ -7,7 +7,11 @@
 @can('update', $item)
     @if ($item->deleted_at!='')
     <!-- start restore button component -->
-    <form method="POST" action="{{ $route }}" class="inline">
+    {{-- Pull-right on the form matches the delete button's
+         alignment, so swapping delete↔restore between live and
+         soft-deleted views keeps the destructive-action slot in
+         the same spot in the info-panel. --}}
+    <form method="POST" action="{{ $route }}" class="inline pull-right">
     @csrf
         <button class="btn btn-sm btn-warning hidden-print{{ $wide == 'true' ? ' btn-block btn-social' : '' }}" data-tooltip="true" data-placement="top" data-title="{{ trans('general.restore') }}">
         <x-icon type="restore" class="fa-fw" />

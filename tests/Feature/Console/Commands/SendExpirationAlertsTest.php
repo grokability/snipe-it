@@ -12,6 +12,48 @@ use Tests\TestCase;
 
 class SendExpirationAlertsTest extends TestCase
 {
+    public function test_command_suppresses_alerts_when_alert_interval_is_null(): void
+    {
+       
+        $this->settings->set([
+            'alerts_enabled' => 1,
+            'alert_email' => 'ops@example.test',
+            'alert_interval' => null,
+        ]);
+
+        $asset = Asset::factory()->create(['archived' => 0]);
+        $asset->asset_eol_date = Carbon::now()->addDays(10);
+        $asset->save();
+
+        Mail::fake();
+
+        $this->artisan('snipeit:expiring-alerts')
+            ->expectsOutput('No alert interval configured in settings. No alerts will be sent.')
+            ->assertExitCode(0);
+
+        Mail::assertNothingSent();
+    }
+
+    public function test_command_suppresses_alerts_when_alert_interval_is_zero(): void
+    {
+        // Zero reads as "disabled" the same as null. The schema allows
+        // either shape in practice (null from a cleared input, 0 from
+        // a numeric field zeroed out).
+        $this->settings->set([
+            'alerts_enabled' => 1,
+            'alert_email' => 'ops@example.test',
+            'alert_interval' => 0,
+        ]);
+
+        Mail::fake();
+
+        $this->artisan('snipeit:expiring-alerts')
+            ->expectsOutput('No alert interval configured in settings. No alerts will be sent.')
+            ->assertExitCode(0);
+
+        Mail::assertNothingSent();
+    }
+
     public function test_survives_transport_exception_and_logs_warning(): void
     {
         $this->settings->set([

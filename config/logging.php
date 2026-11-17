@@ -122,8 +122,15 @@ $config = [
         // Sync-adapter log
         'sync-adapters' => [
             'driver' => 'single',
-            'path' => storage_path('logs/sync-adapters.log'),
+            'path' => env('SYNC_ADAPTERS_LOG_PATH', storage_path('logs/sync-adapters.log')),
             'level' => env('LOG_LEVEL', 'info'),
+        ],
+
+        // Dedicated LDAP log
+        'ldap' => [
+            'driver' => 'single',
+            'path' => env('LDAP_LOG_PATH', storage_path('logs/ldap.log')),
+            'level' => 'debug',
         ],
 
         'rollbar' => [

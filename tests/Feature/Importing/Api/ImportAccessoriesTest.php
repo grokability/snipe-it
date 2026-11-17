@@ -42,7 +42,7 @@ class ImportAccessoriesTest extends ImportDataTestCase implements TestsPermissio
     {
         $this->actingAsForApi(User::factory()->canImport()->create());
 
-        $import = Import::factory()->accessory()->create();
+        $import = Import::factory()->accessory()->withStubFile()->create();
 
         $this->importFileResponse(['import' => $import->id])->assertOk();
     }

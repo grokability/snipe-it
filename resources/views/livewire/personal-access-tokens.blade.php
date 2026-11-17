@@ -23,10 +23,11 @@
                 @if($tokens->count() > 0)
                     <thead>
                     <tr>
-                        <th scope="col" class="col-md-3">{{ trans('general.name') }}</th>
+                        <th scope="col" class="col-md-2">{{ trans('general.name') }}</th>
+                        <th scope="col" class="col-md-3">{{ trans('account/general.pat_scopes_column') }}</th>
                         <th scope="col" class="col-md-2">{{ trans('general.created_at') }}</th>
                         <th scope="col" class="col-md-2">{{ trans('general.expires') }}</th>
-                        <th scope="col" class="col-md-2"><span class="sr-only">{{ trans('general.delete') }}</span></th>
+                        <th scope="col" class="col-md-1"><span class="sr-only">{{ trans('general.delete') }}</span></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -36,6 +37,16 @@
                     <tr>
                         <td>
                             {{ $token->name }}
+                        </td>
+
+                        <td>
+                            @forelse($token->scopes ?? [] as $scope)
+                                <span class="label label-info" style="margin-right: 4px;">{{ $scope }}</span>
+                            @empty
+                                <span class="label label-default" data-tooltip="true" title="{{ trans('account/general.pat_no_scopes_tooltip') }}">
+                                    {{ trans('account/general.pat_no_scopes') }}
+                                </span>
+                            @endforelse
                         </td>
 
                         <td>
@@ -96,7 +107,7 @@
                     <form class="form-horizontal" role="form">
                         <!-- Name -->
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="name">Name</label>
+                            <label class="col-md-4 control-label" for="name">{{ trans('general.name') }}</label>
 
                             <div class="col-md-6">
                                 <input id="create-token-name" type="text" aria-label="name" class="form-control"
@@ -106,6 +117,31 @@
                                        autofocus
                                        required
                                 >
+                            </div>
+                        </div>
+
+                        <!-- Scope selection -->
+                        <div class="form-group {{ $errors->has('selectedScopes') ? 'has-error' : '' }}">
+                            <label class="col-md-4 control-label">{{ trans('account/general.pat_scopes_column') }}</label>
+                            <div class="col-md-8">
+                                <p class="help-block" style="margin-top: 0;">
+                                    {{ trans('account/general.pat_scopes_help') }}
+                                </p>
+                                @foreach($availableScopes as $scopeValue => $scopeDescription)
+                                    <div class="checkbox" style="margin-bottom: 10px;">
+                                        <label style="padding-left: 30px; line-height: 1.5;">
+                                            <input type="checkbox"
+                                                   wire:model="selectedScopes"
+                                                   value="{{ $scopeValue }}"
+                                                   style="margin-left: -24px; margin-right: 10px;">
+                                            <code style="margin-right: 8px;">{{ $scopeValue }}</code>
+                                            <span class="text-muted">{{ $scopeDescription }}</span>
+                                        </label>
+                                    </div>
+                                @endforeach
+                                @error('selectedScopes')
+                                    <span class="help-block error">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                     </form>

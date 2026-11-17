@@ -71,8 +71,6 @@ class DepartmentsController extends Controller
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
-     * @param  int  $id
-     *
      * @since [v4.0]
      */
     public function show(Department $department): View|RedirectResponse
@@ -102,8 +100,6 @@ class DepartmentsController extends Controller
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
-     * @param  int  $locationId
-     *
      * @since [v4.0]
      */
     public function destroy(Department $department): RedirectResponse
@@ -130,9 +126,6 @@ class DepartmentsController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @see LocationsController::postCreate() method that validates and stores
-     *
-     * @param  int  $departmentId
-     *
      * @since [v1.0]
      */
     public function edit(Department $department): View|RedirectResponse
@@ -148,9 +141,6 @@ class DepartmentsController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @see LocationsController::postCreate() method that validates and stores
-     *
-     * @param  int  $departmentId
-     *
      * @since [v1.0]
      */
     public function update(ImageUploadRequest $request, Department $department): RedirectResponse

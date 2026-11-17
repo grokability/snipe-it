@@ -17,7 +17,7 @@ return [
     'last_login' => 'Останній вхід',
     'last_name' => 'Прізвище',
     'location' => 'Розташування',
-    'lock_passwords' => 'Some user details cannot be changed on the demo. Try creating a new user instead.',
+    'lock_passwords' => 'Деякі дані користувача не можна змінити в демонстраційній версії. Натомість спробуйте створити нового користувача.',
     'manager' => 'Керівник',
     'managed_locations' => 'Керовані розташування',
     'managed_users' => 'Керовані користувачі',

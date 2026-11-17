@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use App\Console\Commands\SendExpiringLicenseNotifications;
 use App\Helpers\Helper;
+use App\Models\Builders\LicenseQueryBuilder;
+use App\Models\Contracts\Importable;
 use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\HasCalendarEvents;
 use App\Models\Traits\HasUploads;
@@ -18,13 +19,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Session;
 use Watson\Validating\ValidatingTrait;
 
-class License extends Depreciable
+/**
+ * @mixin IdeHelperLicense
+ */
+class License extends Depreciable implements Importable
 {
     use HasFactory;
 
@@ -56,6 +59,18 @@ class License extends Depreciable
      */
     public const PRODUCT_KEY_MASK = '------------';
 
+    /**
+     * Mask the product key on read when the current user does not hold
+     * the licenses.keys gate.
+     */
+    protected function serial(): Attribute
+    {
+        return Attribute::get(fn($value) => $value !== null && !Gate::allows('viewKeys', $this)
+            ? self::PRODUCT_KEY_MASK
+            : $value
+        );
+    }
+
     protected $casts = [
         'purchase_date' => 'date',
         'expiration_date' => 'date',
@@ -84,7 +99,7 @@ class License extends Depreciable
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'company_id',
@@ -143,6 +158,152 @@ class License extends Depreciable
         'supplier' => ['name'],
         'adminuser' => ['first_name', 'last_name', 'display_name'],
     ];
+
+    /**
+     * Advanced-search filterable fields.
+     *
+     * Direct columns on licenses carry purchase_cost / purchase_date
+     * (unlike Accessory where they moved to the Orders table), so no
+     * applyCustomFilter branches for those. free_seats_count is a
+     * derived withCount on freeSeats() so it routes through
+     * applyCustomFilter.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function filterableFields(): array
+    {
+        return [
+            [
+                'field' => 'company',
+                'type' => 'fk',
+                'column' => 'company_id',
+                'endpoint' => 'companies',
+                'label' => trans('admin/companies/table.title'),
+            ],
+            [
+                'field' => 'category',
+                'type' => 'fk',
+                'column' => 'category_id',
+                'endpoint' => 'categories/license',
+                'label' => trans('general.category'),
+            ],
+            [
+                'field' => 'manufacturer',
+                'type' => 'fk',
+                'column' => 'manufacturer_id',
+                'endpoint' => 'manufacturers',
+                'label' => trans('general.manufacturer'),
+            ],
+            [
+                'field' => 'supplier',
+                'type' => 'fk',
+                'column' => 'supplier_id',
+                'endpoint' => 'suppliers',
+                'label' => trans('general.supplier'),
+            ],
+            [
+                'field' => 'created_by',
+                'type' => 'fk',
+                'column' => 'created_by',
+                'endpoint' => 'users',
+                'label' => trans('general.created_by'),
+            ],
+            [
+                'field' => 'reassignable',
+                'type' => 'boolean',
+                'label' => trans('admin/licenses/form.reassignable'),
+            ],
+            [
+                'field' => 'maintained',
+                'type' => 'boolean',
+                'label' => trans('admin/licenses/form.maintained'),
+            ],
+            [
+                'field' => 'seats',
+                'type' => 'numeric',
+                'label' => trans('admin/licenses/form.seats'),
+            ],
+            [
+                'field' => 'min_amt',
+                'type' => 'numeric',
+                'label' => trans('general.min_amt'),
+            ],
+            [
+                'field' => 'free_seats_count',
+                'type' => 'numeric',
+                'label' => trans('admin/licenses/general.remaining_seats'),
+            ],
+            [
+                'field' => 'purchase_cost',
+                'type' => 'numeric',
+                'label' => trans('general.purchase_cost'),
+            ],
+            [
+                'field' => 'purchase_date',
+                'type' => 'date-range',
+                'label' => trans('general.purchase_date'),
+            ],
+            [
+                'field' => 'expiration_date',
+                'type' => 'date-range',
+                'label' => trans('admin/licenses/form.expiration'),
+            ],
+            [
+                'field' => 'termination_date',
+                'type' => 'date-range',
+                'label' => trans('admin/licenses/form.termination_date'),
+            ],
+            [
+                'field' => 'created_at',
+                'type' => 'date-range',
+                'label' => trans('general.created_at'),
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date-range',
+                'label' => trans('general.updated_at'),
+            ],
+        ];
+    }
+
+    /**
+     * Override hook from Searchable. Routes free_seats_count filter
+     * through a correlated subquery on license_seats that mirrors
+     * the freeSeats() relation (seats with no assigned_to and no
+     * asset_id, not soft-deleted). Default list queries never pay
+     * the subquery cost.
+     */
+    protected function applyCustomFilter(\Illuminate\Database\Eloquent\Builder $query, string $filterKey, string $filterValue, string $boolean = 'and'): ?\Illuminate\Database\Eloquent\Builder
+    {
+        if ($filterKey !== 'free_seats_count') {
+            return null;
+        }
+
+        $bounds = $this->parseGtLtBounds($filterValue);
+        if ($bounds === null) {
+            return null;
+        }
+        [$gt, $lt] = $bounds;
+
+        $freeSeatCountSub = \Illuminate\Support\Facades\DB::table('license_seats')
+            ->whereColumn('license_seats.license_id', 'licenses.id')
+            ->whereNull('license_seats.assigned_to')
+            ->whereNull('license_seats.asset_id')
+            ->whereNull('license_seats.deleted_at')
+            ->selectRaw('COUNT(*)');
+
+        $outerBoolean = $boolean === 'or' ? 'orWhere' : 'where';
+        $query->{$outerBoolean}(function ($nested) use ($freeSeatCountSub, $gt, $lt) {
+            if ($gt !== null) {
+                $nested->where($freeSeatCountSub, '>', $gt);
+            }
+            if ($lt !== null) {
+                $nested->where($freeSeatCountSub, '<', $lt);
+            }
+        });
+
+        return $query;
+    }
 
     protected $appends = ['free_seat_count'];
 
@@ -220,18 +381,6 @@ class License extends Depreciable
             $value = null;
         }
         $this->attributes['requestable'] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
-    }
-
-    /**
-     * Scope query to only requestable licenses. FMCS + location
-     * scoping falls out of the CompanyableTrait global scope, so the
-     * usual "user only sees rows in their reachable companies" rule
-     * applies without any additional wrapping here (matches the
-     * Accessory / Consumable / Component scope shape).
-     */
-    public function scopeRequestable($query)
-    {
-        return $query->where('licenses.requestable', '1');
     }
 
     /**
@@ -908,6 +1057,9 @@ class License extends Depreciable
      * set for the duration of the call. Used by the API index for callers
      * who lack the `viewKeys` permission, so search / filter parameters
      * cannot be used as an existence oracle against license product keys.
+     *
+     * Stays on the model (not the builder) because it needs internal
+     * access to the model's protected $searchableAttributes property.
      */
     public function scopeTextSearchWithoutSerial($query, $search)
     {
@@ -925,150 +1077,8 @@ class License extends Depreciable
         }
     }
 
-    public function scopeActiveLicenses($query)
+    public function newEloquentBuilder($query): LicenseQueryBuilder
     {
-
-        return $query->whereNull('licenses.deleted_at')
-
-            // The termination date is null or within range
-            ->where(function ($query) {
-                $query->whereNull('termination_date')
-                    ->orWhereDate('termination_date', '>', [Carbon::now()]);
-            })
-            ->where(function ($query) {
-                $query->whereNull('expiration_date')
-                    ->orWhereDate('expiration_date', '>', [Carbon::now()]);
-            });
-    }
-
-    /**
-     * Expiried/terminated licenses scope
-     *
-     * @author A. Gianotto <snipe@snipe.net>
-     *
-     * @since  [v1.0]
-     *
-     * @return Relation
-     *
-     * @see SendExpiringLicenseNotifications
-     */
-    public function scopeExpiredLicenses($query)
-    {
-        return $query->whereDate('termination_date', '<=', Carbon::now())// The termination date is null or within range
-            ->orWhere(function ($query) {
-                $query->whereDate('expiration_date', '<=', Carbon::now());
-            })
-            ->whereNull('licenses.deleted_at');
-    }
-
-    /**
-     * Expiring/terminating licenses scope
-     *
-     * This checks if:
-     *
-     * 1) The license has not been deleted
-     * 2) The expiration date is between now and the number of days specified
-     * 3) There is an expiration date set and the termination date has not passed
-     * 4) The license termination date is null or has not passed
-     *
-     * @author A. Gianotto <snipe@snipe.net>
-     *
-     * @since  [v1.0]
-     *
-     * @return Relation
-     *
-     * @see SendExpiringLicenseNotifications
-     */
-    public function scopeExpiringLicenses($query, $days = 60, $includeExpired = false)
-    {
-        return $query// The termination date is null or within range
-            ->where(function ($query) use ($days) {
-                $query->whereNull('termination_date')
-                    ->orWhereBetween('termination_date', [Carbon::now(), Carbon::now()->addDays($days)]);
-            })
-            ->where(function ($query) use ($days, $includeExpired) {
-                $query->whereNotNull('expiration_date')
-                    // Handle expiring licenses without termination dates
-                    ->where(function ($query) use ($days, $includeExpired) {
-                        $query->whereNull('termination_date')
-                            ->whereBetween('expiration_date', [Carbon::now(), Carbon::now()->addDays($days)])
-                            // include expired licenses if requested
-                            ->when($includeExpired, function ($query) {
-                                $query->orwhereDate('expiration_date', '<=', Carbon::now());
-                            });
-                    })
-                    // Handle expiring licenses with termination dates in the future
-                    ->orWhere(function ($query) use ($days) {
-                        $query->whereBetween('termination_date', [Carbon::now(), Carbon::now()->addDays($days)]);
-                    });
-            });
-    }
-
-    /**
-     * Query builder scope to order on manufacturer
-     *
-     * @param  Builder  $query  Query builder instance
-     * @param  string  $order  Order
-     * @return Builder Modified query builder
-     */
-    public function scopeOrderManufacturer($query, $order)
-    {
-        return $query->leftJoin('manufacturers', 'licenses.manufacturer_id', '=', 'manufacturers.id')->select('licenses.*')
-            ->orderBy('manufacturers.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on supplier
-     *
-     * @param  Builder  $query  Query builder instance
-     * @param  string  $order  Order
-     * @return Builder Modified query builder
-     */
-    public function scopeOrderSupplier($query, $order)
-    {
-        return $query->leftJoin('suppliers', 'licenses.supplier_id', '=', 'suppliers.id')->select('licenses.*')
-            ->orderBy('suppliers.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on company
-     *
-     * @param  Builder  $query  Query builder instance
-     * @param  text  $order  Order
-     * @return Builder Modified query builder
-     */
-    public function scopeOrderCompany($query, $order)
-    {
-        return $query->leftJoin('companies as companies', 'licenses.company_id', '=', 'companies.id')->select('licenses.*')
-            ->orderBy('companies.name', $order);
-    }
-
-    /**
-     * Query builder scope to order on the user that created it
-     */
-    public function scopeOrderByCreatedBy($query, $order)
-    {
-        return $query->leftJoin('users as admin_sort', 'licenses.created_by', '=', 'admin_sort.id')->select('licenses.*')->orderBy('admin_sort.first_name', $order)->orderBy('admin_sort.last_name', $order);
-    }
-
-    /**
-     * Query builder scope to sort by the calculated `% remaining` column.
-     *
-     * Mirrors License::percentRemaining(): available_seats / total_seats * 100.
-     * free_seats_count is added by withCount() in the API index() as the
-     * count of unassigned seats; seats is a real column on licenses.
-     * Guards against division by zero for licenses with no seats.
-     *
-     * PostgreSQL note: references a SELECT-list alias inside a compound
-     * ORDER BY expression, which PostgreSQL rejects per SQL standard.
-     * Snipe-IT officially supports MySQL/MariaDB and tests on SQLite
-     * (both allow this); moving to PostgreSQL would require inlining
-     * the subquery or wrapping the query in an outer SELECT.
-     */
-    public function scopeOrderPercentRemaining($query, $order)
-    {
-        $order = strtolower($order) === 'asc' ? 'asc' : 'desc';
-
-        return $query->orderByRaw('CASE WHEN licenses.seats = 0 THEN 0 ELSE (free_seats_count * 100.0 / licenses.seats) END '.$order);
+        return new LicenseQueryBuilder($query);
     }
 }

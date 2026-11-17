@@ -11,7 +11,10 @@
         .snipe-advanced-search-tags .snipe-advanced-search-tags-clear-all:focus,
         .snipe-advanced-search-tags .snipe-advanced-search-tag-remove,
         .snipe-advanced-search-tags .snipe-advanced-search-tag-remove:hover,
-        .snipe-advanced-search-tags .snipe-advanced-search-tag-remove:focus {
+        .snipe-advanced-search-tags .snipe-advanced-search-tag-remove:focus,
+        .snipe-advanced-search-tags .snipe-advanced-search-tag-more,
+        .snipe-advanced-search-tags .snipe-advanced-search-tag-more:hover,
+        .snipe-advanced-search-tags .snipe-advanced-search-tag-more:focus {
             color: #fff !important;
             text-decoration: none !important;
         }
@@ -49,6 +52,228 @@
         var BootstrapTable = $.BootstrapTable;
         var baseBootstrapTablePrototype = Object.getPrototypeOf(BootstrapTable.prototype);
         var baseInitSearch = baseBootstrapTablePrototype.initSearch;
+
+        // The Saga of Daggable columns + Sticky Columns Part I:
+        // bs-table's reorderable-columns extension restores a saved
+        // column order by walking the persisted localStorage and swapping
+        // thead DOM nodes IN PLACE (dragtable's _restoreState calling
+        // _bubbleCols). It does NOT update this.columns,
+        // this.header.fields, this.options.columns[0], or
+        // this.fieldsColumnsIndex to match. initBody renders tbody
+        // rows using this.header.fields, so tbody comes back in the
+        // PRESENTER-declared order while thead is already
+        // in the saved order. This results in a persistent header / body
+        // misalignment visible on every reload that has a saved
+        // column order. Dragging a column craps on it because
+        // beforeStop runs a full re-sync of columns + header.fields
+        // and re-renders both, so it can insert a new column in the
+        // wrong place and the values don't align with the headers.
+        //
+        // To prevent this, we apply the saved order to this.options.columns[0]
+        // (and downstream state) BEFORE the base initHeader builds
+        // the thead. Now the thead is built in the saved order from
+        // the start, header.fields is populated in the saved order,
+        // tbody renders in the saved order, and the extension's
+        // follow-up _restoreState is a no-op because the DOM already
+        // matches the cookie.
+        if (typeof BootstrapTable.prototype.initHeader === 'function') {
+            var originalInitHeaderForReorder = BootstrapTable.prototype.initHeader;
+            BootstrapTable.prototype.initHeader = function () {
+                snipeApplySavedColumnOrder(this);
+                return originalInitHeaderForReorder.apply(this, arguments);
+            };
+        }
+
+        // The Saga of Daggable columns + Sticky Columns Part II:
+        // Second monkey-patch, tackles the column-toggle case specifically.
+        // Flow: user selects a hidden column in the column picker, _toggleColumn
+        // fires, super.initHeader builds the thead (in the interpolated
+        // order we set up in snipeApplySavedColumnOrder below), then the
+        // reorder-columns extension calls makeColumnsReorderable, which
+        // gives dragtable a restoreState object loaded from localStorage.
+        // That localStorage copy pre-dates the just-shown column and so
+        // has no slot for it. dragtable's _restoreState then bubbles THs
+        // to match the stale saved positions against a DOM that has one
+        // more column, scrambling the thead order without touching the
+        // tbody. Re-reading columnsSortOrder from the current thead DOM
+        // right before dragtable sees it means _restoreState bubbles
+        // against the live set and ends up a no-op, since the DOM already
+        // matches. This also keeps persistReorderColumnsState (which
+        // JSON-encodes columnsSortOrder on drag) emitting a shape that
+        // reflects reality.
+        if (typeof BootstrapTable.prototype.makeColumnsReorderable === 'function') {
+            var originalMakeColumnsReorderable = BootstrapTable.prototype.makeColumnsReorderable;
+            BootstrapTable.prototype.makeColumnsReorderable = function () {
+                if (this.$el && this.options && this.options.reorderableColumns) {
+                    var sortOrder = {};
+                    this.$el.find('thead th').each(function (i, el) {
+                        if (el.dataset && el.dataset.field !== undefined) {
+                            sortOrder[el.dataset.field] = i;
+                        }
+                    });
+                    this.columnsSortOrder = sortOrder;
+                }
+                return originalMakeColumnsReorderable.apply(this, arguments);
+            };
+        }
+
+        function snipeApplySavedColumnOrder(that) {
+            if (!that.options || !that.options.reorderableColumns || !that.options.cookie) {
+                return;
+            }
+            if (!that._storage || typeof that._storage.getItem !== 'function') {
+                return;
+            }
+            if (!that.options.cookieIdTable) {
+                return;
+            }
+            if (!that.options.columns || !Array.isArray(that.options.columns[0])) {
+                return;
+            }
+
+            var raw;
+            try {
+                raw = that._storage.getItem(that.options.cookieIdTable + '.bs.table.reorderColumns');
+            } catch (e) {
+                return;
+            }
+            if (!raw) {
+                return;
+            }
+
+            var savedOrder;
+            try {
+                savedOrder = JSON.parse(raw);
+            } catch (e) {
+                return;
+            }
+            if (!savedOrder || typeof savedOrder !== 'object') {
+                return;
+            }
+
+            var currentColumns = that.options.columns[0];
+
+            // Capture the true presenter order ONCE, on first call for
+            // this table. Every subsequent call on the same table reads
+            // from the saved map, since currentColumns may already have
+            // been reordered by a prior invocation of this function (on
+            // column toggles, pagination re-renders, etc.) and using
+            // its current indexes as "presenter positions" would feed
+            // the interpolation garbage.
+            if (!that._snipePresenterOrderByField) {
+                var snapshot = {};
+                currentColumns.forEach(function (col, i) {
+                    if (col && col.field) {
+                        snapshot[col.field] = i;
+                    }
+                });
+                that._snipePresenterOrderByField = snapshot;
+            }
+            var presenterOrderByField = that._snipePresenterOrderByField;
+
+            function presenterIndexFor(col) {
+                if (!col || !col.field) {
+                    return Number.MAX_SAFE_INTEGER;
+                }
+                var p = presenterOrderByField[col.field];
+                // A field that showed up after the first snapshot (very
+                // rare but can happen if runtime code appends a column)
+                // sorts after everything else by default.
+                return p === undefined ? Number.MAX_SAFE_INTEGER : p;
+            }
+
+            // Compute a sort key per column. Columns the saved order
+            // knows about use their saved position as an integer key.
+            // Columns the saved order does NOT know about (dragtable
+            // beforeStop only walks visible THs in the DOM, so hidden
+            // columns never make it into localStorage, same for brand-
+            // new presenter columns added by a code update) interpolate
+            // between the saved positions of the nearest known columns
+            // BEFORE and AFTER them in presenter order. That keeps a
+            // newly-shown or newly-added column in its declared slot
+            // instead of appending it past the sticky actions column at
+            // the tail. bs-table calls this feature `cookie` but the
+            // storage is actually localStorage, hence the
+            // `.bs.table.reorderColumns` key suffix on `_storage`.
+            var knownByField = {};
+            var knownPresenterToKey = [];
+            currentColumns.forEach(function (col) {
+                if (col && col.field && savedOrder[col.field] !== undefined) {
+                    var key = parseInt(savedOrder[col.field], 10);
+                    knownByField[col.field] = key;
+                    knownPresenterToKey.push({i: presenterIndexFor(col), key: key});
+                }
+            });
+
+            function interpolatedKey(presenterIndex) {
+                var prevKey = null, nextKey = null;
+                for (var k = 0; k < knownPresenterToKey.length; k++) {
+                    var entry = knownPresenterToKey[k];
+                    if (entry.i < presenterIndex) {
+                        if (prevKey === null || entry.key > prevKey) {
+                            prevKey = entry.key;
+                        }
+                    }
+                    else if (entry.i > presenterIndex) {
+                        if (nextKey === null || entry.key < nextKey) {
+                            nextKey = entry.key;
+                        }
+                    }
+                }
+                if (prevKey !== null && nextKey !== null) {
+                    return (prevKey + nextKey) / 2;
+                }
+                if (prevKey !== null) {
+                    return prevKey + 0.5;
+                }
+                if (nextKey !== null) {
+                    return nextKey - 0.5;
+                }
+                return presenterIndex;
+            }
+
+            var withKeys = currentColumns.map(function (col) {
+                var pIdx = presenterIndexFor(col);
+                var key = (col && col.field && knownByField[col.field] !== undefined)
+                    ? knownByField[col.field]
+                    : interpolatedKey(pIdx);
+                return {col: col, key: key, presenterIndex: pIdx};
+            });
+            withKeys.sort(function (a, b) {
+                if (a.key !== b.key) {
+                    return a.key - b.key;
+                }
+                // Stable on ties: two unknown columns inserted between
+                // the same two known neighbors fall back to their
+                // presenter order so the declared sequence is preserved
+                // among the fresh additions.
+                return a.presenterIndex - b.presenterIndex;
+            });
+            var ordered = withKeys.map(function (w) {
+                return w.col;
+            });
+
+            var changed = false;
+            for (var i = 0; i < ordered.length; i++) {
+                if (ordered[i] !== currentColumns[i]) {
+                    changed = true;
+                    break;
+                }
+            }
+            if (!changed) {
+                return;
+            }
+
+            that.options.columns[0] = ordered;
+            that.columns = ordered.slice();
+            that.fieldsColumnsIndex = [];
+            ordered.forEach(function (col, i) {
+                col.fieldIndex = i;
+                if (col.field) {
+                    that.fieldsColumnsIndex[col.field] = i;
+                }
+            });
+        }
         var defaultAdvancedSearchOperator = 'and';
         var advancedSearchSearchText = @json(trans('general.search'));
 
@@ -56,7 +281,18 @@
         var advancedSearchAndText = @json(trans('general.and'));
         var advancedSearchOrText = @json(trans('general.or'));
         var advancedSearchClearAllText = @json(trans('general.clear_all_filters'));
+        var advancedSearchYesText = @json(trans('general.yes'));
+        var advancedSearchNoText = @json(trans('general.no'));
+        var advancedSearchMoreTemplate = @json(trans('general.count_more'));
         var advancedSearchOperatorStorageKey = 'snipeit.bs.table.advancedSearchOperator';
+
+        // Per-field cap on the per-term pill fan under the advanced search
+        // strip. A 400-term filter (e.g. select-all against a big category
+        // list) would otherwise push the actual table rows well below the
+        // fold. First N terms render, the rest collapse into a +K more
+        // chip that opens the advanced-search modal so the admin can
+        // review / edit the full selection in the select2 widget.
+        var defaultAdvancedSearchPillCap = 10;
 
         var normalizeAdvancedSearchOperator = function (operator) {
             return (operator || defaultAdvancedSearchOperator).toString().toLowerCase() === 'or' ? 'or' : 'and';
@@ -299,6 +535,27 @@
                 var html = '<span class="label label-warning" style="font-size: 12px; margin-right:6px;display:inline-block;margin-bottom:6px; padding: 4px;">' +
                     advancedSearchOperatorLabel + ': ' + (op === 'or' ? advancedSearchOrText : advancedSearchAndText) + '</span>';
 
+                // Advanced-filter widget registry. The per-table JS that
+                // injects compact multi-select widgets into the modal
+                // (see accessories/index.blade.php for the first user)
+                // writes an {id: name} map to
+                // window.snipeAdvancedFilterLabels[idTable][field] on
+                // every widget change. The pill renderer resolves each
+                // CSV of ids back to names via this registry so the
+                // operator sees "Supplier: Batz LLC, Thompson Group"
+                // instead of "Supplier: 10, 42". Unknown ids fall back
+                // to their raw value.
+                var labelRegistry = (window.snipeAdvancedFilterLabels || {})[this.options.idTable] || {};
+                var resolveFilterLabel = function (field, value) {
+                    var map = labelRegistry[field];
+                    if (!map || typeof value !== 'string' || value === '') { return value; }
+                    var parts = value.split(',').map(function (v) { return v.trim(); }).filter(Boolean);
+                    if (parts.length === 0) { return value; }
+                    return parts.map(function (id) {
+                        return (map && map[id]) ? map[id] : id;
+                    }).join(', ');
+                };
+
                 Object.keys(filters).forEach(f => {
                     // The filter name comes from the URL (deeplink hydration in
                     // the block below), so it is attacker-controllable. Both
@@ -310,10 +567,98 @@
                     // jQuery.html() would then parse and execute).
                     var safeLabel = escapeAdvancedSearchValue(colMap[f] || f);
                     var safeField = escapeAdvancedSearchAttr(f);
-                    html += '<span class="label label-primary" style="font-size: 12px; margin-right:6px;display:inline-block;margin-bottom:6px; padding: 4px;"><b>' +
-                        safeLabel + ':</b> ' + escapeAdvancedSearchValue(filters[f]) +
-                        ' <a href="javascript:void(0)" class="snipe-advanced-search-tag-remove" data-field="' + safeField +
-                        '" style="font-size: 12px; margin-right:6px;display:inline-block;color:#fff;text-decoration:none;">&times;</a></span>';
+                    var rawValue = (filters[f] || '').toString();
+                    var map = labelRegistry[f] || null;
+                    // A CSV of ids coming from the compact multi-select
+                    // widget is split into one chip per term so the admin
+                    // can remove individual selections without clearing
+                    // the whole column filter. Plain-text filters
+                    // (free-text, prefix-syntax, single values) stay in
+                    // the single-chip shape with one × on the whole pill.
+                    var parts = rawValue.split(',').map(function (v) { return v.trim(); }).filter(Boolean);
+                    var isMultiTerm = parts.length > 1;
+                    // Date-range shape: `start..end` (either side may
+                    // be empty). Rendered as one chip "Field: start – end"
+                    // with a single × on the whole pill, matching the
+                    // single-term shape rather than the per-term
+                    // multi-chip shape used for id CSVs.
+                    var dateRangeMatch = rawValue.match(/^(\d{4}-\d{2}-\d{2})?\.\.(\d{4}-\d{2}-\d{2})?$/);
+                    // Numeric-range shape: `gt:X`, `lt:Y`, or
+                    // `gt:X,lt:Y`. Parsed with the same intent as the
+                    // backend matcher, rendered as "Field: > X, < Y"
+                    // (comma-separated when both halves present).
+                    var numericGt = null;
+                    var numericLt = null;
+                    rawValue.split(',').forEach(function (p) {
+                        var gm = p.trim().match(/^gt:(-?\d+(\.\d+)?)$/);
+                        var lm = p.trim().match(/^lt:(-?\d+(\.\d+)?)$/);
+                        if (gm) { numericGt = gm[1]; }
+                        else if (lm) { numericLt = lm[1]; }
+                    });
+                    var isNumericRange = numericGt !== null || numericLt !== null;
+                    // Boolean shape: field is declared as a boolean
+                    // in the per-table field-type registry populated
+                    // by the advanced-filters component. The raw
+                    // value is normalized to a yes/no display label
+                    // instead of the "1"/"0" that gets sent on the
+                    // wire.
+                    var fieldTypes = (window.snipeAdvancedFilterFieldTypes || {})[this.options.idTable] || {};
+                    var isBoolean = fieldTypes[f] === 'boolean';
+
+                    if (isBoolean) {
+                        var boolDisplay = /^(1|true|yes)$/i.test(rawValue) ? advancedSearchYesText : advancedSearchNoText;
+                        html += '<span class="label label-primary" style="font-size: 12px; margin-right:6px;display:inline-block;margin-bottom:6px; padding: 4px;"><b>' +
+                            safeLabel + ':</b> ' + escapeAdvancedSearchValue(boolDisplay) +
+                            ' <a href="javascript:void(0)" class="snipe-advanced-search-tag-remove" data-field="' + safeField +
+                            '" style="font-size: 12px; margin-right:6px;display:inline-block;color:#fff;text-decoration:none;">&times;</a></span>';
+                    } else if (isNumericRange) {
+                        var numericBits = [];
+                        if (numericGt !== null) { numericBits.push('> ' + numericGt); }
+                        if (numericLt !== null) { numericBits.push('< ' + numericLt); }
+                        html += '<span class="label label-primary" style="font-size: 12px; margin-right:6px;display:inline-block;margin-bottom:6px; padding: 4px;"><b>' +
+                            safeLabel + ':</b> ' + escapeAdvancedSearchValue(numericBits.join(', ')) +
+                            ' <a href="javascript:void(0)" class="snipe-advanced-search-tag-remove" data-field="' + safeField +
+                            '" style="font-size: 12px; margin-right:6px;display:inline-block;color:#fff;text-decoration:none;">&times;</a></span>';
+                    } else if (dateRangeMatch) {
+                        var startDate = dateRangeMatch[1] || '…';
+                        var endDate = dateRangeMatch[2] || '…';
+                        var dateRangeDisplay = startDate + ' – ' + endDate;
+                        html += '<span class="label label-primary" style="font-size: 12px; margin-right:6px;display:inline-block;margin-bottom:6px; padding: 4px;"><b>' +
+                            safeLabel + ':</b> ' + escapeAdvancedSearchValue(dateRangeDisplay) +
+                            ' <a href="javascript:void(0)" class="snipe-advanced-search-tag-remove" data-field="' + safeField +
+                            '" style="font-size: 12px; margin-right:6px;display:inline-block;color:#fff;text-decoration:none;">&times;</a></span>';
+                    } else if (isMultiTerm) {
+                        var pillCap = parseInt(_this.$el.data('advanced-search-pill-cap'), 10);
+                        if (isNaN(pillCap) || pillCap <= 0) {
+                            pillCap = defaultAdvancedSearchPillCap;
+                        }
+                        var visibleParts = parts.slice(0, pillCap);
+                        var inner = '<span style="font-size:12px;font-weight:bold;margin-right:4px;align-self:center;">' + safeLabel + ':</span>';
+                        visibleParts.forEach(function (id) {
+                            var termLabel = (map && map[id]) ? map[id] : id;
+                            var safeTermText = escapeAdvancedSearchValue(termLabel);
+                            var safeTermIdAttr = escapeAdvancedSearchAttr(id);
+                            inner += '<span class="label label-primary" style="font-size:12px;font-weight:normal;margin:2px;padding:3px 6px;display:inline-flex;align-items:center;">' +
+                                safeTermText +
+                                ' <a href="javascript:void(0)" class="snipe-advanced-search-term-remove" data-field="' + safeField + '" data-term-id="' + safeTermIdAttr + '" style="color:#fff;text-decoration:none;margin-left:6px;">&times;</a>' +
+                                '</span>';
+                        });
+                        if (parts.length > pillCap) {
+                            var moreCount = parts.length - pillCap;
+                            var moreText = advancedSearchMoreTemplate.replace(':count', String(moreCount));
+                            inner += '<a href="javascript:void(0)" class="label label-info snipe-advanced-search-tag-more" data-field="' + safeField +
+                                '" style="font-size:12px;font-weight:normal;margin:2px;padding:3px 6px;display:inline-flex;align-items:center;color:#fff;text-decoration:none;cursor:pointer;">' +
+                                escapeAdvancedSearchValue(moreText) +
+                                '</a>';
+                        }
+                        html += '<span style="display:inline-flex;flex-wrap:wrap;align-items:center;max-width:90vw;margin-right:12px;margin-bottom:6px;">' + inner + '</span>';
+                    } else {
+                        var displayValue = resolveFilterLabel(f, filters[f]);
+                        html += '<span class="label label-primary" style="font-size: 12px; margin-right:6px;display:inline-block;margin-bottom:6px; padding: 4px;"><b>' +
+                            safeLabel + ':</b> ' + escapeAdvancedSearchValue(displayValue) +
+                            ' <a href="javascript:void(0)" class="snipe-advanced-search-tag-remove" data-field="' + safeField +
+                            '" style="font-size: 12px; margin-right:6px;display:inline-block;color:#fff;text-decoration:none;">&times;</a></span>';
+                    }
                 });
 
                 // "Clear all" pill: same shortcut as opening the modal and hitting
@@ -341,6 +686,43 @@
                             _this.trigger('column-advanced-search', _this.filterColumnsPartial, _this.getAdvancedSearchOperator());
 
                             _this.renderAdvancedSearchTags();
+                        }
+                    })
+                    .on('click.snipeAdvancedSearchTags', '.snipe-advanced-search-term-remove', function (e) {
+                        // Per-term × on multi-id filters. Removes the one
+                        // clicked id from the CSV, leaves the rest of the
+                        // column's filter intact. When the removal
+                        // empties the column, the whole key is dropped
+                        // from filterColumnsPartial so the pill goes
+                        // away cleanly rather than lingering as an empty
+                        // filter.
+                        e.preventDefault();
+                        var field = $(this).data('field');
+                        var termId = String($(this).data('term-id'));
+                        if (!field || !_this.filterColumnsPartial) { return; }
+                        var currentCsv = (_this.filterColumnsPartial[field] || '').toString();
+                        var remaining = currentCsv.split(',')
+                            .map(function (v) { return v.trim(); })
+                            .filter(function (v) { return v !== '' && v !== termId; });
+                        if (remaining.length === 0) {
+                            delete _this.filterColumnsPartial[field];
+                        } else {
+                            _this.filterColumnsPartial[field] = remaining.join(',');
+                        }
+                        _this.options.pageNumber = 1;
+                        _this.initSearch();
+                        _this.updatePagination();
+                        _this.trigger('column-advanced-search', _this.filterColumnsPartial, _this.getAdvancedSearchOperator());
+                        _this.renderAdvancedSearchTags();
+                    })
+                    .on('click.snipeAdvancedSearchTags', '.snipe-advanced-search-tag-more', function (e) {
+                        // +N more chip: opens the advanced-search modal so
+                        // the admin can review / edit the full selection in
+                        // the select2 widget for that field.
+                        e.preventDefault();
+                        var $button = _this.getAdvancedSearchButton();
+                        if ($button.length) {
+                            $button.trigger('click');
                         }
                     })
                     .on('click.snipeAdvancedSearchTags', '.snipe-advanced-search-tags-clear-all', function (e) {
@@ -411,11 +793,13 @@
                 html.push(`
                     <div class="form-group row">
                         <label class="col-sm-4 control-label">${this.options.formatAdvancedSearchOperator()}</label>
-                        <div class="col-sm-6">
-                            <select class="form-control ${this.constants.classes.input}" name="__advanced_search_operator">
-                                <option value="and"${operator === 'and' ? ' selected' : ''}>${advancedSearchAndText}</option>
-                                <option value="or"${operator === 'or' ? ' selected' : ''}>${advancedSearchOrText}</option>
-                            </select>
+                        <div class="col-sm-6" style="padding-top:7px;">
+                            <label class="radio-inline" style="margin-right:16px;vertical-align:middle;">
+                                <input type="radio" name="__advanced_search_operator" value="and" style="vertical-align:middle;"${operator === 'and' ? ' checked' : ''}>&nbsp;&nbsp;<span style="vertical-align:middle;">${advancedSearchAndText}</span>
+                            </label>
+                            <label class="radio-inline" style="vertical-align:middle;">
+                                <input type="radio" name="__advanced_search_operator" value="or" style="vertical-align:middle;"${operator === 'or' ? ' checked' : ''}>&nbsp;&nbsp;<span style="vertical-align:middle;">${advancedSearchOrText}</span>
+                            </label>
                         </div>
                     </div>
                 `);
@@ -822,6 +1206,40 @@
             // callbacks reach the real table.
             var $bootstrapTableEl = $(this);
 
+            // Pin sticky columns out of the drag-to-reorder set. Sticky
+            // columns are positioned via CSS nth-child on the <table>
+            // (snipe-table--sticky-left-N / --sticky-right-N): their DOM
+            // slot is their sticky anchor, so letting them drag would
+            // break the pinning. We tag the non-sticky columns with a
+            // marker class and hand that class to dragtable's dragaccept
+            // option. dragtable then filters both the draggable source
+            // set and the drop-target set down to just those.
+            var dragacceptSelector = null;
+            var tableClasses = this.className || '';
+            var leftStickyMatch = tableClasses.match(/snipe-table--sticky-left-(\d+)/);
+            var rightStickyMatch = tableClasses.match(/snipe-table--sticky-right-(\d+)/);
+            var leftStickyCount = leftStickyMatch ? parseInt(leftStickyMatch[1], 10) : 0;
+            var rightStickyCount = rightStickyMatch ? parseInt(rightStickyMatch[1], 10) : 0;
+            if (leftStickyCount > 0 || rightStickyCount > 0) {
+                var columnsJson = $bootstrapTableEl.attr('data-columns');
+                if (columnsJson) {
+                    try {
+                        var parsedColumns = JSON.parse(columnsJson);
+                        var totalColumns = parsedColumns.length;
+                        parsedColumns.forEach(function (col, idx) {
+                            var isSticky = (idx < leftStickyCount) || (idx >= totalColumns - rightStickyCount);
+                            if (!isSticky) {
+                                col.class = ((col.class || '') + ' snipe-reorderable-col').trim();
+                            }
+                        });
+                        $bootstrapTableEl.attr('data-columns', JSON.stringify(parsedColumns));
+                        dragacceptSelector = '.snipe-reorderable-col';
+                    } catch (e) {
+                        // data-columns is not JSON. Leave reordering unconstrained.
+                    }
+                }
+            }
+
             $(this).bootstrapTable({
 
                 ajaxOptions: {
@@ -838,6 +1256,7 @@
                 buttonsOrder: [
                     'columns',
                     'btnAdd',
+                    'btnShowArchived',
                     'btnShowDeleted',
                     'btnToggleCompleted',
                     'btnDue',
@@ -850,6 +1269,7 @@
                     'export',
                     'print',
                     'fullscreen',
+                    'btnAddMaintenance',
                     'advancedSearch',
                 ],
                 classes: 'table table-responsive table-striped snipe-table table-no-bordered',
@@ -857,6 +1277,7 @@
                 cookie: true,
                 cookieExpire: '2y',
                 cookieStorage: '{{ config('session.bs_table_storage') }}',
+                dragaccept: dragacceptSelector,
                 iconsPrefix: 'fa',
                 maintainSelected: data_with_default('maintain-selected', true),
                 minimumCountColumns: data_with_default('minimum-count-columns', 2),
@@ -949,6 +1370,18 @@
                     var instance = arguments[arguments.length - 1];
                     if (instance && instance.$el) {
                         clearBootstrapTableLoadError(instance);
+                    }
+                },
+                onPostBody: function () {
+                    // Reapply the tableExport opt-out attributes on
+                    // every custom-field cell after each body render,
+                    // so dot-containing text values don't get misread
+                    // as EU-locale thousands numbers on export. See
+                    // customFieldsCellStyle + stampCustomFieldExportAttrs
+                    // and issue #19595.
+                    var instance = arguments[arguments.length - 1];
+                    if (instance && instance.$el) {
+                        stampCustomFieldExportAttrs(instance.$el);
                     }
                 },
                 onRefresh: function () {
@@ -1047,16 +1480,18 @@
 
                     var lookup = {};
                     var lookup_initialized = false;
-                    var ths = $('th');
+                    // Scope to this table's thead. The previous $('th')
+                    // walked every TH on the page, which meant the lookup
+                    // built from the first table bled into every subsequent
+                    // one and headers in later tables got no tooltip.
+                    var ths = $bootstrapTableEl.find('thead th');
                     var toolbar_buttons = $('.tableButton');
 
                     ths.each(function (index, element) {
                         th = $(element);
                         //only populate the lookup table once; don't need to keep doing it.
                         if (!lookup_initialized) {
-                            // th -> tr -> thead -> table
-                            var table = th.parent().parent().parent()
-                            var column_data = table.data('columns')
+                            var column_data = $bootstrapTableEl.data('columns');
 
                             for (var column in column_data) {
                                 lookup[column_data[column].field] = column_data[column].titleTooltip;
@@ -1375,6 +1810,21 @@
 
     }); // end user table buttons
 
+    // Unaccepted-acceptances table buttons
+    window.acceptanceButtons = () => ({
+        btnShowDeleted: {
+            text: '{{ request('deleted') === 'deleted' ? trans('general.hide_deleted') : trans('general.show_deleted') }}',
+            icon: 'fa-solid fa-trash',
+            event () {
+                window.location.href = '{{ request('deleted') === 'deleted' ? route('unaccepted-acceptances.index') : route('unaccepted-acceptances.index', ['deleted' => 'deleted']) }}';
+            },
+            attributes: {
+                class: '{{ request('deleted') === 'deleted' ? ' btn-selected' : '' }}',
+                title: '{{ request('deleted') === 'deleted' ? trans('general.hide_deleted') : trans('general.show_deleted') }}',
+            }
+        },
+    });
+
     // Oauth table buttons
     window.oauthButtons = () => ({
 
@@ -1550,6 +2000,30 @@
                 @endif
             }
         },
+
+        btnShowArchived: {
+            text: '{{ (request()->input('status') == "Archived") ? trans('general.show_current') : trans('general.show_archived') }}',
+            icon: '{{ \App\Helpers\IconHelper::icon('archived') }}',
+            event () {
+                window.location.href = '{{ (request()->input('status') == "Archived") ? route('accessories.index') : route('accessories.index', ['status' => 'Archived']) }}';
+            },
+            attributes: {
+                class: '{{ (request()->input('status') == "Archived") ? 'btn-selected' : '' }}',
+                title: '{{ (request()->input('status') == "Archived") ? trans('general.show_current') : trans('general.show_archived') }}',
+            }
+        },
+
+        btnShowDeleted: {
+            text: '{{ (request()->input('status') == "Deleted") ? trans('general.show_current') : trans('general.show_deleted') }}',
+            icon: 'fa-solid fa-trash',
+            event () {
+                window.location.href = '{{ (request()->input('status') == "Deleted") ? route('accessories.index') : route('accessories.index', ['status' => 'Deleted']) }}';
+            },
+            attributes: {
+                class: '{{ (request()->input('status') == "Deleted") ? 'btn-selected' : '' }}',
+                title: '{{ (request()->input('status') == "Deleted") ? trans('general.show_current') : trans('general.show_deleted') }}',
+            }
+        },
     });
     @endcan
 
@@ -1641,6 +2115,30 @@
                 title: '{{ trans('general.custom_component_report') }}',
             }
         },
+
+        btnShowArchived: {
+            text: '{{ (request()->input('status') == "Archived") ? trans('general.show_current') : trans('general.show_archived') }}',
+            icon: '{{ \App\Helpers\IconHelper::icon('archived') }}',
+            event () {
+                window.location.href = '{{ (request()->input('status') == "Archived") ? route('components.index') : route('components.index', ['status' => 'Archived']) }}';
+            },
+            attributes: {
+                class: '{{ (request()->input('status') == "Archived") ? 'btn-selected' : '' }}',
+                title: '{{ (request()->input('status') == "Archived") ? trans('general.show_current') : trans('general.show_archived') }}',
+            }
+        },
+
+        btnShowDeleted: {
+            text: '{{ (request()->input('status') == "Deleted") ? trans('general.show_current') : trans('general.show_deleted') }}',
+            icon: 'fa-solid fa-trash',
+            event () {
+                window.location.href = '{{ (request()->input('status') == "Deleted") ? route('components.index') : route('components.index', ['status' => 'Deleted']) }}';
+            },
+            attributes: {
+                class: '{{ (request()->input('status') == "Deleted") ? 'btn-selected' : '' }}',
+                title: '{{ (request()->input('status') == "Deleted") ? trans('general.show_current') : trans('general.show_deleted') }}',
+            }
+        },
     });
     @endcan
 
@@ -1659,6 +2157,30 @@
                 @if ($snipeSettings->shortcuts_enabled == 1)
                 accesskey: 'n'
                 @endif
+            }
+        },
+
+        btnShowArchived: {
+            text: '{{ (request()->input('status') == "Archived") ? trans('general.show_current') : trans('general.show_archived') }}',
+            icon: '{{ \App\Helpers\IconHelper::icon('archived') }}',
+            event () {
+                window.location.href = '{{ (request()->input('status') == "Archived") ? route('consumables.index') : route('consumables.index', ['status' => 'Archived']) }}';
+            },
+            attributes: {
+                class: '{{ (request()->input('status') == "Archived") ? 'btn-selected' : '' }}',
+                title: '{{ (request()->input('status') == "Archived") ? trans('general.show_current') : trans('general.show_archived') }}',
+            }
+        },
+
+        btnShowDeleted: {
+            text: '{{ (request()->input('status') == "Deleted") ? trans('general.show_current') : trans('general.show_deleted') }}',
+            icon: 'fa-solid fa-trash',
+            event () {
+                window.location.href = '{{ (request()->input('status') == "Deleted") ? route('consumables.index') : route('consumables.index', ['status' => 'Deleted']) }}';
+            },
+            attributes: {
+                class: '{{ (request()->input('status') == "Deleted") ? 'btn-selected' : '' }}',
+                title: '{{ (request()->input('status') == "Deleted") ? trans('general.show_current') : trans('general.show_deleted') }}',
             }
         },
     });
@@ -2032,11 +2554,13 @@
     function updateSelectedCount(table) {
         var countId = $(table).data('selected-count-id');
         if (!countId) return;
+        var $form = $($(table).data('bulk-form-id'));
+        if (!$form.length) return;
         var rawCountId = countId.charAt(0) === '#' ? countId.substring(1) : countId;
         if (!rawCountId) return;
         var el = document.getElementById(rawCountId);
         if (!el) return;
-        var count = $(table).bootstrapTable('getSelections').length;
+        var count = $form.find('input[name="ids[]"]').length;
         $(el).find('.badge').text(count);
         if (count > 0) {
             $(el).show();
@@ -2048,6 +2572,8 @@
     $('.snipe-table').on('post-body.bs.table', function () {
         var countId = $(this).data('selected-count-id');
         if (!countId) return;
+        var $form = $($(this).data('bulk-form-id'));
+        if (!$form.length) return;
         var rawCountId = countId.charAt(0) === '#' ? countId.substring(1) : countId;
         if (!rawCountId) return;
         var $paginationDetail = $(this).closest('.bootstrap-table')
@@ -2164,7 +2690,41 @@
         var action = $select.val();
         if (!action) return;
 
-        // Use uncheck(index) instead of uncheckBy(field, values). bs-table's
+        // Track IDs we auto-unchecked so switching back to an action
+        // where they ARE eligible re-checks them automatically. Without
+        // this, a select-all → delete (3 rows auto-unchecked as not
+        // deletable) → edit cycle leaves those 3 rows unchecked even
+        // though edit accepts them. Keyed per-table so sibling bulk
+        // tables don't cross-contaminate.
+        var autoUnchecked = $table.data('mutexAutoUnchecked') || {};
+        var data = $table.bootstrapTable('getData');
+
+        // Mark the batch as in-flight so our own check/uncheck events
+        // short-circuit the per-row handlers below.
+        $table.data('mutexAutoInFlight', true);
+
+        // Styling pass FIRST for the new action: enables any
+        // previously-disabled checkboxes that are now compatible
+        // (e.g. a row disabled under "delete" that supports "edit").
+        // bootstrapTable's internal check/uncheck toggles no-op on
+        // disabled DOM checkboxes, so Phase 1 below would silently
+        // fail to re-check those rows otherwise.
+        applyActionDependentRowStyling($table, action);
+
+        // Phase 1: re-check any previously auto-unchecked rows that
+        // now support this action.
+        for (var r = 0; r < data.length; r++) {
+            var rid = data[r].id;
+            if (!autoUnchecked[rid]) continue;
+            var supportsNow = (data[r].available_actions && data[r].available_actions.bulk_selectable) || {};
+            if (supportsNow[action] === true) {
+                $table.bootstrapTable('check', r);
+                delete autoUnchecked[rid];
+            }
+        }
+
+        // Phase 2: standard incompatible-row auto-uncheck. Use
+        // uncheck(index) instead of uncheckBy(field, values). bs-table's
         // uncheckBy at bootstrap-table.js line 10791 filters on ':enabled',
         // which means once applyActionDependentRowStyling disables the
         // checkbox on an incompatible row (or a prior refresh cycle did),
@@ -2181,14 +2741,73 @@
             }
         }
 
-        var data = $table.bootstrapTable('getData');
         for (var j = 0; j < data.length; j++) {
             if (idsToUncheck[data[j].id]) {
                 $table.bootstrapTable('uncheck', j);
+                autoUnchecked[data[j].id] = true;
             }
         }
 
+        $table.data('mutexAutoUnchecked', autoUnchecked);
+        $table.data('mutexAutoInFlight', false);
+
+        // The per-row check/uncheck handlers short-circuit while
+        // mutexAutoInFlight is true (prevents per-row refresh thrash
+        // and the re-entry bug that would stop phase 1 after one row).
+        // Run the deferred bookkeeping once now that the batch is
+        // done so the hidden ids[] inputs, selected-count readout,
+        // and dropdown eligibility all match the new selection.
+        syncBulkInputsForTable($table);
+        updateSelectedCount($table[0]);
+        refreshDynamicBulkActions($table[0]);
+
         applyActionDependentRowStyling($table, action);
+    }
+
+    // Rebuilds the hidden ids[] inputs after a batch check/uncheck
+    // pass. Mirrors the add + remove logic the per-row check/uncheck
+    // handlers would do, but as a single sweep rather than one event
+    // per row.
+    function syncBulkInputsForTable($table) {
+        var tableId = $table.data('id-table');
+        var buttonId = $table.data('bulk-button-id');
+        var $button = $(buttonId);
+        var $form = $($table.data('bulk-form-id'));
+        if (!tableId || !$button.length || !$form.length) return;
+
+        var selectedIds = {};
+        $table.bootstrapTable('getSelections').forEach(function (row) {
+            selectedIds[row.id] = true;
+        });
+        // Track rows on the current page only.
+        var currentIds = {};
+        $table.bootstrapTable('getData').forEach(function (row) {
+            currentIds[row.id] = true;
+        });
+        // Remove hidden inputs for rows no longer selected.
+        $form.find('input[name="ids[]"]').each(function () {
+            if (currentIds[this.value] && !selectedIds[this.value]) {
+                $(this).remove();
+            }
+        });
+
+        // Add hidden inputs for newly-selected rows that don't have one.
+        Object.keys(selectedIds).forEach(function (id) {
+            if (! document.getElementById(tableId + '_checkbox_' + id)) {
+                $button.after($('<input/>', {
+                    id: tableId + '_checkbox_' + id,
+                    type: 'hidden',
+                    name: 'ids[]',
+                    value: id,
+                }));
+            }
+        });
+
+        if ($form.find('input[name="ids[]"]').length > 0) {
+            $button.removeAttr('disabled');
+        } else {
+            $button.attr('disabled', 'disabled');
+        }
     }
 
     // Toggle a visual disabled state on rows that don't support the
@@ -2243,6 +2862,15 @@
     // doesn't sneak past the guard that fired on dropdown pick.
     function reapplyAutoUncheckForTable(table) {
         var $table = $(table);
+        // Guard re-entry while a batch auto-uncheck/re-check pass is
+        // mid-flight. The check/uncheck events fired by our own
+        // bootstrapTable('check'/'uncheck') calls bubble back through
+        // the handlers below and would recursively re-call this,
+        // flipping the in-flight flag off before the outer loop
+        // finishes, which caused only one row to re-check instead of
+        // the whole set.
+        if ($table.data('mutexAutoInFlight')) return;
+
         var formId = $table.data('bulk-form-id');
         if (!formId) return;
 
@@ -2292,19 +2920,83 @@
             clearActionDependentRowStyling($table);
         }
     });
+    // Restore previously selected rows when navigating between pages.
+    $('.snipe-table').on('post-body.bs.table', function () {
+        var $table = $(this);
+        var $form = $($table.data('bulk-form-id'));
+        if (!$form.length) return;
+
+        var selectedIds = {};
+
+        $form.find('input[name="ids[]"]').each(function () {
+            selectedIds[this.value] = true;
+        });
+
+        var currentIds = [];
+
+        $table.bootstrapTable('getData').forEach(function (row) {
+            if (selectedIds[row.id]) {
+                currentIds.push(row.id);
+            }
+        });
+
+        if (currentIds.length > 0) {
+            $table.data('restoringSelections', true);
+
+            try {
+                $table.bootstrapTable('checkBy', {
+                    field: 'id',
+                    values: currentIds
+                });
+            } finally {
+                $table.data('restoringSelections', false);
+            }
+        }
+
+        updateSelectedCount(this);
+    });
 
     // These methods dynamically add/remove hidden input values in the bulk actions form
     $('.snipe-table').on('check.bs.table .btSelectItem', function (row, $element) {
         var buttonName =  $(this).data('bulk-button-id');
         var tableId =  $(this).data('id-table');
 
-        $(buttonName).removeAttr('disabled');
-        $(buttonName).after($('<input/>', {
-            id: tableId + '_checkbox_' + $element.id,
-            type: 'hidden',
-            name: 'ids[]',
-            value: $element.id
-        }));
+        if (!document.getElementById(tableId + '_checkbox_' + $element.id)) {
+            $(buttonName).removeAttr('disabled');
+            $(buttonName).after($('<input/>', {
+                id: tableId + '_checkbox_' + $element.id,
+                type: 'hidden',
+                name: 'ids[]',
+                value: $element.id
+            }));
+        }
+        // Don't run bulk-action logic while restoring saved selections.
+        if ($(this).data('restoringSelections')) {
+            return;
+        }
+
+        // Skip the expensive bulk-actions refresh + re-entry when
+        // this check is being fired by our own batch auto-uncheck /
+        // re-check pass. The outer autoUncheckIncompatibleRowsFor
+        // finishes the whole batch and runs refreshDynamicBulkActions /
+        // applyActionDependentRowStyling once at the end. Without this
+        // short-circuit, every row we re-check triggered a full refresh
+        // cycle, which both caused the "only one row re-selects" bug
+        // (re-entry flipped the in-flight flag off mid-loop) and made
+        // the whole interaction visibly laggy.
+        if ($(this).data('mutexAutoInFlight')) {
+            return;
+        }
+
+        // User-initiated check acknowledges this row explicitly. Drop
+        // it from auto-uncheck tracking so an action switch doesn't
+        // treat it as "we unchecked this" when it was them.
+        var auto = $(this).data('mutexAutoUnchecked') || {};
+        if (auto[$element.id]) {
+            delete auto[$element.id];
+            $(this).data('mutexAutoUnchecked', auto);
+        }
+
         updateSelectedCount(this);
         refreshDynamicBulkActions(this);
         reapplyAutoUncheckForTable(this);
@@ -2327,6 +3019,14 @@
             }
         }
 
+        // Check-all is an explicit "take everything" from the user,
+        // so wipe the auto-uncheck tracking set. reapplyAutoUncheckForTable
+        // below will then re-run the gate against the picked action
+        // and populate the set fresh.
+        if (! $(this).data('mutexAutoInFlight')) {
+            $(this).data('mutexAutoUnchecked', {});
+        }
+
         if ($(this).bootstrapTable('getSelections').length > 0) {
             $(buttonName).removeAttr('disabled');
         }
@@ -2340,11 +3040,39 @@
         var tableId =  $(this).data('id-table');
         $( "#" + tableId + "_checkbox_" + $element.id).remove();
         updateSelectedCount(this);
+
+        // Skip the auto-uncheck bookkeeping when our own batch pass
+        // is firing this event. The outer function tracks adds / drops
+        // directly and shouldn't interact with the per-event handler.
+        if ($(this).data('mutexAutoInFlight')) {
+            return;
+        }
+
+        // Drop this id from the auto-uncheck tracking set when the
+        // user is the one unchecking. Without this, a user who
+        // manually unchecks a row after a prior auto-uncheck cycle
+        // would see it resurrected the next time they picked an action
+        // that accepts it.
+        var auto = $(this).data('mutexAutoUnchecked') || {};
+        if (auto[$element.id]) {
+            delete auto[$element.id];
+            $(this).data('mutexAutoUnchecked', auto);
+        }
     });
 
 
     // Handle whether the edit button should be disabled
     $('.snipe-table').on('uncheck.bs.table', function () {
+        // Short-circuit while a batch auto-uncheck/re-check pass is
+        // mid-flight. Same reason as the sibling check/uncheck
+        // handlers above: our own programmatic uncheck calls bubble
+        // through here and would run refreshDynamicBulkActions per
+        // row, both re-entering autoUncheckIncompatibleRowsFor and
+        // thrashing the dropdown.
+        if ($(this).data('mutexAutoInFlight')) {
+            return;
+        }
+
         var buttonName =  $(this).data('bulk-button-id');
 
         if ($(this).bootstrapTable('getSelections').length == 0) {
@@ -2355,6 +3083,13 @@
     });
 
     $('.snipe-table').on('uncheck-all.bs.table', function (event, rowsAfter, rowsBefore) {
+
+        // Uncheck-all is an explicit "clear everything" from the user,
+        // so the auto-uncheck tracking resets too. Otherwise a prior
+        // auto-unchecked set could spring back on the next action switch.
+        if (! $(this).data('mutexAutoInFlight')) {
+            $(this).data('mutexAutoUnchecked', {});
+        }
 
         var buttonName =  $(this).data('bulk-button-id');
         $(buttonName).attr('disabled', 'disabled');
@@ -2402,32 +3137,32 @@
        }
     });
 
-
-    // This specifies the footer columns that should have special styles associated
-    // (usually numbers)
-    window.footerStyle = column => ({
-        remaining: {
-            classes: 'text-padding-number-footer-cell'
-        },
-        qty: {
-            classes: 'text-padding-number-footer-cell',
-        },
-        purchase_cost: {
-            classes: 'text-padding-number-footer-cell'
-        },
-        checkouts_count: {
-            classes: 'text-padding-number-footer-cell'
-        },
-        assets_count: {
-            classes: 'text-padding-number-footer-cell'
-        },
-        seats: {
-            classes: 'text-padding-number-footer-cell'
-        },
-        free_seats_count: {
-            classes: 'text-padding-number-footer-cell'
-        },
-    }[column.field]);
+    // Called by bs-table for every visible column when it renders the
+    // tfoot. Return { classes: '...' } to add classes to the footer TH
+    // and the number-cell padding class lines the aggregate up with
+    // text-padding-number-cell in the body. Auto-apply it when BOTH
+    // conditions hold: the column has a known numeric aggregator AND
+    // its body already carries text-padding-number-cell. The body
+    // check matters because some presenters opt into text-right only
+    // (Asset's purchase_cost / book_value, say) and padding only the
+    // footer would shift the total 20px left of the body column it is
+    // supposed to line up with.
+    // If we ever add a new style of numeric footer aggregator,
+    // add it to this array.
+    var numericFooterFormatters = ['qtySumFormatter', 'sumFormatter', 'sumFormatterQuantity'];
+    window.footerStyle = function (column) {
+        if (!column || !column.footerFormatter) {
+            return;
+        }
+        if (numericFooterFormatters.indexOf(column.footerFormatter) === -1) {
+            return;
+        }
+        var bodyClasses = (column.class || '').split(/\s+/);
+        if (bodyClasses.indexOf('text-padding-number-cell') === -1) {
+            return;
+        }
+        return {classes: 'text-padding-number-footer-cell'};
+    };
 
 
 
@@ -2441,6 +3176,12 @@
         // in genericActionsFormatter.
         if (destination == 'maintenanceTypes') {
             destination = 'maintenance-types';
+        }
+        if (destination == 'customFields') {
+            destination = 'fields';
+        }
+        if (destination == 'customFieldsets' || destination == 'fieldsets') {
+            destination = 'fields/fieldsets';
         }
         return function (value,row) {
 
@@ -2507,13 +3248,19 @@
         if (destination == 'maintenanceTypes') {
             destination = 'maintenance-types';
         }
+        if (destination == 'customFields') {
+            destination = 'fields';
+        }
+        if (destination == 'customFieldsets' || destination == 'fieldsets') {
+            destination = 'fields/fieldsets';
+        }
         return function (value) {
             if ((value) && (value.status_meta)) {
 
                 var color_style;
                 var icon_style;
                 var text_help;
-                var square_tag;
+                var square_tag = '';
                 var status_meta = {
                   'deployed': '{{ strtolower(trans('general.deployed')) }}',
                   'deployable': '{{ strtolower(trans('admin/hardware/general.deployable')) }}',
@@ -2549,7 +3296,7 @@
                 }
 
                 return '<nobr><a href="{{ config('app.url') }}/' + destination + '/' + value.id + '" data-tooltip="true" title="' + status_meta[value.status_meta] + '">'
-                    + '<i class="fa ' + icon_style + ' ' + color_style + '"></i>' + square_tag
+                    + '<i class="fa ' + icon_style + ' ' + color_style + '"></i> ' + square_tag
                     + value.name
                     + ' '
                     + text_help
@@ -2636,6 +3383,14 @@
                 dest = 'maintenance-types';
             }
 
+            if (dest == 'customFields') {
+                dest = 'fields';
+            }
+
+            if (dest == 'customFieldsets' || dest == 'fieldsets') {
+                dest = 'fields/fieldsets';
+            }
+
 
             if(element_name != '') {
                 dest = dest + '/' + row.owner_id + '/' + element_name;
@@ -2666,22 +3421,30 @@
             // available_actions.adjust_quantity (accessories, consumables,
             // components). The click handler in snipeit.js reads the
             // data-* attrs and shows blade/modals/adjust-quantity.
+            // Archived components keep the button rendered but
+            // disabled so admins see the control is unavailable
+            // for retired inventory rather than wondering where it
+            // went.
             if ((row.available_actions) && (row.available_actions.adjust_quantity === true)) {
+                var adjustDeleted = !!row.deleted_at;
+                var adjustDisabled = adjustDeleted || row.archived === true;
+                var adjustReason = adjustDeleted
+                    ? '{{ trans('general.component_deleted_warning') }}'
+                    : '{{ trans('general.archived_item_label', ['item_type' => trans('general.component')]) }}';
                 actions += window.renderAdjustQuantityButton({
                     dest: dest,
                     id: row.id,
                     name: row.name || '',
                     available: row.remaining,
+                    disabled: adjustDisabled,
+                    disabledReason: adjustReason,
                 }) + '&nbsp;';
             }
 
-            if ((row.available_actions) && (row.available_actions.update === true)) {
+            // Delete button is gated on available_actions.delete
+            if ((row.available_actions) && (row.available_actions.delete === true)) {
                 // use the asset tag if no name is provided
-                if (row.name) {
-                    var name_for_box = row.name
-                } else if (row.asset_tag) {
-                    var name_for_box = row.asset_tag
-                }
+                var name_for_box = row.name || row.asset_tag || '';
 
                 actions += '<a href="{{ config('app.url') }}/' + dest + '/' + row.id + '" '
                     + ' class="actions btn btn-danger btn-sm delete-asset hidden-print" data-tooltip="true"  '
@@ -2690,7 +3453,8 @@
                     + ' data-title="{{  trans('general.delete') }}" onClick="return false;">'
                     + '<x-icon type="delete" class="fa-fw" /><span class="sr-only">{{ trans('general.delete') }}</span></a>&nbsp;';
             } else {
-                // Do not show the delete button on things that are already deleted
+                // Suppress the disabled-delete on already-deleted
+                // rows. Those render the Restore button in its place for things that have soft-deletes.
                 if ((row.available_actions) && (row.available_actions.restore != true)) {
                     actions += '<span data-tooltip="true" title="{{ trans('general.cannot_be_deleted') }}"><a class="btn btn-danger btn-sm delete-asset disabled hidden-print" onClick="return false;"><x-icon type="delete" class="fa-fw" /><span class="sr-only">{{ trans('general.cannot_be_deleted') }}</span></a></span>&nbsp;';
                 }
@@ -2899,6 +3663,52 @@
             return '{{ trans('admin/reports/general.deleted_user') }}';
         }
         return '<a href="' + value.url + '">' + name + '</a>';
+    }
+
+    // Renders the per-row action cluster for /unaccepted-acceptances:
+    // Send Reminder (POST form) + Delete (DELETE form via the shared
+    // dataConfirmModal). Buttons are rendered conditionally on
+    // row.available_actions so a row without an assignee email loses
+    // its reminder affordance and a soft-deleted row loses both.
+    function acceptanceActionsFormatter(value, row) {
+        if (!row) {
+            return '';
+        }
+        var permissions = (row.available_actions || {});
+        var actions = '';
+
+        if (permissions.send_reminder) {
+            var reminderUrl = '{{ route('unaccepted-acceptances.send-reminder') }}';
+            actions += '<form method="post" style="display:inline;" action="' + reminderUrl + '">' +
+                '<input type="hidden" name="_token" value="{{ csrf_token() }}">' +
+                '<input type="hidden" name="acceptance_id" value="' + row.id + '">' +
+                '<button type="submit" class="btn btn-sm btn-warning" data-tooltip="true" data-title="{{ trans('admin/reports/general.send_reminder') }}">' +
+                '<i class="fa fa-repeat" aria-hidden="true"></i>' +
+                '<span class="sr-only">{{ trans('admin/reports/general.send_reminder') }}</span>' +
+                '</button>' +
+                '</form>';
+        }
+
+        if (permissions.delete) {
+            var deleteUrl = '{{ url('/') }}/unaccepted-acceptances/' + row.id;
+            // Pipe through the shared dataConfirmModal so this acts
+            // like every other destructive action in the app
+            // (delete-asset class + data-href + data-content).
+            actions += ' <a href="' + deleteUrl + '"' +
+                ' class="btn btn-sm btn-danger delete-asset"' +
+                ' data-toggle="modal"' +
+                ' data-content="{{ trans('general.delete_confirm', ['item' => trans('admin/reports/general.acceptance_request')]) }}"' +
+                ' data-title="{{ trans('general.delete') }}"' +
+                ' data-icon="fa-trash"' +
+                ' data-tooltip="true"' +
+                ' title="{{ trans('general.delete') }}"' +
+                ' onClick="return false;">' +
+                '<i class="fa fa-trash" aria-hidden="true"></i>' +
+                '<span class="sr-only">{{ trans('general.delete') }}</span>' +
+                '</a>';
+        }
+
+        return actions;
     }
 
     // Renders the per-row action cluster: admin-cancel form + a
@@ -3195,6 +4005,15 @@
             // the /{destination}/{id}/checkin/{backto?} route.
             var backto = row.checkin_backto ? '/' + row.checkin_backto : '';
 
+            // Soft-deleted rows render a disabled checkout stand-in
+            // instead of the active link so the Deleted-index view
+            // keeps the control visible but inert. row.deleted_at is
+            // populated by the transformer whenever the model uses
+            // SoftDeletes.
+            if (row.deleted_at && (row.available_actions.checkout == true)) {
+                return '<span data-tooltip="true" title="{{ trans('general.cannot_be_checked_out') }}"><a class="btn btn-sm bg-maroon btn-checkout disabled">{{ trans('general.checkout') }}</a></span>';
+            }
+
             // The user is allowed to check items out, AND the item is deployable
             if ((row.available_actions.checkout == true) && (row.user_can_checkout == true) && ((!row.asset_id) && (!row.assigned_to))) {
 
@@ -3436,6 +4255,8 @@
         'companies',
         'components',
         'consumables',
+        'customFields',
+        'customFieldsets',
         'departments',
         'depreciations',
         'fieldsets',
@@ -3459,6 +4280,40 @@
         window[formatters[i] + 'ActionsFormatter'] = genericActionsFormatter(formatters[i]);
         window[formatters[i] + 'InOutFormatter'] = genericCheckinCheckoutFormatter(formatters[i]);
     }
+
+    // Custom fieldsets need a tweaked actions formatter so the "clone"
+    // button opens the pre-rendered livewire modal matching this row
+    // (data-target="#cloneFieldsetModal{row.id}"), rather than
+    // navigating to a /clone URL (which does not exist for fieldsets).
+    // Pass clone=false to the base so the generic URL-based clone
+    // button is skipped, then inject the modal-targeted one in its
+    // place. Edit + delete fall through to the generic behavior.
+    (function () {
+        var baseFieldsetsActions = genericActionsFormatter('customFieldsets');
+        window.customFieldsetsActionsFormatter = function (value, row) {
+            var canClone = row && row.available_actions && row.available_actions.clone === true;
+            var scrubbedRow = row;
+            if (canClone) {
+                scrubbedRow = $.extend(true, {}, row);
+                scrubbedRow.available_actions.clone = false;
+            }
+            var base = baseFieldsetsActions(value, scrubbedRow) || '';
+            if (!canClone) {
+                return base;
+            }
+            var cloneBtn = '<a href="#cloneFieldsetModal' + row.id + '" data-toggle="modal" '
+                + 'class="actions btn btn-sm btn-info hidden-print" data-tooltip="true" '
+                + 'title="{{ trans('admin/custom_fields/general.clone_fieldset') }}">'
+                + '<x-icon type="clone" class="fa-fw" />'
+                + '<span class="sr-only">{{ trans('admin/custom_fields/general.clone_fieldset') }}</span>'
+                + '</a>&nbsp;';
+            // Slot the modal clone button immediately after the opening
+            // <nobr> so it renders before edit + delete, matching the
+            // position the inline livewire trigger used to occupy in
+            // the legacy server-rendered row.
+            return base.replace('<nobr>', '<nobr>' + cloneBtn);
+        };
+    })();
 
     // Maintenances need a custom actions formatter (adds the green
     // "mark complete" button between update and delete). Defined AFTER the
@@ -3490,6 +4345,26 @@
         return actions;
     };
 
+    // Actions column for the Assigned tab on the consumable show page.
+    // The Assigned tab only lists outstanding rows, so when the consume
+    // action isn't available the row shouldn't be here at all. Fail
+    // closed to an empty cell.
+    window.consumablesConsumeActionFormatter = function (value, row) {
+        if (!row.available_actions || !row.available_actions.consume) {
+            return '';
+        }
+        return '<form style="display:inline;" method="POST"'
+            + ' action="{{ config('app.url') }}/consumables/' + row.consumable_id + '/consume/' + row.id + '"'
+            + ' accept-charset="utf-8">'
+            + '<input type="hidden" name="_token" value="' + $('meta[name="csrf-token"]').attr('content') + '">'
+            + '<button type="submit" class="btn btn-sm bg-purple hidden-print"'
+            + ' data-tooltip="true" title="{{ trans('admin/consumables/general.mark_consumed') }}">'
+            + '<x-icon type="checkmark" class="fa-fw" />'
+            + '<span class="sr-only">{{ trans('admin/consumables/general.mark_consumed') }}</span>'
+            + '</button>'
+            + '</form>';
+    };
+
     // Shared markup for the adjust-quantity plus-minus button. Used by
     // genericActionsFormatter's adjust_quantity branch above AND by
     // lowStockActionsFormatter below so both call sites render an
@@ -3499,7 +4374,13 @@
     // for the modal header, and the available count for the modal help
     // text.
     window.renderAdjustQuantityButton = function (opts) {
-        return '<button type="button" class="actions btn btn-sm btn-primary hidden-print adjust-quantity" data-tooltip="true" title="{{ trans('general.adjust_quantity') }}"'
+        var disabled = opts.disabled === true;
+        var title = disabled && opts.disabledReason
+            ? opts.disabledReason
+            : '{{ trans('general.adjust_quantity') }}';
+        return '<button type="button" class="actions btn btn-sm btn-primary hidden-print adjust-quantity'
+            + (disabled ? ' disabled' : '') + '" data-tooltip="true" title="' + title + '"'
+            + (disabled ? ' disabled' : '')
             + ' data-adjust-url="{{ config('app.url') }}/' + opts.dest + '/' + opts.id + '/adjust-quantity"'
             + ' data-item-name="' + (opts.name || '') + '"'
             + ' data-available="' + (opts.available != null ? opts.available : '') + '">'
@@ -3581,7 +4462,7 @@
                     }
                 }
                 // Convert newlines to <br> for textarea fields so they render in
-                // the table; export will convert <br> back to \n via onCellHtmlData
+                // the table. Export converts <br> back to \n via onCellHtmlData.
                 if (row.custom_fields[field_column_plain].element === 'textarea') {
                     var val = row.custom_fields[field_column_plain].value;
                     return val ? val.replace(/(?:\r\n|\r|\n)/g, '<br>') : '';
@@ -3591,6 +4472,39 @@
 
             }
 
+    }
+
+    // cellStyle callback stamped on every custom-field column (wired
+    // from AssetPresenter + the other presenters that render custom
+    // fields). Tags the cell so stampCustomFieldExportAttrs below can
+    // set the tableExport "leave this cell alone" attributes on the TD
+    // after each body render. bs-table's cellStyle only honors classes
+    // and css, so the data attributes can't be returned directly from
+    // here, and tableExport only reads data-tableexport-* from the TD
+    // itself (not inner nodes), so putting them on a wrapper span
+    // inside the formatter doesn't work either. See issue #19595.
+    function customFieldsCellStyle() {
+        return {
+            classes: 'snipeit-custom-field-cell',
+        };
+    }
+
+    // Walk every custom-field cell in a table and set the two
+    // tableExport attributes that opt the cell out of the global EU
+    // number-parse config (see the exportOptions['numbers'] block above
+    // and issue #19415). Called from onPostBody so the attrs get
+    // reapplied after every bs-table render.
+    //
+    //   data-tableexport-cellformat=""    : skip number-separator conversion
+    //   data-tableexport-xlsxformatid="49": force XLSX "@" (text) cell format
+    function stampCustomFieldExportAttrs($table) {
+        if (!$table || !$table.length) {
+            return;
+        }
+        $table.find('td.snipeit-custom-field-cell').each(function () {
+            this.setAttribute('data-tableexport-cellformat', '');
+            this.setAttribute('data-tableexport-xlsxformatid', '49');
+        });
     }
 
 
@@ -3619,6 +4533,35 @@
             }
             return groups;
         }
+    }
+
+    // Fieldsets "used by models" column: renders every attached asset
+    // model as a label pill linking to its show page. Reads value.rows
+    // (DatatablesTransformer shape) and matches the pill style the
+    // legacy server-rendered row used.
+    function customFieldsetsModelsFormatter(value) {
+        if (!value || !value.rows || !value.rows.length) {
+            return '';
+        }
+        var pills = '';
+        for (var i in value.rows) {
+            pills += '<a href="{{ config('app.url') }}/models/' + value.rows[i].id + '" class="label label-light label-normal-bold">' + value.rows[i].name + '</a> ';
+        }
+        return pills;
+    }
+
+    // Fields "fieldsets" column: renders every fieldset the field is
+    // attached to as a label pill linking to the fieldset show page.
+    // Mirrors customFieldsetsModelsFormatter but points at fieldset URLs.
+    function customFieldsFieldsetsFormatter(value) {
+        if (!value || !value.rows || !value.rows.length) {
+            return '';
+        }
+        var pills = '';
+        for (var i in value.rows) {
+            pills += '<a href="{{ config('app.url') }}/fields/fieldsets/' + value.rows[i].id + '" class="label label-light label-normal-bold">' + value.rows[i].name + '</a> ';
+        }
+        return pills;
     }
 
 
@@ -3738,6 +4681,22 @@
             return '<a href="{{ config('app.url') }}/hardware/' + row.asset.id + '">' + row.asset.serial + '</a>';
         }
         return '';
+    }
+
+    // Custom fields db_column column: wrap the expected slug in <code>
+    // and append the db_convert_warning when the stored db_column does
+    // not match the expected slug (upstream slug rules changed since
+    // the field was originally created). Warning HTML is pre-rendered
+    // on the transformer side so the formatter stays dumb.
+    function customFieldDbColumnFormatter(value, row) {
+        if (!value) {
+            return '';
+        }
+        var html = '<code>' + value + '</code>';
+        if (row && row.db_column_warning) {
+            html += '<br><i class="fas fa-exclamation-triangle text-danger" aria-hidden="true"></i> ' + row.db_column_warning;
+        }
+        return html;
     }
 
     function trueFalseFormatter(value) {
@@ -4637,6 +5596,19 @@
         });
         window.setTimeout(fn, 120);
     }
+
+    // A page remembered from another view can be past the end of this result.
+    // bootstrap-table clamps pageNumber to 1 but keeps the empty response, so
+    // fetch page 1 once.
+    $(document).on('load-success.bs.table', '.snipe-table', function (e, res) {
+        var instance = $(this).data('bootstrap.table');
+        if (instance && res && res.total > 0 && Array.isArray(res.rows) && res.rows.length === 0 && !instance.snipeRefetchedEmptyPage) {
+            instance.snipeRefetchedEmptyPage = true;
+            instance.updatePagination();
+        } else if (instance) {
+            instance.snipeRefetchedEmptyPage = false;
+        }
+    });
 
     // Re-measure after every bootstrap-table render. Delegated on document
     // so it catches tables that init after this handler was attached.

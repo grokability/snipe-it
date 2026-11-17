@@ -3,16 +3,20 @@
 namespace Tests\Feature\SyncAdapters;
 
 use App\Events\CheckoutableCheckedOut;
+use App\Mail\CheckoutAssetMail;
 use App\Models\Actionlog;
 use App\Models\Asset;
+use App\Models\Setting;
 use App\Models\Statuslabel;
 use App\Models\SyncAdapterConfig;
 use App\Models\SyncAdapterInstance;
 use App\Models\User;
+use App\Notifications\CheckoutAssetNotification;
 use App\SyncAdapters\HostInventoryRecord;
 use App\SyncAdapters\SyncAdapter;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 /**
@@ -177,32 +181,52 @@ class UserAssignmentTest extends TestCase
         ]);
     }
 
-    public function test_suppress_off_falls_back_to_silent_when_no_authenticated_admin()
+    public function test_suppress_off_runs_full_checkout_without_authenticated_admin()
     {
-        Event::fake([CheckoutableCheckedOut::class]);
+        Mail::fake();
 
         $fleet = $this->configuredFleet();
         SyncAdapterConfig::put($fleet->id, 'user_match_strategy', 'email');
         SyncAdapterConfig::put($fleet->id, 'suppress_notifications', '0');
 
-        User::factory()->create(['email' => 'alice@example.test']);
+        $user = User::factory()->create(['email' => 'alice@example.test']);
 
-        // No actingAs(): simulates a CLI-triggered sync where auth()
-        // has no user. Suppress-off would otherwise crash the
-        // CheckoutableCheckedOut event (requires User admin), so the
-        // sync path silently degrades to direct assignment.
-        SyncAdapter::syncFromRecord(new HostInventoryRecord(
+        // First sync reports no user, so the asset is created unassigned
+        // and we can make its category require acceptance.
+        $record = fn (?string $email) => new HostInventoryRecord(
             sourceKey: 'fleet',
             sourceId: 'ua-8',
             hostname: 'cli-assign',
             hardwareSerial: 'SN-A',
             hardwareModel: 'MacBook Pro',
-            assignedUserEmail: 'alice@example.test',
-        ));
-
-        Event::assertNotDispatched(CheckoutableCheckedOut::class);
+            assignedUserEmail: $email,
+        );
+        SyncAdapter::syncFromRecord($record(null));
         $asset = Asset::where('name', 'cli-assign')->firstOrFail();
-        $this->assertNotNull($asset->assigned_to);
+        $asset->model->category->update(['require_acceptance' => true]);
+
+        // No actingAs(): simulates a scheduled/CLI sync with no auth() user.
+        SyncAdapter::syncFromRecord($record('alice@example.test'));
+
+        $this->assertSame($user->id, (int) $asset->fresh()->assigned_to);
+        $this->assertDatabaseHas('checkout_acceptances', [
+            'checkoutable_type' => Asset::class,
+            'checkoutable_id' => $asset->id,
+            'assigned_to_id' => $user->id,
+            'accepted_at' => null,
+            'declined_at' => null,
+        ]);
+        Mail::assertSent(CheckoutAssetMail::class, fn ($mail) => $mail->hasTo('alice@example.test'));
+    }
+
+    public function test_slack_notification_omits_admin_when_checkout_has_none()
+    {
+        $asset = Asset::factory()->assignedToUser()->create();
+
+        $notification = new CheckoutAssetNotification($asset, $asset->assignedTo, null, null, null, Setting::getSettings());
+        $fields = $notification->toSlack()->attachments[0]->fields;
+
+        $this->assertArrayNotHasKey(trans('general.by_user'), $fields);
     }
 
     private function configuredFleet(): SyncAdapterInstance

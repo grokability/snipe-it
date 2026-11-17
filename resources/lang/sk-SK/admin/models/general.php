@@ -9,6 +9,9 @@ return [
     'bulk_delete_warn' => 'Chystáte sa zmazať jeden model majetku.|Chystáte sa zmazať :mode_count modelov majetku.',
     'restore' => 'Obnoviť model',
     'requestable' => 'Používatelia môžu dopytovať tento model',
+    'mfg_marketing_name' => 'Obchodný názov',
+    'mfg_release_date' => 'Dátum vydania',
+    'mfg_discontinued_date' => 'Dátum ukončenia výroby',
     'show_mac_address' => 'Zobraziť pole s MAC adresou v majetkoch tohto modelu',
     'view_deleted' => 'Zobraziť zmazané',
     'view_models' => 'Zobraziť modely',
@@ -16,7 +19,7 @@ return [
     'no_custom_field' => 'Žiadne vlastné polia',
     'add_default_values' => 'Pridať predvolené hodnoty',
     'importer' => [
-        'require_serial' => 'Require Serial',
-        'serial_required' => 'Serial Required',
+        'require_serial' => 'Vyžadovať sériové číslo',
+        'serial_required' => 'Sériové číslo je povinné',
     ],
 ];

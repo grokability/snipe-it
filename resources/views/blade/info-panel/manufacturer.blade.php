@@ -9,11 +9,14 @@
 @if ($manufacturer)
     <x-info-element icon_type="manufacturer" title="{{ trans('general.manufacturer') }}" icon_color="{{ $manufacturer->tag_color }}">
         {!!  $manufacturer->present()->nameUrl !!}
-        <a class="pull-right js-copy-link" style="font-size: 16px; margin-right: 3px;" type="button" data-toggle="collapse" data-target="#manufacturerContact" aria-expanded="false" aria-controls="manufacturerContact">
-            <x-icon type="plus" class="fa-fw"/>
-        </a>
+        @if ($manufacturer->hasInfoPanelDetails())
+            <a class="pull-right js-copy-link" style="font-size: 16px; margin-right: 3px;" type="button" data-toggle="collapse" data-target="#manufacturerContact" aria-expanded="false" aria-controls="manufacturerContact">
+                <x-icon type="plus" class="fa-fw"/>
+            </a>
+        @endif
     </x-info-element>
 
+    @if ($manufacturer->hasInfoPanelDetails())
     <span class="collapse" id="manufacturerContact">
 
         <x-info-element class="subitem well well-sm">
@@ -65,5 +68,6 @@
             </p>
         </x-info-element>
             </span>
+    @endif
 
 @endif

@@ -1,7 +1,7 @@
 ARG ENVIRONMENT=production
 ARG SNIPEIT_RELEASE=6.1.0
-ARG PHP_VERSION=8.2
-ARG PHP_ALPINE_VERSION=3.17
+ARG PHP_VERSION=8.3
+ARG PHP_ALPINE_VERSION=3.21
 ARG COMPOSER_VERSION=2
 
 # Cannot use arguments with 'COPY --from' workaround
@@ -13,7 +13,7 @@ FROM php:${PHP_VERSION}-fpm-alpine${PHP_ALPINE_VERSION} AS source
 LABEL maintainer="Mateus Villar <mromeravillar@gmail.com>"
 
 ARG PACKAGES="\
-		mysql-client \
+		mariadb-client \
 "
 ARG DEV_PACKAGES="\
 		git \

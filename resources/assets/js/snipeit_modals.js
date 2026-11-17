@@ -199,8 +199,6 @@ $(function () {
 });
 
 function formatDatalistSafe(datalist) {
-    // console.warn("What in the hell is going on with Select2?!?!!?!?");
-    // console.warn($.select2);
     if (datalist.loading) {
         return $('<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Loading...');
     }

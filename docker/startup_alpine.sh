@@ -77,6 +77,13 @@ do
   [ ! -d "/var/lib/snipeit/$dir" ] && mkdir -p "/var/lib/snipeit/$dir"
 done
 
+# seed the bundled default avatar into the uploads volume on first start
+# (public/uploads is symlinked to the volume), but never overwrite a
+# default that an admin already uploaded
+if [ ! -f /var/lib/snipeit/data/uploads/default.png ]; then
+  cp /var/www/html/public/img/default.png /var/lib/snipeit/data/uploads/default.png
+fi
+
 chown -R apache:root /var/lib/snipeit/data/*
 chown -R apache:root /var/lib/snipeit/dumps
 chown -R apache:root /var/lib/snipeit/keys
@@ -112,6 +119,20 @@ if [ -v "APACHE_LIMIT_REQUEST_FIELDS" ]
 then
     echo "Changing LimitRequestFields to ${APACHE_LIMIT_REQUEST_FIELDS}"
     sed -i "s/^LimitRequestFields.*/LimitRequestFields ${APACHE_LIMIT_REQUEST_FIELDS}/" /etc/apache2/conf.d/limits.conf
+fi
+
+# Apache listening port. Rootless container runtimes can't bind
+# privileged ports (<1024) even inside the container, so expose the
+# port as an env var. Default preserves the historical 80
+# The Alpine image doesn't ship an in-container SSL config, so only HTTP is
+# handled.
+# Users running SSL on this image use their own vhost and can bind
+# whatever port they want there.
+if [ -v "APACHE_HTTP_PORT" ] && [ "$APACHE_HTTP_PORT" != "80" ]
+then
+    echo "Changing Apache HTTP port to ${APACHE_HTTP_PORT}"
+    sed -i -E "s/^Listen\s+80\b/Listen ${APACHE_HTTP_PORT}/" /etc/apache2/httpd.conf
+    sed -i -E "s/<VirtualHost\s+\*:80>/<VirtualHost *:${APACHE_HTTP_PORT}>/" /etc/apache2/conf.d/default.conf
 fi
 
 # If the Oauth DB files are not present copy the vendor files over to the db migrations

@@ -61,7 +61,8 @@ class ComponentsController extends Controller
         $this->authorize('create', Component::class);
 
         return view('components/edit')->with('category_type', 'component')
-            ->with('item', new Component);
+            ->with('item', new Component)
+            ->with('pendingRequestCount', 0);
     }
 
     /**
@@ -97,6 +98,7 @@ class ComponentsController extends Controller
         // absence to false so the flag really flips off. The setter
         // normalizes the truthy branch.
         $component->requestable = $request->input('requestable', false);
+        $component->archived = $request->input('archived', false);
         // Seed the template supplier from the initial-acquisition
         // supplier on the create form; editable afterwards.
         $component->default_supplier_id = $request->input('default_supplier_id', $request->input('supplier_id'));
@@ -127,7 +129,6 @@ class ComponentsController extends Controller
      * @see ComponentsController::postEdit() method that stores the data.
      * @since [v3.0]
      *
-     * @param  int  $componentId
      * @return View
      *
      * @throws AuthorizationException
@@ -142,7 +143,8 @@ class ComponentsController extends Controller
 
         return view('components/edit')
             ->with('item', $component)
-            ->with('category_type', 'component');
+            ->with('category_type', 'component')
+            ->with('pendingRequestCount', $component->openRequests()->count());
     }
 
     /**
@@ -152,7 +154,6 @@ class ComponentsController extends Controller
      *
      * @see ComponentsController::getEdit() method presents the form.
      *
-     * @param  int  $componentId
      * @return RedirectResponse
      *
      * @throws AuthorizationException
@@ -184,6 +185,7 @@ class ComponentsController extends Controller
         // Unchecked checkbox is omitted from the POST body; coerce
         // absence to false so unchecking really turns the flag off.
         $component->requestable = $request->input('requestable', false);
+        $component->archived = $request->input('archived', false);
 
         $component = $request->handleImages($component);
 
@@ -232,6 +234,30 @@ class ComponentsController extends Controller
     }
 
     /**
+     * Restore a soft-deleted component.
+     */
+    public function postRestore($id): RedirectResponse
+    {
+        if ($component = Component::withTrashed()->find($id)) {
+           
+            $this->authorize('delete', $component);
+
+            if ($component->deleted_at == '') {
+                return redirect()->back()->with('error', trans('general.not_deleted', ['item_type' => trans('general.component')]));
+            }
+
+            if ($component->restore()) {
+                return redirect()->route('components.show', $component)
+                    ->with('success', trans('admin/components/message.restore.success'));
+            }
+
+            return redirect()->back()->with('error', trans('general.could_not_restore', ['item_type' => trans('general.component'), 'error' => $component->getErrors()->first()]));
+        }
+
+        return redirect()->route('components.index')->with('error', trans('admin/components/message.does_not_exist'));
+    }
+
+    /**
      * Return a view to display component information.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
@@ -239,7 +265,6 @@ class ComponentsController extends Controller
      * @see ComponentsController::getDataView() method that generates the JSON response
      * @since [v3.0]
      *
-     * @param  int  $componentId
      * @return View
      *
      * @throws AuthorizationException
@@ -270,7 +295,8 @@ class ComponentsController extends Controller
         // Show the page
         return view('components/edit')
             ->with('item', $cloned_component)
-            ->with('component', $cloned_component);
+            ->with('component', $cloned_component)
+            ->with('pendingRequestCount', 0);
     }
 
     /**

@@ -102,7 +102,7 @@ class OauthClients extends Component
                 ->unique('client_id')
                 ->filter(fn ($token) => $token->client !== null)
                 ->map(fn ($token) => (object) [
-                    'client_id' => $token->client_id,
+                    'client_id' => $token->getAttribute('client_id'),
                     'client_name' => $token->client->name,
                     'client_owner_id' => $token->client->user_id,
                     'client_owner_display_name' => $token->client->user?->display_name,
@@ -137,10 +137,10 @@ class OauthClients extends Component
             'redirect' => 'required|url|max:255',
         ]);
 
-        app(ClientRepository::class)->create(
-            auth()->id(),
-            $this->name,
-            $this->redirect,
+        app(ClientRepository::class)->createAuthorizationCodeGrantClient(
+            name: $this->name,
+            redirectUris: [$this->redirect],
+            user: auth()->user(),
         );
 
         session()->flash('success', trans('admin/settings/message.oauth.client_created'));
@@ -160,7 +160,7 @@ class OauthClients extends Component
         }
     }
 
-    public function deleteAuthorizedApplication(int $clientId): void
+    public function deleteAuthorizedApplication(string $clientId): void
     {
         // Only revoke tokens the caller actually owns. Superusers may revoke
         // any authorized-application entry (matches their admin-surface

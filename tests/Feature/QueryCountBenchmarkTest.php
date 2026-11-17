@@ -32,6 +32,7 @@ namespace Tests\Feature;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Category;
+use App\Models\Company;
 use App\Models\Location;
 use App\Models\Statuslabel;
 use App\Models\User;
@@ -247,5 +248,74 @@ class QueryCountBenchmarkTest extends TestCase
                     .'The SidebarComposer should only fire when layouts.default renders.');
             }
         }
+    }
+
+    // ---------------------------------------------------------------------------
+    // FMCS isCurrentUserHasAccess memoizes
+    // ---------------------------------------------------------------------------
+
+    // Regression for #19918. 8.8.0 removed the hasColumn early-return for User
+    // targets (users.company_id was renamed to legacy_company_id as part of the
+    // parent-company feature). Non-superuser callers in FMCS mode then paid two
+    // round-trips per transformer row: one information_schema.columns probe for
+    // every non-User target, and one FMCS pivot-subquery exists() check per User
+    // target. Both are deterministic within a request, so memoize.
+
+    public function test_fmcs_has_column_lookup_is_memoized_across_is_current_user_has_access_calls(): void
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $actingCompany = Company::factory()->create();
+        $actingUser = $actingCompany->users()->save(User::factory()->make());
+        $this->actingAs($actingUser);
+
+        $assets = Asset::factory()->count(10)->create();
+        Company::flushCompanyColumnCache();
+
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+        foreach ($assets as $asset) {
+            Company::isCurrentUserHasAccess($asset);
+        }
+        $queries = DB::getQueryLog();
+        DB::disableQueryLog();
+
+        $schemaProbes = array_filter($queries, fn ($q) => stripos($q['query'], 'information_schema.columns') !== false
+            || stripos($q['query'], 'show columns') !== false
+            || stripos($q['query'], 'pragma table_info') !== false);
+
+        $this->assertLessThanOrEqual(1, count($schemaProbes),
+            'isCurrentUserHasAccess fired '.count($schemaProbes).' schema-probe queries across 10 identical calls. '
+            .'Company::$hasCompanyColumnCache should memoize this to one lookup per table per request.');
+    }
+
+    public function test_fmcs_user_target_visibility_is_memoized_per_actor_target(): void
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+
+        [$companyA] = Company::factory()->count(2)->create();
+        $actingUser = $companyA->users()->save(User::factory()->make());
+        $this->actingAs($actingUser);
+
+        $target = $companyA->users()->save(User::factory()->make());
+        Company::flushUserVisibilityCache();
+
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+        for ($i = 0; $i < 10; $i++) {
+            Company::isCurrentUserHasAccess($target);
+        }
+        $queries = DB::getQueryLog();
+        DB::disableQueryLog();
+
+        // The pivot-subquery check is the exists() against users scoped by
+        // CompanyableScope. Match on the exists shape against the users table.
+        $existsProbes = array_filter($queries, fn ($q) => stripos($q['query'], 'select exists') !== false
+            && stripos($q['query'], 'users') !== false
+            && stripos($q['query'], 'users.id') !== false);
+
+        $this->assertLessThanOrEqual(1, count($existsProbes),
+            'isCurrentUserHasAccess fired '.count($existsProbes).' pivot-subquery exists() checks across 10 identical calls. '
+            .'Company::$userIsVisibleCache should memoize this to one lookup per actor/target pair.');
     }
 }

@@ -164,6 +164,23 @@ class SupplierPresenter extends Presenter
                 'title' => trans('admin/locations/table.country'),
                 'visible' => false,
             ], [
+                'field' => 'contact',
+                'scope' => 'col',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.contact'),
+                'visible' => false,
+            ], [
+                'field' => 'email',
+                'scope' => 'col',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.email'),
+                'visible' => false,
+                'formatter' => 'emailFormatter',
+            ], [
                 'field' => 'phone',
                 'scope' => 'col',
                 'searchable' => true,

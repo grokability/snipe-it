@@ -23,6 +23,9 @@ return [
             'error' => 'Wystąpił błąd podczas usuwania pola. Spróbuj ponownie.',
             'success' => 'Pole zostało usunięte pomyślnie.',
             'in_use' => 'Pole jest wciąż w użytku.',
+            'in_use_named' => ':name is still attached to at least one fieldset and cannot be deleted.',
+            'bulk_success' => 'Field deleted successfully.|:count fields were deleted successfully.',
+            'partial_success' => ':count field was deleted successfully, but others could not be deleted. See below for details.|:count fields were deleted successfully, but others could not be deleted. See below for details.',
         ],
 
     ],
@@ -46,6 +49,13 @@ return [
             'error' => 'Wystąpił błąd podczas usuwania zestawu pól. Spróbuj ponownie.',
             'success' => 'Zestaw pól usunięto pomyślnie.',
             'in_use' => 'Zestaw pól jest nadal w użyciu.',
+            'in_use_named' => ':name is still attached to at least one asset model and cannot be deleted.',
+            'bulk_success' => 'Fieldset deleted successfully.|:count fieldsets were deleted successfully.',
+            'partial_success' => ':count fieldset was deleted successfully, but others could not be deleted. See below for details.|:count fieldsets were deleted successfully, but others could not be deleted. See below for details.',
+        ],
+
+        'clone' => [
+            'success' => 'Fieldset cloned successfully.',
         ],
 
     ],

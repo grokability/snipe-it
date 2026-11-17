@@ -5,7 +5,6 @@ namespace App\Models\Traits;
 use App\Enums\CheckoutRequestState;
 use App\Models\CheckoutRequest;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 // $asset->requests
@@ -38,8 +37,38 @@ trait Requestable
             // gone, so are its pending requests".
             $model->requests()->forceDelete();
         });
+
+        static::updated(function (self $model): void {
+            // Archive-time request cleanup.
+            if ($model->wasChanged('archived') && $model->getAttribute('archived')) {
+                $model->openRequests()->get()->each(fn(CheckoutRequest $request) => $request->cancelAndSync());
+            }
+        });
+
+
+        /**
+         * Listen to the Requestable's deleting event. Mirrors the archive-time
+         * cancellation in updated() so the two lifecycle transitions
+         * have the same posture: open CheckoutRequest rows get canceled
+         * so they stop surfacing on /account/requested while the parent
+         * is unavailable. Canceled request rows remain as history; this
+         * quiet-save path synchronizes their calendar events without
+         * writing a separate cancellation log.
+         *
+         * @return void
+         */
+        static::deleting(function (self $model): void {
+            $model->openRequests()->get()->each(fn (CheckoutRequest $request) => $request->cancelAndSync());
+        });
+
+        static::restoring(function (self $model): void {
+            $model->requests()->onlyTrashed()->restore();
+        });
     }
 
+    /**
+     * @return MorphMany<CheckoutRequest, $this>
+     */
     public function requests(): MorphMany
     {
         return $this->morphMany(CheckoutRequest::class, 'requestable');
@@ -52,6 +81,8 @@ trait Requestable
      * assigned_to_self flag on the requestable-tab API rows, and the
      * upcoming withCount('openRequests') replacement for the
      * requests_counter denorm all read from.
+     *
+     * @return MorphMany<CheckoutRequest, $this>
      */
     public function openRequests(): MorphMany
     {
@@ -125,6 +156,12 @@ trait Requestable
      * prevents already-terminal rows (fulfilled/canceled) from
      * getting their canceled_at bumped, and prevents no-op
      * cancellations from looking like real events downstream.
+     *
+     * Iterate + save (via cancelAndSync) rather than a query-builder
+     * ->update() so the HasCalendarEvents observer fires per row and
+     * the matching calendar_events index row gets cleaned up. The
+     * cancel count on this path is small (one requester's open
+     * requests for one item) so the N+1 shape is deliberate.
      */
     public function cancelRequest($user_id = null): int
     {
@@ -132,13 +169,20 @@ trait Requestable
             $user_id = auth()->id();
         }
 
-        return $this->requests()
+        $pending = $this->requests()
             ->where('user_id', $user_id)
             ->where('state', CheckoutRequestState::Pending->value)
-            ->update([
-                'state' => CheckoutRequestState::Canceled->value,
-                'canceled_at' => Carbon::now(),
-            ]);
+            ->get();
+
+        $affected = 0;
+        /** @var CheckoutRequest $request */
+        foreach ($pending as $request) {
+            if ($request->cancelAndSync()) {
+                $affected++;
+            }
+        }
+
+        return $affected;
     }
 
     /**

@@ -23,6 +23,32 @@ use Tests\TestCase;
  */
 class LabelPreviewRequestOverrideTest extends TestCase
 {
+    /**
+     * Every test here hits the label preview endpoint which routes
+     * through App\View\Label::render(), which calls TCPDF's Output()
+     * with destination='I' (inline). TCPDF's 'I' mode `print`s the
+     * PDF bytes, and PHPUnit's HTTP test harness doesn't always
+     * capture those cleanly, so without a buffer the PDF stream
+     * bleeds into CI stdout and interleaves with the progress line.
+     * Save the outer OB level so we only clean down to our own.
+     */
+    private int $outerObLevel = 0;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->outerObLevel = ob_get_level();
+        ob_start();
+    }
+
+    protected function tearDown(): void
+    {
+        while (ob_get_level() > $this->outerObLevel) {
+            ob_end_clean();
+        }
+        parent::tearDown();
+    }
+
     #[Test]
     public function non_label2_override_does_not_mutate_the_setting_singleton(): void
     {

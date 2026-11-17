@@ -5,6 +5,7 @@ namespace App\Http\Requests\Traits;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\CustomField;
+use App\Models\CustomFieldset;
 
 trait MayContainCustomFields
 {
@@ -59,7 +60,7 @@ trait MayContainCustomFields
 
             // Single-target-model path: fields present in the request but
             // not on this asset's fieldset are errors.
-            $request_fields->diff($asset_model->fieldset?->fields?->pluck('db_column'))
+            $request_fields->diff(CustomFieldset::find($asset_model->fieldset_id)?->fields->pluck('db_column') ?? collect())
                 ->each(function ($request_field_name) use ($validator) {
                     if (CustomField::where('db_column', $request_field_name)->exists()) {
                         $validator->errors()->add($request_field_name, trans('validation.custom.custom_field_not_found_on_model'));

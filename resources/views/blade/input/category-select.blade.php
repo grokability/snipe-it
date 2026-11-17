@@ -45,7 +45,7 @@
             @if ($selected)
                 @foreach(Arr::wrap($selected) as $value)
                     <option value="{{ $value }}" selected="selected" role="option" aria-selected="true">
-                        {{ Category::find($value)?->name }}
+                        {{ Category::nameMap()->get($value) }}
                     </option>
                 @endforeach
             @endif

@@ -14,4 +14,9 @@ return [
     'no_tokens' => 'crwdns12318:0crwdne12318:0',
     'enable_sounds' => 'crwdns12658:0crwdne12658:0',
     'enable_confetti' => 'crwdns12664:0crwdne12664:0',
+    'pat_scopes_column' => 'crwdns18309:0crwdne18309:0',
+    'pat_scopes_help' => 'crwdns18311:0crwdne18311:0',
+    'pat_no_scopes' => 'crwdns18313:0crwdne18313:0',
+    'pat_no_scopes_tooltip' => 'crwdns18315:0crwdne18315:0',
+    'mcp_url' => 'crwdns18317:0crwdne18317:0',
 ];

@@ -1,5 +1,6 @@
 @props([
     'infoPanelObj' => null,
+    'fieldset' => null,
     'img_path' => null,
     'qr_code_url' => null,
     'snipeSettings' => \App\Models\Setting::getSettings()
@@ -42,15 +43,7 @@
             @endif
 
                 <a href="{{ $infoPanelObj->getImageUrl($img_path) }}" data-toggle="lightbox" data-type="image">
-                    {{-- width:100% + max-width:300px = "scale down with the
-                         container up to a 300px cap". Without the explicit
-                         width:100%, the !important max-width overrides
-                         img-responsive's max-width:100% and the image
-                         renders at its intrinsic (or 300px cap) width
-                         regardless of container. At md and smaller, the
-                         info-panel column is narrower than 300px and the
-                         image overflows into the whitespace to its right. --}}
-                    <img src="{{ $infoPanelObj->getImageUrl($img_path) }}" class="img-responsive img-thumbnail" alt="{{ $infoPanelObj->name }}" style="width: 100%; max-width: 300px !important; max-height: 300px !important; height: auto; margin-bottom: 10px;">
+                    <img src="{{ $infoPanelObj->getImageUrl($img_path) }}" class="img-responsive img-thumbnail" alt="{{ $infoPanelObj->name }}" style="max-width: min(100%, 300px); max-height: 300px; margin-bottom: 10px;">
             </a>
         </div>
         <br>
@@ -136,6 +129,8 @@
                 </x-copy-to-clipboard>
             </x-info-element>
 
+            <x-info-panel.mfg-fields :model="$infoPanelObj->model" />
+
         @elseif ($infoPanelObj->model_number)
             <!-- This is not an asset (with a model) so just grab it off the object -->
             <x-info-element icon_type="number" title="{{ trans('general.model_no') }}">
@@ -144,6 +139,10 @@
                     {{ $infoPanelObj->model_number }}
                 </x-copy-to-clipboard>
             </x-info-element>
+        @endif
+
+        @if ($infoPanelObj instanceof \App\Models\AssetModel)
+            <x-info-panel.mfg-fields :model="$infoPanelObj" />
         @endif
 
         @if ($infoPanelObj->item_no)
@@ -227,10 +226,10 @@
                 <x-info-element>
                     <x-icon type="cost" class="fa-fw" title="{{ trans('general.total_cost') }}"/>
                     {{ trans('general.total_cost') }}
-                    <span class="pull-right">
-                        {{ $currency !== '' ? $currency : $snipeSettings->default_currency }}
+                    {{ $currency !== '' ? $currency : $snipeSettings->default_currency }}
+                    <x-copy-to-clipboard copy_what="total_cost" class="pull-right">
                         {{ Helper::formatCurrencyOutput($totalsByCurrency[$currency]) }}
-                    </span>
+                    </x-copy-to-clipboard>
                 </x-info-element>
             @elseif (count($totalsByCurrency) > 1)
                 <x-info-element>
@@ -361,9 +360,9 @@
         @endif
 
 
-        @if ($infoPanelObj->fieldset)
+        @if ($fieldset)
             <x-info-element icon_type="fieldset" title="{{ trans('admin/custom_fields/general.fieldset_name') }}">
-                {!!  $infoPanelObj->fieldset->present()->nameUrl !!}
+                {!!  $fieldset->present()->nameUrl !!}
             </x-info-element>
         @endif
 
@@ -374,13 +373,7 @@
 
         @if (($infoPanelObj instanceof \App\Models\Location) && (isset($infoPanelObj->parent)) && ($infoPanelObj->parent))
             @php
-                $locationAncestors = [];
-                $ancestorCursor = $infoPanelObj->parent;
-
-                while ($ancestorCursor) {
-                    array_unshift($locationAncestors, $ancestorCursor);
-                    $ancestorCursor = $ancestorCursor->parent;
-                }
+                $locationAncestors = $infoPanelObj->ancestors()->reverse();
             @endphp
             <x-info-element icon_type="parent" title="{{ trans('admin/locations/table.parent') }}">
                 @foreach ($locationAncestors as $ancestor)
@@ -520,7 +513,7 @@
 
         @if (($infoPanelObj->present()->displayAddress) && (config('services.google.maps_api_key')))
 
-                <x-info-element>
+                <x-info-element class="hidden-print">
                     <div class="text-center">
                         <img src="https://maps.googleapis.com/maps/api/staticmap?markers={{ urlencode($infoPanelObj->address.','.$infoPanelObj->city.' '.$infoPanelObj->state.' '.$infoPanelObj->country.' '.$infoPanelObj->zip) }}&size=500x300&maptype=roadmap&key={{ config('services.google.maps_api_key') }}" class="img-thumbnail img-responsive" style="width: 100%" alt="Map">
                     </div>

@@ -64,6 +64,7 @@ class ComponentImporter extends ItemImporter
         // normalizes "0"/"1"/"true"/"false"/"" so any of the common CSV
         // shapes lands correctly.
         $this->setItemFromCsvIfPresent($row, 'requestable');
+        $this->setItemFromCsvIfPresent($row, 'archived');
 
         // asset_tag is not in Component's fillable but is used by the
         // checkout-to-asset path in createComponentIfNotExists.

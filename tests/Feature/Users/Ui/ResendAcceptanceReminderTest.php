@@ -2,17 +2,17 @@
 
 namespace Tests\Feature\Users\Ui;
 
-use App\Mail\UnacceptedAssetReminderMail;
 use App\Models\CheckoutAcceptance;
 use App\Models\User;
-use Illuminate\Support\Facades\Mail;
+use App\Notifications\UnacceptedAssetReminderNotification;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class ResendAcceptanceReminderTest extends TestCase
 {
-    public function test_it_sends_acceptance_reminder_email_for_user_with_pending_acceptances(): void
+    public function test_it_sends_acceptance_reminder_for_user_with_pending_acceptances(): void
     {
-        Mail::fake();
+        Notification::fake();
 
         $viewer = User::factory()->viewUsers()->create();
         $targetUser = User::factory()->create(['email' => 'target@example.com']);
@@ -26,14 +26,12 @@ class ResendAcceptanceReminderTest extends TestCase
             ->assertRedirect()
             ->assertSessionHas('success');
 
-        Mail::assertSent(UnacceptedAssetReminderMail::class, function (UnacceptedAssetReminderMail $mail) use ($targetUser) {
-            return $mail->hasTo($targetUser->email);
-        });
+        Notification::assertSentTo($targetUser, UnacceptedAssetReminderNotification::class);
     }
 
     public function test_it_does_not_send_when_user_has_no_pending_acceptances(): void
     {
-        Mail::fake();
+        Notification::fake();
 
         $viewer = User::factory()->viewUsers()->create();
         $targetUser = User::factory()->create(['email' => 'target@example.com']);
@@ -43,12 +41,12 @@ class ResendAcceptanceReminderTest extends TestCase
             ->assertRedirect()
             ->assertSessionHas('warning');
 
-        Mail::assertNotSent(UnacceptedAssetReminderMail::class);
+        Notification::assertNotSentTo($targetUser, UnacceptedAssetReminderNotification::class);
     }
 
     public function test_it_does_not_send_when_user_has_no_email(): void
     {
-        Mail::fake();
+        Notification::fake();
 
         $viewer = User::factory()->viewUsers()->create();
         $targetUser = User::factory()->create(['email' => '']);
@@ -62,6 +60,6 @@ class ResendAcceptanceReminderTest extends TestCase
             ->assertRedirect()
             ->assertSessionHas('error');
 
-        Mail::assertNotSent(UnacceptedAssetReminderMail::class);
+        Notification::assertNotSentTo($targetUser, UnacceptedAssetReminderNotification::class);
     }
 }

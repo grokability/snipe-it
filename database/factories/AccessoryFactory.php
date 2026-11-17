@@ -17,7 +17,7 @@ class AccessoryFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var string
+     * @var class-string<Accessory>
      */
     protected $model = Accessory::class;
 
@@ -117,6 +117,11 @@ class AccessoryFactory extends Factory
                 'min_amt' => 2,
             ];
         });
+    }
+
+    public function archived(): self
+    {
+        return $this->state(fn () => ['archived' => true]);
     }
 
     public function withoutItemsRemaining()

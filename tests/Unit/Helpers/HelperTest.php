@@ -374,6 +374,78 @@ class HelperTest extends TestCase
         $this->assertNull(Helper::sameOriginUrl('https://user:pass@evil.example.com/'));
     }
 
+    public function test_same_host_as_configured_idp_url_returns_null_for_empty_input(): void
+    {
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl(null, 'https://keycloak.example.net/sls'));
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl('', 'https://keycloak.example.net/sls'));
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl('https://keycloak.example.net/sls', null));
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl('https://keycloak.example.net/sls', ''));
+    }
+
+    public function test_same_host_as_configured_idp_url_accepts_idp_target_off_origin()
+    {
+        // Issue #20023 regression: when Keycloak sends an IdP-initiated
+        // LogoutRequest, SamlController::sls must be able to carry the
+        // SP-configured IdP SLO response URL back to LoginController
+        // even though it is off-origin. This is the gate that lets that
+        // happen.
+        config(['app.url' => 'https://snipe-it.example.com']);
+        $expected = 'https://keycloak.example.net/realms/snipe/protocol/saml';
+        $target = $expected.'?SAMLResponse=abc&RelayState=https%3A%2F%2Fapp.example.com%2Fdashboard';
+
+        $this->assertSame($target, Helper::sameHostAsConfiguredIdpUrl($target, $expected));
+    }
+
+    public function test_same_host_as_configured_idp_url_rejects_host_mismatch()
+    {
+        // A toolkit bug or crafted input that pointed the Location at a
+        // third-party host (not the SP-configured IdP) must be dropped.
+        $this->assertNull(
+            Helper::sameHostAsConfiguredIdpUrl(
+                'https://attacker.example.net/phish',
+                'https://keycloak.example.net/sls'
+            )
+        );
+    }
+
+    public function test_same_host_as_configured_idp_url_rejects_dangerous_schemes()
+    {
+        $expected = 'https://keycloak.example.net/sls';
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl('javascript:alert(1)', $expected));
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl('data:text/html,<script>alert(1)</script>', $expected));
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl('file:///etc/passwd', $expected));
+    }
+
+    public function test_same_host_as_configured_idp_url_rejects_userinfo_authority()
+    {
+        // Credentials in the authority can hide the real host behind an
+        // `@`, which is a parser-differential bypass of the host-match
+        // check. Reject outright, matching sameOriginUrl's treatment.
+        $expected = 'https://keycloak.example.net/sls';
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl('https://user@attacker.example.net@keycloak.example.net/', $expected));
+        $this->assertNull(Helper::sameHostAsConfiguredIdpUrl('https://user:pass@keycloak.example.net/sls', $expected));
+    }
+
+    public function test_same_host_as_configured_idp_url_strips_crlf()
+    {
+        $expected = 'https://keycloak.example.net/sls';
+        $target = "https://keycloak.example.net/sls?SAMLResponse=abc\r\nSet-Cookie: attacker=1";
+
+        $sanitized = Helper::sameHostAsConfiguredIdpUrl($target, $expected);
+
+        $this->assertNotNull($sanitized);
+        $this->assertStringNotContainsString("\r", $sanitized);
+        $this->assertStringNotContainsString("\n", $sanitized);
+    }
+
+    public function test_same_host_as_configured_idp_url_host_match_is_case_insensitive()
+    {
+        $this->assertSame(
+            'https://Keycloak.Example.Net/sls?SAMLResponse=abc',
+            Helper::sameHostAsConfiguredIdpUrl('https://Keycloak.Example.Net/sls?SAMLResponse=abc', 'https://keycloak.example.net/sls')
+        );
+    }
+
     public function test_safe_intended_returns_stored_url_when_it_passes_the_origin_guard(): void
     {
         config(['app.url' => 'https://app.example.com']);
@@ -449,7 +521,7 @@ class HelperTest extends TestCase
         // because CustomField columns are added at runtime and are not in
         // Asset's $fillable, so `new Asset([...])` would silently drop them.
         $asset = new \App\Models\Asset;
-        $asset->{$field->db_column} = \Illuminate\Support\Facades\Crypt::encrypt('very-secret-value');
+        $asset->{$field->db_column} = 'very-secret-value';
 
         $model = \App\Models\AssetModel::factory()->make();
 
@@ -457,7 +529,7 @@ class HelperTest extends TestCase
 
         $this->assertSame(
             strtoupper(trans('admin/custom_fields/general.encrypted')),
-            Helper::customFieldFormValue($field, $asset, $model)
+            Helper::customFieldFormValue($field, $asset)
         );
     }
 
@@ -467,7 +539,7 @@ class HelperTest extends TestCase
         $field = \App\Models\CustomField::where('name', 'Test Encrypted')->first();
 
         $asset = new \App\Models\Asset;
-        $asset->{$field->db_column} = \Illuminate\Support\Facades\Crypt::encrypt('very-secret-value');
+        $asset->{$field->db_column} = 'very-secret-value';
 
         $model = \App\Models\AssetModel::factory()->make();
 
@@ -475,7 +547,7 @@ class HelperTest extends TestCase
 
         $this->assertSame(
             'very-secret-value',
-            Helper::customFieldFormValue($field, $asset, $model)
+            Helper::customFieldFormValue($field, $asset)
         );
     }
 
@@ -492,7 +564,7 @@ class HelperTest extends TestCase
 
         $model = \App\Models\AssetModel::factory()->make();
 
-        $this->assertSame('16', Helper::customFieldFormValue($field, $asset, $model));
+        $this->assertSame('16', Helper::customFieldFormValue($field, $asset));
     }
 
     public function test_custom_field_form_value_returns_default_when_item_is_null(): void
@@ -501,11 +573,13 @@ class HelperTest extends TestCase
         // model-scoped default value for the field.
         \App\Models\CustomField::factory()->ram()->create();
         $field = \App\Models\CustomField::where('name', 'RAM')->first();
-        $model = \App\Models\AssetModel::factory()->create();
+        $model = \App\Models\AssetModel::factory()->hasMultipleCustomFields([$field])->create();
+        $model->defaultValues()->attach($field, ['default_value' => '16']);
+        $defaults = \App\Models\CustomFieldDefault::valuesFor($model);
 
         $this->assertSame(
-            $field->defaultValue($model->id),
-            Helper::customFieldFormValue($field, null, $model)
+            '16',
+            Helper::customFieldFormValue($field, null, $defaults[$field->db_column] ?? null)
         );
     }
 
@@ -516,13 +590,15 @@ class HelperTest extends TestCase
         // so the mask should win over the default-value fallback.
         \App\Models\CustomField::factory()->testEncrypted()->create();
         $field = \App\Models\CustomField::where('name', 'Test Encrypted')->first();
-        $model = \App\Models\AssetModel::factory()->create();
+        $model = \App\Models\AssetModel::factory()->hasMultipleCustomFields([$field])->create();
+        $model->defaultValues()->attach($field, ['default_value' => 'default secret']);
+        $defaults = \App\Models\CustomFieldDefault::valuesFor($model);
 
         $this->actingAs(\App\Models\User::factory()->editAssets()->create());
 
         $this->assertSame(
             strtoupper(trans('admin/custom_fields/general.encrypted')),
-            Helper::customFieldFormValue($field, null, $model)
+            Helper::customFieldFormValue($field, null, $defaults[$field->db_column] ?? null)
         );
     }
 
@@ -548,7 +624,7 @@ class HelperTest extends TestCase
         $asset->{$field->db_column} = '3/28/2025';
         $model = \App\Models\AssetModel::factory()->make();
 
-        $this->assertSame('2025-03-28', Helper::customFieldFormValue($field, $asset, $model));
+        $this->assertSame('2025-03-28', Helper::customFieldFormValue($field, $asset));
     }
 
     public function test_custom_field_form_value_normalizes_us_formatted_datetime_to_ymd_his(): void
@@ -563,7 +639,7 @@ class HelperTest extends TestCase
         $asset->{$field->db_column} = '3/28/2025 09:15:00';
         $model = \App\Models\AssetModel::factory()->make();
 
-        $this->assertSame('2025-03-28 09:15:00', Helper::customFieldFormValue($field, $asset, $model));
+        $this->assertSame('2025-03-28 09:15:00', Helper::customFieldFormValue($field, $asset));
     }
 
     public function test_custom_field_form_value_leaves_already_normalized_date_untouched(): void
@@ -578,7 +654,7 @@ class HelperTest extends TestCase
         $asset->{$field->db_column} = '2026-08-20';
         $model = \App\Models\AssetModel::factory()->make();
 
-        $this->assertSame('2026-08-20', Helper::customFieldFormValue($field, $asset, $model));
+        $this->assertSame('2026-08-20', Helper::customFieldFormValue($field, $asset));
     }
 
     public function test_custom_field_form_value_leaves_unparseable_date_value_untouched(): void
@@ -598,6 +674,6 @@ class HelperTest extends TestCase
         $asset->{$field->db_column} = '2028 1st Qtr';
         $model = \App\Models\AssetModel::factory()->make();
 
-        $this->assertSame('2028 1st Qtr', Helper::customFieldFormValue($field, $asset, $model));
+        $this->assertSame('2028 1st Qtr', Helper::customFieldFormValue($field, $asset));
     }
 }

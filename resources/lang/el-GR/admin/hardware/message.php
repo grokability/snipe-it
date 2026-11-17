@@ -163,6 +163,7 @@ return [
     'checkin' => [
         'error' => 'Το στοιχείο δεν έχει επιλεγεί, δοκιμάστε ξανά',
         'success' => 'Το ενεργό στοιχείο ολοκληρώθηκε με επιτυχία.',
+        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
         'user_does_not_exist' => 'Αυτός ο χρήστης δεν υπάρχει. Παρακαλώ δοκιμάστε ξανά.',
         'already_checked_in' => 'Το στοιχείο αυτό έχει ήδη ελεγχθεί.',
         'force_checkin_orphaned_success' => 'Invalid assignment cleared successfully.',

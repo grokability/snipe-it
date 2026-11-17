@@ -92,9 +92,6 @@ class CategoriesController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @see CategoriesController::postEdit() method saves the data
-     *
-     * @param  int  $categoryId
-     *
      * @since [v1.0]
      */
     public function edit(Category $category): RedirectResponse|View
@@ -111,9 +108,6 @@ class CategoriesController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @see CategoriesController::getEdit() method that makes the form.
-     *
-     * @param  int  $categoryId
-     *
      * @since [v1.0]
      */
     public function update(ImageUploadRequest $request, Category $category): RedirectResponse
@@ -155,8 +149,6 @@ class CategoriesController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @since [v1.0]
-     *
-     * @param  int  $categoryId
      */
     public function destroy(Category $category): RedirectResponse
     {
