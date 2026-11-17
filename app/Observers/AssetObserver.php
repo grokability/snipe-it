@@ -2,7 +2,6 @@
 
 namespace App\Observers;
 
-use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\CalendarEvent;
 use App\Models\CheckoutRequest;
@@ -58,42 +57,30 @@ class AssetObserver
             $number = substr($tag, strlen($prefix));
             // IF - auto_increment_assets is on, AND (there is no prefix OR the prefix matches the start of the tag)
             //      AND the rest of the string after the prefix is all digits, THEN...
-            if ($settings->auto_increment_assets && ($prefix == '' || strpos($tag, $prefix) === 0) && preg_match('/\d+/', $number) === 1) {
-                // intval() rather than cast because $number could be '01234'
-                // which would otherwise be read as octal
-                $next_asset_tag = intval($number, 10) + 1;
+            $computedTag = ($settings->auto_increment_assets && ($prefix == '' || strpos($tag, $prefix) === 0) && preg_match('/\d+/', $number) === 1)
+                ? intval($number, 10) + 1
+                : null;
 
-                // Server-side UPDATE so two concurrent asset
-                // creates can't clobber each other's catch-up write. If another
-                // request already pushed next_auto_tag_base past our
-                // value between our read and save, the update matches
-                // zero rows and we leave their (higher) value in place.
-                // PHP_INT_MAX guard matches the pre-#19744 behavior so an
-                // asset tag at the ceiling can't push the base to a value
-                // that overflows on the next bump.
-                //
-                // No $settings->refresh() here. The static Setting cache
-                // is a cross-request optimization that survives a
-                // DB::transaction rollback in the same PHP process, so
-                // mutating its next_auto_tag_base in-place (via refresh
-                // or direct model save) leaves subsequent asset-tag
-                // reads in that process ahead of the committed DB value
-                // on any rollback. autoincrement_asset reads
-                // next_auto_tag_base straight from the DB for exactly
-                // this reason, so an in-transaction UPDATE is still
-                // visible to later reads in the same transaction (#19954).
-                if ($next_asset_tag < PHP_INT_MAX) {
-                    Setting::where('id', $settings->id)
-                        ->where('next_auto_tag_base', '<', $next_asset_tag)
-                        ->update(['next_auto_tag_base' => $next_asset_tag]);
+            // Defer the settings write until after asset-create
+            // transaction commits.
+            DB::afterCommit(function () use ($settings, $computedTag) {
+                if ($computedTag !== null) {
+                    if ($computedTag < PHP_INT_MAX) {
+                        DB::table('settings')
+                            ->where('id', $settings->id)
+                            ->where('next_auto_tag_base', '<', $computedTag)
+                            ->update(['next_auto_tag_base' => $computedTag]);
+                    }
+
+                    return;
                 }
-            } else {
-                // Legacy method. Atomic server-side increment through
-                // the query builder so the Setting model instance
-                // (static cache) isn't mutated. Same rollback-safety
-                // rationale as the modern branch above.
-                Setting::where('id', $settings->id)->increment('next_auto_tag_base');
-            }
+
+                // Legacy method for non-matching tag shapes. Atomic
+                // server-side increment, still no updated_at write.
+                DB::table('settings')
+                    ->where('id', $settings->id)
+                    ->increment('next_auto_tag_base');
+            });
         }
 
         // Every new asset is a transaction: supplier, price, currency,

@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\Accessory;
+use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Component;
 use App\Models\Consumable;
