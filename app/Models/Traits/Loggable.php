@@ -250,7 +250,7 @@ trait Loggable
         $allowedFields = $this->allowedLogFields();
 
         if ($allowedFields) {
-            // "disallowed" field at the _model_ level; do not log it
+            // "disallowed" field at the _model_ level, do not log it
             $originalValues = array_intersect_key($originalValues, array_flip($allowedFields));
         }
 
@@ -259,6 +259,10 @@ trait Loggable
             // - things where you want to limit the changeable fields
             $originalValues = array_intersect_key($originalValues, array_flip($limitKeys));
         }
+
+        // Eloquent bumps updated_at automatically on every save. Drop it so timestamps
+        // aren't part of the change the history shows.
+        unset($originalValues[$this->getUpdatedAtColumn()]);
 
         return $originalValues;
     }
