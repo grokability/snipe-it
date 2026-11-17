@@ -31,6 +31,14 @@
                 @endforeach
             </select>
 
+        @elseif ($field['type'] === 'number')
+            <input
+                    type="number"
+                    name="{{ $name }}"
+                    value="{{ $value }}"
+                    step="any"
+                    class="form-control"
+            >
         @else
             <input
                     type="{{ $field['type'] }}"
