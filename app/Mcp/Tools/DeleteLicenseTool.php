@@ -45,6 +45,17 @@ class DeleteLicenseTool extends Tool
     use ResolvesForeignKeyByName;
     use SnipeMcpTool;
 
+    /**
+     * @var list<array{0: string, 1: string, 2: class-string<\Illuminate\Database\Eloquent\Model>}>
+     */
+    protected array $foreignKeys = [
+        ['company_id', 'company_name', Company::class],
+        ['category_id', 'category_name', Category::class],
+        ['manufacturer_id', 'manufacturer_name', Manufacturer::class],
+        ['supplier_id', 'supplier_name', Supplier::class],
+        ['depreciation_id', 'depreciation_name', Depreciation::class],
+    ];
+
     public function handle(Request $request): ResponseFactory
     {
         if ($denied = $this->scopeDenied(McpScope::Delete)) {
@@ -90,22 +101,7 @@ class DeleteLicenseTool extends Tool
             return $this->handleSingle($request);
         }
 
-        $fkMap = [
-            ['company_id', 'company_name', Company::class],
-            ['category_id', 'category_name', Category::class],
-            ['manufacturer_id', 'manufacturer_name', Manufacturer::class],
-            ['supplier_id', 'supplier_name', Supplier::class],
-            ['depreciation_id', 'depreciation_name', Depreciation::class],
-        ];
-        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
-            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
-            if ($this->fkResolutionFailed($resolved)) {
-                return Response::make(Response::error($this->fkErrorMessage($resolved)));
-            }
-            if ($resolved !== null) {
-                $request->merge([$idField => $resolved]);
-            }
-        }
+        $request->merge($this->resolveForeignKeys($request));
 
         $targets = $shape === 'array'
             ? $this->resolveByArray($request)

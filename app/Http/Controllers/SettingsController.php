@@ -838,6 +838,7 @@ class SettingsController extends Controller
         $setting->saml_attr_mapping_username = $request->input('saml_attr_mapping_username');
         $setting->saml_forcelogin = $request->input('saml_forcelogin', '0');
         $setting->saml_slo = $request->input('saml_slo', '0');
+        $setting->saml_auto_create_users = $request->input('saml_auto_create_users', '0');
         if (! empty($request->input('saml_sp_privatekey'))) {
             $setting->saml_sp_x509cert = $request->input('saml_sp_x509cert');
             $setting->saml_sp_privatekey = $request->input('saml_sp_privatekey');

@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Mcp;
 
+use App\Mcp\Servers\SnipeMCPServer;
 use App\Mcp\Tools\ListConsumablesTool;
 use App\Models\Category;
+use App\Models\Company;
 use App\Models\Consumable;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -181,5 +183,33 @@ class ListConsumablesToolTest extends TestCase
 
         $names = array_column($content['consumables'], 'name');
         $this->assertNotContains('Archived Low Stock', $names);
+    }
+
+    public function test_filters_by_company_name(): void
+    {
+        $company = Company::factory()->create(['name' => 'Consumable Company']);
+        $matching = Consumable::factory()->create(['company_id' => $company->id]);
+        Consumable::factory()->create();
+
+        $content = $this->handle(['company_name' => $company->name])->getStructuredContent();
+
+        $this->assertSame(1, $content['total']);
+        $this->assertSame([$matching->id], array_column($content['consumables'], 'id'));
+    }
+
+    public function test_returns_error_for_an_unknown_company_name(): void
+    {
+        config(['app.debug' => false]);
+
+        $response = SnipeMCPServer::tool(ListConsumablesTool::class, [
+            'company_name' => 'Unknown Consumable Company',
+        ]);
+
+        $response->assertHasErrors([
+            trans('mcp.fk_not_found', [
+                'field' => 'company_name',
+                'value' => 'Unknown Consumable Company',
+            ]),
+        ]);
     }
 }

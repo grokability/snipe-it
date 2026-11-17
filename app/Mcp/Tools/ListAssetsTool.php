@@ -32,6 +32,19 @@ class ListAssetsTool extends Tool
     use ResolvesForeignKeyByName;
     use SnipeMcpTool;
 
+    /**
+     * @var list<array{0: string, 1: string, 2: class-string<\Illuminate\Database\Eloquent\Model>}>
+     */
+    protected array $foreignKeys = [
+        ['company_id', 'company_name', Company::class],
+        ['location_id', 'location_name', Location::class],
+        ['rtd_location_id', 'rtd_location_name', Location::class],
+        ['category_id', 'category_name', Category::class],
+        ['model_id', 'model_name', AssetModel::class],
+        ['manufacturer_id', 'manufacturer_name', Manufacturer::class],
+        ['supplier_id', 'supplier_name', Supplier::class],
+    ];
+
     public function handle(Request $request): ResponseFactory
     {
         if ($denied = $this->scopeDenied(McpScope::Read)) {
@@ -59,26 +72,7 @@ class ListAssetsTool extends Tool
 
         // Resolve *_name filters to IDs and merge back onto the request
         // so the existing filled() reads below keep working unchanged.
-        $fkMap = [
-            ['company_id', 'company_name', Company::class],
-            ['location_id', 'location_name', Location::class],
-            ['rtd_location_id', 'rtd_location_name', Location::class],
-            ['category_id', 'category_name', Category::class],
-            ['model_id', 'model_name', AssetModel::class],
-            ['manufacturer_id', 'manufacturer_name', Manufacturer::class],
-            ['supplier_id', 'supplier_name', Supplier::class],
-        ];
-
-        $resolvedFks = [];
-        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
-            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
-            if ($this->fkResolutionFailed($resolved)) {
-                return Response::make(Response::error($this->fkErrorMessage($resolved)));
-            }
-            if ($resolved !== null) {
-                $resolvedFks[$idField] = $resolved;
-            }
-        }
+        $resolvedFks = $this->resolveForeignKeys($request);
         $request->merge($resolvedFks);
 
         $assets = Asset::select('assets.*')
