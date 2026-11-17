@@ -216,6 +216,9 @@
             'change',
             'select[name="content[logo_h_align]"], select[name="content[barcode2D_h_align]"]',
             function () {
+                if ($('input[name="content[logo_top]"]').is(':checked')) {
+                    return;
+                }
                 const value = $(this).val();
 
                 if (!['L', 'R'].includes(value)) {

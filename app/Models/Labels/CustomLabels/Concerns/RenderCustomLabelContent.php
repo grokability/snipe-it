@@ -93,7 +93,7 @@ trait RenderCustomLabelContent
             $layout['logo']['w'],
             $layout['logo']['h'],
             $this->getLogoHAlign(),
-            $this->getLogoVAlign(),
+            $this->getLogoTop() ? 'T' : $this->getLogoVAlign(),
             300,
             true,
             false,
@@ -359,12 +359,41 @@ trait RenderCustomLabelContent
         }
 
         $width = min($this->getLogoMaxWidth(), $body['w']);
+        $alignment = $this->getLogoHAlign();
+
+        if ($this->getLogoTop()) {
+            $height = min($width, $body['h']);
+
+            $imageInfo = @getimagesize($record->get('logo'));
+
+            if ($imageInfo && $imageInfo[0] > 0 && $imageInfo[1] > 0) {
+                $height = min(
+                    $width * ($imageInfo[1] / $imageInfo[0]),
+                    $body['h']
+                );
+            }
+
+
+            $x = match ($alignment) {
+                'R' => $body['x2'] - $width,
+                'C' => $body['x1'] + (($body['w'] - $width) / 2),
+                default => $body['x1'],
+            };
+
+            return [
+                'x' => $x,
+                'y' => $body['y1'],
+                'w' => $width,
+                'h' => $height,
+            ];
+        }
+
 
         return $this->anchorBox(
             $body,
             $width,
             $body['h'],
-            $this->getLogoHAlign(),
+            $alignment,
             $this->getLogoVAlign()
         );
     }
@@ -428,6 +457,24 @@ trait RenderCustomLabelContent
         $box['y'] += $this->getTagOffsetY();
 
         return $this->clampBox($box, $body);
+    }
+
+    protected function resolveContentBody(array $body, ?array $logoBox): array
+    {
+        if (!$logoBox || !$this->getLogoTop()) {
+            return $body;
+        }
+
+        $top = min(
+            $body['y2'],
+            $logoBox['y'] + $logoBox['h'] + $this->getLogoMargin()
+        );
+
+        return [
+            ...$body,
+            'y1' => $top,
+            'h' => max(0, $body['y2'] - $top),
+        ];
     }
 
     protected function calculate2DBarcodeSize($record, array $container): float

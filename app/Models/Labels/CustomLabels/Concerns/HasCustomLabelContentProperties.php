@@ -32,6 +32,7 @@ trait HasCustomLabelContentProperties
     protected float $logoMargin = 2.0;
     protected string $logoHAlign = 'L';
     protected string $logoVAlign = 'T';
+    protected bool $logoTop = false;
 
     //Tape only properities
     protected string $barcode1DVAlign = 'M';
@@ -179,6 +180,10 @@ trait HasCustomLabelContentProperties
         return $this->logoVAlign;
     }
 
+    public function getLogoTop(): bool
+    {
+        return $this->logoTop;
+    }
     public function getTextAreaWidth(): ?float
     {
         return $this->textAreaWidth;
@@ -222,6 +227,14 @@ trait HasCustomLabelContentProperties
         $this->hydrateNumericContent($content);
         $this->hydrateStringContent($content);
 
+        $this->logoTop = filter_var(
+            $content['logo_top'] ?? false,
+            FILTER_VALIDATE_BOOLEAN
+        );
+        logger()->debug('Logo Top hydration', [
+            'raw' => $content['logo_top'] ?? 'MISSING',
+            'hydrated' => $this->logoTop,
+        ]);
     }
 
     protected function hydrateNumericContent(array $content): void

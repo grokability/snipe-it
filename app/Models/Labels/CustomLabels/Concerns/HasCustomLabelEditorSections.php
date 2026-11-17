@@ -152,6 +152,10 @@ trait HasCustomLabelEditorSections
                                 'type' => 'number',
                                 'label' => trans('admin/labels/general.fields.logo_margin'),
                             ],
+                            'logo_top' => [
+                                'type' => 'checkbox',
+                                'label' => 'Top Logo Alignment',
+                            ],
                             'logo_h_align' => [
                                 'type' => 'select',
                                 'label' => trans('admin/labels/general.fields.logo_h_align'),
