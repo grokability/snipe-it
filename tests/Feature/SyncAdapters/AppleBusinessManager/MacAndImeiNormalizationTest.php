@@ -28,6 +28,7 @@ class MacAndImeiNormalizationTest extends TestCase
         $key = openssl_pkey_new([
             'private_key_type' => OPENSSL_KEYTYPE_EC,
             'curve_name' => 'prime256v1',
+            'private_key_bits' => 2048,
         ]);
         $pem = '';
         openssl_pkey_export($key, $pem);
