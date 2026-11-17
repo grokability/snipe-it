@@ -259,17 +259,23 @@
                             </fieldset>
 
 
-                            <fieldset name="checkin-preferences">
+                            <fieldset name="notes-preferences">
                                 <x-form.legend>
-                                    {{ trans('admin/settings/general.legends.checkin') }}
+                                    {{ trans('admin/settings/general.legends.notes') }}
                                 </x-form.legend>
 
-                                <!-- Require Notes on checkin/checkout checkbox -->
                                 <x-form.checkbox-row
                                     name="require_checkinout_notes"
                                     :label="trans('admin/settings/general.require_checkinout_notes')"
                                     :item="$setting"
                                     :help_text="trans('admin/settings/general.require_checkinout_notes_help_text')"
+                                />
+
+                                <x-form.checkbox-row
+                                    name="require_adjust_quantity_notes"
+                                    :label="trans('admin/settings/general.require_adjust_quantity_notes')"
+                                    :item="$setting"
+                                    :help_text="trans('admin/settings/general.require_adjust_quantity_notes_help_text')"
                                 />
                             </fieldset>
 
