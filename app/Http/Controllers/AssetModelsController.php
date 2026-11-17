@@ -10,10 +10,8 @@ use App\Http\Requests\StoreAssetModelRequest;
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\CheckoutRequest;
-use App\Models\CustomField;
 use App\Models\CustomFieldDefault;
 use App\Models\CustomFieldset;
-use App\Models\SnipeModel;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\View\View;
@@ -101,10 +99,10 @@ class AssetModelsController extends Controller
 
             $source_image = $cloned->image;
             if ($source_image) {
-                $new_image_name = 'clone-' . date('U') . '-' . $source_image;
+                $new_image_name = 'clone-'.date('U').'-'.$source_image;
                 Storage::disk('public')->copy(
-                    FileStorage::Models->publicPath() . $source_image,
-                    FileStorage::Models->publicPath() . $new_image_name,
+                    FileStorage::Models->publicPath().$source_image,
+                    FileStorage::Models->publicPath().$new_image_name,
                 );
                 $model->image = $new_image_name;
             }
@@ -654,6 +652,14 @@ class AssetModelsController extends Controller
                 }
                 if (! $locked->availableForCheckout()) {
                     $errors[] = trans('admin/hardware/message.requests.row_asset_not_available', ['id' => $requestId]);
+
+                    return;
+                }
+                if (! $locked->canCheckoutTo($requester)) {
+                    $errors[] = trans('admin/hardware/message.requests.row_company_mismatch', [
+                        'id' => $requestId,
+                        'user' => $requester->display_name,
+                    ]);
 
                     return;
                 }
