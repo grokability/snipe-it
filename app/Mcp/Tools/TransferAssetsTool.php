@@ -173,6 +173,11 @@ class TransferAssetsTool extends Tool
 
                         continue;
                     }
+                    if ($accessory && ! $accessory->canCheckoutTo($to)) {
+                        $failures[] = "accessory {$accessory->name}: target user is not allowed to receive items from this accessory's company";
+
+                        continue;
+                    }
                     $checkout->assigned_to = $to->id;
                     if (! $checkout->save()) {
                         $failures[] = "accessory checkout {$checkout->id}: reassignment failed";
@@ -183,6 +188,11 @@ class TransferAssetsTool extends Tool
                     $license = $seat->license;
                     if ($license && ! Gate::allows('checkout', $license)) {
                         $failures[] = "license {$license->name}: permission denied";
+
+                        continue;
+                    }
+                    if ($license && ! $license->canCheckoutTo($to)) {
+                        $failures[] = "license {$license->name}: target user is not allowed to receive items from this license's company";
 
                         continue;
                     }
