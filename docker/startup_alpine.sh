@@ -89,6 +89,9 @@ chown -R apache:root /var/lib/snipeit/dumps
 chown -R apache:root /var/lib/snipeit/keys
 chown -R apache:root /var/www/html/storage/framework/cache
 
+[ -f /var/lib/snipeit/keys/oauth-public.key ] && chmod 660 /var/lib/snipeit/keys/oauth-public.key
+[ -f /var/lib/snipeit/keys/oauth-private.key ] && chmod 600 /var/lib/snipeit/keys/oauth-private.key
+
 # Fix php settings
 if [ ! -z "${PHP_UPLOAD_LIMIT}" ]
 then
