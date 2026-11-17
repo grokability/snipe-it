@@ -97,7 +97,7 @@ trait HasCustomLabelEditorSections
                                 'label' => trans('admin/labels/general.fields.barcode2D_v_align'),
                                 'options' => [
                                     'T' => trans('admin/labels/general.options.top'),
-                                    'M' => trans('admin/labels/general.options.middle'),
+                                    'C' => trans('admin/labels/general.options.middle'),
                                     'B' => trans('admin/labels/general.options.bottom'),
                                 ],
                             ],
