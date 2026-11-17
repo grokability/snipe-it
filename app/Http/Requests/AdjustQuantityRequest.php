@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Helpers\Helper;
+use App\Models\Setting;
 use App\Rules\AllowedUploadExtension;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -21,6 +22,11 @@ class AdjustQuantityRequest extends FormRequest
 
     public function rules(): array
     {
+
+        $noteRule = Setting::getSettings()?->require_adjust_quantity_notes
+            ? ['required', 'string', 'max:65535']
+            : ['nullable', 'string', 'max:65535'];
+
         return [
             // Signed delta: positive to replenish, negative to decrement.
             // Zero is intentionally allowed so users can record an audit
@@ -29,7 +35,7 @@ class AdjustQuantityRequest extends FormRequest
             // case without touching the on-hand column. The trait itself
             // rejects the actual below-in-use case.
             'amount' => ['required', 'integer'],
-            'note' => ['required', 'string', 'max:65535'],
+            'note' => $noteRule,
             'order_number' => ['nullable', 'string', 'max:191'],
             // Acquisition metadata that feeds Order / OrderItem creation
             // via HandlesAdjustQuantity::resolveOrderForAdjustment. All
