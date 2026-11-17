@@ -119,6 +119,28 @@ class AuthServiceProvider extends ServiceProvider
         // $user->tokenCan('mcp:read') (etc.) per request.
         Passport::tokensCan(\App\Enums\McpScope::forPassport());
 
+        // Pre-MCP (Passport 13) upgrade PATs carry the old bigint client_id in their JWT
+        // aud claim, which no longer exists after the Passport v13 UUID
+        // migration. Swap Passport's TokenGuard for a subclass that
+        // falls back to oauth_access_tokens.client_id when the aud
+        // lookup misses. See App\Auth\CompatTokenGuard.
+        Auth::resolved(function ($auth): void {
+            $auth->extend('passport', function ($app, $name, array $config) {
+                return tap(new \App\Auth\CompatTokenGuard(
+                    $app->make(\League\OAuth2\Server\ResourceServer::class),
+                    new \Laravel\Passport\PassportUserProvider(
+                        Auth::createUserProvider($config['provider']),
+                        $config['provider']
+                    ),
+                    $app->make(\Laravel\Passport\ClientRepository::class),
+                    $app->make('encrypter'),
+                    $app->make('request')
+                ), function ($guard) use ($app) {
+                    $app->refresh('request', $guard, 'setRequest');
+                });
+            });
+        });
+
         // Federated identity: a provider-agnostic OIDC bearer guard, layered
         // alongside Passport via the `auth:oidc,api` multi-guard. Inert until
         // config('oidc.enabled') is true, so this is purely additive.

@@ -3,21 +3,13 @@
 namespace App\Providers;
 
 use App\Exceptions\SyncAdapterVendorException;
-use App\Models\Accessory;
 use App\Models\Asset;
-use App\Models\AssetModel;
-use App\Models\Component;
-use App\Models\Consumable;
-use App\Models\License;
-use App\Models\Location;
 use App\Models\Maintenance;
 use App\Models\Setting;
 use App\Models\SnipeSCIMConfig;
-use App\Models\User;
 use App\Observers\AssetObserver;
 use App\Observers\MaintenanceObserver;
 use App\Observers\SettingObserver;
-use App\Observers\UserObserver;
 use App\View\Composers\ImpersonationBannerComposer;
 use App\View\Composers\SidebarComposer;
 use Illuminate\Http\Client\Response as HttpClientResponse;
@@ -65,8 +57,13 @@ class AppServiceProvider extends ServiceProvider
 
         Passport::enablePasswordGrant();
 
-        Passport::authorizationView(function ($parameters) {
-            return view('mcp.authorize', $parameters);
+        // Route OAuth consent to the MCP-specific view only when the
+        // authorization request actually targets an MCP scope.
+        Passport::authorizationView(function (array $parameters) {
+            $requestsMcpScope = collect($parameters['scopes'] ?? [])
+                ->contains(fn($scope) => str_starts_with($scope->id, 'mcp:'));
+
+            return view($requestsMcpScope ? 'mcp.authorize' : 'passport.authorize', $parameters);
         });
 
         if (! config('app.allow_insecure_hosts')) {  // unless you set APP_ALLOW_INSECURE_HOSTS, you should PROHIBIT forging domain parts of URL via Host: headers

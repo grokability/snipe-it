@@ -40,8 +40,8 @@ class Handler extends ExceptionHandler
         TokenMismatchException::class,
         ValidationException::class,
         NotSupportedException::class,
-        OAuthServerException::class,
-        PassportOAuthServerException::class,
+        // OAuthServerException::class,
+        // PassportOAuthServerException::class,
         JsonException::class,
         SCIMException::class, // these generally don't need to be reported
         InvalidFormatException::class,
