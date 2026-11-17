@@ -83,7 +83,6 @@
   },
   "require-dev": {
     "barryvdh/laravel-ide-helper": "^3.7",
-    "brianium/paratest": "^7.8",
     "fruitcake/laravel-debugbar": "^4.0",
     "larastan/larastan": "^3.0",
     "laravel/boost": "^2.10",
