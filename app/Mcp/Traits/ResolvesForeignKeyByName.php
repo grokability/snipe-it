@@ -3,6 +3,7 @@
 namespace App\Mcp\Traits;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 
 /**
@@ -16,9 +17,9 @@ use Laravel\Mcp\Request;
  *   - the int id resolved from `*_name` via a case-insensitive exact
  *     match on the model's name column when only `*_name` is present
  *   - null when neither key is present
- *   - the sentinel ['_fk_ambiguous' => true, ...] or
- *     ['_fk_not_found' => true, ...] array for the caller to decode
- *     into an MCP error response
+ *
+ * Missing or ambiguous names throw a ValidationException, which Laravel
+ * MCP converts into a localized tool error response.
  *
  * Lookups run through the model's normal global scopes (including
  * CompanyableScope), so a non-superuser in one company gets a
@@ -26,15 +27,33 @@ use Laravel\Mcp\Request;
  * cannot see. This matches the UI's "that record does not exist"
  * posture and prevents the name resolution from leaking other
  * tenants' data to non-superusers.
- *
- * Callers use fkErrorMessage() to convert those to a
- * localized error string.
  */
 trait ResolvesForeignKeyByName
 {
     /**
+     * @return array<string, int>
+     *
+     * @throws ValidationException
+     */
+    protected function resolveForeignKeys(Request $request): array
+    {
+        $resolvedFks = [];
+
+        foreach ($this->foreignKeys as [$idField, $nameField, $modelClass]) {
+            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
+
+            if ($resolved !== null) {
+                $resolvedFks[$idField] = $resolved;
+            }
+        }
+
+        return $resolvedFks;
+    }
+
+    /**
      * @param  class-string<Model>  $modelClass
-     * @return int|array<string, mixed>|null
+     *
+     * @throws ValidationException
      */
     protected function resolveFkByName(
         Request $request,
@@ -42,7 +61,7 @@ trait ResolvesForeignKeyByName
         string $nameField,
         string $modelClass,
         string $nameColumn = 'name',
-    ): int|array|null {
+    ): ?int {
         if ($request->filled($idField)) {
             return (int) $request->get($idField);
         }
@@ -59,50 +78,24 @@ trait ResolvesForeignKeyByName
             ->get(['id', $nameColumn]);
 
         if ($matches->isEmpty()) {
-            return ['_fk_not_found' => true, 'field' => $nameField, 'value' => $name];
-        }
-
-        if ($matches->count() > 1) {
-            return [
-                '_fk_ambiguous' => true,
-                'field' => $nameField,
-                'value' => $name,
-                'id_field' => $idField,
-            ];
-        }
-
-        return (int) $matches->first()->getKey();
-    }
-
-    /**
-     * Return true if the resolver value is one of the sentinel error
-     * arrays (not found / ambiguous).
-     *
-     * @param  int|array<string, mixed>|null  $resolved
-     */
-    protected function fkResolutionFailed(int|array|null $resolved): bool
-    {
-        return is_array($resolved);
-    }
-
-    /**
-     * Build the MCP error message for a failed resolution sentinel.
-     *
-     * @param  array<string, mixed>  $sentinel
-     */
-    protected function fkErrorMessage(array $sentinel): string
-    {
-        if (! empty($sentinel['_fk_ambiguous'])) {
-            return trans('mcp.fk_ambiguous', [
-                'field' => $sentinel['field'],
-                'value' => $sentinel['value'],
-                'id_field' => $sentinel['id_field'],
+            throw ValidationException::withMessages([
+                $nameField => trans('mcp.fk_not_found', [
+                    'field' => $nameField,
+                    'value' => $name,
+                ]),
             ]);
         }
 
-        return trans('mcp.fk_not_found', [
-            'field' => $sentinel['field'],
-            'value' => $sentinel['value'],
-        ]);
+        if ($matches->count() > 1) {
+            throw ValidationException::withMessages([
+                $nameField => trans('mcp.fk_ambiguous', [
+                    'field' => $nameField,
+                    'value' => $name,
+                    'id_field' => $idField,
+                ]),
+            ]);
+        }
+
+        return (int) $matches->first()->getKey();
     }
 }

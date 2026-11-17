@@ -29,6 +29,14 @@ class CreateMaintenanceTool extends Tool
     use ResolvesForeignKeyByName;
     use SnipeMcpTool;
 
+    /**
+     * @var list<array{0: string, 1: string, 2: class-string<\Illuminate\Database\Eloquent\Model>}>
+     */
+    protected array $foreignKeys = [
+        ['maintenance_type_id', 'maintenance_type_name', MaintenanceType::class],
+        ['supplier_id', 'supplier_name', Supplier::class],
+    ];
+
     public function handle(Request $request): ResponseFactory
     {
         if ($denied = $this->scopeDenied(McpScope::Write)) {
@@ -45,21 +53,7 @@ class CreateMaintenanceTool extends Tool
         // non-superuser in a locked-down FMCS install gets a not-found
         // error for a name that only exists in a tenant they cannot
         // see, matching the UI's "that record does not exist" posture.
-        $fkMap = [
-            ['maintenance_type_id', 'maintenance_type_name', MaintenanceType::class],
-            ['supplier_id', 'supplier_name', Supplier::class],
-        ];
-
-        $resolvedFks = [];
-        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
-            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
-            if ($this->fkResolutionFailed($resolved)) {
-                return Response::make(Response::error($this->fkErrorMessage($resolved)));
-            }
-            if ($resolved !== null) {
-                $resolvedFks[$idField] = $resolved;
-            }
-        }
+        $resolvedFks = $this->resolveForeignKeys($request);
 
         // MCP-specific lookup: asset_id OR asset_tag. These aren't
         // persisted so they stay as an inline pre-validation step.

@@ -28,6 +28,14 @@ class UpdateMaintenanceTool extends Tool
     use ResolvesForeignKeyByName;
     use SnipeMcpTool;
 
+    /**
+     * @var list<array{0: string, 1: string, 2: class-string<\Illuminate\Database\Eloquent\Model>}>
+     */
+    protected array $foreignKeys = [
+        ['maintenance_type_id', 'maintenance_type_name', MaintenanceType::class],
+        ['supplier_id', 'supplier_name', Supplier::class],
+    ];
+
     public function handle(Request $request): ResponseFactory
     {
         if ($denied = $this->scopeDenied(McpScope::Write)) {
@@ -48,21 +56,7 @@ class UpdateMaintenanceTool extends Tool
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
-        $fkMap = [
-            ['maintenance_type_id', 'maintenance_type_name', MaintenanceType::class],
-            ['supplier_id', 'supplier_name', Supplier::class],
-        ];
-
-        $resolvedFks = [];
-        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
-            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
-            if ($this->fkResolutionFailed($resolved)) {
-                return Response::make(Response::error($this->fkErrorMessage($resolved)));
-            }
-            if ($resolved !== null) {
-                $resolvedFks[$idField] = $resolved;
-            }
-        }
+        $resolvedFks = $this->resolveForeignKeys($request);
 
         // Only pull in the fields the caller actually supplied so an
         // update to just `cost` or `notes` doesn't null out everything

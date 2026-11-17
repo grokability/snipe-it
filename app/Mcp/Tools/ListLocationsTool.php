@@ -24,6 +24,13 @@ class ListLocationsTool extends Tool
     use ResolvesForeignKeyByName;
     use SnipeMcpTool;
 
+    /**
+     * @var list<array{0: string, 1: string, 2: class-string<\Illuminate\Database\Eloquent\Model>}>
+     */
+    protected array $foreignKeys = [
+        ['parent_id', 'parent_name', Location::class],
+    ];
+
     public function handle(Request $request): ResponseFactory
     {
         if ($denied = $this->scopeDenied(McpScope::Read)) {
@@ -44,20 +51,7 @@ class ListLocationsTool extends Tool
         // Resolve parent_name to parent_id (self-referential FK) and
         // merge back onto the request so the existing filled() reads
         // below keep working unchanged.
-        $fkMap = [
-            ['parent_id', 'parent_name', Location::class],
-        ];
-
-        $resolvedFks = [];
-        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
-            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
-            if ($this->fkResolutionFailed($resolved)) {
-                return Response::make(Response::error($this->fkErrorMessage($resolved)));
-            }
-            if ($resolved !== null) {
-                $resolvedFks[$idField] = $resolved;
-            }
-        }
+        $resolvedFks = $this->resolveForeignKeys($request);
         $request->merge($resolvedFks);
 
         $locations = Location::with('parent')->withCount(

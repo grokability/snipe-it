@@ -30,6 +30,15 @@ class UpdateUserTool extends Tool
     use ResolvesForeignKeyByName;
     use SnipeMcpTool;
 
+    /**
+     * @var list<array{0: string, 1: string, 2: class-string<\Illuminate\Database\Eloquent\Model>}>
+     */
+    protected array $foreignKeys = [
+        ['company_id', 'company_name', Company::class],
+        ['department_id', 'department_name', Department::class],
+        ['location_id', 'location_name', Location::class],
+    ];
+
     public function handle(Request $request): ResponseFactory
     {
         if ($denied = $this->scopeDenied(McpScope::Write)) {
@@ -63,22 +72,7 @@ class UpdateUserTool extends Tool
             return Response::make(Response::error(trans('mcp.cannot_edit_auth_fields')));
         }
 
-        $fkMap = [
-            ['company_id', 'company_name', Company::class],
-            ['department_id', 'department_name', Department::class],
-            ['location_id', 'location_name', Location::class],
-        ];
-
-        $resolvedFks = [];
-        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
-            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
-            if ($this->fkResolutionFailed($resolved)) {
-                return Response::make(Response::error($this->fkErrorMessage($resolved)));
-            }
-            if ($resolved !== null) {
-                $resolvedFks[$idField] = $resolved;
-            }
-        }
+        $resolvedFks = $this->resolveForeignKeys($request);
 
         // Map aliases (new_username -> username, new_email -> email) and
         // strip the lookup fields so they don't get validated as updates.
