@@ -190,7 +190,7 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
         'password' => 'required|min:8',
         'locale' => 'max:10|nullable',
         'website' => 'url|nullable|max:191',
-        'manager_id' => 'nullable|exists:users,id|cant_manage_self|non_circular:users,id|fmcs_manager',
+        'manager_id' => 'nullable|exists:users,id|cant_manage_self|non_circular:users,id|fmcs_manager|fmcs_target_compat',
         'location_id' => 'exists:locations,id|nullable|fmcs_location',
         'department_id' => 'nullable|integer|exists:departments,id|fmcs_department',
         'start_date' => 'nullable|date_format:Y-m-d',
