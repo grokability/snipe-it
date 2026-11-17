@@ -16,6 +16,7 @@ use Tests\Support\CanSkipTests;
 use Tests\Support\CustomTestMacros;
 use Tests\Support\InitializesSettings;
 use Tests\Support\InteractsWithAuthentication;
+use Tests\Support\MocksLdap;
 use Tests\Support\SeedsShippedSyncAdapters;
 
 abstract class TestCase extends BaseTestCase
@@ -28,6 +29,7 @@ abstract class TestCase extends BaseTestCase
     use InitializesSettings;
     use InteractsWithAuthentication;
     use LazilyRefreshDatabase;
+    use MocksLdap;
     use SeedsShippedSyncAdapters;
 
     private array $globallyDisabledMiddleware = [
