@@ -79,8 +79,15 @@ class UploadFileRequest extends Request
         $extension = strtolower((string) $file->getClientOriginalExtension());
         $file_name = $name_prefix.'-'.str_random(8).'-'.str_slug(basename($file->getClientOriginalName(), '.'.$extension)).'.'.$extension;
 
-        // Check for SVG and sanitize it
-        if ($file->getMimeType() === 'image/svg+xml') {
+        // Sanitize when the stored extension is .svg OR the content
+        // sniffs as SVG. Gating on getMimeType() alone used to let an
+        // SVG prefixed with an XML comment through, because finfo
+        // sniffs that content as text/plain while the file still
+        // lands on disk as .svg and is served inline as
+        // image/svg+xml. Keeping both signals catches the known
+        // bypass and any real SVG bytes uploaded under a non-.svg
+        // extension that a future serve path might render.
+        if ($extension === 'svg' || $file->getMimeType() === 'image/svg+xml') {
             $uploaded_file = $this->handleSVG($file);
         } else {
             $uploaded_file = file_get_contents($file);

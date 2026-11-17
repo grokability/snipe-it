@@ -84,6 +84,53 @@ SVG;
         $this->assertStringContainsString('<rect', $storedContents);
     }
 
+    public function test_comment_prefixed_svg_still_runs_through_sanitizer(): void
+    {
+        // Regression for the reported sanitizer-bypass: finfo sniffs
+        // an SVG that starts with an XML comment as text/plain, so the
+        // old gate (upload-time MIME string) skipped the sanitizer and
+        // left the onload handler intact. The current gate keys on the
+        // stored .svg extension, so the sanitizer always runs for any
+        // file about to be served inline as image/svg+xml.
+        $malicious = '<!--x--><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" onload="alert(document.domain)"/>';
+
+        $upload = $this->realUpload('comment.svg', $malicious);
+
+        // Pin that the content-sniffed MIME on this payload does not
+        // match what the old gate expected. If finfo on a future PHP
+        // starts recognizing comment-prefixed SVG as image/svg+xml the
+        // bypass itself goes away, but the extension-keyed gate below
+        // still wants to be the thing being exercised.
+        $this->assertSame('text/plain', $upload->getMimeType(), 'Payload premise: finfo must not recognize this as SVG.');
+
+        $storedName = (new UploadFileRequest)->handleFile('private_uploads/assets/', 'asset-1', $upload);
+        $storedContents = Storage::get('private_uploads/assets/'.$storedName);
+
+        $this->assertStringNotContainsString('onload', $storedContents, 'Sanitizer must run on .svg uploads regardless of sniffed MIME.');
+        $this->assertStringNotContainsString('alert(', $storedContents);
+    }
+
+    public function test_real_svg_bytes_under_non_svg_extension_still_run_through_sanitizer(): void
+    {
+        // The upload gate uses extension OR content-MIME. This case
+        // pins the content-MIME half: a file whose bytes finfo
+        // classifies as image/svg+xml must be sanitized regardless of
+        // the client-chosen extension, so a future serve path can't
+        // treat it as live SVG with the handlers intact.
+        $malicious = <<<'SVG'
+<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" onload="alert(document.domain)"/>
+SVG;
+
+        $upload = $this->realUpload('payload.txt', $malicious);
+        $this->assertSame('image/svg+xml', $upload->getMimeType(), 'Payload premise: finfo must recognize these bytes as SVG.');
+
+        $storedName = (new UploadFileRequest)->handleFile('private_uploads/assets/', 'asset-1', $upload);
+        $storedContents = Storage::get('private_uploads/assets/'.$storedName);
+
+        $this->assertStringNotContainsString('onload', $storedContents, 'Sanitizer must run on SVG-shaped content regardless of extension.');
+        $this->assertStringNotContainsString('alert(', $storedContents);
+    }
+
     public function test_clean_svg_upload_passes_through_unchanged_content(): void
     {
         // Non-regression: legitimate SVGs must still be usable.
