@@ -30,6 +30,17 @@ class UpdateAssetTool extends Tool
     use ResolvesForeignKeyByName;
     use SnipeMcpTool;
 
+    /**
+     * @var list<array{0: string, 1: string, 2: class-string<\Illuminate\Database\Eloquent\Model>}>
+     */
+    protected array $foreignKeys = [
+        ['model_id', 'model_name', AssetModel::class],
+        ['status_id', 'status_name', Statuslabel::class],
+        ['location_id', 'location_name', Location::class],
+        ['rtd_location_id', 'rtd_location_name', Location::class],
+        ['supplier_id', 'supplier_name', Supplier::class],
+    ];
+
     public function handle(Request $request): ResponseFactory
     {
         if ($denied = $this->scopeDenied(McpScope::Write)) {
@@ -52,24 +63,7 @@ class UpdateAssetTool extends Tool
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset')])));
         }
 
-        $fkMap = [
-            ['model_id', 'model_name', AssetModel::class],
-            ['status_id', 'status_name', Statuslabel::class],
-            ['location_id', 'location_name', Location::class],
-            ['rtd_location_id', 'rtd_location_name', Location::class],
-            ['supplier_id', 'supplier_name', Supplier::class],
-        ];
-
-        $resolvedFks = [];
-        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
-            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
-            if ($this->fkResolutionFailed($resolved)) {
-                return Response::make(Response::error($this->fkErrorMessage($resolved)));
-            }
-            if ($resolved !== null) {
-                $resolvedFks[$idField] = $resolved;
-            }
-        }
+        $resolvedFks = $this->resolveForeignKeys($request);
 
         // new_asset_tag / new_serial let callers change the identifiers
         // without conflicting with the asset_tag/serial used to look up

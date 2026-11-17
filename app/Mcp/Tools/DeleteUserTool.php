@@ -44,6 +44,15 @@ class DeleteUserTool extends Tool
     use ResolvesForeignKeyByName;
     use SnipeMcpTool;
 
+    /**
+     * @var list<array{0: string, 1: string, 2: class-string<\Illuminate\Database\Eloquent\Model>}>
+     */
+    protected array $foreignKeys = [
+        ['company_id', 'company_name', Company::class],
+        ['department_id', 'department_name', Department::class],
+        ['location_id', 'location_name', Location::class],
+    ];
+
     public function handle(Request $request): ResponseFactory
     {
         if ($denied = $this->scopeDenied(McpScope::Delete)) {
@@ -88,20 +97,7 @@ class DeleteUserTool extends Tool
             return $this->handleSingle($request);
         }
 
-        $fkMap = [
-            ['company_id', 'company_name', Company::class],
-            ['department_id', 'department_name', Department::class],
-            ['location_id', 'location_name', Location::class],
-        ];
-        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
-            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
-            if ($this->fkResolutionFailed($resolved)) {
-                return Response::make(Response::error($this->fkErrorMessage($resolved)));
-            }
-            if ($resolved !== null) {
-                $request->merge([$idField => $resolved]);
-            }
-        }
+        $request->merge($this->resolveForeignKeys($request));
 
         $targets = $shape === 'array'
             ? $this->resolveByArray($request)

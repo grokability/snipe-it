@@ -3,6 +3,7 @@
 namespace Tests\Feature\Mcp;
 
 use App\Events\CheckoutableCheckedIn;
+use App\Mcp\Servers\SnipeMCPServer;
 use App\Mcp\Tools\DeleteAssetTool;
 use App\Models\Asset;
 use App\Models\User;
@@ -229,5 +230,25 @@ class DeleteAssetToolTest extends TestCase
 
         $this->assertTrue($content['dry_run']);
         $this->assertSame(1, $content['total_matched']);
+    }
+
+    public function test_does_not_delete_assets_for_an_unknown_model_name(): void
+    {
+        config(['app.debug' => false]);
+        $asset = Asset::factory()->create();
+
+        $response = SnipeMCPServer::tool(DeleteAssetTool::class, [
+            'model_name' => 'Unknown Bulk Delete Model',
+            'dry_run' => false,
+            'confirm_count' => 1,
+        ]);
+
+        $response->assertHasErrors([
+            trans('mcp.fk_not_found', [
+                'field' => 'model_name',
+                'value' => 'Unknown Bulk Delete Model',
+            ]),
+        ]);
+        $this->assertNotSoftDeleted($asset);
     }
 }

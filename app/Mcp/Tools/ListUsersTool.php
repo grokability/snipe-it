@@ -29,6 +29,15 @@ class ListUsersTool extends Tool
     use ResolvesForeignKeyByName;
     use SnipeMcpTool;
 
+    /**
+     * @var list<array{0: string, 1: string, 2: class-string<\Illuminate\Database\Eloquent\Model>}>
+     */
+    protected array $foreignKeys = [
+        ['company_id', 'company_name', Company::class],
+        ['department_id', 'department_name', Department::class],
+        ['location_id', 'location_name', Location::class],
+    ];
+
     public function handle(Request $request): ResponseFactory
     {
         if ($denied = $this->scopeDenied(McpScope::Read)) {
@@ -57,22 +66,7 @@ class ListUsersTool extends Tool
         // Resolve *_name filters to IDs and merge back onto the request
         // so the existing filled() reads below keep working unchanged.
         // company_id still uses the company_user pivot path below.
-        $fkMap = [
-            ['company_id', 'company_name', Company::class],
-            ['department_id', 'department_name', Department::class],
-            ['location_id', 'location_name', Location::class],
-        ];
-
-        $resolvedFks = [];
-        foreach ($fkMap as [$idField, $nameField, $modelClass]) {
-            $resolved = $this->resolveFkByName($request, $idField, $nameField, $modelClass);
-            if ($this->fkResolutionFailed($resolved)) {
-                return Response::make(Response::error($this->fkErrorMessage($resolved)));
-            }
-            if ($resolved !== null) {
-                $resolvedFks[$idField] = $resolved;
-            }
-        }
+        $resolvedFks = $this->resolveForeignKeys($request);
         $request->merge($resolvedFks);
 
         $users = User::with('companies', 'department', 'userloc', 'manager')

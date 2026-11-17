@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\Mcp;
 
+use App\Mcp\Servers\SnipeMCPServer;
 use App\Mcp\Tools\CreateAssetTool;
 use App\Models\AssetModel;
+use App\Models\Company;
+use App\Models\Location;
 use App\Models\Statuslabel;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -164,32 +167,74 @@ class CreateAssetToolTest extends TestCase
         $this->assertDatabaseHas('assets', ['model_id' => $modelFromId->id, 'asset_tag' => 'TAG-BOTH-001']);
     }
 
-    public function test_returns_error_when_name_matches_multiple_rows()
+    public function test_returns_error_when_name_matches_multiple_rows(): void
     {
+        config(['app.debug' => false]);
         AssetModel::factory()->count(2)->create(['name' => 'MacBook Pro']);
         $status = Statuslabel::factory()->create();
 
-        $response = $this->handle([
+        $response = SnipeMCPServer::tool(CreateAssetTool::class, [
             'model_name' => 'MacBook Pro',
             'status_id' => $status->id,
             'asset_tag' => 'TAG-AMBIG-001',
         ]);
 
-        $this->assertTrue($response->responses()->first()->isError());
+        $response->assertHasErrors([
+            trans('mcp.fk_ambiguous', [
+                'field' => 'model_name',
+                'value' => 'MacBook Pro',
+                'id_field' => 'model_id',
+            ]),
+        ]);
         $this->assertDatabaseMissing('assets', ['asset_tag' => 'TAG-AMBIG-001']);
     }
 
-    public function test_returns_error_when_name_does_not_match_any_row()
+    public function test_returns_error_when_name_does_not_match_any_row(): void
     {
+        config(['app.debug' => false]);
         $status = Statuslabel::factory()->create();
 
-        $response = $this->handle([
+        $response = SnipeMCPServer::tool(CreateAssetTool::class, [
             'model_name' => 'Nonexistent Model Name',
             'status_id' => $status->id,
             'asset_tag' => 'TAG-NOMATCH-001',
         ]);
 
-        $this->assertTrue($response->responses()->first()->isError());
+        $response->assertHasErrors([
+            trans('mcp.fk_not_found', [
+                'field' => 'model_name',
+                'value' => 'Nonexistent Model Name',
+            ]),
+        ]);
         $this->assertDatabaseMissing('assets', ['asset_tag' => 'TAG-NOMATCH-001']);
+    }
+
+    public function test_returns_not_found_for_a_location_name_in_another_company(): void
+    {
+        $company = Company::factory()->create();
+        $otherCompany = Company::factory()->create();
+        $location = Location::factory()->create([
+            'name' => 'Other Company Office',
+            'company_id' => $otherCompany->id,
+        ]);
+        $model = AssetModel::factory()->create();
+        $status = Statuslabel::factory()->create();
+        $this->actingAs(User::factory()->forCompany($company)->createAssets()->create());
+        $this->settings->enableScopedLocationsWithFullMultipleCompanySupport();
+
+        $response = SnipeMCPServer::tool(CreateAssetTool::class, [
+            'model_id' => $model->id,
+            'status_id' => $status->id,
+            'location_name' => $location->name,
+            'asset_tag' => 'TAG-CROSS-COMPANY',
+        ]);
+
+        $response->assertHasErrors([
+            trans('mcp.fk_not_found', [
+                'field' => 'location_name',
+                'value' => $location->name,
+            ]),
+        ]);
+        $this->assertDatabaseMissing('assets', ['asset_tag' => 'TAG-CROSS-COMPANY']);
     }
 }
