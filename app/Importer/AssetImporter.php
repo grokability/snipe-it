@@ -6,6 +6,7 @@ use App\Events\CheckoutableCheckedIn;
 use App\Models\Asset;
 use App\Models\Statuslabel;
 use App\Models\User;
+use Illuminate\Support\Facades\Crypt;
 
 class AssetImporter extends ItemImporter
 {
@@ -302,7 +303,14 @@ class AssetImporter extends ItemImporter
         // Apply custom fields to asset attributes if they exist
         $customFieldsToSave = [];
         if (array_key_exists('custom_fields', $this->item)) {
+            $casts = $asset->getCasts();
+            $encryptedCustomFields = collect($this->customFields)->where('field_encrypted', 1)->keyBy('db_column');
+
             foreach ($this->item['custom_fields'] as $custom_field => $val) {
+                if (isset($encryptedCustomFields[$custom_field]) && ! isset($casts[$custom_field]) && $val !== null && $val !== '') {
+                    $val = Crypt::encrypt($val);
+                }
+
                 $asset->{$custom_field} = $val;
                 $customFieldsToSave[$custom_field] = $val;
             }

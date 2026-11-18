@@ -13,6 +13,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\Test;
@@ -806,22 +807,13 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
     #[Test]
     public function will_encrypt_custom_fields(): void
     {
+        $customField = CustomField::factory()->macAddress()->encrypt()->create();
         $macAddress = $this->faker->macAddress;
         $row = ImportFileBuilder::new()->definition();
 
-        $row['Mac Address'] = $macAddress;
+        $row[$customField->name] = $macAddress;
 
         $importFileBuilder = new ImportFileBuilder([$row]);
-        $customField = CustomField::query()->where('name', 'Mac Address')->firstOrNew();
-
-        if (! $customField->exists) {
-            $customField = CustomField::factory()->macAddress()->create();
-        }
-
-        if (! $customField->field_encrypted) {
-            $customField->field_encrypted = 1;
-            $customField->save();
-        }
 
         AssetModel::factory()
             ->for(CustomFieldset::factory()->hasEncryptedCustomField($customField), 'custom_fieldset')
@@ -840,6 +832,42 @@ class ImportAssetsTest extends ImportDataTestCase implements TestsPermissionsReq
         $encryptedMacAddress = $asset->getRawOriginal($customField->db_column);
 
         $this->assertNotEquals($encryptedMacAddress, $macAddress);
+        $this->assertSame($macAddress, Crypt::decrypt($encryptedMacAddress));
+    }
+
+    #[Test]
+    public function test_import_encrypts_custom_field_not_in_assets_fieldset(): void
+    {
+        $customField = CustomField::factory()->macAddress()->encrypt()->create();
+        $fieldset = CustomFieldset::factory()->create();
+        $macAddress = $this->faker->macAddress;
+        $row = ImportFileBuilder::new()->definition();
+        $row[$customField->name] = $macAddress;
+
+        $model = AssetModel::factory()
+            ->for($fieldset, 'custom_fieldset')
+            ->create([
+                'name' => $row['model'],
+                'model_number' => $row['modelNumber'],
+            ]);
+
+        $importFileBuilder = new ImportFileBuilder([$row]);
+        $import = Import::factory()->asset()->create(['file_path' => $importFileBuilder->saveToImportsDirectory()]);
+
+        $this->actingAsForApi(User::factory()->superuser()->create());
+        $this->importFileResponse(['import' => $import->id])
+            ->assertOk()
+            ->assertJsonPath('status', 'success')
+            ->assertJsonPath('payload.tally.created', 1);
+
+        $asset = Asset::query()->where('serial', $row['serialNumber'])->sole();
+        $this->assertEquals($model->id, $asset->model_id);
+        $this->assertFalse($asset->custom_fieldset->fields->contains($customField));
+
+        $encryptedMacAddress = $asset->getRawOriginal($customField->db_column);
+        $this->assertNotEmpty($encryptedMacAddress);
+        $this->assertNotEquals($macAddress, $encryptedMacAddress);
+        $this->assertSame($macAddress, Crypt::decrypt($encryptedMacAddress));
     }
 
     #[Test]
