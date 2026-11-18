@@ -16,7 +16,6 @@ use Illuminate\Support\Collection;
 
 /**
  * @property \App\Enums\CheckoutRequestState $state
- *
  * @mixin IdeHelperCheckoutRequest
  */
 class CheckoutRequest extends Model

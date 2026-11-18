@@ -26,7 +26,6 @@ use Illuminate\Support\Str;
  * checkouts, checkins, and updates).
  *
  * @version v1.0
- *
  * @mixin IdeHelperActionlog
  */
 class Actionlog extends SnipeModel

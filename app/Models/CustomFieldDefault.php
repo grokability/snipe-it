@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * @mixin IdeHelperCustomFieldDefault
+ */
 class CustomFieldDefault extends Pivot
 {
     /** @use HasFactory<\Database\Factories\CustomFieldDefaultFactory> */

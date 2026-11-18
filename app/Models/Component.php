@@ -31,7 +31,6 @@ use Watson\Validating\ValidatingTrait;
  * Model for Components.
  *
  * @version v1.0
- *
  * @mixin IdeHelperComponent
  */
 class Component extends SnipeModel implements Importable

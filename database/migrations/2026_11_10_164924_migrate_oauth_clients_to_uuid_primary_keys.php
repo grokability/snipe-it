@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -53,6 +54,7 @@ return new class extends Migration
 
         if ($driver === 'sqlite' || $driver === 'pgsql') {
             $this->upSqliteOrPostgres();
+            $this->hashLegacyClientSecrets();
 
             return;
         }
@@ -140,6 +142,21 @@ return new class extends Migration
             });
             DB::statement("ALTER TABLE {$prefix}oauth_personal_access_clients CHANGE client_id_uuid client_id CHAR(36) NOT NULL");
         }
+
+        $this->hashLegacyClientSecrets();
+    }
+
+    /**
+     * Passport v13's Bridge\ClientRepository::validateClient bcrypt-verifies
+     * the incoming client secret against oauth_clients.secret, so any
+     * confidential OAuth client whose secret was stored as plaintext under
+     * Passport v12 fails client auth silently after the upgrade. The
+     * command is idempotent and skips rows that are already hashed, so
+     * re-runs are no-ops on installs that have been through it.
+     */
+    private function hashLegacyClientSecrets(): void
+    {
+        Artisan::call('passport:hash', ['--force' => true]);
     }
 
     /**
