@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Feature\Accessories\Api;
-
 use App\Models\Accessory;
 use App\Models\Actionlog;
 use App\Models\Category;
@@ -10,245 +8,230 @@ use App\Models\Location;
 use App\Models\Manufacturer;
 use App\Models\Supplier;
 use App\Models\User;
-use Tests\Concerns\TestsFullMultipleCompaniesSupport;
-use Tests\Concerns\TestsPermissionsRequirement;
-use Tests\TestCase;
 
-class UpdateAccessoryTest extends TestCase implements TestsFullMultipleCompaniesSupport, TestsPermissionsRequirement
-{
-    public function test_requires_permission()
-    {
-        $accessory = Accessory::factory()->create();
+test('requires permission', function () {
+    $accessory = Accessory::factory()->create();
 
-        $this->actingAsForApi(User::factory()->create())
-            ->patchJson(route('api.accessories.update', $accessory))
-            ->assertForbidden();
-    }
+    $this->actingAsForApi(User::factory()->create())
+        ->patchJson(route('api.accessories.update', $accessory))
+        ->assertForbidden();
+});
 
-    public function test_adheres_to_full_multiple_companies_support_scoping()
-    {
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
+test('adheres to full multiple companies support scoping', function () {
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
 
-        $accessoryA = Accessory::factory()->for($companyA)->create(['name' => 'A Name to Change']);
-        $accessoryB = Accessory::factory()->for($companyB)->create(['name' => 'A Name to Change']);
-        $accessoryC = Accessory::factory()->for($companyB)->create(['name' => 'A Name to Change']);
+    $accessoryA = Accessory::factory()->for($companyA)->create(['name' => 'A Name to Change']);
+    $accessoryB = Accessory::factory()->for($companyB)->create(['name' => 'A Name to Change']);
+    $accessoryC = Accessory::factory()->for($companyB)->create(['name' => 'A Name to Change']);
 
-        $superuser = User::factory()->superuser()->create();
-        $userInCompanyA = $companyA->users()->save(User::factory()->editAccessories()->make());
-        $userInCompanyB = $companyB->users()->save(User::factory()->editAccessories()->make());
+    $superuser = User::factory()->superuser()->create();
+    $userInCompanyA = $companyA->users()->save(User::factory()->editAccessories()->make());
+    $userInCompanyB = $companyB->users()->save(User::factory()->editAccessories()->make());
 
-        $this->settings->enableMultipleFullCompanySupport();
+    $this->settings->enableMultipleFullCompanySupport();
 
-        $this->actingAsForApi($userInCompanyA)
-            ->patchJson(route('api.accessories.update', $accessoryB), ['name' => 'New Name'])
-            ->assertStatusMessageIs('error');
+    $this->actingAsForApi($userInCompanyA)
+        ->patchJson(route('api.accessories.update', $accessoryB), ['name' => 'New Name'])
+        ->assertStatusMessageIs('error');
 
-        $this->actingAsForApi($userInCompanyB)
-            ->patchJson(route('api.accessories.update', $accessoryA), ['name' => 'New Name'])
-            ->assertStatusMessageIs('error');
+    $this->actingAsForApi($userInCompanyB)
+        ->patchJson(route('api.accessories.update', $accessoryA), ['name' => 'New Name'])
+        ->assertStatusMessageIs('error');
 
-        $this->actingAsForApi($superuser)
-            ->patchJson(route('api.accessories.update', $accessoryC), ['name' => 'New Name'])
-            ->assertOk();
+    $this->actingAsForApi($superuser)
+        ->patchJson(route('api.accessories.update', $accessoryC), ['name' => 'New Name'])
+        ->assertOk();
 
-        $this->assertEquals('A Name to Change', $accessoryA->fresh()->name);
-        $this->assertEquals('A Name to Change', $accessoryB->fresh()->name);
-        $this->assertEquals('New Name', $accessoryC->fresh()->name);
-    }
+    expect($accessoryA->fresh()->name)->toEqual('A Name to Change');
+    expect($accessoryB->fresh()->name)->toEqual('A Name to Change');
+    expect($accessoryC->fresh()->name)->toEqual('New Name');
+});
 
-    public function test_prevents_cross_tenant_company_reassignment_when_fmcs_enabled()
-    {
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
-        $accessory = Accessory::factory()->for($companyA)->create();
-        $userInCompanyA = User::factory()->forCompany($companyA)->editAccessories()->create();
+test('prevents cross tenant company reassignment when fmcs enabled', function () {
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
+    $accessory = Accessory::factory()->for($companyA)->create();
+    $userInCompanyA = User::factory()->forCompany($companyA)->editAccessories()->create();
 
-        $this->settings->enableMultipleFullCompanySupport();
+    $this->settings->enableMultipleFullCompanySupport();
 
-        $this->actingAsForApi($userInCompanyA)
-            ->patchJson(route('api.accessories.update', $accessory), [
-                'company_id' => $companyB->id,
-            ])
-            ->assertStatusMessageIs('error');
+    $this->actingAsForApi($userInCompanyA)
+        ->patchJson(route('api.accessories.update', $accessory), [
+            'company_id' => $companyB->id,
+        ])
+        ->assertStatusMessageIs('error');
 
-        $this->assertSame($companyA->id, $accessory->fresh()->company_id);
-    }
+    expect($accessory->fresh()->company_id)->toBe($companyA->id);
+});
 
-    public function test_allows_superuser_company_reassignment_when_fmcs_enabled()
-    {
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
-        $accessory = Accessory::factory()->for($companyA)->create();
-        $superuser = User::factory()->superuser()->withoutCompany()->create();
+test('allows superuser company reassignment when fmcs enabled', function () {
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
+    $accessory = Accessory::factory()->for($companyA)->create();
+    $superuser = User::factory()->superuser()->withoutCompany()->create();
 
-        $this->settings->enableMultipleFullCompanySupport();
+    $this->settings->enableMultipleFullCompanySupport();
 
-        $this->actingAsForApi($superuser)
-            ->patchJson(route('api.accessories.update', $accessory), [
-                'company_id' => $companyB->id,
-            ])
-            ->assertStatusMessageIs('success');
+    $this->actingAsForApi($superuser)
+        ->patchJson(route('api.accessories.update', $accessory), [
+            'company_id' => $companyB->id,
+        ])
+        ->assertStatusMessageIs('success');
 
-        $this->assertSame($companyB->id, $accessory->fresh()->company_id);
-    }
+    expect($accessory->fresh()->company_id)->toBe($companyB->id);
+});
 
-    public function test_can_update_accessory_via_patch()
-    {
-        [$categoryA, $categoryB] = Category::factory()->count(2)->create();
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
-        [$locationA, $locationB] = Location::factory()->count(2)->create();
-        [$manufacturerA, $manufacturerB] = Manufacturer::factory()->count(2)->create();
-        [$supplierA, $supplierB] = Supplier::factory()->count(2)->create();
+test('can update accessory via patch', function () {
+    [$categoryA, $categoryB] = Category::factory()->count(2)->create();
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
+    [$locationA, $locationB] = Location::factory()->count(2)->create();
+    [$manufacturerA, $manufacturerB] = Manufacturer::factory()->count(2)->create();
+    [$supplierA, $supplierB] = Supplier::factory()->count(2)->create();
 
-        $accessory = Accessory::factory()->create([
-            'name' => 'A Name to Change',
-            'qty' => 5,
-            'model_number' => 'ABC098',
-            'category_id' => $categoryA->id,
-            'company_id' => $companyA->id,
-            'location_id' => $locationA->id,
-            'manufacturer_id' => $manufacturerA->id,
-            'default_supplier_id' => $supplierA->id,
-        ]);
+    $accessory = Accessory::factory()->create([
+        'name' => 'A Name to Change',
+        'qty' => 5,
+        'model_number' => 'ABC098',
+        'category_id' => $categoryA->id,
+        'company_id' => $companyA->id,
+        'location_id' => $locationA->id,
+        'manufacturer_id' => $manufacturerA->id,
+        'default_supplier_id' => $supplierA->id,
+    ]);
 
-        // Payload shape preserved for API back-compat. Acquisition-only
-        // fields (order_number, purchase_date, purchase_cost, and the
-        // per-Order supplier_id) don't touch the parent — post-create
-        // changes flow through Orders + OrderItems via the
-        // adjust-quantity endpoint. default_supplier_id IS editable
-        // (parent template).
-        $this->actingAsForApi(User::factory()->editAccessories()->create())
-            ->patchJson(route('api.accessories.update', $accessory), [
-                'name' => 'A New Name',
-                'qty' => 10,
-                'order_number' => 'B54321',
-                'purchase_cost' => 199.99,
-                'model_number' => 'XYZ123',
-                'category_id' => $categoryB->id,
-                'company_id' => $companyB->id,
-                'location_id' => $locationB->id,
-                'manufacturer_id' => $manufacturerB->id,
-                'default_supplier_id' => $supplierB->id,
-            ])
-            ->assertOk();
+    // Payload shape preserved for API back-compat. Acquisition-only
+    // fields (order_number, purchase_date, purchase_cost, and the
+    // per-Order supplier_id) don't touch the parent — post-create
+    // changes flow through Orders + OrderItems via the
+    // adjust-quantity endpoint. default_supplier_id IS editable
+    // (parent template).
+    $this->actingAsForApi(User::factory()->editAccessories()->create())
+        ->patchJson(route('api.accessories.update', $accessory), [
+            'name' => 'A New Name',
+            'qty' => 10,
+            'order_number' => 'B54321',
+            'purchase_cost' => 199.99,
+            'model_number' => 'XYZ123',
+            'category_id' => $categoryB->id,
+            'company_id' => $companyB->id,
+            'location_id' => $locationB->id,
+            'manufacturer_id' => $manufacturerB->id,
+            'default_supplier_id' => $supplierB->id,
+        ])
+        ->assertOk();
 
-        $accessory = $accessory->fresh();
-        $this->assertEquals('A New Name', $accessory->name);
-        // qty stays supported on the PATCH endpoint for API back-compat:
-        // the update controller routes qty deltas through adjustQuantity
-        // so a payload with qty=10 (original 5) writes a +5 OrderItem
-        // and moves the parent qty to 10.
-        $this->assertEquals(10, $accessory->qty);
-        $this->assertEquals($supplierB->id, $accessory->default_supplier_id);
-        $this->assertEquals('XYZ123', $accessory->model_number);
-        $this->assertEquals($categoryB->id, $accessory->category_id);
-        $this->assertEquals($companyB->id, $accessory->company_id);
-        $this->assertEquals($locationB->id, $accessory->location_id);
-        $this->assertEquals($manufacturerB->id, $accessory->manufacturer_id);
-    }
+    $accessory = $accessory->fresh();
+    expect($accessory->name)->toEqual('A New Name');
 
-    public function test_update_logs_changed_fields_in_log_meta()
-    {
-        $accessory = Accessory::factory()->create(['qty' => 5, 'name' => 'Old Name']);
+    // qty stays supported on the PATCH endpoint for API back-compat:
+    // the update controller routes qty deltas through adjustQuantity
+    // so a payload with qty=10 (original 5) writes a +5 OrderItem
+    // and moves the parent qty to 10.
+    expect($accessory->qty)->toEqual(10);
+    expect($accessory->default_supplier_id)->toEqual($supplierB->id);
+    expect($accessory->model_number)->toEqual('XYZ123');
+    expect($accessory->category_id)->toEqual($categoryB->id);
+    expect($accessory->company_id)->toEqual($companyB->id);
+    expect($accessory->location_id)->toEqual($locationB->id);
+    expect($accessory->manufacturer_id)->toEqual($manufacturerB->id);
+});
 
-        $this->actingAsForApi(User::factory()->editAccessories()->create())
-            ->patchJson(route('api.accessories.update', $accessory), ['qty' => 10, 'name' => 'New Name']);
+test('update logs changed fields in log meta', function () {
+    $accessory = Accessory::factory()->create(['qty' => 5, 'name' => 'Old Name']);
 
-        $log = Actionlog::where('item_type', Accessory::class)
-            ->where('item_id', $accessory->id)
-            ->where('action_type', 'update')
-            ->latest()
-            ->first();
+    $this->actingAsForApi(User::factory()->editAccessories()->create())
+        ->patchJson(route('api.accessories.update', $accessory), ['qty' => 10, 'name' => 'New Name']);
 
-        $this->assertNotNull($log, 'No update log entry was created');
-        $this->assertNotNull($log->log_meta, 'log_meta was not stored');
+    $log = Actionlog::where('item_type', Accessory::class)
+        ->where('item_id', $accessory->id)
+        ->where('action_type', 'update')
+        ->latest()
+        ->first();
 
-        // qty change writes its own QuantityAdjust log (asserted below);
-        // it does not appear in the update log_meta because the fill()
-        // deliberately excludes qty to route it through adjustQuantity.
-        $meta = json_decode($log->log_meta, true);
-        $this->assertArrayNotHasKey('qty', $meta);
-        $this->assertEquals('Old Name', $meta['name']['old']);
-        $this->assertEquals('New Name', $meta['name']['new']);
-    }
+    expect($log)->not->toBeNull('No update log entry was created');
+    expect($log->log_meta)->not->toBeNull('log_meta was not stored');
 
-    public function test_qty_change_via_api_creates_quantity_adjust_log()
-    {
-        $accessory = Accessory::factory()->create(['qty' => 5]);
+    // qty change writes its own QuantityAdjust log (asserted below);
+    // it does not appear in the update log_meta because the fill()
+    // deliberately excludes qty to route it through adjustQuantity.
+    $meta = json_decode($log->log_meta, true);
+    $this->assertArrayNotHasKey('qty', $meta);
+    expect($meta['name']['old'])->toEqual('Old Name');
+    expect($meta['name']['new'])->toEqual('New Name');
+});
 
-        $this->actingAsForApi(User::factory()->editAccessories()->create())
-            ->patchJson(route('api.accessories.update', $accessory), ['qty' => 12, 'order_number' => 'PO-API'])
-            ->assertOk();
+test('qty change via api creates quantity adjust log', function () {
+    $accessory = Accessory::factory()->create(['qty' => 5]);
 
-        $this->assertSame(12, (int) $accessory->fresh()->qty);
+    $this->actingAsForApi(User::factory()->editAccessories()->create())
+        ->patchJson(route('api.accessories.update', $accessory), ['qty' => 12, 'order_number' => 'PO-API'])
+        ->assertOk();
 
-        $log = Actionlog::where('item_type', Accessory::class)
-            ->where('item_id', $accessory->id)
-            ->where('action_type', \App\Enums\ActionType::QuantityAdjust->value)
-            ->latest('id')
-            ->firstOrFail();
+    expect((int) $accessory->fresh()->qty)->toBe(12);
 
-        $this->assertSame(7, (int) $log->quantity);
-        $this->assertSame('PO-API', $log->orderItem->order->order_number);
-        $this->assertNotEmpty($log->note, 'Adjustment note must be synthesized when the API caller omits one');
-    }
+    $log = Actionlog::where('item_type', Accessory::class)
+        ->where('item_id', $accessory->id)
+        ->where('action_type', \App\Enums\ActionType::QuantityAdjust->value)
+        ->latest('id')
+        ->firstOrFail();
 
-    public function test_qty_only_change_via_api_creates_no_update_log_entry()
-    {
-        $accessory = Accessory::factory()->create(['qty' => 5, 'name' => 'Same Name']);
+    expect((int) $log->quantity)->toBe(7);
+    expect($log->orderItem->order->order_number)->toBe('PO-API');
+    expect($log->note)->not->toBeEmpty('Adjustment note must be synthesized when the API caller omits one');
+});
 
-        $updateLogsBefore = Actionlog::where('item_type', Accessory::class)
-            ->where('item_id', $accessory->id)
-            ->where('action_type', 'update')
-            ->count();
+test('qty only change via api creates no update log entry', function () {
+    $accessory = Accessory::factory()->create(['qty' => 5, 'name' => 'Same Name']);
 
-        $this->actingAsForApi(User::factory()->editAccessories()->create())
-            ->patchJson(route('api.accessories.update', $accessory), ['qty' => 8, 'name' => 'Same Name'])
-            ->assertOk();
+    $updateLogsBefore = Actionlog::where('item_type', Accessory::class)
+        ->where('item_id', $accessory->id)
+        ->where('action_type', 'update')
+        ->count();
 
-        $updateLogsAfter = Actionlog::where('item_type', Accessory::class)
-            ->where('item_id', $accessory->id)
-            ->where('action_type', 'update')
-            ->count();
+    $this->actingAsForApi(User::factory()->editAccessories()->create())
+        ->patchJson(route('api.accessories.update', $accessory), ['qty' => 8, 'name' => 'Same Name'])
+        ->assertOk();
 
-        // Only qty changed. The QuantityAdjust log captures that change;
-        // no separate 'update' log should exist because nothing else was dirty.
-        $this->assertSame($updateLogsBefore, $updateLogsAfter);
-        $this->assertSame(1, Actionlog::where('item_type', Accessory::class)
-            ->where('item_id', $accessory->id)
-            ->where('action_type', \App\Enums\ActionType::QuantityAdjust->value)
-            ->count());
-    }
+    $updateLogsAfter = Actionlog::where('item_type', Accessory::class)
+        ->where('item_id', $accessory->id)
+        ->where('action_type', 'update')
+        ->count();
 
-    public function test_qty_change_below_in_use_returns_422()
-    {
-        $accessory = Accessory::factory()->create(['qty' => 10]);
-        \App\Models\AccessoryCheckout::factory()->count(4)->create([
-            'accessory_id' => $accessory->id,
-            'assigned_type' => User::class,
-            'assigned_to' => User::factory()->create()->id,
-        ]);
+    // Only qty changed. The QuantityAdjust log captures that change;
+    // no separate 'update' log should exist because nothing else was dirty.
+    expect($updateLogsAfter)->toBe($updateLogsBefore);
+    expect(Actionlog::where('item_type', Accessory::class)
+        ->where('item_id', $accessory->id)
+        ->where('action_type', \App\Enums\ActionType::QuantityAdjust->value)
+        ->count())->toBe(1);
+});
 
-        $this->actingAsForApi(User::factory()->editAccessories()->create())
-            ->patchJson(route('api.accessories.update', $accessory), ['qty' => 3]) // below the 4 in use
-            ->assertStatus(422);
+test('qty change below in use returns 422', function () {
+    $accessory = Accessory::factory()->create(['qty' => 10]);
+    \App\Models\AccessoryCheckout::factory()->count(4)->create([
+        'accessory_id' => $accessory->id,
+        'assigned_type' => User::class,
+        'assigned_to' => User::factory()->create()->id,
+    ]);
 
-        $this->assertSame(10, (int) $accessory->fresh()->qty);
-    }
+    $this->actingAsForApi(User::factory()->editAccessories()->create())
+        ->patchJson(route('api.accessories.update', $accessory), ['qty' => 3]) // below the 4 in use
+        ->assertStatus(422);
 
-    public function test_no_op_update_does_not_create_log_entry()
-    {
-        $accessory = Accessory::factory()->create(['qty' => 5, 'name' => 'Same Name']);
+    expect((int) $accessory->fresh()->qty)->toBe(10);
+});
 
-        $before = Actionlog::where('item_type', Accessory::class)
-            ->where('item_id', $accessory->id)
-            ->count();
+test('no op update does not create log entry', function () {
+    $accessory = Accessory::factory()->create(['qty' => 5, 'name' => 'Same Name']);
 
-        $this->actingAsForApi(User::factory()->editAccessories()->create())
-            ->patchJson(route('api.accessories.update', $accessory), ['qty' => 5, 'name' => 'Same Name']);
+    $before = Actionlog::where('item_type', Accessory::class)
+        ->where('item_id', $accessory->id)
+        ->count();
 
-        $after = Actionlog::where('item_type', Accessory::class)
-            ->where('item_id', $accessory->id)
-            ->count();
+    $this->actingAsForApi(User::factory()->editAccessories()->create())
+        ->patchJson(route('api.accessories.update', $accessory), ['qty' => 5, 'name' => 'Same Name']);
 
-        $this->assertEquals($before, $after, 'A spurious log entry was created for a no-op update');
-    }
-}
+    $after = Actionlog::where('item_type', Accessory::class)
+        ->where('item_id', $accessory->id)
+        ->count();
+
+    expect($after)->toEqual($before, 'A spurious log entry was created for a no-op update');
+});
