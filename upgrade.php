@@ -568,10 +568,12 @@ $config_clear = shell_exec('php artisan config:clear');
 $cache_clear = shell_exec('php artisan cache:clear');
 $route_clear = shell_exec('php artisan route:clear');
 $view_clear = shell_exec('php artisan view:clear');
+$event_clear = shell_exec('php artisan event:clear');
 echo $success_icon.' '.trim($config_clear)."\n";
 echo $success_icon.' '.trim($cache_clear)."\n";
 echo $success_icon.' '.trim($route_clear)."\n";
 echo $success_icon.' '.trim($view_clear)."\n";
+echo $success_icon . ' ' . trim($event_clear) . "\n";
 echo "\n";
 
 echo "\e[95m--------------------------------------------------------\n";
