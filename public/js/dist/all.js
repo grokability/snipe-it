@@ -1657,7 +1657,14 @@ $(function () {
     var value = searchElement.val();
     return value;
   }
-  $(".select2-hidden-accessible").on('select2:selecting', function (e) {
+
+  // Force-select-on-close is for single-value pickers where the user
+  // types exactly what they want and clicks out to commit it. Checkbox
+  // multi-select pickers (js-select2-checkboxes) have their own
+  // explicit tick behaviour, so auto-selecting the first typed match
+  // on blur silently picks an item the user never clicked. See
+  // issue #20092.
+  $(".select2-hidden-accessible").not('.js-select2-checkboxes').on('select2:selecting', function (e) {
     var data = e.params.args.data;
     var isMouseUp = false;
     var element = $(this);
@@ -1676,7 +1683,7 @@ $(function () {
       }
     }
   });
-  $("select.js-data-ajax, select[data-endpoint]").on('select2:closing', function (e) {
+  $("select.js-data-ajax, select[data-endpoint]").not('.js-select2-checkboxes').on('select2:closing', function (e) {
     var element = $(this);
     var value = getSelect2Value(element);
     var noForceAjax = false;
