@@ -93,7 +93,7 @@ trait RenderCustomLabelContent
             $layout['logo']['w'],
             $layout['logo']['h'],
             $this->getLogoHAlign(),
-            $this->getLogoTop() ? 'T' : $this->getLogoVAlign(),
+            $this->getLogoPosition() === 'top' ? 'T' : $this->getLogoVAlign(),
             300,
             true,
             false,
@@ -361,7 +361,7 @@ trait RenderCustomLabelContent
         $width = min($this->getLogoMaxWidth(), $body['w']);
         $alignment = $this->getLogoHAlign();
 
-        if ($this->getLogoTop()) {
+        if ($this->getLogoPosition() === 'top') {
             $height = min($width, $body['h']);
 
             $imageInfo = @getimagesize($record->get('logo'));
@@ -461,7 +461,7 @@ trait RenderCustomLabelContent
 
     protected function resolveContentBody(array $body, ?array $logoBox): array
     {
-        if (!$logoBox || !$this->getLogoTop()) {
+        if (!$logoBox || $this->getLogoPosition() !== 'top') {
             return $body;
         }
 

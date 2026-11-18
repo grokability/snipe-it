@@ -30,9 +30,9 @@ trait HasCustomLabelContentProperties
 
     protected float $logoMaxWidth = 12.0;
     protected float $logoMargin = 2.0;
-    protected string $logoHAlign = 'L';
+    protected string $logoHAlign = 'R';
     protected string $logoVAlign = 'T';
-    protected bool $logoTop = false;
+    protected string $logoPosition = 'inline';
 
     //Tape only properities
     protected string $barcode1DVAlign = 'M';
@@ -180,9 +180,9 @@ trait HasCustomLabelContentProperties
         return $this->logoVAlign;
     }
 
-    public function getLogoTop(): bool
+    public function getLogoPosition(): string
     {
-        return $this->logoTop;
+        return $this->logoPosition;
     }
     public function getTextAreaWidth(): ?float
     {
@@ -227,14 +227,13 @@ trait HasCustomLabelContentProperties
         $this->hydrateNumericContent($content);
         $this->hydrateStringContent($content);
 
-        $this->logoTop = filter_var(
-            $content['logo_top'] ?? false,
-            FILTER_VALIDATE_BOOLEAN
-        );
-        logger()->debug('Logo Top hydration', [
-            'raw' => $content['logo_top'] ?? 'MISSING',
-            'hydrated' => $this->logoTop,
+        $this->logoPosition = $content['logo_position'] ?? 'inline';
+
+        \Log::debug('Logo position hydration', [
+            'raw' => $content['logo_position'] ?? 'MISSING',
+            'hydrated' => $this->logoPosition,
         ]);
+
     }
 
     protected function hydrateNumericContent(array $content): void

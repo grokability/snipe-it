@@ -63,6 +63,7 @@ return [
         'logo_max_width' => 'Maximum Width',
         'logo_margin' => 'Margin',
         'logo_h_align' => 'Horizontal Alignment',
+        'logo_position' => 'Logo Position',
         'asset_tag' => 'Asset Tag',
         'barcode_1d' => '1D Barcode',
         'barcode_2d' => '2D Barcode',

@@ -214,24 +214,25 @@
     <script>
         $(document).on(
             'change',
-            'select[name="content[logo_h_align]"], select[name="content[barcode2D_h_align]"]',
+            'select[name="content[logo_h_align]"], select[name="content[barcode2D_h_align]"], select[name="content[logo_position]"]',
             function () {
-                if ($('input[name="content[logo_top]"]').is(':checked')) {
+                const $logoPosition = $('select[name="content[logo_position]"]');
+                const $logo = $('select[name="content[logo_h_align]"]');
+                const $barcode = $('select[name="content[barcode2D_h_align]"]');
+
+                if ($logoPosition.val() === 'top') {
                     return;
                 }
-                const value = $(this).val();
+
+                const isLogo = this.name !== 'content[barcode2D_h_align]';
+                const value = isLogo ? $logo.val() : $barcode.val();
 
                 if (!['L', 'R'].includes(value)) {
                     return;
                 }
 
                 const opposite = value === 'L' ? 'R' : 'L';
-
-                const isLogo = this.name === 'content[logo_h_align]';
-
-                const $other = isLogo
-                    ? $('select[name="content[barcode2D_h_align]"]')
-                    : $('select[name="content[logo_h_align]"]');
+                const $other = isLogo ? $barcode : $logo;
 
                 if ($other.val() === value) {
                     $other.val(opposite).trigger('change.select2');

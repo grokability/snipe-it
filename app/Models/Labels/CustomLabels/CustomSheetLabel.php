@@ -296,7 +296,7 @@ abstract class CustomSheetLabel extends RectangleSheet
         */
         $logoBox = null;
 
-        if ($this->getLogoTop()) {
+        if ($this->getLogoPosition() === 'top') {
             $logoBox = $this->resolveLogoBox($record, $contentBody);
             $contentBody = $this->resolveContentBody($contentBody, $logoBox);
         }
@@ -353,7 +353,7 @@ abstract class CustomSheetLabel extends RectangleSheet
         | Use $contentBody here, not $layout['body'].
         |--------------------------------------------------------------------------
         */
-        if (!$this->getLogoTop()) {
+        if ($this->getLogoPosition() !== 'top') {
             $logoBox = $this->resolveLogoBox(
                 $record,
                 $contentBody
@@ -387,7 +387,7 @@ abstract class CustomSheetLabel extends RectangleSheet
             $layout['tag'],
         ]);
 
-        if (!$this->getLogoTop() && $layout['logo']) {
+        if ($this->getLogoPosition() !== 'top' && $layout['logo']) {
             $boxes[] = $layout['logo'];
         }
 
