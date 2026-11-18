@@ -1,37 +1,25 @@
 <?php
 
-namespace Tests\Feature\Accessories\Ui;
-
 use App\Models\Accessory;
 use App\Models\Category;
-use PHPUnit\Framework\Attributes\DataProvider;
-use Tests\Support\ProvidesDataForFullMultipleCompanySupportTesting;
-use Tests\TestCase;
+use App\Models\Company;
+use App\Models\User;
 
-class CreateAccessoryWithFullMultipleCompanySupportTest extends TestCase
-{
-    use ProvidesDataForFullMultipleCompanySupportTesting;
+test('adheres to full multiple companies support scoping', function (User $actor, Company $company, Closure $assertions) {
+    $this->settings->enableMultipleFullCompanySupport();
 
-    #[DataProvider('dataForFullMultipleCompanySupportTesting')]
-    public function test_adheres_to_full_multiple_companies_support_scoping($data)
-    {
-        ['actor' => $actor, 'company_attempting_to_associate' => $company, 'assertions' => $assertions] = $data();
-
-        $this->settings->enableMultipleFullCompanySupport();
-
-        $this->actingAs($actor)
-            ->post(route('accessories.store'), [
-                'redirect_option' => 'index',
-                'name' => 'My Cool Accessory',
-                'qty' => '1',
-                'category_id' => Category::factory()->create()->id,
-                'company_id' => $company->id,
-            ]);
-
-        $accessory = Accessory::withoutGlobalScopes()->where([
+    $this->actingAs($actor)
+        ->post(route('accessories.store'), [
+            'redirect_option' => 'index',
             'name' => 'My Cool Accessory',
-        ])->sole();
+            'qty' => '1',
+            'category_id' => Category::factory()->create()->id,
+            'company_id' => $company->id,
+        ]);
 
-        $assertions($accessory);
-    }
-}
+    $accessory = Accessory::withoutGlobalScopes()->where([
+        'name' => 'My Cool Accessory',
+    ])->sole();
+
+    $assertions($accessory);
+})->with('FMCS data');

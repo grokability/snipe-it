@@ -50,11 +50,7 @@ test('cannot delete accessory that has checkouts', function (Accessory $accessor
         ->assertStatusMessageIs('error');
 
     $this->assertNotSoftDeleted($accessory);
-})->with([
-    'checked out to user' => [fn () => Accessory::factory()->checkedOutToUser()->create()],
-    'checked out to asset' => [fn () => Accessory::factory()->checkedOutToAsset()->create()],
-    'checked out to location' => [fn () => Accessory::factory()->checkedOutToLocation()->create()],
-]);
+})->with('checked out accessories');
 
 test('can delete accessory', function () {
     $accessory = Accessory::factory()->create();

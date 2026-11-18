@@ -1,134 +1,116 @@
 <?php
 
-namespace Tests\Feature\Accessories;
-
 use App\Enums\CheckoutRequestState;
 use App\Models\Accessory;
 use App\Models\CheckoutRequest;
 use App\Models\User;
-use Tests\TestCase;
 
-class AccessoryArchiveValidationTest extends TestCase
-{
-    public function test_accessory_can_save_as_requestable_without_archived(): void
-    {
-        $accessory = Accessory::factory()->create();
+test('accessory can save as requestable without archived', function () {
+    $accessory = Accessory::factory()->create();
 
-        $accessory->requestable = 1;
-        $accessory->archived = 0;
+    $accessory->requestable = 1;
+    $accessory->archived = 0;
 
-        $this->assertTrue($accessory->save());
-    }
+    expect($accessory->save())->toBeTrue();
+});
 
-    public function test_accessory_can_save_as_archived_without_requestable(): void
-    {
-        $accessory = Accessory::factory()->create();
+test('accessory can save as archived without requestable', function () {
+    $accessory = Accessory::factory()->create();
 
-        $accessory->archived = 1;
-        $accessory->requestable = 0;
+    $accessory->archived = 1;
+    $accessory->requestable = 0;
 
-        $this->assertTrue($accessory->save());
-    }
+    expect($accessory->save())->toBeTrue();
+});
 
-    public function test_accessory_cannot_save_as_both_requestable_and_archived(): void
-    {
-        $accessory = Accessory::factory()->create();
+test('accessory cannot save as both requestable and archived', function () {
+    $accessory = Accessory::factory()->create();
 
-        $accessory->requestable = 1;
-        $accessory->archived = 1;
+    $accessory->requestable = 1;
+    $accessory->archived = 1;
 
-        $this->assertFalse($accessory->save());
-        $this->assertArrayHasKey('archived', $accessory->getErrors()->toArray());
-        $this->assertArrayHasKey('requestable', $accessory->getErrors()->toArray());
-    }
+    expect($accessory->save())->toBeFalse();
+    expect($accessory->getErrors()->toArray())->toHaveKey('archived');
+    expect($accessory->getErrors()->toArray())->toHaveKey('requestable');
+});
 
-    public function test_accessory_with_active_checkouts_cannot_be_archived(): void
-    {
-        $accessory = Accessory::factory()->checkedOutToUser()->create();
-        $accessory->refresh();
+test('accessory with active checkouts cannot be archived', function () {
+    $accessory = Accessory::factory()->checkedOutToUser()->create();
+    $accessory->refresh();
 
-        $accessory->archived = 1;
+    $accessory->archived = 1;
 
-        $this->assertFalse($accessory->save());
-        $this->assertSame(
-            trans('general.archived_blocked_by_checkouts', ['item_type' => trans('general.accessory')]),
-            $accessory->getErrors()->get('archived')[0],
-        );
-    }
+    expect($accessory->save())->toBeFalse();
+    expect($accessory->getErrors()->get('archived')[0])->toBe(trans('general.archived_blocked_by_checkouts', ['item_type' => trans('general.accessory')]));
+});
 
-    public function test_accessory_without_active_checkouts_can_be_archived(): void
-    {
-        $accessory = Accessory::factory()->create();
+test('accessory without active checkouts can be archived', function () {
+    $accessory = Accessory::factory()->create();
 
-        $accessory->archived = 1;
+    $accessory->archived = 1;
 
-        $this->assertTrue($accessory->save());
-    }
+    expect($accessory->save())->toBeTrue();
+});
 
-    public function test_archiving_accessory_auto_cancels_pending_requests(): void
-    {
-        $accessory = Accessory::factory()->create();
-        $pending = CheckoutRequest::factory()->create([
-            'user_id' => User::factory()->create()->id,
-            'requestable_id' => $accessory->id,
-            'requestable_type' => Accessory::class,
-        ]);
+test('archiving accessory auto cancels pending requests', function () {
+    $accessory = Accessory::factory()->create();
+    $pending = CheckoutRequest::factory()->create([
+        'user_id' => User::factory()->create()->id,
+        'requestable_id' => $accessory->id,
+        'requestable_type' => Accessory::class,
+    ]);
 
-        $accessory->archived = 1;
-        $accessory->save();
+    $accessory->archived = 1;
+    $accessory->save();
 
-        $pending->refresh();
-        $this->assertNotNull($pending->canceled_at);
-        $this->assertSame(CheckoutRequestState::Canceled, $pending->state);
-    }
+    $pending->refresh();
+    expect($pending->canceled_at)->not->toBeNull();
+    expect($pending->state)->toBe(CheckoutRequestState::Canceled);
+});
 
-    public function test_deleting_accessory_auto_cancels_pending_requests(): void
-    {
-        $accessory = Accessory::factory()->create();
-        $pending = CheckoutRequest::factory()->create([
-            'user_id' => User::factory()->create()->id,
-            'requestable_id' => $accessory->id,
-            'requestable_type' => Accessory::class,
-        ]);
+test('deleting accessory auto cancels pending requests', function () {
+    $accessory = Accessory::factory()->create();
+    $pending = CheckoutRequest::factory()->create([
+        'user_id' => User::factory()->create()->id,
+        'requestable_id' => $accessory->id,
+        'requestable_type' => Accessory::class,
+    ]);
 
-        $accessory->delete();
+    $accessory->delete();
 
-        $pending->refresh();
-        $this->assertNotNull($pending->canceled_at);
-        $this->assertSame(CheckoutRequestState::Canceled, $pending->state);
-    }
+    $pending->refresh();
+    expect($pending->canceled_at)->not->toBeNull();
+    expect($pending->state)->toBe(CheckoutRequestState::Canceled);
+});
 
-    public function test_archiving_does_not_touch_already_canceled_requests(): void
-    {
-        $accessory = Accessory::factory()->create();
-        $previousCancelAt = now()->subDay();
-        $alreadyCanceled = CheckoutRequest::factory()->create([
-            'user_id' => User::factory()->create()->id,
-            'requestable_id' => $accessory->id,
-            'requestable_type' => Accessory::class,
-            'canceled_at' => $previousCancelAt,
-        ]);
+test('archiving does not touch already canceled requests', function () {
+    $accessory = Accessory::factory()->create();
+    $previousCancelAt = now()->subDay();
+    $alreadyCanceled = CheckoutRequest::factory()->create([
+        'user_id' => User::factory()->create()->id,
+        'requestable_id' => $accessory->id,
+        'requestable_type' => Accessory::class,
+        'canceled_at' => $previousCancelAt,
+    ]);
 
-        $accessory->archived = 1;
-        $accessory->save();
+    $accessory->archived = 1;
+    $accessory->save();
 
-        $alreadyCanceled->refresh();
-        $this->assertEquals($previousCancelAt->toDateTimeString(), $alreadyCanceled->canceled_at->toDateTimeString());
-    }
+    $alreadyCanceled->refresh();
+    expect($alreadyCanceled->canceled_at->toDateTimeString())->toEqual($previousCancelAt->toDateTimeString());
+});
 
-    public function test_un_archiving_does_not_touch_requests(): void
-    {
-        $accessory = Accessory::factory()->archived()->create();
-        $request = CheckoutRequest::factory()->create([
-            'user_id' => User::factory()->create()->id,
-            'requestable_id' => $accessory->id,
-            'requestable_type' => Accessory::class,
-        ]);
+test('un archiving does not touch requests', function () {
+    $accessory = Accessory::factory()->archived()->create();
+    $request = CheckoutRequest::factory()->create([
+        'user_id' => User::factory()->create()->id,
+        'requestable_id' => $accessory->id,
+        'requestable_type' => Accessory::class,
+    ]);
 
-        $accessory->archived = 0;
-        $accessory->save();
+    $accessory->archived = 0;
+    $accessory->save();
 
-        $request->refresh();
-        $this->assertNull($request->canceled_at);
-    }
-}
+    $request->refresh();
+    expect($request->canceled_at)->toBeNull();
+});
