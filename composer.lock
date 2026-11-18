@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6971bbbaf101facd0316a9e93cbd7951",
+    "content-hash": "3cf85d9b0aceee7d4379b81da556e103",
     "packages": [
         {
             "name": "alek13/slack",
@@ -15690,7 +15690,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-05-18T11:57:34+00:00"
+            "time": "2026-05-18T11:57:34+00:00",
+            "published-time": "2026-05-18T11:57:48+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
