@@ -90,6 +90,7 @@
     "laravel/telescope": "^5.11",
     "mockery/mockery": "^1.4",
     "nunomaduro/phpinsights": "^2.11",
+    "pestphp/pest": "^3.8",
     "php-mock/php-mock-phpunit": "^2.10",
     "phpmd/phpmd": "^2.15",
     "phpunit/phpunit": "^11.0",
@@ -156,6 +157,7 @@
     },
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true,
+      "pestphp/pest-plugin": true,
       "php-http/discovery": true
     }
   }
