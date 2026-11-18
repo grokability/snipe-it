@@ -571,6 +571,7 @@ return [
     'new_component' => 'New Component',
     'new_user' => 'New User',
     'collapse' => 'Collapse',
+    'compact_view' => 'Compact view',
     'assigned' => 'Assigned',
     'asset_count' => 'Asset Count',
     'accessories_count' => 'Accessories Count',

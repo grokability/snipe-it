@@ -107,8 +107,38 @@
 
             var modalSelector = '#avdSearchModal_' + tableId;
             var addFilterLabel = @json(trans('general.add_filter'));
+            var showAllLabel = @json(trans('general.show_all'));
+            var compactViewLabel = @json(trans('general.compact_view'));
             var removeLabel = @json(trans('button.remove'));
             var noValueLabel = @json(trans('general.no_value'));
+
+            // localStorage key for the "Show all fields" toggle preference.
+            // Scoped by tableId so each advanced-filter modal remembers
+            // its own user preference. '1' means on, anything else means
+            // off (including a missing key).
+            var showAllStorageKey = 'snipeAdvancedFilterShowAll:' + tableId;
+
+            function readShowAllPreference() {
+                try {
+                    return window.localStorage.getItem(showAllStorageKey) === '1';
+                } catch (e) {
+                    return false;
+                }
+            }
+
+            function writeShowAllPreference(on) {
+                try {
+                    if (on) {
+                        window.localStorage.setItem(showAllStorageKey, '1');
+                    }
+                    else {
+                        window.localStorage.removeItem(showAllStorageKey);
+                    }
+                } catch (e) {
+                    // Private-mode Safari throws on setItem. Silently
+                    // degrade to a per-session preference.
+                }
+            }
 
             var widgetFields = $stash.find('[data-advanced-filter-widget]').map(function () {
                 return $(this).data('advanced-filter-widget');
@@ -861,6 +891,20 @@
                 var registry = buildFieldRegistry(bsTable);
 
                 var $rowsContainer = $('<div class="snipe-advanced-filter-rows"></div>');
+
+                // Show/hide toggle lives in its own row with an empty
+                // label slot so the button aligns with the picker's
+                // select beneath it.
+                var $toggleRow = $(
+                    '<div class="form-group row snipe-advanced-filter-toggle-row">' +
+                    '<label class="col-sm-4 control-label">&nbsp;</label>' +
+                    '<div class="col-sm-7">' +
+                    '<button type="button" class="btn btn-theme btn-sm js-advanced-filter-show-all" aria-pressed="false" autocomplete="off"></button>' +
+                    '</div>' +
+                    '</div>',
+                );
+                $toggleRow.find('.js-advanced-filter-show-all').text(showAllLabel);
+
                 var $pickerRow = $(
                     '<div class="form-group row snipe-advanced-filter-picker-row">' +
                         '<label class="col-sm-4 control-label" for="' + tableId + 'AdvancedFilterPicker"></label>' +
@@ -870,7 +914,8 @@
                     '</div>'
                 );
                 $pickerRow.find('label').text(addFilterLabel);
-                $form.append($rowsContainer).append($pickerRow);
+
+                $form.append($rowsContainer).append($pickerRow).append($toggleRow);
 
                 var filterColumnsPartial = (bsTable && bsTable.filterColumnsPartial) || {};
                 Object.keys(filterColumnsPartial).forEach(function (field) {
@@ -898,6 +943,69 @@
                     var $row = $(this).closest('.snipe-advanced-filter-row');
                     removeFilterRow($row, $modal);
                     refreshPickerOptions($picker, $rowsContainer, registry, $modal);
+                });
+
+                // Walks every registry entry and appends an empty row
+                // for anything not already active. Guarded by
+                // appendFilterRow's duplicate check so repeated calls
+                // are idempotent.
+                function fillAllRegistryFields() {
+                    Object.keys(registry).sort(function (a, b) {
+                        return registry[a].label.localeCompare(registry[b].label);
+                    }).forEach(function (field) {
+                        appendFilterRow($rowsContainer, field, '', $modal, registry);
+                    });
+                    refreshPickerOptions($picker, $rowsContainer, registry, $modal);
+                }
+
+                // Removes only rows whose carrier is empty. Filled-in
+                // rows survive so toggling off does not silently throw
+                // away a user's in-progress search.
+                function removeEmptyRegistryFields() {
+                    $rowsContainer.find('.snipe-advanced-filter-row').each(function () {
+                        var $row = $(this);
+                        var field = $row.attr('data-field');
+                        var $carrier = $row.find('input[name="' + field + '"]').first();
+                        var value = ($carrier.val() || '').toString().trim();
+                        if (value === '') {
+                            removeFilterRow($row, $modal);
+                        }
+                    });
+                    refreshPickerOptions($picker, $rowsContainer, registry, $modal);
+                }
+
+                var $showAllToggle = $toggleRow.find('.js-advanced-filter-show-all');
+
+                // Picker is redundant once Show all is on because every
+                // registered field is already an active row, so hide
+                // the whole picker row and keep the toggle in its own
+                // row so its position does not shift. Button label
+                // describes the action a click will take, not the
+                // current state: off reads "Show all" (click to go
+                // show-all), on reads "Compact view" (click to collapse).
+                function setShowAllToggleState(on) {
+                    $showAllToggle.toggleClass('active', on).attr('aria-pressed', on ? 'true' : 'false').text(on ? compactViewLabel : showAllLabel);
+                    $pickerRow.toggle(!on);
+                }
+
+                setShowAllToggleState(readShowAllPreference());
+                if ($showAllToggle.hasClass('active')) {
+                    fillAllRegistryFields();
+                }
+
+                $showAllToggle.off('click.snipeAdvancedFilterShowAll').on('click.snipeAdvancedFilterShowAll', function (e) {
+                    e.preventDefault();
+                    var on = !$(this).hasClass('active');
+                    setShowAllToggleState(on);
+                    writeShowAllPreference(on);
+                    if (on) {
+                        fillAllRegistryFields();
+                    }
+                    else {
+                        removeEmptyRegistryFields();
+                    }
+                    // handleUpdate reflows the scroll region to the current content height.
+                    $modal.modal('handleUpdate');
                 });
             });
 
