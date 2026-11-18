@@ -641,16 +641,6 @@ foreach (['storage/oauth-public.key', 'storage/oauth-private.key'] as $keyPath) 
 }
 echo "\n";
 
-// Passport v13's Bridge\ClientRepository::validateClient bcrypt-verifies
-// the incoming client secret against oauth_clients.secret, so any
-// confidential OAuth client whose secret was stored as plaintext under
-// Passport v12 will fail client auth silently after upgrade. The command
-// is idempotent and skips rows that are already hashed, so re-runs cost
-// nothing on installs that have already been through it.
-echo $info_icon." Hashing any legacy plaintext OAuth client secrets.\n\n";
-$passportHash = shell_exec('php artisan passport:hash --force --no-interaction');
-echo $passportHash."\n";
-
 
 echo "\e[95m--------------------------------------------------------\n";
 echo "STEP 11: Taking application out of maintenance mode:\n";
