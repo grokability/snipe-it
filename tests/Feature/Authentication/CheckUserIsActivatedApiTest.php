@@ -1,115 +1,67 @@
 <?php
 
-namespace Tests\Feature\Authentication;
-
 use App\Models\User;
 use Laravel\Passport\Passport;
-use Tests\TestCase;
 
-/**
- * Confirms that Personal Access Tokens (or any Passport-authenticated API
- * request) can't be used to call the API when the token's owner has been
- * deactivated. The web session path has always been protected by
- * CheckUserIsActivated in the `web` middleware group; the `api` group
- * was missing it, so a deactivated user's already-issued token kept
- * full permission-level access to the API - defeating "Activated" as an
- * offboarding control. A deactivated account with users.edit could
- * additionally re-activate itself via PATCH /api/v1/users/{own_id}.
- * This file pins the fix (CheckUserIsActivated added to the api group).
- */
-class CheckUserIsActivatedApiTest extends TestCase
-{
-    public function test_activated_user_can_use_api(): void
-    {
-        Passport::actingAs(User::factory()->create(['activated' => 1]));
+test('activated user can use api', function () {
+    Passport::actingAs(User::factory()->create(['activated' => 1]));
 
-        $this->getJson(route('api.users.me'))->assertOk();
-    }
+    $this->getJson(route('api.users.me'))->assertOk();
+});
 
-    public function test_deactivated_user_api_token_is_refused(): void
-    {
-        Passport::actingAs(User::factory()->create(['activated' => 0]));
+test('deactivated user api token is refused', function () {
+    Passport::actingAs(User::factory()->create(['activated' => 0]));
 
-        $this->getJson(route('api.users.me'))->assertUnauthorized();
-    }
+    $this->getJson(route('api.users.me'))->assertUnauthorized();
+});
 
-    public function test_deactivated_user_cannot_write_via_api(): void
-    {
-        Passport::actingAs(User::factory()->superuser()->create(['activated' => 0]));
+test('deactivated user cannot write via api', function () {
+    Passport::actingAs(User::factory()->superuser()->create(['activated' => 0]));
 
-        $this->postJson(route('api.users.store'), [
-            'first_name' => 'Should',
-            'last_name' => 'Not Persist',
-            'username' => 'shouldnotpersist',
-            'password' => 'This-Is-A-Long-Password-123!',
-            'password_confirmation' => 'This-Is-A-Long-Password-123!',
-        ])->assertUnauthorized();
+    $this->postJson(route('api.users.store'), [
+        'first_name' => 'Should',
+        'last_name' => 'Not Persist',
+        'username' => 'shouldnotpersist',
+        'password' => 'This-Is-A-Long-Password-123!',
+        'password_confirmation' => 'This-Is-A-Long-Password-123!',
+    ])->assertUnauthorized();
 
-        $this->assertDatabaseMissing('users', ['username' => 'shouldnotpersist']);
-    }
+    $this->assertDatabaseMissing('users', ['username' => 'shouldnotpersist']);
+});
 
-    /**
-     * Escalation regression pin from the researcher's report: a
-     * deactivated account with users.edit used to be able to
-     * PATCH /api/v1/users/{own_id} {"activated": 1} and re-enable
-     * itself, permanently defeating the deactivation. The middleware
-     * now refuses the request before it reaches the controller.
-     */
-    public function test_deactivated_admin_cannot_self_reactivate_via_api(): void
-    {
-        $user = User::factory()->admin()->create(['activated' => 0]);
+test('deactivated admin cannot self reactivate via api', function () {
+    $user = User::factory()->admin()->create(['activated' => 0]);
 
-        Passport::actingAs($user);
+    Passport::actingAs($user);
 
-        $this->patchJson(route('api.users.update', $user), [
-            'activated' => 1,
-        ])->assertUnauthorized();
+    $this->patchJson(route('api.users.update', $user), [
+        'activated' => 1,
+    ])->assertUnauthorized();
 
-        $this->assertSame(0, (int) $user->fresh()->activated, 'Account must remain deactivated');
-    }
+    expect((int) $user->fresh()->activated)->toBe(0, 'Account must remain deactivated');
+});
 
-    /**
-     * Response body deliberately does NOT distinguish "known token,
-     * deactivated account" from a generic 401. Locks in the generic
-     * message so a later change doesn't leak the specific reason (which
-     * would help an attacker validate that a token they hold is
-     * otherwise correct and just points at a disabled account).
-     */
-    public function test_deactivated_response_is_generic_unauthorized(): void
-    {
-        Passport::actingAs(User::factory()->create(['activated' => 0]));
+test('deactivated response is generic unauthorized', function () {
+    Passport::actingAs(User::factory()->create(['activated' => 0]));
 
-        $response = $this->getJson(route('api.users.me'))->assertUnauthorized();
+    $response = $this->getJson(route('api.users.me'))->assertUnauthorized();
 
-        $body = $response->json();
-        $this->assertSame('error', $body['status'] ?? null);
-        // The generic 'general.unauthorized' translation; must NOT
-        // mention "activated" / "disabled" / "inactive".
-        $this->assertStringNotContainsStringIgnoringCase('activat', (string) ($body['messages'] ?? ''));
-        $this->assertStringNotContainsStringIgnoringCase('disabled', (string) ($body['messages'] ?? ''));
-    }
+    $body = $response->json();
+    expect($body['status'] ?? null)->toBe('error');
 
-    /**
-     * Rollbar regression pin: a Python client hitting /api/v1/hardware
-     * with a bearer token but without an Accept: application/json
-     * header used to fatal with BadMethodCallException. The middleware
-     * fell past its expectsJson() check (Python's requests library
-     * doesn't set Accept by default) and called Auth::logout() on
-     * Passport's TokenGuard, which doesn't define that method.
-     *
-     * A bearer token is now a sufficient signal that the caller is on
-     * the API surface, so the middleware returns a JSON 401 instead
-     * of trying to terminate a session that doesn't exist.
-     */
-    public function test_bearer_authenticated_request_without_accept_header_returns_json_not_500(): void
-    {
-        Passport::actingAs(User::factory()->create(['activated' => 0]));
+    // The generic 'general.unauthorized' translation; must NOT
+    // mention "activated" / "disabled" / "inactive".
+    $this->assertStringNotContainsStringIgnoringCase('activat', (string) ($body['messages'] ?? ''));
+    $this->assertStringNotContainsStringIgnoringCase('disabled', (string) ($body['messages'] ?? ''));
+});
 
-        $response = $this
-            ->withHeader('Authorization', 'Bearer fake-token-value')
-            ->get(route('api.assets.index'));
+test('bearer authenticated request without accept header returns json not 500', function () {
+    Passport::actingAs(User::factory()->create(['activated' => 0]));
 
-        $response->assertUnauthorized();
-        $this->assertSame('error', $response->json('status'));
-    }
-}
+    $response = $this
+        ->withHeader('Authorization', 'Bearer fake-token-value')
+        ->get(route('api.assets.index'));
+
+    $response->assertUnauthorized();
+    expect($response->json('status'))->toBe('error');
+});
