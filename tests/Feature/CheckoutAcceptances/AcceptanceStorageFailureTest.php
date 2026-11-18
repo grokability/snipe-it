@@ -4,7 +4,6 @@ namespace Tests\Feature\CheckoutAcceptances;
 
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
-use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Mockery;
@@ -44,9 +43,10 @@ class AcceptanceStorageFailureTest extends TestCase
         ob_start();
         imagepng($canvas);
         $signaturePng = (string) ob_get_clean();
+
         return [
             'asset_acceptance' => 'accepted',
-            'signature_output' => 'data:image/png;base64,' . base64_encode($signaturePng),
+            'signature_output' => 'data:image/png;base64,'.base64_encode($signaturePng),
         ];
     }
 
@@ -72,10 +72,7 @@ class AcceptanceStorageFailureTest extends TestCase
     public function test_failed_signature_write_does_not_finalize_acceptance(): void
     {
         // Require signatures so the signature write path fires.
-        $settings = Setting::query()->firstOrFail();
-        $settings->require_accept_signature = 1;
-        $settings->save();
-        Setting::$_cache = null;
+        $this->settings->enableRequiredSignatures();
 
         $target = User::factory()->create();
         $acceptance = $this->pendingAcceptance($target);

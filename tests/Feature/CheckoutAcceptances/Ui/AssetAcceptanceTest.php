@@ -7,7 +7,6 @@ use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
 use App\Models\CustomField;
-use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\AcceptanceItemAcceptedNotification;
 use Illuminate\Support\Facades\Event;
@@ -105,10 +104,7 @@ class AssetAcceptanceTest extends TestCase
             $this->markTestSkipped('GD extension is required for signature image generation.');
         }
 
-        $settings = Setting::query()->firstOrFail();
-        $settings->require_accept_signature = 1;
-        $settings->save();
-        Setting::$_cache = null;
+        $this->settings->enableRequiredSignatures();
 
         $checkoutAcceptance = CheckoutAcceptance::factory()->pending()->create();
 

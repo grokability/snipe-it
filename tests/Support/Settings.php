@@ -182,6 +182,11 @@ class Settings
         return $this->update(['unique_serial' => 0]);
     }
 
+    public function enableRequiredSignatures(): Settings
+    {
+        return $this->update(['require_accept_signature' => 1]);
+    }
+
     public function enableLdap(): Settings
     {
         return $this->update([

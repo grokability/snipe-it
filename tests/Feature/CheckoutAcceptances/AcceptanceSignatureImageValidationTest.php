@@ -4,7 +4,6 @@ namespace Tests\Feature\CheckoutAcceptances;
 
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
-use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -18,14 +17,6 @@ class AcceptanceSignatureImageValidationTest extends TestCase
         return CheckoutAcceptance::factory()->pending()->for($asset, 'checkoutable')->create([
             'assigned_to_id' => $target->id,
         ]);
-    }
-
-    private function enableRequiredSignatures(): void
-    {
-        $settings = Setting::query()->firstOrFail();
-        $settings->require_accept_signature = 1;
-        $settings->save();
-        Setting::$_cache = null;
     }
 
     private function tinyPng(int $width = 2, int $height = 2): string
@@ -58,7 +49,7 @@ class AcceptanceSignatureImageValidationTest extends TestCase
     public function test_signature_output_with_non_image_bytes_is_rejected_and_nothing_is_written(): void
     {
         Storage::fake();
-        $this->enableRequiredSignatures();
+        $this->settings->enableRequiredSignatures();
 
         $target = User::factory()->create();
         $acceptance = $this->pendingAcceptance($target);
@@ -83,7 +74,7 @@ class AcceptanceSignatureImageValidationTest extends TestCase
     public function test_signature_output_with_oversized_declared_dimensions_is_rejected_before_decode(): void
     {
         Storage::fake();
-        $this->enableRequiredSignatures();
+        $this->settings->enableRequiredSignatures();
 
         $target = User::factory()->create();
         $acceptance = $this->pendingAcceptance($target);
@@ -127,7 +118,7 @@ class AcceptanceSignatureImageValidationTest extends TestCase
         // Covers the inverse direction of the oversized-dimensions test
         // which already proves the default rejects 10000x10000.
         Storage::fake();
-        $this->enableRequiredSignatures();
+        $this->settings->enableRequiredSignatures();
         config(['app.acceptance_signature_max_dimension' => 1]);
 
         $target = User::factory()->create();
@@ -159,7 +150,7 @@ class AcceptanceSignatureImageValidationTest extends TestCase
     public function test_signature_output_exceeding_2mb_cap_is_rejected_by_validator(): void
     {
         Storage::fake();
-        $this->enableRequiredSignatures();
+        $this->settings->enableRequiredSignatures();
 
         $target = User::factory()->create();
         $acceptance = $this->pendingAcceptance($target);
@@ -189,7 +180,7 @@ class AcceptanceSignatureImageValidationTest extends TestCase
     public function test_signature_output_with_valid_header_but_no_idat_is_rejected(): void
     {
         Storage::fake();
-        $this->enableRequiredSignatures();
+        $this->settings->enableRequiredSignatures();
 
         $target = User::factory()->create();
         $acceptance = $this->pendingAcceptance($target);
@@ -221,7 +212,7 @@ class AcceptanceSignatureImageValidationTest extends TestCase
     public function test_signature_output_with_non_png_image_type_is_rejected(): void
     {
         Storage::fake();
-        $this->enableRequiredSignatures();
+        $this->settings->enableRequiredSignatures();
 
         $target = User::factory()->create();
         $acceptance = $this->pendingAcceptance($target);
@@ -252,7 +243,7 @@ class AcceptanceSignatureImageValidationTest extends TestCase
         // PNG from the signaturepad canvas should continue to validate,
         // flatten, store, and finalize.
         Storage::fake();
-        $this->enableRequiredSignatures();
+        $this->settings->enableRequiredSignatures();
 
         $target = User::factory()->create();
         $acceptance = $this->pendingAcceptance($target);
