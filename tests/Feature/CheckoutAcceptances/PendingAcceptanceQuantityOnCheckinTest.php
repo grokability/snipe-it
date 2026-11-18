@@ -13,6 +13,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
+use function Pest\Laravel\actingAs;
+
 beforeEach(function () {
     Mail::fake();
     $this->settings->disableAdminCC()->disableAdminCCAlways()->disableSlackWebhook();
@@ -306,7 +308,7 @@ function accessoryAndUser(): array
 
 function checkOut(Accessory $accessory, User $user, int $qty): void
 {
-    $this->actingAs(User::factory()->superuser()->create())
+    actingAs(User::factory()->superuser()->create())
         ->post(route('accessories.checkout.store', $accessory), [
             'assigned_user' => $user->id,
             'checkout_to_type' => 'user',
@@ -319,7 +321,7 @@ function checkOutSeat(License $license, User $user): LicenseSeat
 {
     $seat = $license->licenseseats()->whereNull('assigned_to')->whereNull('asset_id')->firstOrFail();
 
-    $this->actingAs(User::factory()->superuser()->create())
+    actingAs(User::factory()->superuser()->create())
         ->post(route('licenses.checkout.save', [$license->id, $seat->id]), [
             'assigned_user' => $user->id,
         ])
@@ -355,14 +357,14 @@ function oneHeldCheckoutOf(Accessory $accessory, User $user): int
 
 function checkIn(int $accessoryCheckoutId): void
 {
-    $this->actingAs(User::factory()->superuser()->create())
+    actingAs(User::factory()->superuser()->create())
         ->post(route('accessories.checkin.store', $accessoryCheckoutId))
         ->assertRedirect();
 }
 
 function transfer(User $source, User $target, int $accessoryCheckoutId): void
 {
-    $this->actingAs(User::factory()->superuser()->create())
+    actingAs(User::factory()->superuser()->create())
         ->post(route('users.transfer.store', $source), [
             'target_user_id' => $target->id,
             'note' => 'matrix',
