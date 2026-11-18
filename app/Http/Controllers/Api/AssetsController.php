@@ -692,9 +692,14 @@ class AssetsController extends Controller
     {
         $this->authorize('view', $asset);
         $this->authorize('view', License::class);
-        $licenses = $asset->licenseseats()->get();
 
-        return (new AssetsTransformer)->transformLicensesCheckedToAsset($licenses, $licenses->count());
+        // load the License through CompanyableScope first and
+        // drop any seat whose license the caller cannot see. 
+        $seats = $asset->licenseseats()->get()->filter(function ($seat) {
+            return License::find($seat->license_id) !== null;
+        })->values();
+
+        return (new AssetsTransformer)->transformLicensesCheckedToAsset($seats, $seats->count());
     }
 
     /**
@@ -1839,7 +1844,7 @@ class AssetsController extends Controller
         if ($asset->custom_fieldset) {
             $payload['custom_fields'] = $asset->custom_fill($request, false, 'display_audit');
         }
-        
+
         if ($asset->isInvalid()) {
             return [
                 'success' => false,

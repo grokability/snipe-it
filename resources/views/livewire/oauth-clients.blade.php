@@ -32,7 +32,6 @@
                         <th scope="col" data-field="client_type" data-sortable="true">{{ trans('admin/settings/general.oauth_client_type') }}</th>
                         <th scope="col" data-field="revoked" data-sortable="true">{{ trans('general.status') }}</th>
                         <th scope="col" data-field="redirect" data-sortable="true">{{ trans('admin/settings/general.oauth_redirect_url') }}</th>
-                        <th scope="col" data-field="secret" data-sortable="true">{{ trans('admin/settings/general.oauth_secret') }}</th>
                         <th scope="col" data-field="associated_token_count" data-sortable="true">{{ trans('admin/settings/general.oauth_associated_token_count') }}</th>
                         <th scope="col" data-field="created_at" data-sortable="true">{{ trans('general.created_at') }}</th>
                         <th scope="col" data-field="updated_at" data-sortable="true">{{ trans('general.updated_at') }}</th>
@@ -71,7 +70,6 @@
                                 @endif
                             </td>
                             <td><code>{{ $client->redirect }}</code></td>
-                            <td><code>{{ $client->secret }}</code></td>
                             <td>{{ $client->associated_token_count ?? 0 }}</td>
                             <td>{{ $client->created_at ? Helper::getFormattedDateObject($client->created_at, 'datetime', false) : '' }}</td>
                             <td>

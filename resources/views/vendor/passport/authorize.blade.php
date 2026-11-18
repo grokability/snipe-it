@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
-{{-- TODO: Translate --}}
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>{{ config('app.name') }} - Authorization</title>
+    <title>{{ config('app.name') }} - {{ trans('passport.authorize_title', ['client' => $client->name]) }}</title>
 
     {{-- stylesheets --}}
     <link rel="stylesheet" href="{{ url(mix('css/dist/all.css')) }}">
@@ -21,18 +20,9 @@
 
         .passport-authorize .buttons {
             margin-top: 25px;
-            text-align: center;
         }
 
-        .passport-authorize .btn {
-            width: 125px;
-        }
-
-        .passport-authorize .btn-approve {
-            margin-right: 15px;
-        }
-
-        .passport-authorize form {
+        .passport-authorize .buttons form {
             display: inline;
         }
     </style>
@@ -43,49 +33,47 @@
             <div class="col-md-6 col-md-offset-3">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Authorization Request
+                        {{ trans('passport.authorize_title', ['client' => $client->name]) }}
                     </div>
                     <div class="panel-body">
-                        <!-- Introduction -->
-                        <p><strong>{{ $client->name }}</strong> is requesting permission to access your account.</p>
+                        <p>{{ trans('passport.authorize_body') }}</p>
 
-                        <!-- Scope List -->
+                        <p>{{ trans('passport.authorize_logged_in_as', ['username' => $user->username]) }}</p>
+
                         @if (count($scopes) > 0)
                             <div class="scopes">
-                                    <p><strong>This application is requesting the following scopes:</strong></p>
+                                <p><strong>{{ trans('general.permissions') }}</strong></p>
 
-                                    <ul>
-                                        @foreach ($scopes as $scope)
-                                            <li>
-                                                <code>{{ $scope->id }}</code>
-                                                @if ($scope->description && $scope->description !== $scope->id)
-                                                    : {{ $scope->description }}
-                                                @endif
-                                            </li>
-                                        @endforeach
-                                    </ul>
+                                <ul>
+                                    @foreach ($scopes as $scope)
+                                        <li>
+                                            {{ $scope->description && $scope->description !== $scope->id ? $scope->description : $scope->id }}
+                                        </li>
+                                    @endforeach
+                                </ul>
                             </div>
                         @endif
 
-                        <div class="buttons">
-                            <!-- Authorize Button -->
-                            <form method="post" action="{{ url('/oauth/authorize') }}">
-                                {{ csrf_field() }}
+                        <div class="buttons row">
+                            <div class="col-xs-6">
+                                <form method="post" action="{{ url('/oauth/authorize') }}">
+                                    {{ csrf_field() }}
+                                    {{ method_field('DELETE') }}
 
-                                <input type="hidden" name="state" value="{{ $request->state }}">
-                                <input type="hidden" name="client_id" value="{{ $client->id }}">
-                                <button type="submit" class="btn btn-success btn-approve">Authorize</button>
-                            </form>
+                                    <input type="hidden" name="state" value="{{ $request->state }}">
+                                    <input type="hidden" name="client_id" value="{{ $client->id }}">
+                                    <button type="submit" class="btn btn-default">{{ trans('general.cancel') }}</button>
+                                </form>
+                            </div>
+                            <div class="col-xs-6 text-right">
+                                <form method="post" action="{{ url('/oauth/authorize') }}">
+                                    {{ csrf_field() }}
 
-                            <!-- Cancel Button -->
-                            <form method="post" action="{{ url('/oauth/authorize') }}">
-                                {{ csrf_field() }}
-                                {{ method_field('DELETE') }}
-
-                                <input type="hidden" name="state" value="{{ $request->state }}">
-                                <input type="hidden" name="client_id" value="{{ $client->id }}">
-                                <button class="btn btn-danger">Cancel</button>
-                            </form>
+                                    <input type="hidden" name="state" value="{{ $request->state }}">
+                                    <input type="hidden" name="client_id" value="{{ $client->id }}">
+                                    <button type="submit" class="btn btn-primary">{{ trans('passport.authorize_button') }}</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
