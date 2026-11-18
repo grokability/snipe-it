@@ -7,11 +7,13 @@ use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
 use App\Models\User;
 use App\Notifications\CheckinAccessoryNotification;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
-use PHPUnit\Framework\Attributes\Test;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseMissing;
+use function Pest\Laravel\assertSoftDeleted;
 
 test('checking in accessory requires correct permission', function () {
     $accessory = Accessory::factory()->checkedOutToUser()->create();
@@ -109,7 +111,7 @@ test('accessory checkin clears pending acceptance when notifications are fully d
 
     checkInAccessoryFrom($accessory, $user);
 
-    assertAcceptanceWasSoftDeleted($acceptance, 'The pending acceptance should have been soft-deleted when the accessory was checked in but it survived.');
+    assertSoftDeleted($acceptance);
 });
 
 test('accessory checkin clears pending acceptance when only a webhook is configured', function () {
@@ -136,7 +138,7 @@ test('accessory checkin clears pending acceptance when only a webhook is configu
 
     $this->assertSlackNotificationSent(CheckinAccessoryNotification::class);
 
-    assertAcceptanceWasSoftDeleted($acceptance, 'The pending acceptance should have been soft-deleted when the accessory was checked in but it survived.');
+    assertSoftDeleted($acceptance);
 });
 
 test('accessory checkin does not clear a same id pending acceptance of another type', function () {
@@ -165,7 +167,7 @@ test('accessory checkin does not clear a same id pending acceptance of another t
 
     checkInAccessoryFrom($accessory, $user);
 
-    assertAcceptanceWasSoftDeleted($accessoryAcceptance, 'The checked-in accessory\'s own pending acceptance should have been soft-deleted.');
+    assertSoftDeleted($accessoryAcceptance);
 
     expect(CheckoutAcceptance::withTrashed()->findOrFail($assetAcceptance->id)->deleted_at)->toBeNull('Checking in the accessory should have left the asset acceptance alone. It was soft-deleted too, because the listener matches on checkoutable_id and assigned_to_id without filtering on checkoutable_type, and the asset happens to share the accessory\'s id.');
 });
@@ -177,11 +179,11 @@ function checkInAccessoryFrom(Accessory $accessory, User $user): void
         ->where('assigned_to', $user->id)
         ->firstOrFail();
 
-    $this->actingAs(User::factory()->checkinAccessories()->create())
+    actingAs(User::factory()->checkinAccessories()->create())
         ->post(route('accessories.checkin.store', $checkout->id))
         ->assertRedirect();
 
-    $this->assertDatabaseMissing('accessories_checkout', ['id' => $checkout->id]);
+    assertDatabaseMissing('accessories_checkout', ['id' => $checkout->id]);
 }
 
 function createAccessoryAndAssetSharingAnId(User $user): array
@@ -196,20 +198,4 @@ function createAccessoryAndAssetSharingAnId(User $user): array
     expect($asset->id)->toBe($accessory->id);
 
     return [$accessory, $asset];
-}
-
-/**
- * An id no row in either table holds, so both can be created with it.
- */
-function firstIdFreeInBoth(string $firstTable, string $secondtable): int
-{
-    return max(
-        (int) DB::table($firstTable)->max('id'),
-        (int) DB::table($secondtable)->max('id'),
-    ) + 1;
-}
-
-function assertAcceptanceWasSoftDeleted(CheckoutAcceptance $acceptance, string $message): void
-{
-    expect(CheckoutAcceptance::withTrashed()->findOrFail($acceptance->id)->deleted_at)->not->toBeNull($message);
 }
