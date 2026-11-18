@@ -91,6 +91,7 @@
     "mockery/mockery": "^1.4",
     "nunomaduro/phpinsights": "^2.11",
     "pestphp/pest": "^3.8",
+    "pestphp/pest-plugin-drift": "^3.0",
     "php-mock/php-mock-phpunit": "^2.10",
     "phpmd/phpmd": "^2.15",
     "squizlabs/php_codesniffer": "^3.5"

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3cf85d9b0aceee7d4379b81da556e103",
+    "content-hash": "a03b5b65118fd9c9edf51b6f872ee181",
     "packages": [
         {
             "name": "alek13/slack",
@@ -14926,6 +14926,76 @@
             ],
             "time": "2025-04-16T22:59:48+00:00",
             "published-time": "2025-04-16T23:00:12+00:00"
+        },
+        {
+            "name": "pestphp/pest-plugin-drift",
+            "version": "v3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pestphp/pest-plugin-drift.git",
+                "reference": "cd506d2b931eb1443b878229b472c59d6f2d8ee8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pestphp/pest-plugin-drift/zipball/cd506d2b931eb1443b878229b472c59d6f2d8ee8",
+                "reference": "cd506d2b931eb1443b878229b472c59d6f2d8ee8",
+                "shasum": ""
+            },
+            "require": {
+                "nikic/php-parser": "^5.1.0",
+                "pestphp/pest": "^3.0.0",
+                "php": "^8.2.0",
+                "symfony/finder": "^7.1.4"
+            },
+            "require-dev": {
+                "pestphp/pest-dev-tools": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "pest": {
+                    "plugins": [
+                        "Pest\\Drift\\Plugin"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Pest\\Drift\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "The Pest Drift Plugin",
+            "keywords": [
+                "framework",
+                "laravel",
+                "pest",
+                "php",
+                "test",
+                "testing",
+                "unit"
+            ],
+            "support": {
+                "source": "https://github.com/pestphp/pest-plugin-drift/tree/v3.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.com/paypalme/enunomaduro",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/mandisma",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nunomaduro",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-09-08T23:45:48+00:00",
+            "published-time": "2024-10-09T00:05:50+00:00"
         },
         {
             "name": "pestphp/pest-plugin-mutate",
