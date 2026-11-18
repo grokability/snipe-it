@@ -1,103 +1,88 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\CheckoutConsumableTool;
 use App\Models\Consumable;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class CheckoutConsumableToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->checkoutConsumables()->create());
+});
+
+function handle(array $args = []): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->checkoutConsumables()->create());
-    }
-
-    private function handle(array $args = []): ResponseFactory
-    {
-        return (new CheckoutConsumableTool)->handle(new Request($args));
-    }
-
-    public function test_checks_out_consumable_to_user()
-    {
-        $consumable = Consumable::factory()->create(['qty' => 5]);
-        $user = User::factory()->create();
-
-        $content = $this->handle([
-            'id' => $consumable->id,
-            'assigned_to' => $user->id,
-        ])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertDatabaseHas('consumables_users', [
-            'consumable_id' => $consumable->id,
-            'assigned_to' => $user->id,
-        ]);
-    }
-
-    public function test_returns_error_when_no_units_remaining()
-    {
-        $consumable = Consumable::factory()->withoutItemsRemaining()->create();
-        $user = User::factory()->create();
-
-        $response = $this->handle([
-            'id' => $consumable->id,
-            'assigned_to' => $user->id,
-        ]);
-
-        $this->assertTrue($response->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_consumable_not_found()
-    {
-        $user = User::factory()->create();
-
-        $this->assertTrue($this->handle([
-            'id' => 999999,
-            'assigned_to' => $user->id,
-        ])->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_user_not_found()
-    {
-        $consumable = Consumable::factory()->create(['qty' => 5]);
-
-        $this->assertTrue($this->handle([
-            'id' => $consumable->id,
-            'assigned_to' => 999999,
-        ])->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_user_lacks_permission()
-    {
-        $this->actingAs(User::factory()->create());
-        $consumable = Consumable::factory()->create(['qty' => 5]);
-        $user = User::factory()->create();
-
-        $this->assertTrue($this->handle([
-            'id' => $consumable->id,
-            'assigned_to' => $user->id,
-        ])->responses()->first()->isError());
-    }
-
-    public function test_refuses_to_check_out_archived_consumable()
-    {
-        $consumable = Consumable::factory()->archived()->create(['qty' => 5]);
-        $user = User::factory()->create();
-
-        $response = $this->handle([
-            'id' => $consumable->id,
-            'assigned_to' => $user->id,
-        ]);
-
-        $this->assertTrue($response->responses()->first()->isError());
-        $this->assertDatabaseMissing('consumables_users', [
-            'consumable_id' => $consumable->id,
-            'assigned_to' => $user->id,
-        ]);
-    }
+    return handle(new Request($args));
 }
+
+test('checks out consumable to user', function () {
+    $consumable = Consumable::factory()->create(['qty' => 5]);
+    $user = User::factory()->create();
+
+    $content = handle([
+        'id' => $consumable->id,
+        'assigned_to' => $user->id,
+    ])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    $this->assertDatabaseHas('consumables_users', [
+        'consumable_id' => $consumable->id,
+        'assigned_to' => $user->id,
+    ]);
+});
+
+test('returns error when no units remaining', function () {
+    $consumable = Consumable::factory()->withoutItemsRemaining()->create();
+    $user = User::factory()->create();
+
+    $response = handle([
+        'id' => $consumable->id,
+        'assigned_to' => $user->id,
+    ]);
+
+    expect($response->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when consumable not found', function () {
+    $user = User::factory()->create();
+
+    expect(handle([
+        'id' => 999999,
+        'assigned_to' => $user->id,
+    ])->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when user not found', function () {
+    $consumable = Consumable::factory()->create(['qty' => 5]);
+
+    expect(handle([
+        'id' => $consumable->id,
+        'assigned_to' => 999999,
+    ])->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when user lacks permission', function () {
+    $this->actingAs(User::factory()->create());
+    $consumable = Consumable::factory()->create(['qty' => 5]);
+    $user = User::factory()->create();
+
+    expect(handle([
+        'id' => $consumable->id,
+        'assigned_to' => $user->id,
+    ])->responses()->first()->isError())->toBeTrue();
+});
+
+test('refuses to check out archived consumable', function () {
+    $consumable = Consumable::factory()->archived()->create(['qty' => 5]);
+    $user = User::factory()->create();
+
+    $response = handle([
+        'id' => $consumable->id,
+        'assigned_to' => $user->id,
+    ]);
+
+    expect($response->responses()->first()->isError())->toBeTrue();
+    $this->assertDatabaseMissing('consumables_users', [
+        'consumable_id' => $consumable->id,
+        'assigned_to' => $user->id,
+    ]);
+});

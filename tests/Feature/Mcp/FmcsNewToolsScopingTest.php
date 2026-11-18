@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
 use App\Mcp\Tools\ListAccessoriesTool;
 use App\Mcp\Tools\OffboardUserTool;
 use App\Mcp\Tools\TransferAssetsTool;
@@ -12,282 +10,242 @@ use App\Models\Company;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Mcp\Request;
-use Tests\TestCase;
 
-/**
- * Adversarial cross-company coverage for the tools added alongside the
- * atomic-workflow + rich-filter pass. One happy path, one cross-company
- * rejection path per tool, repeated across FMCS strict mode, floater
- * mode, and scoped-locations mode.
- */
-class FmcsNewToolsScopingTest extends TestCase
-{
-    private Company $companyA;
+beforeEach(function () {
+    [$this->companyA, $this->companyB] = Company::factory()->count(2)->create();
 
-    private Company $companyB;
+    // Non-superuser with the perms the tools need. Superusers bypass
+    // FMCS so would hide the scope enforcement we are trying to verify.
+    $this->userInA = $this->companyA->users()->save(
+        User::factory()
+            ->editUsers()
+            ->editAssets()
+            ->checkinAssets()
+            ->checkoutAssets()
+            ->viewAccessories()
+            ->make()
+    );
+});
 
-    private User $userInA;
+test('strict offboard blocks cross company target', function () {
+    $this->settings->enableMultipleFullCompanySupport();
+    $targetInB = $this->companyB->users()->save(User::factory()->make(['username' => 'leaver']));
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    $this->actingAs($this->userInA);
+    $response = (new OffboardUserTool)->handle(new Request(['username' => 'leaver']));
 
-        [$this->companyA, $this->companyB] = Company::factory()->count(2)->create();
-        // Non-superuser with the perms the tools need. Superusers bypass
-        // FMCS so would hide the scope enforcement we are trying to verify.
-        $this->userInA = $this->companyA->users()->save(
-            User::factory()
-                ->editUsers()
-                ->editAssets()
-                ->checkinAssets()
-                ->checkoutAssets()
-                ->viewAccessories()
-                ->make()
-        );
-    }
+    expect($response->responses()->first()->isError())->toBeTrue();
+    expect($targetInB->fresh()->deleted_at)->toBeNull();
+});
 
-    // --- OffboardUserTool ---
+test('floater offboard blocks cross company target', function () {
+    $this->settings->enableFloaterMode();
+    $targetInB = $this->companyB->users()->save(User::factory()->make(['username' => 'leaver']));
 
-    public function test_strict_offboard_blocks_cross_company_target()
-    {
-        $this->settings->enableMultipleFullCompanySupport();
-        $targetInB = $this->companyB->users()->save(User::factory()->make(['username' => 'leaver']));
+    $this->actingAs($this->userInA);
+    $response = (new OffboardUserTool)->handle(new Request(['username' => 'leaver']));
 
-        $this->actingAs($this->userInA);
-        $response = (new OffboardUserTool)->handle(new Request(['username' => 'leaver']));
+    expect($response->responses()->first()->isError())->toBeTrue();
+    expect($targetInB->fresh()->deleted_at)->toBeNull();
+});
 
-        $this->assertTrue($response->responses()->first()->isError());
-        $this->assertNull($targetInB->fresh()->deleted_at);
-    }
+test('scoped locations offboard blocks cross company target', function () {
+    $this->settings->enableScopedLocationsWithFullMultipleCompanySupport();
+    $targetInB = $this->companyB->users()->save(User::factory()->make(['username' => 'leaver']));
 
-    public function test_floater_offboard_blocks_cross_company_target()
-    {
-        $this->settings->enableFloaterMode();
-        $targetInB = $this->companyB->users()->save(User::factory()->make(['username' => 'leaver']));
+    $this->actingAs($this->userInA);
+    $response = (new OffboardUserTool)->handle(new Request(['username' => 'leaver']));
 
-        $this->actingAs($this->userInA);
-        $response = (new OffboardUserTool)->handle(new Request(['username' => 'leaver']));
+    expect($response->responses()->first()->isError())->toBeTrue();
+    expect($targetInB->fresh()->deleted_at)->toBeNull();
+});
 
-        $this->assertTrue($response->responses()->first()->isError());
-        $this->assertNull($targetInB->fresh()->deleted_at);
-    }
+test('strict offboard allows same company target', function () {
+    $this->settings->enableMultipleFullCompanySupport();
+    $targetInA = $this->companyA->users()->save(User::factory()->make(['username' => 'leaver']));
 
-    public function test_scoped_locations_offboard_blocks_cross_company_target()
-    {
-        $this->settings->enableScopedLocationsWithFullMultipleCompanySupport();
-        $targetInB = $this->companyB->users()->save(User::factory()->make(['username' => 'leaver']));
+    $this->actingAs($this->userInA);
+    $content = (new OffboardUserTool)->handle(new Request([
+        'username' => 'leaver',
+        'dry_run' => false,
+    ]))->getStructuredContent();
 
-        $this->actingAs($this->userInA);
-        $response = (new OffboardUserTool)->handle(new Request(['username' => 'leaver']));
+    expect($content['success'])->toBeTrue();
+    expect(User::withTrashed()->find($targetInA->id)->deleted_at)->not->toBeNull();
+});
 
-        $this->assertTrue($response->responses()->first()->isError());
-        $this->assertNull($targetInB->fresh()->deleted_at);
-    }
+test('strict offboard blocks target with unreachable pivot company', function () {
+    // Multi-company user case: target belongs to BOTH the actor's
+    // company AND a company the actor cannot reach. The scoped
+    // User::where query DOES find them (shared Company A pivot
+    // row), and the Gate::allows('update') check passes, but
+    // offboarding would check in only the actor-visible items via
+    // FMCS-scoped queries and then soft-delete the whole user,
+    // orphaning the Company B assignments. The tool must refuse.
+    $this->settings->enableMultipleFullCompanySupport();
 
-    public function test_strict_offboard_allows_same_company_target()
-    {
-        $this->settings->enableMultipleFullCompanySupport();
-        $targetInA = $this->companyA->users()->save(User::factory()->make(['username' => 'leaver']));
+    // Use ->save(make()) to avoid the User factory's auto-attach a
+    // fresh company behavior in create(), which would add a third
+    // unreachable pivot row and muddy the "both companies, nothing
+    // extra" setup this test is pinning down.
+    $targetBoth = $this->companyA->users()->save(User::factory()->make(['username' => 'leaver']));
+    $this->companyB->users()->attach($targetBoth);
 
-        $this->actingAs($this->userInA);
-        $content = (new OffboardUserTool)->handle(new Request([
-            'username' => 'leaver',
-            'dry_run' => false,
-        ]))->getStructuredContent();
+    $this->actingAs($this->userInA);
+    $response = (new OffboardUserTool)->handle(new Request([
+        'username' => 'leaver',
+        'dry_run' => false,
+    ]));
 
-        $this->assertTrue($content['success']);
-        $this->assertNotNull(User::withTrashed()->find($targetInA->id)->deleted_at);
-    }
+    expect($response->responses()->first()->isError())->toBeTrue();
+    expect($targetBoth->fresh()->deleted_at)->toBeNull();
+});
 
-    public function test_strict_offboard_blocks_target_with_unreachable_pivot_company()
-    {
-        // Multi-company user case: target belongs to BOTH the actor's
-        // company AND a company the actor cannot reach. The scoped
-        // User::where query DOES find them (shared Company A pivot
-        // row), and the Gate::allows('update') check passes, but
-        // offboarding would check in only the actor-visible items via
-        // FMCS-scoped queries and then soft-delete the whole user,
-        // orphaning the Company B assignments. The tool must refuse.
-        $this->settings->enableMultipleFullCompanySupport();
-        // Use ->save(make()) to avoid the User factory's auto-attach a
-        // fresh company behavior in create(), which would add a third
-        // unreachable pivot row and muddy the "both companies, nothing
-        // extra" setup this test is pinning down.
-        $targetBoth = $this->companyA->users()->save(User::factory()->make(['username' => 'leaver']));
-        $this->companyB->users()->attach($targetBoth);
+test('superuser offboard allows target with unreachable pivot company', function () {
+    // Superusers bypass the cross-company guard: they can reach
+    // every company, so there is no "unreachable pivot row" case
+    // for them to protect against.
+    $this->settings->enableMultipleFullCompanySupport();
+    $targetBoth = $this->companyA->users()->save(User::factory()->make(['username' => 'leaver']));
+    $this->companyB->users()->attach($targetBoth);
 
-        $this->actingAs($this->userInA);
-        $response = (new OffboardUserTool)->handle(new Request([
-            'username' => 'leaver',
-            'dry_run' => false,
-        ]));
+    $this->actingAs(User::factory()->superuser()->create());
+    $content = (new OffboardUserTool)->handle(new Request([
+        'username' => 'leaver',
+        'dry_run' => false,
+    ]))->getStructuredContent();
 
-        $this->assertTrue($response->responses()->first()->isError());
-        $this->assertNull($targetBoth->fresh()->deleted_at);
-    }
+    expect($content['success'])->toBeTrue();
+    expect(User::withTrashed()->find($targetBoth->id)->deleted_at)->not->toBeNull();
+});
 
-    public function test_superuser_offboard_allows_target_with_unreachable_pivot_company()
-    {
-        // Superusers bypass the cross-company guard: they can reach
-        // every company, so there is no "unreachable pivot row" case
-        // for them to protect against.
-        $this->settings->enableMultipleFullCompanySupport();
-        $targetBoth = $this->companyA->users()->save(User::factory()->make(['username' => 'leaver']));
-        $this->companyB->users()->attach($targetBoth);
+test('strict transfer blocks cross company source', function () {
+    $this->settings->enableMultipleFullCompanySupport();
+    $sourceInB = $this->companyB->users()->save(User::factory()->make(['username' => 'source']));
+    $targetInA = $this->companyA->users()->save(User::factory()->make(['username' => 'target']));
 
-        $this->actingAs(User::factory()->superuser()->create());
-        $content = (new OffboardUserTool)->handle(new Request([
-            'username' => 'leaver',
-            'dry_run' => false,
-        ]))->getStructuredContent();
+    $this->actingAs($this->userInA);
+    $response = (new TransferAssetsTool)->handle(new Request([
+        'from_username' => 'source',
+        'to_username' => 'target',
+    ]));
 
-        $this->assertTrue($content['success']);
-        $this->assertNotNull(User::withTrashed()->find($targetBoth->id)->deleted_at);
-    }
+    expect($response->responses()->first()->isError())->toBeTrue();
+});
 
-    // --- TransferAssetsTool ---
+test('floater transfer blocks cross company source', function () {
+    $this->settings->enableFloaterMode();
+    $sourceInB = $this->companyB->users()->save(User::factory()->make(['username' => 'source']));
+    $targetInA = $this->companyA->users()->save(User::factory()->make(['username' => 'target']));
 
-    public function test_strict_transfer_blocks_cross_company_source()
-    {
-        $this->settings->enableMultipleFullCompanySupport();
-        $sourceInB = $this->companyB->users()->save(User::factory()->make(['username' => 'source']));
-        $targetInA = $this->companyA->users()->save(User::factory()->make(['username' => 'target']));
+    $this->actingAs($this->userInA);
+    $response = (new TransferAssetsTool)->handle(new Request([
+        'from_username' => 'source',
+        'to_username' => 'target',
+    ]));
 
-        $this->actingAs($this->userInA);
-        $response = (new TransferAssetsTool)->handle(new Request([
-            'from_username' => 'source',
-            'to_username' => 'target',
-        ]));
+    expect($response->responses()->first()->isError())->toBeTrue();
+});
 
-        $this->assertTrue($response->responses()->first()->isError());
-    }
+test('scoped locations transfer blocks cross company target', function () {
+    $this->settings->enableScopedLocationsWithFullMultipleCompanySupport();
+    $sourceInA = $this->companyA->users()->save(User::factory()->make(['username' => 'source']));
+    $targetInB = $this->companyB->users()->save(User::factory()->make(['username' => 'target']));
 
-    public function test_floater_transfer_blocks_cross_company_source()
-    {
-        $this->settings->enableFloaterMode();
-        $sourceInB = $this->companyB->users()->save(User::factory()->make(['username' => 'source']));
-        $targetInA = $this->companyA->users()->save(User::factory()->make(['username' => 'target']));
+    $this->actingAs($this->userInA);
+    $response = (new TransferAssetsTool)->handle(new Request([
+        'from_username' => 'source',
+        'to_username' => 'target',
+    ]));
 
-        $this->actingAs($this->userInA);
-        $response = (new TransferAssetsTool)->handle(new Request([
-            'from_username' => 'source',
-            'to_username' => 'target',
-        ]));
+    expect($response->responses()->first()->isError())->toBeTrue();
+});
 
-        $this->assertTrue($response->responses()->first()->isError());
-    }
+test('strict upload blocks cross company asset', function () {
+    Storage::fake('public');
+    $this->settings->enableMultipleFullCompanySupport();
+    $assetB = Asset::factory()->for($this->companyB)->create();
 
-    public function test_scoped_locations_transfer_blocks_cross_company_target()
-    {
-        $this->settings->enableScopedLocationsWithFullMultipleCompanySupport();
-        $sourceInA = $this->companyA->users()->save(User::factory()->make(['username' => 'source']));
-        $targetInB = $this->companyB->users()->save(User::factory()->make(['username' => 'target']));
+    $this->actingAs($this->userInA);
+    $response = (new UploadAssetImageTool)->handle(new Request([
+        'asset_tag' => $assetB->asset_tag,
+        'image_base64' => 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
+        'mime_type' => 'image/png',
+    ]));
 
-        $this->actingAs($this->userInA);
-        $response = (new TransferAssetsTool)->handle(new Request([
-            'from_username' => 'source',
-            'to_username' => 'target',
-        ]));
+    expect($response->responses()->first()->isError())->toBeTrue();
+    expect($assetB->fresh()->image)->toBeNull();
+});
 
-        $this->assertTrue($response->responses()->first()->isError());
-    }
+test('floater upload blocks cross company asset', function () {
+    Storage::fake('public');
+    $this->settings->enableFloaterMode();
+    $assetB = Asset::factory()->for($this->companyB)->create();
 
-    // --- UploadAssetImageTool ---
+    $this->actingAs($this->userInA);
+    $response = (new UploadAssetImageTool)->handle(new Request([
+        'asset_tag' => $assetB->asset_tag,
+        'image_base64' => 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
+        'mime_type' => 'image/png',
+    ]));
 
-    public function test_strict_upload_blocks_cross_company_asset()
-    {
-        Storage::fake('public');
-        $this->settings->enableMultipleFullCompanySupport();
-        $assetB = Asset::factory()->for($this->companyB)->create();
+    expect($response->responses()->first()->isError())->toBeTrue();
+});
 
-        $this->actingAs($this->userInA);
-        $response = (new UploadAssetImageTool)->handle(new Request([
-            'asset_tag' => $assetB->asset_tag,
-            'image_base64' => 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
-            'mime_type' => 'image/png',
-        ]));
+test('scoped locations upload blocks cross company asset', function () {
+    Storage::fake('public');
+    $this->settings->enableScopedLocationsWithFullMultipleCompanySupport();
+    $assetB = Asset::factory()->for($this->companyB)->create();
 
-        $this->assertTrue($response->responses()->first()->isError());
-        $this->assertNull($assetB->fresh()->image);
-    }
+    $this->actingAs($this->userInA);
+    $response = (new UploadAssetImageTool)->handle(new Request([
+        'asset_tag' => $assetB->asset_tag,
+        'image_base64' => 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
+        'mime_type' => 'image/png',
+    ]));
 
-    public function test_floater_upload_blocks_cross_company_asset()
-    {
-        Storage::fake('public');
-        $this->settings->enableFloaterMode();
-        $assetB = Asset::factory()->for($this->companyB)->create();
+    expect($response->responses()->first()->isError())->toBeTrue();
+});
 
-        $this->actingAs($this->userInA);
-        $response = (new UploadAssetImageTool)->handle(new Request([
-            'asset_tag' => $assetB->asset_tag,
-            'image_base64' => 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
-            'mime_type' => 'image/png',
-        ]));
+test('strict list accessories excludes other company', function () {
+    $this->settings->enableMultipleFullCompanySupport();
+    $mine = Accessory::factory()->for($this->companyA)->create(['name' => 'OursA']);
+    $theirs = Accessory::factory()->for($this->companyB)->create(['name' => 'TheirsB']);
 
-        $this->assertTrue($response->responses()->first()->isError());
-    }
+    $this->actingAs($this->userInA);
+    $content = (new ListAccessoriesTool)->handle(new Request(['limit' => 500]))->getStructuredContent();
+    $names = array_column($content['accessories'], 'name');
 
-    public function test_scoped_locations_upload_blocks_cross_company_asset()
-    {
-        Storage::fake('public');
-        $this->settings->enableScopedLocationsWithFullMultipleCompanySupport();
-        $assetB = Asset::factory()->for($this->companyB)->create();
+    expect($names)->toContain('OursA');
+    expect($names)->not->toContain('TheirsB');
+});
 
-        $this->actingAs($this->userInA);
-        $response = (new UploadAssetImageTool)->handle(new Request([
-            'asset_tag' => $assetB->asset_tag,
-            'image_base64' => 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
-            'mime_type' => 'image/png',
-        ]));
+test('floater list accessories includes null company accessory', function () {
+    $this->settings->enableFloaterMode();
+    $mine = Accessory::factory()->for($this->companyA)->create(['name' => 'OursA']);
+    $floater = Accessory::factory()->create(['name' => 'Floater', 'company_id' => null]);
+    $theirs = Accessory::factory()->for($this->companyB)->create(['name' => 'TheirsB']);
 
-        $this->assertTrue($response->responses()->first()->isError());
-    }
+    $this->actingAs($this->userInA);
+    $content = (new ListAccessoriesTool)->handle(new Request(['limit' => 500]))->getStructuredContent();
+    $names = array_column($content['accessories'], 'name');
 
-    // --- ListAccessoriesTool ---
+    expect($names)->toContain('OursA');
+    expect($names)->toContain('Floater');
+    expect($names)->not->toContain('TheirsB');
+});
 
-    public function test_strict_list_accessories_excludes_other_company()
-    {
-        $this->settings->enableMultipleFullCompanySupport();
-        $mine = Accessory::factory()->for($this->companyA)->create(['name' => 'OursA']);
-        $theirs = Accessory::factory()->for($this->companyB)->create(['name' => 'TheirsB']);
+test('scoped locations list accessories excludes other company', function () {
+    // In scoped-locations mode, visibility also depends on
+    // user-location matching, so we only assert the cross-company
+    // negative here. "Can see own company" is covered by the strict
+    // and floater variants above.
+    $this->settings->enableScopedLocationsWithFullMultipleCompanySupport();
+    Accessory::factory()->for($this->companyB)->create(['name' => 'TheirsB']);
 
-        $this->actingAs($this->userInA);
-        $content = (new ListAccessoriesTool)->handle(new Request(['limit' => 500]))->getStructuredContent();
-        $names = array_column($content['accessories'], 'name');
+    $this->actingAs($this->userInA);
+    $content = (new ListAccessoriesTool)->handle(new Request(['limit' => 500]))->getStructuredContent();
+    $names = array_column($content['accessories'], 'name');
 
-        $this->assertContains('OursA', $names);
-        $this->assertNotContains('TheirsB', $names);
-    }
-
-    public function test_floater_list_accessories_includes_null_company_accessory()
-    {
-        $this->settings->enableFloaterMode();
-        $mine = Accessory::factory()->for($this->companyA)->create(['name' => 'OursA']);
-        $floater = Accessory::factory()->create(['name' => 'Floater', 'company_id' => null]);
-        $theirs = Accessory::factory()->for($this->companyB)->create(['name' => 'TheirsB']);
-
-        $this->actingAs($this->userInA);
-        $content = (new ListAccessoriesTool)->handle(new Request(['limit' => 500]))->getStructuredContent();
-        $names = array_column($content['accessories'], 'name');
-
-        $this->assertContains('OursA', $names);
-        $this->assertContains('Floater', $names);
-        $this->assertNotContains('TheirsB', $names);
-    }
-
-    public function test_scoped_locations_list_accessories_excludes_other_company()
-    {
-        // In scoped-locations mode, visibility also depends on
-        // user-location matching, so we only assert the cross-company
-        // negative here. "Can see own company" is covered by the strict
-        // and floater variants above.
-        $this->settings->enableScopedLocationsWithFullMultipleCompanySupport();
-        Accessory::factory()->for($this->companyB)->create(['name' => 'TheirsB']);
-
-        $this->actingAs($this->userInA);
-        $content = (new ListAccessoriesTool)->handle(new Request(['limit' => 500]))->getStructuredContent();
-        $names = array_column($content['accessories'], 'name');
-
-        $this->assertNotContains('TheirsB', $names);
-    }
-}
+    expect($names)->not->toContain('TheirsB');
+});

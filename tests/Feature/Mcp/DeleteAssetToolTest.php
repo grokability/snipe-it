@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
 use App\Events\CheckoutableCheckedIn;
 use App\Mcp\Servers\SnipeMCPServer;
 use App\Mcp\Tools\DeleteAssetTool;
@@ -10,245 +8,218 @@ use App\Models\User;
 use Illuminate\Support\Facades\Event;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class DeleteAssetToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->deleteAssets()->create());
+});
+
+function handle(array $args): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->deleteAssets()->create());
-    }
-
-    private function handle(array $args): ResponseFactory
-    {
-        return (new DeleteAssetTool)->handle(new Request($args));
-    }
-
-    public function test_deletes_asset_by_asset_tag()
-    {
-        $asset = Asset::factory()->create();
-
-        $content = $this->handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertSoftDeleted('assets', ['id' => $asset->id]);
-    }
-
-    public function test_deletes_asset_by_numeric_id()
-    {
-        $asset = Asset::factory()->create();
-
-        $content = $this->handle(['id' => $asset->id])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertSoftDeleted('assets', ['id' => $asset->id]);
-    }
-
-    public function test_deletes_asset_by_serial()
-    {
-        $asset = Asset::factory()->create(['serial' => 'SN-DELETE-001']);
-
-        $content = $this->handle(['serial' => 'SN-DELETE-001'])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertSoftDeleted('assets', ['id' => $asset->id]);
-    }
-
-    public function test_returns_error_when_asset_not_found()
-    {
-        $this->assertTrue($this->handle(['asset_tag' => 'DOES-NOT-EXIST'])->responses()->first()->isError());
-    }
-
-    public function test_checks_in_asset_before_deleting_when_checked_out()
-    {
-        Event::fake([CheckoutableCheckedIn::class]);
-
-        $user = User::factory()->create();
-        $asset = Asset::factory()->assignedToUser($user)->create();
-
-        $this->handle(['asset_tag' => $asset->asset_tag]);
-
-        Event::assertDispatched(CheckoutableCheckedIn::class, function (CheckoutableCheckedIn $event) use ($asset) {
-            return $event->checkoutable->id === $asset->id;
-        });
-
-        $this->assertSoftDeleted('assets', ['id' => $asset->id]);
-    }
-
-    public function test_deletes_unassigned_asset_without_firing_checkin_event()
-    {
-        Event::fake([CheckoutableCheckedIn::class]);
-
-        $asset = Asset::factory()->create();
-
-        $this->handle(['asset_tag' => $asset->asset_tag]);
-
-        Event::assertNotDispatched(CheckoutableCheckedIn::class);
-        $this->assertSoftDeleted('assets', ['id' => $asset->id]);
-    }
-
-    public function test_response_includes_asset_tag()
-    {
-        $asset = Asset::factory()->create(['asset_tag' => 'TAG-DEL-001']);
-
-        $content = $this->handle(['asset_tag' => 'TAG-DEL-001'])->getStructuredContent();
-
-        $this->assertEquals('TAG-DEL-001', $content['asset_tag']);
-    }
-
-    public function test_returns_error_when_user_lacks_permission()
-    {
-        $this->actingAs(User::factory()->create());
-        $asset = Asset::factory()->create();
-
-        $this->assertTrue($this->handle(['asset_tag' => $asset->asset_tag])->responses()->first()->isError());
-        $this->assertNotSoftDeleted($asset);
-    }
-
-    // --- Bulk delete: array-identifier shape ---
-
-    public function test_array_shape_defaults_to_dry_run_and_does_not_delete()
-    {
-        $a = Asset::factory()->create();
-        $b = Asset::factory()->create();
-
-        $content = $this->handle(['ids' => [$a->id, $b->id]])->getStructuredContent();
-
-        $this->assertTrue($content['dry_run']);
-        $this->assertSame(2, $content['total_matched']);
-        $this->assertSame(2, $content['will_delete']);
-        $this->assertNotSoftDeleted($a);
-        $this->assertNotSoftDeleted($b);
-    }
-
-    public function test_array_shape_commits_when_dry_run_false()
-    {
-        $a = Asset::factory()->create();
-        $b = Asset::factory()->create();
-
-        $content = $this->handle([
-            'ids' => [$a->id, $b->id],
-            'dry_run' => false,
-        ])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertFalse($content['dry_run']);
-        $this->assertSame(2, $content['deleted_count']);
-        $this->assertSoftDeleted('assets', ['id' => $a->id]);
-        $this->assertSoftDeleted('assets', ['id' => $b->id]);
-    }
-
-    public function test_array_shape_accepts_asset_tags()
-    {
-        $a = Asset::factory()->create(['asset_tag' => 'BULK-A']);
-        $b = Asset::factory()->create(['asset_tag' => 'BULK-B']);
-
-        $this->handle([
-            'asset_tags' => ['BULK-A', 'BULK-B'],
-            'dry_run' => false,
-        ]);
-
-        $this->assertSoftDeleted('assets', ['id' => $a->id]);
-        $this->assertSoftDeleted('assets', ['id' => $b->id]);
-    }
-
-    // --- Bulk delete: filter shape ---
-
-    public function test_filter_shape_defaults_to_dry_run()
-    {
-        $a = Asset::factory()->create();
-        $b = Asset::factory()->create();
-
-        $content = $this->handle([
-            'created_before' => now()->addDay()->toDateString(),
-        ])->getStructuredContent();
-
-        $this->assertTrue($content['dry_run']);
-        $this->assertGreaterThanOrEqual(2, $content['total_matched']);
-        $this->assertNotSoftDeleted($a);
-        $this->assertNotSoftDeleted($b);
-    }
-
-    public function test_filter_shape_requires_confirm_count_on_commit()
-    {
-        Asset::factory()->create();
-
-        $response = $this->handle([
-            'created_before' => now()->addDay()->toDateString(),
-            'dry_run' => false,
-        ]);
-
-        $this->assertTrue($response->responses()->first()->isError());
-    }
-
-    public function test_filter_shape_rejects_mismatched_confirm_count()
-    {
-        $existingCount = Asset::count();
-        Asset::factory()->count(3)->create();
-
-        $response = $this->handle([
-            'created_before' => now()->addDay()->toDateString(),
-            'dry_run' => false,
-            'confirm_count' => $existingCount + 999,
-        ]);
-
-        $this->assertTrue($response->responses()->first()->isError());
-        $this->assertSame($existingCount + 3, Asset::count());
-    }
-
-    public function test_filter_shape_commits_when_confirm_count_matches()
-    {
-        // Use a filter narrow enough to only match our seeded rows.
-        $tagPrefix = 'BULK-FILT-';
-        $assets = Asset::factory()->count(3)->sequence(
-            ['asset_tag' => $tagPrefix.'1'],
-            ['asset_tag' => $tagPrefix.'2'],
-            ['asset_tag' => $tagPrefix.'3'],
-        )->create();
-
-        $content = $this->handle([
-            'search' => $tagPrefix,
-            'dry_run' => false,
-            'confirm_count' => 3,
-        ])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertSame(3, $content['deleted_count']);
-        foreach ($assets as $asset) {
-            $this->assertSoftDeleted('assets', ['id' => $asset->id]);
-        }
-    }
-
-    public function test_filter_shape_resolves_company_name_to_id()
-    {
-        $company = \App\Models\Company::factory()->create(['name' => 'BulkCo']);
-        Asset::factory()->create(['company_id' => $company->id]);
-        Asset::factory()->create();
-
-        $content = $this->handle(['company_name' => 'BulkCo'])->getStructuredContent();
-
-        $this->assertTrue($content['dry_run']);
-        $this->assertSame(1, $content['total_matched']);
-    }
-
-    public function test_does_not_delete_assets_for_an_unknown_model_name(): void
-    {
-        config(['app.debug' => false]);
-        $asset = Asset::factory()->create();
-
-        $response = SnipeMCPServer::tool(DeleteAssetTool::class, [
-            'model_name' => 'Unknown Bulk Delete Model',
-            'dry_run' => false,
-            'confirm_count' => 1,
-        ]);
-
-        $response->assertHasErrors([
-            trans('mcp.fk_not_found', [
-                'field' => 'model_name',
-                'value' => 'Unknown Bulk Delete Model',
-            ]),
-        ]);
-        $this->assertNotSoftDeleted($asset);
-    }
+    return handle(new Request($args));
 }
+
+test('deletes asset by asset tag', function () {
+    $asset = Asset::factory()->create();
+
+    $content = handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    $this->assertSoftDeleted('assets', ['id' => $asset->id]);
+});
+
+test('deletes asset by numeric id', function () {
+    $asset = Asset::factory()->create();
+
+    $content = handle(['id' => $asset->id])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    $this->assertSoftDeleted('assets', ['id' => $asset->id]);
+});
+
+test('deletes asset by serial', function () {
+    $asset = Asset::factory()->create(['serial' => 'SN-DELETE-001']);
+
+    $content = handle(['serial' => 'SN-DELETE-001'])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    $this->assertSoftDeleted('assets', ['id' => $asset->id]);
+});
+
+test('returns error when asset not found', function () {
+    expect(handle(['asset_tag' => 'DOES-NOT-EXIST'])->responses()->first()->isError())->toBeTrue();
+});
+
+test('checks in asset before deleting when checked out', function () {
+    Event::fake([CheckoutableCheckedIn::class]);
+
+    $user = User::factory()->create();
+    $asset = Asset::factory()->assignedToUser($user)->create();
+
+    handle(['asset_tag' => $asset->asset_tag]);
+
+    Event::assertDispatched(CheckoutableCheckedIn::class, function (CheckoutableCheckedIn $event) use ($asset) {
+        return $event->checkoutable->id === $asset->id;
+    });
+
+    $this->assertSoftDeleted('assets', ['id' => $asset->id]);
+});
+
+test('deletes unassigned asset without firing checkin event', function () {
+    Event::fake([CheckoutableCheckedIn::class]);
+
+    $asset = Asset::factory()->create();
+
+    handle(['asset_tag' => $asset->asset_tag]);
+
+    Event::assertNotDispatched(CheckoutableCheckedIn::class);
+    $this->assertSoftDeleted('assets', ['id' => $asset->id]);
+});
+
+test('response includes asset tag', function () {
+    $asset = Asset::factory()->create(['asset_tag' => 'TAG-DEL-001']);
+
+    $content = handle(['asset_tag' => 'TAG-DEL-001'])->getStructuredContent();
+
+    expect($content['asset_tag'])->toEqual('TAG-DEL-001');
+});
+
+test('returns error when user lacks permission', function () {
+    $this->actingAs(User::factory()->create());
+    $asset = Asset::factory()->create();
+
+    expect(handle(['asset_tag' => $asset->asset_tag])->responses()->first()->isError())->toBeTrue();
+    $this->assertNotSoftDeleted($asset);
+});
+
+test('array shape defaults to dry run and does not delete', function () {
+    $a = Asset::factory()->create();
+    $b = Asset::factory()->create();
+
+    $content = handle(['ids' => [$a->id, $b->id]])->getStructuredContent();
+
+    expect($content['dry_run'])->toBeTrue();
+    expect($content['total_matched'])->toBe(2);
+    expect($content['will_delete'])->toBe(2);
+    $this->assertNotSoftDeleted($a);
+    $this->assertNotSoftDeleted($b);
+});
+
+test('array shape commits when dry run false', function () {
+    $a = Asset::factory()->create();
+    $b = Asset::factory()->create();
+
+    $content = handle([
+        'ids' => [$a->id, $b->id],
+        'dry_run' => false,
+    ])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    expect($content['dry_run'])->toBeFalse();
+    expect($content['deleted_count'])->toBe(2);
+    $this->assertSoftDeleted('assets', ['id' => $a->id]);
+    $this->assertSoftDeleted('assets', ['id' => $b->id]);
+});
+
+test('array shape accepts asset tags', function () {
+    $a = Asset::factory()->create(['asset_tag' => 'BULK-A']);
+    $b = Asset::factory()->create(['asset_tag' => 'BULK-B']);
+
+    handle([
+        'asset_tags' => ['BULK-A', 'BULK-B'],
+        'dry_run' => false,
+    ]);
+
+    $this->assertSoftDeleted('assets', ['id' => $a->id]);
+    $this->assertSoftDeleted('assets', ['id' => $b->id]);
+});
+
+test('filter shape defaults to dry run', function () {
+    $a = Asset::factory()->create();
+    $b = Asset::factory()->create();
+
+    $content = handle([
+        'created_before' => now()->addDay()->toDateString(),
+    ])->getStructuredContent();
+
+    expect($content['dry_run'])->toBeTrue();
+    expect($content['total_matched'])->toBeGreaterThanOrEqual(2);
+    $this->assertNotSoftDeleted($a);
+    $this->assertNotSoftDeleted($b);
+});
+
+test('filter shape requires confirm count on commit', function () {
+    Asset::factory()->create();
+
+    $response = handle([
+        'created_before' => now()->addDay()->toDateString(),
+        'dry_run' => false,
+    ]);
+
+    expect($response->responses()->first()->isError())->toBeTrue();
+});
+
+test('filter shape rejects mismatched confirm count', function () {
+    $existingCount = Asset::count();
+    Asset::factory()->count(3)->create();
+
+    $response = handle([
+        'created_before' => now()->addDay()->toDateString(),
+        'dry_run' => false,
+        'confirm_count' => $existingCount + 999,
+    ]);
+
+    expect($response->responses()->first()->isError())->toBeTrue();
+    expect(Asset::count())->toBe($existingCount + 3);
+});
+
+test('filter shape commits when confirm count matches', function () {
+    // Use a filter narrow enough to only match our seeded rows.
+    $tagPrefix = 'BULK-FILT-';
+    $assets = Asset::factory()->count(3)->sequence(
+        ['asset_tag' => $tagPrefix.'1'],
+        ['asset_tag' => $tagPrefix.'2'],
+        ['asset_tag' => $tagPrefix.'3'],
+    )->create();
+
+    $content = handle([
+        'search' => $tagPrefix,
+        'dry_run' => false,
+        'confirm_count' => 3,
+    ])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    expect($content['deleted_count'])->toBe(3);
+    foreach ($assets as $asset) {
+        $this->assertSoftDeleted('assets', ['id' => $asset->id]);
+    }
+});
+
+test('filter shape resolves company name to id', function () {
+    $company = \App\Models\Company::factory()->create(['name' => 'BulkCo']);
+    Asset::factory()->create(['company_id' => $company->id]);
+    Asset::factory()->create();
+
+    $content = handle(['company_name' => 'BulkCo'])->getStructuredContent();
+
+    expect($content['dry_run'])->toBeTrue();
+    expect($content['total_matched'])->toBe(1);
+});
+
+test('does not delete assets for an unknown model name', function () {
+    config(['app.debug' => false]);
+    $asset = Asset::factory()->create();
+
+    $response = SnipeMCPServer::tool(DeleteAssetTool::class, [
+        'model_name' => 'Unknown Bulk Delete Model',
+        'dry_run' => false,
+        'confirm_count' => 1,
+    ]);
+
+    $response->assertHasErrors([
+        trans('mcp.fk_not_found', [
+            'field' => 'model_name',
+            'value' => 'Unknown Bulk Delete Model',
+        ]),
+    ]);
+    $this->assertNotSoftDeleted($asset);
+});

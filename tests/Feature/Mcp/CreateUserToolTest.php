@@ -1,8 +1,5 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\CreateUserTool;
 use App\Models\Department;
 use App\Models\Group;
 use App\Models\Location;
@@ -10,193 +7,173 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class CreateUserToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->createUsers()->create());
+});
+
+function handle(array $args): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->createUsers()->create());
-    }
-
-    private function handle(array $args): ResponseFactory
-    {
-        return (new CreateUserTool)->handle(new Request($args));
-    }
-
-    public function test_creates_user_with_required_fields()
-    {
-        $content = $this->handle([
-            'first_name' => 'Jane',
-            'last_name' => 'Doe',
-            'username' => 'jane.doe.mcp',
-        ])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertDatabaseHas('users', ['username' => 'jane.doe.mcp', 'first_name' => 'Jane']);
-    }
-
-    public function test_response_includes_new_user_id_and_username()
-    {
-        $content = $this->handle([
-            'first_name' => 'Test',
-            'username' => 'new.user.mcp',
-        ])->getStructuredContent();
-
-        $this->assertArrayHasKey('id', $content);
-        $this->assertArrayHasKey('username', $content);
-        $this->assertEquals('new.user.mcp', $content['username']);
-        $this->assertIsInt($content['id']);
-    }
-
-    public function test_hashes_password_when_provided()
-    {
-        $this->handle([
-            'first_name' => 'Secure',
-            'username' => 'secure.user.mcp',
-            'password' => 'secret1234',
-        ]);
-
-        $user = User::where('username', 'secure.user.mcp')->first();
-        $this->assertNotNull($user);
-        $this->assertTrue(Hash::check('secret1234', $user->password));
-    }
-
-    public function test_creates_user_with_no_password_when_omitted()
-    {
-        $this->handle([
-            'first_name' => 'Nopass',
-            'username' => 'nopass.user.mcp',
-        ]);
-
-        $user = User::where('username', 'nopass.user.mcp')->first();
-        $this->assertNotNull($user);
-        $this->assertFalse(Hash::check('', $user->password));
-    }
-
-    public function test_creates_user_with_email_and_contact_fields()
-    {
-        $this->handle([
-            'first_name' => 'Contact',
-            'username' => 'contact.user.mcp',
-            'email' => 'contact@example.com',
-            'phone' => '555-1234',
-            'jobtitle' => 'Engineer',
-        ]);
-
-        $this->assertDatabaseHas('users', [
-            'username' => 'contact.user.mcp',
-            'email' => 'contact@example.com',
-            'phone' => '555-1234',
-            'jobtitle' => 'Engineer',
-        ]);
-    }
-
-    public function test_creates_user_with_department_and_location()
-    {
-        $department = Department::factory()->create();
-        $location = Location::factory()->create();
-
-        $this->handle([
-            'first_name' => 'Located',
-            'username' => 'located.user.mcp',
-            'department_id' => $department->id,
-            'location_id' => $location->id,
-        ]);
-
-        $this->assertDatabaseHas('users', [
-            'username' => 'located.user.mcp',
-            'department_id' => $department->id,
-            'location_id' => $location->id,
-        ]);
-    }
-
-    public function test_returns_error_when_username_missing()
-    {
-        $this->assertTrue($this->handle([
-            'first_name' => 'No Username',
-        ])->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_first_name_missing()
-    {
-        $this->assertTrue($this->handle([
-            'username' => 'no.firstname.mcp',
-        ])->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_username_already_exists()
-    {
-        User::factory()->create(['username' => 'duplicate.mcp']);
-
-        $response = $this->handle([
-            'first_name' => 'Dupe',
-            'username' => 'duplicate.mcp',
-        ]);
-
-        $this->assertTrue($response->responses()->first()->isError());
-    }
-
-    public function test_activates_user_by_default()
-    {
-        $this->handle([
-            'first_name' => 'Active',
-            'username' => 'default.active.mcp',
-        ]);
-
-        $this->assertDatabaseHas('users', ['username' => 'default.active.mcp', 'activated' => 1]);
-    }
-
-    public function test_can_create_deactivated_user()
-    {
-        $this->handle([
-            'first_name' => 'Inactive',
-            'username' => 'inactive.user.mcp',
-            'activated' => false,
-        ]);
-
-        $this->assertDatabaseHas('users', ['username' => 'inactive.user.mcp', 'activated' => 0]);
-    }
-
-    public function test_returns_error_when_user_lacks_permission()
-    {
-        $this->actingAs(User::factory()->create());
-
-        $this->assertTrue($this->handle([
-            'first_name' => 'Blocked',
-            'username' => 'blocked.user.mcp',
-        ])->responses()->first()->isError());
-        $this->assertDatabaseMissing('users', ['username' => 'blocked.user.mcp']);
-    }
-
-    public function test_superadmin_can_assign_group_ids()
-    {
-        $this->actingAs(User::factory()->superuser()->create());
-        $group = Group::factory()->create();
-
-        $content = $this->handle([
-            'first_name' => 'GroupedUser',
-            'username' => 'grouped.user.mcp',
-            'group_ids' => [$group->id],
-        ])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $user = User::where('username', 'grouped.user.mcp')->first();
-        $this->assertNotNull($user);
-        $this->assertTrue($user->groups->contains($group->id));
-    }
-
-    public function test_non_superadmin_cannot_assign_group_ids()
-    {
-        $group = Group::factory()->create();
-
-        $response = $this->handle([
-            'first_name' => 'Denied',
-            'username' => 'denied.groups.mcp',
-            'group_ids' => [$group->id],
-        ]);
-
-        $this->assertTrue($response->responses()->first()->isError());
-    }
+    return handle(new Request($args));
 }
+
+test('creates user with required fields', function () {
+    $content = handle([
+        'first_name' => 'Jane',
+        'last_name' => 'Doe',
+        'username' => 'jane.doe.mcp',
+    ])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    $this->assertDatabaseHas('users', ['username' => 'jane.doe.mcp', 'first_name' => 'Jane']);
+});
+
+test('response includes new user id and username', function () {
+    $content = handle([
+        'first_name' => 'Test',
+        'username' => 'new.user.mcp',
+    ])->getStructuredContent();
+
+    expect($content)->toHaveKey('id');
+    expect($content)->toHaveKey('username');
+    expect($content['username'])->toEqual('new.user.mcp');
+    expect($content['id'])->toBeInt();
+});
+
+test('hashes password when provided', function () {
+    handle([
+        'first_name' => 'Secure',
+        'username' => 'secure.user.mcp',
+        'password' => 'secret1234',
+    ]);
+
+    $user = User::where('username', 'secure.user.mcp')->first();
+    expect($user)->not->toBeNull();
+    expect(Hash::check('secret1234', $user->password))->toBeTrue();
+});
+
+test('creates user with no password when omitted', function () {
+    handle([
+        'first_name' => 'Nopass',
+        'username' => 'nopass.user.mcp',
+    ]);
+
+    $user = User::where('username', 'nopass.user.mcp')->first();
+    expect($user)->not->toBeNull();
+    expect(Hash::check('', $user->password))->toBeFalse();
+});
+
+test('creates user with email and contact fields', function () {
+    handle([
+        'first_name' => 'Contact',
+        'username' => 'contact.user.mcp',
+        'email' => 'contact@example.com',
+        'phone' => '555-1234',
+        'jobtitle' => 'Engineer',
+    ]);
+
+    $this->assertDatabaseHas('users', [
+        'username' => 'contact.user.mcp',
+        'email' => 'contact@example.com',
+        'phone' => '555-1234',
+        'jobtitle' => 'Engineer',
+    ]);
+});
+
+test('creates user with department and location', function () {
+    $department = Department::factory()->create();
+    $location = Location::factory()->create();
+
+    handle([
+        'first_name' => 'Located',
+        'username' => 'located.user.mcp',
+        'department_id' => $department->id,
+        'location_id' => $location->id,
+    ]);
+
+    $this->assertDatabaseHas('users', [
+        'username' => 'located.user.mcp',
+        'department_id' => $department->id,
+        'location_id' => $location->id,
+    ]);
+});
+
+test('returns error when username missing', function () {
+    expect(handle([
+        'first_name' => 'No Username',
+    ])->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when first name missing', function () {
+    expect(handle([
+        'username' => 'no.firstname.mcp',
+    ])->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when username already exists', function () {
+    User::factory()->create(['username' => 'duplicate.mcp']);
+
+    $response = handle([
+        'first_name' => 'Dupe',
+        'username' => 'duplicate.mcp',
+    ]);
+
+    expect($response->responses()->first()->isError())->toBeTrue();
+});
+
+test('activates user by default', function () {
+    handle([
+        'first_name' => 'Active',
+        'username' => 'default.active.mcp',
+    ]);
+
+    $this->assertDatabaseHas('users', ['username' => 'default.active.mcp', 'activated' => 1]);
+});
+
+test('can create deactivated user', function () {
+    handle([
+        'first_name' => 'Inactive',
+        'username' => 'inactive.user.mcp',
+        'activated' => false,
+    ]);
+
+    $this->assertDatabaseHas('users', ['username' => 'inactive.user.mcp', 'activated' => 0]);
+});
+
+test('returns error when user lacks permission', function () {
+    $this->actingAs(User::factory()->create());
+
+    expect(handle([
+        'first_name' => 'Blocked',
+        'username' => 'blocked.user.mcp',
+    ])->responses()->first()->isError())->toBeTrue();
+    $this->assertDatabaseMissing('users', ['username' => 'blocked.user.mcp']);
+});
+
+test('superadmin can assign group ids', function () {
+    $this->actingAs(User::factory()->superuser()->create());
+    $group = Group::factory()->create();
+
+    $content = handle([
+        'first_name' => 'GroupedUser',
+        'username' => 'grouped.user.mcp',
+        'group_ids' => [$group->id],
+    ])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    $user = User::where('username', 'grouped.user.mcp')->first();
+    expect($user)->not->toBeNull();
+    expect($user->groups->contains($group->id))->toBeTrue();
+});
+
+test('non superadmin cannot assign group ids', function () {
+    $group = Group::factory()->create();
+
+    $response = handle([
+        'first_name' => 'Denied',
+        'username' => 'denied.groups.mcp',
+        'group_ids' => [$group->id],
+    ]);
+
+    expect($response->responses()->first()->isError())->toBeTrue();
+});

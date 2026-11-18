@@ -1,62 +1,48 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\ShowCategoryTool;
 use App\Models\Category;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class ShowCategoryToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->viewCategories()->create());
+});
+
+function handle(array $args = []): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->viewCategories()->create());
-    }
-
-    private function handle(array $args = []): ResponseFactory
-    {
-        return (new ShowCategoryTool)->handle(new Request($args));
-    }
-
-    public function test_returns_category_by_id()
-    {
-        $category = Category::factory()->create(['name' => 'Lookup By ID Cat']);
-
-        $content = $this->handle(['id' => $category->id])->getStructuredContent();
-
-        $this->assertEquals($category->id, $content['id']);
-        $this->assertEquals('Lookup By ID Cat', $content['name']);
-    }
-
-    public function test_returns_category_by_name()
-    {
-        $category = Category::factory()->create(['name' => 'Lookup By Name Cat']);
-
-        $content = $this->handle(['name' => 'Lookup By Name Cat'])->getStructuredContent();
-
-        $this->assertEquals($category->id, $content['id']);
-        $this->assertEquals('Lookup By Name Cat', $content['name']);
-    }
-
-    public function test_returns_error_when_no_identifier_provided()
-    {
-        $this->assertTrue($this->handle()->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_not_found()
-    {
-        $this->assertTrue($this->handle(['id' => 999999])->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_user_lacks_permission()
-    {
-        $category = Category::factory()->create();
-        $this->actingAs(User::factory()->create());
-
-        $this->assertTrue($this->handle(['id' => $category->id])->responses()->first()->isError());
-    }
+    return handle(new Request($args));
 }
+
+test('returns category by id', function () {
+    $category = Category::factory()->create(['name' => 'Lookup By ID Cat']);
+
+    $content = handle(['id' => $category->id])->getStructuredContent();
+
+    expect($content['id'])->toEqual($category->id);
+    expect($content['name'])->toEqual('Lookup By ID Cat');
+});
+
+test('returns category by name', function () {
+    $category = Category::factory()->create(['name' => 'Lookup By Name Cat']);
+
+    $content = handle(['name' => 'Lookup By Name Cat'])->getStructuredContent();
+
+    expect($content['id'])->toEqual($category->id);
+    expect($content['name'])->toEqual('Lookup By Name Cat');
+});
+
+test('returns error when no identifier provided', function () {
+    expect(handle()->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when not found', function () {
+    expect(handle(['id' => 999999])->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when user lacks permission', function () {
+    $category = Category::factory()->create();
+    $this->actingAs(User::factory()->create());
+
+    expect(handle(['id' => $category->id])->responses()->first()->isError())->toBeTrue();
+});

@@ -1,61 +1,47 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\ShowManufacturerTool;
 use App\Models\Manufacturer;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class ShowManufacturerToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->viewManufacturers()->create());
+});
+
+function handle(array $args = []): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->viewManufacturers()->create());
-    }
-
-    private function handle(array $args = []): ResponseFactory
-    {
-        return (new ShowManufacturerTool)->handle(new Request($args));
-    }
-
-    public function test_returns_manufacturer_by_id()
-    {
-        $manufacturer = Manufacturer::factory()->create(['name' => 'Show By ID Manufacturer']);
-
-        $content = $this->handle(['id' => $manufacturer->id])->getStructuredContent();
-
-        $this->assertEquals($manufacturer->id, $content['id']);
-        $this->assertEquals('Show By ID Manufacturer', $content['name']);
-    }
-
-    public function test_returns_manufacturer_by_name()
-    {
-        Manufacturer::factory()->create(['name' => 'Show By Name Manufacturer']);
-
-        $content = $this->handle(['name' => 'Show By Name Manufacturer'])->getStructuredContent();
-
-        $this->assertEquals('Show By Name Manufacturer', $content['name']);
-    }
-
-    public function test_returns_error_when_no_identifier_provided()
-    {
-        $this->assertTrue($this->handle()->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_not_found()
-    {
-        $this->assertTrue($this->handle(['id' => 999999])->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_user_lacks_permission()
-    {
-        $manufacturer = Manufacturer::factory()->create();
-        $this->actingAs(User::factory()->create());
-
-        $this->assertTrue($this->handle(['id' => $manufacturer->id])->responses()->first()->isError());
-    }
+    return handle(new Request($args));
 }
+
+test('returns manufacturer by id', function () {
+    $manufacturer = Manufacturer::factory()->create(['name' => 'Show By ID Manufacturer']);
+
+    $content = handle(['id' => $manufacturer->id])->getStructuredContent();
+
+    expect($content['id'])->toEqual($manufacturer->id);
+    expect($content['name'])->toEqual('Show By ID Manufacturer');
+});
+
+test('returns manufacturer by name', function () {
+    Manufacturer::factory()->create(['name' => 'Show By Name Manufacturer']);
+
+    $content = handle(['name' => 'Show By Name Manufacturer'])->getStructuredContent();
+
+    expect($content['name'])->toEqual('Show By Name Manufacturer');
+});
+
+test('returns error when no identifier provided', function () {
+    expect(handle()->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when not found', function () {
+    expect(handle(['id' => 999999])->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when user lacks permission', function () {
+    $manufacturer = Manufacturer::factory()->create();
+    $this->actingAs(User::factory()->create());
+
+    expect(handle(['id' => $manufacturer->id])->responses()->first()->isError())->toBeTrue();
+});

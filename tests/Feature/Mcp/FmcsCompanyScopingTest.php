@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
 use App\Mcp\Tools\AuditAssetTool;
 use App\Mcp\Tools\CheckinAssetTool;
 use App\Mcp\Tools\CheckoutAssetTool;
@@ -11,208 +9,165 @@ use App\Models\Asset;
 use App\Models\Company;
 use App\Models\User;
 use Laravel\Mcp\Request;
-use Tests\TestCase;
 
-class FmcsCompanyScopingTest extends TestCase
-{
-    private Company $companyA;
+beforeEach(function () {
+    [$this->companyA, $this->companyB] = Company::factory()->count(2)->create();
 
-    private Company $companyB;
+    $this->assetA = Asset::factory()->for($this->companyA)->create();
+    $this->assetB = Asset::factory()->for($this->companyB)->create();
 
-    private Asset $assetA;
+    $this->userInCompanyA = $this->companyA->users()->save(
+        User::factory()->editAssets()->deleteAssets()->auditAssets()->checkinAssets()->checkoutAssets()->make()
+    );
+    $this->superUser = $this->companyA->users()->save(User::factory()->superuser()->make());
 
-    private Asset $assetB;
+    $this->settings->enableMultipleFullCompanySupport();
+});
 
-    private User $userInCompanyA;
+test('update blocked for cross company asset', function () {
+    $this->actingAs($this->userInCompanyA);
 
-    private User $superUser;
+    $response = (new UpdateAssetTool)->handle(new Request([
+        'asset_tag' => $this->assetB->asset_tag,
+        'name' => 'Should Not Apply',
+    ]));
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    expect($response->responses()->first()->isError())->toBeTrue();
+    $this->assertDatabaseMissing('assets', ['id' => $this->assetB->id, 'name' => 'Should Not Apply']);
+});
 
-        [$this->companyA, $this->companyB] = Company::factory()->count(2)->create();
+test('update allowed for same company asset', function () {
+    $this->actingAs($this->userInCompanyA);
 
-        $this->assetA = Asset::factory()->for($this->companyA)->create();
-        $this->assetB = Asset::factory()->for($this->companyB)->create();
+    $content = (new UpdateAssetTool)->handle(new Request([
+        'asset_tag' => $this->assetA->asset_tag,
+        'name' => 'Updated Name',
+    ]))->getStructuredContent();
 
-        $this->userInCompanyA = $this->companyA->users()->save(
-            User::factory()->editAssets()->deleteAssets()->auditAssets()->checkinAssets()->checkoutAssets()->make()
-        );
-        $this->superUser = $this->companyA->users()->save(User::factory()->superuser()->make());
+    expect($content['success'])->toBeTrue();
+    $this->assertDatabaseHas('assets', ['id' => $this->assetA->id, 'name' => 'Updated Name']);
+});
 
-        $this->settings->enableMultipleFullCompanySupport();
-    }
+test('delete blocked for cross company asset', function () {
+    $this->actingAs($this->userInCompanyA);
 
-    // --- UpdateAssetTool ---
+    $response = (new DeleteAssetTool)->handle(new Request([
+        'asset_tag' => $this->assetB->asset_tag,
+    ]));
 
-    public function test_update_blocked_for_cross_company_asset()
-    {
-        $this->actingAs($this->userInCompanyA);
+    expect($response->responses()->first()->isError())->toBeTrue();
+    $this->assertNotSoftDeleted($this->assetB);
+});
 
-        $response = (new UpdateAssetTool)->handle(new Request([
-            'asset_tag' => $this->assetB->asset_tag,
-            'name' => 'Should Not Apply',
-        ]));
+test('delete allowed for same company asset', function () {
+    $this->actingAs($this->userInCompanyA);
 
-        $this->assertTrue($response->responses()->first()->isError());
-        $this->assertDatabaseMissing('assets', ['id' => $this->assetB->id, 'name' => 'Should Not Apply']);
-    }
+    $content = (new DeleteAssetTool)->handle(new Request([
+        'asset_tag' => $this->assetA->asset_tag,
+    ]))->getStructuredContent();
 
-    public function test_update_allowed_for_same_company_asset()
-    {
-        $this->actingAs($this->userInCompanyA);
+    expect($content['success'])->toBeTrue();
+    $this->assertSoftDeleted($this->assetA);
+});
 
-        $content = (new UpdateAssetTool)->handle(new Request([
-            'asset_tag' => $this->assetA->asset_tag,
-            'name' => 'Updated Name',
-        ]))->getStructuredContent();
+test('audit blocked for cross company asset', function () {
+    $this->actingAs($this->userInCompanyA);
 
-        $this->assertTrue($content['success']);
-        $this->assertDatabaseHas('assets', ['id' => $this->assetA->id, 'name' => 'Updated Name']);
-    }
+    (new AuditAssetTool)->handle(new Request([
+        'asset_tag' => $this->assetB->asset_tag,
+    ]));
 
-    // --- DeleteAssetTool ---
+    expect($this->assetB->fresh()->last_audit_date)->toBeNull();
+});
 
-    public function test_delete_blocked_for_cross_company_asset()
-    {
-        $this->actingAs($this->userInCompanyA);
+test('audit allowed for same company asset', function () {
+    $this->actingAs($this->userInCompanyA);
 
-        $response = (new DeleteAssetTool)->handle(new Request([
-            'asset_tag' => $this->assetB->asset_tag,
-        ]));
+    $content = (new AuditAssetTool)->handle(new Request([
+        'asset_tag' => $this->assetA->asset_tag,
+    ]))->getStructuredContent();
 
-        $this->assertTrue($response->responses()->first()->isError());
-        $this->assertNotSoftDeleted($this->assetB);
-    }
+    expect($content['success'])->toBeTrue();
+    expect($this->assetA->fresh()->last_audit_date)->not->toBeNull();
+});
 
-    public function test_delete_allowed_for_same_company_asset()
-    {
-        $this->actingAs($this->userInCompanyA);
+test('checkin blocked for cross company asset', function () {
+    $user = $this->companyB->users()->save(User::factory()->make());
+    $checkedOutAsset = Asset::factory()->for($this->companyB)->assignedToUser($user)->create();
 
-        $content = (new DeleteAssetTool)->handle(new Request([
-            'asset_tag' => $this->assetA->asset_tag,
-        ]))->getStructuredContent();
+    $this->actingAs($this->userInCompanyA);
 
-        $this->assertTrue($content['success']);
-        $this->assertSoftDeleted($this->assetA);
-    }
+    $response = resolve(CheckinAssetTool::class)->handle(new Request([
+        'asset_tag' => $checkedOutAsset->asset_tag,
+    ]));
 
-    // --- AuditAssetTool ---
+    expect($response->responses()->first()->isError())->toBeTrue();
+    $this->assertDatabaseHas('assets', ['id' => $checkedOutAsset->id, 'assigned_to' => $user->id]);
+});
 
-    public function test_audit_blocked_for_cross_company_asset()
-    {
-        $this->actingAs($this->userInCompanyA);
+test('checkin allowed for same company asset', function () {
+    $user = $this->companyA->users()->save(User::factory()->make());
+    $asset = Asset::factory()->for($this->companyA)->assignedToUser($user)->create();
 
-        (new AuditAssetTool)->handle(new Request([
-            'asset_tag' => $this->assetB->asset_tag,
-        ]));
+    $this->actingAs($this->userInCompanyA);
 
-        $this->assertNull($this->assetB->fresh()->last_audit_date);
-    }
+    $content = resolve(CheckinAssetTool::class)->handle(new Request([
+        'asset_tag' => $asset->asset_tag,
+    ]))->getStructuredContent();
 
-    public function test_audit_allowed_for_same_company_asset()
-    {
-        $this->actingAs($this->userInCompanyA);
+    expect($content['success'])->toBeTrue();
+    $this->assertDatabaseHas('assets', ['id' => $asset->id, 'assigned_to' => null]);
+});
 
-        $content = (new AuditAssetTool)->handle(new Request([
-            'asset_tag' => $this->assetA->asset_tag,
-        ]))->getStructuredContent();
+test('checkout blocked for cross company asset', function () {
+    $user = $this->companyA->users()->save(User::factory()->make());
 
-        $this->assertTrue($content['success']);
-        $this->assertNotNull($this->assetA->fresh()->last_audit_date);
-    }
+    $this->actingAs($this->userInCompanyA);
 
-    // --- CheckinAssetTool ---
+    $response = resolve(CheckoutAssetTool::class)->handle(new Request([
+        'asset_tag' => $this->assetB->asset_tag,
+        'checkout_to_type' => 'user',
+        'assigned_user' => $user->id,
+    ]));
 
-    public function test_checkin_blocked_for_cross_company_asset()
-    {
-        $user = $this->companyB->users()->save(User::factory()->make());
-        $checkedOutAsset = Asset::factory()->for($this->companyB)->assignedToUser($user)->create();
+    expect($response->responses()->first()->isError())->toBeTrue();
+    $this->assertDatabaseHas('assets', ['id' => $this->assetB->id, 'assigned_to' => null]);
+});
 
-        $this->actingAs($this->userInCompanyA);
+test('checkout allowed for same company asset', function () {
+    $user = $this->companyA->users()->save(User::factory()->make());
 
-        $response = resolve(CheckinAssetTool::class)->handle(new Request([
-            'asset_tag' => $checkedOutAsset->asset_tag,
-        ]));
+    $this->actingAs($this->userInCompanyA);
 
-        $this->assertTrue($response->responses()->first()->isError());
-        $this->assertDatabaseHas('assets', ['id' => $checkedOutAsset->id, 'assigned_to' => $user->id]);
-    }
+    $content = resolve(CheckoutAssetTool::class)->handle(new Request([
+        'asset_tag' => $this->assetA->asset_tag,
+        'checkout_to_type' => 'user',
+        'assigned_user' => $user->id,
+    ]))->getStructuredContent();
 
-    public function test_checkin_allowed_for_same_company_asset()
-    {
-        $user = $this->companyA->users()->save(User::factory()->make());
-        $asset = Asset::factory()->for($this->companyA)->assignedToUser($user)->create();
+    expect($content['success'])->toBeTrue();
+    $this->assertDatabaseHas('assets', ['id' => $this->assetA->id, 'assigned_to' => $user->id]);
+});
 
-        $this->actingAs($this->userInCompanyA);
+test('superuser can update asset in any company', function () {
+    $this->actingAs($this->superUser);
 
-        $content = resolve(CheckinAssetTool::class)->handle(new Request([
-            'asset_tag' => $asset->asset_tag,
-        ]))->getStructuredContent();
+    $content = (new UpdateAssetTool)->handle(new Request([
+        'asset_tag' => $this->assetB->asset_tag,
+        'name' => 'Superuser Override',
+    ]))->getStructuredContent();
 
-        $this->assertTrue($content['success']);
-        $this->assertDatabaseHas('assets', ['id' => $asset->id, 'assigned_to' => null]);
-    }
+    expect($content['success'])->toBeTrue();
+    $this->assertDatabaseHas('assets', ['id' => $this->assetB->id, 'name' => 'Superuser Override']);
+});
 
-    // --- CheckoutAssetTool ---
+test('superuser can delete asset in any company', function () {
+    $this->actingAs($this->superUser);
 
-    public function test_checkout_blocked_for_cross_company_asset()
-    {
-        $user = $this->companyA->users()->save(User::factory()->make());
+    $content = (new DeleteAssetTool)->handle(new Request([
+        'asset_tag' => $this->assetB->asset_tag,
+    ]))->getStructuredContent();
 
-        $this->actingAs($this->userInCompanyA);
-
-        $response = resolve(CheckoutAssetTool::class)->handle(new Request([
-            'asset_tag' => $this->assetB->asset_tag,
-            'checkout_to_type' => 'user',
-            'assigned_user' => $user->id,
-        ]));
-
-        $this->assertTrue($response->responses()->first()->isError());
-        $this->assertDatabaseHas('assets', ['id' => $this->assetB->id, 'assigned_to' => null]);
-    }
-
-    public function test_checkout_allowed_for_same_company_asset()
-    {
-        $user = $this->companyA->users()->save(User::factory()->make());
-
-        $this->actingAs($this->userInCompanyA);
-
-        $content = resolve(CheckoutAssetTool::class)->handle(new Request([
-            'asset_tag' => $this->assetA->asset_tag,
-            'checkout_to_type' => 'user',
-            'assigned_user' => $user->id,
-        ]))->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertDatabaseHas('assets', ['id' => $this->assetA->id, 'assigned_to' => $user->id]);
-    }
-
-    // --- Superuser bypass ---
-
-    public function test_superuser_can_update_asset_in_any_company()
-    {
-        $this->actingAs($this->superUser);
-
-        $content = (new UpdateAssetTool)->handle(new Request([
-            'asset_tag' => $this->assetB->asset_tag,
-            'name' => 'Superuser Override',
-        ]))->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertDatabaseHas('assets', ['id' => $this->assetB->id, 'name' => 'Superuser Override']);
-    }
-
-    public function test_superuser_can_delete_asset_in_any_company()
-    {
-        $this->actingAs($this->superUser);
-
-        $content = (new DeleteAssetTool)->handle(new Request([
-            'asset_tag' => $this->assetB->asset_tag,
-        ]))->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertSoftDeleted($this->assetB);
-    }
-}
+    expect($content['success'])->toBeTrue();
+    $this->assertSoftDeleted($this->assetB);
+});

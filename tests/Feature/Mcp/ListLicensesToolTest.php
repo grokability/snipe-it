@@ -1,160 +1,140 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\ListLicensesTool;
 use App\Models\Category;
 use App\Models\License;
 use App\Models\Manufacturer;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class ListLicensesToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->viewLicenses()->create());
+});
+
+function handle(array $args = []): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->viewLicenses()->create());
-    }
-
-    private function handle(array $args = []): ResponseFactory
-    {
-        return (new ListLicensesTool)->handle(new Request($args));
-    }
-
-    public function test_returns_total_licenses_and_pagination_metadata()
-    {
-        License::factory()->count(3)->create();
-
-        $content = $this->handle()->getStructuredContent();
-
-        $this->assertArrayHasKey('total', $content);
-        $this->assertArrayHasKey('licenses', $content);
-        $this->assertArrayHasKey('limit', $content);
-        $this->assertArrayHasKey('offset', $content);
-        $this->assertGreaterThanOrEqual(3, $content['total']);
-    }
-
-    public function test_each_license_includes_key_fields()
-    {
-        License::factory()->create();
-
-        $content = $this->handle()->getStructuredContent();
-
-        $license = $content['licenses'][0];
-        $this->assertArrayHasKey('id', $license);
-        $this->assertArrayHasKey('name', $license);
-        $this->assertArrayHasKey('seats', $license);
-        $this->assertArrayHasKey('free_seats', $license);
-        $this->assertArrayHasKey('category', $license);
-    }
-
-    public function test_limit_controls_number_of_results_returned()
-    {
-        License::factory()->count(10)->create();
-
-        $content = $this->handle(['limit' => 3])->getStructuredContent();
-
-        $this->assertCount(3, $content['licenses']);
-        $this->assertGreaterThan(3, $content['total']);
-    }
-
-    public function test_offset_skips_results_for_pagination()
-    {
-        License::factory()->count(10)->create();
-
-        $page1 = $this->handle(['limit' => 4, 'offset' => 0])->getStructuredContent();
-        $page2 = $this->handle(['limit' => 4, 'offset' => 4])->getStructuredContent();
-
-        $ids1 = array_column($page1['licenses'], 'id');
-        $ids2 = array_column($page2['licenses'], 'id');
-
-        $this->assertEmpty(array_intersect($ids1, $ids2));
-    }
-
-    public function test_search_matches_on_name()
-    {
-        $target = License::factory()->create(['name' => 'UniqueLicenseXYZ']);
-        License::factory()->create(['name' => 'Something Else']);
-
-        $content = $this->handle(['search' => 'UniqueLicenseXYZ'])->getStructuredContent();
-        $ids = array_column($content['licenses'], 'id');
-
-        $this->assertContains($target->id, $ids);
-    }
-
-    public function test_filters_by_category_id()
-    {
-        $category = Category::factory()->create(['category_type' => 'license']);
-        $matching = License::factory()->create(['category_id' => $category->id]);
-        $other = License::factory()->create();
-
-        $content = $this->handle(['category_id' => $category->id])->getStructuredContent();
-        $ids = array_column($content['licenses'], 'id');
-
-        $this->assertContains($matching->id, $ids);
-        $this->assertNotContains($other->id, $ids);
-    }
-
-    public function test_filters_by_manufacturer_id()
-    {
-        $manufacturer = Manufacturer::factory()->create();
-        $matching = License::factory()->create(['manufacturer_id' => $manufacturer->id]);
-        $other = License::factory()->create(['manufacturer_id' => null]);
-
-        $content = $this->handle(['manufacturer_id' => $manufacturer->id])->getStructuredContent();
-        $ids = array_column($content['licenses'], 'id');
-
-        $this->assertContains($matching->id, $ids);
-        $this->assertNotContains($other->id, $ids);
-    }
-
-    public function test_returns_error_when_user_lacks_permission()
-    {
-        $this->actingAs(User::factory()->create());
-
-        $this->assertTrue($this->handle()->responses()->first()->isError());
-    }
-
-    public function test_expiring_within_days_filters_to_license_window()
-    {
-        $soon = License::factory()->create(['name' => 'Soon', 'expiration_date' => now()->addDays(10)->toDateString()]);
-        $later = License::factory()->create(['name' => 'Later', 'expiration_date' => now()->addDays(90)->toDateString()]);
-
-        $content = $this->handle(['expiring_within_days' => 30])->getStructuredContent();
-        $names = array_column($content['licenses'], 'name');
-
-        $this->assertContains('Soon', $names);
-        $this->assertNotContains('Later', $names);
-    }
-
-    public function test_filter_payload_forwards_to_text_search()
-    {
-        $match = License::factory()->create(['name' => 'Office Enterprise 365']);
-        License::factory()->create(['name' => 'Unrelated License']);
-
-        $content = $this->handle(['filter' => ['name' => 'Office']])->getStructuredContent();
-        $names = array_column($content['licenses'], 'name');
-
-        $this->assertContains('Office Enterprise 365', $names);
-    }
-
-    public function test_response_includes_lifecycle_fields_and_notes()
-    {
-        $license = License::factory()->create(['name' => 'Marker License', 'seats' => 25]);
-
-        $content = $this->handle(['limit' => 500])->getStructuredContent();
-        $row = collect($content['licenses'])->firstWhere('name', 'Marker License');
-
-        $this->assertNotNull($row);
-        $this->assertArrayHasKey('seats', $row);
-        $this->assertArrayHasKey('free_seats', $row);
-        $this->assertArrayHasKey('expiration_date', $row);
-        $this->assertArrayHasKey('termination_date', $row);
-        $this->assertArrayHasKey('maintained', $row);
-        $this->assertArrayHasKey('reassignable', $row);
-        $this->assertArrayHasKey('notes', $row);
-    }
+    return handle(new Request($args));
 }
+
+test('returns total licenses and pagination metadata', function () {
+    License::factory()->count(3)->create();
+
+    $content = handle()->getStructuredContent();
+
+    expect($content)->toHaveKey('total');
+    expect($content)->toHaveKey('licenses');
+    expect($content)->toHaveKey('limit');
+    expect($content)->toHaveKey('offset');
+    expect($content['total'])->toBeGreaterThanOrEqual(3);
+});
+
+test('each license includes key fields', function () {
+    License::factory()->create();
+
+    $content = handle()->getStructuredContent();
+
+    $license = $content['licenses'][0];
+    expect($license)->toHaveKey('id');
+    expect($license)->toHaveKey('name');
+    expect($license)->toHaveKey('seats');
+    expect($license)->toHaveKey('free_seats');
+    expect($license)->toHaveKey('category');
+});
+
+test('limit controls number of results returned', function () {
+    License::factory()->count(10)->create();
+
+    $content = handle(['limit' => 3])->getStructuredContent();
+
+    expect($content['licenses'])->toHaveCount(3);
+    expect($content['total'])->toBeGreaterThan(3);
+});
+
+test('offset skips results for pagination', function () {
+    License::factory()->count(10)->create();
+
+    $page1 = handle(['limit' => 4, 'offset' => 0])->getStructuredContent();
+    $page2 = handle(['limit' => 4, 'offset' => 4])->getStructuredContent();
+
+    $ids1 = array_column($page1['licenses'], 'id');
+    $ids2 = array_column($page2['licenses'], 'id');
+
+    expect(array_intersect($ids1, $ids2))->toBeEmpty();
+});
+
+test('search matches on name', function () {
+    $target = License::factory()->create(['name' => 'UniqueLicenseXYZ']);
+    License::factory()->create(['name' => 'Something Else']);
+
+    $content = handle(['search' => 'UniqueLicenseXYZ'])->getStructuredContent();
+    $ids = array_column($content['licenses'], 'id');
+
+    expect($ids)->toContain($target->id);
+});
+
+test('filters by category id', function () {
+    $category = Category::factory()->create(['category_type' => 'license']);
+    $matching = License::factory()->create(['category_id' => $category->id]);
+    $other = License::factory()->create();
+
+    $content = handle(['category_id' => $category->id])->getStructuredContent();
+    $ids = array_column($content['licenses'], 'id');
+
+    expect($ids)->toContain($matching->id);
+    expect($ids)->not->toContain($other->id);
+});
+
+test('filters by manufacturer id', function () {
+    $manufacturer = Manufacturer::factory()->create();
+    $matching = License::factory()->create(['manufacturer_id' => $manufacturer->id]);
+    $other = License::factory()->create(['manufacturer_id' => null]);
+
+    $content = handle(['manufacturer_id' => $manufacturer->id])->getStructuredContent();
+    $ids = array_column($content['licenses'], 'id');
+
+    expect($ids)->toContain($matching->id);
+    expect($ids)->not->toContain($other->id);
+});
+
+test('returns error when user lacks permission', function () {
+    $this->actingAs(User::factory()->create());
+
+    expect(handle()->responses()->first()->isError())->toBeTrue();
+});
+
+test('expiring within days filters to license window', function () {
+    $soon = License::factory()->create(['name' => 'Soon', 'expiration_date' => now()->addDays(10)->toDateString()]);
+    $later = License::factory()->create(['name' => 'Later', 'expiration_date' => now()->addDays(90)->toDateString()]);
+
+    $content = handle(['expiring_within_days' => 30])->getStructuredContent();
+    $names = array_column($content['licenses'], 'name');
+
+    expect($names)->toContain('Soon');
+    expect($names)->not->toContain('Later');
+});
+
+test('filter payload forwards to text search', function () {
+    $match = License::factory()->create(['name' => 'Office Enterprise 365']);
+    License::factory()->create(['name' => 'Unrelated License']);
+
+    $content = handle(['filter' => ['name' => 'Office']])->getStructuredContent();
+    $names = array_column($content['licenses'], 'name');
+
+    expect($names)->toContain('Office Enterprise 365');
+});
+
+test('response includes lifecycle fields and notes', function () {
+    $license = License::factory()->create(['name' => 'Marker License', 'seats' => 25]);
+
+    $content = handle(['limit' => 500])->getStructuredContent();
+    $row = collect($content['licenses'])->firstWhere('name', 'Marker License');
+
+    expect($row)->not->toBeNull();
+    expect($row)->toHaveKey('seats');
+    expect($row)->toHaveKey('free_seats');
+    expect($row)->toHaveKey('expiration_date');
+    expect($row)->toHaveKey('termination_date');
+    expect($row)->toHaveKey('maintained');
+    expect($row)->toHaveKey('reassignable');
+    expect($row)->toHaveKey('notes');
+});

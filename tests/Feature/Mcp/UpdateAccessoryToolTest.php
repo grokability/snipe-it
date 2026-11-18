@@ -1,132 +1,115 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\UpdateAccessoryTool;
 use App\Models\Accessory;
 use App\Models\Category;
 use App\Models\Location;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class UpdateAccessoryToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->editAccessories()->create());
+});
+
+function handle(array $args): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->editAccessories()->create());
-    }
-
-    private function handle(array $args): ResponseFactory
-    {
-        return (new UpdateAccessoryTool)->handle(new Request($args));
-    }
-
-    public function test_updates_accessory_by_id()
-    {
-        $accessory = Accessory::factory()->create(['qty' => 5]);
-
-        $content = $this->handle([
-            'id' => $accessory->id,
-            'qty' => 10,
-        ])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertDatabaseHas('accessories', ['id' => $accessory->id, 'qty' => 10]);
-    }
-
-    public function test_updates_accessory_by_name()
-    {
-        $accessory = Accessory::factory()->create(['name' => 'Lookup By Name', 'qty' => 3]);
-
-        $content = $this->handle([
-            'name' => 'Lookup By Name',
-            'qty' => 8,
-        ])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertDatabaseHas('accessories', ['id' => $accessory->id, 'qty' => 8]);
-    }
-
-    public function test_renames_accessory_via_new_name()
-    {
-        $accessory = Accessory::factory()->create(['name' => 'Old Accessory Name']);
-
-        $content = $this->handle([
-            'id' => $accessory->id,
-            'new_name' => 'New Accessory Name',
-        ])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertEquals('New Accessory Name', $content['name']);
-        $this->assertDatabaseHas('accessories', ['id' => $accessory->id, 'name' => 'New Accessory Name']);
-    }
-
-    public function test_updates_multiple_fields_at_once()
-    {
-        $accessory = Accessory::factory()->create();
-        $location = Location::factory()->create();
-        $category = Category::factory()->forAccessories()->create();
-
-        // order_number moved to the Orders table. Swapping it out for
-        // default_purchase_cost here to cover the forwarded legacy
-        // purchase_cost input path.
-        $this->handle([
-            'id' => $accessory->id,
-            'qty' => 20,
-            'location_id' => $location->id,
-            'category_id' => $category->id,
-            'purchase_cost' => 42.50,
-            'notes' => 'Updated note',
-        ]);
-
-        $this->assertDatabaseHas('accessories', [
-            'id' => $accessory->id,
-            'qty' => 20,
-            'location_id' => $location->id,
-            'category_id' => $category->id,
-            'default_purchase_cost' => 42.50,
-        ]);
-    }
-
-    public function test_returns_error_when_not_found()
-    {
-        $this->assertTrue($this->handle([
-            'id' => 999999,
-            'qty' => 5,
-        ])->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_no_identifier_provided()
-    {
-        $this->assertTrue($this->handle([
-            'qty' => 5,
-        ])->responses()->first()->isError());
-    }
-
-    public function test_response_includes_id_and_name()
-    {
-        $accessory = Accessory::factory()->create(['name' => 'Response Accessory']);
-
-        $content = $this->handle([
-            'id' => $accessory->id,
-            'qty' => 7,
-        ])->getStructuredContent();
-
-        $this->assertEquals($accessory->id, $content['id']);
-        $this->assertEquals('Response Accessory', $content['name']);
-    }
-
-    public function test_returns_error_when_user_lacks_permission()
-    {
-        $this->actingAs(User::factory()->create());
-        $accessory = Accessory::factory()->create(['name' => 'Locked Accessory']);
-
-        $this->assertTrue($this->handle([
-            'id' => $accessory->id,
-            'qty' => 5,
-        ])->responses()->first()->isError());
-    }
+    return handle(new Request($args));
 }
+
+test('updates accessory by id', function () {
+    $accessory = Accessory::factory()->create(['qty' => 5]);
+
+    $content = handle([
+        'id' => $accessory->id,
+        'qty' => 10,
+    ])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    $this->assertDatabaseHas('accessories', ['id' => $accessory->id, 'qty' => 10]);
+});
+
+test('updates accessory by name', function () {
+    $accessory = Accessory::factory()->create(['name' => 'Lookup By Name', 'qty' => 3]);
+
+    $content = handle([
+        'name' => 'Lookup By Name',
+        'qty' => 8,
+    ])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    $this->assertDatabaseHas('accessories', ['id' => $accessory->id, 'qty' => 8]);
+});
+
+test('renames accessory via new name', function () {
+    $accessory = Accessory::factory()->create(['name' => 'Old Accessory Name']);
+
+    $content = handle([
+        'id' => $accessory->id,
+        'new_name' => 'New Accessory Name',
+    ])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    expect($content['name'])->toEqual('New Accessory Name');
+    $this->assertDatabaseHas('accessories', ['id' => $accessory->id, 'name' => 'New Accessory Name']);
+});
+
+test('updates multiple fields at once', function () {
+    $accessory = Accessory::factory()->create();
+    $location = Location::factory()->create();
+    $category = Category::factory()->forAccessories()->create();
+
+    // order_number moved to the Orders table. Swapping it out for
+    // default_purchase_cost here to cover the forwarded legacy
+    // purchase_cost input path.
+    handle([
+        'id' => $accessory->id,
+        'qty' => 20,
+        'location_id' => $location->id,
+        'category_id' => $category->id,
+        'purchase_cost' => 42.50,
+        'notes' => 'Updated note',
+    ]);
+
+    $this->assertDatabaseHas('accessories', [
+        'id' => $accessory->id,
+        'qty' => 20,
+        'location_id' => $location->id,
+        'category_id' => $category->id,
+        'default_purchase_cost' => 42.50,
+    ]);
+});
+
+test('returns error when not found', function () {
+    expect(handle([
+        'id' => 999999,
+        'qty' => 5,
+    ])->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when no identifier provided', function () {
+    expect(handle([
+        'qty' => 5,
+    ])->responses()->first()->isError())->toBeTrue();
+});
+
+test('response includes id and name', function () {
+    $accessory = Accessory::factory()->create(['name' => 'Response Accessory']);
+
+    $content = handle([
+        'id' => $accessory->id,
+        'qty' => 7,
+    ])->getStructuredContent();
+
+    expect($content['id'])->toEqual($accessory->id);
+    expect($content['name'])->toEqual('Response Accessory');
+});
+
+test('returns error when user lacks permission', function () {
+    $this->actingAs(User::factory()->create());
+    $accessory = Accessory::factory()->create(['name' => 'Locked Accessory']);
+
+    expect(handle([
+        'id' => $accessory->id,
+        'qty' => 5,
+    ])->responses()->first()->isError())->toBeTrue();
+});

@@ -1,106 +1,90 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\ShowLicenseTool;
 use App\Models\License;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class ShowLicenseToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->viewLicenses()->create());
+});
+
+function handle(array $args): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->viewLicenses()->create());
-    }
-
-    private function handle(array $args): ResponseFactory
-    {
-        return (new ShowLicenseTool)->handle(new Request($args));
-    }
-
-    public function test_returns_license_by_id()
-    {
-        $license = License::factory()->create(['name' => 'Test License', 'seats' => 5]);
-
-        $content = $this->handle(['id' => $license->id])->getStructuredContent();
-
-        $this->assertEquals($license->id, $content['id']);
-        $this->assertEquals('Test License', $content['name']);
-        $this->assertEquals(5, $content['seats']);
-    }
-
-    public function test_returns_license_by_name()
-    {
-        $license = License::factory()->create(['name' => 'FindByName License']);
-
-        $content = $this->handle(['name' => 'FindByName License'])->getStructuredContent();
-
-        $this->assertEquals($license->id, $content['id']);
-        $this->assertEquals('FindByName License', $content['name']);
-    }
-
-    public function test_response_includes_seat_counts()
-    {
-        $license = License::factory()->create(['seats' => 3, 'reassignable' => true]);
-        $user = User::factory()->create();
-
-        $seat = $license->freeSeat();
-        $seat->assigned_to = $user->id;
-        $seat->save();
-
-        $content = $this->handle(['id' => $license->id])->getStructuredContent();
-
-        $this->assertEquals(3, $content['seats']);
-        $this->assertEquals(1, $content['assigned_seats']);
-        $this->assertEquals(2, $content['free_seats']);
-    }
-
-    public function test_response_includes_key_fields()
-    {
-        // License::serial is masked (--------) unless the acting user
-        // has the licenses.keys gate. The default viewLicenses() helper
-        // used in setUp doesn't include it, so this test adds it.
-        $this->actingAs(User::factory()->viewLicenses()->viewKeysLicenses()->create());
-
-        $license = License::factory()->create([
-            'name' => 'Full Details License',
-            'serial' => 'SN-12345',
-            'license_name' => 'Acme Corp',
-            'license_email' => 'legal@acme.com',
-        ]);
-
-        $content = $this->handle(['id' => $license->id])->getStructuredContent();
-
-        $this->assertArrayHasKey('serial', $content);
-        $this->assertArrayHasKey('license_name', $content);
-        $this->assertArrayHasKey('license_email', $content);
-        $this->assertArrayHasKey('maintained', $content);
-        $this->assertArrayHasKey('reassignable', $content);
-        $this->assertArrayHasKey('category', $content);
-        $this->assertArrayHasKey('category_id', $content);
-        $this->assertEquals('SN-12345', $content['serial']);
-        $this->assertEquals('Acme Corp', $content['license_name']);
-    }
-
-    public function test_returns_error_when_no_identifier_provided()
-    {
-        $this->assertTrue($this->handle([])->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_not_found()
-    {
-        $this->assertTrue($this->handle(['id' => 999999])->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_user_lacks_permission()
-    {
-        $license = License::factory()->create();
-        $this->actingAs(User::factory()->create());
-
-        $this->assertTrue($this->handle(['id' => $license->id])->responses()->first()->isError());
-    }
+    return handle(new Request($args));
 }
+
+test('returns license by id', function () {
+    $license = License::factory()->create(['name' => 'Test License', 'seats' => 5]);
+
+    $content = handle(['id' => $license->id])->getStructuredContent();
+
+    expect($content['id'])->toEqual($license->id);
+    expect($content['name'])->toEqual('Test License');
+    expect($content['seats'])->toEqual(5);
+});
+
+test('returns license by name', function () {
+    $license = License::factory()->create(['name' => 'FindByName License']);
+
+    $content = handle(['name' => 'FindByName License'])->getStructuredContent();
+
+    expect($content['id'])->toEqual($license->id);
+    expect($content['name'])->toEqual('FindByName License');
+});
+
+test('response includes seat counts', function () {
+    $license = License::factory()->create(['seats' => 3, 'reassignable' => true]);
+    $user = User::factory()->create();
+
+    $seat = $license->freeSeat();
+    $seat->assigned_to = $user->id;
+    $seat->save();
+
+    $content = handle(['id' => $license->id])->getStructuredContent();
+
+    expect($content['seats'])->toEqual(3);
+    expect($content['assigned_seats'])->toEqual(1);
+    expect($content['free_seats'])->toEqual(2);
+});
+
+test('response includes key fields', function () {
+    // License::serial is masked (--------) unless the acting user
+    // has the licenses.keys gate. The default viewLicenses() helper
+    // used in setUp doesn't include it, so this test adds it.
+    $this->actingAs(User::factory()->viewLicenses()->viewKeysLicenses()->create());
+
+    $license = License::factory()->create([
+        'name' => 'Full Details License',
+        'serial' => 'SN-12345',
+        'license_name' => 'Acme Corp',
+        'license_email' => 'legal@acme.com',
+    ]);
+
+    $content = handle(['id' => $license->id])->getStructuredContent();
+
+    expect($content)->toHaveKey('serial');
+    expect($content)->toHaveKey('license_name');
+    expect($content)->toHaveKey('license_email');
+    expect($content)->toHaveKey('maintained');
+    expect($content)->toHaveKey('reassignable');
+    expect($content)->toHaveKey('category');
+    expect($content)->toHaveKey('category_id');
+    expect($content['serial'])->toEqual('SN-12345');
+    expect($content['license_name'])->toEqual('Acme Corp');
+});
+
+test('returns error when no identifier provided', function () {
+    expect(handle([])->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when not found', function () {
+    expect(handle(['id' => 999999])->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when user lacks permission', function () {
+    $license = License::factory()->create();
+    $this->actingAs(User::factory()->create());
+
+    expect(handle(['id' => $license->id])->responses()->first()->isError())->toBeTrue();
+});

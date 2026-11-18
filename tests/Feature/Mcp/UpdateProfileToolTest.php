@@ -1,87 +1,71 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\UpdateProfileTool;
 use App\Models\Location;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class UpdateProfileToolTest extends TestCase
+beforeEach(function () {
+    $this->user = User::factory()->create();
+    $this->actingAs($this->user);
+});
+
+function handle(array $args): ResponseFactory
 {
-    private User $user;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->user = User::factory()->create();
-        $this->actingAs($this->user);
-    }
-
-    private function handle(array $args): ResponseFactory
-    {
-        return (new UpdateProfileTool)->handle(new Request($args));
-    }
-
-    public function test_updates_profile_fields()
-    {
-        $content = $this->handle([
-            'first_name' => 'Updated',
-            'last_name' => 'Name',
-            'phone' => '555-1234',
-        ])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertDatabaseHas('users', [
-            'id' => $this->user->id,
-            'first_name' => 'Updated',
-            'last_name' => 'Name',
-            'phone' => '555-1234',
-        ]);
-    }
-
-    public function test_updates_locale()
-    {
-        $content = $this->handle(['locale' => 'fr'])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertDatabaseHas('users', ['id' => $this->user->id, 'locale' => 'fr']);
-    }
-
-    public function test_updates_location_with_permission()
-    {
-        $this->actingAs(User::factory()->canEditOwnLocation()->create());
-        $location = Location::factory()->create();
-
-        $content = $this->handle(['location_id' => $location->id])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertEquals($location->id, $content['location_id']);
-    }
-
-    public function test_does_not_update_location_without_permission()
-    {
-        $location = Location::factory()->create();
-
-        $originalLocation = $this->user->location_id;
-
-        $this->handle(['location_id' => $location->id]);
-
-        $this->assertDatabaseHas('users', ['id' => $this->user->id, 'location_id' => $originalLocation]);
-    }
-
-    public function test_only_updates_provided_fields()
-    {
-        $originalLastName = $this->user->last_name;
-
-        $this->handle(['first_name' => 'Changed']);
-
-        $this->assertDatabaseHas('users', [
-            'id' => $this->user->id,
-            'first_name' => 'Changed',
-            'last_name' => $originalLastName,
-        ]);
-    }
+    return handle(new Request($args));
 }
+
+test('updates profile fields', function () {
+    $content = handle([
+        'first_name' => 'Updated',
+        'last_name' => 'Name',
+        'phone' => '555-1234',
+    ])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    $this->assertDatabaseHas('users', [
+        'id' => $this->user->id,
+        'first_name' => 'Updated',
+        'last_name' => 'Name',
+        'phone' => '555-1234',
+    ]);
+});
+
+test('updates locale', function () {
+    $content = handle(['locale' => 'fr'])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    $this->assertDatabaseHas('users', ['id' => $this->user->id, 'locale' => 'fr']);
+});
+
+test('updates location with permission', function () {
+    $this->actingAs(User::factory()->canEditOwnLocation()->create());
+    $location = Location::factory()->create();
+
+    $content = handle(['location_id' => $location->id])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    expect($content['location_id'])->toEqual($location->id);
+});
+
+test('does not update location without permission', function () {
+    $location = Location::factory()->create();
+
+    $originalLocation = $this->user->location_id;
+
+    handle(['location_id' => $location->id]);
+
+    $this->assertDatabaseHas('users', ['id' => $this->user->id, 'location_id' => $originalLocation]);
+});
+
+test('only updates provided fields', function () {
+    $originalLastName = $this->user->last_name;
+
+    handle(['first_name' => 'Changed']);
+
+    $this->assertDatabaseHas('users', [
+        'id' => $this->user->id,
+        'first_name' => 'Changed',
+        'last_name' => $originalLastName,
+    ]);
+});

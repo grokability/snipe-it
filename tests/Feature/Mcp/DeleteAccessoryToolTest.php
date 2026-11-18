@@ -1,78 +1,63 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\DeleteAccessoryTool;
 use App\Models\Accessory;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class DeleteAccessoryToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->deleteAccessories()->create());
+});
+
+function handle(array $args): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->deleteAccessories()->create());
-    }
-
-    private function handle(array $args): ResponseFactory
-    {
-        return (new DeleteAccessoryTool)->handle(new Request($args));
-    }
-
-    public function test_deletes_accessory_by_id()
-    {
-        $accessory = Accessory::factory()->create();
-
-        $content = $this->handle(['id' => $accessory->id])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertSoftDeleted('accessories', ['id' => $accessory->id]);
-    }
-
-    public function test_deletes_accessory_by_name()
-    {
-        $accessory = Accessory::factory()->create(['name' => 'Delete By Name']);
-
-        $content = $this->handle(['name' => 'Delete By Name'])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertSoftDeleted('accessories', ['id' => $accessory->id]);
-    }
-
-    public function test_response_includes_name()
-    {
-        $accessory = Accessory::factory()->create(['name' => 'Named Accessory']);
-
-        $content = $this->handle(['id' => $accessory->id])->getStructuredContent();
-
-        $this->assertEquals('Named Accessory', $content['name']);
-    }
-
-    public function test_returns_error_when_not_found()
-    {
-        $this->assertTrue($this->handle(['id' => 999999])->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_accessory_has_checkouts()
-    {
-        $user = User::factory()->create();
-        $accessory = Accessory::factory()->checkedOutToUser($user)->create();
-
-        $response = $this->handle(['id' => $accessory->id]);
-
-        $this->assertTrue($response->responses()->first()->isError());
-        $this->assertNotSoftDeleted('accessories', ['id' => $accessory->id]);
-    }
-
-    public function test_returns_error_when_user_lacks_permission()
-    {
-        $this->actingAs(User::factory()->create());
-        $accessory = Accessory::factory()->create();
-
-        $this->assertTrue($this->handle(['id' => $accessory->id])->responses()->first()->isError());
-        $this->assertNotSoftDeleted('accessories', ['id' => $accessory->id]);
-    }
+    return handle(new Request($args));
 }
+
+test('deletes accessory by id', function () {
+    $accessory = Accessory::factory()->create();
+
+    $content = handle(['id' => $accessory->id])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    $this->assertSoftDeleted('accessories', ['id' => $accessory->id]);
+});
+
+test('deletes accessory by name', function () {
+    $accessory = Accessory::factory()->create(['name' => 'Delete By Name']);
+
+    $content = handle(['name' => 'Delete By Name'])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    $this->assertSoftDeleted('accessories', ['id' => $accessory->id]);
+});
+
+test('response includes name', function () {
+    $accessory = Accessory::factory()->create(['name' => 'Named Accessory']);
+
+    $content = handle(['id' => $accessory->id])->getStructuredContent();
+
+    expect($content['name'])->toEqual('Named Accessory');
+});
+
+test('returns error when not found', function () {
+    expect(handle(['id' => 999999])->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when accessory has checkouts', function () {
+    $user = User::factory()->create();
+    $accessory = Accessory::factory()->checkedOutToUser($user)->create();
+
+    $response = handle(['id' => $accessory->id]);
+
+    expect($response->responses()->first()->isError())->toBeTrue();
+    $this->assertNotSoftDeleted('accessories', ['id' => $accessory->id]);
+});
+
+test('returns error when user lacks permission', function () {
+    $this->actingAs(User::factory()->create());
+    $accessory = Accessory::factory()->create();
+
+    expect(handle(['id' => $accessory->id])->responses()->first()->isError())->toBeTrue();
+    $this->assertNotSoftDeleted('accessories', ['id' => $accessory->id]);
+});

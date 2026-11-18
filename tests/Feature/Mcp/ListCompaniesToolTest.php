@@ -1,65 +1,52 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\ListCompaniesTool;
 use App\Models\Company;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class ListCompaniesToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->viewCompanies()->create());
+});
+
+function handle(array $args = []): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->viewCompanies()->create());
-    }
-
-    private function handle(array $args = []): ResponseFactory
-    {
-        return (new ListCompaniesTool)->handle(new Request($args));
-    }
-
-    public function test_returns_total_and_pagination_metadata()
-    {
-        Company::factory()->count(3)->create();
-
-        $content = $this->handle()->getStructuredContent();
-
-        $this->assertGreaterThanOrEqual(3, $content['total']);
-        $this->assertArrayHasKey('companies', $content);
-        $this->assertArrayHasKey('limit', $content);
-        $this->assertArrayHasKey('offset', $content);
-    }
-
-    public function test_each_company_includes_key_fields()
-    {
-        Company::factory()->create();
-
-        $content = $this->handle()->getStructuredContent();
-
-        $this->assertNotEmpty($content['companies']);
-        $company = $content['companies'][0];
-        $this->assertArrayHasKey('id', $company);
-        $this->assertArrayHasKey('name', $company);
-    }
-
-    public function test_limit_controls_results()
-    {
-        Company::factory()->count(10)->create();
-
-        $content = $this->handle(['limit' => 3])->getStructuredContent();
-
-        $this->assertCount(3, $content['companies']);
-        $this->assertGreaterThan(3, $content['total']);
-    }
-
-    public function test_returns_error_when_user_lacks_permission()
-    {
-        $this->actingAs(User::factory()->create());
-
-        $this->assertTrue($this->handle()->responses()->first()->isError());
-    }
+    return handle(new Request($args));
 }
+
+test('returns total and pagination metadata', function () {
+    Company::factory()->count(3)->create();
+
+    $content = handle()->getStructuredContent();
+
+    expect($content['total'])->toBeGreaterThanOrEqual(3);
+    expect($content)->toHaveKey('companies');
+    expect($content)->toHaveKey('limit');
+    expect($content)->toHaveKey('offset');
+});
+
+test('each company includes key fields', function () {
+    Company::factory()->create();
+
+    $content = handle()->getStructuredContent();
+
+    expect($content['companies'])->not->toBeEmpty();
+    $company = $content['companies'][0];
+    expect($company)->toHaveKey('id');
+    expect($company)->toHaveKey('name');
+});
+
+test('limit controls results', function () {
+    Company::factory()->count(10)->create();
+
+    $content = handle(['limit' => 3])->getStructuredContent();
+
+    expect($content['companies'])->toHaveCount(3);
+    expect($content['total'])->toBeGreaterThan(3);
+});
+
+test('returns error when user lacks permission', function () {
+    $this->actingAs(User::factory()->create());
+
+    expect(handle()->responses()->first()->isError())->toBeTrue();
+});

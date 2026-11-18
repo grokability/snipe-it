@@ -1,95 +1,82 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\GetActivityLogTool;
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class GetActivityLogToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->superuser()->create());
+});
+
+function handle(array $args = []): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->superuser()->create());
-    }
-
-    private function handle(array $args = []): ResponseFactory
-    {
-        return (new GetActivityLogTool)->handle(new Request($args));
-    }
-
-    public function test_returns_activity_log()
-    {
-        $asset = Asset::factory()->laptopZenbook()->create();
-        $log = new Actionlog;
-        $log->item_type = Asset::class;
-        $log->item_id = $asset->id;
-        $log->action_type = 'update';
-        $log->target_id = auth()->id();
-        $log->save();
-
-        $content = $this->handle()->getStructuredContent();
-
-        $this->assertArrayHasKey('activity', $content);
-        $this->assertArrayHasKey('total', $content);
-        $this->assertGreaterThanOrEqual(1, $content['total']);
-    }
-
-    public function test_filters_by_action_type()
-    {
-        $asset = Asset::factory()->laptopZenbook()->create();
-        $log = new Actionlog;
-        $log->item_type = Asset::class;
-        $log->item_id = $asset->id;
-        $log->action_type = 'checkout';
-        $log->target_id = auth()->id();
-        $log->save();
-
-        $content = $this->handle(['action_type' => 'checkout'])->getStructuredContent();
-
-        $this->assertGreaterThanOrEqual(1, $content['total']);
-        foreach ($content['activity'] as $entry) {
-            $this->assertEquals('checkout', $entry['action_type']);
-        }
-    }
-
-    public function test_filters_by_item_id()
-    {
-        $asset = Asset::factory()->laptopZenbook()->create();
-        $log = new Actionlog;
-        $log->item_type = Asset::class;
-        $log->item_id = $asset->id;
-        $log->action_type = 'update';
-        $log->target_id = auth()->id();
-        $log->save();
-
-        $content = $this->handle([
-            'item_id' => $asset->id,
-            'item_type' => Asset::class,
-        ])->getStructuredContent();
-
-        $this->assertGreaterThanOrEqual(1, $content['total']);
-        foreach ($content['activity'] as $entry) {
-            $this->assertEquals($asset->id, $entry['item_id']);
-        }
-    }
-
-    public function test_user_without_activity_view_or_type_view_gets_empty_feed()
-    {
-        // Mirrors Api\DashboardController::activity: callers without
-        // activity.view AND without any type-level view permission
-        // get an empty feed, not a hard error. The dashboard treats
-        // this the same way.
-        $this->actingAs(User::factory()->create());
-
-        $content = $this->handle()->getStructuredContent();
-
-        $this->assertSame(0, $content['total']);
-        $this->assertSame([], $content['activity']);
-    }
+    return handle(new Request($args));
 }
+
+test('returns activity log', function () {
+    $asset = Asset::factory()->laptopZenbook()->create();
+    $log = new Actionlog;
+    $log->item_type = Asset::class;
+    $log->item_id = $asset->id;
+    $log->action_type = 'update';
+    $log->target_id = auth()->id();
+    $log->save();
+
+    $content = handle()->getStructuredContent();
+
+    expect($content)->toHaveKey('activity');
+    expect($content)->toHaveKey('total');
+    expect($content['total'])->toBeGreaterThanOrEqual(1);
+});
+
+test('filters by action type', function () {
+    $asset = Asset::factory()->laptopZenbook()->create();
+    $log = new Actionlog;
+    $log->item_type = Asset::class;
+    $log->item_id = $asset->id;
+    $log->action_type = 'checkout';
+    $log->target_id = auth()->id();
+    $log->save();
+
+    $content = handle(['action_type' => 'checkout'])->getStructuredContent();
+
+    expect($content['total'])->toBeGreaterThanOrEqual(1);
+    foreach ($content['activity'] as $entry) {
+        expect($entry['action_type'])->toEqual('checkout');
+    }
+});
+
+test('filters by item id', function () {
+    $asset = Asset::factory()->laptopZenbook()->create();
+    $log = new Actionlog;
+    $log->item_type = Asset::class;
+    $log->item_id = $asset->id;
+    $log->action_type = 'update';
+    $log->target_id = auth()->id();
+    $log->save();
+
+    $content = handle([
+        'item_id' => $asset->id,
+        'item_type' => Asset::class,
+    ])->getStructuredContent();
+
+    expect($content['total'])->toBeGreaterThanOrEqual(1);
+    foreach ($content['activity'] as $entry) {
+        expect($entry['item_id'])->toEqual($asset->id);
+    }
+});
+
+test('user without activity view or type view gets empty feed', function () {
+    // Mirrors Api\DashboardController::activity: callers without
+    // activity.view AND without any type-level view permission
+    // get an empty feed, not a hard error. The dashboard treats
+    // this the same way.
+    $this->actingAs(User::factory()->create());
+
+    $content = handle()->getStructuredContent();
+
+    expect($content['total'])->toBe(0);
+    expect($content['activity'])->toBe([]);
+});

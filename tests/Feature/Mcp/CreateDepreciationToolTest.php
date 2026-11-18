@@ -1,61 +1,47 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\CreateDepreciationTool;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class CreateDepreciationToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->createDepreciations()->create());
+});
+
+function handle(array $args = []): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->createDepreciations()->create());
-    }
-
-    private function handle(array $args = []): ResponseFactory
-    {
-        return (new CreateDepreciationTool)->handle(new Request($args));
-    }
-
-    public function test_creates_depreciation()
-    {
-        $content = $this->handle(['name' => 'Test Depreciation', 'months' => 36])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertDatabaseHas('depreciations', [
-            'name' => 'Test Depreciation',
-            'months' => 36,
-        ]);
-    }
-
-    public function test_response_includes_id_name_and_months()
-    {
-        $content = $this->handle(['name' => 'Response Depreciation', 'months' => 24])->getStructuredContent();
-
-        $this->assertArrayHasKey('id', $content);
-        $this->assertEquals('Response Depreciation', $content['name']);
-        $this->assertEquals(24, $content['months']);
-    }
-
-    public function test_returns_error_when_name_missing()
-    {
-        $this->assertTrue($this->handle(['months' => 36])->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_months_missing()
-    {
-        $this->assertTrue($this->handle(['name' => 'No Months'])->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_user_lacks_permission()
-    {
-        $this->actingAs(User::factory()->create());
-
-        $this->assertTrue($this->handle(['name' => 'Blocked Depreciation', 'months' => 12])->responses()->first()->isError());
-        $this->assertDatabaseMissing('depreciations', ['name' => 'Blocked Depreciation']);
-    }
+    return handle(new Request($args));
 }
+
+test('creates depreciation', function () {
+    $content = handle(['name' => 'Test Depreciation', 'months' => 36])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    $this->assertDatabaseHas('depreciations', [
+        'name' => 'Test Depreciation',
+        'months' => 36,
+    ]);
+});
+
+test('response includes id name and months', function () {
+    $content = handle(['name' => 'Response Depreciation', 'months' => 24])->getStructuredContent();
+
+    expect($content)->toHaveKey('id');
+    expect($content['name'])->toEqual('Response Depreciation');
+    expect($content['months'])->toEqual(24);
+});
+
+test('returns error when name missing', function () {
+    expect(handle(['months' => 36])->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when months missing', function () {
+    expect(handle(['name' => 'No Months'])->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when user lacks permission', function () {
+    $this->actingAs(User::factory()->create());
+
+    expect(handle(['name' => 'Blocked Depreciation', 'months' => 12])->responses()->first()->isError())->toBeTrue();
+    $this->assertDatabaseMissing('depreciations', ['name' => 'Blocked Depreciation']);
+});

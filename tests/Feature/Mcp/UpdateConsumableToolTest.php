@@ -1,81 +1,67 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\UpdateConsumableTool;
 use App\Models\Consumable;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class UpdateConsumableToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->editConsumables()->create());
+});
+
+function handle(array $args = []): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->editConsumables()->create());
-    }
-
-    private function handle(array $args = []): ResponseFactory
-    {
-        return (new UpdateConsumableTool)->handle(new Request($args));
-    }
-
-    public function test_updates_consumable_by_id()
-    {
-        $consumable = Consumable::factory()->create(['qty' => 5]);
-
-        $content = $this->handle([
-            'id' => $consumable->id,
-            'qty' => 20,
-        ])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertEquals(20, $content['qty']);
-        $this->assertDatabaseHas('consumables', ['id' => $consumable->id, 'qty' => 20]);
-    }
-
-    public function test_updates_consumable_by_name()
-    {
-        $consumable = Consumable::factory()->create(['name' => 'Update By Name', 'qty' => 3]);
-
-        $content = $this->handle([
-            'name' => 'Update By Name',
-            'qty' => 15,
-        ])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertDatabaseHas('consumables', ['id' => $consumable->id, 'qty' => 15]);
-    }
-
-    public function test_renames_via_new_name()
-    {
-        $consumable = Consumable::factory()->create(['name' => 'Old Consumable Name']);
-
-        $content = $this->handle([
-            'id' => $consumable->id,
-            'new_name' => 'New Consumable Name',
-        ])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertEquals('New Consumable Name', $content['name']);
-        $this->assertDatabaseHas('consumables', ['id' => $consumable->id, 'name' => 'New Consumable Name']);
-    }
-
-    public function test_returns_error_when_not_found()
-    {
-        $this->assertTrue($this->handle(['id' => 999999, 'qty' => 5])->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_user_lacks_permission()
-    {
-        $this->actingAs(User::factory()->create());
-        $consumable = Consumable::factory()->create(['qty' => 5]);
-
-        $this->assertTrue($this->handle([
-            'id' => $consumable->id,
-            'qty' => 99,
-        ])->responses()->first()->isError());
-    }
+    return handle(new Request($args));
 }
+
+test('updates consumable by id', function () {
+    $consumable = Consumable::factory()->create(['qty' => 5]);
+
+    $content = handle([
+        'id' => $consumable->id,
+        'qty' => 20,
+    ])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    expect($content['qty'])->toEqual(20);
+    $this->assertDatabaseHas('consumables', ['id' => $consumable->id, 'qty' => 20]);
+});
+
+test('updates consumable by name', function () {
+    $consumable = Consumable::factory()->create(['name' => 'Update By Name', 'qty' => 3]);
+
+    $content = handle([
+        'name' => 'Update By Name',
+        'qty' => 15,
+    ])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    $this->assertDatabaseHas('consumables', ['id' => $consumable->id, 'qty' => 15]);
+});
+
+test('renames via new name', function () {
+    $consumable = Consumable::factory()->create(['name' => 'Old Consumable Name']);
+
+    $content = handle([
+        'id' => $consumable->id,
+        'new_name' => 'New Consumable Name',
+    ])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    expect($content['name'])->toEqual('New Consumable Name');
+    $this->assertDatabaseHas('consumables', ['id' => $consumable->id, 'name' => 'New Consumable Name']);
+});
+
+test('returns error when not found', function () {
+    expect(handle(['id' => 999999, 'qty' => 5])->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when user lacks permission', function () {
+    $this->actingAs(User::factory()->create());
+    $consumable = Consumable::factory()->create(['qty' => 5]);
+
+    expect(handle([
+        'id' => $consumable->id,
+        'qty' => 99,
+    ])->responses()->first()->isError())->toBeTrue();
+});

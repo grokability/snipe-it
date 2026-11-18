@@ -1,149 +1,129 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\AuditAssetTool;
 use App\Models\Asset;
 use App\Models\Location;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class AuditAssetToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->auditAssets()->create());
+});
+
+function handle(array $args): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->auditAssets()->create());
-    }
-
-    private function handle(array $args): ResponseFactory
-    {
-        return (new AuditAssetTool)->handle(new Request($args));
-    }
-
-    public function test_records_audit_by_asset_tag()
-    {
-        $asset = Asset::factory()->create();
-
-        $content = $this->handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-    }
-
-    public function test_records_audit_by_numeric_id()
-    {
-        $asset = Asset::factory()->create();
-
-        $content = $this->handle(['id' => $asset->id])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-    }
-
-    public function test_records_audit_by_serial()
-    {
-        $asset = Asset::factory()->create(['serial' => 'SN-AUDIT-001']);
-
-        $content = $this->handle(['serial' => 'SN-AUDIT-001'])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-    }
-
-    public function test_returns_error_when_asset_not_found()
-    {
-        $this->assertTrue($this->handle(['asset_tag' => 'DOES-NOT-EXIST'])->responses()->first()->isError());
-    }
-
-    public function test_sets_last_audit_date_to_now()
-    {
-        $asset = Asset::factory()->create(['last_audit_date' => null]);
-
-        $this->handle(['asset_tag' => $asset->asset_tag]);
-
-        $this->assertNotNull($asset->fresh()->last_audit_date);
-    }
-
-    public function test_respects_explicit_next_audit_date()
-    {
-        $asset = Asset::factory()->create();
-
-        $this->handle([
-            'asset_tag' => $asset->asset_tag,
-            'next_audit_date' => '2027-01-15',
-        ]);
-
-        $this->assertDatabaseHas('assets', [
-            'id' => $asset->id,
-            'next_audit_date' => '2027-01-15',
-        ]);
-    }
-
-    public function test_updates_location_when_provided()
-    {
-        $location = Location::factory()->create();
-        $asset = Asset::factory()->create();
-
-        $this->handle([
-            'asset_tag' => $asset->asset_tag,
-            'location_id' => $location->id,
-        ]);
-
-        $this->assertDatabaseHas('assets', [
-            'id' => $asset->id,
-            'location_id' => $location->id,
-        ]);
-    }
-
-    public function test_does_not_change_location_when_not_provided()
-    {
-        $location = Location::factory()->create();
-        $asset = Asset::factory()->create(['location_id' => $location->id]);
-
-        $this->handle(['asset_tag' => $asset->asset_tag]);
-
-        $this->assertDatabaseHas('assets', [
-            'id' => $asset->id,
-            'location_id' => $location->id,
-        ]);
-    }
-
-    public function test_response_includes_audit_dates_and_asset_tag()
-    {
-        $asset = Asset::factory()->create();
-
-        $content = $this->handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
-
-        $this->assertEquals($asset->asset_tag, $content['asset_tag']);
-        $this->assertArrayHasKey('last_audit_date', $content);
-        $this->assertArrayHasKey('next_audit_date', $content);
-        $this->assertNotNull($content['last_audit_date']);
-    }
-
-    public function test_creates_audit_log_entry()
-    {
-        $asset = Asset::factory()->create();
-
-        $this->handle([
-            'asset_tag' => $asset->asset_tag,
-            'note' => 'MCP audit note',
-        ]);
-
-        $this->assertDatabaseHas('action_logs', [
-            'item_type' => Asset::class,
-            'item_id' => $asset->id,
-            'action_type' => 'audit',
-        ]);
-    }
-
-    public function test_returns_error_when_user_lacks_permission()
-    {
-        $this->actingAs(User::factory()->create());
-        $asset = Asset::factory()->create();
-
-        $response = $this->handle(['asset_tag' => $asset->asset_tag]);
-
-        $this->assertTrue($response->responses()->first()->isError());
-        $this->assertNull($asset->fresh()->last_audit_date);
-    }
+    return handle(new Request($args));
 }
+
+test('records audit by asset tag', function () {
+    $asset = Asset::factory()->create();
+
+    $content = handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+});
+
+test('records audit by numeric id', function () {
+    $asset = Asset::factory()->create();
+
+    $content = handle(['id' => $asset->id])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+});
+
+test('records audit by serial', function () {
+    $asset = Asset::factory()->create(['serial' => 'SN-AUDIT-001']);
+
+    $content = handle(['serial' => 'SN-AUDIT-001'])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+});
+
+test('returns error when asset not found', function () {
+    expect(handle(['asset_tag' => 'DOES-NOT-EXIST'])->responses()->first()->isError())->toBeTrue();
+});
+
+test('sets last audit date to now', function () {
+    $asset = Asset::factory()->create(['last_audit_date' => null]);
+
+    handle(['asset_tag' => $asset->asset_tag]);
+
+    expect($asset->fresh()->last_audit_date)->not->toBeNull();
+});
+
+test('respects explicit next audit date', function () {
+    $asset = Asset::factory()->create();
+
+    handle([
+        'asset_tag' => $asset->asset_tag,
+        'next_audit_date' => '2027-01-15',
+    ]);
+
+    $this->assertDatabaseHas('assets', [
+        'id' => $asset->id,
+        'next_audit_date' => '2027-01-15',
+    ]);
+});
+
+test('updates location when provided', function () {
+    $location = Location::factory()->create();
+    $asset = Asset::factory()->create();
+
+    handle([
+        'asset_tag' => $asset->asset_tag,
+        'location_id' => $location->id,
+    ]);
+
+    $this->assertDatabaseHas('assets', [
+        'id' => $asset->id,
+        'location_id' => $location->id,
+    ]);
+});
+
+test('does not change location when not provided', function () {
+    $location = Location::factory()->create();
+    $asset = Asset::factory()->create(['location_id' => $location->id]);
+
+    handle(['asset_tag' => $asset->asset_tag]);
+
+    $this->assertDatabaseHas('assets', [
+        'id' => $asset->id,
+        'location_id' => $location->id,
+    ]);
+});
+
+test('response includes audit dates and asset tag', function () {
+    $asset = Asset::factory()->create();
+
+    $content = handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
+
+    expect($content['asset_tag'])->toEqual($asset->asset_tag);
+    expect($content)->toHaveKey('last_audit_date');
+    expect($content)->toHaveKey('next_audit_date');
+    expect($content['last_audit_date'])->not->toBeNull();
+});
+
+test('creates audit log entry', function () {
+    $asset = Asset::factory()->create();
+
+    handle([
+        'asset_tag' => $asset->asset_tag,
+        'note' => 'MCP audit note',
+    ]);
+
+    $this->assertDatabaseHas('action_logs', [
+        'item_type' => Asset::class,
+        'item_id' => $asset->id,
+        'action_type' => 'audit',
+    ]);
+});
+
+test('returns error when user lacks permission', function () {
+    $this->actingAs(User::factory()->create());
+    $asset = Asset::factory()->create();
+
+    $response = handle(['asset_tag' => $asset->asset_tag]);
+
+    expect($response->responses()->first()->isError())->toBeTrue();
+    expect($asset->fresh()->last_audit_date)->toBeNull();
+});

@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
 use App\Mcp\Tools\CheckinAccessoryTool;
 use App\Mcp\Tools\CheckoutAccessoryTool;
 use App\Mcp\Tools\DeleteAccessoryTool;
@@ -11,174 +9,136 @@ use App\Models\AccessoryCheckout;
 use App\Models\Company;
 use App\Models\User;
 use Laravel\Mcp\Request;
-use Tests\TestCase;
 
-class FmcsAccessoryScopingTest extends TestCase
-{
-    private Company $companyA;
+beforeEach(function () {
+    [$this->companyA, $this->companyB] = Company::factory()->count(2)->create();
 
-    private Company $companyB;
+    $this->accessoryA = Accessory::factory()->for($this->companyA)->create(['qty' => 5]);
+    $this->accessoryB = Accessory::factory()->for($this->companyB)->create(['qty' => 5]);
 
-    private Accessory $accessoryA;
+    $this->userInCompanyA = $this->companyA->users()->save(
+        User::factory()->editAccessories()->deleteAccessories()->checkoutAccessories()->checkinAccessories()->make()
+    );
+    $this->superUser = $this->companyA->users()->save(User::factory()->superuser()->make());
 
-    private Accessory $accessoryB;
+    $this->settings->enableMultipleFullCompanySupport();
+});
 
-    private User $userInCompanyA;
+test('update blocked for cross company accessory', function () {
+    $this->actingAs($this->userInCompanyA);
 
-    private User $superUser;
+    $response = (new UpdateAccessoryTool)->handle(new Request([
+        'id' => $this->accessoryB->id,
+        'qty' => 99,
+    ]));
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    expect($response->responses()->first()->isError())->toBeTrue();
+    $this->assertDatabaseMissing('accessories', ['id' => $this->accessoryB->id, 'qty' => 99]);
+});
 
-        [$this->companyA, $this->companyB] = Company::factory()->count(2)->create();
+test('update allowed for same company accessory', function () {
+    $this->actingAs($this->userInCompanyA);
 
-        $this->accessoryA = Accessory::factory()->for($this->companyA)->create(['qty' => 5]);
-        $this->accessoryB = Accessory::factory()->for($this->companyB)->create(['qty' => 5]);
+    $content = (new UpdateAccessoryTool)->handle(new Request([
+        'id' => $this->accessoryA->id,
+        'qty' => 10,
+    ]))->getStructuredContent();
 
-        $this->userInCompanyA = $this->companyA->users()->save(
-            User::factory()->editAccessories()->deleteAccessories()->checkoutAccessories()->checkinAccessories()->make()
-        );
-        $this->superUser = $this->companyA->users()->save(User::factory()->superuser()->make());
+    expect($content['success'])->toBeTrue();
+    $this->assertDatabaseHas('accessories', ['id' => $this->accessoryA->id, 'qty' => 10]);
+});
 
-        $this->settings->enableMultipleFullCompanySupport();
-    }
+test('delete blocked for cross company accessory', function () {
+    $this->actingAs($this->userInCompanyA);
 
-    // --- UpdateAccessoryTool ---
+    $response = (new DeleteAccessoryTool)->handle(new Request([
+        'id' => $this->accessoryB->id,
+    ]));
 
-    public function test_update_blocked_for_cross_company_accessory()
-    {
-        $this->actingAs($this->userInCompanyA);
+    expect($response->responses()->first()->isError())->toBeTrue();
+    $this->assertNotSoftDeleted($this->accessoryB);
+});
 
-        $response = (new UpdateAccessoryTool)->handle(new Request([
-            'id' => $this->accessoryB->id,
-            'qty' => 99,
-        ]));
+test('delete allowed for same company accessory', function () {
+    $this->actingAs($this->userInCompanyA);
 
-        $this->assertTrue($response->responses()->first()->isError());
-        $this->assertDatabaseMissing('accessories', ['id' => $this->accessoryB->id, 'qty' => 99]);
-    }
+    $content = (new DeleteAccessoryTool)->handle(new Request([
+        'id' => $this->accessoryA->id,
+    ]))->getStructuredContent();
 
-    public function test_update_allowed_for_same_company_accessory()
-    {
-        $this->actingAs($this->userInCompanyA);
+    expect($content['success'])->toBeTrue();
+    $this->assertSoftDeleted($this->accessoryA);
+});
 
-        $content = (new UpdateAccessoryTool)->handle(new Request([
-            'id' => $this->accessoryA->id,
-            'qty' => 10,
-        ]))->getStructuredContent();
+test('checkout blocked for cross company accessory', function () {
+    $user = $this->companyA->users()->save(User::factory()->make());
 
-        $this->assertTrue($content['success']);
-        $this->assertDatabaseHas('accessories', ['id' => $this->accessoryA->id, 'qty' => 10]);
-    }
+    $this->actingAs($this->userInCompanyA);
 
-    // --- DeleteAccessoryTool ---
+    $response = (new CheckoutAccessoryTool)->handle(new Request([
+        'id' => $this->accessoryB->id,
+        'checkout_to_type' => 'user',
+        'assigned_user' => $user->id,
+    ]));
 
-    public function test_delete_blocked_for_cross_company_accessory()
-    {
-        $this->actingAs($this->userInCompanyA);
+    expect($response->responses()->first()->isError())->toBeTrue();
+    $this->assertDatabaseMissing('accessories_checkout', ['accessory_id' => $this->accessoryB->id]);
+});
 
-        $response = (new DeleteAccessoryTool)->handle(new Request([
-            'id' => $this->accessoryB->id,
-        ]));
+test('checkout allowed for same company accessory', function () {
+    $user = $this->companyA->users()->save(User::factory()->make());
 
-        $this->assertTrue($response->responses()->first()->isError());
-        $this->assertNotSoftDeleted($this->accessoryB);
-    }
+    $this->actingAs($this->userInCompanyA);
 
-    public function test_delete_allowed_for_same_company_accessory()
-    {
-        $this->actingAs($this->userInCompanyA);
+    $content = (new CheckoutAccessoryTool)->handle(new Request([
+        'id' => $this->accessoryA->id,
+        'checkout_to_type' => 'user',
+        'assigned_user' => $user->id,
+    ]))->getStructuredContent();
 
-        $content = (new DeleteAccessoryTool)->handle(new Request([
-            'id' => $this->accessoryA->id,
-        ]))->getStructuredContent();
+    expect($content['success'])->toBeTrue();
+    $this->assertDatabaseHas('accessories_checkout', ['accessory_id' => $this->accessoryA->id]);
+});
 
-        $this->assertTrue($content['success']);
-        $this->assertSoftDeleted($this->accessoryA);
-    }
+test('checkin blocked for cross company accessory', function () {
+    $user = $this->companyB->users()->save(User::factory()->make());
+    $this->actingAs($this->userInCompanyA);
 
-    // --- CheckoutAccessoryTool ---
+    // Checkout accessory B as superuser (different company), then try to check it in as userInCompanyA
+    $checkoutId = AccessoryCheckout::create([
+        'accessory_id' => $this->accessoryB->id,
+        'assigned_to' => $user->id,
+        'assigned_type' => User::class,
+        'created_by' => $this->superUser->id,
+    ])->id;
 
-    public function test_checkout_blocked_for_cross_company_accessory()
-    {
-        $user = $this->companyA->users()->save(User::factory()->make());
+    $response = (new CheckinAccessoryTool)->handle(new Request([
+        'checkout_id' => $checkoutId,
+    ]));
 
-        $this->actingAs($this->userInCompanyA);
+    expect($response->responses()->first()->isError())->toBeTrue();
+    $this->assertDatabaseHas('accessories_checkout', ['id' => $checkoutId]);
+});
 
-        $response = (new CheckoutAccessoryTool)->handle(new Request([
-            'id' => $this->accessoryB->id,
-            'checkout_to_type' => 'user',
-            'assigned_user' => $user->id,
-        ]));
+test('superuser can update accessory in any company', function () {
+    $this->actingAs($this->superUser);
 
-        $this->assertTrue($response->responses()->first()->isError());
-        $this->assertDatabaseMissing('accessories_checkout', ['accessory_id' => $this->accessoryB->id]);
-    }
+    $content = (new UpdateAccessoryTool)->handle(new Request([
+        'id' => $this->accessoryB->id,
+        'qty' => 20,
+    ]))->getStructuredContent();
 
-    public function test_checkout_allowed_for_same_company_accessory()
-    {
-        $user = $this->companyA->users()->save(User::factory()->make());
+    expect($content['success'])->toBeTrue();
+    $this->assertDatabaseHas('accessories', ['id' => $this->accessoryB->id, 'qty' => 20]);
+});
 
-        $this->actingAs($this->userInCompanyA);
+test('superuser can delete accessory in any company', function () {
+    $this->actingAs($this->superUser);
 
-        $content = (new CheckoutAccessoryTool)->handle(new Request([
-            'id' => $this->accessoryA->id,
-            'checkout_to_type' => 'user',
-            'assigned_user' => $user->id,
-        ]))->getStructuredContent();
+    $content = (new DeleteAccessoryTool)->handle(new Request([
+        'id' => $this->accessoryB->id,
+    ]))->getStructuredContent();
 
-        $this->assertTrue($content['success']);
-        $this->assertDatabaseHas('accessories_checkout', ['accessory_id' => $this->accessoryA->id]);
-    }
-
-    // --- CheckinAccessoryTool ---
-
-    public function test_checkin_blocked_for_cross_company_accessory()
-    {
-        $user = $this->companyB->users()->save(User::factory()->make());
-        $this->actingAs($this->userInCompanyA);
-
-        // Checkout accessory B as superuser (different company), then try to check it in as userInCompanyA
-        $checkoutId = AccessoryCheckout::create([
-            'accessory_id' => $this->accessoryB->id,
-            'assigned_to' => $user->id,
-            'assigned_type' => User::class,
-            'created_by' => $this->superUser->id,
-        ])->id;
-
-        $response = (new CheckinAccessoryTool)->handle(new Request([
-            'checkout_id' => $checkoutId,
-        ]));
-
-        $this->assertTrue($response->responses()->first()->isError());
-        $this->assertDatabaseHas('accessories_checkout', ['id' => $checkoutId]);
-    }
-
-    // --- Superuser bypass ---
-
-    public function test_superuser_can_update_accessory_in_any_company()
-    {
-        $this->actingAs($this->superUser);
-
-        $content = (new UpdateAccessoryTool)->handle(new Request([
-            'id' => $this->accessoryB->id,
-            'qty' => 20,
-        ]))->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertDatabaseHas('accessories', ['id' => $this->accessoryB->id, 'qty' => 20]);
-    }
-
-    public function test_superuser_can_delete_accessory_in_any_company()
-    {
-        $this->actingAs($this->superUser);
-
-        $content = (new DeleteAccessoryTool)->handle(new Request([
-            'id' => $this->accessoryB->id,
-        ]))->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertSoftDeleted($this->accessoryB);
-    }
-}
+    expect($content['success'])->toBeTrue();
+    $this->assertSoftDeleted($this->accessoryB);
+});

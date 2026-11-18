@@ -1,63 +1,50 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\ListManufacturersTool;
 use App\Models\Manufacturer;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class ListManufacturersToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->viewManufacturers()->create());
+});
+
+function handle(array $args = []): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->viewManufacturers()->create());
-    }
-
-    private function handle(array $args = []): ResponseFactory
-    {
-        return (new ListManufacturersTool)->handle(new Request($args));
-    }
-
-    public function test_returns_manufacturers_with_pagination()
-    {
-        Manufacturer::factory()->count(3)->create();
-
-        $content = $this->handle()->getStructuredContent();
-
-        $this->assertArrayHasKey('manufacturers', $content);
-        $this->assertGreaterThanOrEqual(3, $content['total']);
-    }
-
-    public function test_each_manufacturer_has_key_fields()
-    {
-        Manufacturer::factory()->create(['name' => 'Key Fields Manufacturer']);
-
-        $content = $this->handle(['search' => 'Key Fields Manufacturer'])->getStructuredContent();
-
-        $this->assertNotEmpty($content['manufacturers']);
-        $manufacturer = $content['manufacturers'][0];
-        $this->assertArrayHasKey('id', $manufacturer);
-        $this->assertArrayHasKey('name', $manufacturer);
-    }
-
-    public function test_limit_controls_results()
-    {
-        Manufacturer::factory()->count(5)->create();
-
-        $content = $this->handle(['limit' => 2])->getStructuredContent();
-
-        $this->assertCount(2, $content['manufacturers']);
-        $this->assertEquals(2, $content['limit']);
-    }
-
-    public function test_returns_error_when_user_lacks_permission()
-    {
-        $this->actingAs(User::factory()->create());
-
-        $this->assertTrue($this->handle()->responses()->first()->isError());
-    }
+    return handle(new Request($args));
 }
+
+test('returns manufacturers with pagination', function () {
+    Manufacturer::factory()->count(3)->create();
+
+    $content = handle()->getStructuredContent();
+
+    expect($content)->toHaveKey('manufacturers');
+    expect($content['total'])->toBeGreaterThanOrEqual(3);
+});
+
+test('each manufacturer has key fields', function () {
+    Manufacturer::factory()->create(['name' => 'Key Fields Manufacturer']);
+
+    $content = handle(['search' => 'Key Fields Manufacturer'])->getStructuredContent();
+
+    expect($content['manufacturers'])->not->toBeEmpty();
+    $manufacturer = $content['manufacturers'][0];
+    expect($manufacturer)->toHaveKey('id');
+    expect($manufacturer)->toHaveKey('name');
+});
+
+test('limit controls results', function () {
+    Manufacturer::factory()->count(5)->create();
+
+    $content = handle(['limit' => 2])->getStructuredContent();
+
+    expect($content['manufacturers'])->toHaveCount(2);
+    expect($content['limit'])->toEqual(2);
+});
+
+test('returns error when user lacks permission', function () {
+    $this->actingAs(User::factory()->create());
+
+    expect(handle()->responses()->first()->isError())->toBeTrue();
+});

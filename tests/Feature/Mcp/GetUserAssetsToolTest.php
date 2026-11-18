@@ -1,60 +1,47 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\GetUserAssetsTool;
 use App\Models\Asset;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class GetUserAssetsToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->viewUsers()->viewAssets()->create());
+});
+
+function handle(array $args): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->viewUsers()->viewAssets()->create());
-    }
-
-    private function handle(array $args): ResponseFactory
-    {
-        return (new GetUserAssetsTool)->handle(new Request($args));
-    }
-
-    public function test_returns_assets_for_user()
-    {
-        $user = User::factory()->create();
-        Asset::factory()->assignedToUser($user)->create();
-
-        $content = $this->handle(['id' => $user->id])->getStructuredContent();
-
-        $this->assertEquals($user->id, $content['user_id']);
-        $this->assertEquals(1, $content['total']);
-        $this->assertCount(1, $content['assets']);
-    }
-
-    public function test_returns_empty_array_when_user_has_no_assets()
-    {
-        $user = User::factory()->create();
-
-        $content = $this->handle(['id' => $user->id])->getStructuredContent();
-
-        $this->assertEquals(0, $content['total']);
-        $this->assertCount(0, $content['assets']);
-    }
-
-    public function test_returns_error_when_user_not_found()
-    {
-        $this->assertTrue($this->handle(['id' => 999999])->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_user_lacks_permission()
-    {
-        $this->actingAs(User::factory()->create());
-
-        $user = User::factory()->create();
-
-        $this->assertTrue($this->handle(['id' => $user->id])->responses()->first()->isError());
-    }
+    return handle(new Request($args));
 }
+
+test('returns assets for user', function () {
+    $user = User::factory()->create();
+    Asset::factory()->assignedToUser($user)->create();
+
+    $content = handle(['id' => $user->id])->getStructuredContent();
+
+    expect($content['user_id'])->toEqual($user->id);
+    expect($content['total'])->toEqual(1);
+    expect($content['assets'])->toHaveCount(1);
+});
+
+test('returns empty array when user has no assets', function () {
+    $user = User::factory()->create();
+
+    $content = handle(['id' => $user->id])->getStructuredContent();
+
+    expect($content['total'])->toEqual(0);
+    expect($content['assets'])->toHaveCount(0);
+});
+
+test('returns error when user not found', function () {
+    expect(handle(['id' => 999999])->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when user lacks permission', function () {
+    $this->actingAs(User::factory()->create());
+
+    $user = User::factory()->create();
+
+    expect(handle(['id' => $user->id])->responses()->first()->isError())->toBeTrue();
+});

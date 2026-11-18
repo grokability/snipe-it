@@ -1,54 +1,42 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\ListStatusLabelsTool;
 use App\Models\Statuslabel;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class ListStatusLabelsToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->viewStatusLabels()->create());
+});
+
+function handle(array $args = []): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->viewStatusLabels()->create());
-    }
-
-    private function handle(array $args = []): ResponseFactory
-    {
-        return (new ListStatusLabelsTool)->handle(new Request($args));
-    }
-
-    public function test_returns_status_labels_with_pagination()
-    {
-        Statuslabel::factory()->count(3)->create();
-
-        $content = $this->handle()->getStructuredContent();
-
-        $this->assertArrayHasKey('status_labels', $content);
-        $this->assertGreaterThanOrEqual(3, $content['total']);
-    }
-
-    public function test_each_status_label_has_key_fields()
-    {
-        Statuslabel::factory()->create(['name' => 'Key Fields Status Label']);
-
-        $content = $this->handle(['search' => 'Key Fields Status Label'])->getStructuredContent();
-
-        $this->assertNotEmpty($content['status_labels']);
-        $label = $content['status_labels'][0];
-        $this->assertArrayHasKey('id', $label);
-        $this->assertArrayHasKey('name', $label);
-        $this->assertArrayHasKey('type', $label);
-    }
-
-    public function test_returns_error_when_user_lacks_permission()
-    {
-        $this->actingAs(User::factory()->create());
-
-        $this->assertTrue($this->handle()->responses()->first()->isError());
-    }
+    return handle(new Request($args));
 }
+
+test('returns status labels with pagination', function () {
+    Statuslabel::factory()->count(3)->create();
+
+    $content = handle()->getStructuredContent();
+
+    expect($content)->toHaveKey('status_labels');
+    expect($content['total'])->toBeGreaterThanOrEqual(3);
+});
+
+test('each status label has key fields', function () {
+    Statuslabel::factory()->create(['name' => 'Key Fields Status Label']);
+
+    $content = handle(['search' => 'Key Fields Status Label'])->getStructuredContent();
+
+    expect($content['status_labels'])->not->toBeEmpty();
+    $label = $content['status_labels'][0];
+    expect($label)->toHaveKey('id');
+    expect($label)->toHaveKey('name');
+    expect($label)->toHaveKey('type');
+});
+
+test('returns error when user lacks permission', function () {
+    $this->actingAs(User::factory()->create());
+
+    expect(handle()->responses()->first()->isError())->toBeTrue();
+});

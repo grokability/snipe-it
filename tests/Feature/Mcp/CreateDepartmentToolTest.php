@@ -1,84 +1,69 @@
 <?php
 
-namespace Tests\Feature\Mcp;
-
-use App\Mcp\Tools\CreateDepartmentTool;
 use App\Models\Location;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
-use Tests\TestCase;
 
-class CreateDepartmentToolTest extends TestCase
+beforeEach(function () {
+    $this->actingAs(User::factory()->createDepartments()->create());
+});
+
+function handle(array $args): ResponseFactory
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->actingAs(User::factory()->createDepartments()->create());
-    }
-
-    private function handle(array $args): ResponseFactory
-    {
-        return (new CreateDepartmentTool)->handle(new Request($args));
-    }
-
-    public function test_creates_department_with_required_fields()
-    {
-        $content = $this->handle(['name' => 'Test Department'])->getStructuredContent();
-
-        $this->assertTrue($content['success']);
-        $this->assertDatabaseHas('departments', ['name' => 'Test Department']);
-    }
-
-    public function test_response_includes_id_and_name()
-    {
-        $content = $this->handle(['name' => 'Response Department'])->getStructuredContent();
-
-        $this->assertArrayHasKey('id', $content);
-        $this->assertEquals('Response Department', $content['name']);
-    }
-
-    public function test_creates_department_with_optional_fields()
-    {
-        $location = Location::factory()->create();
-        $manager = User::factory()->create();
-
-        $this->handle([
-            'name' => 'Full Department',
-            'location_id' => $location->id,
-            'manager_id' => $manager->id,
-            'phone' => '555-1234',
-            'fax' => '555-5678',
-            'notes' => 'Department notes',
-        ]);
-
-        $this->assertDatabaseHas('departments', [
-            'name' => 'Full Department',
-            'location_id' => $location->id,
-            'manager_id' => $manager->id,
-            'phone' => '555-1234',
-            'fax' => '555-5678',
-        ]);
-    }
-
-    public function test_returns_error_when_name_missing()
-    {
-        $this->assertTrue($this->handle([])->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_location_does_not_exist()
-    {
-        $this->assertTrue($this->handle([
-            'name' => 'Bad Location Dept',
-            'location_id' => 999999,
-        ])->responses()->first()->isError());
-    }
-
-    public function test_returns_error_when_user_lacks_permission()
-    {
-        $this->actingAs(User::factory()->create());
-
-        $this->assertTrue($this->handle(['name' => 'Blocked Department'])->responses()->first()->isError());
-        $this->assertDatabaseMissing('departments', ['name' => 'Blocked Department']);
-    }
+    return handle(new Request($args));
 }
+
+test('creates department with required fields', function () {
+    $content = handle(['name' => 'Test Department'])->getStructuredContent();
+
+    expect($content['success'])->toBeTrue();
+    $this->assertDatabaseHas('departments', ['name' => 'Test Department']);
+});
+
+test('response includes id and name', function () {
+    $content = handle(['name' => 'Response Department'])->getStructuredContent();
+
+    expect($content)->toHaveKey('id');
+    expect($content['name'])->toEqual('Response Department');
+});
+
+test('creates department with optional fields', function () {
+    $location = Location::factory()->create();
+    $manager = User::factory()->create();
+
+    handle([
+        'name' => 'Full Department',
+        'location_id' => $location->id,
+        'manager_id' => $manager->id,
+        'phone' => '555-1234',
+        'fax' => '555-5678',
+        'notes' => 'Department notes',
+    ]);
+
+    $this->assertDatabaseHas('departments', [
+        'name' => 'Full Department',
+        'location_id' => $location->id,
+        'manager_id' => $manager->id,
+        'phone' => '555-1234',
+        'fax' => '555-5678',
+    ]);
+});
+
+test('returns error when name missing', function () {
+    expect(handle([])->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when location does not exist', function () {
+    expect(handle([
+        'name' => 'Bad Location Dept',
+        'location_id' => 999999,
+    ])->responses()->first()->isError())->toBeTrue();
+});
+
+test('returns error when user lacks permission', function () {
+    $this->actingAs(User::factory()->create());
+
+    expect(handle(['name' => 'Blocked Department'])->responses()->first()->isError())->toBeTrue();
+    $this->assertDatabaseMissing('departments', ['name' => 'Blocked Department']);
+});
