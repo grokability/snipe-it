@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Feature\Checkins\Ui;
-
 use App\Events\CheckoutableCheckedIn;
 use App\Models\Actionlog;
 use App\Models\Asset;
@@ -13,501 +11,444 @@ use App\Models\Statuslabel;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
-use Tests\TestCase;
 
-class AssetCheckinTest extends TestCase
-{
-    public function test_checking_in_asset_requires_correct_permission()
-    {
-        $this->actingAs(User::factory()->create())
-            ->post(route('hardware.checkin.store', [Asset::factory()->assignedToUser()->create()]))
-            ->assertForbidden();
-    }
+test('checking in asset requires correct permission', function () {
+    $this->actingAs(User::factory()->create())
+        ->post(route('hardware.checkin.store', [Asset::factory()->assignedToUser()->create()]))
+        ->assertForbidden();
+});
 
-    public function test_cannot_check_in_asset_that_is_not_checked_out()
-    {
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', [Asset::factory()->create()]))
-            ->assertStatus(302)
-            ->assertSessionHas('error')
-            ->assertRedirect(route('hardware.index'));
-    }
+test('cannot check in asset that is not checked out', function () {
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route('hardware.checkin.store', [Asset::factory()->create()]))
+        ->assertStatus(302)
+        ->assertSessionHas('error')
+        ->assertRedirect(route('hardware.index'));
+});
 
-    public function test_cannot_store_asset_checkin_that_is_not_checked_out()
-    {
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->get(route('hardware.checkin.store', [Asset::factory()->create()]))
-            ->assertStatus(302)
-            ->assertSessionHas('error')
-            ->assertRedirect(route('hardware.index'));
-    }
+test('cannot store asset checkin that is not checked out', function () {
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->get(route('hardware.checkin.store', [Asset::factory()->create()]))
+        ->assertStatus(302)
+        ->assertSessionHas('error')
+        ->assertRedirect(route('hardware.index'));
+});
 
-    public function test_page_renders()
-    {
-        $this->actingAs(User::factory()->superuser()->create())
-            ->get(route('hardware.checkin.create', Asset::factory()->assignedToUser()->create()))
-            ->assertOk();
-    }
+test('page renders', function () {
+    $this->actingAs(User::factory()->superuser()->create())
+        ->get(route('hardware.checkin.create', Asset::factory()->assignedToUser()->create()))
+        ->assertOk();
+});
 
-    public function test_requestable_toggle_is_hidden_on_checkin_page_without_old_status_selection()
-    {
-        $deployableStatus = Statuslabel::factory()->readyToDeploy()->create();
-        $asset = Asset::factory()->assignedToUser()->create([
-            'status_id' => $deployableStatus->id,
-        ]);
+test('requestable toggle is hidden on checkin page without old status selection', function () {
+    $deployableStatus = Statuslabel::factory()->readyToDeploy()->create();
+    $asset = Asset::factory()->assignedToUser()->create([
+        'status_id' => $deployableStatus->id,
+    ]);
 
-        $response = $this->actingAs(User::factory()->checkinAssets()->create())
-            ->get(route('hardware.checkin.create', $asset))
-            ->assertOk();
+    $response = $this->actingAs(User::factory()->checkinAssets()->create())
+        ->get(route('hardware.checkin.create', $asset))
+        ->assertOk();
 
-        $content = $response->getContent();
+    $content = $response->getContent();
 
-        $this->assertStringContainsString('id="requestable-wrapper"', $content);
-        $this->assertMatchesRegularExpression(
-            '/id="requestable-wrapper"(?:(?!>).)*style="display:\s*none;"/s',
-            $content
-        );
-    }
+    $this->assertStringContainsString('id="requestable-wrapper"', $content);
+    expect($content)->toMatch('/id="requestable-wrapper"(?:(?!>).)*style="display:\s*none;"/s');
+});
 
-    public function test_requestable_toggle_is_hidden_on_checkin_page_for_non_deployable_status()
-    {
-        $nonDeployableStatus = Statuslabel::factory()->create(['deployable' => 0]);
-        $asset = Asset::factory()->assignedToUser()->create([
-            'status_id' => $nonDeployableStatus->id,
-        ]);
+test('requestable toggle is hidden on checkin page for non deployable status', function () {
+    $nonDeployableStatus = Statuslabel::factory()->create(['deployable' => 0]);
+    $asset = Asset::factory()->assignedToUser()->create([
+        'status_id' => $nonDeployableStatus->id,
+    ]);
 
-        $response = $this->actingAs(User::factory()->checkinAssets()->create())
-            ->get(route('hardware.checkin.create', $asset))
-            ->assertOk();
+    $response = $this->actingAs(User::factory()->checkinAssets()->create())
+        ->get(route('hardware.checkin.create', $asset))
+        ->assertOk();
 
-        $content = $response->getContent();
+    $content = $response->getContent();
 
-        $this->assertMatchesRegularExpression(
-            '/id="requestable-wrapper"(?:(?!>).)*style="display:\s*none;"/s',
-            $content
-        );
-    }
+    expect($content)->toMatch('/id="requestable-wrapper"(?:(?!>).)*style="display:\s*none;"/s');
+});
 
-    public function test_requestable_toggle_visibility_prefers_old_input_status_id_when_present()
-    {
-        $deployableStatus = Statuslabel::factory()->readyToDeploy()->create();
-        $nonDeployableStatus = Statuslabel::factory()->create(['deployable' => 0]);
+test('requestable toggle visibility prefers old input status id when present', function () {
+    $deployableStatus = Statuslabel::factory()->readyToDeploy()->create();
+    $nonDeployableStatus = Statuslabel::factory()->create(['deployable' => 0]);
 
-        $asset = Asset::factory()->assignedToUser()->create([
-            'status_id' => $nonDeployableStatus->id,
-        ]);
+    $asset = Asset::factory()->assignedToUser()->create([
+        'status_id' => $nonDeployableStatus->id,
+    ]);
 
-        $responseWithDeployableOldInput = $this->actingAs(User::factory()->checkinAssets()->create())
-            ->withSession(['_old_input' => ['status_id' => (string) $deployableStatus->id]])
-            ->get(route('hardware.checkin.create', $asset))
-            ->assertOk();
+    $responseWithDeployableOldInput = $this->actingAs(User::factory()->checkinAssets()->create())
+        ->withSession(['_old_input' => ['status_id' => (string) $deployableStatus->id]])
+        ->get(route('hardware.checkin.create', $asset))
+        ->assertOk();
 
-        $this->assertDoesNotMatchRegularExpression(
-            '/id="requestable-wrapper"(?:(?!>).)*style="display:\s*none;"/s',
-            $responseWithDeployableOldInput->getContent()
-        );
+    $this->assertDoesNotMatchRegularExpression(
+        '/id="requestable-wrapper"(?:(?!>).)*style="display:\s*none;"/s',
+        $responseWithDeployableOldInput->getContent()
+    );
 
-        $assetWithDeployableStatus = Asset::factory()->assignedToUser()->create([
-            'status_id' => $deployableStatus->id,
-        ]);
+    $assetWithDeployableStatus = Asset::factory()->assignedToUser()->create([
+        'status_id' => $deployableStatus->id,
+    ]);
 
-        $responseWithNonDeployableOldInput = $this->actingAs(User::factory()->checkinAssets()->create())
-            ->withSession(['_old_input' => ['status_id' => (string) $nonDeployableStatus->id]])
-            ->get(route('hardware.checkin.create', $assetWithDeployableStatus))
-            ->assertOk();
+    $responseWithNonDeployableOldInput = $this->actingAs(User::factory()->checkinAssets()->create())
+        ->withSession(['_old_input' => ['status_id' => (string) $nonDeployableStatus->id]])
+        ->get(route('hardware.checkin.create', $assetWithDeployableStatus))
+        ->assertOk();
 
-        $this->assertMatchesRegularExpression(
-            '/id="requestable-wrapper"(?:(?!>).)*style="display:\s*none;"/s',
-            $responseWithNonDeployableOldInput->getContent()
-        );
-    }
+    expect($responseWithNonDeployableOldInput->getContent())->toMatch('/id="requestable-wrapper"(?:(?!>).)*style="display:\s*none;"/s');
+});
 
-    public function test_asset_can_be_checked_in()
-    {
-        Event::fake([CheckoutableCheckedIn::class]);
+test('asset can be checked in', function () {
+    Event::fake([CheckoutableCheckedIn::class]);
 
-        $user = User::factory()->create();
-        $location = Location::factory()->create();
-        $status = Statuslabel::first() ?? Statuslabel::factory()->create();
-        $asset = Asset::factory()->assignedToUser($user)->create([
-            'expected_checkin' => now()->addDay(),
-            'last_checkin' => null,
-            'accepted' => 'accepted',
-        ]);
+    $user = User::factory()->create();
+    $location = Location::factory()->create();
+    $status = Statuslabel::first() ?? Statuslabel::factory()->create();
+    $asset = Asset::factory()->assignedToUser($user)->create([
+        'expected_checkin' => now()->addDay(),
+        'last_checkin' => null,
+        'accepted' => 'accepted',
+    ]);
 
-        $this->assertTrue($asset->assignedTo->is($user));
+    expect($asset->assignedTo->is($user))->toBeTrue();
 
-        $currentTimestamp = now();
+    $currentTimestamp = now();
 
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(
-                route('hardware.checkin.store', [$asset]),
-                [
-                    'name' => 'Changed Name',
-                    'status_id' => $status->id,
-                    'location_id' => $location->id,
-                ],
-            );
-
-        $this->assertNull($asset->refresh()->assignedTo);
-        $this->assertNull($asset->expected_checkin);
-        $this->assertNotNull($asset->last_checkin);
-        $this->assertNull($asset->assignedTo);
-        $this->assertNull($asset->assigned_type);
-        $this->assertNull($asset->accepted);
-        $this->assertEquals('Changed Name', $asset->name);
-        $this->assertEquals($status->id, $asset->status_id);
-        $this->assertTrue($asset->location()->is($location));
-
-        Event::assertDispatched(function (CheckoutableCheckedIn $event) use ($currentTimestamp) {
-            // this could be better mocked but is ok for now.
-            return (int) Carbon::parse($event->action_date)->diffInSeconds($currentTimestamp, true) < 2;
-        }, 1);
-    }
-
-    public function test_location_is_set_to_rtd_location_by_default_upon_checkin()
-    {
-        $rtdLocation = Location::factory()->create();
-        $asset = Asset::factory()->assignedToUser()->create([
-            'location_id' => Location::factory()->create()->id,
-            'rtd_location_id' => $rtdLocation->id,
-        ]);
-
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', [$asset]));
-
-        $this->assertTrue($asset->refresh()->location()->is($rtdLocation));
-        $this->assertHasTheseActionLogs($asset, ['create', 'checkin from']);
-    }
-
-    /**
-     * Regression coverage for #19401. Pre-fix, submitting the checkin form
-     * with the location dropdown blank (which is how a browser submits an
-     * empty select) wiped the asset's current location to null instead of
-     * resetting it to rtd_location_id like the field's own helper text
-     * implied. The new form ships both pickers pre-populated with
-     * rtd_location_id, so a no-touch submit sends both values back and
-     * the asset lands at rtd. This test posts the same shape as the browser
-     * would after a no-touch submit.
-     */
-    public function test_checkin_with_prepopulated_location_lands_at_rtd_not_null()
-    {
-        $rtdLocation = Location::factory()->create();
-        $userLocation = Location::factory()->create();
-        $asset = Asset::factory()->assignedToUser()->create([
-            'location_id' => $userLocation->id,
-            'rtd_location_id' => $rtdLocation->id,
-        ]);
-
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', [$asset]), [
-                'location_id' => $rtdLocation->id,
-                'rtd_location_id' => $rtdLocation->id,
-            ]);
-
-        $fresh = $asset->refresh();
-        $this->assertNotNull($fresh->location_id, 'Current location must not be wiped to null on checkin (#19401).');
-        $this->assertTrue($fresh->location()->is($rtdLocation), 'Current location should land at rtd_location on default checkin.');
-        $this->assertTrue($fresh->defaultLoc()->is($rtdLocation), 'Default location should be unchanged when picker submitted with same rtd value.');
-    }
-
-    /**
-     * The user can explicitly clear either location picker (via select2's
-     * X button), which posts an empty string for that field. Empty string
-     * for a submitted field is distinct from "field not present" — it means
-     * "clear this location."
-     */
-    public function test_checkin_clears_location_when_picker_submitted_empty()
-    {
-        $rtdLocation = Location::factory()->create();
-        $asset = Asset::factory()->assignedToUser()->create([
-            'location_id' => Location::factory()->create()->id,
-            'rtd_location_id' => $rtdLocation->id,
-        ]);
-
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', [$asset]), [
-                'location_id' => '',
-                'rtd_location_id' => $rtdLocation->id,
-            ]);
-
-        $fresh = $asset->refresh();
-        $this->assertNull($fresh->location_id, 'Explicit empty submission of the picker should clear the location.');
-        $this->assertTrue($fresh->defaultLoc()->is($rtdLocation), 'Default location should be untouched.');
-    }
-
-    public function test_checkin_rejects_nonexistent_location_id()
-    {
-        $rtdLocation = Location::factory()->create();
-        $asset = Asset::factory()->assignedToUser()->create(['rtd_location_id' => $rtdLocation->id]);
-
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', [$asset]), [
-                'location_id' => PHP_INT_MAX,
-            ])
-            ->assertRedirect()
-            ->assertSessionHas('error');
-
-        $this->assertNotNull($asset->fresh()->assigned_to);
-    }
-
-    public function test_checkin_rejects_location_from_another_company_under_fmcs()
-    {
-        $this->settings->enableMultipleFullCompanySupport();
-
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
-
-        $foreignLocation = Location::factory()->create(['company_id' => $companyB->id]);
-        $rtdLocation = Location::factory()->create(['company_id' => $companyA->id]);
-        $asset = Asset::factory()->assignedToUser()->create([
-            'company_id' => $companyA->id,
-            'rtd_location_id' => $rtdLocation->id,
-        ]);
-        $actor = User::factory()->checkinAssets()->viewAssets()->forCompany($companyA->id)->create();
-
-        $this->actingAs($actor)
-            ->post(route('hardware.checkin.store', [$asset]), [
-                'location_id' => $foreignLocation->id,
-            ])
-            ->assertRedirect()
-            ->assertSessionHas('error');
-
-        $this->assertNotNull($asset->fresh()->assigned_to);
-    }
-
-    public function test_default_location_can_be_updated_upon_checkin()
-    {
-        $location = Location::factory()->create();
-        $asset = Asset::factory()->assignedToUser()->create();
-
-        // Post-#19401 the checkin form ships both `location_id` and
-        // `rtd_location_id` as independent pickers, so updating the default
-        // location just means submitting the desired value on that field.
-        // Replaces the older `update_default_location=0` flag semantic.
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', [$asset]), [
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(
+            route('hardware.checkin.store', [$asset]),
+            [
+                'name' => 'Changed Name',
+                'status_id' => $status->id,
                 'location_id' => $location->id,
-                'rtd_location_id' => $location->id,
-            ]);
+            ],
+        );
 
-        $this->assertTrue($asset->refresh()->defaultLoc()->is($location));
-    }
+    expect($asset->refresh()->assignedTo)->toBeNull();
+    expect($asset->expected_checkin)->toBeNull();
+    expect($asset->last_checkin)->not->toBeNull();
+    expect($asset->assignedTo)->toBeNull();
+    expect($asset->assigned_type)->toBeNull();
+    expect($asset->accepted)->toBeNull();
+    expect($asset->name)->toEqual('Changed Name');
+    expect($asset->status_id)->toEqual($status->id);
+    expect($asset->location()->is($location))->toBeTrue();
 
-    public function test_assets_license_seats_are_cleared_upon_checkin()
-    {
-        $asset = Asset::factory()->assignedToUser()->create();
-        LicenseSeat::factory()->assignedToUser()->for($asset)->create();
+    Event::assertDispatched(function (CheckoutableCheckedIn $event) use ($currentTimestamp) {
+        // this could be better mocked but is ok for now.
+        return (int) Carbon::parse($event->action_date)->diffInSeconds($currentTimestamp, true) < 2;
+    }, 1);
+});
 
-        $this->assertNotNull($asset->licenseseats->first()->assigned_to);
+test('location is set to rtd location by default upon checkin', function () {
+    $rtdLocation = Location::factory()->create();
+    $asset = Asset::factory()->assignedToUser()->create([
+        'location_id' => Location::factory()->create()->id,
+        'rtd_location_id' => $rtdLocation->id,
+    ]);
 
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', [$asset]));
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route('hardware.checkin.store', [$asset]));
 
-        $this->assertNull($asset->refresh()->licenseseats->first()->assigned_to);
-    }
+    expect($asset->refresh()->location()->is($rtdLocation))->toBeTrue();
+    $this->assertHasTheseActionLogs($asset, ['create', 'checkin from']);
+});
 
-    public function test_checking_in_asset_updates_location_of_assets_assigned_to_it()
-    {
-        $originalLocation = Location::factory()->create();
-        $checkedOutLocation = Location::factory()->create();
+test('checkin with prepopulated location lands at rtd not null', function () {
+    $rtdLocation = Location::factory()->create();
+    $userLocation = Location::factory()->create();
+    $asset = Asset::factory()->assignedToUser()->create([
+        'location_id' => $userLocation->id,
+        'rtd_location_id' => $rtdLocation->id,
+    ]);
 
-        $parentAsset = Asset::factory()->assignedToLocation($checkedOutLocation)->create([
-            'location_id' => $checkedOutLocation->id,
-            'rtd_location_id' => $originalLocation->id,
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route('hardware.checkin.store', [$asset]), [
+            'location_id' => $rtdLocation->id,
+            'rtd_location_id' => $rtdLocation->id,
         ]);
 
-        $childAsset = Asset::factory()->create([
-            'assigned_to' => $parentAsset->id,
-            'assigned_type' => Asset::class,
-            'location_id' => $checkedOutLocation->id,
-            'rtd_location_id' => $originalLocation->id,
+    $fresh = $asset->refresh();
+    expect($fresh->location_id)->not->toBeNull('Current location must not be wiped to null on checkin (#19401).');
+    expect($fresh->location()->is($rtdLocation))->toBeTrue('Current location should land at rtd_location on default checkin.');
+    expect($fresh->defaultLoc()->is($rtdLocation))->toBeTrue('Default location should be unchanged when picker submitted with same rtd value.');
+});
+
+test('checkin clears location when picker submitted empty', function () {
+    $rtdLocation = Location::factory()->create();
+    $asset = Asset::factory()->assignedToUser()->create([
+        'location_id' => Location::factory()->create()->id,
+        'rtd_location_id' => $rtdLocation->id,
+    ]);
+
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route('hardware.checkin.store', [$asset]), [
+            'location_id' => '',
+            'rtd_location_id' => $rtdLocation->id,
         ]);
 
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', [$parentAsset]), [
-                'location_id' => $originalLocation->id,
-            ]);
+    $fresh = $asset->refresh();
+    expect($fresh->location_id)->toBeNull('Explicit empty submission of the picker should clear the location.');
+    expect($fresh->defaultLoc()->is($rtdLocation))->toBeTrue('Default location should be untouched.');
+});
 
-        $this->assertEquals($originalLocation->id, $parentAsset->fresh()->location_id);
-        $this->assertEquals($originalLocation->id, $childAsset->fresh()->location_id);
-        $this->assertEquals($parentAsset->id, $childAsset->fresh()->assigned_to);
-        $this->assertEquals(Asset::class, $childAsset->fresh()->assigned_type);
-    }
+test('checkin rejects nonexistent location id', function () {
+    $rtdLocation = Location::factory()->create();
+    $asset = Asset::factory()->assignedToUser()->create(['rtd_location_id' => $rtdLocation->id]);
 
-    public function test_legacy_location_values_set_to_zero_are_updated()
-    {
-        $asset = Asset::factory()->canBeInvalidUponCreation()->assignedToUser()->create([
-            'rtd_location_id' => 0,
-            'location_id' => 0,
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route('hardware.checkin.store', [$asset]), [
+            'location_id' => PHP_INT_MAX,
+        ])
+        ->assertRedirect()
+        ->assertSessionHas('error');
+
+    expect($asset->fresh()->assigned_to)->not->toBeNull();
+});
+
+test('checkin rejects location from another company under fmcs', function () {
+    $this->settings->enableMultipleFullCompanySupport();
+
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
+
+    $foreignLocation = Location::factory()->create(['company_id' => $companyB->id]);
+    $rtdLocation = Location::factory()->create(['company_id' => $companyA->id]);
+    $asset = Asset::factory()->assignedToUser()->create([
+        'company_id' => $companyA->id,
+        'rtd_location_id' => $rtdLocation->id,
+    ]);
+    $actor = User::factory()->checkinAssets()->viewAssets()->forCompany($companyA->id)->create();
+
+    $this->actingAs($actor)
+        ->post(route('hardware.checkin.store', [$asset]), [
+            'location_id' => $foreignLocation->id,
+        ])
+        ->assertRedirect()
+        ->assertSessionHas('error');
+
+    expect($asset->fresh()->assigned_to)->not->toBeNull();
+});
+
+test('default location can be updated upon checkin', function () {
+    $location = Location::factory()->create();
+    $asset = Asset::factory()->assignedToUser()->create();
+
+    // Post-#19401 the checkin form ships both `location_id` and
+    // `rtd_location_id` as independent pickers, so updating the default
+    // location just means submitting the desired value on that field.
+    // Replaces the older `update_default_location=0` flag semantic.
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route('hardware.checkin.store', [$asset]), [
+            'location_id' => $location->id,
+            'rtd_location_id' => $location->id,
         ]);
 
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', [$asset]));
+    expect($asset->refresh()->defaultLoc()->is($location))->toBeTrue();
+});
 
-        $this->assertNull($asset->refresh()->rtd_location_id);
-        $this->assertEquals($asset->location_id, $asset->rtd_location_id);
-    }
+test('assets license seats are cleared upon checkin', function () {
+    $asset = Asset::factory()->assignedToUser()->create();
+    LicenseSeat::factory()->assignedToUser()->for($asset)->create();
 
-    public function test_pending_checkout_acceptances_are_cleared_upon_checkin()
-    {
-        $asset = Asset::factory()->assignedToUser()->create();
+    expect($asset->licenseseats->first()->assigned_to)->not->toBeNull();
 
-        $acceptance = CheckoutAcceptance::factory()->for($asset, 'checkoutable')->pending()->create();
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route('hardware.checkin.store', [$asset]));
 
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', [$asset]));
+    expect($asset->refresh()->licenseseats->first()->assigned_to)->toBeNull();
+});
 
-        $this->assertFalse($acceptance->exists(), 'Acceptance was not deleted');
-    }
+test('checking in asset updates location of assets assigned to it', function () {
+    $originalLocation = Location::factory()->create();
+    $checkedOutLocation = Location::factory()->create();
 
-    public function test_checkin_time_and_action_log_note_can_be_set()
-    {
-        Event::fake([CheckoutableCheckedIn::class]);
+    $parentAsset = Asset::factory()->assignedToLocation($checkedOutLocation)->create([
+        'location_id' => $checkedOutLocation->id,
+        'rtd_location_id' => $originalLocation->id,
+    ]);
 
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route(
-                'hardware.checkin.store', [Asset::factory()->assignedToUser()->create()]
-            ), [
-                'checkin_at' => '2023-01-02',
-                'note' => 'hello',
-            ]);
+    $childAsset = Asset::factory()->create([
+        'assigned_to' => $parentAsset->id,
+        'assigned_type' => Asset::class,
+        'location_id' => $checkedOutLocation->id,
+        'rtd_location_id' => $originalLocation->id,
+    ]);
 
-        Event::assertDispatched(function (CheckoutableCheckedIn $event) {
-            return $event->action_date === '2023-01-02' && $event->note === 'hello';
-        }, 1);
-    }
-
-    public function test_checkin_can_set_asset_to_requestable_when_status_is_deployable()
-    {
-        $deployableStatus = Statuslabel::factory()->readyToDeploy()->create();
-        $asset = Asset::factory()->assignedToUser()->create([
-            'requestable' => 0,
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route('hardware.checkin.store', [$parentAsset]), [
+            'location_id' => $originalLocation->id,
         ]);
 
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', [$asset]), [
-                'status_id' => $deployableStatus->id,
-                'requestable' => 1,
-            ]);
+    expect($parentAsset->fresh()->location_id)->toEqual($originalLocation->id);
+    expect($childAsset->fresh()->location_id)->toEqual($originalLocation->id);
+    expect($childAsset->fresh()->assigned_to)->toEqual($parentAsset->id);
+    expect($childAsset->fresh()->assigned_type)->toEqual(Asset::class);
+});
 
-        $this->assertTrue((bool) $asset->fresh()->requestable);
+test('legacy location values set to zero are updated', function () {
+    $asset = Asset::factory()->canBeInvalidUponCreation()->assignedToUser()->create([
+        'rtd_location_id' => 0,
+        'location_id' => 0,
+    ]);
 
-        $log = Actionlog::query()
-            ->where('item_type', Asset::class)
-            ->where('item_id', $asset->id)
-            ->where('action_type', 'checkin from')
-            ->latest('id')
-            ->first();
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route('hardware.checkin.store', [$asset]));
 
-        $this->assertNotNull($log);
-        $this->assertNotNull($log->log_meta);
+    expect($asset->refresh()->rtd_location_id)->toBeNull();
+    expect($asset->rtd_location_id)->toEqual($asset->location_id);
+});
 
-        $logMeta = json_decode($log->log_meta, true);
-        $this->assertArrayHasKey('requestable', $logMeta);
-        $this->assertEquals(0, (int) $logMeta['requestable']['old']);
-        $this->assertEquals(1, (int) $logMeta['requestable']['new']);
-    }
+test('pending checkout acceptances are cleared upon checkin', function () {
+    $asset = Asset::factory()->assignedToUser()->create();
 
-    public function test_checkin_does_not_set_asset_to_requestable_when_status_is_not_deployable()
-    {
-        $undeployableStatus = Statuslabel::factory()->create(['deployable' => 0]);
-        $asset = Asset::factory()->assignedToUser()->create([
-            'requestable' => 0,
+    $acceptance = CheckoutAcceptance::factory()->for($asset, 'checkoutable')->pending()->create();
+
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route('hardware.checkin.store', [$asset]));
+
+    expect($acceptance->exists())->toBeFalse('Acceptance was not deleted');
+});
+
+test('checkin time and action log note can be set', function () {
+    Event::fake([CheckoutableCheckedIn::class]);
+
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route(
+            'hardware.checkin.store', [Asset::factory()->assignedToUser()->create()]
+        ), [
+            'checkin_at' => '2023-01-02',
+            'note' => 'hello',
         ]);
 
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', [$asset]), [
-                'status_id' => $undeployableStatus->id,
-                'requestable' => 1,
-            ]);
+    Event::assertDispatched(function (CheckoutableCheckedIn $event) {
+        return $event->action_date === '2023-01-02' && $event->note === 'hello';
+    }, 1);
+});
 
-        $this->assertFalse((bool) $asset->fresh()->requestable);
-    }
+test('checkin can set asset to requestable when status is deployable', function () {
+    $deployableStatus = Statuslabel::factory()->readyToDeploy()->create();
+    $asset = Asset::factory()->assignedToUser()->create([
+        'requestable' => 0,
+    ]);
 
-    public function test_asset_checkin_page_is_redirected_if_model_is_invalid()
-    {
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route('hardware.checkin.store', [$asset]), [
+            'status_id' => $deployableStatus->id,
+            'requestable' => 1,
+        ]);
 
-        $asset = Asset::factory()->assignedToUser()->create();
-        $asset->model_id = 0;
-        $asset->forceSave();
+    expect((bool) $asset->fresh()->requestable)->toBeTrue();
 
-        $this->actingAs(User::factory()->admin()->create())
-            ->get(route('hardware.checkin.create', [$asset]))
-            ->assertStatus(302)
-            ->assertSessionHas('error')
-            ->assertRedirect(route('hardware.show', $asset));
-    }
+    $log = Actionlog::query()
+        ->where('item_type', Asset::class)
+        ->where('item_id', $asset->id)
+        ->where('action_type', 'checkin from')
+        ->latest('id')
+        ->first();
 
-    public function test_asset_checkin_page_post_is_redirected_if_model_is_invalid()
-    {
-        $asset = Asset::factory()->assignedToUser()->create();
-        $asset->model_id = 0;
-        $asset->forceSave();
+    expect($log)->not->toBeNull();
+    expect($log->log_meta)->not->toBeNull();
 
-        $this->actingAs(User::factory()->admin()->create())
-            ->post(route('hardware.checkin.store', $asset))
-            ->assertStatus(302)
-            ->assertSessionHas('error')
-            ->assertRedirect(route('hardware.show', $asset));
-    }
+    $logMeta = json_decode($log->log_meta, true);
+    expect($logMeta)->toHaveKey('requestable');
+    expect((int) $logMeta['requestable']['old'])->toEqual(0);
+    expect((int) $logMeta['requestable']['new'])->toEqual(1);
+});
 
-    public function test_asset_checkin_page_post_is_redirected_if_redirect_selection_is_index()
-    {
-        $asset = Asset::factory()->assignedToUser()->create();
+test('checkin does not set asset to requestable when status is not deployable', function () {
+    $undeployableStatus = Statuslabel::factory()->create(['deployable' => 0]);
+    $asset = Asset::factory()->assignedToUser()->create([
+        'requestable' => 0,
+    ]);
 
-        $this->actingAs(User::factory()->admin()->create())
-            ->from(route('hardware.index'))
-            ->post(route('hardware.checkin.store', $asset), [
-                'redirect_option' => 'index',
-            ])
-            ->assertStatus(302)
-            ->assertRedirect(route('hardware.index'));
-    }
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route('hardware.checkin.store', [$asset]), [
+            'status_id' => $undeployableStatus->id,
+            'requestable' => 1,
+        ]);
 
-    public function test_asset_checkin_page_post_is_redirected_if_redirect_selection_is_item()
-    {
-        $asset = Asset::factory()->assignedToUser()->create();
+    expect((bool) $asset->fresh()->requestable)->toBeFalse();
+});
 
-        $this->actingAs(User::factory()->admin()->create())
-            ->from(route('hardware.index'))
-            ->post(route('hardware.checkin.store', $asset), [
-                'redirect_option' => 'item',
-            ])
-            ->assertStatus(302)
-            ->assertSessionHasNoErrors()
-            ->assertRedirect(route('hardware.show', $asset));
-    }
+test('asset checkin page is redirected if model is invalid', function () {
+    $asset = Asset::factory()->assignedToUser()->create();
+    $asset->model_id = 0;
+    $asset->forceSave();
 
-    public function test_deleted_checked_out_asset_checkin_page_renders()
-    {
-        $asset = Asset::factory()->deleted()->assignedToUser()->create();
+    $this->actingAs(User::factory()->admin()->create())
+        ->get(route('hardware.checkin.create', [$asset]))
+        ->assertStatus(302)
+        ->assertSessionHas('error')
+        ->assertRedirect(route('hardware.show', $asset));
+});
 
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->get(route('hardware.checkin.create', $asset))
-            ->assertOk();
-    }
+test('asset checkin page post is redirected if model is invalid', function () {
+    $asset = Asset::factory()->assignedToUser()->create();
+    $asset->model_id = 0;
+    $asset->forceSave();
 
-    public function test_deleted_checked_out_asset_can_be_checked_in()
-    {
-        Event::fake([CheckoutableCheckedIn::class]);
+    $this->actingAs(User::factory()->admin()->create())
+        ->post(route('hardware.checkin.store', $asset))
+        ->assertStatus(302)
+        ->assertSessionHas('error')
+        ->assertRedirect(route('hardware.show', $asset));
+});
 
-        $user = User::factory()->create();
-        $asset = Asset::factory()->deleted()->assignedToUser($user)->create();
+test('asset checkin page post is redirected if redirect selection is index', function () {
+    $asset = Asset::factory()->assignedToUser()->create();
 
-        $this->assertTrue($asset->assignedTo->is($user));
-        $this->assertNotNull($asset->deleted_at);
+    $this->actingAs(User::factory()->admin()->create())
+        ->from(route('hardware.index'))
+        ->post(route('hardware.checkin.store', $asset), [
+            'redirect_option' => 'index',
+        ])
+        ->assertStatus(302)
+        ->assertRedirect(route('hardware.index'));
+});
 
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('hardware.checkin.store', $asset))
-            ->assertRedirect()
-            ->assertSessionHasNoErrors();
+test('asset checkin page post is redirected if redirect selection is item', function () {
+    $asset = Asset::factory()->assignedToUser()->create();
 
-        $asset->refresh();
+    $this->actingAs(User::factory()->admin()->create())
+        ->from(route('hardware.index'))
+        ->post(route('hardware.checkin.store', $asset), [
+            'redirect_option' => 'item',
+        ])
+        ->assertStatus(302)
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('hardware.show', $asset));
+});
 
-        $this->assertNull($asset->assignedTo);
-        $this->assertNull($asset->assigned_to);
-        $this->assertNotNull($asset->deleted_at, 'Asset should remain deleted after checkin');
+test('deleted checked out asset checkin page renders', function () {
+    $asset = Asset::factory()->deleted()->assignedToUser()->create();
 
-        Event::assertDispatched(CheckoutableCheckedIn::class);
-    }
-}
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->get(route('hardware.checkin.create', $asset))
+        ->assertOk();
+});
+
+test('deleted checked out asset can be checked in', function () {
+    Event::fake([CheckoutableCheckedIn::class]);
+
+    $user = User::factory()->create();
+    $asset = Asset::factory()->deleted()->assignedToUser($user)->create();
+
+    expect($asset->assignedTo->is($user))->toBeTrue();
+    expect($asset->deleted_at)->not->toBeNull();
+
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route('hardware.checkin.store', $asset))
+        ->assertRedirect()
+        ->assertSessionHasNoErrors();
+
+    $asset->refresh();
+
+    expect($asset->assignedTo)->toBeNull();
+    expect($asset->assigned_to)->toBeNull();
+    expect($asset->deleted_at)->not->toBeNull('Asset should remain deleted after checkin');
+
+    Event::assertDispatched(CheckoutableCheckedIn::class);
+});
