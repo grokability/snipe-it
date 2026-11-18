@@ -694,8 +694,8 @@ class AssetsController extends Controller
         $this->authorize('view', License::class);
 
         // load the License through CompanyableScope first and
-        // drop any seat whose license the caller cannot see. 
-        $seats = $asset->licenseseats()->get()->filter(function ($seat) {
+        // drop any seat whose license the caller cannot see.
+        $seats = $asset->licenseseats()->get()->filter(function (LicenseSeat $seat) {
             return License::find($seat->license_id) !== null;
         })->values();
 
