@@ -19,6 +19,12 @@ trait CreatesApplication
     {
         $app = require __DIR__.'/../bootstrap/app.php';
 
+        // Configure storage before boot so disk roots and storage_path() agree.
+        $testToken = getenv('TEST_TOKEN');
+        if ($testToken !== false) {
+            $app->useStoragePath($app->storagePath('framework/testing/parallel/'.$testToken));
+        }
+
         (new Filesystem)->ensureDirectoryExists($app->storagePath('framework/views'));
 
         $app->make(Kernel::class)->bootstrap();

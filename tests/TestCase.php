@@ -112,10 +112,10 @@ abstract class TestCase extends BaseTestCase
             // so controllers that call Storage::disk('public')->put()
             // for avatars, item images, and barcodes land in the test
             // garbage dir rather than polluting the real public tree.
-            // The default disk stays real because the import flow
-            // mixes Storage::put() writes with storage_path() reads
-            // and the two must agree. Single-process mode keeps the
-            // snapshot/diff sweep instead.
+            // The default disk stays real under the worker's storage
+            // path because the import flow mixes Storage::put() writes
+            // with storage_path() reads and the two must agree.
+            // Single-process mode keeps the snapshot/diff sweep instead.
             Storage::fake('public');
         } else {
             $this->uploadTreeSnapshot = $this->currentUploadTreeListing();

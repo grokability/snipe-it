@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Support\Importing;
 
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use League\Csv\Reader;
@@ -11,6 +12,8 @@ use OutOfBoundsException;
 
 /**
  * @template Row of array
+ *
+ * @phpstan-consistent-constructor
  */
 abstract class FileBuilder
 {
@@ -205,9 +208,12 @@ abstract class FileBuilder
     public function saveToImportsDirectory(?string $filename = null, ?string $locale = null): string
     {
         $filename ??= Str::random(40).'.csv';
+        $directory = config('app.private_uploads').'/imports';
+        (new Filesystem)->ensureDirectoryExists($directory);
+        $stream = null;
 
         try {
-            $stream = fopen(config('app.private_uploads')."/imports/{$filename}", 'w');
+            $stream = fopen($directory."/{$filename}", 'w');
 
             foreach ($this->toCsv() as $row) {
                 if ($locale) {
