@@ -1,6 +1,8 @@
 <?php
 
 use App\Events\CheckoutableCheckedIn;
+use App\Mcp\Tools\CheckinComponentTool;
+use App\Mcp\Tools\CheckoutComponentTool;
 use App\Models\Asset;
 use App\Models\Component;
 use App\Models\User;
@@ -13,14 +15,14 @@ beforeEach(function () {
     $this->actingAs(User::factory()->checkoutComponents()->checkinComponents()->create());
 });
 
-function handle(array $args): ResponseFactory
+function checkinComponentTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CheckinComponentTool)->handle(new Request($args));
 }
 
 function checkoutToAsset(Component $component, Asset $asset, int $qty = 1): int
 {
-    $response = handle(new Request([
+    $response = (new CheckoutComponentTool)->handle(new Request([
         'id' => $component->id,
         'asset_id' => $asset->id,
         'assigned_qty' => $qty,
@@ -34,7 +36,7 @@ test('checks in full quantity', function () {
     $asset = Asset::factory()->create();
     $componentAssetId = checkoutToAsset($component, $asset);
 
-    $content = handle(['component_asset_id' => $componentAssetId])->getStructuredContent();
+    $content = checkinComponentTool(['component_asset_id' => $componentAssetId])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
     expect($content['qty_still_checked_out'])->toEqual(0);
@@ -46,7 +48,7 @@ test('partial checkin leaves remainder in record', function () {
     $asset = Asset::factory()->create();
     $componentAssetId = checkoutToAsset($component, $asset, 4);
 
-    $content = handle([
+    $content = checkinComponentTool([
         'component_asset_id' => $componentAssetId,
         'checkin_qty' => 2,
     ])->getStructuredContent();
@@ -62,7 +64,7 @@ test('full checkin deletes pivot record', function () {
     $asset = Asset::factory()->create();
     $componentAssetId = checkoutToAsset($component, $asset, 3);
 
-    handle([
+    checkinComponentTool([
         'component_asset_id' => $componentAssetId,
         'checkin_qty' => 3,
     ]);
@@ -75,7 +77,7 @@ test('response includes component name and counts', function () {
     $asset = Asset::factory()->create();
     $componentAssetId = checkoutToAsset($component, $asset);
 
-    $content = handle(['component_asset_id' => $componentAssetId])->getStructuredContent();
+    $content = checkinComponentTool(['component_asset_id' => $componentAssetId])->getStructuredContent();
 
     expect($content['component_name'])->toEqual('Checkin Test Component');
     expect($content['component_id'])->toEqual($component->id);
@@ -88,7 +90,7 @@ test('fires checkin event', function () {
     $asset = Asset::factory()->create();
     $componentAssetId = checkoutToAsset($component, $asset);
 
-    handle(['component_asset_id' => $componentAssetId]);
+    checkinComponentTool(['component_asset_id' => $componentAssetId]);
 
     Event::assertDispatched(CheckoutableCheckedIn::class, function (CheckoutableCheckedIn $event) use ($component) {
         return $event->checkoutable->id === $component->id;
@@ -96,7 +98,7 @@ test('fires checkin event', function () {
 });
 
 test('returns error when checkout record not found', function () {
-    expect(handle(['component_asset_id' => 999999])->responses()->first()->isError())->toBeTrue();
+    expect(checkinComponentTool(['component_asset_id' => 999999])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when checkin qty exceeds assigned qty', function () {
@@ -104,7 +106,7 @@ test('returns error when checkin qty exceeds assigned qty', function () {
     $asset = Asset::factory()->create();
     $componentAssetId = checkoutToAsset($component, $asset, 2);
 
-    $response = handle([
+    $response = checkinComponentTool([
         'component_asset_id' => $componentAssetId,
         'checkin_qty' => 5,
     ]);
@@ -119,7 +121,7 @@ test('factory checkout record can be checked in', function () {
 
     $record = DB::table('components_assets')->where('component_id', $component->id)->first();
 
-    $content = handle(['component_asset_id' => $record->id])->getStructuredContent();
+    $content = checkinComponentTool(['component_asset_id' => $record->id])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
     $this->assertDatabaseMissing('components_assets', ['id' => $record->id]);
@@ -132,6 +134,6 @@ test('returns error when user lacks permission', function () {
 
     $this->actingAs(User::factory()->create());
 
-    expect(handle(['component_asset_id' => $componentAssetId])->responses()->first()->isError())->toBeTrue();
+    expect(checkinComponentTool(['component_asset_id' => $componentAssetId])->responses()->first()->isError())->toBeTrue();
     $this->assertDatabaseHas('components_assets', ['id' => $componentAssetId]);
 });

@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\CreateMaintenanceTool;
 use App\Models\Asset;
 use App\Models\MaintenanceType;
 use App\Models\User;
@@ -10,16 +11,16 @@ beforeEach(function () {
     $this->actingAs(User::factory()->editAssets()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function createMaintenanceTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CreateMaintenanceTool)->handle(new Request($args));
 }
 
 test('creates maintenance for asset via asset id', function () {
     $asset = Asset::factory()->laptopZenbook()->create();
     $type = MaintenanceType::factory()->create();
 
-    handle([
+    createMaintenanceTool([
         'asset_id' => $asset->id,
         'maintenance_type_id' => $type->id,
         'title' => 'Test Maintenance',
@@ -39,7 +40,7 @@ test('creates maintenance for asset via asset tag', function () {
     $asset = Asset::factory()->laptopZenbook()->create(['asset_tag' => 'TAG-LOOKUP']);
     $type = MaintenanceType::factory()->create();
 
-    handle([
+    createMaintenanceTool([
         'asset_tag' => 'TAG-LOOKUP',
         'maintenance_type_id' => $type->id,
         'title' => 'Tag Lookup Maintenance',
@@ -56,7 +57,7 @@ test('completion date input writes to expected completion date', function () {
     $asset = Asset::factory()->laptopZenbook()->create();
     $type = MaintenanceType::factory()->create();
 
-    handle([
+    createMaintenanceTool([
         'asset_id' => $asset->id,
         'maintenance_type_id' => $type->id,
         'title' => 'Legacy Alias',
@@ -76,7 +77,7 @@ test('completed at input marks maintenance done and sets completed by', function
     $asset = Asset::factory()->laptopZenbook()->create();
     $type = MaintenanceType::factory()->create();
 
-    handle([
+    createMaintenanceTool([
         'asset_id' => $asset->id,
         'maintenance_type_id' => $type->id,
         'title' => 'Already Done',
@@ -97,7 +98,7 @@ test('response includes item fields not legacy asset id', function () {
     $asset = Asset::factory()->laptopZenbook()->create();
     $type = MaintenanceType::factory()->create();
 
-    $content = handle([
+    $content = createMaintenanceTool([
         'asset_id' => $asset->id,
         'maintenance_type_id' => $type->id,
         'title' => 'Test Maintenance Response',
@@ -115,7 +116,7 @@ test('response includes item fields not legacy asset id', function () {
 test('returns error when asset identifier missing', function () {
     $type = MaintenanceType::factory()->create();
 
-    expect(handle([
+    expect(createMaintenanceTool([
         'maintenance_type_id' => $type->id,
         'title' => 'Test',
     ])->responses()->first()->isError())->toBeTrue();
@@ -125,7 +126,7 @@ test('returns error when title missing', function () {
     $asset = Asset::factory()->laptopZenbook()->create();
     $type = MaintenanceType::factory()->create();
 
-    expect(handle([
+    expect(createMaintenanceTool([
         'asset_id' => $asset->id,
         'maintenance_type_id' => $type->id,
     ])->responses()->first()->isError())->toBeTrue();
@@ -134,7 +135,7 @@ test('returns error when title missing', function () {
 test('returns error when maintenance type missing', function () {
     $asset = Asset::factory()->laptopZenbook()->create();
 
-    expect(handle([
+    expect(createMaintenanceTool([
         'asset_id' => $asset->id,
         'title' => 'Test',
     ])->responses()->first()->isError())->toBeTrue();
@@ -143,7 +144,7 @@ test('returns error when maintenance type missing', function () {
 test('returns error when asset not found', function () {
     $type = MaintenanceType::factory()->create();
 
-    expect(handle([
+    expect(createMaintenanceTool([
         'asset_id' => 999999,
         'maintenance_type_id' => $type->id,
         'title' => 'Test',
@@ -155,7 +156,7 @@ test('returns error when user lacks permission', function () {
     $asset = Asset::factory()->laptopZenbook()->create();
     $type = MaintenanceType::factory()->create();
 
-    expect(handle([
+    expect(createMaintenanceTool([
         'asset_id' => $asset->id,
         'maintenance_type_id' => $type->id,
         'title' => 'Unauthorized Maintenance',

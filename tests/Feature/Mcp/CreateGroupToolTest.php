@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\CreateGroupTool;
 use App\Models\Group;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,15 +10,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->superuser()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function createGroupTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CreateGroupTool)->handle(new Request($args));
 }
 
 test('creates group', function () {
     $name = 'Test MCP Group '.uniqid();
 
-    handle(['name' => $name]);
+    createGroupTool(['name' => $name]);
 
     $this->assertDatabaseHas('permission_groups', ['name' => $name]);
 });
@@ -25,7 +26,7 @@ test('creates group', function () {
 test('response includes id and name', function () {
     $name = 'Test MCP Group '.uniqid();
 
-    $content = handle(['name' => $name])->getStructuredContent();
+    $content = createGroupTool(['name' => $name])->getStructuredContent();
 
     expect($content)->toHaveKey('id');
     expect($content)->toHaveKey('name');
@@ -34,7 +35,7 @@ test('response includes id and name', function () {
 });
 
 test('returns error when name missing', function () {
-    expect(handle()->responses()->first()->isError())->toBeTrue();
+    expect(createGroupTool()->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
@@ -42,7 +43,7 @@ test('returns error when user lacks permission', function () {
 
     $name = 'Unauthorized Group '.uniqid();
 
-    handle(['name' => $name]);
+    createGroupTool(['name' => $name]);
 
     $this->assertDatabaseMissing('permission_groups', ['name' => $name]);
 });
@@ -50,7 +51,7 @@ test('returns error when user lacks permission', function () {
 test('creates group with valid permissions', function () {
     $name = 'Permissions Group '.uniqid();
 
-    $content = handle([
+    $content = createGroupTool([
         'name' => $name,
         'permissions' => json_encode(['assets.view' => 1, 'assets.create' => -1]),
     ])->getStructuredContent();
@@ -65,7 +66,7 @@ test('creates group with valid permissions', function () {
 });
 
 test('returns error for invalid permission key', function () {
-    $response = handle([
+    $response = createGroupTool([
         'name' => 'Bad Perms Group '.uniqid(),
         'permissions' => json_encode(['not.a.real.key' => 1]),
     ]);
@@ -74,7 +75,7 @@ test('returns error for invalid permission key', function () {
 });
 
 test('returns error for invalid permission value', function () {
-    $response = handle([
+    $response = createGroupTool([
         'name' => 'Bad Value Group '.uniqid(),
         'permissions' => json_encode(['assets.view' => 0]),
     ]);
@@ -83,7 +84,7 @@ test('returns error for invalid permission value', function () {
 });
 
 test('returns error for malformed permissions json', function () {
-    $response = handle([
+    $response = createGroupTool([
         'name' => 'Malformed Group '.uniqid(),
         'permissions' => 'not valid json',
     ]);

@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\Reset2FATool;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
@@ -8,9 +9,9 @@ beforeEach(function () {
     $this->actingAs(User::factory()->editUsers()->create());
 });
 
-function handle(array $args): ResponseFactory
+function reset2FATool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new Reset2FATool)->handle(new Request($args));
 }
 
 test('resets two factor for user', function () {
@@ -20,7 +21,7 @@ test('resets two factor for user', function () {
         'two_factor_secret' => 'somesecret',
     ]);
 
-    $content = handle(['id' => $user->id])->getStructuredContent();
+    $content = reset2FATool(['id' => $user->id])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
 
@@ -31,7 +32,7 @@ test('resets two factor for user', function () {
 });
 
 test('returns error when user not found', function () {
-    expect(handle(['id' => 999999])->responses()->first()->isError())->toBeTrue();
+    expect(reset2FATool(['id' => 999999])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
@@ -39,7 +40,7 @@ test('returns error when user lacks permission', function () {
 
     $user = User::factory()->create(['two_factor_enrolled' => 1]);
 
-    expect(handle(['id' => $user->id])->responses()->first()->isError())->toBeTrue();
+    expect(reset2FATool(['id' => $user->id])->responses()->first()->isError())->toBeTrue();
 
     $user->refresh();
     expect($user->two_factor_enrolled)->toEqual(1);

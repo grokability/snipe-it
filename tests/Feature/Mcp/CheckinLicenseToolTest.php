@@ -1,6 +1,8 @@
 <?php
 
 use App\Events\CheckoutableCheckedIn;
+use App\Mcp\Tools\CheckinLicenseTool;
+use App\Mcp\Tools\CheckoutLicenseTool;
 use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\User;
@@ -12,14 +14,14 @@ beforeEach(function () {
     $this->actingAs(User::factory()->checkoutLicenses()->create());
 });
 
-function handle(array $args): ResponseFactory
+function checkinLicenseTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CheckinLicenseTool)->handle(new Request($args));
 }
 
-function checkoutToUser(License $license, User $user): LicenseSeat
+function checkoutLicenseToUser(License $license, User $user): LicenseSeat
 {
-    $response = handle(new Request([
+    $response = (new CheckoutLicenseTool)->handle(new Request([
         'id' => $license->id,
         'assigned_to' => $user->id,
     ]));
@@ -32,9 +34,9 @@ function checkoutToUser(License $license, User $user): LicenseSeat
 test('checks in seat by seat id', function () {
     $license = License::factory()->create(['seats' => 3, 'reassignable' => true]);
     $user = User::factory()->create();
-    $seat = checkoutToUser($license, $user);
+    $seat = checkoutLicenseToUser($license, $user);
 
-    $content = handle(['seat_id' => $seat->id])->getStructuredContent();
+    $content = checkinLicenseTool(['seat_id' => $seat->id])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
     $this->assertDatabaseHas('license_seats', [
@@ -47,9 +49,9 @@ test('checks in seat by seat id', function () {
 test('response includes license info', function () {
     $license = License::factory()->create(['name' => 'Checkin License', 'seats' => 3, 'reassignable' => true]);
     $user = User::factory()->create();
-    $seat = checkoutToUser($license, $user);
+    $seat = checkoutLicenseToUser($license, $user);
 
-    $content = handle(['seat_id' => $seat->id])->getStructuredContent();
+    $content = checkinLicenseTool(['seat_id' => $seat->id])->getStructuredContent();
 
     expect($content['seat_id'])->toEqual($seat->id);
     expect($content['license_id'])->toEqual($license->id);
@@ -61,22 +63,22 @@ test('fires checkin event', function () {
 
     $license = License::factory()->create(['seats' => 3, 'reassignable' => true]);
     $user = User::factory()->create();
-    $seat = checkoutToUser($license, $user);
+    $seat = checkoutLicenseToUser($license, $user);
 
-    handle(['seat_id' => $seat->id]);
+    checkinLicenseTool(['seat_id' => $seat->id]);
 
     Event::assertDispatched(CheckoutableCheckedIn::class);
 });
 
 test('returns error when seat not found', function () {
-    expect(handle(['seat_id' => 999999])->responses()->first()->isError())->toBeTrue();
+    expect(checkinLicenseTool(['seat_id' => 999999])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when seat is not checked out', function () {
     $license = License::factory()->create(['seats' => 3, 'reassignable' => true]);
     $seat = $license->freeSeat();
 
-    expect(handle(['seat_id' => $seat->id])->responses()->first()->isError())->toBeTrue();
+    expect(checkinLicenseTool(['seat_id' => $seat->id])->responses()->first()->isError())->toBeTrue();
 });
 
 test('sets unreassignable flag when license not reassignable', function () {
@@ -87,7 +89,7 @@ test('sets unreassignable flag when license not reassignable', function () {
     $seat->assigned_to = $user->id;
     $seat->save();
 
-    handle(['seat_id' => $seat->id]);
+    checkinLicenseTool(['seat_id' => $seat->id]);
 
     $this->assertDatabaseHas('license_seats', [
         'id' => $seat->id,
@@ -98,9 +100,9 @@ test('sets unreassignable flag when license not reassignable', function () {
 test('does not set unreassignable flag when license is reassignable', function () {
     $license = License::factory()->create(['seats' => 3, 'reassignable' => true]);
     $user = User::factory()->create();
-    $seat = checkoutToUser($license, $user);
+    $seat = checkoutLicenseToUser($license, $user);
 
-    handle(['seat_id' => $seat->id]);
+    checkinLicenseTool(['seat_id' => $seat->id]);
 
     $refreshed = LicenseSeat::find($seat->id);
     expect((bool) $refreshed->unreassignable_seat)->toBeFalse();
@@ -109,11 +111,11 @@ test('does not set unreassignable flag when license is reassignable', function (
 test('returns error when user lacks permission', function () {
     $license = License::factory()->create(['seats' => 3, 'reassignable' => true]);
     $user = User::factory()->create();
-    $seat = checkoutToUser($license, $user);
+    $seat = checkoutLicenseToUser($license, $user);
 
     $this->actingAs(User::factory()->create());
 
-    expect(handle(['seat_id' => $seat->id])->responses()->first()->isError())->toBeTrue();
+    expect(checkinLicenseTool(['seat_id' => $seat->id])->responses()->first()->isError())->toBeTrue();
     $this->assertDatabaseHas('license_seats', [
         'id' => $seat->id,
         'assigned_to' => $user->id,

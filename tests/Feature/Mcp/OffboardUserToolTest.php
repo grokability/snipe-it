@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\OffboardUserTool;
 use App\Models\Asset;
 use App\Models\License;
 use App\Models\LicenseSeat;
@@ -12,16 +13,16 @@ beforeEach(function () {
     $this->actingAs(User::factory()->superuser()->create());
 });
 
-function handle(array $args): ResponseFactory
+function offboardUserTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return resolve(OffboardUserTool::class)->handle(new Request($args));
 }
 
 test('dry run returns preview without writing', function () {
     $user = User::factory()->create(['username' => 'leaver']);
     $asset = Asset::factory()->assignedToUser($user)->create();
 
-    $content = handle(['username' => 'leaver'])->getStructuredContent();
+    $content = offboardUserTool(['username' => 'leaver'])->getStructuredContent();
 
     expect($content['dry_run'])->toBeTrue();
     expect($content['preview']['assets_to_checkin'])->toHaveCount(1);
@@ -34,7 +35,7 @@ test('dry run returns preview without writing', function () {
 test('dry run is default when not specified', function () {
     $user = User::factory()->create(['username' => 'leaver']);
 
-    $content = handle(['username' => 'leaver'])->getStructuredContent();
+    $content = offboardUserTool(['username' => 'leaver'])->getStructuredContent();
 
     expect($content['dry_run'])->toBeTrue();
 });
@@ -44,7 +45,7 @@ test('execute checks in all assigned assets', function () {
     $assetA = Asset::factory()->assignedToUser($user)->create();
     $assetB = Asset::factory()->assignedToUser($user)->create();
 
-    handle(['username' => 'leaver', 'dry_run' => false]);
+    offboardUserTool(['username' => 'leaver', 'dry_run' => false]);
 
     expect($assetA->fresh()->assigned_to)->toBeNull();
     expect($assetB->fresh()->assigned_to)->toBeNull();
@@ -58,7 +59,7 @@ test('execute releases assigned license seats', function () {
         'assigned_to' => $user->id,
     ]);
 
-    handle(['username' => 'leaver', 'dry_run' => false]);
+    offboardUserTool(['username' => 'leaver', 'dry_run' => false]);
 
     expect($seat->fresh()->assigned_to)->toBeNull();
 });
@@ -67,7 +68,7 @@ test('execute nulls manager id on dependent users', function () {
     $manager = User::factory()->create(['username' => 'themanager']);
     $report = User::factory()->create(['manager_id' => $manager->id]);
 
-    handle(['username' => 'themanager', 'dry_run' => false]);
+    offboardUserTool(['username' => 'themanager', 'dry_run' => false]);
 
     expect($report->fresh()->manager_id)->toBeNull();
 });
@@ -76,7 +77,7 @@ test('execute nulls manager id on dependent locations', function () {
     $manager = User::factory()->create(['username' => 'themanager']);
     $location = Location::factory()->create(['manager_id' => $manager->id]);
 
-    handle(['username' => 'themanager', 'dry_run' => false]);
+    offboardUserTool(['username' => 'themanager', 'dry_run' => false]);
 
     expect($location->fresh()->manager_id)->toBeNull();
 });
@@ -84,7 +85,7 @@ test('execute nulls manager id on dependent locations', function () {
 test('execute soft deletes the user', function () {
     $user = User::factory()->create(['username' => 'leaver']);
 
-    handle(['username' => 'leaver', 'dry_run' => false]);
+    offboardUserTool(['username' => 'leaver', 'dry_run' => false]);
 
     expect(User::withTrashed()->find($user->id)->deleted_at)->not->toBeNull();
 });
@@ -94,7 +95,7 @@ test('execute does not touch activated flag directly', function () {
     // use soft-delete as the exit signal and not just flip activated=0.
     $user = User::factory()->create(['username' => 'leaver', 'activated' => 0]);
 
-    handle(['username' => 'leaver', 'dry_run' => false]);
+    offboardUserTool(['username' => 'leaver', 'dry_run' => false]);
 
     expect(User::withTrashed()->find($user->id)->deleted_at)->not->toBeNull();
 });
@@ -106,7 +107,7 @@ test('resolves user by first and last name', function () {
         'username' => 'taylor',
     ]);
 
-    $content = handle(['first_name' => 'Taylor', 'last_name' => 'Otwell'])
+    $content = offboardUserTool(['first_name' => 'Taylor', 'last_name' => 'Otwell'])
         ->getStructuredContent();
 
     expect($content['dry_run'])->toBeTrue();
@@ -119,7 +120,7 @@ test('returns ambiguous match set when name matches multiple users', function ()
         'last_name' => 'Doe',
     ]);
 
-    $content = handle(['first_name' => 'John', 'last_name' => 'Doe'])
+    $content = offboardUserTool(['first_name' => 'John', 'last_name' => 'Doe'])
         ->getStructuredContent();
 
     expect($content['success'])->toBeFalse();
@@ -128,11 +129,11 @@ test('returns ambiguous match set when name matches multiple users', function ()
 });
 
 test('returns error when no identifier provided', function () {
-    expect(handle(['dry_run' => false])->responses()->first()->isError())->toBeTrue();
+    expect(offboardUserTool(['dry_run' => false])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user not found', function () {
-    expect(handle(['username' => 'nobody'])->responses()->first()->isError())->toBeTrue();
+    expect(offboardUserTool(['username' => 'nobody'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when acting user lacks permission', function () {
@@ -141,7 +142,7 @@ test('returns error when acting user lacks permission', function () {
     $user = User::factory()->create(['username' => 'leaver']);
     $asset = Asset::factory()->assignedToUser($user)->create();
 
-    expect(handle(['username' => 'leaver'])->responses()->first()->isError())->toBeTrue();
+    expect(offboardUserTool(['username' => 'leaver'])->responses()->first()->isError())->toBeTrue();
 
     // No changes made.
     $this->assertDatabaseHas('assets', ['id' => $asset->id, 'assigned_to' => $user->id]);
@@ -153,7 +154,7 @@ test('preview includes managed users and locations', function () {
     $report = User::factory()->create(['manager_id' => $manager->id]);
     $location = Location::factory()->create(['manager_id' => $manager->id]);
 
-    $content = handle(['username' => 'themanager'])->getStructuredContent();
+    $content = offboardUserTool(['username' => 'themanager'])->getStructuredContent();
 
     $managedUserIds = array_column($content['preview']['managed_users_to_unparent'], 'id');
     $managedLocationIds = array_column($content['preview']['managed_locations_to_unparent'], 'id');

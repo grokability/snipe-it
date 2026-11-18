@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\UpdateSupplierTool;
 use App\Models\Supplier;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,15 +10,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->editSuppliers()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function updateSupplierTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new UpdateSupplierTool)->handle(new Request($args));
 }
 
 test('updates supplier by id', function () {
     $supplier = Supplier::factory()->create(['name' => 'Original Supplier']);
 
-    $content = handle([
+    $content = updateSupplierTool([
         'id' => $supplier->id,
         'new_name' => 'Updated Supplier',
     ])->getStructuredContent();
@@ -29,7 +30,7 @@ test('updates supplier by id', function () {
 test('renames via new name', function () {
     $supplier = Supplier::factory()->create(['name' => 'Old Supplier Name']);
 
-    $content = handle([
+    $content = updateSupplierTool([
         'name' => 'Old Supplier Name',
         'new_name' => 'New Supplier Name',
     ])->getStructuredContent();
@@ -39,14 +40,14 @@ test('renames via new name', function () {
 });
 
 test('returns error when not found', function () {
-    expect(handle(['id' => 999999, 'new_name' => 'Ghost'])->responses()->first()->isError())->toBeTrue();
+    expect(updateSupplierTool(['id' => 999999, 'new_name' => 'Ghost'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
     $supplier = Supplier::factory()->create(['name' => 'Unchanged Supplier']);
     $this->actingAs(User::factory()->create());
 
-    expect(handle([
+    expect(updateSupplierTool([
         'id' => $supplier->id,
         'new_name' => 'Should Not Change',
     ])->responses()->first()->isError())->toBeTrue();

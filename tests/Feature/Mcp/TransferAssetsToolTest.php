@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\TransferAssetsTool;
 use App\Models\Accessory;
 use App\Models\AccessoryCheckout;
 use App\Models\Asset;
@@ -9,14 +10,15 @@ use App\Models\LicenseSeat;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
+use Tests\Support\Settings;
 
 beforeEach(function () {
     $this->actingAs(User::factory()->superuser()->create());
 });
 
-function handle(array $args): ResponseFactory
+function transferAssetsTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return resolve(TransferAssetsTool::class)->handle(new Request($args));
 }
 
 test('dry run returns preview without moving anything', function () {
@@ -24,7 +26,7 @@ test('dry run returns preview without moving anything', function () {
     $to = User::factory()->create(['username' => 'receiver']);
     $asset = Asset::factory()->assignedToUser($from)->create();
 
-    $content = handle(['from_username' => 'leaver', 'to_username' => 'receiver'])
+    $content = transferAssetsTool(['from_username' => 'leaver', 'to_username' => 'receiver'])
         ->getStructuredContent();
 
     expect($content['dry_run'])->toBeTrue();
@@ -36,7 +38,7 @@ test('dry run is default', function () {
     User::factory()->create(['username' => 'a']);
     User::factory()->create(['username' => 'b']);
 
-    $content = handle(['from_username' => 'a', 'to_username' => 'b'])->getStructuredContent();
+    $content = transferAssetsTool(['from_username' => 'a', 'to_username' => 'b'])->getStructuredContent();
 
     expect($content['dry_run'])->toBeTrue();
 });
@@ -46,7 +48,7 @@ test('execute moves assets', function () {
     $to = User::factory()->create(['username' => 'receiver']);
     $asset = Asset::factory()->assignedToUser($from)->create();
 
-    handle(['from_username' => 'leaver', 'to_username' => 'receiver', 'dry_run' => false]);
+    transferAssetsTool(['from_username' => 'leaver', 'to_username' => 'receiver', 'dry_run' => false]);
 
     $fresh = $asset->fresh();
     expect($fresh->assigned_to)->toBe($to->id);
@@ -61,7 +63,7 @@ test('execute moves license seats', function () {
         'assigned_to' => $from->id,
     ]);
 
-    handle(['from_username' => 'leaver', 'to_username' => 'receiver', 'dry_run' => false]);
+    transferAssetsTool(['from_username' => 'leaver', 'to_username' => 'receiver', 'dry_run' => false]);
 
     expect($seat->fresh()->assigned_to)->toBe($to->id);
 });
@@ -76,7 +78,7 @@ test('execute moves accessory checkouts', function () {
         'assigned_to' => $from->id,
     ]);
 
-    handle(['from_username' => 'leaver', 'to_username' => 'receiver', 'dry_run' => false]);
+    transferAssetsTool(['from_username' => 'leaver', 'to_username' => 'receiver', 'dry_run' => false]);
 
     expect($checkout->fresh()->assigned_to)->toBe($to->id);
 });
@@ -87,12 +89,12 @@ test('rejects cross company asset transfer under fmcs', function () {
     // canCheckoutTo() guard under FMCS strict mode so a
     // company-A asset doesn't land on a user who only belongs
     // to company B.
-    [$from, $to, $operator] = fmcsFixture($companyA, $companyB);
+    [$from, $to, $operator] = fmcsFixture($this->settings, $companyA, $companyB);
     $this->actingAs($operator);
 
     $asset = Asset::factory()->assignedToUser($from)->create(['company_id' => $companyA->id]);
 
-    handle(['from_username' => 'leaver', 'to_username' => 'receiver', 'dry_run' => false]);
+    transferAssetsTool(['from_username' => 'leaver', 'to_username' => 'receiver', 'dry_run' => false]);
 
     expect((int) $asset->fresh()->assigned_to)->toBe($from->id, 'FMCS cross-company transfer must leave the asset with the source user.');
 });
@@ -103,7 +105,7 @@ test('rejects cross company accessory transfer under fmcs', function () {
     // type test (no asset or license fixtures) so the
     // transaction-wide rollback from an asset-guard failure
     // doesn't mask a missing accessory guard.
-    [$from, $to, $operator] = fmcsFixture($companyA, $companyB);
+    [$from, $to, $operator] = fmcsFixture($this->settings, $companyA, $companyB);
     $this->actingAs($operator);
 
     $accessory = Accessory::factory()->for($companyA, 'company')->create();
@@ -113,7 +115,7 @@ test('rejects cross company accessory transfer under fmcs', function () {
         'assigned_to' => $from->id,
     ]);
 
-    handle(['from_username' => 'leaver', 'to_username' => 'receiver', 'dry_run' => false]);
+    transferAssetsTool(['from_username' => 'leaver', 'to_username' => 'receiver', 'dry_run' => false]);
 
     expect((int) $checkout->fresh()->assigned_to)->toBe($from->id, 'FMCS cross-company transfer must leave the accessory checkout with the source user.');
 });
@@ -122,7 +124,7 @@ test('rejects cross company license seat transfer under fmcs', function () {
     // License-seat branch had the same missing guard: the seat's
     // assigned_to was being rewritten directly without checking
     // whether the license's company allowed the target user.
-    [$from, $to, $operator] = fmcsFixture($companyA, $companyB);
+    [$from, $to, $operator] = fmcsFixture($this->settings, $companyA, $companyB);
     $this->actingAs($operator);
 
     $license = License::factory()->for($companyA, 'company')->create();
@@ -131,7 +133,7 @@ test('rejects cross company license seat transfer under fmcs', function () {
         'assigned_to' => $from->id,
     ]);
 
-    handle(['from_username' => 'leaver', 'to_username' => 'receiver', 'dry_run' => false]);
+    transferAssetsTool(['from_username' => 'leaver', 'to_username' => 'receiver', 'dry_run' => false]);
 
     expect((int) $seat->fresh()->assigned_to)->toBe($from->id, 'FMCS cross-company transfer must leave the license seat with the source user.');
 });
@@ -145,9 +147,9 @@ test('rejects cross company license seat transfer under fmcs', function () {
  *
  * @return array{0: User, 1: User, 2: User}
  */
-function fmcsFixture(?Company &$companyA, ?Company &$companyB): array
+function fmcsFixture(Settings $settings, ?Company &$companyA, ?Company &$companyB): array
 {
-    $this->settings->enableMultipleFullCompanySupport();
+    $settings->enableMultipleFullCompanySupport();
     [$companyA, $companyB] = Company::factory()->count(2)->create();
 
     $from = User::factory()->forCompany($companyA)->create(['username' => 'leaver']);
@@ -170,7 +172,7 @@ function fmcsFixture(?Company &$companyA, ?Company &$companyB): array
 test('rejects same user transfer', function () {
     User::factory()->create(['username' => 'solo']);
 
-    $response = handle(['from_username' => 'solo', 'to_username' => 'solo']);
+    $response = transferAssetsTool(['from_username' => 'solo', 'to_username' => 'solo']);
 
     expect($response->responses()->first()->isError())->toBeTrue();
 });
@@ -179,7 +181,7 @@ test('returns ambiguous match set when from name resolves to multiple', function
     User::factory()->count(2)->create(['first_name' => 'John', 'last_name' => 'Doe']);
     User::factory()->create(['username' => 'receiver']);
 
-    $content = handle([
+    $content = transferAssetsTool([
         'from_first_name' => 'John',
         'from_last_name' => 'Doe',
         'to_username' => 'receiver',
@@ -194,7 +196,7 @@ test('returns ambiguous match set when to name resolves to multiple', function (
     User::factory()->create(['username' => 'source']);
     User::factory()->count(2)->create(['first_name' => 'Jane', 'last_name' => 'Smith']);
 
-    $content = handle([
+    $content = transferAssetsTool([
         'from_username' => 'source',
         'to_first_name' => 'Jane',
         'to_last_name' => 'Smith',
@@ -207,7 +209,7 @@ test('returns ambiguous match set when to name resolves to multiple', function (
 test('returns error when from user not found', function () {
     User::factory()->create(['username' => 'receiver']);
 
-    $response = handle(['from_username' => 'nobody', 'to_username' => 'receiver']);
+    $response = transferAssetsTool(['from_username' => 'nobody', 'to_username' => 'receiver']);
 
     expect($response->responses()->first()->isError())->toBeTrue();
 });
@@ -216,7 +218,7 @@ test('preview captures the before state on both sides', function () {
     $from = User::factory()->create(['username' => 'leaver']);
     $to = User::factory()->create(['username' => 'receiver']);
 
-    $content = handle(['from_username' => 'leaver', 'to_username' => 'receiver'])
+    $content = transferAssetsTool(['from_username' => 'leaver', 'to_username' => 'receiver'])
         ->getStructuredContent();
 
     expect($content['preview']['from']['id'])->toBe($from->id);

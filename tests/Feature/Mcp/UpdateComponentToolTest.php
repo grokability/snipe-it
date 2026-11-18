@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\UpdateComponentTool;
 use App\Models\Category;
 use App\Models\Component;
 use App\Models\Location;
@@ -11,15 +12,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->editComponents()->create());
 });
 
-function handle(array $args): ResponseFactory
+function updateComponentTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new UpdateComponentTool)->handle(new Request($args));
 }
 
 test('updates component by id', function () {
     $component = Component::factory()->create(['qty' => 5]);
 
-    $content = handle([
+    $content = updateComponentTool([
         'id' => $component->id,
         'qty' => 15,
     ])->getStructuredContent();
@@ -31,7 +32,7 @@ test('updates component by id', function () {
 test('updates component by name', function () {
     $component = Component::factory()->create(['name' => 'Lookup By Name', 'qty' => 3]);
 
-    $content = handle([
+    $content = updateComponentTool([
         'name' => 'Lookup By Name',
         'qty' => 9,
     ])->getStructuredContent();
@@ -43,7 +44,7 @@ test('updates component by name', function () {
 test('renames component via new name', function () {
     $component = Component::factory()->create(['name' => 'Old Component Name']);
 
-    $content = handle([
+    $content = updateComponentTool([
         'id' => $component->id,
         'new_name' => 'New Component Name',
     ])->getStructuredContent();
@@ -60,7 +61,7 @@ test('updates multiple fields at once', function () {
 
     // order_number moved to the Orders table. Covering the
     // forwarded legacy purchase_cost input path instead.
-    handle([
+    updateComponentTool([
         'id' => $component->id,
         'qty' => 25,
         'location_id' => $location->id,
@@ -79,14 +80,14 @@ test('updates multiple fields at once', function () {
 });
 
 test('returns error when not found', function () {
-    expect(handle([
+    expect(updateComponentTool([
         'id' => 999999,
         'qty' => 5,
     ])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when no identifier provided', function () {
-    expect(handle([
+    expect(updateComponentTool([
         'qty' => 5,
     ])->responses()->first()->isError())->toBeTrue();
 });
@@ -94,7 +95,7 @@ test('returns error when no identifier provided', function () {
 test('response includes id and name', function () {
     $component = Component::factory()->create(['name' => 'Response Component']);
 
-    $content = handle([
+    $content = updateComponentTool([
         'id' => $component->id,
         'qty' => 8,
     ])->getStructuredContent();
@@ -107,7 +108,7 @@ test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
     $component = Component::factory()->create();
 
-    expect(handle([
+    expect(updateComponentTool([
         'id' => $component->id,
         'qty' => 5,
     ])->responses()->first()->isError())->toBeTrue();

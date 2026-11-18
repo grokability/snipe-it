@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\CheckoutableCheckedIn;
+use App\Mcp\Tools\CheckinAssetTool;
 use App\Models\Asset;
 use App\Models\Location;
 use App\Models\User;
@@ -12,16 +13,16 @@ beforeEach(function () {
     $this->actingAs(User::factory()->checkinAssets()->create());
 });
 
-function handle(array $args): ResponseFactory
+function checkinAssetTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return resolve(CheckinAssetTool::class)->handle(new Request($args));
 }
 
 test('checks in asset by asset tag', function () {
     $user = User::factory()->create();
     $asset = Asset::factory()->assignedToUser($user)->create();
 
-    $content = handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
+    $content = checkinAssetTool(['asset_tag' => $asset->asset_tag])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
     $this->assertDatabaseHas('assets', [
@@ -36,19 +37,19 @@ test('checks in asset by numeric id', function () {
     $user = User::factory()->create();
     $asset = Asset::factory()->assignedToUser($user)->create();
 
-    $content = handle(['id' => $asset->id])->getStructuredContent();
+    $content = checkinAssetTool(['id' => $asset->id])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
 });
 
 test('returns error when asset tag not found', function () {
-    expect(handle(['asset_tag' => 'DOES-NOT-EXIST'])->responses()->first()->isError())->toBeTrue();
+    expect(checkinAssetTool(['asset_tag' => 'DOES-NOT-EXIST'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when asset not checked out', function () {
     $asset = Asset::factory()->create();
 
-    expect(handle(['asset_tag' => $asset->asset_tag])->responses()->first()->isError())->toBeTrue();
+    expect(checkinAssetTool(['asset_tag' => $asset->asset_tag])->responses()->first()->isError())->toBeTrue();
 });
 
 test('asset location resets to rtd location on checkin', function () {
@@ -58,7 +59,7 @@ test('asset location resets to rtd location on checkin', function () {
         'rtd_location_id' => $rtdLocation->id,
     ]);
 
-    handle(['asset_tag' => $asset->asset_tag]);
+    checkinAssetTool(['asset_tag' => $asset->asset_tag]);
 
     $this->assertDatabaseHas('assets', [
         'id' => $asset->id,
@@ -72,7 +73,7 @@ test('clears expected checkin date on checkin', function () {
         'expected_checkin' => now()->addDays(7),
     ]);
 
-    handle(['asset_tag' => $asset->asset_tag]);
+    checkinAssetTool(['asset_tag' => $asset->asset_tag]);
 
     expect($asset->fresh()->expected_checkin)->toBeNull();
 });
@@ -83,7 +84,7 @@ test('fires checkin event', function () {
     $user = User::factory()->create();
     $asset = Asset::factory()->assignedToUser($user)->create();
 
-    handle(['asset_tag' => $asset->asset_tag]);
+    checkinAssetTool(['asset_tag' => $asset->asset_tag]);
 
     Event::assertDispatched(CheckoutableCheckedIn::class, function (CheckoutableCheckedIn $event) use ($asset) {
         return $event->checkoutable->id === $asset->id;
@@ -94,7 +95,7 @@ test('response includes asset tag and location', function () {
     $user = User::factory()->create();
     $asset = Asset::factory()->assignedToUser($user)->create();
 
-    $content = handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
+    $content = checkinAssetTool(['asset_tag' => $asset->asset_tag])->getStructuredContent();
 
     expect($content['asset_tag'])->toEqual($asset->asset_tag);
     expect($content)->toHaveKey('model');
@@ -106,6 +107,6 @@ test('returns error when user lacks permission', function () {
     $user = User::factory()->create();
     $asset = Asset::factory()->assignedToUser($user)->create();
 
-    expect(handle(['asset_tag' => $asset->asset_tag])->responses()->first()->isError())->toBeTrue();
+    expect(checkinAssetTool(['asset_tag' => $asset->asset_tag])->responses()->first()->isError())->toBeTrue();
     $this->assertDatabaseHas('assets', ['id' => $asset->id, 'assigned_to' => $user->id]);
 });

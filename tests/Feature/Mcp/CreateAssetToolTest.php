@@ -14,16 +14,16 @@ beforeEach(function () {
     $this->actingAs(User::factory()->createAssets()->create());
 });
 
-function handle(array $args): ResponseFactory
+function createAssetTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CreateAssetTool)->handle(new Request($args));
 }
 
 test('creates asset with required fields', function () {
     $model = AssetModel::factory()->create();
     $status = Statuslabel::factory()->create();
 
-    $content = handle([
+    $content = createAssetTool([
         'model_id' => $model->id,
         'status_id' => $status->id,
         'asset_tag' => 'TEST-001',
@@ -41,7 +41,7 @@ test('response includes id and asset tag', function () {
     $model = AssetModel::factory()->create();
     $status = Statuslabel::factory()->create();
 
-    $content = handle([
+    $content = createAssetTool([
         'model_id' => $model->id,
         'status_id' => $status->id,
         'asset_tag' => 'TAG-RESP-001',
@@ -54,7 +54,7 @@ test('response includes id and asset tag', function () {
 test('returns error when model id missing', function () {
     $status = Statuslabel::factory()->create();
 
-    expect(handle([
+    expect(createAssetTool([
         'status_id' => $status->id,
         'asset_tag' => 'TAG-NO-MODEL',
     ])->responses()->first()->isError())->toBeTrue();
@@ -63,7 +63,7 @@ test('returns error when model id missing', function () {
 test('returns error when status id missing', function () {
     $model = AssetModel::factory()->create();
 
-    expect(handle([
+    expect(createAssetTool([
         'model_id' => $model->id,
         'asset_tag' => 'TAG-NO-STATUS',
     ])->responses()->first()->isError())->toBeTrue();
@@ -73,7 +73,7 @@ test('returns error when asset tag missing', function () {
     $model = AssetModel::factory()->create();
     $status = Statuslabel::factory()->create();
 
-    expect(handle([
+    expect(createAssetTool([
         'model_id' => $model->id,
         'status_id' => $status->id,
     ])->responses()->first()->isError())->toBeTrue();
@@ -85,7 +85,7 @@ test('returns error when user lacks permission', function () {
     $model = AssetModel::factory()->create();
     $status = Statuslabel::factory()->create();
 
-    expect(handle([
+    expect(createAssetTool([
         'model_id' => $model->id,
         'status_id' => $status->id,
         'asset_tag' => 'TAG-BLOCKED',
@@ -101,7 +101,7 @@ test('resolves model and status by name', function () {
     $model = AssetModel::factory()->create(['name' => 'MCP Test Model Alpha']);
     $status = Statuslabel::factory()->create(['name' => 'MCP Test Status Alpha']);
 
-    $content = handle([
+    $content = createAssetTool([
         'model_name' => 'MCP Test Model Alpha',
         'status_name' => 'MCP Test Status Alpha',
         'asset_tag' => 'TAG-NAME-001',
@@ -119,7 +119,7 @@ test('name resolution is case insensitive', function () {
     $model = AssetModel::factory()->create(['name' => 'MCP Test Model Beta']);
     $status = Statuslabel::factory()->create(['name' => 'MCP Test Status Beta']);
 
-    $content = handle([
+    $content = createAssetTool([
         'model_name' => 'mcp test model beta',
         'status_name' => 'MCP TEST STATUS BETA',
         'asset_tag' => 'TAG-CASE-001',
@@ -138,7 +138,7 @@ test('id wins when both id and name are passed', function () {
     AssetModel::factory()->create(['name' => 'From Name']);
     $status = Statuslabel::factory()->create();
 
-    $content = handle([
+    $content = createAssetTool([
         'model_id' => $modelFromId->id,
         'model_name' => 'From Name',
         'status_id' => $status->id,

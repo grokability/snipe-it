@@ -13,15 +13,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->deleteAssets()->create());
 });
 
-function handle(array $args): ResponseFactory
+function deleteAssetTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new DeleteAssetTool)->handle(new Request($args));
 }
 
 test('deletes asset by asset tag', function () {
     $asset = Asset::factory()->create();
 
-    $content = handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
+    $content = deleteAssetTool(['asset_tag' => $asset->asset_tag])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
     $this->assertSoftDeleted('assets', ['id' => $asset->id]);
@@ -30,7 +30,7 @@ test('deletes asset by asset tag', function () {
 test('deletes asset by numeric id', function () {
     $asset = Asset::factory()->create();
 
-    $content = handle(['id' => $asset->id])->getStructuredContent();
+    $content = deleteAssetTool(['id' => $asset->id])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
     $this->assertSoftDeleted('assets', ['id' => $asset->id]);
@@ -39,14 +39,14 @@ test('deletes asset by numeric id', function () {
 test('deletes asset by serial', function () {
     $asset = Asset::factory()->create(['serial' => 'SN-DELETE-001']);
 
-    $content = handle(['serial' => 'SN-DELETE-001'])->getStructuredContent();
+    $content = deleteAssetTool(['serial' => 'SN-DELETE-001'])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
     $this->assertSoftDeleted('assets', ['id' => $asset->id]);
 });
 
 test('returns error when asset not found', function () {
-    expect(handle(['asset_tag' => 'DOES-NOT-EXIST'])->responses()->first()->isError())->toBeTrue();
+    expect(deleteAssetTool(['asset_tag' => 'DOES-NOT-EXIST'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('checks in asset before deleting when checked out', function () {
@@ -55,7 +55,7 @@ test('checks in asset before deleting when checked out', function () {
     $user = User::factory()->create();
     $asset = Asset::factory()->assignedToUser($user)->create();
 
-    handle(['asset_tag' => $asset->asset_tag]);
+    deleteAssetTool(['asset_tag' => $asset->asset_tag]);
 
     Event::assertDispatched(CheckoutableCheckedIn::class, function (CheckoutableCheckedIn $event) use ($asset) {
         return $event->checkoutable->id === $asset->id;
@@ -69,7 +69,7 @@ test('deletes unassigned asset without firing checkin event', function () {
 
     $asset = Asset::factory()->create();
 
-    handle(['asset_tag' => $asset->asset_tag]);
+    deleteAssetTool(['asset_tag' => $asset->asset_tag]);
 
     Event::assertNotDispatched(CheckoutableCheckedIn::class);
     $this->assertSoftDeleted('assets', ['id' => $asset->id]);
@@ -78,7 +78,7 @@ test('deletes unassigned asset without firing checkin event', function () {
 test('response includes asset tag', function () {
     $asset = Asset::factory()->create(['asset_tag' => 'TAG-DEL-001']);
 
-    $content = handle(['asset_tag' => 'TAG-DEL-001'])->getStructuredContent();
+    $content = deleteAssetTool(['asset_tag' => 'TAG-DEL-001'])->getStructuredContent();
 
     expect($content['asset_tag'])->toEqual('TAG-DEL-001');
 });
@@ -87,7 +87,7 @@ test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
     $asset = Asset::factory()->create();
 
-    expect(handle(['asset_tag' => $asset->asset_tag])->responses()->first()->isError())->toBeTrue();
+    expect(deleteAssetTool(['asset_tag' => $asset->asset_tag])->responses()->first()->isError())->toBeTrue();
     $this->assertNotSoftDeleted($asset);
 });
 
@@ -95,7 +95,7 @@ test('array shape defaults to dry run and does not delete', function () {
     $a = Asset::factory()->create();
     $b = Asset::factory()->create();
 
-    $content = handle(['ids' => [$a->id, $b->id]])->getStructuredContent();
+    $content = deleteAssetTool(['ids' => [$a->id, $b->id]])->getStructuredContent();
 
     expect($content['dry_run'])->toBeTrue();
     expect($content['total_matched'])->toBe(2);
@@ -108,7 +108,7 @@ test('array shape commits when dry run false', function () {
     $a = Asset::factory()->create();
     $b = Asset::factory()->create();
 
-    $content = handle([
+    $content = deleteAssetTool([
         'ids' => [$a->id, $b->id],
         'dry_run' => false,
     ])->getStructuredContent();
@@ -124,7 +124,7 @@ test('array shape accepts asset tags', function () {
     $a = Asset::factory()->create(['asset_tag' => 'BULK-A']);
     $b = Asset::factory()->create(['asset_tag' => 'BULK-B']);
 
-    handle([
+    deleteAssetTool([
         'asset_tags' => ['BULK-A', 'BULK-B'],
         'dry_run' => false,
     ]);
@@ -137,7 +137,7 @@ test('filter shape defaults to dry run', function () {
     $a = Asset::factory()->create();
     $b = Asset::factory()->create();
 
-    $content = handle([
+    $content = deleteAssetTool([
         'created_before' => now()->addDay()->toDateString(),
     ])->getStructuredContent();
 
@@ -150,7 +150,7 @@ test('filter shape defaults to dry run', function () {
 test('filter shape requires confirm count on commit', function () {
     Asset::factory()->create();
 
-    $response = handle([
+    $response = deleteAssetTool([
         'created_before' => now()->addDay()->toDateString(),
         'dry_run' => false,
     ]);
@@ -162,7 +162,7 @@ test('filter shape rejects mismatched confirm count', function () {
     $existingCount = Asset::count();
     Asset::factory()->count(3)->create();
 
-    $response = handle([
+    $response = deleteAssetTool([
         'created_before' => now()->addDay()->toDateString(),
         'dry_run' => false,
         'confirm_count' => $existingCount + 999,
@@ -181,7 +181,7 @@ test('filter shape commits when confirm count matches', function () {
         ['asset_tag' => $tagPrefix.'3'],
     )->create();
 
-    $content = handle([
+    $content = deleteAssetTool([
         'search' => $tagPrefix,
         'dry_run' => false,
         'confirm_count' => 3,
@@ -199,7 +199,7 @@ test('filter shape resolves company name to id', function () {
     Asset::factory()->create(['company_id' => $company->id]);
     Asset::factory()->create();
 
-    $content = handle(['company_name' => 'BulkCo'])->getStructuredContent();
+    $content = deleteAssetTool(['company_name' => 'BulkCo'])->getStructuredContent();
 
     expect($content['dry_run'])->toBeTrue();
     expect($content['total_matched'])->toBe(1);

@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\UpdateCompanyTool;
 use App\Models\Company;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,15 +10,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->editCompanies()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function updateCompanyTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new UpdateCompanyTool)->handle(new Request($args));
 }
 
 test('updates company by id', function () {
     $company = Company::factory()->create(['name' => 'Original Corp']);
 
-    $content = handle([
+    $content = updateCompanyTool([
         'id' => $company->id,
         'new_name' => 'Updated Corp',
     ])->getStructuredContent();
@@ -29,7 +30,7 @@ test('updates company by id', function () {
 test('updates company by name', function () {
     $company = Company::factory()->create(['name' => 'Find By Name Corp']);
 
-    $content = handle([
+    $content = updateCompanyTool([
         'name' => 'Find By Name Corp',
         'new_name' => 'Renamed Corp',
     ])->getStructuredContent();
@@ -41,7 +42,7 @@ test('updates company by name', function () {
 test('renames via new name', function () {
     $company = Company::factory()->create(['name' => 'Before Rename']);
 
-    $content = handle([
+    $content = updateCompanyTool([
         'id' => $company->id,
         'new_name' => 'After Rename',
     ])->getStructuredContent();
@@ -51,18 +52,18 @@ test('renames via new name', function () {
 });
 
 test('returns error when not found', function () {
-    expect(handle(['id' => 999999, 'new_name' => 'Ghost Corp'])->responses()->first()->isError())->toBeTrue();
+    expect(updateCompanyTool(['id' => 999999, 'new_name' => 'Ghost Corp'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when no identifier provided', function () {
-    expect(handle(['new_name' => 'X'])->responses()->first()->isError())->toBeTrue();
+    expect(updateCompanyTool(['new_name' => 'X'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
     $company = Company::factory()->create(['name' => 'Unchanged Corp']);
     $this->actingAs(User::factory()->create());
 
-    expect(handle([
+    expect(updateCompanyTool([
         'id' => $company->id,
         'new_name' => 'Should Not Change',
     ])->responses()->first()->isError())->toBeTrue();

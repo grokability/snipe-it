@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\ListAccessoriesTool;
 use App\Models\Accessory;
 use App\Models\AccessoryCheckout;
 use App\Models\Category;
@@ -11,15 +12,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->viewAccessories()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function listAccessoriesTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new ListAccessoriesTool)->handle(new Request($args));
 }
 
 test('returns total and pagination metadata', function () {
     Accessory::factory()->count(3)->create();
 
-    $content = handle()->getStructuredContent();
+    $content = listAccessoriesTool()->getStructuredContent();
 
     expect($content)->toHaveKey('total');
     expect($content)->toHaveKey('offset');
@@ -31,7 +32,7 @@ test('returns total and pagination metadata', function () {
 test('each accessory includes qty min amt and remaining', function () {
     Accessory::factory()->create(['name' => 'Test Mouse', 'qty' => 10, 'min_amt' => 2]);
 
-    $content = handle(['limit' => 500])->getStructuredContent();
+    $content = listAccessoriesTool(['limit' => 500])->getStructuredContent();
 
     $row = collect($content['accessories'])->firstWhere('name', 'Test Mouse');
 
@@ -48,7 +49,7 @@ test('filters by category id', function () {
     Accessory::factory()->create(['name' => 'Category Match', 'category_id' => $category->id]);
     Accessory::factory()->create(['name' => 'Other Accessory']);
 
-    $content = handle(['category_id' => $category->id])->getStructuredContent();
+    $content = listAccessoriesTool(['category_id' => $category->id])->getStructuredContent();
 
     expect($content['total'])->toBe(1);
     expect($content['accessories'][0]['name'])->toBe('Category Match');
@@ -66,7 +67,7 @@ test('low stock only returns only rows at or below min amt', function () {
         'min_amt' => 5,
     ]);
 
-    $content = handle(['low_stock_only' => true])->getStructuredContent();
+    $content = listAccessoriesTool(['low_stock_only' => true])->getStructuredContent();
 
     $names = array_column($content['accessories'], 'name');
     expect($names)->toContain('Low Stock');
@@ -88,7 +89,7 @@ test('low stock only accounts for active checkouts', function () {
         'assigned_to' => User::factory()->create()->id,
     ]);
 
-    $content = handle(['low_stock_only' => true])->getStructuredContent();
+    $content = listAccessoriesTool(['low_stock_only' => true])->getStructuredContent();
 
     $names = array_column($content['accessories'], 'name');
     expect($names)->toContain('Checked Out Low');
@@ -98,7 +99,7 @@ test('default hides archived accessories', function () {
     Accessory::factory()->create(['name' => 'Active Accessory']);
     Accessory::factory()->archived()->create(['name' => 'Retired Accessory']);
 
-    $content = handle()->getStructuredContent();
+    $content = listAccessoriesTool()->getStructuredContent();
 
     $names = array_column($content['accessories'], 'name');
     expect($names)->toContain('Active Accessory');
@@ -109,7 +110,7 @@ test('include archived returns both', function () {
     Accessory::factory()->create(['name' => 'Active Accessory']);
     Accessory::factory()->archived()->create(['name' => 'Retired Accessory']);
 
-    $content = handle(['include_archived' => true])->getStructuredContent();
+    $content = listAccessoriesTool(['include_archived' => true])->getStructuredContent();
 
     $names = array_column($content['accessories'], 'name');
     expect($names)->toContain('Active Accessory');
@@ -120,7 +121,7 @@ test('archived only returns archived rows only', function () {
     Accessory::factory()->create(['name' => 'Active Accessory']);
     Accessory::factory()->archived()->create(['name' => 'Retired Accessory']);
 
-    $content = handle(['archived_only' => true])->getStructuredContent();
+    $content = listAccessoriesTool(['archived_only' => true])->getStructuredContent();
 
     $names = array_column($content['accessories'], 'name');
     expect($names)->not->toContain('Active Accessory');
@@ -130,7 +131,7 @@ test('archived only returns archived rows only', function () {
 test('each accessory row includes archived flag', function () {
     Accessory::factory()->archived()->create(['name' => 'Retired']);
 
-    $content = handle(['archived_only' => true])->getStructuredContent();
+    $content = listAccessoriesTool(['archived_only' => true])->getStructuredContent();
 
     $row = collect($content['accessories'])->firstWhere('name', 'Retired');
     expect($row)->not->toBeNull();
@@ -145,7 +146,7 @@ test('low stock excludes archived even when include archived true', function () 
         'min_amt' => 5,
     ]);
 
-    $content = handle([
+    $content = listAccessoriesTool([
         'low_stock_only' => true,
         'include_archived' => true,
     ])->getStructuredContent();
@@ -157,7 +158,7 @@ test('low stock excludes archived even when include archived true', function () 
 test('limit controls results', function () {
     Accessory::factory()->count(5)->create();
 
-    $content = handle(['limit' => 2])->getStructuredContent();
+    $content = listAccessoriesTool(['limit' => 2])->getStructuredContent();
 
     expect($content['accessories'])->toHaveCount(2);
     expect($content['limit'])->toBe(2);
@@ -166,5 +167,5 @@ test('limit controls results', function () {
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
 
-    expect(handle()->responses()->first()->isError())->toBeTrue();
+    expect(listAccessoriesTool()->responses()->first()->isError())->toBeTrue();
 });

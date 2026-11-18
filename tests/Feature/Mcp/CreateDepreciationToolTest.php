@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\CreateDepreciationTool;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
@@ -8,13 +9,13 @@ beforeEach(function () {
     $this->actingAs(User::factory()->createDepreciations()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function createDepreciationTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CreateDepreciationTool)->handle(new Request($args));
 }
 
 test('creates depreciation', function () {
-    $content = handle(['name' => 'Test Depreciation', 'months' => 36])->getStructuredContent();
+    $content = createDepreciationTool(['name' => 'Test Depreciation', 'months' => 36])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
     $this->assertDatabaseHas('depreciations', [
@@ -24,7 +25,7 @@ test('creates depreciation', function () {
 });
 
 test('response includes id name and months', function () {
-    $content = handle(['name' => 'Response Depreciation', 'months' => 24])->getStructuredContent();
+    $content = createDepreciationTool(['name' => 'Response Depreciation', 'months' => 24])->getStructuredContent();
 
     expect($content)->toHaveKey('id');
     expect($content['name'])->toEqual('Response Depreciation');
@@ -32,16 +33,16 @@ test('response includes id name and months', function () {
 });
 
 test('returns error when name missing', function () {
-    expect(handle(['months' => 36])->responses()->first()->isError())->toBeTrue();
+    expect(createDepreciationTool(['months' => 36])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when months missing', function () {
-    expect(handle(['name' => 'No Months'])->responses()->first()->isError())->toBeTrue();
+    expect(createDepreciationTool(['name' => 'No Months'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
 
-    expect(handle(['name' => 'Blocked Depreciation', 'months' => 12])->responses()->first()->isError())->toBeTrue();
+    expect(createDepreciationTool(['name' => 'Blocked Depreciation', 'months' => 12])->responses()->first()->isError())->toBeTrue();
     $this->assertDatabaseMissing('depreciations', ['name' => 'Blocked Depreciation']);
 });

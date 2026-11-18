@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\ShowAssetTool;
 use App\Models\Asset;
 use App\Models\Location;
 use App\Models\User;
@@ -10,19 +11,19 @@ beforeEach(function () {
     $this->actingAs(User::factory()->viewAssets()->create());
 });
 
-function handle(array $args): ResponseFactory
+function showAssetTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new ShowAssetTool)->handle(new Request($args));
 }
 
 test('returns error when asset tag not found', function () {
-    $response = handle(['asset_tag' => 'DOES-NOT-EXIST']);
+    $response = showAssetTool(['asset_tag' => 'DOES-NOT-EXIST']);
 
     expect($response->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when id not found', function () {
-    $response = handle(['id' => 99999]);
+    $response = showAssetTool(['id' => 99999]);
 
     expect($response->responses()->first()->isError())->toBeTrue();
 });
@@ -30,7 +31,7 @@ test('returns error when id not found', function () {
 test('finds asset by asset tag', function () {
     $asset = Asset::factory()->create(['asset_tag' => 'TAG-FIND-001']);
 
-    $content = handle(['asset_tag' => 'TAG-FIND-001'])->getStructuredContent();
+    $content = showAssetTool(['asset_tag' => 'TAG-FIND-001'])->getStructuredContent();
 
     expect($content['asset_tag'])->toEqual('TAG-FIND-001');
     expect($content['id'])->toEqual($asset->id);
@@ -39,14 +40,14 @@ test('finds asset by asset tag', function () {
 test('finds asset by serial', function () {
     $asset = Asset::factory()->create(['serial' => 'SN-FIND-001']);
 
-    $content = handle(['serial' => 'SN-FIND-001'])->getStructuredContent();
+    $content = showAssetTool(['serial' => 'SN-FIND-001'])->getStructuredContent();
 
     expect($content['serial'])->toEqual('SN-FIND-001');
     expect($content['id'])->toEqual($asset->id);
 });
 
 test('returns error when serial not found', function () {
-    $response = handle(['serial' => 'DOES-NOT-EXIST']);
+    $response = showAssetTool(['serial' => 'DOES-NOT-EXIST']);
 
     expect($response->responses()->first()->isError())->toBeTrue();
 });
@@ -54,7 +55,7 @@ test('returns error when serial not found', function () {
 test('finds asset by numeric id', function () {
     $asset = Asset::factory()->create();
 
-    $content = handle(['id' => $asset->id])->getStructuredContent();
+    $content = showAssetTool(['id' => $asset->id])->getStructuredContent();
 
     expect($content['asset_tag'])->toEqual($asset->asset_tag);
     expect($content['id'])->toEqual($asset->id);
@@ -63,7 +64,7 @@ test('finds asset by numeric id', function () {
 test('returns model status and manufacturer details', function () {
     $asset = Asset::factory()->create();
 
-    $content = handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
+    $content = showAssetTool(['asset_tag' => $asset->asset_tag])->getStructuredContent();
 
     expect($content)->toHaveKey('model');
     expect($content)->toHaveKey('model_number');
@@ -76,7 +77,7 @@ test('returns model status and manufacturer details', function () {
 test('returns date and cost fields', function () {
     $asset = Asset::factory()->create();
 
-    $content = handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
+    $content = showAssetTool(['asset_tag' => $asset->asset_tag])->getStructuredContent();
 
     expect($content)->toHaveKey('purchase_date');
     expect($content)->toHaveKey('purchase_cost');
@@ -89,7 +90,7 @@ test('shows assignment info when checked out to user', function () {
     $user = User::factory()->create();
     $asset = Asset::factory()->assignedToUser($user)->create();
 
-    $content = handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
+    $content = showAssetTool(['asset_tag' => $asset->asset_tag])->getStructuredContent();
 
     expect($content['assigned_to_id'])->toEqual($user->id);
     expect($content['assigned_to_type'])->toEqual('User');
@@ -99,7 +100,7 @@ test('shows assignment info when checked out to location', function () {
     $location = Location::factory()->create();
     $asset = Asset::factory()->assignedToLocation($location)->create();
 
-    $content = handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
+    $content = showAssetTool(['asset_tag' => $asset->asset_tag])->getStructuredContent();
 
     expect($content['assigned_to_id'])->toEqual($location->id);
     expect($content['assigned_to_type'])->toEqual('Location');
@@ -108,7 +109,7 @@ test('shows assignment info when checked out to location', function () {
 test('assignment info is null when not checked out', function () {
     $asset = Asset::factory()->create();
 
-    $content = handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
+    $content = showAssetTool(['asset_tag' => $asset->asset_tag])->getStructuredContent();
 
     expect($content['assigned_to_id'])->toBeNull();
     expect($content['assigned_to_type'])->toBeNull();
@@ -118,13 +119,13 @@ test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
     $asset = Asset::factory()->create();
 
-    expect(handle(['asset_tag' => $asset->asset_tag])->responses()->first()->isError())->toBeTrue();
+    expect(showAssetTool(['asset_tag' => $asset->asset_tag])->responses()->first()->isError())->toBeTrue();
 });
 
 test('custom fields is empty when model has no fieldset', function () {
     $asset = Asset::factory()->create();
 
-    $content = handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
+    $content = showAssetTool(['asset_tag' => $asset->asset_tag])->getStructuredContent();
 
     expect($content)->toHaveKey('custom_fields');
     expect($content['custom_fields'])->toBe([]);
@@ -141,7 +142,7 @@ test('custom fields surfaces cpu and ram from fieldset', function () {
     $asset->{$ramField->db_column_name()} = '64';
     $asset->save();
 
-    $content = handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
+    $content = showAssetTool(['asset_tag' => $asset->asset_tag])->getStructuredContent();
 
     expect($content['custom_fields'])->toHaveKey('CPU');
     expect($content['custom_fields']['CPU']['value'])->toBe('Apple M3 Max');

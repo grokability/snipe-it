@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\CreateLicenseTool;
 use App\Models\Category;
 use App\Models\LicenseSeat;
 use App\Models\User;
@@ -10,15 +11,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->createLicenses()->create());
 });
 
-function handle(array $args): ResponseFactory
+function createLicenseTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CreateLicenseTool)->handle(new Request($args));
 }
 
 test('creates license with required fields', function () {
     $category = Category::factory()->create(['category_type' => 'license']);
 
-    $content = handle([
+    $content = createLicenseTool([
         'name' => 'Test License',
         'seats' => 5,
         'category_id' => $category->id,
@@ -31,7 +32,7 @@ test('creates license with required fields', function () {
 test('response includes id name seats and category', function () {
     $category = Category::factory()->create(['category_type' => 'license']);
 
-    $content = handle([
+    $content = createLicenseTool([
         'name' => 'Response License',
         'seats' => 10,
         'category_id' => $category->id,
@@ -46,7 +47,7 @@ test('response includes id name seats and category', function () {
 test('creates license seats automatically', function () {
     $category = Category::factory()->create(['category_type' => 'license']);
 
-    $content = handle([
+    $content = createLicenseTool([
         'name' => 'Seat Auto License',
         'seats' => 3,
         'category_id' => $category->id,
@@ -59,7 +60,7 @@ test('creates license seats automatically', function () {
 test('creates license with optional fields', function () {
     $category = Category::factory()->create(['category_type' => 'license']);
 
-    handle([
+    createLicenseTool([
         'name' => 'Full License',
         'seats' => 2,
         'category_id' => $category->id,
@@ -85,7 +86,7 @@ test('creates license with optional fields', function () {
 test('returns error when name missing', function () {
     $category = Category::factory()->create(['category_type' => 'license']);
 
-    expect(handle([
+    expect(createLicenseTool([
         'seats' => 5,
         'category_id' => $category->id,
     ])->responses()->first()->isError())->toBeTrue();
@@ -94,21 +95,21 @@ test('returns error when name missing', function () {
 test('returns error when seats missing', function () {
     $category = Category::factory()->create(['category_type' => 'license']);
 
-    expect(handle([
+    expect(createLicenseTool([
         'name' => 'No Seats',
         'category_id' => $category->id,
     ])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when category missing', function () {
-    expect(handle([
+    expect(createLicenseTool([
         'name' => 'No Category',
         'seats' => 5,
     ])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when category does not exist', function () {
-    expect(handle([
+    expect(createLicenseTool([
         'name' => 'Bad Category',
         'seats' => 5,
         'category_id' => 999999,
@@ -119,7 +120,7 @@ test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
     $category = Category::factory()->create(['category_type' => 'license']);
 
-    expect(handle([
+    expect(createLicenseTool([
         'name' => 'Blocked License',
         'seats' => 5,
         'category_id' => $category->id,

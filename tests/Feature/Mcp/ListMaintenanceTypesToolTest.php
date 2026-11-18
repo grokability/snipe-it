@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\ListMaintenanceTypesTool;
 use App\Models\MaintenanceType;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,15 +10,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->viewAssets()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function listMaintenanceTypesTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new ListMaintenanceTypesTool)->handle(new Request($args));
 }
 
 test('returns total and pagination metadata', function () {
     MaintenanceType::factory()->count(3)->create();
 
-    $content = handle()->getStructuredContent();
+    $content = listMaintenanceTypesTool()->getStructuredContent();
 
     expect($content)->toHaveKey('total');
     expect($content)->toHaveKey('offset');
@@ -29,7 +30,7 @@ test('returns total and pagination metadata', function () {
 test('each type includes id name and tag color', function () {
     MaintenanceType::factory()->create(['name' => 'UniqueTypeForTest', 'tag_color' => '#ff0000']);
 
-    $content = handle(['limit' => 500])->getStructuredContent();
+    $content = listMaintenanceTypesTool(['limit' => 500])->getStructuredContent();
     $row = collect($content['maintenance_types'])->firstWhere('name', 'UniqueTypeForTest');
 
     expect($row)->not->toBeNull();
@@ -42,7 +43,7 @@ test('search narrows results', function () {
     MaintenanceType::factory()->create(['name' => 'Preventive Maintenance']);
     MaintenanceType::factory()->create(['name' => 'Something Unrelated']);
 
-    $content = handle(['search' => 'Preventive'])->getStructuredContent();
+    $content = listMaintenanceTypesTool(['search' => 'Preventive'])->getStructuredContent();
     $names = array_column($content['maintenance_types'], 'name');
 
     expect($names)->toContain('Preventive Maintenance');
@@ -54,7 +55,7 @@ test('results ordered alphabetically by name', function () {
     MaintenanceType::factory()->create(['name' => 'Alpha']);
     MaintenanceType::factory()->create(['name' => 'Mango']);
 
-    $content = handle(['limit' => 500])->getStructuredContent();
+    $content = listMaintenanceTypesTool(['limit' => 500])->getStructuredContent();
     $names = array_column($content['maintenance_types'], 'name');
 
     $alphaPos = array_search('Alpha', $names);
@@ -67,5 +68,5 @@ test('results ordered alphabetically by name', function () {
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
 
-    expect(handle()->responses()->first()->isError())->toBeTrue();
+    expect(listMaintenanceTypesTool()->responses()->first()->isError())->toBeTrue();
 });

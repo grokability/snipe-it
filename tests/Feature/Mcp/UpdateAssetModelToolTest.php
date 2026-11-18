@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\UpdateAssetModelTool;
 use App\Models\AssetModel;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,15 +10,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->editAssetModels()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function updateAssetModelTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new UpdateAssetModelTool)->handle(new Request($args));
 }
 
 test('updates model by id', function () {
     $model = AssetModel::factory()->create();
 
-    $content = handle([
+    $content = updateAssetModelTool([
         'id' => $model->id,
         'model_number' => 'MN-001',
     ])->getStructuredContent();
@@ -32,7 +33,7 @@ test('updates model by id', function () {
 test('renames via new name', function () {
     $model = AssetModel::factory()->create();
 
-    $content = handle([
+    $content = updateAssetModelTool([
         'id' => $model->id,
         'new_name' => 'Renamed Model',
     ])->getStructuredContent();
@@ -46,12 +47,12 @@ test('renames via new name', function () {
 });
 
 test('returns error when not found', function () {
-    expect(handle(['id' => 99999])->responses()->first()->isError())->toBeTrue();
+    expect(updateAssetModelTool(['id' => 99999])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
     $model = AssetModel::factory()->create();
 
-    expect(handle(['id' => $model->id, 'model_number' => 'HACKED'])->responses()->first()->isError())->toBeTrue();
+    expect(updateAssetModelTool(['id' => $model->id, 'model_number' => 'HACKED'])->responses()->first()->isError())->toBeTrue();
 });

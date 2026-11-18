@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\ShowLicenseTool;
 use App\Models\License;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,15 +10,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->viewLicenses()->create());
 });
 
-function handle(array $args): ResponseFactory
+function showLicenseTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new ShowLicenseTool)->handle(new Request($args));
 }
 
 test('returns license by id', function () {
     $license = License::factory()->create(['name' => 'Test License', 'seats' => 5]);
 
-    $content = handle(['id' => $license->id])->getStructuredContent();
+    $content = showLicenseTool(['id' => $license->id])->getStructuredContent();
 
     expect($content['id'])->toEqual($license->id);
     expect($content['name'])->toEqual('Test License');
@@ -27,7 +28,7 @@ test('returns license by id', function () {
 test('returns license by name', function () {
     $license = License::factory()->create(['name' => 'FindByName License']);
 
-    $content = handle(['name' => 'FindByName License'])->getStructuredContent();
+    $content = showLicenseTool(['name' => 'FindByName License'])->getStructuredContent();
 
     expect($content['id'])->toEqual($license->id);
     expect($content['name'])->toEqual('FindByName License');
@@ -41,7 +42,7 @@ test('response includes seat counts', function () {
     $seat->assigned_to = $user->id;
     $seat->save();
 
-    $content = handle(['id' => $license->id])->getStructuredContent();
+    $content = showLicenseTool(['id' => $license->id])->getStructuredContent();
 
     expect($content['seats'])->toEqual(3);
     expect($content['assigned_seats'])->toEqual(1);
@@ -61,7 +62,7 @@ test('response includes key fields', function () {
         'license_email' => 'legal@acme.com',
     ]);
 
-    $content = handle(['id' => $license->id])->getStructuredContent();
+    $content = showLicenseTool(['id' => $license->id])->getStructuredContent();
 
     expect($content)->toHaveKey('serial');
     expect($content)->toHaveKey('license_name');
@@ -75,16 +76,16 @@ test('response includes key fields', function () {
 });
 
 test('returns error when no identifier provided', function () {
-    expect(handle([])->responses()->first()->isError())->toBeTrue();
+    expect(showLicenseTool([])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when not found', function () {
-    expect(handle(['id' => 999999])->responses()->first()->isError())->toBeTrue();
+    expect(showLicenseTool(['id' => 999999])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
     $license = License::factory()->create();
     $this->actingAs(User::factory()->create());
 
-    expect(handle(['id' => $license->id])->responses()->first()->isError())->toBeTrue();
+    expect(showLicenseTool(['id' => $license->id])->responses()->first()->isError())->toBeTrue();
 });

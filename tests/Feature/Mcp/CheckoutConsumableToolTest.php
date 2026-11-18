@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\CheckoutConsumableTool;
 use App\Models\Consumable;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,16 +10,16 @@ beforeEach(function () {
     $this->actingAs(User::factory()->checkoutConsumables()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function checkoutConsumableTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CheckoutConsumableTool)->handle(new Request($args));
 }
 
 test('checks out consumable to user', function () {
     $consumable = Consumable::factory()->create(['qty' => 5]);
     $user = User::factory()->create();
 
-    $content = handle([
+    $content = checkoutConsumableTool([
         'id' => $consumable->id,
         'assigned_to' => $user->id,
     ])->getStructuredContent();
@@ -34,7 +35,7 @@ test('returns error when no units remaining', function () {
     $consumable = Consumable::factory()->withoutItemsRemaining()->create();
     $user = User::factory()->create();
 
-    $response = handle([
+    $response = checkoutConsumableTool([
         'id' => $consumable->id,
         'assigned_to' => $user->id,
     ]);
@@ -45,7 +46,7 @@ test('returns error when no units remaining', function () {
 test('returns error when consumable not found', function () {
     $user = User::factory()->create();
 
-    expect(handle([
+    expect(checkoutConsumableTool([
         'id' => 999999,
         'assigned_to' => $user->id,
     ])->responses()->first()->isError())->toBeTrue();
@@ -54,7 +55,7 @@ test('returns error when consumable not found', function () {
 test('returns error when user not found', function () {
     $consumable = Consumable::factory()->create(['qty' => 5]);
 
-    expect(handle([
+    expect(checkoutConsumableTool([
         'id' => $consumable->id,
         'assigned_to' => 999999,
     ])->responses()->first()->isError())->toBeTrue();
@@ -65,7 +66,7 @@ test('returns error when user lacks permission', function () {
     $consumable = Consumable::factory()->create(['qty' => 5]);
     $user = User::factory()->create();
 
-    expect(handle([
+    expect(checkoutConsumableTool([
         'id' => $consumable->id,
         'assigned_to' => $user->id,
     ])->responses()->first()->isError())->toBeTrue();
@@ -75,7 +76,7 @@ test('refuses to check out archived consumable', function () {
     $consumable = Consumable::factory()->archived()->create(['qty' => 5]);
     $user = User::factory()->create();
 
-    $response = handle([
+    $response = checkoutConsumableTool([
         'id' => $consumable->id,
         'assigned_to' => $user->id,
     ]);

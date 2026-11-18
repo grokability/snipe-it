@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\CreateUserTool;
 use App\Models\Department;
 use App\Models\Group;
 use App\Models\Location;
@@ -12,13 +13,13 @@ beforeEach(function () {
     $this->actingAs(User::factory()->createUsers()->create());
 });
 
-function handle(array $args): ResponseFactory
+function createUserTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CreateUserTool)->handle(new Request($args));
 }
 
 test('creates user with required fields', function () {
-    $content = handle([
+    $content = createUserTool([
         'first_name' => 'Jane',
         'last_name' => 'Doe',
         'username' => 'jane.doe.mcp',
@@ -29,7 +30,7 @@ test('creates user with required fields', function () {
 });
 
 test('response includes new user id and username', function () {
-    $content = handle([
+    $content = createUserTool([
         'first_name' => 'Test',
         'username' => 'new.user.mcp',
     ])->getStructuredContent();
@@ -41,7 +42,7 @@ test('response includes new user id and username', function () {
 });
 
 test('hashes password when provided', function () {
-    handle([
+    createUserTool([
         'first_name' => 'Secure',
         'username' => 'secure.user.mcp',
         'password' => 'secret1234',
@@ -53,7 +54,7 @@ test('hashes password when provided', function () {
 });
 
 test('creates user with no password when omitted', function () {
-    handle([
+    createUserTool([
         'first_name' => 'Nopass',
         'username' => 'nopass.user.mcp',
     ]);
@@ -64,7 +65,7 @@ test('creates user with no password when omitted', function () {
 });
 
 test('creates user with email and contact fields', function () {
-    handle([
+    createUserTool([
         'first_name' => 'Contact',
         'username' => 'contact.user.mcp',
         'email' => 'contact@example.com',
@@ -84,7 +85,7 @@ test('creates user with department and location', function () {
     $department = Department::factory()->create();
     $location = Location::factory()->create();
 
-    handle([
+    createUserTool([
         'first_name' => 'Located',
         'username' => 'located.user.mcp',
         'department_id' => $department->id,
@@ -99,13 +100,13 @@ test('creates user with department and location', function () {
 });
 
 test('returns error when username missing', function () {
-    expect(handle([
+    expect(createUserTool([
         'first_name' => 'No Username',
     ])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when first name missing', function () {
-    expect(handle([
+    expect(createUserTool([
         'username' => 'no.firstname.mcp',
     ])->responses()->first()->isError())->toBeTrue();
 });
@@ -113,7 +114,7 @@ test('returns error when first name missing', function () {
 test('returns error when username already exists', function () {
     User::factory()->create(['username' => 'duplicate.mcp']);
 
-    $response = handle([
+    $response = createUserTool([
         'first_name' => 'Dupe',
         'username' => 'duplicate.mcp',
     ]);
@@ -122,7 +123,7 @@ test('returns error when username already exists', function () {
 });
 
 test('activates user by default', function () {
-    handle([
+    createUserTool([
         'first_name' => 'Active',
         'username' => 'default.active.mcp',
     ]);
@@ -131,7 +132,7 @@ test('activates user by default', function () {
 });
 
 test('can create deactivated user', function () {
-    handle([
+    createUserTool([
         'first_name' => 'Inactive',
         'username' => 'inactive.user.mcp',
         'activated' => false,
@@ -143,7 +144,7 @@ test('can create deactivated user', function () {
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
 
-    expect(handle([
+    expect(createUserTool([
         'first_name' => 'Blocked',
         'username' => 'blocked.user.mcp',
     ])->responses()->first()->isError())->toBeTrue();
@@ -154,7 +155,7 @@ test('superadmin can assign group ids', function () {
     $this->actingAs(User::factory()->superuser()->create());
     $group = Group::factory()->create();
 
-    $content = handle([
+    $content = createUserTool([
         'first_name' => 'GroupedUser',
         'username' => 'grouped.user.mcp',
         'group_ids' => [$group->id],
@@ -169,7 +170,7 @@ test('superadmin can assign group ids', function () {
 test('non superadmin cannot assign group ids', function () {
     $group = Group::factory()->create();
 
-    $response = handle([
+    $response = createUserTool([
         'first_name' => 'Denied',
         'username' => 'denied.groups.mcp',
         'group_ids' => [$group->id],

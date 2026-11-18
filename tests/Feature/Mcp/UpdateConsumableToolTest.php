@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\UpdateConsumableTool;
 use App\Models\Consumable;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,15 +10,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->editConsumables()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function updateConsumableTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new UpdateConsumableTool)->handle(new Request($args));
 }
 
 test('updates consumable by id', function () {
     $consumable = Consumable::factory()->create(['qty' => 5]);
 
-    $content = handle([
+    $content = updateConsumableTool([
         'id' => $consumable->id,
         'qty' => 20,
     ])->getStructuredContent();
@@ -30,7 +31,7 @@ test('updates consumable by id', function () {
 test('updates consumable by name', function () {
     $consumable = Consumable::factory()->create(['name' => 'Update By Name', 'qty' => 3]);
 
-    $content = handle([
+    $content = updateConsumableTool([
         'name' => 'Update By Name',
         'qty' => 15,
     ])->getStructuredContent();
@@ -42,7 +43,7 @@ test('updates consumable by name', function () {
 test('renames via new name', function () {
     $consumable = Consumable::factory()->create(['name' => 'Old Consumable Name']);
 
-    $content = handle([
+    $content = updateConsumableTool([
         'id' => $consumable->id,
         'new_name' => 'New Consumable Name',
     ])->getStructuredContent();
@@ -53,14 +54,14 @@ test('renames via new name', function () {
 });
 
 test('returns error when not found', function () {
-    expect(handle(['id' => 999999, 'qty' => 5])->responses()->first()->isError())->toBeTrue();
+    expect(updateConsumableTool(['id' => 999999, 'qty' => 5])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
     $consumable = Consumable::factory()->create(['qty' => 5]);
 
-    expect(handle([
+    expect(updateConsumableTool([
         'id' => $consumable->id,
         'qty' => 99,
     ])->responses()->first()->isError())->toBeTrue();

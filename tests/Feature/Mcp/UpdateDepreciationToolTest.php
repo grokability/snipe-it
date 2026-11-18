@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\UpdateDepreciationTool;
 use App\Models\Depreciation;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,15 +10,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->editDepreciations()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function updateDepreciationTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new UpdateDepreciationTool)->handle(new Request($args));
 }
 
 test('updates depreciation by id', function () {
     $dep = Depreciation::factory()->create(['months' => 12]);
 
-    $content = handle([
+    $content = updateDepreciationTool([
         'id' => $dep->id,
         'months' => 24,
     ])->getStructuredContent();
@@ -32,7 +33,7 @@ test('updates depreciation by id', function () {
 test('updates months', function () {
     $dep = Depreciation::factory()->create(['months' => 36]);
 
-    $content = handle([
+    $content = updateDepreciationTool([
         'id' => $dep->id,
         'months' => 48,
     ])->getStructuredContent();
@@ -44,7 +45,7 @@ test('updates months', function () {
 test('renames via new name', function () {
     $dep = Depreciation::factory()->create();
 
-    $content = handle([
+    $content = updateDepreciationTool([
         'id' => $dep->id,
         'new_name' => 'Renamed Depreciation',
     ])->getStructuredContent();
@@ -58,12 +59,12 @@ test('renames via new name', function () {
 });
 
 test('returns error when not found', function () {
-    expect(handle(['id' => 99999])->responses()->first()->isError())->toBeTrue();
+    expect(updateDepreciationTool(['id' => 99999])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
     $dep = Depreciation::factory()->create();
 
-    expect(handle(['id' => $dep->id, 'months' => 99])->responses()->first()->isError())->toBeTrue();
+    expect(updateDepreciationTool(['id' => $dep->id, 'months' => 99])->responses()->first()->isError())->toBeTrue();
 });

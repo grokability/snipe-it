@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\GetUserAssetsTool;
 use App\Models\Asset;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,16 +10,16 @@ beforeEach(function () {
     $this->actingAs(User::factory()->viewUsers()->viewAssets()->create());
 });
 
-function handle(array $args): ResponseFactory
+function getUserAssetsTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new GetUserAssetsTool)->handle(new Request($args));
 }
 
 test('returns assets for user', function () {
     $user = User::factory()->create();
     Asset::factory()->assignedToUser($user)->create();
 
-    $content = handle(['id' => $user->id])->getStructuredContent();
+    $content = getUserAssetsTool(['id' => $user->id])->getStructuredContent();
 
     expect($content['user_id'])->toEqual($user->id);
     expect($content['total'])->toEqual(1);
@@ -28,14 +29,14 @@ test('returns assets for user', function () {
 test('returns empty array when user has no assets', function () {
     $user = User::factory()->create();
 
-    $content = handle(['id' => $user->id])->getStructuredContent();
+    $content = getUserAssetsTool(['id' => $user->id])->getStructuredContent();
 
     expect($content['total'])->toEqual(0);
     expect($content['assets'])->toHaveCount(0);
 });
 
 test('returns error when user not found', function () {
-    expect(handle(['id' => 999999])->responses()->first()->isError())->toBeTrue();
+    expect(getUserAssetsTool(['id' => 999999])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
@@ -43,5 +44,5 @@ test('returns error when user lacks permission', function () {
 
     $user = User::factory()->create();
 
-    expect(handle(['id' => $user->id])->responses()->first()->isError())->toBeTrue();
+    expect(getUserAssetsTool(['id' => $user->id])->responses()->first()->isError())->toBeTrue();
 });

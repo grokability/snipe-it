@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\UpdateLicenseTool;
 use App\Models\Category;
 use App\Models\License;
 use App\Models\User;
@@ -10,15 +11,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->editLicenses()->create());
 });
 
-function handle(array $args): ResponseFactory
+function updateLicenseTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new UpdateLicenseTool)->handle(new Request($args));
 }
 
 test('updates license by id', function () {
     $license = License::factory()->create(['name' => 'Original Name']);
 
-    $content = handle([
+    $content = updateLicenseTool([
         'id' => $license->id,
         'new_name' => 'Updated Name',
     ])->getStructuredContent();
@@ -30,7 +31,7 @@ test('updates license by id', function () {
 test('updates license by name', function () {
     $license = License::factory()->create(['name' => 'Find By Name License']);
 
-    $content = handle([
+    $content = updateLicenseTool([
         'name' => 'Find By Name License',
         'new_name' => 'Renamed License',
     ])->getStructuredContent();
@@ -42,7 +43,7 @@ test('updates license by name', function () {
 test('response includes id name and seats', function () {
     $license = License::factory()->create(['seats' => 5]);
 
-    $content = handle([
+    $content = updateLicenseTool([
         'id' => $license->id,
         'new_name' => 'Response Check License',
     ])->getStructuredContent();
@@ -56,7 +57,7 @@ test('updates multiple fields', function () {
     $license = License::factory()->create();
     $category = Category::factory()->create(['category_type' => 'license']);
 
-    handle([
+    updateLicenseTool([
         'id' => $license->id,
         'category_id' => $category->id,
         'serial' => 'SN-NEW-001',
@@ -75,14 +76,14 @@ test('updates multiple fields', function () {
 });
 
 test('returns error when not found', function () {
-    expect(handle(['id' => 999999, 'new_name' => 'Ghost'])->responses()->first()->isError())->toBeTrue();
+    expect(updateLicenseTool(['id' => 999999, 'new_name' => 'Ghost'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
     $license = License::factory()->create(['name' => 'Unchanged License']);
     $this->actingAs(User::factory()->create());
 
-    expect(handle([
+    expect(updateLicenseTool([
         'id' => $license->id,
         'new_name' => 'Should Not Change',
     ])->responses()->first()->isError())->toBeTrue();

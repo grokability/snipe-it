@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\UpdateAssetTool;
 use App\Models\Asset;
 use App\Models\Location;
 use App\Models\Statuslabel;
@@ -11,15 +12,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->editAssets()->create());
 });
 
-function handle(array $args): ResponseFactory
+function updateAssetTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new UpdateAssetTool)->handle(new Request($args));
 }
 
 test('updates name by asset tag', function () {
     $asset = Asset::factory()->create(['name' => 'Old Name']);
 
-    $content = handle([
+    $content = updateAssetTool([
         'asset_tag' => $asset->asset_tag,
         'name' => 'New Name',
     ])->getStructuredContent();
@@ -31,7 +32,7 @@ test('updates name by asset tag', function () {
 test('updates asset by numeric id', function () {
     $asset = Asset::factory()->create(['name' => 'Old Name']);
 
-    $content = handle([
+    $content = updateAssetTool([
         'id' => $asset->id,
         'name' => 'Updated by ID',
     ])->getStructuredContent();
@@ -43,7 +44,7 @@ test('updates asset by numeric id', function () {
 test('updates asset by serial', function () {
     $asset = Asset::factory()->create(['serial' => 'SN-UPDATE-001', 'name' => 'Old Name']);
 
-    $content = handle([
+    $content = updateAssetTool([
         'serial' => 'SN-UPDATE-001',
         'name' => 'Updated by Serial',
     ])->getStructuredContent();
@@ -57,7 +58,7 @@ test('updates multiple fields at once', function () {
     $location = Location::factory()->create();
     $status = Statuslabel::factory()->rtd()->create();
 
-    handle([
+    updateAssetTool([
         'asset_tag' => $asset->asset_tag,
         'notes' => 'MCP note',
         'location_id' => $location->id,
@@ -75,7 +76,7 @@ test('updates multiple fields at once', function () {
 test('renames asset tag via new asset tag', function () {
     $asset = Asset::factory()->create(['asset_tag' => 'TAG-OLD-001']);
 
-    $content = handle([
+    $content = updateAssetTool([
         'asset_tag' => 'TAG-OLD-001',
         'new_asset_tag' => 'TAG-NEW-001',
     ])->getStructuredContent();
@@ -88,7 +89,7 @@ test('renames asset tag via new asset tag', function () {
 test('updates serial via new serial', function () {
     $asset = Asset::factory()->create(['serial' => 'SN-OLD-001']);
 
-    handle([
+    updateAssetTool([
         'asset_tag' => $asset->asset_tag,
         'new_serial' => 'SN-NEW-001',
     ]);
@@ -97,7 +98,7 @@ test('updates serial via new serial', function () {
 });
 
 test('returns error when asset not found', function () {
-    expect(handle([
+    expect(updateAssetTool([
         'asset_tag' => 'DOES-NOT-EXIST',
         'name' => 'Anything',
     ])->responses()->first()->isError())->toBeTrue();
@@ -106,7 +107,7 @@ test('returns error when asset not found', function () {
 test('response includes asset tag and id', function () {
     $asset = Asset::factory()->create();
 
-    $content = handle([
+    $content = updateAssetTool([
         'asset_tag' => $asset->asset_tag,
         'name' => 'Response Check',
     ])->getStructuredContent();
@@ -119,7 +120,7 @@ test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
     $asset = Asset::factory()->create();
 
-    expect(handle([
+    expect(updateAssetTool([
         'asset_tag' => $asset->asset_tag,
         'name' => 'Should Not Update',
     ])->responses()->first()->isError())->toBeTrue();

@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\ListAssetsTool;
 use App\Models\Asset;
 use App\Models\Location;
 use App\Models\Statuslabel;
@@ -11,15 +12,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->viewAssets()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function listAssetsTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new ListAssetsTool)->handle(new Request($args));
 }
 
 test('returns total assets and pagination metadata', function () {
     Asset::factory()->count(3)->create();
 
-    $content = handle()->getStructuredContent();
+    $content = listAssetsTool()->getStructuredContent();
 
     expect($content)->toHaveKey('total');
     expect($content)->toHaveKey('assets');
@@ -31,7 +32,7 @@ test('returns total assets and pagination metadata', function () {
 test('each asset includes key fields', function () {
     Asset::factory()->create();
 
-    $content = handle()->getStructuredContent();
+    $content = listAssetsTool()->getStructuredContent();
 
     $asset = $content['assets'][0];
     expect($asset)->toHaveKey('id');
@@ -48,7 +49,7 @@ test('excludes archived assets by default', function () {
         'status_id' => Statuslabel::factory()->archived()->create()->id,
     ]);
 
-    $content = handle()->getStructuredContent();
+    $content = listAssetsTool()->getStructuredContent();
     $ids = array_column($content['assets'], 'id');
 
     expect($ids)->toContain($rtdAsset->id);
@@ -59,7 +60,7 @@ test('rtd filter excludes deployed assets', function () {
     $rtdAsset = Asset::factory()->create();
     $deployedAsset = Asset::factory()->assignedToUser()->create();
 
-    $content = handle(['status_type' => 'RTD'])->getStructuredContent();
+    $content = listAssetsTool(['status_type' => 'RTD'])->getStructuredContent();
     $ids = array_column($content['assets'], 'id');
 
     expect($ids)->toContain($rtdAsset->id);
@@ -71,7 +72,7 @@ test('deployed filter excludes rtd assets', function () {
     $deployedAsset = Asset::factory()->assignedToUser($user)->create();
     $rtdAsset = Asset::factory()->create();
 
-    $content = handle(['status_type' => 'Deployed'])->getStructuredContent();
+    $content = listAssetsTool(['status_type' => 'Deployed'])->getStructuredContent();
     $ids = array_column($content['assets'], 'id');
 
     expect($ids)->toContain($deployedAsset->id);
@@ -83,7 +84,7 @@ test('archived filter returns only archived assets', function () {
     $archivedAsset = Asset::factory()->create(['status_id' => $archivedStatus->id]);
     $rtdAsset = Asset::factory()->create();
 
-    $content = handle(['status_type' => 'Archived'])->getStructuredContent();
+    $content = listAssetsTool(['status_type' => 'Archived'])->getStructuredContent();
     $ids = array_column($content['assets'], 'id');
 
     expect($ids)->toContain($archivedAsset->id);
@@ -93,7 +94,7 @@ test('archived filter returns only archived assets', function () {
 test('limit controls number of results returned', function () {
     Asset::factory()->count(10)->create();
 
-    $content = handle(['limit' => 3])->getStructuredContent();
+    $content = listAssetsTool(['limit' => 3])->getStructuredContent();
 
     expect($content['assets'])->toHaveCount(3);
     expect($content['total'])->toBeGreaterThan(3);
@@ -102,8 +103,8 @@ test('limit controls number of results returned', function () {
 test('offset skips results for pagination', function () {
     Asset::factory()->count(10)->create();
 
-    $page1 = handle(['limit' => 4, 'offset' => 0])->getStructuredContent();
-    $page2 = handle(['limit' => 4, 'offset' => 4])->getStructuredContent();
+    $page1 = listAssetsTool(['limit' => 4, 'offset' => 0])->getStructuredContent();
+    $page2 = listAssetsTool(['limit' => 4, 'offset' => 4])->getStructuredContent();
 
     $ids1 = array_column($page1['assets'], 'id');
     $ids2 = array_column($page2['assets'], 'id');
@@ -115,7 +116,7 @@ test('search matches on asset tag', function () {
     $target = Asset::factory()->create(['asset_tag' => 'UNIQ-SEARCH-XYZ']);
     Asset::factory()->create(['asset_tag' => 'COMPLETELY-DIFFERENT']);
 
-    $content = handle(['search' => 'UNIQ-SEARCH-XYZ'])->getStructuredContent();
+    $content = listAssetsTool(['search' => 'UNIQ-SEARCH-XYZ'])->getStructuredContent();
     $ids = array_column($content['assets'], 'id');
 
     expect($ids)->toContain($target->id);
@@ -126,7 +127,7 @@ test('filters by location id', function () {
     $matchingAsset = Asset::factory()->create(['location_id' => $location->id]);
     $otherAsset = Asset::factory()->create();
 
-    $content = handle(['location_id' => $location->id])->getStructuredContent();
+    $content = listAssetsTool(['location_id' => $location->id])->getStructuredContent();
     $ids = array_column($content['assets'], 'id');
 
     expect($ids)->toContain($matchingAsset->id);
@@ -136,7 +137,7 @@ test('filters by location id', function () {
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
 
-    expect(handle()->responses()->first()->isError())->toBeTrue();
+    expect(listAssetsTool()->responses()->first()->isError())->toBeTrue();
 });
 
 test('filters by rtd location id', function () {
@@ -145,7 +146,7 @@ test('filters by rtd location id', function () {
     $matching = Asset::factory()->create(['rtd_location_id' => $rtdLocation->id, 'location_id' => $elsewhere->id]);
     $other = Asset::factory()->create(['rtd_location_id' => $elsewhere->id]);
 
-    $content = handle(['rtd_location_id' => $rtdLocation->id])->getStructuredContent();
+    $content = listAssetsTool(['rtd_location_id' => $rtdLocation->id])->getStructuredContent();
     $ids = array_column($content['assets'], 'id');
 
     expect($ids)->toContain($matching->id);
@@ -157,7 +158,7 @@ test('filters by supplier id', function () {
     $matching = Asset::factory()->create(['supplier_id' => $supplier->id]);
     $other = Asset::factory()->create();
 
-    $content = handle(['supplier_id' => $supplier->id])->getStructuredContent();
+    $content = listAssetsTool(['supplier_id' => $supplier->id])->getStructuredContent();
     $ids = array_column($content['assets'], 'id');
 
     expect($ids)->toContain($matching->id);
@@ -168,7 +169,7 @@ test('filter payload forwards to text search', function () {
     $match = Asset::factory()->create(['name' => 'Executive MacBook Pro']);
     Asset::factory()->create(['name' => 'Generic Laptop']);
 
-    $content = handle(['filter' => ['name' => 'Executive']])->getStructuredContent();
+    $content = listAssetsTool(['filter' => ['name' => 'Executive']])->getStructuredContent();
     $ids = array_column($content['assets'], 'id');
 
     expect($ids)->toContain($match->id);
@@ -180,7 +181,7 @@ test('response includes lifecycle fields and child counts', function () {
         'purchase_date' => '2026-01-15',
     ]);
 
-    $content = handle(['limit' => 500])->getStructuredContent();
+    $content = listAssetsTool(['limit' => 500])->getStructuredContent();
     $row = collect($content['assets'])->firstWhere('id', $asset->id);
 
     expect($row)->not->toBeNull();

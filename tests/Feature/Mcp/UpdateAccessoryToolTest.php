@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\UpdateAccessoryTool;
 use App\Models\Accessory;
 use App\Models\Category;
 use App\Models\Location;
@@ -11,15 +12,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->editAccessories()->create());
 });
 
-function handle(array $args): ResponseFactory
+function updateAccessoryTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new UpdateAccessoryTool)->handle(new Request($args));
 }
 
 test('updates accessory by id', function () {
     $accessory = Accessory::factory()->create(['qty' => 5]);
 
-    $content = handle([
+    $content = updateAccessoryTool([
         'id' => $accessory->id,
         'qty' => 10,
     ])->getStructuredContent();
@@ -31,7 +32,7 @@ test('updates accessory by id', function () {
 test('updates accessory by name', function () {
     $accessory = Accessory::factory()->create(['name' => 'Lookup By Name', 'qty' => 3]);
 
-    $content = handle([
+    $content = updateAccessoryTool([
         'name' => 'Lookup By Name',
         'qty' => 8,
     ])->getStructuredContent();
@@ -43,7 +44,7 @@ test('updates accessory by name', function () {
 test('renames accessory via new name', function () {
     $accessory = Accessory::factory()->create(['name' => 'Old Accessory Name']);
 
-    $content = handle([
+    $content = updateAccessoryTool([
         'id' => $accessory->id,
         'new_name' => 'New Accessory Name',
     ])->getStructuredContent();
@@ -61,7 +62,7 @@ test('updates multiple fields at once', function () {
     // order_number moved to the Orders table. Swapping it out for
     // default_purchase_cost here to cover the forwarded legacy
     // purchase_cost input path.
-    handle([
+    updateAccessoryTool([
         'id' => $accessory->id,
         'qty' => 20,
         'location_id' => $location->id,
@@ -80,14 +81,14 @@ test('updates multiple fields at once', function () {
 });
 
 test('returns error when not found', function () {
-    expect(handle([
+    expect(updateAccessoryTool([
         'id' => 999999,
         'qty' => 5,
     ])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when no identifier provided', function () {
-    expect(handle([
+    expect(updateAccessoryTool([
         'qty' => 5,
     ])->responses()->first()->isError())->toBeTrue();
 });
@@ -95,7 +96,7 @@ test('returns error when no identifier provided', function () {
 test('response includes id and name', function () {
     $accessory = Accessory::factory()->create(['name' => 'Response Accessory']);
 
-    $content = handle([
+    $content = updateAccessoryTool([
         'id' => $accessory->id,
         'qty' => 7,
     ])->getStructuredContent();
@@ -108,7 +109,7 @@ test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
     $accessory = Accessory::factory()->create(['name' => 'Locked Accessory']);
 
-    expect(handle([
+    expect(updateAccessoryTool([
         'id' => $accessory->id,
         'qty' => 5,
     ])->responses()->first()->isError())->toBeTrue();

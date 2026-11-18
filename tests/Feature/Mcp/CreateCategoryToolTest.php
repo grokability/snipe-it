@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\CreateCategoryTool;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
@@ -8,13 +9,13 @@ beforeEach(function () {
     $this->actingAs(User::factory()->createCategories()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function createCategoryTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CreateCategoryTool)->handle(new Request($args));
 }
 
 test('creates asset category', function () {
-    $content = handle([
+    $content = createCategoryTool([
         'name' => 'Test Asset Category',
         'category_type' => 'asset',
     ])->getStructuredContent();
@@ -24,7 +25,7 @@ test('creates asset category', function () {
 });
 
 test('creates license category', function () {
-    $content = handle([
+    $content = createCategoryTool([
         'name' => 'Test License Category',
         'category_type' => 'license',
     ])->getStructuredContent();
@@ -34,7 +35,7 @@ test('creates license category', function () {
 });
 
 test('response includes id name and type', function () {
-    $content = handle([
+    $content = createCategoryTool([
         'name' => 'Response Category',
         'category_type' => 'accessory',
     ])->getStructuredContent();
@@ -45,15 +46,15 @@ test('response includes id name and type', function () {
 });
 
 test('returns error when name missing', function () {
-    expect(handle(['category_type' => 'asset'])->responses()->first()->isError())->toBeTrue();
+    expect(createCategoryTool(['category_type' => 'asset'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when type missing', function () {
-    expect(handle(['name' => 'No Type Category'])->responses()->first()->isError())->toBeTrue();
+    expect(createCategoryTool(['name' => 'No Type Category'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when invalid type', function () {
-    expect(handle([
+    expect(createCategoryTool([
         'name' => 'Invalid Type Category',
         'category_type' => 'invalid',
     ])->responses()->first()->isError())->toBeTrue();
@@ -62,7 +63,7 @@ test('returns error when invalid type', function () {
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
 
-    expect(handle([
+    expect(createCategoryTool([
         'name' => 'Blocked Category',
         'category_type' => 'asset',
     ])->responses()->first()->isError())->toBeTrue();

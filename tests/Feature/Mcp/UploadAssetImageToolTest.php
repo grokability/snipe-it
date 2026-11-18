@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\UploadAssetImageTool;
 use App\Models\Asset;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
@@ -11,9 +12,9 @@ beforeEach(function () {
     Storage::fake('public');
 });
 
-function handle(array $args): ResponseFactory
+function uploadAssetImageTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return resolve(UploadAssetImageTool::class)->handle(new Request($args));
 }
 
 function pngBase64(): string
@@ -25,7 +26,7 @@ function pngBase64(): string
 test('attaches image to asset by asset tag', function () {
     $asset = Asset::factory()->create();
 
-    $content = handle([
+    $content = uploadAssetImageTool([
         'asset_tag' => $asset->asset_tag,
         'image_base64' => pngBase64(),
         'mime_type' => 'image/png',
@@ -38,7 +39,7 @@ test('attaches image to asset by asset tag', function () {
 test('attaches image to asset by numeric id', function () {
     $asset = Asset::factory()->create();
 
-    $content = handle([
+    $content = uploadAssetImageTool([
         'id' => $asset->id,
         'image_base64' => pngBase64(),
         'mime_type' => 'image/png',
@@ -48,14 +49,14 @@ test('attaches image to asset by numeric id', function () {
 });
 
 test('returns error when no identifier provided', function () {
-    expect(handle([
+    expect(uploadAssetImageTool([
         'image_base64' => pngBase64(),
         'mime_type' => 'image/png',
     ])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when asset not found', function () {
-    expect(handle([
+    expect(uploadAssetImageTool([
         'asset_tag' => 'DOES-NOT-EXIST',
         'image_base64' => pngBase64(),
         'mime_type' => 'image/png',
@@ -66,7 +67,7 @@ test('rejects disallowed mime type', function () {
     $asset = Asset::factory()->create();
 
     $this->expectException(\Illuminate\Validation\ValidationException::class);
-    handle([
+    uploadAssetImageTool([
         'asset_tag' => $asset->asset_tag,
         'image_base64' => pngBase64(),
         'mime_type' => 'application/octet-stream',
@@ -76,7 +77,7 @@ test('rejects disallowed mime type', function () {
 test('rejects undecodable base64', function () {
     $asset = Asset::factory()->create();
 
-    $response = handle([
+    $response = uploadAssetImageTool([
         'asset_tag' => $asset->asset_tag,
         'image_base64' => '!!!not valid base64!!!',
         'mime_type' => 'image/png',
@@ -89,7 +90,7 @@ test('returns error when acting user lacks permission', function () {
     $this->actingAs(User::factory()->create());
     $asset = Asset::factory()->create();
 
-    expect(handle([
+    expect(uploadAssetImageTool([
         'asset_tag' => $asset->asset_tag,
         'image_base64' => pngBase64(),
         'mime_type' => 'image/png',
@@ -99,7 +100,7 @@ test('returns error when acting user lacks permission', function () {
 test('response includes image filename and url', function () {
     $asset = Asset::factory()->create();
 
-    $content = handle([
+    $content = uploadAssetImageTool([
         'asset_tag' => $asset->asset_tag,
         'image_base64' => pngBase64(),
         'mime_type' => 'image/png',

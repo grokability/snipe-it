@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\CheckoutableCheckedOut;
+use App\Mcp\Tools\CheckoutLicenseTool;
 use App\Models\Asset;
 use App\Models\License;
 use App\Models\LicenseSeat;
@@ -13,16 +14,16 @@ beforeEach(function () {
     $this->actingAs(User::factory()->checkoutLicenses()->create());
 });
 
-function handle(array $args): ResponseFactory
+function checkoutLicenseTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CheckoutLicenseTool)->handle(new Request($args));
 }
 
 test('checks out license to user by id', function () {
     $license = License::factory()->create(['seats' => 3, 'reassignable' => true]);
     $user = User::factory()->create();
 
-    $content = handle([
+    $content = checkoutLicenseTool([
         'id' => $license->id,
         'assigned_to' => $user->id,
     ])->getStructuredContent();
@@ -40,7 +41,7 @@ test('checks out license to user by name', function () {
     $license = License::factory()->create(['name' => 'Named Checkout License', 'seats' => 3, 'reassignable' => true]);
     $user = User::factory()->create();
 
-    $content = handle([
+    $content = checkoutLicenseTool([
         'name' => 'Named Checkout License',
         'assigned_to' => $user->id,
     ])->getStructuredContent();
@@ -52,7 +53,7 @@ test('checks out license to asset', function () {
     $license = License::factory()->create(['seats' => 3, 'reassignable' => true]);
     $asset = Asset::factory()->create();
 
-    $content = handle([
+    $content = checkoutLicenseTool([
         'id' => $license->id,
         'asset_id' => $asset->id,
     ])->getStructuredContent();
@@ -70,7 +71,7 @@ test('response includes seat id for checkin', function () {
     $license = License::factory()->create(['seats' => 3, 'reassignable' => true]);
     $user = User::factory()->create();
 
-    $content = handle([
+    $content = checkoutLicenseTool([
         'id' => $license->id,
         'assigned_to' => $user->id,
     ])->getStructuredContent();
@@ -86,7 +87,7 @@ test('fires checkout event', function () {
     $license = License::factory()->create(['seats' => 3, 'reassignable' => true]);
     $user = User::factory()->create();
 
-    handle([
+    checkoutLicenseTool([
         'id' => $license->id,
         'assigned_to' => $user->id,
     ]);
@@ -103,7 +104,7 @@ test('returns error when no seats remaining', function () {
     $seat->assigned_to = $user1->id;
     $seat->save();
 
-    $response = handle([
+    $response = checkoutLicenseTool([
         'id' => $license->id,
         'assigned_to' => $user2->id,
     ]);
@@ -114,11 +115,11 @@ test('returns error when no seats remaining', function () {
 test('returns error when neither assignee provided', function () {
     $license = License::factory()->create(['seats' => 3]);
 
-    expect(handle(['id' => $license->id])->responses()->first()->isError())->toBeTrue();
+    expect(checkoutLicenseTool(['id' => $license->id])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when license not found', function () {
-    expect(handle([
+    expect(checkoutLicenseTool([
         'id' => 999999,
         'assigned_to' => User::factory()->create()->id,
     ])->responses()->first()->isError())->toBeTrue();
@@ -127,7 +128,7 @@ test('returns error when license not found', function () {
 test('returns error when user not found', function () {
     $license = License::factory()->create(['seats' => 3]);
 
-    expect(handle([
+    expect(checkoutLicenseTool([
         'id' => $license->id,
         'assigned_to' => 999999,
     ])->responses()->first()->isError())->toBeTrue();
@@ -138,7 +139,7 @@ test('returns error when user lacks permission', function () {
     $license = License::factory()->create(['seats' => 3, 'reassignable' => true]);
     $user = User::factory()->create();
 
-    expect(handle([
+    expect(checkoutLicenseTool([
         'id' => $license->id,
         'assigned_to' => $user->id,
     ])->responses()->first()->isError())->toBeTrue();

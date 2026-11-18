@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\ListCategoriesTool;
 use App\Models\Category;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,15 +10,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->viewCategories()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function listCategoriesTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new ListCategoriesTool)->handle(new Request($args));
 }
 
 test('returns categories with pagination metadata', function () {
     Category::factory()->count(3)->create();
 
-    $content = handle()->getStructuredContent();
+    $content = listCategoriesTool()->getStructuredContent();
 
     expect($content)->toHaveKey('total');
     expect($content)->toHaveKey('categories');
@@ -29,7 +30,7 @@ test('returns categories with pagination metadata', function () {
 test('each category includes key fields', function () {
     Category::factory()->create();
 
-    $content = handle()->getStructuredContent();
+    $content = listCategoriesTool()->getStructuredContent();
 
     expect($content['categories'])->not->toBeEmpty();
     $category = $content['categories'][0];
@@ -42,7 +43,7 @@ test('filters by category type', function () {
     $assetCategory = Category::factory()->create(['category_type' => 'asset', 'name' => 'Asset Type Cat '.uniqid()]);
     $licenseCategory = Category::factory()->create(['category_type' => 'license', 'name' => 'License Type Cat '.uniqid()]);
 
-    $content = handle(['category_type' => 'asset'])->getStructuredContent();
+    $content = listCategoriesTool(['category_type' => 'asset'])->getStructuredContent();
 
     $ids = array_column($content['categories'], 'id');
     expect($ids)->toContain($assetCategory->id);
@@ -52,5 +53,5 @@ test('filters by category type', function () {
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
 
-    expect(handle()->responses()->first()->isError())->toBeTrue();
+    expect(listCategoriesTool()->responses()->first()->isError())->toBeTrue();
 });

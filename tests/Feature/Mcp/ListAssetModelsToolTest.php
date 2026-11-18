@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\ListAssetModelsTool;
 use App\Models\AssetModel;
 use App\Models\Category;
 use App\Models\User;
@@ -10,15 +11,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->viewAssetModels()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function listAssetModelsTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new ListAssetModelsTool)->handle(new Request($args));
 }
 
 test('returns models with pagination', function () {
     AssetModel::factory()->count(3)->create();
 
-    $content = handle()->getStructuredContent();
+    $content = listAssetModelsTool()->getStructuredContent();
 
     expect($content)->toHaveKey('total');
     expect($content)->toHaveKey('models');
@@ -28,7 +29,7 @@ test('returns models with pagination', function () {
 test('each model has key fields', function () {
     AssetModel::factory()->create();
 
-    $content = handle()->getStructuredContent();
+    $content = listAssetModelsTool()->getStructuredContent();
 
     expect($content['models'])->not->toBeEmpty();
     $first = $content['models'][0];
@@ -43,7 +44,7 @@ test('filters by category id', function () {
     AssetModel::factory()->create();
 
     // another model with different category
-    $content = handle(['category_id' => $category->id])->getStructuredContent();
+    $content = listAssetModelsTool(['category_id' => $category->id])->getStructuredContent();
 
     $ids = array_column($content['models'], 'id');
     expect($ids)->toContain($model->id);
@@ -55,5 +56,5 @@ test('filters by category id', function () {
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
 
-    expect(handle()->responses()->first()->isError())->toBeTrue();
+    expect(listAssetModelsTool()->responses()->first()->isError())->toBeTrue();
 });

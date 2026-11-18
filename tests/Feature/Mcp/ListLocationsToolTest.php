@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\ListLocationsTool;
 use App\Models\Location;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,15 +10,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->viewLocations()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function listLocationsTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new ListLocationsTool)->handle(new Request($args));
 }
 
 test('returns locations with pagination', function () {
     Location::factory()->count(3)->create();
 
-    $content = handle()->getStructuredContent();
+    $content = listLocationsTool()->getStructuredContent();
 
     expect($content)->toHaveKey('total');
     expect($content)->toHaveKey('locations');
@@ -27,7 +28,7 @@ test('returns locations with pagination', function () {
 test('each location has key fields', function () {
     Location::factory()->create();
 
-    $content = handle()->getStructuredContent();
+    $content = listLocationsTool()->getStructuredContent();
 
     expect($content['locations'])->not->toBeEmpty();
     $first = $content['locations'][0];
@@ -41,7 +42,7 @@ test('filters by parent id', function () {
     Location::factory()->create();
 
     // another location without parent
-    $content = handle(['parent_id' => $parent->id])->getStructuredContent();
+    $content = listLocationsTool(['parent_id' => $parent->id])->getStructuredContent();
 
     $ids = array_column($content['locations'], 'id');
     expect($ids)->toContain($child->id);
@@ -51,5 +52,5 @@ test('filters by parent id', function () {
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
 
-    expect(handle()->responses()->first()->isError())->toBeTrue();
+    expect(listLocationsTool()->responses()->first()->isError())->toBeTrue();
 });

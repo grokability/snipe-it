@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\CreateAccessoryTool;
 use App\Models\Category;
 use App\Models\Location;
 use App\Models\User;
@@ -10,15 +11,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->createAccessories()->create());
 });
 
-function handle(array $args): ResponseFactory
+function createAccessoryTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CreateAccessoryTool)->handle(new Request($args));
 }
 
 test('creates accessory with required fields', function () {
     $category = Category::factory()->forAccessories()->create();
 
-    $content = handle([
+    $content = createAccessoryTool([
         'name' => 'Test Keyboard',
         'category_id' => $category->id,
         'qty' => 5,
@@ -31,7 +32,7 @@ test('creates accessory with required fields', function () {
 test('response includes id name and qty', function () {
     $category = Category::factory()->forAccessories()->create();
 
-    $content = handle([
+    $content = createAccessoryTool([
         'name' => 'Response Check Accessory',
         'category_id' => $category->id,
         'qty' => 3,
@@ -51,7 +52,7 @@ test('creates accessory with optional fields', function () {
     $category = Category::factory()->forAccessories()->create();
     $location = Location::factory()->create();
 
-    handle([
+    createAccessoryTool([
         'name' => 'Full Accessory',
         'category_id' => $category->id,
         'qty' => 10,
@@ -74,19 +75,19 @@ test('creates accessory with optional fields', function () {
 test('returns error when name missing', function () {
     $category = Category::factory()->forAccessories()->create();
 
-    expect(handle([
+    expect(createAccessoryTool([
         'category_id' => $category->id,
     ])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when category missing', function () {
-    expect(handle([
+    expect(createAccessoryTool([
         'name' => 'No Category',
     ])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when category does not exist', function () {
-    expect(handle([
+    expect(createAccessoryTool([
         'name' => 'Bad Category',
         'category_id' => 999999,
     ])->responses()->first()->isError())->toBeTrue();
@@ -96,7 +97,7 @@ test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
     $category = Category::factory()->create(['category_type' => 'accessory']);
 
-    expect(handle([
+    expect(createAccessoryTool([
         'name' => 'Blocked Accessory',
         'category_id' => $category->id,
     ])->responses()->first()->isError())->toBeTrue();

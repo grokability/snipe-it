@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\ListLicensesTool;
 use App\Models\Category;
 use App\Models\License;
 use App\Models\Manufacturer;
@@ -11,15 +12,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->viewLicenses()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function listLicensesTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new ListLicensesTool)->handle(new Request($args));
 }
 
 test('returns total licenses and pagination metadata', function () {
     License::factory()->count(3)->create();
 
-    $content = handle()->getStructuredContent();
+    $content = listLicensesTool()->getStructuredContent();
 
     expect($content)->toHaveKey('total');
     expect($content)->toHaveKey('licenses');
@@ -31,7 +32,7 @@ test('returns total licenses and pagination metadata', function () {
 test('each license includes key fields', function () {
     License::factory()->create();
 
-    $content = handle()->getStructuredContent();
+    $content = listLicensesTool()->getStructuredContent();
 
     $license = $content['licenses'][0];
     expect($license)->toHaveKey('id');
@@ -44,7 +45,7 @@ test('each license includes key fields', function () {
 test('limit controls number of results returned', function () {
     License::factory()->count(10)->create();
 
-    $content = handle(['limit' => 3])->getStructuredContent();
+    $content = listLicensesTool(['limit' => 3])->getStructuredContent();
 
     expect($content['licenses'])->toHaveCount(3);
     expect($content['total'])->toBeGreaterThan(3);
@@ -53,8 +54,8 @@ test('limit controls number of results returned', function () {
 test('offset skips results for pagination', function () {
     License::factory()->count(10)->create();
 
-    $page1 = handle(['limit' => 4, 'offset' => 0])->getStructuredContent();
-    $page2 = handle(['limit' => 4, 'offset' => 4])->getStructuredContent();
+    $page1 = listLicensesTool(['limit' => 4, 'offset' => 0])->getStructuredContent();
+    $page2 = listLicensesTool(['limit' => 4, 'offset' => 4])->getStructuredContent();
 
     $ids1 = array_column($page1['licenses'], 'id');
     $ids2 = array_column($page2['licenses'], 'id');
@@ -66,7 +67,7 @@ test('search matches on name', function () {
     $target = License::factory()->create(['name' => 'UniqueLicenseXYZ']);
     License::factory()->create(['name' => 'Something Else']);
 
-    $content = handle(['search' => 'UniqueLicenseXYZ'])->getStructuredContent();
+    $content = listLicensesTool(['search' => 'UniqueLicenseXYZ'])->getStructuredContent();
     $ids = array_column($content['licenses'], 'id');
 
     expect($ids)->toContain($target->id);
@@ -77,7 +78,7 @@ test('filters by category id', function () {
     $matching = License::factory()->create(['category_id' => $category->id]);
     $other = License::factory()->create();
 
-    $content = handle(['category_id' => $category->id])->getStructuredContent();
+    $content = listLicensesTool(['category_id' => $category->id])->getStructuredContent();
     $ids = array_column($content['licenses'], 'id');
 
     expect($ids)->toContain($matching->id);
@@ -89,7 +90,7 @@ test('filters by manufacturer id', function () {
     $matching = License::factory()->create(['manufacturer_id' => $manufacturer->id]);
     $other = License::factory()->create(['manufacturer_id' => null]);
 
-    $content = handle(['manufacturer_id' => $manufacturer->id])->getStructuredContent();
+    $content = listLicensesTool(['manufacturer_id' => $manufacturer->id])->getStructuredContent();
     $ids = array_column($content['licenses'], 'id');
 
     expect($ids)->toContain($matching->id);
@@ -99,14 +100,14 @@ test('filters by manufacturer id', function () {
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
 
-    expect(handle()->responses()->first()->isError())->toBeTrue();
+    expect(listLicensesTool()->responses()->first()->isError())->toBeTrue();
 });
 
 test('expiring within days filters to license window', function () {
     $soon = License::factory()->create(['name' => 'Soon', 'expiration_date' => now()->addDays(10)->toDateString()]);
     $later = License::factory()->create(['name' => 'Later', 'expiration_date' => now()->addDays(90)->toDateString()]);
 
-    $content = handle(['expiring_within_days' => 30])->getStructuredContent();
+    $content = listLicensesTool(['expiring_within_days' => 30])->getStructuredContent();
     $names = array_column($content['licenses'], 'name');
 
     expect($names)->toContain('Soon');
@@ -117,7 +118,7 @@ test('filter payload forwards to text search', function () {
     $match = License::factory()->create(['name' => 'Office Enterprise 365']);
     License::factory()->create(['name' => 'Unrelated License']);
 
-    $content = handle(['filter' => ['name' => 'Office']])->getStructuredContent();
+    $content = listLicensesTool(['filter' => ['name' => 'Office']])->getStructuredContent();
     $names = array_column($content['licenses'], 'name');
 
     expect($names)->toContain('Office Enterprise 365');
@@ -126,7 +127,7 @@ test('filter payload forwards to text search', function () {
 test('response includes lifecycle fields and notes', function () {
     $license = License::factory()->create(['name' => 'Marker License', 'seats' => 25]);
 
-    $content = handle(['limit' => 500])->getStructuredContent();
+    $content = listLicensesTool(['limit' => 500])->getStructuredContent();
     $row = collect($content['licenses'])->firstWhere('name', 'Marker License');
 
     expect($row)->not->toBeNull();

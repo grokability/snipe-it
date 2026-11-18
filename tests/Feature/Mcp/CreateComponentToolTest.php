@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\CreateComponentTool;
 use App\Models\Category;
 use App\Models\Location;
 use App\Models\User;
@@ -10,15 +11,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->createComponents()->create());
 });
 
-function handle(array $args): ResponseFactory
+function createComponentTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CreateComponentTool)->handle(new Request($args));
 }
 
 test('creates component with required fields', function () {
     $category = Category::factory()->forComponents()->create();
 
-    $content = handle([
+    $content = createComponentTool([
         'name' => 'Test RAM',
         'category_id' => $category->id,
         'qty' => 10,
@@ -31,7 +32,7 @@ test('creates component with required fields', function () {
 test('response includes id name qty and category', function () {
     $category = Category::factory()->forComponents()->create();
 
-    $content = handle([
+    $content = createComponentTool([
         'name' => 'Response Check Component',
         'category_id' => $category->id,
         'qty' => 5,
@@ -51,7 +52,7 @@ test('creates component with optional fields', function () {
     // the Orders table and no longer land on the components row.
     // purchase_cost is accepted as an input alias mapping to
     // default_purchase_cost on the parent.
-    handle([
+    createComponentTool([
         'name' => 'Full Component',
         'category_id' => $category->id,
         'qty' => 20,
@@ -76,14 +77,14 @@ test('creates component with optional fields', function () {
 test('returns error when name missing', function () {
     $category = Category::factory()->forComponents()->create();
 
-    expect(handle([
+    expect(createComponentTool([
         'category_id' => $category->id,
         'qty' => 5,
     ])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when category missing', function () {
-    expect(handle([
+    expect(createComponentTool([
         'name' => 'No Category',
         'qty' => 5,
     ])->responses()->first()->isError())->toBeTrue();
@@ -92,14 +93,14 @@ test('returns error when category missing', function () {
 test('returns error when qty missing', function () {
     $category = Category::factory()->forComponents()->create();
 
-    expect(handle([
+    expect(createComponentTool([
         'name' => 'No Qty',
         'category_id' => $category->id,
     ])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when category does not exist', function () {
-    expect(handle([
+    expect(createComponentTool([
         'name' => 'Bad Category',
         'category_id' => 999999,
         'qty' => 5,
@@ -110,7 +111,7 @@ test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
     $category = Category::factory()->create(['category_type' => 'component']);
 
-    expect(handle([
+    expect(createComponentTool([
         'name' => 'Blocked Component',
         'category_id' => $category->id,
         'qty' => 1,

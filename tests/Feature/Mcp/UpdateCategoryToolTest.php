@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\UpdateCategoryTool;
 use App\Models\Category;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,15 +10,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->editCategories()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function updateCategoryTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new UpdateCategoryTool)->handle(new Request($args));
 }
 
 test('updates category by id', function () {
     $category = Category::factory()->create(['name' => 'Original Cat Name']);
 
-    $content = handle([
+    $content = updateCategoryTool([
         'id' => $category->id,
         'new_name' => 'Updated Cat Name',
     ])->getStructuredContent();
@@ -29,7 +30,7 @@ test('updates category by id', function () {
 test('renames via new name', function () {
     $category = Category::factory()->create(['name' => 'Before Cat Rename']);
 
-    $content = handle([
+    $content = updateCategoryTool([
         'id' => $category->id,
         'new_name' => 'After Cat Rename',
     ])->getStructuredContent();
@@ -39,14 +40,14 @@ test('renames via new name', function () {
 });
 
 test('returns error when not found', function () {
-    expect(handle(['id' => 999999, 'new_name' => 'Ghost Cat'])->responses()->first()->isError())->toBeTrue();
+    expect(updateCategoryTool(['id' => 999999, 'new_name' => 'Ghost Cat'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
     $category = Category::factory()->create(['name' => 'Unchanged Cat']);
     $this->actingAs(User::factory()->create());
 
-    expect(handle([
+    expect(updateCategoryTool([
         'id' => $category->id,
         'new_name' => 'Should Not Change',
     ])->responses()->first()->isError())->toBeTrue();

@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\UpdateLocationTool;
 use App\Models\Location;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,15 +10,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->editLocations()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function updateLocationTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new UpdateLocationTool)->handle(new Request($args));
 }
 
 test('updates location by id', function () {
     $location = Location::factory()->create();
 
-    $content = handle([
+    $content = updateLocationTool([
         'id' => $location->id,
         'city' => 'New City',
     ])->getStructuredContent();
@@ -32,7 +33,7 @@ test('updates location by id', function () {
 test('renames via new name', function () {
     $location = Location::factory()->create();
 
-    $content = handle([
+    $content = updateLocationTool([
         'id' => $location->id,
         'new_name' => 'Renamed Location',
     ])->getStructuredContent();
@@ -46,12 +47,12 @@ test('renames via new name', function () {
 });
 
 test('returns error when not found', function () {
-    expect(handle(['id' => 99999])->responses()->first()->isError())->toBeTrue();
+    expect(updateLocationTool(['id' => 99999])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
     $location = Location::factory()->create();
 
-    expect(handle(['id' => $location->id, 'city' => 'Hacked'])->responses()->first()->isError())->toBeTrue();
+    expect(updateLocationTool(['id' => $location->id, 'city' => 'Hacked'])->responses()->first()->isError())->toBeTrue();
 });

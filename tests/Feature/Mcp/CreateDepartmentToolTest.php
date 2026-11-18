@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\CreateDepartmentTool;
 use App\Models\Location;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,20 +10,20 @@ beforeEach(function () {
     $this->actingAs(User::factory()->createDepartments()->create());
 });
 
-function handle(array $args): ResponseFactory
+function createDepartmentTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CreateDepartmentTool)->handle(new Request($args));
 }
 
 test('creates department with required fields', function () {
-    $content = handle(['name' => 'Test Department'])->getStructuredContent();
+    $content = createDepartmentTool(['name' => 'Test Department'])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
     $this->assertDatabaseHas('departments', ['name' => 'Test Department']);
 });
 
 test('response includes id and name', function () {
-    $content = handle(['name' => 'Response Department'])->getStructuredContent();
+    $content = createDepartmentTool(['name' => 'Response Department'])->getStructuredContent();
 
     expect($content)->toHaveKey('id');
     expect($content['name'])->toEqual('Response Department');
@@ -32,7 +33,7 @@ test('creates department with optional fields', function () {
     $location = Location::factory()->create();
     $manager = User::factory()->create();
 
-    handle([
+    createDepartmentTool([
         'name' => 'Full Department',
         'location_id' => $location->id,
         'manager_id' => $manager->id,
@@ -51,11 +52,11 @@ test('creates department with optional fields', function () {
 });
 
 test('returns error when name missing', function () {
-    expect(handle([])->responses()->first()->isError())->toBeTrue();
+    expect(createDepartmentTool([])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when location does not exist', function () {
-    expect(handle([
+    expect(createDepartmentTool([
         'name' => 'Bad Location Dept',
         'location_id' => 999999,
     ])->responses()->first()->isError())->toBeTrue();
@@ -64,6 +65,6 @@ test('returns error when location does not exist', function () {
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
 
-    expect(handle(['name' => 'Blocked Department'])->responses()->first()->isError())->toBeTrue();
+    expect(createDepartmentTool(['name' => 'Blocked Department'])->responses()->first()->isError())->toBeTrue();
     $this->assertDatabaseMissing('departments', ['name' => 'Blocked Department']);
 });

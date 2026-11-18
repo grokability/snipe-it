@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\CheckoutableCheckedOut;
+use App\Mcp\Tools\CheckoutAccessoryTool;
 use App\Models\Accessory;
 use App\Models\Asset;
 use App\Models\Location;
@@ -13,16 +14,16 @@ beforeEach(function () {
     $this->actingAs(User::factory()->checkoutAccessories()->create());
 });
 
-function handle(array $args): ResponseFactory
+function checkoutAccessoryTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CheckoutAccessoryTool)->handle(new Request($args));
 }
 
 test('checks out accessory to user by id', function () {
     $accessory = Accessory::factory()->create(['qty' => 5]);
     $user = User::factory()->create();
 
-    $content = handle([
+    $content = checkoutAccessoryTool([
         'id' => $accessory->id,
         'checkout_to_type' => 'user',
         'assigned_user' => $user->id,
@@ -40,7 +41,7 @@ test('checks out accessory to user by name', function () {
     $accessory = Accessory::factory()->create(['name' => 'Named Checkout Accessory', 'qty' => 5]);
     $user = User::factory()->create();
 
-    $content = handle([
+    $content = checkoutAccessoryTool([
         'name' => 'Named Checkout Accessory',
         'checkout_to_type' => 'user',
         'assigned_user' => $user->id,
@@ -53,7 +54,7 @@ test('checks out accessory to location', function () {
     $accessory = Accessory::factory()->create(['qty' => 5]);
     $location = Location::factory()->create();
 
-    $content = handle([
+    $content = checkoutAccessoryTool([
         'id' => $accessory->id,
         'checkout_to_type' => 'location',
         'assigned_location' => $location->id,
@@ -71,7 +72,7 @@ test('checks out accessory to asset', function () {
     $accessory = Accessory::factory()->create(['qty' => 5]);
     $asset = Asset::factory()->create();
 
-    $content = handle([
+    $content = checkoutAccessoryTool([
         'id' => $accessory->id,
         'checkout_to_type' => 'asset',
         'assigned_asset' => $asset->id,
@@ -89,7 +90,7 @@ test('response includes checkout id for checkin', function () {
     $accessory = Accessory::factory()->create(['qty' => 5]);
     $user = User::factory()->create();
 
-    $content = handle([
+    $content = checkoutAccessoryTool([
         'id' => $accessory->id,
         'checkout_to_type' => 'user',
         'assigned_user' => $user->id,
@@ -105,7 +106,7 @@ test('fires checkout event', function () {
     $accessory = Accessory::factory()->create(['qty' => 5]);
     $user = User::factory()->create();
 
-    handle([
+    checkoutAccessoryTool([
         'id' => $accessory->id,
         'checkout_to_type' => 'user',
         'assigned_user' => $user->id,
@@ -120,7 +121,7 @@ test('returns error when no units remaining', function () {
     $user = User::factory()->create();
     $accessory = Accessory::factory()->withoutItemsRemaining()->create();
 
-    $response = handle([
+    $response = checkoutAccessoryTool([
         'id' => $accessory->id,
         'checkout_to_type' => 'user',
         'assigned_user' => $user->id,
@@ -130,7 +131,7 @@ test('returns error when no units remaining', function () {
 });
 
 test('returns error when accessory not found', function () {
-    expect(handle([
+    expect(checkoutAccessoryTool([
         'id' => 999999,
         'checkout_to_type' => 'user',
         'assigned_user' => User::factory()->create()->id,
@@ -140,7 +141,7 @@ test('returns error when accessory not found', function () {
 test('returns error when target user not found', function () {
     $accessory = Accessory::factory()->create(['qty' => 5]);
 
-    expect(handle([
+    expect(checkoutAccessoryTool([
         'id' => $accessory->id,
         'checkout_to_type' => 'user',
         'assigned_user' => 999999,
@@ -152,7 +153,7 @@ test('returns error when user lacks permission', function () {
     $accessory = Accessory::factory()->create(['qty' => 5]);
     $user = User::factory()->create();
 
-    expect(handle([
+    expect(checkoutAccessoryTool([
         'id' => $accessory->id,
         'checkout_to_type' => 'user',
         'assigned_user' => $user->id,
@@ -163,7 +164,7 @@ test('refuses to check out archived accessory', function () {
     $accessory = Accessory::factory()->archived()->create(['qty' => 5]);
     $user = User::factory()->create();
 
-    $response = handle([
+    $response = checkoutAccessoryTool([
         'id' => $accessory->id,
         'checkout_to_type' => 'user',
         'assigned_user' => $user->id,

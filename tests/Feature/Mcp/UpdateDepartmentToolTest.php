@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\UpdateDepartmentTool;
 use App\Models\Department;
 use App\Models\Location;
 use App\Models\User;
@@ -10,15 +11,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->editDepartments()->create());
 });
 
-function handle(array $args): ResponseFactory
+function updateDepartmentTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new UpdateDepartmentTool)->handle(new Request($args));
 }
 
 test('updates department by id', function () {
     $department = Department::factory()->create(['name' => 'Original Name']);
 
-    $content = handle([
+    $content = updateDepartmentTool([
         'id' => $department->id,
         'new_name' => 'Updated Name',
     ])->getStructuredContent();
@@ -30,7 +31,7 @@ test('updates department by id', function () {
 test('updates department by name', function () {
     $department = Department::factory()->create(['name' => 'Find By Name Dept']);
 
-    $content = handle([
+    $content = updateDepartmentTool([
         'name' => 'Find By Name Dept',
         'new_name' => 'Renamed Dept',
     ])->getStructuredContent();
@@ -42,7 +43,7 @@ test('updates department by name', function () {
 test('response includes id and name', function () {
     $department = Department::factory()->create();
 
-    $content = handle([
+    $content = updateDepartmentTool([
         'id' => $department->id,
         'new_name' => 'Response Check Dept',
     ])->getStructuredContent();
@@ -56,7 +57,7 @@ test('updates multiple fields', function () {
     $location = Location::factory()->create();
     $manager = User::factory()->create();
 
-    handle([
+    updateDepartmentTool([
         'id' => $department->id,
         'location_id' => $location->id,
         'manager_id' => $manager->id,
@@ -74,18 +75,18 @@ test('updates multiple fields', function () {
 });
 
 test('returns error when not found', function () {
-    expect(handle(['id' => 999999, 'new_name' => 'Ghost'])->responses()->first()->isError())->toBeTrue();
+    expect(updateDepartmentTool(['id' => 999999, 'new_name' => 'Ghost'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when no identifier provided', function () {
-    expect(handle(['new_name' => 'No ID'])->responses()->first()->isError())->toBeTrue();
+    expect(updateDepartmentTool(['new_name' => 'No ID'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
     $department = Department::factory()->create(['name' => 'Unchanged Dept']);
     $this->actingAs(User::factory()->create());
 
-    expect(handle([
+    expect(updateDepartmentTool([
         'id' => $department->id,
         'new_name' => 'Should Not Change',
     ])->responses()->first()->isError())->toBeTrue();

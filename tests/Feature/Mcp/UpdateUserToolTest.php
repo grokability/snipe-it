@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\UpdateUserTool;
 use App\Models\Department;
 use App\Models\Group;
 use App\Models\Location;
@@ -12,15 +13,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->editUsers()->create());
 });
 
-function handle(array $args): ResponseFactory
+function updateUserTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new UpdateUserTool)->handle(new Request($args));
 }
 
 test('updates user by id', function () {
     $user = User::factory()->create(['first_name' => 'Old']);
 
-    $content = handle([
+    $content = updateUserTool([
         'id' => $user->id,
         'first_name' => 'New',
     ])->getStructuredContent();
@@ -32,7 +33,7 @@ test('updates user by id', function () {
 test('updates user by username', function () {
     $user = User::factory()->create(['username' => 'lookup.by.username', 'jobtitle' => 'Old Title']);
 
-    $content = handle([
+    $content = updateUserTool([
         'username' => 'lookup.by.username',
         'jobtitle' => 'New Title',
     ])->getStructuredContent();
@@ -44,7 +45,7 @@ test('updates user by username', function () {
 test('updates user by email', function () {
     $user = User::factory()->create(['email' => 'update.by@example.com', 'jobtitle' => 'Old Title']);
 
-    $content = handle([
+    $content = updateUserTool([
         'email' => 'update.by@example.com',
         'jobtitle' => 'Senior Engineer',
     ])->getStructuredContent();
@@ -56,7 +57,7 @@ test('updates user by email', function () {
 test('renames username via new username', function () {
     $user = User::factory()->create(['username' => 'old.username.mcp']);
 
-    $content = handle([
+    $content = updateUserTool([
         'username' => 'old.username.mcp',
         'new_username' => 'new.username.mcp',
     ])->getStructuredContent();
@@ -69,7 +70,7 @@ test('renames username via new username', function () {
 test('updates email via new email', function () {
     $user = User::factory()->create(['email' => 'before@example.com']);
 
-    handle([
+    updateUserTool([
         'id' => $user->id,
         'new_email' => 'after@example.com',
     ]);
@@ -80,7 +81,7 @@ test('updates email via new email', function () {
 test('updates password', function () {
     $user = User::factory()->create();
 
-    handle([
+    updateUserTool([
         'id' => $user->id,
         'password' => 'newpassword99',
     ]);
@@ -93,7 +94,7 @@ test('updates multiple fields at once', function () {
     $department = Department::factory()->create();
     $location = Location::factory()->create();
 
-    handle([
+    updateUserTool([
         'id' => $user->id,
         'jobtitle' => 'Team Lead',
         'phone' => '555-9999',
@@ -111,14 +112,14 @@ test('updates multiple fields at once', function () {
 });
 
 test('returns error when user not found', function () {
-    expect(handle([
+    expect(updateUserTool([
         'id' => 999999,
         'first_name' => 'Ghost',
     ])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when no identifier provided', function () {
-    expect(handle([
+    expect(updateUserTool([
         'first_name' => 'No Identifier',
     ])->responses()->first()->isError())->toBeTrue();
 });
@@ -126,7 +127,7 @@ test('returns error when no identifier provided', function () {
 test('response includes id and username', function () {
     $user = User::factory()->create();
 
-    $content = handle([
+    $content = updateUserTool([
         'id' => $user->id,
         'first_name' => 'Updated',
     ])->getStructuredContent();
@@ -139,7 +140,7 @@ test('non admin cannot change auth fields of admin', function () {
     // Acting user is a plain user (set in setUp); target is an admin
     $admin = User::factory()->admin()->create();
 
-    $response = handle([
+    $response = updateUserTool([
         'id' => $admin->id,
         'password' => 'shouldnotwork1',
     ]);
@@ -151,7 +152,7 @@ test('non admin cannot change auth fields of admin', function () {
 test('non admin cannot change auth fields of superuser', function () {
     $superuser = User::factory()->superuser()->create();
 
-    $response = handle([
+    $response = updateUserTool([
         'id' => $superuser->id,
         'new_email' => 'hacked@example.com',
     ]);
@@ -164,7 +165,7 @@ test('admin cannot change auth fields of superuser', function () {
     $this->actingAs(User::factory()->admin()->create());
     $superuser = User::factory()->superuser()->create();
 
-    $response = handle([
+    $response = updateUserTool([
         'id' => $superuser->id,
         'new_username' => 'hijacked',
     ]);
@@ -177,7 +178,7 @@ test('superuser can change auth fields of any user', function () {
     $this->actingAs(User::factory()->superuser()->create());
     $target = User::factory()->admin()->create();
 
-    $content = handle([
+    $content = updateUserTool([
         'id' => $target->id,
         'new_email' => 'superchanged@example.com',
     ])->getStructuredContent();
@@ -190,7 +191,7 @@ test('non auth fields are still updated even without can edit auth fields', func
     // A non-admin updating an admin's non-sensitive fields (jobtitle etc.) should still work
     $admin = User::factory()->admin()->create(['jobtitle' => 'Old Title']);
 
-    $content = handle([
+    $content = updateUserTool([
         'id' => $admin->id,
         'jobtitle' => 'New Title',
     ])->getStructuredContent();
@@ -203,7 +204,7 @@ test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
     $user = User::factory()->create();
 
-    expect(handle([
+    expect(updateUserTool([
         'id' => $user->id,
         'first_name' => 'Should Not Update',
     ])->responses()->first()->isError())->toBeTrue();
@@ -214,7 +215,7 @@ test('superadmin can assign group ids', function () {
     $user = User::factory()->create();
     $group = Group::factory()->create();
 
-    $content = handle([
+    $content = updateUserTool([
         'id' => $user->id,
         'group_ids' => [$group->id],
     ])->getStructuredContent();
@@ -228,7 +229,7 @@ test('non superadmin cannot assign group ids', function () {
     $user = User::factory()->create();
     $group = Group::factory()->create();
 
-    $response = handle([
+    $response = updateUserTool([
         'id' => $user->id,
         'group_ids' => [$group->id],
     ]);
@@ -244,7 +245,7 @@ test('group ids replaces existing groups', function () {
     $newGroup = Group::factory()->create();
     $user->groups()->sync([$oldGroup->id]);
 
-    handle([
+    updateUserTool([
         'id' => $user->id,
         'group_ids' => [$newGroup->id],
     ]);

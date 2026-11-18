@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\AuditAssetTool;
 use App\Models\Asset;
 use App\Models\Location;
 use App\Models\User;
@@ -10,15 +11,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->auditAssets()->create());
 });
 
-function handle(array $args): ResponseFactory
+function auditAssetTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new AuditAssetTool)->handle(new Request($args));
 }
 
 test('records audit by asset tag', function () {
     $asset = Asset::factory()->create();
 
-    $content = handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
+    $content = auditAssetTool(['asset_tag' => $asset->asset_tag])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
 });
@@ -26,7 +27,7 @@ test('records audit by asset tag', function () {
 test('records audit by numeric id', function () {
     $asset = Asset::factory()->create();
 
-    $content = handle(['id' => $asset->id])->getStructuredContent();
+    $content = auditAssetTool(['id' => $asset->id])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
 });
@@ -34,19 +35,19 @@ test('records audit by numeric id', function () {
 test('records audit by serial', function () {
     $asset = Asset::factory()->create(['serial' => 'SN-AUDIT-001']);
 
-    $content = handle(['serial' => 'SN-AUDIT-001'])->getStructuredContent();
+    $content = auditAssetTool(['serial' => 'SN-AUDIT-001'])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
 });
 
 test('returns error when asset not found', function () {
-    expect(handle(['asset_tag' => 'DOES-NOT-EXIST'])->responses()->first()->isError())->toBeTrue();
+    expect(auditAssetTool(['asset_tag' => 'DOES-NOT-EXIST'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('sets last audit date to now', function () {
     $asset = Asset::factory()->create(['last_audit_date' => null]);
 
-    handle(['asset_tag' => $asset->asset_tag]);
+    auditAssetTool(['asset_tag' => $asset->asset_tag]);
 
     expect($asset->fresh()->last_audit_date)->not->toBeNull();
 });
@@ -54,7 +55,7 @@ test('sets last audit date to now', function () {
 test('respects explicit next audit date', function () {
     $asset = Asset::factory()->create();
 
-    handle([
+    auditAssetTool([
         'asset_tag' => $asset->asset_tag,
         'next_audit_date' => '2027-01-15',
     ]);
@@ -69,7 +70,7 @@ test('updates location when provided', function () {
     $location = Location::factory()->create();
     $asset = Asset::factory()->create();
 
-    handle([
+    auditAssetTool([
         'asset_tag' => $asset->asset_tag,
         'location_id' => $location->id,
     ]);
@@ -84,7 +85,7 @@ test('does not change location when not provided', function () {
     $location = Location::factory()->create();
     $asset = Asset::factory()->create(['location_id' => $location->id]);
 
-    handle(['asset_tag' => $asset->asset_tag]);
+    auditAssetTool(['asset_tag' => $asset->asset_tag]);
 
     $this->assertDatabaseHas('assets', [
         'id' => $asset->id,
@@ -95,7 +96,7 @@ test('does not change location when not provided', function () {
 test('response includes audit dates and asset tag', function () {
     $asset = Asset::factory()->create();
 
-    $content = handle(['asset_tag' => $asset->asset_tag])->getStructuredContent();
+    $content = auditAssetTool(['asset_tag' => $asset->asset_tag])->getStructuredContent();
 
     expect($content['asset_tag'])->toEqual($asset->asset_tag);
     expect($content)->toHaveKey('last_audit_date');
@@ -106,7 +107,7 @@ test('response includes audit dates and asset tag', function () {
 test('creates audit log entry', function () {
     $asset = Asset::factory()->create();
 
-    handle([
+    auditAssetTool([
         'asset_tag' => $asset->asset_tag,
         'note' => 'MCP audit note',
     ]);
@@ -122,7 +123,7 @@ test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
     $asset = Asset::factory()->create();
 
-    $response = handle(['asset_tag' => $asset->asset_tag]);
+    $response = auditAssetTool(['asset_tag' => $asset->asset_tag]);
 
     expect($response->responses()->first()->isError())->toBeTrue();
     expect($asset->fresh()->last_audit_date)->toBeNull();

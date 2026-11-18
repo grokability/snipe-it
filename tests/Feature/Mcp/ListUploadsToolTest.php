@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\ListUploadsTool;
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\User;
@@ -10,9 +11,9 @@ beforeEach(function () {
     $this->actingAs(User::factory()->superuser()->create());
 });
 
-function handle(array $args): ResponseFactory
+function listUploadsTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new ListUploadsTool)->handle(new Request($args));
 }
 
 test('returns uploads for asset', function () {
@@ -25,7 +26,7 @@ test('returns uploads for asset', function () {
         'filename' => 'test-document.pdf',
     ]);
 
-    $content = handle(['object_type' => 'assets', 'id' => $asset->id])->getStructuredContent();
+    $content = listUploadsTool(['object_type' => 'assets', 'id' => $asset->id])->getStructuredContent();
 
     expect($content['total'])->toEqual(1);
     expect($content['files'][0]['filename'])->toEqual('test-document.pdf');
@@ -34,27 +35,27 @@ test('returns uploads for asset', function () {
 test('returns empty list when no uploads', function () {
     $asset = Asset::factory()->create();
 
-    $content = handle(['object_type' => 'assets', 'id' => $asset->id])->getStructuredContent();
+    $content = listUploadsTool(['object_type' => 'assets', 'id' => $asset->id])->getStructuredContent();
 
     expect($content['total'])->toEqual(0);
     expect($content['files'])->toBeEmpty();
 });
 
 test('returns error when object not found', function () {
-    expect(handle(['object_type' => 'assets', 'id' => 999999])->responses()->first()->isError())->toBeTrue();
+    expect(listUploadsTool(['object_type' => 'assets', 'id' => 999999])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks files permission', function () {
     $this->actingAs(User::factory()->create());
     $asset = Asset::factory()->create();
 
-    expect(handle(['object_type' => 'assets', 'id' => $asset->id])->responses()->first()->isError())->toBeTrue();
+    expect(listUploadsTool(['object_type' => 'assets', 'id' => $asset->id])->responses()->first()->isError())->toBeTrue();
 });
 
 test('supports user object type', function () {
     $user = User::factory()->create();
 
-    $content = handle(['object_type' => 'users', 'id' => $user->id])->getStructuredContent();
+    $content = listUploadsTool(['object_type' => 'users', 'id' => $user->id])->getStructuredContent();
 
     expect($content['object_type'])->toEqual('users');
     expect($content['object_id'])->toEqual($user->id);

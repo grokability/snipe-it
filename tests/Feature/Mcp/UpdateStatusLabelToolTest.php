@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\UpdateStatusLabelTool;
 use App\Models\Statuslabel;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,15 +10,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->editStatusLabels()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function updateStatusLabelTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new UpdateStatusLabelTool)->handle(new Request($args));
 }
 
 test('updates status label by id', function () {
     $label = Statuslabel::factory()->create(['name' => 'Original Status Label']);
 
-    $content = handle([
+    $content = updateStatusLabelTool([
         'id' => $label->id,
         'new_name' => 'Updated Status Label',
     ])->getStructuredContent();
@@ -29,7 +30,7 @@ test('updates status label by id', function () {
 test('renames via new name', function () {
     $label = Statuslabel::factory()->create(['name' => 'Old Status Label Name']);
 
-    $content = handle([
+    $content = updateStatusLabelTool([
         'name' => 'Old Status Label Name',
         'new_name' => 'New Status Label Name',
     ])->getStructuredContent();
@@ -41,7 +42,7 @@ test('renames via new name', function () {
 test('updates type', function () {
     $label = Statuslabel::factory()->rtd()->create(['name' => 'Type Change Label']);
 
-    $content = handle([
+    $content = updateStatusLabelTool([
         'id' => $label->id,
         'type' => 'pending',
     ])->getStructuredContent();
@@ -57,14 +58,14 @@ test('updates type', function () {
 });
 
 test('returns error when not found', function () {
-    expect(handle(['id' => 999999, 'new_name' => 'Ghost'])->responses()->first()->isError())->toBeTrue();
+    expect(updateStatusLabelTool(['id' => 999999, 'new_name' => 'Ghost'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
     $label = Statuslabel::factory()->create(['name' => 'Unchanged Status Label']);
     $this->actingAs(User::factory()->create());
 
-    expect(handle([
+    expect(updateStatusLabelTool([
         'id' => $label->id,
         'new_name' => 'Should Not Change',
     ])->responses()->first()->isError())->toBeTrue();

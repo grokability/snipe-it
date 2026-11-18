@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\ListCompaniesTool;
 use App\Models\Company;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,15 +10,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->viewCompanies()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function listCompaniesTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new ListCompaniesTool)->handle(new Request($args));
 }
 
 test('returns total and pagination metadata', function () {
     Company::factory()->count(3)->create();
 
-    $content = handle()->getStructuredContent();
+    $content = listCompaniesTool()->getStructuredContent();
 
     expect($content['total'])->toBeGreaterThanOrEqual(3);
     expect($content)->toHaveKey('companies');
@@ -28,7 +29,7 @@ test('returns total and pagination metadata', function () {
 test('each company includes key fields', function () {
     Company::factory()->create();
 
-    $content = handle()->getStructuredContent();
+    $content = listCompaniesTool()->getStructuredContent();
 
     expect($content['companies'])->not->toBeEmpty();
     $company = $content['companies'][0];
@@ -39,7 +40,7 @@ test('each company includes key fields', function () {
 test('limit controls results', function () {
     Company::factory()->count(10)->create();
 
-    $content = handle(['limit' => 3])->getStructuredContent();
+    $content = listCompaniesTool(['limit' => 3])->getStructuredContent();
 
     expect($content['companies'])->toHaveCount(3);
     expect($content['total'])->toBeGreaterThan(3);
@@ -48,5 +49,5 @@ test('limit controls results', function () {
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
 
-    expect(handle()->responses()->first()->isError())->toBeTrue();
+    expect(listCompaniesTool()->responses()->first()->isError())->toBeTrue();
 });

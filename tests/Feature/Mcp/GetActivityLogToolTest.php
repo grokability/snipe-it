@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\GetActivityLogTool;
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\User;
@@ -10,9 +11,9 @@ beforeEach(function () {
     $this->actingAs(User::factory()->superuser()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function getActivityLogTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new GetActivityLogTool)->handle(new Request($args));
 }
 
 test('returns activity log', function () {
@@ -24,7 +25,7 @@ test('returns activity log', function () {
     $log->target_id = auth()->id();
     $log->save();
 
-    $content = handle()->getStructuredContent();
+    $content = getActivityLogTool()->getStructuredContent();
 
     expect($content)->toHaveKey('activity');
     expect($content)->toHaveKey('total');
@@ -40,7 +41,7 @@ test('filters by action type', function () {
     $log->target_id = auth()->id();
     $log->save();
 
-    $content = handle(['action_type' => 'checkout'])->getStructuredContent();
+    $content = getActivityLogTool(['action_type' => 'checkout'])->getStructuredContent();
 
     expect($content['total'])->toBeGreaterThanOrEqual(1);
     foreach ($content['activity'] as $entry) {
@@ -57,7 +58,7 @@ test('filters by item id', function () {
     $log->target_id = auth()->id();
     $log->save();
 
-    $content = handle([
+    $content = getActivityLogTool([
         'item_id' => $asset->id,
         'item_type' => Asset::class,
     ])->getStructuredContent();
@@ -75,7 +76,7 @@ test('user without activity view or type view gets empty feed', function () {
     // this the same way.
     $this->actingAs(User::factory()->create());
 
-    $content = handle()->getStructuredContent();
+    $content = getActivityLogTool()->getStructuredContent();
 
     expect($content['total'])->toBe(0);
     expect($content['activity'])->toBe([]);

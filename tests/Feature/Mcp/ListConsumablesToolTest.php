@@ -13,15 +13,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->viewConsumables()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function listConsumablesTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new ListConsumablesTool)->handle(new Request($args));
 }
 
 test('returns total and pagination metadata', function () {
     Consumable::factory()->count(3)->create();
 
-    $content = handle()->getStructuredContent();
+    $content = listConsumablesTool()->getStructuredContent();
 
     expect($content)->toHaveKey('total');
     expect($content)->toHaveKey('offset');
@@ -33,7 +33,7 @@ test('returns total and pagination metadata', function () {
 test('each consumable includes key fields', function () {
     Consumable::factory()->create(['name' => 'Test Ink Cartridge']);
 
-    $content = handle(['limit' => 500])->getStructuredContent();
+    $content = listConsumablesTool(['limit' => 500])->getStructuredContent();
 
     $consumable = collect($content['consumables'])->firstWhere('name', 'Test Ink Cartridge');
 
@@ -47,7 +47,7 @@ test('each consumable includes key fields', function () {
 test('limit controls results', function () {
     Consumable::factory()->count(10)->create();
 
-    $content = handle(['limit' => 3])->getStructuredContent();
+    $content = listConsumablesTool(['limit' => 3])->getStructuredContent();
 
     expect($content['consumables'])->toHaveCount(3);
     expect($content['limit'])->toEqual(3);
@@ -58,7 +58,7 @@ test('filters by category id', function () {
     Consumable::factory()->create(['name' => 'Category Match', 'category_id' => $category->id]);
     Consumable::factory()->create(['name' => 'Other Consumable']);
 
-    $content = handle(['category_id' => $category->id])->getStructuredContent();
+    $content = listConsumablesTool(['category_id' => $category->id])->getStructuredContent();
 
     expect($content['total'])->toEqual(1);
     expect($content['consumables'][0]['name'])->toEqual('Category Match');
@@ -67,14 +67,14 @@ test('filters by category id', function () {
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
 
-    expect(handle()->responses()->first()->isError())->toBeTrue();
+    expect(listConsumablesTool()->responses()->first()->isError())->toBeTrue();
 });
 
 test('low stock only returns only rows at or below min amt', function () {
     $healthy = Consumable::factory()->create(['name' => 'Plenty', 'qty' => 100, 'min_amt' => 10]);
     $low = Consumable::factory()->create(['name' => 'Low', 'qty' => 2, 'min_amt' => 5]);
 
-    $content = handle(['low_stock_only' => true])->getStructuredContent();
+    $content = listConsumablesTool(['low_stock_only' => true])->getStructuredContent();
     $names = array_column($content['consumables'], 'name');
 
     expect($names)->toContain('Low');
@@ -85,7 +85,7 @@ test('filter payload forwards to text search', function () {
     $match = Consumable::factory()->create(['name' => 'Toner Cartridge Cyan']);
     Consumable::factory()->create(['name' => 'Unrelated Item']);
 
-    $content = handle(['filter' => ['name' => 'Toner']])->getStructuredContent();
+    $content = listConsumablesTool(['filter' => ['name' => 'Toner']])->getStructuredContent();
     $names = array_column($content['consumables'], 'name');
 
     expect($names)->toContain('Toner Cartridge Cyan');
@@ -94,7 +94,7 @@ test('filter payload forwards to text search', function () {
 test('response includes qty min amt remaining and notes', function () {
     Consumable::factory()->create(['name' => 'Response Field Check', 'qty' => 50, 'min_amt' => 5]);
 
-    $content = handle(['limit' => 500])->getStructuredContent();
+    $content = listConsumablesTool(['limit' => 500])->getStructuredContent();
     $row = collect($content['consumables'])->firstWhere('name', 'Response Field Check');
 
     expect($row)->not->toBeNull();
@@ -109,7 +109,7 @@ test('default hides archived consumables', function () {
     Consumable::factory()->create(['name' => 'Active Consumable']);
     Consumable::factory()->archived()->create(['name' => 'Retired Consumable']);
 
-    $content = handle()->getStructuredContent();
+    $content = listConsumablesTool()->getStructuredContent();
 
     $names = array_column($content['consumables'], 'name');
     expect($names)->toContain('Active Consumable');
@@ -120,7 +120,7 @@ test('include archived returns both', function () {
     Consumable::factory()->create(['name' => 'Active Consumable']);
     Consumable::factory()->archived()->create(['name' => 'Retired Consumable']);
 
-    $content = handle(['include_archived' => true])->getStructuredContent();
+    $content = listConsumablesTool(['include_archived' => true])->getStructuredContent();
 
     $names = array_column($content['consumables'], 'name');
     expect($names)->toContain('Active Consumable');
@@ -131,7 +131,7 @@ test('archived only returns archived rows only', function () {
     Consumable::factory()->create(['name' => 'Active Consumable']);
     Consumable::factory()->archived()->create(['name' => 'Retired Consumable']);
 
-    $content = handle(['archived_only' => true])->getStructuredContent();
+    $content = listConsumablesTool(['archived_only' => true])->getStructuredContent();
 
     $names = array_column($content['consumables'], 'name');
     expect($names)->not->toContain('Active Consumable');
@@ -141,7 +141,7 @@ test('archived only returns archived rows only', function () {
 test('each row includes archived flag', function () {
     Consumable::factory()->archived()->create(['name' => 'Retired']);
 
-    $content = handle(['archived_only' => true])->getStructuredContent();
+    $content = listConsumablesTool(['archived_only' => true])->getStructuredContent();
 
     $row = collect($content['consumables'])->firstWhere('name', 'Retired');
     expect($row)->not->toBeNull();
@@ -156,7 +156,7 @@ test('low stock excludes archived even when include archived true', function () 
         'min_amt' => 5,
     ]);
 
-    $content = handle([
+    $content = listConsumablesTool([
         'low_stock_only' => true,
         'include_archived' => true,
     ])->getStructuredContent();
@@ -170,7 +170,7 @@ test('filters by company name', function () {
     $matching = Consumable::factory()->create(['company_id' => $company->id]);
     Consumable::factory()->create();
 
-    $content = handle(['company_name' => $company->name])->getStructuredContent();
+    $content = listConsumablesTool(['company_name' => $company->name])->getStructuredContent();
 
     expect($content['total'])->toBe(1);
     expect(array_column($content['consumables'], 'id'))->toBe([$matching->id]);

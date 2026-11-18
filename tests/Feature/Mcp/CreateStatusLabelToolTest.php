@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\CreateStatusLabelTool;
 use App\Models\User;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\ResponseFactory;
@@ -8,13 +9,13 @@ beforeEach(function () {
     $this->actingAs(User::factory()->createStatusLabels()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function createStatusLabelTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CreateStatusLabelTool)->handle(new Request($args));
 }
 
 test('creates deployable status label', function () {
-    $content = handle(['name' => 'Test Deployable', 'type' => 'deployable'])->getStructuredContent();
+    $content = createStatusLabelTool(['name' => 'Test Deployable', 'type' => 'deployable'])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
     $this->assertDatabaseHas('status_labels', [
@@ -26,7 +27,7 @@ test('creates deployable status label', function () {
 });
 
 test('creates pending status label', function () {
-    $content = handle(['name' => 'Test Pending', 'type' => 'pending'])->getStructuredContent();
+    $content = createStatusLabelTool(['name' => 'Test Pending', 'type' => 'pending'])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
     $this->assertDatabaseHas('status_labels', [
@@ -38,7 +39,7 @@ test('creates pending status label', function () {
 });
 
 test('response includes id name and type', function () {
-    $content = handle(['name' => 'Response Status Label', 'type' => 'deployable'])->getStructuredContent();
+    $content = createStatusLabelTool(['name' => 'Response Status Label', 'type' => 'deployable'])->getStructuredContent();
 
     expect($content)->toHaveKey('id');
     expect($content['name'])->toEqual('Response Status Label');
@@ -46,16 +47,16 @@ test('response includes id name and type', function () {
 });
 
 test('returns error when name missing', function () {
-    expect(handle(['type' => 'deployable'])->responses()->first()->isError())->toBeTrue();
+    expect(createStatusLabelTool(['type' => 'deployable'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when type missing', function () {
-    expect(handle(['name' => 'No Type Label'])->responses()->first()->isError())->toBeTrue();
+    expect(createStatusLabelTool(['name' => 'No Type Label'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
 
-    expect(handle(['name' => 'Blocked Label', 'type' => 'deployable'])->responses()->first()->isError())->toBeTrue();
+    expect(createStatusLabelTool(['name' => 'Blocked Label', 'type' => 'deployable'])->responses()->first()->isError())->toBeTrue();
     $this->assertDatabaseMissing('status_labels', ['name' => 'Blocked Label']);
 });

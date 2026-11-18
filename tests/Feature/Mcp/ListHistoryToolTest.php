@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\ListHistoryTool;
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\User;
@@ -10,9 +11,9 @@ beforeEach(function () {
     $this->actingAs(User::factory()->viewAssets()->create());
 });
 
-function handle(array $args): ResponseFactory
+function listHistoryTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new ListHistoryTool)->handle(new Request($args));
 }
 
 test('returns history for asset', function () {
@@ -24,7 +25,7 @@ test('returns history for asset', function () {
         'action_type' => 'update',
     ]);
 
-    $content = handle(['object_type' => 'asset', 'id' => $asset->id])->getStructuredContent();
+    $content = listHistoryTool(['object_type' => 'asset', 'id' => $asset->id])->getStructuredContent();
 
     expect($content['total'])->toBeGreaterThanOrEqual(1);
     expect($content['object_type'])->toEqual('asset');
@@ -34,7 +35,7 @@ test('returns history for asset', function () {
 test('returns empty history for new asset', function () {
     $asset = Asset::factory()->create();
 
-    $content = handle(['object_type' => 'asset', 'id' => $asset->id])->getStructuredContent();
+    $content = listHistoryTool(['object_type' => 'asset', 'id' => $asset->id])->getStructuredContent();
 
     expect($content['object_type'])->toEqual('asset');
     expect($content['history'])->toBeArray();
@@ -56,7 +57,7 @@ test('filters by action type', function () {
         'note' => 'A note',
     ]);
 
-    $content = handle([
+    $content = listHistoryTool([
         'object_type' => 'asset',
         'id' => $asset->id,
         'action_type' => 'note added',
@@ -68,21 +69,21 @@ test('filters by action type', function () {
 });
 
 test('returns error when object not found', function () {
-    expect(handle(['object_type' => 'asset', 'id' => 999999])->responses()->first()->isError())->toBeTrue();
+    expect(listHistoryTool(['object_type' => 'asset', 'id' => 999999])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks history permission', function () {
     $this->actingAs(User::factory()->create());
     $asset = Asset::factory()->create();
 
-    expect(handle(['object_type' => 'asset', 'id' => $asset->id])->responses()->first()->isError())->toBeTrue();
+    expect(listHistoryTool(['object_type' => 'asset', 'id' => $asset->id])->responses()->first()->isError())->toBeTrue();
 });
 
 test('supports user object type', function () {
     $this->actingAs(User::factory()->viewUsers()->create());
     $user = User::factory()->create();
 
-    $content = handle(['object_type' => 'user', 'id' => $user->id])->getStructuredContent();
+    $content = listHistoryTool(['object_type' => 'user', 'id' => $user->id])->getStructuredContent();
 
     expect($content['object_type'])->toEqual('user');
     expect($content['object_id'])->toEqual($user->id);

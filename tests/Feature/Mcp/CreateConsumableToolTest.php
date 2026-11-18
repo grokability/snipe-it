@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\CreateConsumableTool;
 use App\Models\Category;
 use App\Models\Location;
 use App\Models\User;
@@ -10,15 +11,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->createConsumables()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function createConsumableTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CreateConsumableTool)->handle(new Request($args));
 }
 
 test('creates consumable with required fields', function () {
     $category = Category::factory()->create(['category_type' => 'consumable']);
 
-    $content = handle([
+    $content = createConsumableTool([
         'name' => 'Test Toner Cartridge',
         'qty' => 10,
         'category_id' => $category->id,
@@ -35,7 +36,7 @@ test('creates consumable with required fields', function () {
 test('response includes id name and qty', function () {
     $category = Category::factory()->create(['category_type' => 'consumable']);
 
-    $content = handle([
+    $content = createConsumableTool([
         'name' => 'Response Check Consumable',
         'qty' => 5,
         'category_id' => $category->id,
@@ -52,7 +53,7 @@ test('creates with optional fields', function () {
 
     // Per-acquisition fields (order_number, purchase_date) moved to
     // the Orders table. purchase_cost aliases default_purchase_cost.
-    handle([
+    createConsumableTool([
         'name' => 'Full Consumable',
         'qty' => 20,
         'category_id' => $category->id,
@@ -74,7 +75,7 @@ test('creates with optional fields', function () {
 test('returns error when name missing', function () {
     $category = Category::factory()->create(['category_type' => 'consumable']);
 
-    expect(handle([
+    expect(createConsumableTool([
         'qty' => 5,
         'category_id' => $category->id,
     ])->responses()->first()->isError())->toBeTrue();
@@ -83,14 +84,14 @@ test('returns error when name missing', function () {
 test('returns error when qty missing', function () {
     $category = Category::factory()->create(['category_type' => 'consumable']);
 
-    expect(handle([
+    expect(createConsumableTool([
         'name' => 'No Qty Consumable',
         'category_id' => $category->id,
     ])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when category missing', function () {
-    expect(handle([
+    expect(createConsumableTool([
         'name' => 'No Category Consumable',
         'qty' => 5,
     ])->responses()->first()->isError())->toBeTrue();
@@ -100,7 +101,7 @@ test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
     $category = Category::factory()->create(['category_type' => 'consumable']);
 
-    expect(handle([
+    expect(createConsumableTool([
         'name' => 'Blocked Consumable',
         'qty' => 1,
         'category_id' => $category->id,

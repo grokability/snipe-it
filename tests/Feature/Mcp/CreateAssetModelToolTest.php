@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\CreateAssetModelTool;
 use App\Models\Category;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,15 +10,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->createAssetModels()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function createAssetModelTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new CreateAssetModelTool)->handle(new Request($args));
 }
 
 test('creates model with required fields', function () {
     $category = Category::factory()->create(['category_type' => 'asset']);
 
-    $content = handle([
+    $content = createAssetModelTool([
         'name' => 'Test Model',
         'category_id' => $category->id,
     ])->getStructuredContent();
@@ -32,7 +33,7 @@ test('creates model with required fields', function () {
 test('response includes id name and category', function () {
     $category = Category::factory()->create(['category_type' => 'asset']);
 
-    $content = handle([
+    $content = createAssetModelTool([
         'name' => 'Response Model',
         'category_id' => $category->id,
     ])->getStructuredContent();
@@ -45,18 +46,18 @@ test('response includes id name and category', function () {
 test('returns error when name missing', function () {
     $category = Category::factory()->create(['category_type' => 'asset']);
 
-    expect(handle(['category_id' => $category->id])->responses()->first()->isError())->toBeTrue();
+    expect(createAssetModelTool(['category_id' => $category->id])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when category missing', function () {
-    expect(handle(['name' => 'No Category Model'])->responses()->first()->isError())->toBeTrue();
+    expect(createAssetModelTool(['name' => 'No Category Model'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
     $category = Category::factory()->create(['category_type' => 'asset']);
 
-    expect(handle([
+    expect(createAssetModelTool([
         'name' => 'Blocked Model',
         'category_id' => $category->id,
     ])->responses()->first()->isError())->toBeTrue();

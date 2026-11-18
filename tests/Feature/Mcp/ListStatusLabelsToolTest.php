@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\ListStatusLabelsTool;
 use App\Models\Statuslabel;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,15 +10,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->viewStatusLabels()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function listStatusLabelsTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new ListStatusLabelsTool)->handle(new Request($args));
 }
 
 test('returns status labels with pagination', function () {
     Statuslabel::factory()->count(3)->create();
 
-    $content = handle()->getStructuredContent();
+    $content = listStatusLabelsTool()->getStructuredContent();
 
     expect($content)->toHaveKey('status_labels');
     expect($content['total'])->toBeGreaterThanOrEqual(3);
@@ -26,7 +27,7 @@ test('returns status labels with pagination', function () {
 test('each status label has key fields', function () {
     Statuslabel::factory()->create(['name' => 'Key Fields Status Label']);
 
-    $content = handle(['search' => 'Key Fields Status Label'])->getStructuredContent();
+    $content = listStatusLabelsTool(['search' => 'Key Fields Status Label'])->getStructuredContent();
 
     expect($content['status_labels'])->not->toBeEmpty();
     $label = $content['status_labels'][0];
@@ -38,5 +39,5 @@ test('each status label has key fields', function () {
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
 
-    expect(handle()->responses()->first()->isError())->toBeTrue();
+    expect(listStatusLabelsTool()->responses()->first()->isError())->toBeTrue();
 });

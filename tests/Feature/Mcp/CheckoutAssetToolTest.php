@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\CheckoutAssetTool;
 use App\Models\Asset;
 use App\Models\Location;
 use App\Models\User;
@@ -10,16 +11,16 @@ beforeEach(function () {
     $this->actingAs(User::factory()->checkoutAssets()->create());
 });
 
-function handle(array $args): ResponseFactory
+function checkoutAssetTool(array $args): ResponseFactory
 {
-    return handle(new Request($args));
+    return resolve(CheckoutAssetTool::class)->handle(new Request($args));
 }
 
 test('checks out asset to user by asset tag', function () {
     $asset = Asset::factory()->create();
     $user = User::factory()->create();
 
-    $content = handle([
+    $content = checkoutAssetTool([
         'asset_tag' => $asset->asset_tag,
         'checkout_to_type' => 'user',
         'assigned_user' => $user->id,
@@ -37,7 +38,7 @@ test('checks out asset to user by numeric id', function () {
     $asset = Asset::factory()->create();
     $user = User::factory()->create();
 
-    $content = handle([
+    $content = checkoutAssetTool([
         'id' => $asset->id,
         'checkout_to_type' => 'user',
         'assigned_user' => $user->id,
@@ -50,7 +51,7 @@ test('checks out asset to location', function () {
     $asset = Asset::factory()->create();
     $location = Location::factory()->create();
 
-    $content = handle([
+    $content = checkoutAssetTool([
         'asset_tag' => $asset->asset_tag,
         'checkout_to_type' => 'location',
         'assigned_location' => $location->id,
@@ -68,7 +69,7 @@ test('checks out asset to another asset', function () {
     $asset = Asset::factory()->create();
     $target = Asset::factory()->create();
 
-    $content = handle([
+    $content = checkoutAssetTool([
         'asset_tag' => $asset->asset_tag,
         'checkout_to_type' => 'asset',
         'assigned_asset' => $target->id,
@@ -83,7 +84,7 @@ test('checks out asset to another asset', function () {
 });
 
 test('returns error when asset tag not found', function () {
-    expect(handle([
+    expect(checkoutAssetTool([
         'asset_tag' => 'DOES-NOT-EXIST',
         'checkout_to_type' => 'user',
         'assigned_user' => User::factory()->create()->id,
@@ -95,7 +96,7 @@ test('returns error when asset already checked out', function () {
     $asset = Asset::factory()->assignedToUser($existingUser)->create();
     $newUser = User::factory()->create();
 
-    expect(handle([
+    expect(checkoutAssetTool([
         'asset_tag' => $asset->asset_tag,
         'checkout_to_type' => 'user',
         'assigned_user' => $newUser->id,
@@ -110,7 +111,7 @@ test('returns error when asset already checked out', function () {
 test('returns error when target user not found', function () {
     $asset = Asset::factory()->create();
 
-    expect(handle([
+    expect(checkoutAssetTool([
         'asset_tag' => $asset->asset_tag,
         'checkout_to_type' => 'user',
         'assigned_user' => 99999,
@@ -120,7 +121,7 @@ test('returns error when target user not found', function () {
 test('returns error when target location not found', function () {
     $asset = Asset::factory()->create();
 
-    expect(handle([
+    expect(checkoutAssetTool([
         'asset_tag' => $asset->asset_tag,
         'checkout_to_type' => 'location',
         'assigned_location' => 99999,
@@ -131,7 +132,7 @@ test('response includes asset tag and target info', function () {
     $asset = Asset::factory()->create();
     $user = User::factory()->create();
 
-    $content = handle([
+    $content = checkoutAssetTool([
         'asset_tag' => $asset->asset_tag,
         'checkout_to_type' => 'user',
         'assigned_user' => $user->id,
@@ -147,7 +148,7 @@ test('returns error when user lacks permission', function () {
     $asset = Asset::factory()->create();
     $user = User::factory()->create();
 
-    expect(handle([
+    expect(checkoutAssetTool([
         'asset_tag' => $asset->asset_tag,
         'checkout_to_type' => 'user',
         'assigned_user' => $user->id,

@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\DeleteManufacturerTool;
 use App\Models\Manufacturer;
 use App\Models\User;
 use Laravel\Mcp\Request;
@@ -9,15 +10,15 @@ beforeEach(function () {
     $this->actingAs(User::factory()->deleteManufacturers()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function deleteManufacturerTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new DeleteManufacturerTool)->handle(new Request($args));
 }
 
 test('deletes manufacturer by id', function () {
     $manufacturer = Manufacturer::factory()->create();
 
-    $content = handle(['id' => $manufacturer->id])->getStructuredContent();
+    $content = deleteManufacturerTool(['id' => $manufacturer->id])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
     $this->assertSoftDeleted('manufacturers', ['id' => $manufacturer->id]);
@@ -26,20 +27,20 @@ test('deletes manufacturer by id', function () {
 test('deletes manufacturer by name', function () {
     $manufacturer = Manufacturer::factory()->create(['name' => 'Delete By Name Manufacturer']);
 
-    $content = handle(['name' => 'Delete By Name Manufacturer'])->getStructuredContent();
+    $content = deleteManufacturerTool(['name' => 'Delete By Name Manufacturer'])->getStructuredContent();
 
     expect($content['success'])->toBeTrue();
     $this->assertSoftDeleted('manufacturers', ['id' => $manufacturer->id]);
 });
 
 test('returns error when not found', function () {
-    expect(handle(['id' => 999999])->responses()->first()->isError())->toBeTrue();
+    expect(deleteManufacturerTool(['id' => 999999])->responses()->first()->isError())->toBeTrue();
 });
 
 test('returns error when user lacks permission', function () {
     $manufacturer = Manufacturer::factory()->create();
     $this->actingAs(User::factory()->create());
 
-    expect(handle(['id' => $manufacturer->id])->responses()->first()->isError())->toBeTrue();
+    expect(deleteManufacturerTool(['id' => $manufacturer->id])->responses()->first()->isError())->toBeTrue();
     $this->assertNotSoftDeleted('manufacturers', ['id' => $manufacturer->id]);
 });

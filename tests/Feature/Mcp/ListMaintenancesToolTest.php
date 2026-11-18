@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Tools\ListMaintenancesTool;
 use App\Models\Asset;
 use App\Models\Maintenance;
 use App\Models\User;
@@ -10,16 +11,16 @@ beforeEach(function () {
     $this->actingAs(User::factory()->viewAssets()->create());
 });
 
-function handle(array $args = []): ResponseFactory
+function listMaintenancesTool(array $args = []): ResponseFactory
 {
-    return handle(new Request($args));
+    return (new ListMaintenancesTool)->handle(new Request($args));
 }
 
 test('returns maintenances with pagination', function () {
     $asset = Asset::factory()->laptopZenbook()->create();
     Maintenance::factory()->create(['asset_id' => $asset->id]);
 
-    $content = handle()->getStructuredContent();
+    $content = listMaintenancesTool()->getStructuredContent();
 
     expect($content)->toHaveKey('maintenances');
     expect($content)->toHaveKey('total');
@@ -33,7 +34,7 @@ test('filters by asset id', function () {
     $maintenance1 = Maintenance::factory()->create(['asset_id' => $asset1->id]);
     Maintenance::factory()->create(['asset_id' => $asset2->id]);
 
-    $content = handle(['asset_id' => $asset1->id])->getStructuredContent();
+    $content = listMaintenancesTool(['asset_id' => $asset1->id])->getStructuredContent();
 
     expect($content['total'])->toBeGreaterThanOrEqual(1);
     foreach ($content['maintenances'] as $m) {
@@ -47,7 +48,7 @@ test('filters by asset id', function () {
 test('returns error when user lacks permission', function () {
     $this->actingAs(User::factory()->create());
 
-    expect(handle()->responses()->first()->isError())->toBeTrue();
+    expect(listMaintenancesTool()->responses()->first()->isError())->toBeTrue();
 });
 
 test('filters by asset tag', function () {
@@ -56,7 +57,7 @@ test('filters by asset tag', function () {
     $matching = Maintenance::factory()->create(['asset_id' => $asset->id]);
     Maintenance::factory()->create(['asset_id' => $other->id]);
 
-    $content = handle(['asset_tag' => 'FIND-ME'])->getStructuredContent();
+    $content = listMaintenancesTool(['asset_tag' => 'FIND-ME'])->getStructuredContent();
     $ids = array_column($content['maintenances'], 'id');
 
     expect($ids)->toContain($matching->id);
@@ -64,7 +65,7 @@ test('filters by asset tag', function () {
 });
 
 test('returns error when asset tag not found', function () {
-    expect(handle(['asset_tag' => 'NOPE'])->responses()->first()->isError())->toBeTrue();
+    expect(listMaintenancesTool(['asset_tag' => 'NOPE'])->responses()->first()->isError())->toBeTrue();
 });
 
 test('status open excludes completed maintenances', function () {
@@ -72,7 +73,7 @@ test('status open excludes completed maintenances', function () {
     $open = Maintenance::factory()->create(['asset_id' => $asset->id, 'completed_at' => null]);
     $closed = Maintenance::factory()->create(['asset_id' => $asset->id, 'completed_at' => now()]);
 
-    $content = handle(['status' => 'open'])->getStructuredContent();
+    $content = listMaintenancesTool(['status' => 'open'])->getStructuredContent();
     $ids = array_column($content['maintenances'], 'id');
 
     expect($ids)->toContain($open->id);
@@ -84,7 +85,7 @@ test('status completed excludes open maintenances', function () {
     $open = Maintenance::factory()->create(['asset_id' => $asset->id, 'completed_at' => null]);
     $closed = Maintenance::factory()->create(['asset_id' => $asset->id, 'completed_at' => now()]);
 
-    $content = handle(['status' => 'completed'])->getStructuredContent();
+    $content = listMaintenancesTool(['status' => 'completed'])->getStructuredContent();
     $ids = array_column($content['maintenances'], 'id');
 
     expect($ids)->toContain($closed->id);
@@ -96,7 +97,7 @@ test('is warranty filter scopes results', function () {
     $warranty = Maintenance::factory()->create(['asset_id' => $asset->id, 'is_warranty' => true]);
     $paid = Maintenance::factory()->create(['asset_id' => $asset->id, 'is_warranty' => false]);
 
-    $content = handle(['is_warranty' => true])->getStructuredContent();
+    $content = listMaintenancesTool(['is_warranty' => true])->getStructuredContent();
     $ids = array_column($content['maintenances'], 'id');
 
     expect($ids)->toContain($warranty->id);
@@ -114,7 +115,7 @@ test('start date range narrows window', function () {
         'start_date' => '2026-01-01',
     ]);
 
-    $content = handle([
+    $content = listMaintenancesTool([
         'start_date_from' => '2026-06-01',
         'start_date_to' => '2026-06-30',
     ])->getStructuredContent();
@@ -131,7 +132,7 @@ test('response includes item fields and completed at', function () {
         'completed_at' => '2026-05-10 14:00:00',
     ]);
 
-    $content = handle(['limit' => 500])->getStructuredContent();
+    $content = listMaintenancesTool(['limit' => 500])->getStructuredContent();
     $row = collect($content['maintenances'])->firstWhere('id', $maintenance->id);
 
     expect($row)->not->toBeNull();
