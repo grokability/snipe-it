@@ -111,6 +111,10 @@
     "classmap": [
       "database"
     ],
+    "exclude-from-classmap": [
+      "vendor/league/flysystem/src/Local/",
+      "vendor/league/flysystem/src/AwsS3V3/"
+    ],
     "psr-4": {
       "App\\": "app/",
       "Database\\Factories\\": "database/factories/",
