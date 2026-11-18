@@ -43,7 +43,7 @@ class LicenseSeatsTransformer
                 'tag_color' => $seat->location()->tag_color ? e($seat->location()->tag_color) : null,
                 'created_at' => Helper::getFormattedDateObject($seat->created_at, 'datetime'),
             ] : null,
-            'reassignable' => (bool) ($license?->reassignable ?? false),
+            'reassignable' => (bool) ($license && $license->reassignable),
             'notes' => e($seat->notes),
             'user_can_checkout' => (($seat->assigned_to == '') && ($seat->asset_id == '')),
             'disabled' => $seat->unreassignable_seat || ($license ? $license->isInactive() : true),

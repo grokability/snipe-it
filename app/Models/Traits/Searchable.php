@@ -1485,12 +1485,12 @@ trait Searchable
             return null;
         }
 
-        if (! preg_match('/^(\d{4}-\d{2}-\d{2})?\.\.(\d{4}-\d{2}-\d{2})?$/', trim($rawValue), $m)) {
+        if (! preg_match('/^(\d{4}-\d{2}-\d{2})?\.\.(\d{4}-\d{2}-\d{2})?$/', trim($rawValue), $m, PREG_UNMATCHED_AS_NULL)) {
             return null;
         }
 
-        $start = $m[1] !== '' ? $m[1] : null;
-        $end = $m[2] !== '' ? $m[2] : null;
+        $start = $m[1] ?? null;
+        $end = $m[2] ?? null;
 
         if ($start === null && $end === null) {
             return null;
