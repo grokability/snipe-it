@@ -1,187 +1,156 @@
 <?php
 
-namespace Tests\Feature\Assets\Ui;
-
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use PHPUnit\Framework\Attributes\Group;
-use Tests\TestCase;
 
-/**
- * Submission-side of the checked-rows bulk-audit flow. Covers POST
- * `hardware.bulk-audit.store` end-to-end: permissions, empty-selection
- * behavior, per-asset action_log writes, and the semantics for each
- * shared payload field (next_audit_date, location_id + update_location
- * gate, uploaded image).
- *
- * Split from BulkAuditSelectedAssetsTest (which covers form / dispatcher
- * access) to keep either file under Codacy's per-class method-count
- * threshold.
- */
-#[Group('auditing')]
-class BulkAuditSelectedAssetsSubmissionTest extends TestCase
-{
-    public function test_permission_required_to_submit(): void
-    {
-        $this->actingAs(User::factory()->create())
-            ->post(route('hardware.bulk-audit.store'), [
-                'selected_assets' => [1, 2, 3],
-            ])
-            ->assertForbidden();
+test('permission required to submit', function () {
+    $this->actingAs(User::factory()->create())
+        ->post(route('hardware.bulk-audit.store'), [
+            'selected_assets' => [1, 2, 3],
+        ])
+        ->assertForbidden();
+});
+
+test('submitting without selected assets bounces back', function () {
+    $this->actingAs(User::factory()->auditAssets()->create())
+        ->post(route('hardware.bulk-audit.store'), [])
+        ->assertRedirect(route('hardware.bulk-audit.show'))
+        ->assertSessionHas('error');
+});
+
+test('bulk audit writes one audit actionlog per asset', function () {
+    $assets = Asset::factory()->count(3)->create();
+
+    $this->actingAs(User::factory()->auditAssets()->create())
+        ->post(route('hardware.bulk-audit.store'), [
+            'selected_assets' => $assets->pluck('id')->toArray(),
+            'note' => 'bulk audit test',
+        ])
+        ->assertRedirect(route('hardware.index'))
+        ->assertSessionHas('success');
+
+    foreach ($assets as $asset) {
+        $this->assertDatabaseHas('action_logs', [
+            'action_type' => 'audit',
+            'item_type' => Asset::class,
+            'item_id' => $asset->id,
+            'note' => 'bulk audit test',
+        ]);
     }
+});
 
-    public function test_submitting_without_selected_assets_bounces_back(): void
-    {
-        $this->actingAs(User::factory()->auditAssets()->create())
-            ->post(route('hardware.bulk-audit.store'), [])
-            ->assertRedirect(route('hardware.bulk-audit.show'))
-            ->assertSessionHas('error');
+test('bulk audit updates next audit date when provided', function () {
+    $assets = Asset::factory()->count(2)->create();
+
+    $this->actingAs(User::factory()->auditAssets()->create())
+        ->post(route('hardware.bulk-audit.store'), [
+            'selected_assets' => $assets->pluck('id')->toArray(),
+            'next_audit_date' => '2099-01-15',
+        ])
+        ->assertRedirect(route('hardware.index'));
+
+    // next_audit_date has an Attribute accessor that returns a
+    // pre-formatted date string, not a Carbon instance, so we
+    // check the raw column value instead.
+    foreach ($assets as $asset) {
+        expect($asset->fresh()->getRawOriginal('next_audit_date'))->toBe('2099-01-15');
     }
+});
 
-    public function test_bulk_audit_writes_one_audit_actionlog_per_asset(): void
-    {
-        $assets = Asset::factory()->count(3)->create();
+test('bulk audit updates asset location when update location opt in is checked', function () {
+    $location = Location::factory()->create();
+    $assets = Asset::factory()->count(2)->create();
 
-        $this->actingAs(User::factory()->auditAssets()->create())
-            ->post(route('hardware.bulk-audit.store'), [
-                'selected_assets' => $assets->pluck('id')->toArray(),
-                'note' => 'bulk audit test',
-            ])
-            ->assertRedirect(route('hardware.index'))
-            ->assertSessionHas('success');
+    $this->actingAs(User::factory()->auditAssets()->create())
+        ->post(route('hardware.bulk-audit.store'), [
+            'selected_assets' => $assets->pluck('id')->toArray(),
+            'location_id' => $location->id,
+            'update_location' => '1',
+        ])
+        ->assertRedirect(route('hardware.index'));
 
-        foreach ($assets as $asset) {
-            $this->assertDatabaseHas('action_logs', [
-                'action_type' => 'audit',
-                'item_type' => Asset::class,
-                'item_id' => $asset->id,
-                'note' => 'bulk audit test',
-            ]);
-        }
+    foreach ($assets as $asset) {
+        expect($asset->fresh()->location_id)->toBe($location->id);
     }
+});
 
-    public function test_bulk_audit_updates_next_audit_date_when_provided(): void
-    {
-        $assets = Asset::factory()->count(2)->create();
+test('bulk audit does not move assets when update location is unchecked', function () {
+    // Provided location_id + no update_location flag should
+    // record the audit's location on each log entry (as "where
+    // the audit happened") without touching the asset's actual
+    // location_id. Matches the API's update_location=1 gate.
+    $originalLocation = Location::factory()->create();
+    $auditLocation = Location::factory()->create();
+    $assets = Asset::factory()->count(2)->create(['location_id' => $originalLocation->id]);
 
-        $this->actingAs(User::factory()->auditAssets()->create())
-            ->post(route('hardware.bulk-audit.store'), [
-                'selected_assets' => $assets->pluck('id')->toArray(),
-                'next_audit_date' => '2099-01-15',
-            ])
-            ->assertRedirect(route('hardware.index'));
+    $this->actingAs(User::factory()->auditAssets()->create())
+        ->post(route('hardware.bulk-audit.store'), [
+            'selected_assets' => $assets->pluck('id')->toArray(),
+            'location_id' => $auditLocation->id,
+            // update_location intentionally omitted (unchecked)
+        ])
+        ->assertRedirect(route('hardware.index'));
 
-        // next_audit_date has an Attribute accessor that returns a
-        // pre-formatted date string, not a Carbon instance, so we
-        // check the raw column value instead.
-        foreach ($assets as $asset) {
-            $this->assertSame('2099-01-15', $asset->fresh()->getRawOriginal('next_audit_date'));
-        }
+    foreach ($assets as $asset) {
+        $fresh = $asset->fresh();
+        expect($fresh->location_id)->toBe($originalLocation->id, "Asset {$asset->id} location must not change when update_location is unchecked.");
+
+        // But the audit log DOES record the submitted location.
+        $log = Actionlog::where('action_type', 'audit')
+            ->where('item_type', Asset::class)
+            ->where('item_id', $asset->id)
+            ->first();
+        expect($log)->not->toBeNull();
+        expect((int) $log->location_id)->toBe($auditLocation->id);
     }
+});
 
-    public function test_bulk_audit_updates_asset_location_when_update_location_opt_in_is_checked(): void
-    {
-        $location = Location::factory()->create();
-        $assets = Asset::factory()->count(2)->create();
+test('bulk audit attaches uploaded image to every row', function () {
+    // Matches the API's bulkAudit behavior: one uploaded image is
+    // stamped onto every asset's audit log entry, with the stored
+    // filename scoped by asset id (audit-{id}-...).
+    Storage::fake();
+    $assets = Asset::factory()->count(2)->create();
 
-        $this->actingAs(User::factory()->auditAssets()->create())
-            ->post(route('hardware.bulk-audit.store'), [
-                'selected_assets' => $assets->pluck('id')->toArray(),
-                'location_id' => $location->id,
-                'update_location' => '1',
-            ])
-            ->assertRedirect(route('hardware.index'));
+    $this->actingAs(User::factory()->auditAssets()->create())
+        ->post(route('hardware.bulk-audit.store'), [
+            'selected_assets' => $assets->pluck('id')->toArray(),
+            'file' => [UploadedFile::fake()->image('audit.png')],
+        ])
+        ->assertRedirect(route('hardware.index'))
+        ->assertSessionHas('success');
 
-        foreach ($assets as $asset) {
-            $this->assertSame($location->id, $asset->fresh()->location_id);
-        }
+    foreach ($assets as $asset) {
+        $log = Actionlog::where('action_type', 'audit')
+            ->where('item_type', Asset::class)
+            ->where('item_id', $asset->id)
+            ->first();
+
+        expect($log)->not->toBeNull("Audit log missing for asset {$asset->id}");
+        expect($log->filename)->not->toBeEmpty("Audit log filename missing for asset {$asset->id}");
+        expect($log->filename)->toStartWith('audit-'.$asset->id);
     }
+});
 
-    public function test_bulk_audit_does_not_move_assets_when_update_location_is_unchecked(): void
-    {
-        // Provided location_id + no update_location flag should
-        // record the audit's location on each log entry (as "where
-        // the audit happened") without touching the asset's actual
-        // location_id. Matches the API's update_location=1 gate.
-        $originalLocation = Location::factory()->create();
-        $auditLocation = Location::factory()->create();
-        $assets = Asset::factory()->count(2)->create(['location_id' => $originalLocation->id]);
+test('bulk audit rejects unresolvable location before touching any asset', function () {
+    $assets = Asset::factory()->count(2)->create();
+    $originalLocations = $assets->pluck('location_id', 'id');
 
-        $this->actingAs(User::factory()->auditAssets()->create())
-            ->post(route('hardware.bulk-audit.store'), [
-                'selected_assets' => $assets->pluck('id')->toArray(),
-                'location_id' => $auditLocation->id,
-                // update_location intentionally omitted (unchecked)
-            ])
-            ->assertRedirect(route('hardware.index'));
+    $this->actingAs(User::factory()->auditAssets()->create())
+        ->post(route('hardware.bulk-audit.store'), [
+            'selected_assets' => $assets->pluck('id')->toArray(),
+            'location_id' => 9999999, // does not exist
+        ])
+        ->assertRedirect(route('hardware.bulk-audit.show'))
+        ->assertSessionHas('error');
 
-        foreach ($assets as $asset) {
-            $fresh = $asset->fresh();
-            $this->assertSame(
-                $originalLocation->id,
-                $fresh->location_id,
-                "Asset {$asset->id} location must not change when update_location is unchecked.",
-            );
-
-            // But the audit log DOES record the submitted location.
-            $log = Actionlog::where('action_type', 'audit')
-                ->where('item_type', Asset::class)
-                ->where('item_id', $asset->id)
-                ->first();
-            $this->assertNotNull($log);
-            $this->assertSame($auditLocation->id, (int) $log->location_id);
-        }
+    // No audit rows written, no location mutations applied.
+    expect(Actionlog::where('action_type', 'audit')->count())->toBe(0);
+    foreach ($assets as $asset) {
+        expect($asset->fresh()->location_id)->toBe($originalLocations[$asset->id]);
     }
-
-    public function test_bulk_audit_attaches_uploaded_image_to_every_row(): void
-    {
-        // Matches the API's bulkAudit behavior: one uploaded image is
-        // stamped onto every asset's audit log entry, with the stored
-        // filename scoped by asset id (audit-{id}-...).
-        Storage::fake();
-        $assets = Asset::factory()->count(2)->create();
-
-        $this->actingAs(User::factory()->auditAssets()->create())
-            ->post(route('hardware.bulk-audit.store'), [
-                'selected_assets' => $assets->pluck('id')->toArray(),
-                'file' => [UploadedFile::fake()->image('audit.png')],
-            ])
-            ->assertRedirect(route('hardware.index'))
-            ->assertSessionHas('success');
-
-        foreach ($assets as $asset) {
-            $log = Actionlog::where('action_type', 'audit')
-                ->where('item_type', Asset::class)
-                ->where('item_id', $asset->id)
-                ->first();
-
-            $this->assertNotNull($log, "Audit log missing for asset {$asset->id}");
-            $this->assertNotEmpty($log->filename, "Audit log filename missing for asset {$asset->id}");
-            $this->assertStringStartsWith('audit-'.$asset->id, $log->filename);
-        }
-    }
-
-    public function test_bulk_audit_rejects_unresolvable_location_before_touching_any_asset(): void
-    {
-        $assets = Asset::factory()->count(2)->create();
-        $originalLocations = $assets->pluck('location_id', 'id');
-
-        $this->actingAs(User::factory()->auditAssets()->create())
-            ->post(route('hardware.bulk-audit.store'), [
-                'selected_assets' => $assets->pluck('id')->toArray(),
-                'location_id' => 9999999, // does not exist
-            ])
-            ->assertRedirect(route('hardware.bulk-audit.show'))
-            ->assertSessionHas('error');
-
-        // No audit rows written, no location mutations applied.
-        $this->assertSame(0, Actionlog::where('action_type', 'audit')->count());
-        foreach ($assets as $asset) {
-            $this->assertSame($originalLocations[$asset->id], $asset->fresh()->location_id);
-        }
-    }
-}
+});

@@ -1,113 +1,96 @@
 <?php
 
-namespace Tests\Feature\Assets\Api;
-
 use App\Models\Asset;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
 
-class AssetFilesTest extends TestCase
-{
-    protected function setUp(): void
-    {
-        parent::setUp();
-        Storage::fake();
-    }
+beforeEach(function () {
+    Storage::fake();
+});
 
-    public function test_asset_api_accepts_file_upload()
-    {
-        // Upload a file to an asset
+test('asset api accepts file upload', function () {
+    // Upload a file to an asset
+    // Create an asset to work with
+    $asset = Asset::factory()->create();
 
-        // Create an asset to work with
-        $asset = Asset::factory()->create();
+    // Create a superuser to run this as
+    $user = User::factory()->superuser()->create();
 
-        // Create a superuser to run this as
-        $user = User::factory()->superuser()->create();
+    // Upload a file
+    $this->actingAsForApi($user)
+        ->post(
+            route('api.files.store', ['object_type' => 'assets', 'id' => $asset->id]), [
+                'file' => [UploadedFile::fake()->create('test.jpg', 100)],
+            ]
+        )
+        ->assertOk();
+});
 
-        // Upload a file
-        $this->actingAsForApi($user)
-            ->post(
-                route('api.files.store', ['object_type' => 'assets', 'id' => $asset->id]), [
-                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
-                ]
-            )
-            ->assertOk();
-    }
+test('asset api lists files', function () {
+    // List all files on an asset
+    // Create an asset to work with
+    $asset = Asset::factory()->create();
 
-    public function test_asset_api_lists_files()
-    {
-        // List all files on an asset
+    // Create a superuser to run this as
+    $user = User::factory()->superuser()->create();
 
-        // Create an asset to work with
-        $asset = Asset::factory()->create();
+    // List the files
+    $this->actingAsForApi($user)
+        ->getJson(route('api.files.index', ['object_type' => 'assets', 'id' => $asset->id]))
+        ->assertOk()
+        ->assertJsonStructure(
+            [
+                'rows',
+                'total',
+            ]
+        );
+});
 
-        // Create a superuser to run this as
-        $user = User::factory()->superuser()->create();
+test('asset api downloads file', function () {
+    // Download a file from an asset
+    // Create an asset to work with
+    $asset = Asset::factory()->create();
 
-        // List the files
-        $this->actingAsForApi($user)
-            ->getJson(route('api.files.index', ['object_type' => 'assets', 'id' => $asset->id]))
-            ->assertOk()
-            ->assertJsonStructure(
-                [
-                    'rows',
-                    'total',
-                ]
-            );
-    }
+    // Create a superuser to run this as
+    $user = User::factory()->superuser()->create();
 
-    public function test_asset_api_downloads_file()
-    {
-        // Download a file from an asset
+    // Upload a file
+    $this->actingAsForApi($user)
+        ->post(
+            route('api.files.store', ['object_type' => 'assets', 'id' => $asset->id]), [
+                'file' => [UploadedFile::fake()->create('test.jpg', 100)],
+            ]
+        )
+        ->assertOk();
 
-        // Create an asset to work with
-        $asset = Asset::factory()->create();
+    // List the files to get the file ID
+    $result = $this->actingAsForApi($user)
+        ->getJson(route('api.files.index', ['object_type' => 'assets', 'id' => $asset->id]))
+        ->assertOk();
+});
 
-        // Create a superuser to run this as
-        $user = User::factory()->superuser()->create();
+test('asset api deletes file', function () {
+    // Delete a file from an asset
+    // Create an asset to work with
+    $asset = Asset::factory()->create();
 
-        // Upload a file
-        $this->actingAsForApi($user)
-            ->post(
-                route('api.files.store', ['object_type' => 'assets', 'id' => $asset->id]), [
-                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
-                ]
-            )
-            ->assertOk();
+    // Create a superuser to run this as
+    $user = User::factory()->superuser()->create();
 
-        // List the files to get the file ID
-        $result = $this->actingAsForApi($user)
-            ->getJson(route('api.files.index', ['object_type' => 'assets', 'id' => $asset->id]))
-            ->assertOk();
-    }
+    // Upload a file
+    $this->actingAsForApi($user)
+        ->post(
+            route('api.files.store', ['object_type' => 'assets', 'id' => $asset->id]), [
+                'file' => [UploadedFile::fake()->create('test.jpg', 100)],
+            ]
+        )
+        ->assertOk();
 
-    public function test_asset_api_deletes_file()
-    {
-        // Delete a file from an asset
-
-        // Create an asset to work with
-        $asset = Asset::factory()->create();
-
-        // Create a superuser to run this as
-        $user = User::factory()->superuser()->create();
-
-        // Upload a file
-        $this->actingAsForApi($user)
-            ->post(
-                route('api.files.store', ['object_type' => 'assets', 'id' => $asset->id]), [
-                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
-                ]
-            )
-            ->assertOk();
-
-        // List the files to get the file ID
-        $result = $this->actingAsForApi($user)
-            ->getJson(
-                route('api.files.index', ['object_type' => 'assets', 'id' => $asset->id])
-            )
-            ->assertOk();
-
-    }
-}
+    // List the files to get the file ID
+    $result = $this->actingAsForApi($user)
+        ->getJson(
+            route('api.files.index', ['object_type' => 'assets', 'id' => $asset->id])
+        )
+        ->assertOk();
+});

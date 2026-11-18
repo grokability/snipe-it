@@ -1,194 +1,158 @@
 <?php
 
-namespace Tests\Feature\Assets\Api;
-
 use App\Models\Asset;
 use App\Models\Company;
 use App\Models\User;
-use Tests\TestCase;
 
-class AssetsForSelectListTest extends TestCase
-{
-    public function test_requires_view_selectlists_permission(): void
-    {
-        $this->actingAsForApi(User::factory()->create())
-            ->getJson(route('assets.selectlist'))
-            ->assertForbidden();
-    }
+test('requires view selectlists permission', function () {
+    $this->actingAsForApi(User::factory()->create())
+        ->getJson(route('assets.selectlist'))
+        ->assertForbidden();
+});
 
-    public function test_assets_can_be_searched_for_by_asset_tag()
-    {
-        Asset::factory()->create(['asset_tag' => '0001']);
-        Asset::factory()->create(['asset_tag' => '0002']);
+test('assets can be searched for by asset tag', function () {
+    Asset::factory()->create(['asset_tag' => '0001']);
+    Asset::factory()->create(['asset_tag' => '0002']);
 
-        $response = $this->actingAsForApi(User::factory()->createAssets()->create())
-            ->getJson(route('assets.selectlist', ['search' => '000']))
-            ->assertOk();
+    $response = $this->actingAsForApi(User::factory()->createAssets()->create())
+        ->getJson(route('assets.selectlist', ['search' => '000']))
+        ->assertOk();
 
-        $results = collect($response->json('results'));
+    $results = collect($response->json('results'));
 
-        $this->assertEquals(2, $results->count());
-        $this->assertTrue($results->pluck('text')->contains(fn ($text) => str_contains($text, '0001')));
-        $this->assertTrue($results->pluck('text')->contains(fn ($text) => str_contains($text, '0002')));
-    }
+    expect($results->count())->toEqual(2);
+    expect($results->pluck('text')->contains(fn ($text) => str_contains($text, '0001')))->toBeTrue();
+    expect($results->pluck('text')->contains(fn ($text) => str_contains($text, '0002')))->toBeTrue();
+});
 
-    public function test_assets_are_scoped_to_company_when_multiple_company_support_enabled()
-    {
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
+test('assets are scoped to company when multiple company support enabled', function () {
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
 
-        $assetA = Asset::factory()->for($companyA)->create(['asset_tag' => '0001']);
-        $assetB = Asset::factory()->for($companyB)->create(['asset_tag' => '0002']);
+    $assetA = Asset::factory()->for($companyA)->create(['asset_tag' => '0001']);
+    $assetB = Asset::factory()->for($companyB)->create(['asset_tag' => '0002']);
 
-        $superUser = $companyA->users()->save(User::factory()->superuser()->make());
-        $userInCompanyA = $companyA->users()->save(User::factory()->createAssets()->make());
-        $userInCompanyB = $companyB->users()->save(User::factory()->createAssets()->make());
+    $superUser = $companyA->users()->save(User::factory()->superuser()->make());
+    $userInCompanyA = $companyA->users()->save(User::factory()->createAssets()->make());
+    $userInCompanyB = $companyB->users()->save(User::factory()->createAssets()->make());
 
-        $this->settings->disableMultipleFullCompanySupport();
+    $this->settings->disableMultipleFullCompanySupport();
 
-        $this->actingAsForApi($superUser)
-            ->getJson(route('assets.selectlist', ['search' => '000']))
-            ->assertResponseContainsInResults($assetA)
-            ->assertResponseContainsInResults($assetB);
+    $this->actingAsForApi($superUser)
+        ->getJson(route('assets.selectlist', ['search' => '000']))
+        ->assertResponseContainsInResults($assetA)
+        ->assertResponseContainsInResults($assetB);
 
-        $this->actingAsForApi($userInCompanyA)
-            ->getJson(route('assets.selectlist', ['search' => '000']))
-            ->assertResponseContainsInResults($assetA)
-            ->assertResponseContainsInResults($assetB);
+    $this->actingAsForApi($userInCompanyA)
+        ->getJson(route('assets.selectlist', ['search' => '000']))
+        ->assertResponseContainsInResults($assetA)
+        ->assertResponseContainsInResults($assetB);
 
-        $this->actingAsForApi($userInCompanyB)
-            ->getJson(route('assets.selectlist', ['search' => '000']))
-            ->assertResponseContainsInResults($assetA)
-            ->assertResponseContainsInResults($assetB);
+    $this->actingAsForApi($userInCompanyB)
+        ->getJson(route('assets.selectlist', ['search' => '000']))
+        ->assertResponseContainsInResults($assetA)
+        ->assertResponseContainsInResults($assetB);
 
-        $this->settings->enableMultipleFullCompanySupport();
+    $this->settings->enableMultipleFullCompanySupport();
 
-        $this->actingAsForApi($superUser)
-            ->getJson(route('assets.selectlist', ['search' => '000']))
-            ->assertResponseContainsInResults($assetA)
-            ->assertResponseContainsInResults($assetB);
+    $this->actingAsForApi($superUser)
+        ->getJson(route('assets.selectlist', ['search' => '000']))
+        ->assertResponseContainsInResults($assetA)
+        ->assertResponseContainsInResults($assetB);
 
-        $this->actingAsForApi($userInCompanyA)
-            ->getJson(route('assets.selectlist', ['search' => '000']))
-            ->assertResponseContainsInResults($assetA)
-            ->assertResponseDoesNotContainInResults($assetB);
+    $this->actingAsForApi($userInCompanyA)
+        ->getJson(route('assets.selectlist', ['search' => '000']))
+        ->assertResponseContainsInResults($assetA)
+        ->assertResponseDoesNotContainInResults($assetB);
 
-        $this->actingAsForApi($userInCompanyB)
-            ->getJson(route('assets.selectlist', ['search' => '000']))
-            ->assertResponseDoesNotContainInResults($assetA)
-            ->assertResponseContainsInResults($assetB);
-    }
+    $this->actingAsForApi($userInCompanyB)
+        ->getJson(route('assets.selectlist', ['search' => '000']))
+        ->assertResponseDoesNotContainInResults($assetA)
+        ->assertResponseContainsInResults($assetB);
+});
 
-    public function test_asset_is_excluded_from_selectlist_when_exclude_id_matches()
-    {
-        [$assetA, $assetB] = Asset::factory()->count(2)->create();
+test('asset is excluded from selectlist when exclude id matches', function () {
+    [$assetA, $assetB] = Asset::factory()->count(2)->create();
 
-        $actor = User::factory()->createAssets()->create();
+    $actor = User::factory()->createAssets()->create();
 
-        $this->actingAsForApi($actor)
-            ->getJson(route('assets.selectlist', ['excludeId' => $assetA->id]))
-            ->assertResponseDoesNotContainInResults($assetA)
-            ->assertResponseContainsInResults($assetB);
-    }
+    $this->actingAsForApi($actor)
+        ->getJson(route('assets.selectlist', ['excludeId' => $assetA->id]))
+        ->assertResponseDoesNotContainInResults($assetA)
+        ->assertResponseContainsInResults($assetB);
+});
 
-    public function test_assets_are_filtered_by_multiple_comma_separated_company_ids_when_full_company_support_is_enabled()
-    {
-        $this->settings->enableMultipleFullCompanySupport();
+test('assets are filtered by multiple comma separated company ids when full company support is enabled', function () {
+    $this->settings->enableMultipleFullCompanySupport();
 
-        [$companyA, $companyB, $companyC] = Company::factory()->count(3)->create();
+    [$companyA, $companyB, $companyC] = Company::factory()->count(3)->create();
 
-        $assetA = Asset::factory()->for($companyA)->create(['asset_tag' => 'A001']);
-        $assetB = Asset::factory()->for($companyB)->create(['asset_tag' => 'B001']);
-        $assetC = Asset::factory()->for($companyC)->create(['asset_tag' => 'C001']);
+    $assetA = Asset::factory()->for($companyA)->create(['asset_tag' => 'A001']);
+    $assetB = Asset::factory()->for($companyB)->create(['asset_tag' => 'B001']);
+    $assetC = Asset::factory()->for($companyC)->create(['asset_tag' => 'C001']);
 
-        // The companyId filter is intentionally bypassed for superusers (v8.6.3 regression fix),
-        // so this test uses a non-superuser admin who is a member of all three companies — that
-        // gives them visibility to every candidate asset, leaving the explicit companyId filter
-        // as the only active narrowing.
-        $actor = User::factory()->createAssets()->create();
-        $companyA->users()->attach($actor);
-        $companyB->users()->attach($actor);
-        $companyC->users()->attach($actor);
+    // The companyId filter is intentionally bypassed for superusers (v8.6.3 regression fix),
+    // so this test uses a non-superuser admin who is a member of all three companies — that
+    // gives them visibility to every candidate asset, leaving the explicit companyId filter
+    // as the only active narrowing.
+    $actor = User::factory()->createAssets()->create();
+    $companyA->users()->attach($actor);
+    $companyB->users()->attach($actor);
+    $companyC->users()->attach($actor);
 
-        $this->actingAsForApi($actor)
-            ->getJson(route('assets.selectlist', ['companyId' => $companyA->id.','.$companyB->id]))
-            ->assertResponseContainsInResults($assetA)
-            ->assertResponseContainsInResults($assetB)
-            ->assertResponseDoesNotContainInResults($assetC);
-    }
+    $this->actingAsForApi($actor)
+        ->getJson(route('assets.selectlist', ['companyId' => $companyA->id.','.$companyB->id]))
+        ->assertResponseContainsInResults($assetA)
+        ->assertResponseContainsInResults($assetB)
+        ->assertResponseDoesNotContainInResults($assetC);
+});
 
-    /**
-     * v8.6.3 regression fix: superusers must bypass the companyId filter on asset selectlists.
-     *
-     * AssetsController::selectlist now skips the companyId narrowing when the requester is a
-     * superuser, matching pre-v8.6.3 behavior where a superuser could pick any asset for
-     * linking regardless of which company the asset belonged to.
-     */
-    public function test_superuser_bypasses_company_id_filter_on_assets_selectlist()
-    {
-        $this->settings->enableMultipleFullCompanySupport();
+test('superuser bypasses company id filter on assets selectlist', function () {
+    $this->settings->enableMultipleFullCompanySupport();
 
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
 
-        $assetA = Asset::factory()->for($companyA)->create(['asset_tag' => 'SUSEL-A1']);
-        $assetB = Asset::factory()->for($companyB)->create(['asset_tag' => 'SUSEL-B1']);
+    $assetA = Asset::factory()->for($companyA)->create(['asset_tag' => 'SUSEL-A1']);
+    $assetB = Asset::factory()->for($companyB)->create(['asset_tag' => 'SUSEL-B1']);
 
-        $superuser = User::factory()->superuser()->create();
+    $superuser = User::factory()->superuser()->create();
 
-        $this->actingAsForApi($superuser)
-            ->getJson(route('assets.selectlist', ['companyId' => $companyA->id]))
-            ->assertResponseContainsInResults($assetA)
-            ->assertResponseContainsInResults($assetB);
-    }
+    $this->actingAsForApi($superuser)
+        ->getJson(route('assets.selectlist', ['companyId' => $companyA->id]))
+        ->assertResponseContainsInResults($assetA)
+        ->assertResponseContainsInResults($assetB);
+});
 
-    /**
-     * #19394 regression: under FMCS + floater mode, a company-scoped user
-     * asking for assets narrowed by companyId should also see null-company
-     * (floater) assets in the results. This matches the documented rule
-     * that "items from any company can be checked out to targets with no
-     * company assignment" — server-side canCheckoutTo already permits the
-     * checkout, so the picker must not hide the target.
-     */
-    public function test_floater_assets_appear_in_selectlist_under_floater_mode_when_narrowed_by_company()
-    {
-        $this->settings->enableMultipleFullCompanySupport();
-        $this->settings->enableFloaterMode();
+test('floater assets appear in selectlist under floater mode when narrowed by company', function () {
+    $this->settings->enableMultipleFullCompanySupport();
+    $this->settings->enableFloaterMode();
 
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
 
-        $companyAsset = Asset::factory()->for($companyA)->create(['asset_tag' => 'FLOATER-CA']);
-        $otherCompanyAsset = Asset::factory()->for($companyB)->create(['asset_tag' => 'FLOATER-CB']);
-        $floaterAsset = Asset::factory()->create(['asset_tag' => 'FLOATER-NULL', 'company_id' => null]);
+    $companyAsset = Asset::factory()->for($companyA)->create(['asset_tag' => 'FLOATER-CA']);
+    $otherCompanyAsset = Asset::factory()->for($companyB)->create(['asset_tag' => 'FLOATER-CB']);
+    $floaterAsset = Asset::factory()->create(['asset_tag' => 'FLOATER-NULL', 'company_id' => null]);
 
-        $actor = User::factory()->createAssets()->forCompany($companyA->id)->create();
+    $actor = User::factory()->createAssets()->forCompany($companyA->id)->create();
 
-        $this->actingAsForApi($actor)
-            ->getJson(route('assets.selectlist', ['companyId' => $companyA->id]))
-            ->assertResponseContainsInResults($companyAsset)
-            ->assertResponseContainsInResults($floaterAsset)
-            ->assertResponseDoesNotContainInResults($otherCompanyAsset);
-    }
+    $this->actingAsForApi($actor)
+        ->getJson(route('assets.selectlist', ['companyId' => $companyA->id]))
+        ->assertResponseContainsInResults($companyAsset)
+        ->assertResponseContainsInResults($floaterAsset)
+        ->assertResponseDoesNotContainInResults($otherCompanyAsset);
+});
 
-    /**
-     * #19394 negative counterpart: under FMCS + strict mode (floater OFF),
-     * the companyId narrowing stays exact — null-company assets must NOT
-     * leak into the picker for a company-scoped caller. Otherwise turning
-     * floater mode off would silently still show floaters, breaking the
-     * "null is treated as its own pseudo-company" strict-mode contract.
-     */
-    public function test_floater_assets_are_hidden_in_selectlist_under_strict_mode_when_narrowed_by_company()
-    {
-        $this->settings->enableMultipleFullCompanySupport();
-        $this->settings->disableFloaterMode();
+test('floater assets are hidden in selectlist under strict mode when narrowed by company', function () {
+    $this->settings->enableMultipleFullCompanySupport();
+    $this->settings->disableFloaterMode();
 
-        $companyA = Company::factory()->create();
-        $companyAsset = Asset::factory()->for($companyA)->create(['asset_tag' => 'STRICT-CA']);
-        $floaterAsset = Asset::factory()->create(['asset_tag' => 'STRICT-NULL', 'company_id' => null]);
+    $companyA = Company::factory()->create();
+    $companyAsset = Asset::factory()->for($companyA)->create(['asset_tag' => 'STRICT-CA']);
+    $floaterAsset = Asset::factory()->create(['asset_tag' => 'STRICT-NULL', 'company_id' => null]);
 
-        $actor = User::factory()->createAssets()->forCompany($companyA->id)->create();
+    $actor = User::factory()->createAssets()->forCompany($companyA->id)->create();
 
-        $this->actingAsForApi($actor)
-            ->getJson(route('assets.selectlist', ['companyId' => $companyA->id]))
-            ->assertResponseContainsInResults($companyAsset)
-            ->assertResponseDoesNotContainInResults($floaterAsset);
-    }
-}
+    $this->actingAsForApi($actor)
+        ->getJson(route('assets.selectlist', ['companyId' => $companyA->id]))
+        ->assertResponseContainsInResults($companyAsset)
+        ->assertResponseDoesNotContainInResults($floaterAsset);
+});

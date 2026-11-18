@@ -1,135 +1,124 @@
 <?php
 
-namespace Tests\Feature\Assets\Api;
-
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Location;
 use App\Models\Statuslabel;
 use App\Models\User;
-use Tests\TestCase;
 
-class StoreAssetCheckoutPermissionTest extends TestCase
-{
-    public function test_create_with_assigned_user_without_checkout_permission_creates_asset_but_skips_checkout(): void
-    {
-        $creator = User::factory()->createAssets()->create();
-        $victim = User::factory()->create();
-        $model = AssetModel::factory()->create();
-        $status = Statuslabel::factory()->readyToDeploy()->create();
+test('create with assigned user without checkout permission creates asset but skips checkout', function () {
+    $creator = User::factory()->createAssets()->create();
+    $victim = User::factory()->create();
+    $model = AssetModel::factory()->create();
+    $status = Statuslabel::factory()->readyToDeploy()->create();
 
-        $tag = 'CHECKOUT-GATE-U-'.uniqid();
-        $response = $this->actingAsForApi($creator)
-            ->postJson(route('api.assets.store'), [
-                'model_id' => $model->id,
-                'status_id' => $status->id,
-                'asset_tag' => $tag,
-                'assigned_user' => $victim->id,
-            ])
-            ->assertOk()
-            ->assertStatusMessageIs('success')
-            ->assertMessagesAre(trans('admin/hardware/message.create.success_no_checkout'));
-
-        // Asset persists.
-        $this->assertDatabaseHas('assets', [
+    $tag = 'CHECKOUT-GATE-U-'.uniqid();
+    $response = $this->actingAsForApi($creator)
+        ->postJson(route('api.assets.store'), [
+            'model_id' => $model->id,
+            'status_id' => $status->id,
             'asset_tag' => $tag,
-            'assigned_to' => null,
-        ]);
+            'assigned_user' => $victim->id,
+        ])
+        ->assertOk()
+        ->assertStatusMessageIs('success')
+        ->assertMessagesAre(trans('admin/hardware/message.create.success_no_checkout'));
 
-        // No checkout event on the victim.
-        $this->assertDatabaseMissing('action_logs', [
-            'target_id' => $victim->id,
-            'target_type' => User::class,
-            'action_type' => 'checkout',
-        ]);
-    }
+    // Asset persists.
+    $this->assertDatabaseHas('assets', [
+        'asset_tag' => $tag,
+        'assigned_to' => null,
+    ]);
 
-    public function test_create_with_assigned_asset_without_checkout_permission_creates_asset_but_skips_checkout(): void
-    {
-        $creator = User::factory()->createAssets()->create();
-        $parentAsset = Asset::factory()->create();
-        $model = AssetModel::factory()->create();
-        $status = Statuslabel::factory()->readyToDeploy()->create();
+    // No checkout event on the victim.
+    $this->assertDatabaseMissing('action_logs', [
+        'target_id' => $victim->id,
+        'target_type' => User::class,
+        'action_type' => 'checkout',
+    ]);
+});
 
-        $tag = 'CHECKOUT-GATE-A-'.uniqid();
-        $this->actingAsForApi($creator)
-            ->postJson(route('api.assets.store'), [
-                'model_id' => $model->id,
-                'status_id' => $status->id,
-                'asset_tag' => $tag,
-                'assigned_asset' => $parentAsset->id,
-            ])
-            ->assertOk()
-            ->assertStatusMessageIs('success');
+test('create with assigned asset without checkout permission creates asset but skips checkout', function () {
+    $creator = User::factory()->createAssets()->create();
+    $parentAsset = Asset::factory()->create();
+    $model = AssetModel::factory()->create();
+    $status = Statuslabel::factory()->readyToDeploy()->create();
 
-        $this->assertDatabaseHas('assets', [
+    $tag = 'CHECKOUT-GATE-A-'.uniqid();
+    $this->actingAsForApi($creator)
+        ->postJson(route('api.assets.store'), [
+            'model_id' => $model->id,
+            'status_id' => $status->id,
             'asset_tag' => $tag,
-            'assigned_to' => null,
-        ]);
-    }
+            'assigned_asset' => $parentAsset->id,
+        ])
+        ->assertOk()
+        ->assertStatusMessageIs('success');
 
-    public function test_create_with_assigned_location_without_checkout_permission_creates_asset_but_skips_checkout(): void
-    {
-        $creator = User::factory()->createAssets()->create();
-        $location = Location::factory()->create();
-        $model = AssetModel::factory()->create();
-        $status = Statuslabel::factory()->readyToDeploy()->create();
+    $this->assertDatabaseHas('assets', [
+        'asset_tag' => $tag,
+        'assigned_to' => null,
+    ]);
+});
 
-        $tag = 'CHECKOUT-GATE-L-'.uniqid();
-        $this->actingAsForApi($creator)
-            ->postJson(route('api.assets.store'), [
-                'model_id' => $model->id,
-                'status_id' => $status->id,
-                'asset_tag' => $tag,
-                'assigned_location' => $location->id,
-            ])
-            ->assertOk()
-            ->assertStatusMessageIs('success');
+test('create with assigned location without checkout permission creates asset but skips checkout', function () {
+    $creator = User::factory()->createAssets()->create();
+    $location = Location::factory()->create();
+    $model = AssetModel::factory()->create();
+    $status = Statuslabel::factory()->readyToDeploy()->create();
 
-        $this->assertDatabaseHas('assets', [
+    $tag = 'CHECKOUT-GATE-L-'.uniqid();
+    $this->actingAsForApi($creator)
+        ->postJson(route('api.assets.store'), [
+            'model_id' => $model->id,
+            'status_id' => $status->id,
             'asset_tag' => $tag,
-            'assigned_to' => null,
-        ]);
-    }
+            'assigned_location' => $location->id,
+        ])
+        ->assertOk()
+        ->assertStatusMessageIs('success');
 
-    public function test_create_without_assignment_returns_default_success_message(): void
-    {
-        $creator = User::factory()->createAssets()->create();
-        $model = AssetModel::factory()->create();
-        $status = Statuslabel::factory()->readyToDeploy()->create();
+    $this->assertDatabaseHas('assets', [
+        'asset_tag' => $tag,
+        'assigned_to' => null,
+    ]);
+});
 
-        $this->actingAsForApi($creator)
-            ->postJson(route('api.assets.store'), [
-                'model_id' => $model->id,
-                'status_id' => $status->id,
-                'asset_tag' => 'CREATE-ONLY',
-            ])
-            ->assertOk()
-            ->assertStatusMessageIs('success')
-            ->assertMessagesAre(trans('admin/hardware/message.create.success'));
-    }
+test('create without assignment returns default success message', function () {
+    $creator = User::factory()->createAssets()->create();
+    $model = AssetModel::factory()->create();
+    $status = Statuslabel::factory()->readyToDeploy()->create();
 
-    public function test_create_with_assignment_succeeds_and_checks_out_when_checkout_permission_granted(): void
-    {
-        $creator = User::factory()->createAssets()->checkoutAssets()->create();
-        $victim = User::factory()->create();
-        $model = AssetModel::factory()->create();
-        $status = Statuslabel::factory()->readyToDeploy()->create();
+    $this->actingAsForApi($creator)
+        ->postJson(route('api.assets.store'), [
+            'model_id' => $model->id,
+            'status_id' => $status->id,
+            'asset_tag' => 'CREATE-ONLY',
+        ])
+        ->assertOk()
+        ->assertStatusMessageIs('success')
+        ->assertMessagesAre(trans('admin/hardware/message.create.success'));
+});
 
-        $this->actingAsForApi($creator)
-            ->postJson(route('api.assets.store'), [
-                'model_id' => $model->id,
-                'status_id' => $status->id,
-                'asset_tag' => 'CHECKOUT-OK',
-                'assigned_user' => $victim->id,
-            ])
-            ->assertOk()
-            ->assertStatusMessageIs('success')
-            ->assertMessagesAre(trans('admin/hardware/message.create.success'));
+test('create with assignment succeeds and checks out when checkout permission granted', function () {
+    $creator = User::factory()->createAssets()->checkoutAssets()->create();
+    $victim = User::factory()->create();
+    $model = AssetModel::factory()->create();
+    $status = Statuslabel::factory()->readyToDeploy()->create();
 
-        $this->assertDatabaseHas('assets', [
+    $this->actingAsForApi($creator)
+        ->postJson(route('api.assets.store'), [
+            'model_id' => $model->id,
+            'status_id' => $status->id,
             'asset_tag' => 'CHECKOUT-OK',
-            'assigned_to' => $victim->id,
-        ]);
-    }
-}
+            'assigned_user' => $victim->id,
+        ])
+        ->assertOk()
+        ->assertStatusMessageIs('success')
+        ->assertMessagesAre(trans('admin/hardware/message.create.success'));
+
+    $this->assertDatabaseHas('assets', [
+        'asset_tag' => 'CHECKOUT-OK',
+        'assigned_to' => $victim->id,
+    ]);
+});

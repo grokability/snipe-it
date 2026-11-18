@@ -1,88 +1,78 @@
 <?php
 
-namespace Tests\Feature\Assets\Api;
-
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\User;
-use Tests\TestCase;
 
-class AssetNotesTest extends TestCase
-{
-    public function test_that_a_non_existent_asset_id_returns_error()
-    {
-        $this->actingAsForApi(User::factory()->editAssets()->create())
-            ->postJson(route('api.notes.store', ['asset' => 123456789]))
-            ->assertStatusMessageIs('error');
-    }
+test('that a non existent asset id returns error', function () {
+    $this->actingAsForApi(User::factory()->editAssets()->create())
+        ->postJson(route('api.notes.store', ['asset' => 123456789]))
+        ->assertStatusMessageIs('error');
+});
 
-    public function test_requires_permission_to_add_note_to_asset_asset()
-    {
-        $asset = Asset::factory()->create();
+test('requires permission to add note to asset asset', function () {
+    $asset = Asset::factory()->create();
 
-        $this->actingAsForApi(User::factory()->create())
-            ->postJson(route('api.notes.store', $asset), [
-                'note' => 'test',
-            ])
-            ->assertForbidden();
-    }
+    $this->actingAsForApi(User::factory()->create())
+        ->postJson(route('api.notes.store', $asset), [
+            'note' => 'test',
+        ])
+        ->assertForbidden();
+});
 
-    public function test_asset_note_is_saved()
-    {
-        $asset = Asset::factory()->create();
+test('asset note is saved', function () {
+    $asset = Asset::factory()->create();
 
-        $this->actingAsForApi(User::factory()->editAssets()->create())
-            ->postJson(route('api.notes.store', $asset), [
+    $this->actingAsForApi(User::factory()->editAssets()->create())
+        ->postJson(route('api.notes.store', $asset), [
+            'note' => 'This is a test note.',
+        ])
+        ->assertStatusMessageIs('success')
+        ->assertJson([
+            'messages' => trans('general.note_added'),
+            'payload' => [
                 'note' => 'This is a test note.',
-            ])
-            ->assertStatusMessageIs('success')
-            ->assertJson([
-                'messages' => trans('general.note_added'),
-                'payload' => [
-                    'note' => 'This is a test note.',
-                    'item_id' => e($asset->id),
-                ],
-            ])
-            ->assertStatus(200);
+                'item_id' => e($asset->id),
+            ],
+        ])
+        ->assertStatus(200);
 
-        $note = Actionlog::where('item_id', $asset->id)
-            ->where('action_type', 'note added')
-            ->first();
+    $note = Actionlog::where('item_id', $asset->id)
+        ->where('action_type', 'note added')
+        ->first();
 
-        $this->assertNotNull($note, 'The note was not saved in the database.');
-        $this->assertEquals('This is a test note.', $note->note, 'The note content does not match.');
-    }
+    expect($note)->not->toBeNull('The note was not saved in the database.');
+    expect($note->note)->toEqual('This is a test note.', 'The note content does not match.');
+});
 
-    public function test_asset_notes_are_retrievable()
-    {
-        $asset = Asset::factory()->create();
+test('asset notes are retrievable', function () {
+    $asset = Asset::factory()->create();
 
-        $user = User::factory()->viewAssets()->create();
+    $user = User::factory()->viewAssets()->create();
 
-        $assetNote = Actionlog::factory()
-            ->assetNote($user)
-            ->create([
-                'item_id' => $asset->id,
-                'note' => 'This is a test note.',
-            ]);
+    $assetNote = Actionlog::factory()
+        ->assetNote($user)
+        ->create([
+            'item_id' => $asset->id,
+            'note' => 'This is a test note.',
+        ]);
 
-        $this->actingAsForApi($user)
-            ->getJson(route('api.notes.index', $asset))
-            ->assertOk()
-            ->assertJson([
-                'messages' => null,
-                'payload' => [
-                    'notes' => [
-                        [
-                            'note' => 'This is a test note.',
-                            'created_by' => $assetNote->created_by,
-                            'username' => $user->username,
-                            'item_id' => $assetNote->item_id,
-                            'item_type' => Asset::class,
-                            'action_type' => 'note added',
-                        ],
+    $this->actingAsForApi($user)
+        ->getJson(route('api.notes.index', $asset))
+        ->assertOk()
+        ->assertJson([
+            'messages' => null,
+            'payload' => [
+                'notes' => [
+                    [
+                        'note' => 'This is a test note.',
+                        'created_by' => $assetNote->created_by,
+                        'username' => $user->username,
+                        'item_id' => $assetNote->item_id,
+                        'item_type' => Asset::class,
+                        'action_type' => 'note added',
                     ],
                 ],
-            ]);
-    }
-}
+            ],
+        ]);
+});

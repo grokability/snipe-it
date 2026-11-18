@@ -1,132 +1,122 @@
 <?php
 
-namespace Tests\Feature\Assets\Ui;
-
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\User;
-use Tests\TestCase;
 
-class ForceCheckinAssetTest extends TestCase
-{
-    public function test_permission_required_to_force_checkin_asset()
-    {
-        $asset = Asset::factory()->create();
+test('permission required to force checkin asset', function () {
+    $asset = Asset::factory()->create();
 
-        $this->actingAs(User::factory()->create())
-            ->post(route('asset.checkin.force', $asset))
-            ->assertForbidden();
-    }
+    $this->actingAs(User::factory()->create())
+        ->post(route('asset.checkin.force', $asset))
+        ->assertForbidden();
+});
 
-    public function test_can_force_checkin_asset_with_orphaned_assigned_to_and_missing_type()
-    {
-        $asset = Asset::factory()->create();
-        $originalCheckinCounter = (int) $asset->checkin_counter;
-        $asset->assigned_to = 999; // Non-existent ID
-        $asset->assigned_type = null; // Missing type
-        $asset->forceSave();
+test('can force checkin asset with orphaned assigned to and missing type', function () {
+    $asset = Asset::factory()->create();
+    $originalCheckinCounter = (int) $asset->checkin_counter;
+    $asset->assigned_to = 999;
+    // Non-existent ID
+    $asset->assigned_type = null;
+    // Missing type
+    $asset->forceSave();
 
-        $response = $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('asset.checkin.force', $asset));
+    $response = $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route('asset.checkin.force', $asset));
 
-        $response->assertRedirect(route('hardware.show', $asset))
-            ->assertSessionHas('success');
+    $response->assertRedirect(route('hardware.show', $asset))
+        ->assertSessionHas('success');
 
-        $asset->refresh();
-        $this->assertNull($asset->assigned_to);
-        $this->assertNull($asset->assigned_type);
-        $this->assertSame($originalCheckinCounter, (int) $asset->checkin_counter);
+    $asset->refresh();
+    expect($asset->assigned_to)->toBeNull();
+    expect($asset->assigned_type)->toBeNull();
+    expect((int) $asset->checkin_counter)->toBe($originalCheckinCounter);
 
-        $this->assertDatabaseHas((new Actionlog)->getTable(), [
-            'item_type' => Asset::class,
-            'item_id' => $asset->id,
-            'action_type' => 'force checkin',
-        ]);
+    $this->assertDatabaseHas((new Actionlog)->getTable(), [
+        'item_type' => Asset::class,
+        'item_id' => $asset->id,
+        'action_type' => 'force checkin',
+    ]);
 
-        $forceCheckinLog = Actionlog::query()
-            ->where('item_type', Asset::class)
-            ->where('item_id', $asset->id)
-            ->where('action_type', 'force checkin')
-            ->latest('id')
-            ->first();
+    $forceCheckinLog = Actionlog::query()
+        ->where('item_type', Asset::class)
+        ->where('item_id', $asset->id)
+        ->where('action_type', 'force checkin')
+        ->latest('id')
+        ->first();
 
-        $this->assertNotNull($forceCheckinLog);
-        $this->assertNull($forceCheckinLog->log_meta);
-    }
+    expect($forceCheckinLog)->not->toBeNull();
+    expect($forceCheckinLog->log_meta)->toBeNull();
+});
 
-    public function test_can_force_checkin_asset_with_hard_deleted_assigned_to()
-    {
-        $user = User::factory()->create();
-        $asset = Asset::factory()->create();
-        $asset->assigned_to = $user->id;
-        $asset->assigned_type = User::class;
-        $asset->save();
+test('can force checkin asset with hard deleted assigned to', function () {
+    $user = User::factory()->create();
+    $asset = Asset::factory()->create();
+    $asset->assigned_to = $user->id;
+    $asset->assigned_type = User::class;
+    $asset->save();
 
-        // Hard delete the user
-        $user->forceDelete();
+    // Hard delete the user
+    $user->forceDelete();
 
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('asset.checkin.force', $asset))
-            ->assertRedirect(route('hardware.show', $asset))
-            ->assertSessionHas('success');
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route('asset.checkin.force', $asset))
+        ->assertRedirect(route('hardware.show', $asset))
+        ->assertSessionHas('success');
 
-        $asset->refresh();
-        $this->assertNull($asset->assigned_to);
-        $this->assertNull($asset->assigned_type);
-    }
+    $asset->refresh();
+    expect($asset->assigned_to)->toBeNull();
+    expect($asset->assigned_type)->toBeNull();
+});
 
-    public function test_cannot_force_checkin_asset_that_is_not_orphaned()
-    {
-        $user = User::factory()->create();
-        $asset = Asset::factory()->create();
-        $asset->assigned_to = $user->id;
-        $asset->assigned_type = User::class;
-        $asset->save();
+test('cannot force checkin asset that is not orphaned', function () {
+    $user = User::factory()->create();
+    $asset = Asset::factory()->create();
+    $asset->assigned_to = $user->id;
+    $asset->assigned_type = User::class;
+    $asset->save();
 
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('asset.checkin.force', $asset))
-            ->assertRedirect(route('hardware.show', $asset))
-            ->assertSessionHas('error');
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route('asset.checkin.force', $asset))
+        ->assertRedirect(route('hardware.show', $asset))
+        ->assertSessionHas('error');
 
-        $asset->refresh();
-        $this->assertNotNull($asset->assigned_to);
-    }
+    $asset->refresh();
+    expect($asset->assigned_to)->not->toBeNull();
+});
 
-    public function test_cannot_force_checkin_asset_with_no_assignment()
-    {
-        $asset = Asset::factory()->create();
-        $asset->assigned_to = null;
-        $asset->assigned_type = null;
-        $asset->save();
+test('cannot force checkin asset with no assignment', function () {
+    $asset = Asset::factory()->create();
+    $asset->assigned_to = null;
+    $asset->assigned_type = null;
+    $asset->save();
 
-        $this->actingAs(User::factory()->checkinAssets()->create())
-            ->post(route('asset.checkin.force', $asset))
-            ->assertRedirect(route('hardware.show', $asset))
-            ->assertSessionHas('error');
-    }
+    $this->actingAs(User::factory()->checkinAssets()->create())
+        ->post(route('asset.checkin.force', $asset))
+        ->assertRedirect(route('hardware.show', $asset))
+        ->assertSessionHas('error');
+});
 
-    public function test_force_checkin_button_shown_on_asset_view_when_orphaned()
-    {
-        $asset = Asset::factory()->create();
-        $asset->assigned_to = 999; // Non-existent ID
-        $asset->assigned_type = User::class;
-        $asset->save();
+test('force checkin button shown on asset view when orphaned', function () {
+    $asset = Asset::factory()->create();
+    $asset->assigned_to = 999;
+    // Non-existent ID
+    $asset->assigned_type = User::class;
+    $asset->save();
 
-        $this->actingAs(User::factory()->superuser()->create())
-            ->get(route('hardware.show', $asset))
-            ->assertSeeText(trans('general.force_checkin'));
-    }
+    $this->actingAs(User::factory()->superuser()->create())
+        ->get(route('hardware.show', $asset))
+        ->assertSeeText(trans('general.force_checkin'));
+});
 
-    public function test_force_checkin_button_not_shown_when_asset_is_not_orphaned()
-    {
-        $user = User::factory()->create();
-        $asset = Asset::factory()->create();
-        $asset->assigned_to = $user->id;
-        $asset->assigned_type = User::class;
-        $asset->save();
+test('force checkin button not shown when asset is not orphaned', function () {
+    $user = User::factory()->create();
+    $asset = Asset::factory()->create();
+    $asset->assigned_to = $user->id;
+    $asset->assigned_type = User::class;
+    $asset->save();
 
-        $this->actingAs(User::factory()->superuser()->create())
-            ->get(route('hardware.show', $asset))
-            ->assertDontSeeText(trans('general.force_checkin'));
-    }
-}
+    $this->actingAs(User::factory()->superuser()->create())
+        ->get(route('hardware.show', $asset))
+        ->assertDontSeeText(trans('general.force_checkin'));
+});

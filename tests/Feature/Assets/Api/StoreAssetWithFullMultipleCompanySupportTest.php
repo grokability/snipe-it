@@ -1,58 +1,43 @@
 <?php
 
-namespace Tests\Feature\Assets\Api;
-
 use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Statuslabel;
-use PHPUnit\Framework\Attributes\DataProvider;
-use Tests\Support\ProvidesDataForFullMultipleCompanySupportTesting;
-use Tests\TestCase;
 
-class StoreAssetWithFullMultipleCompanySupportTest extends TestCase
-{
-    use ProvidesDataForFullMultipleCompanySupportTesting;
+uses(\Tests\Support\ProvidesDataForFullMultipleCompanySupportTesting::class);
 
-    /**
-     * @link https://github.com/grokability/snipe-it/issues/15654
-     */
-    #[DataProvider('dataForFullMultipleCompanySupportTesting')]
-    public function test_adheres_to_full_multiple_companies_support_scoping($data)
-    {
-        ['actor' => $actor, 'company_attempting_to_associate' => $company, 'assertions' => $assertions] = $data();
+test('adheres to full multiple companies support scoping', function ($data) {
+    ['actor' => $actor, 'company_attempting_to_associate' => $company, 'assertions' => $assertions] = $data();
 
-        $this->settings->enableMultipleFullCompanySupport();
+    $this->settings->enableMultipleFullCompanySupport();
 
-        $response = $this->actingAsForApi($actor)
-            ->postJson(route('api.assets.store'), [
-                'asset_tag' => 'random_string',
-                'company_id' => $company->id,
-                'model_id' => AssetModel::factory()->create()->id,
-                'status_id' => Statuslabel::factory()->readyToDeploy()->create()->id,
-            ]);
+    $response = $this->actingAsForApi($actor)
+        ->postJson(route('api.assets.store'), [
+            'asset_tag' => 'random_string',
+            'company_id' => $company->id,
+            'model_id' => AssetModel::factory()->create()->id,
+            'status_id' => Statuslabel::factory()->readyToDeploy()->create()->id,
+        ]);
 
-        $asset = Asset::withoutGlobalScopes()->findOrFail($response['payload']['id']);
+    $asset = Asset::withoutGlobalScopes()->findOrFail($response['payload']['id']);
 
-        $assertions($asset);
-    }
+    $assertions($asset);
+})->with('dataForFullMultipleCompanySupportTesting');
 
-    #[DataProvider('dataForFullMultipleCompanySupportTesting')]
-    public function test_handles_company_id_being_string($data)
-    {
-        ['actor' => $actor, 'company_attempting_to_associate' => $company, 'assertions' => $assertions] = $data();
+test('handles company id being string', function ($data) {
+    ['actor' => $actor, 'company_attempting_to_associate' => $company, 'assertions' => $assertions] = $data();
 
-        $this->settings->enableMultipleFullCompanySupport();
+    $this->settings->enableMultipleFullCompanySupport();
 
-        $response = $this->actingAsForApi($actor)
-            ->postJson(route('api.assets.store'), [
-                'asset_tag' => 'random_string',
-                'company_id' => (string) $company->id,
-                'model_id' => AssetModel::factory()->create()->id,
-                'status_id' => Statuslabel::factory()->readyToDeploy()->create()->id,
-            ]);
+    $response = $this->actingAsForApi($actor)
+        ->postJson(route('api.assets.store'), [
+            'asset_tag' => 'random_string',
+            'company_id' => (string) $company->id,
+            'model_id' => AssetModel::factory()->create()->id,
+            'status_id' => Statuslabel::factory()->readyToDeploy()->create()->id,
+        ]);
 
-        $asset = Asset::withoutGlobalScopes()->findOrFail($response['payload']['id']);
+    $asset = Asset::withoutGlobalScopes()->findOrFail($response['payload']['id']);
 
-        $assertions($asset);
-    }
-}
+    $assertions($asset);
+})->with('dataForFullMultipleCompanySupportTesting');
