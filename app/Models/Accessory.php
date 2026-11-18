@@ -31,7 +31,6 @@ use Watson\Validating\ValidatingTrait;
  * Model for Accessories.
  *
  * @version v1.0
- *
  * @mixin IdeHelperAccessory
  */
 class Accessory extends SnipeModel implements Importable

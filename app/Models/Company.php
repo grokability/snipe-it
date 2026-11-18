@@ -29,7 +29,6 @@ use Watson\Validating\ValidatingTrait;
  * Model for Companies.
  *
  * @version v1.8
- *
  * @mixin IdeHelperCompany
  */
 final class Company extends SnipeModel

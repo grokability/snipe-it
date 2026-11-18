@@ -41,7 +41,6 @@ use Illuminate\Validation\Validator;
  * Model for Assets.
  *
  * @version v1.0
- *
  * @property ?int $location_id
  * @property \Carbon\Carbon|string|null $next_audit_date
  * @property \Carbon\Carbon|string|null $last_audit_date
@@ -51,7 +50,6 @@ use Illuminate\Validation\Validator;
  * @property bool $requestable
  * @property Asset|Location|User|null $assigned Current checkout target. morphTo relation named `assigned` (declared on method `assignedTo()`). Eloquent resolves the dynamic property by the morphTo name arg, not the method name, so this `@property` is distinct from `@property ... $assignedTo` written by ide-helper.
  * @property Asset|Location|User|null $assignedTo Current checkout target. morphTo relation named `assigned` (declared on method `assignedTo()`). Eloquent resolves the dynamic property by the morphTo name arg, not the method name, so this `@property` is distinct from `@property ... $assigned` written by ide-helper.
- *
  * @mixin IdeHelperAsset
  */
 class Asset extends Depreciable implements HasCustomFields, Importable
