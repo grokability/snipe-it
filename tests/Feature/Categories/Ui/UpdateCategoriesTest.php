@@ -1,117 +1,103 @@
 <?php
 
-namespace Tests\Feature\Categories\Ui;
-
 use App\Models\Asset;
 use App\Models\Category;
 use App\Models\User;
-use Tests\TestCase;
 
-class UpdateCategoriesTest extends TestCase
-{
-    public function test_permission_required_to_store_category()
-    {
-        $this->actingAs(User::factory()->create())
-            ->post(route('categories.store'), [
-                'name' => 'Test Category',
-                'category_type' => 'asset',
-            ])
-            ->assertStatus(403)
-            ->assertForbidden();
-    }
-
-    public function test_page_renders()
-    {
-        $this->actingAs(User::factory()->superuser()->create())
-            ->get(route('categories.edit', Category::factory()->create()))
-            ->assertOk();
-    }
-
-    public function test_user_can_create_categories()
-    {
-        $this->actingAs(User::factory()->superuser()->create())
-            ->post(route('categories.store'), [
-                'name' => 'Test Category',
-                'category_type' => 'asset',
-            ])
-            ->assertStatus(302)
-            ->assertSessionHasNoErrors()
-            ->assertRedirect(route('categories.index'));
-
-        $this->assertTrue(Category::where('name', 'Test Category')->exists());
-    }
-
-    public function test_user_can_edit_asset_category()
-    {
-        $category = Category::factory()->forAssets()->create([
+test('permission required to store category', function () {
+    $this->actingAs(User::factory()->create())
+        ->post(route('categories.store'), [
             'name' => 'Test Category',
-            'require_acceptance' => false,
-            'alert_on_response' => false,
-        ]);
+            'category_type' => 'asset',
+        ])
+        ->assertStatus(403)
+        ->assertForbidden();
+});
 
-        $this->assertTrue(Category::where('name', 'Test Category')->exists());
+test('page renders', function () {
+    $this->actingAs(User::factory()->superuser()->create())
+        ->get(route('categories.edit', Category::factory()->create()))
+        ->assertOk();
+});
 
-        $response = $this->actingAs(User::factory()->superuser()->create())
-            ->put(route('categories.update', $category), [
-                'name' => 'Test Category Edited',
-                'notes' => 'Test Note Edited',
-                'require_acceptance' => '1',
-                'alert_on_response' => '1',
-            ])
-            ->assertStatus(302)
-            ->assertSessionHasNoErrors()
-            ->assertRedirect(route('categories.index'));
+test('user can create categories', function () {
+    $this->actingAs(User::factory()->superuser()->create())
+        ->post(route('categories.store'), [
+            'name' => 'Test Category',
+            'category_type' => 'asset',
+        ])
+        ->assertStatus(302)
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('categories.index'));
 
-        $this->followRedirects($response)->assertSee('Success');
+    expect(Category::where('name', 'Test Category')->exists())->toBeTrue();
+});
 
-        $this->assertDatabaseHas('categories', [
+test('user can edit asset category', function () {
+    $category = Category::factory()->forAssets()->create([
+        'name' => 'Test Category',
+        'require_acceptance' => false,
+        'alert_on_response' => false,
+    ]);
+
+    expect(Category::where('name', 'Test Category')->exists())->toBeTrue();
+
+    $response = $this->actingAs(User::factory()->superuser()->create())
+        ->put(route('categories.update', $category), [
             'name' => 'Test Category Edited',
             'notes' => 'Test Note Edited',
-            'require_acceptance' => 1,
-            'alert_on_response' => 1,
-        ]);
-    }
+            'require_acceptance' => '1',
+            'alert_on_response' => '1',
+        ])
+        ->assertStatus(302)
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('categories.index'));
 
-    public function test_user_can_change_category_type_if_no_assets_associated()
-    {
-        $category = Category::factory()->forAssets()->create(['name' => 'Test Category']);
-        $this->assertTrue(Category::where('name', 'Test Category')->exists());
+    $this->followRedirects($response)->assertSee('Success');
 
-        $response = $this->actingAs(User::factory()->superuser()->create())
-            ->from(route('categories.edit', $category->id))
-            ->put(route('categories.update', $category), [
-                'name' => 'Test Category Edited',
-                'category_type' => 'accessory',
-                'notes' => 'Test Note Edited',
-            ])
-            ->assertSessionHasNoErrors()
-            ->assertStatus(302)
-            ->assertRedirect(route('categories.index'));
+    $this->assertDatabaseHas('categories', [
+        'name' => 'Test Category Edited',
+        'notes' => 'Test Note Edited',
+        'require_acceptance' => 1,
+        'alert_on_response' => 1,
+    ]);
+});
 
-        $this->followRedirects($response)->assertSee('Success');
-        $this->assertTrue(Category::where('name', 'Test Category Edited')->where('notes', 'Test Note Edited')->exists());
+test('user can change category type if no assets associated', function () {
+    $category = Category::factory()->forAssets()->create(['name' => 'Test Category']);
+    expect(Category::where('name', 'Test Category')->exists())->toBeTrue();
 
-    }
+    $response = $this->actingAs(User::factory()->superuser()->create())
+        ->from(route('categories.edit', $category->id))
+        ->put(route('categories.update', $category), [
+            'name' => 'Test Category Edited',
+            'category_type' => 'accessory',
+            'notes' => 'Test Note Edited',
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertStatus(302)
+        ->assertRedirect(route('categories.index'));
 
-    public function test_user_cannot_change_category_type_if_assets_are_associated()
-    {
-        Asset::factory()->count(5)->laptopMbp()->create();
-        $category = Category::where('name', 'Laptops')->first();
+    $this->followRedirects($response)->assertSee('Success');
+    expect(Category::where('name', 'Test Category Edited')->where('notes', 'Test Note Edited')->exists())->toBeTrue();
+});
 
-        $response = $this->actingAs(User::factory()->superuser()->create())
-            ->from(route('categories.edit', $category))
-            ->put(route('categories.update', $category), [
-                'name' => 'Test Category Edited',
-                'category_type' => 'accessory',
-                'notes' => 'Test Note Edited',
-            ])
-            ->assertSessionHasErrors(['category_type'])
-            ->assertInvalid(['category_type'])
-            ->assertStatus(302)
-            ->assertRedirect(route('categories.edit', $category));
+test('user cannot change category type if assets are associated', function () {
+    Asset::factory()->count(5)->laptopMbp()->create();
+    $category = Category::where('name', 'Laptops')->first();
 
-        $this->followRedirects($response)->assertSee(trans('general.error'));
-        $this->assertFalse(Category::where('name', 'Test Category Edited')->where('notes', 'Test Note Edited')->exists());
+    $response = $this->actingAs(User::factory()->superuser()->create())
+        ->from(route('categories.edit', $category))
+        ->put(route('categories.update', $category), [
+            'name' => 'Test Category Edited',
+            'category_type' => 'accessory',
+            'notes' => 'Test Note Edited',
+        ])
+        ->assertSessionHasErrors(['category_type'])
+        ->assertInvalid(['category_type'])
+        ->assertStatus(302)
+        ->assertRedirect(route('categories.edit', $category));
 
-    }
-}
+    $this->followRedirects($response)->assertSee(trans('general.error'));
+    expect(Category::where('name', 'Test Category Edited')->where('notes', 'Test Note Edited')->exists())->toBeFalse();
+});
