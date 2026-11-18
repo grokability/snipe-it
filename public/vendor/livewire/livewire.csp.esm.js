@@ -4375,7 +4375,7 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
       get transaction() {
         return transaction;
       },
-      version: "3.17.4",
+      version: "3.17.5",
       flushAndStopDeferringMutations,
       dontAutoEvaluateFunctions,
       disableEffectScheduling,
@@ -5942,7 +5942,11 @@ ${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
     function isGetterSetter(value) {
       return value !== null && typeof value === "object" && typeof value.get === "function" && typeof value.set === "function";
     }
-    directive2("cloak", (el) => queueMicrotask(() => mutateDom(() => el.removeAttribute(prefix("cloak")))));
+    directive2("cloak", (el) => {
+      if (isCloning)
+        return el.removeAttribute(prefix("cloak"));
+      queueMicrotask(() => mutateDom(() => el.removeAttribute(prefix("cloak"))));
+    });
     addInitSelector(() => `[${prefix("init")}]`);
     directive2("init", skipDuringClone((el, { expression }, { evaluate: evaluate2 }) => {
       if (typeof expression === "string") {
@@ -11752,6 +11756,11 @@ var WeakBag = class {
     return this.get(key).forEach(callback);
   }
 };
+function arrayPull(array, item) {
+  let index = array.indexOf(item);
+  if (index !== -1)
+    array.splice(index, 1);
+}
 function dispatch(target, name, detail = {}, bubbles = true) {
   target.dispatchEvent(
     new CustomEvent(name, {
@@ -12738,19 +12747,19 @@ var InterceptorRegistry = class {
   addInterceptor(component, callback) {
     this.messageInterceptorCallbacksByComponent.add(component, callback);
     return () => {
-      this.messageInterceptorCallbacksByComponent.delete(component, callback);
+      arrayPull(this.messageInterceptorCallbacksByComponent.get(component), callback);
     };
   }
   addMessageInterceptor(callback) {
     this.messageInterceptorCallbacks.push(callback);
     return () => {
-      this.messageInterceptorCallbacks.splice(this.messageInterceptorCallbacks.indexOf(callback), 1);
+      arrayPull(this.messageInterceptorCallbacks, callback);
     };
   }
   addRequestInterceptor(callback) {
     this.requestInterceptorCallbacks.push(callback);
     return () => {
-      this.requestInterceptorCallbacks.splice(this.requestInterceptorCallbacks.indexOf(callback), 1);
+      arrayPull(this.requestInterceptorCallbacks, callback);
     };
   }
   getMessageInterceptors(message) {
@@ -12763,7 +12772,7 @@ var InterceptorRegistry = class {
     });
   }
   getRequestInterceptors(request) {
-    return this.requestInterceptorCallbacks.map((callback) => {
+    return Array.from(this.requestInterceptorCallbacks).map((callback) => {
       return new RequestInterceptor(request, callback);
     });
   }
@@ -13381,7 +13390,7 @@ function setNextActionInterceptor(callback) {
 function interceptAction(callback) {
   actionInterceptors.push(callback);
   return () => {
-    actionInterceptors.splice(actionInterceptors.indexOf(callback), 1);
+    arrayPull(actionInterceptors, callback);
   };
 }
 function interceptMessage(callback) {
@@ -13393,7 +13402,7 @@ function interceptRequest(callback) {
 function interceptPartition(callback) {
   partitionInterceptors.push(callback);
   return () => {
-    partitionInterceptors.splice(partitionInterceptors.indexOf(callback), 1);
+    arrayPull(partitionInterceptors, callback);
   };
 }
 function interceptComponentAction(component, actionNameOrCallback, maybeCallback) {
@@ -13447,7 +13456,7 @@ function fireAction(component, method, params = [], metadata = {}) {
   if (component.__isWireProxy)
     component = component.__instance;
   let action = constructAction(component, method, params, metadata);
-  actionInterceptors.forEach((callback) => {
+  Array.from(actionInterceptors).forEach((callback) => {
     callback({
       action,
       onSend: (cb) => action.onSendCallbacks.push(cb),
@@ -13495,7 +13504,7 @@ function createOrAddToOutstandingMessage(action) {
 function sendMessages() {
   let requests = /* @__PURE__ */ new Set();
   messageBus.eachPendingMessage((message) => {
-    partitionInterceptors.forEach((callback) => {
+    Array.from(partitionInterceptors).forEach((callback) => {
       callback({
         message,
         compileRequest: (messages2) => {
@@ -14461,9 +14470,9 @@ function generateWireObject(component, state) {
     get(target, property) {
       if (property === "__instance")
         return component;
-      if (property in aliases) {
+      if (Object.hasOwn(aliases, property)) {
         return getProperty(component, aliases[property]);
-      } else if (property in properties) {
+      } else if (Object.hasOwn(properties, property)) {
         return getProperty(component, property);
       } else if (property in state) {
         return state[property];
@@ -14750,13 +14759,13 @@ var Component = class {
   mergeQueuedUpdates(diff2) {
     Object.entries(this.queuedUpdates).forEach(([updateKey, updateValue]) => {
       Object.entries(diff2).forEach(([diffKey, diffValue]) => {
-        if (diffKey.startsWith(updateKey)) {
+        if (diffKey === updateKey || diffKey.startsWith(updateKey + ".")) {
           delete diff2[diffKey];
         }
       });
       diff2[updateKey] = updateValue;
     });
-    this.queuedUpdates = [];
+    this.queuedUpdates = {};
     return diff2;
   }
   getUpdates() {
@@ -14898,10 +14907,7 @@ var Component = class {
   addCleanup(cleanup) {
     this.cleanups.push(cleanup);
     return () => {
-      let index = this.cleanups.indexOf(cleanup);
-      if (index === -1)
-        return;
-      this.cleanups.splice(index, 1);
+      arrayPull(this.cleanups, cleanup);
     };
   }
   cleanup() {
@@ -14917,7 +14923,7 @@ function closestFragment(el, { isMatch, hasReachedBoundary }) {
   if (!hasReachedBoundary)
     hasReachedBoundary = () => false;
   let current = el;
-  while (current) {
+  while (current && !hasReachedBoundary({ el: current })) {
     let sibling = current.previousSibling;
     let foundEndMarker = [];
     while (sibling) {
@@ -14937,9 +14943,6 @@ function closestFragment(el, { isMatch, hasReachedBoundary }) {
       sibling = sibling.previousSibling;
     }
     current = current.parentElement;
-    if (current && hasReachedBoundary({ el: current })) {
-      break;
-    }
   }
   return null;
 }
@@ -15767,6 +15770,10 @@ function injectStyles() {
 
     #nprogress {
       pointer-events: none;
+
+      /* NProgress fades out by setting opacity here, which creates a stacking context... */
+      position: relative;
+      z-index: 1031;
     }
 
     #nprogress .bar {
@@ -17285,7 +17292,8 @@ function closestIsland(el) {
   return closestFragment(el, {
     isMatch: ({ type: type2 }) => {
       return type2 === "island";
-    }
+    },
+    hasReachedBoundary: ({ el: el2 }) => el2.hasAttribute("wire:id")
   });
 }
 async function renderIsland(component, islandHtml) {
