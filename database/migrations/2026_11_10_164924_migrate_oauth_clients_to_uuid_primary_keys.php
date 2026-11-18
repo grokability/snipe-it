@@ -153,10 +153,25 @@ return new class extends Migration
      * Passport v12 fails client auth silently after the upgrade. The
      * command is idempotent and skips rows that are already hashed, so
      * re-runs are no-ops on installs that have been through it.
+     *
+     * Public (PKCE) clients historically stored '' as the secret
+     * sentinel (the Snipe-IT mobile app client is the canonical case).
+     * passport:hash bcrypt-encodes that empty string, and Client::
+     * confidential() then reads the non-empty hash as "confidential",
+     * so the token-exchange rejects the mobile with invalid_client.
+     * Null the secret back out on any row whose hash matches the
+     * empty string so those clients revert to public.
      */
     private function hashLegacyClientSecrets(): void
     {
         Artisan::call('passport:hash', ['--force' => true]);
+
+        $hasher = app('hash');
+        foreach (DB::table('oauth_clients')->whereNotNull('secret')->cursor() as $client) {
+            if ($hasher->check('', $client->secret)) {
+                DB::table('oauth_clients')->where('id', $client->id)->update(['secret' => null]);
+            }
+        }
     }
 
     /**

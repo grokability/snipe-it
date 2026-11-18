@@ -27,12 +27,13 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
     });
 
     Route::withoutMiddleware(['api'])->get('/client', function () {
+        // Mobile is a PKCE/public client, so secret MUST be null.
         $client = Client::firstOrCreate(
             ['redirect' => 'com.grokability.snipeitmobile://home'],
             [
                 'name' => 'Snipe-IT Mobile App',
                 'user_id' => null,
-                'secret' => '',
+                'secret' => null,
                 'personal_access_client' => false,
                 'password_client' => false,
                 'revoked' => false,
