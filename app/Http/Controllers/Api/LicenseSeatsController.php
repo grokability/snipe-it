@@ -89,6 +89,11 @@ class LicenseSeatsController extends Controller
 
         $this->authorize('view', License::class);
 
+        // Load the owning License through CompanyableScope first
+        if (!License::find($licenseId)) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, 'Seat ID or license not found or the seat does not belong to this license'));
+        }
+
         if ($licenseSeat = LicenseSeat::where('license_id', $licenseId)->find($seatId)) {
             return (new LicenseSeatsTransformer)->transformLicenseSeat($licenseSeat);
         }

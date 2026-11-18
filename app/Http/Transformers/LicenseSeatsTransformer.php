@@ -22,9 +22,14 @@ class LicenseSeatsTransformer
 
     public function transformLicenseSeat(LicenseSeat $seat)
     {
+        // $seat->license is scoped by CompanyableScope on the License
+        // model, so a seat whose owning license is in a different
+        // tenant than the caller resolves to null here
+        $license = $seat->license;
+
         $array = [
             'id' => (int) $seat->id,
-            'license_id' => (int) $seat->license->id,
+            'license_id' => $license ? (int) $license->id : null,
             'updated_at' => Helper::getFormattedDateObject($seat->updated_at, 'datetime'), // we use updated_at here because the record gets updated when it's checked in or out
             'assigned_user' => $this->transformAssignedUser($seat),
             'assigned_asset' => ($seat->asset) ? [
@@ -38,20 +43,20 @@ class LicenseSeatsTransformer
                 'tag_color' => $seat->location()->tag_color ? e($seat->location()->tag_color) : null,
                 'created_at' => Helper::getFormattedDateObject($seat->created_at, 'datetime'),
             ] : null,
-            'reassignable' => (bool) $seat->license->reassignable,
+            'reassignable' => (bool) ($license?->reassignable ?? false),
             'notes' => e($seat->notes),
             'user_can_checkout' => (($seat->assigned_to == '') && ($seat->asset_id == '')),
-            'disabled' => $seat->unreassignable_seat || $seat->license->isInactive(),
+            'disabled' => $seat->unreassignable_seat || ($license ? $license->isInactive() : true),
         ];
 
         $permissions_array['available_actions'] = [
-            'checkout' => Gate::allows('checkout', $seat->license),
-            'checkin' => Gate::allows('checkin', $seat->license),
-            'clone' => Gate::allows('clone', $seat->license),
-            'update' => Gate::allows('update', $seat->license),
-            'delete' => Gate::allows('delete', $seat->license),
+            'checkout' => $license ? Gate::allows('checkout', $license) : false,
+            'checkin' => $license ? Gate::allows('checkin', $license) : false,
+            'clone' => $license ? Gate::allows('clone', $license) : false,
+            'update' => $license ? Gate::allows('update', $license) : false,
+            'delete' => $license ? Gate::allows('delete', $license) : false,
             'bulk_selectable' => [
-                'checkin' => Gate::allows('checkin', $seat->license) && ($seat->assigned_to || $seat->asset_id),
+                'checkin' => $license ? (Gate::allows('checkin', $license) && ($seat->assigned_to || $seat->asset_id)) : false,
             ],
         ];
 
