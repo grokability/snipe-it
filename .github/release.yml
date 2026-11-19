@@ -1,0 +1,73 @@
+# .github/release.yml
+
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+      - github_actions
+    authors:
+      - octocat
+  categories:
+    - title: 🎁 New Features
+      labels:
+        - new-feature
+        - feature-request
+    - title: 🎉 Improvements
+      labels:
+        - improvements
+        - feature-improvements
+    - title: 🐛 Bugfixes
+      labels:
+        - bugfix       
+    - title: ❤️‍🩹 Breaking API Changes
+      labels:
+        - breaking-api-change
+    - title: ⚠️ Breaking Changes
+      labels:
+        - breaking-change
+    - title: 💖 UX/UI Improvements
+      labels:
+        - ux-ui  
+    - title: 🖨️ Label Printing
+      labels:
+        - labels 
+    - title: 👩‍🦼‍➡️ Accessibility
+      labels:
+        - accessibility
+    - title: 🤖 MCP Updates
+      labels:
+        - mcp
+    - title: 🔄 Sync Adapters
+      labels:
+        - sync-adapters  
+    - title: 💌 Notifications
+      labels:
+        - notifications     
+    - title: 🗓️ Calendar
+      labels:
+        - calendar 
+    - title: 🦄 Custom Fields
+      labels:
+        - custom-fields   
+    - title: 📥 Item Importer  
+      labels:
+        - importer     
+    - title: 🛎️ Item Acceptance
+      labels:
+        - item-acceptance
+    - title: 🤜💥🤛 Code Improvements
+      labels:
+        - code-improvements   
+    - title: 🐳 Docker
+      labels:
+        - docker    
+    - title: 🔐 Dependency & Security Updates
+      labels:
+        - dependencies 
+        - security    
+    - title: ⛑️ Tests & Testing
+      labels:
+        - tests-and-testing     
+    - title: Everything Else
+      labels:
+        - "*"
