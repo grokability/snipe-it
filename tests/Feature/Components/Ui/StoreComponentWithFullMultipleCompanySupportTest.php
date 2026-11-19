@@ -1,13 +1,11 @@
 <?php
 
 use App\Models\Category;
+use App\Models\Company;
 use App\Models\Component;
+use App\Models\User;
 
-uses(\Tests\Support\ProvidesDataForFullMultipleCompanySupportTesting::class);
-
-test('adheres to full multiple companies support scoping', function ($data) {
-    ['actor' => $actor, 'company_attempting_to_associate' => $company, 'assertions' => $assertions] = $data();
-
+test('adheres to full multiple companies support scoping', function (User $actor, Company $company, Closure $assertions) {
     $this->settings->enableMultipleFullCompanySupport();
 
     $this->actingAs($actor)
@@ -21,4 +19,4 @@ test('adheres to full multiple companies support scoping', function ($data) {
     $component = Component::where('name', 'My Cool Component')->sole();
 
     $assertions($component);
-})->with('dataForFullMultipleCompanySupportTesting');
+})->with('FMCS data');

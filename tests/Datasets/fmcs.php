@@ -4,7 +4,7 @@ use App\Models\Company;
 use App\Models\User;
 
 dataset('FMCS data', [
-    function () {
+    "User in a company should result in user's company_id being used" => function () {
         $jedi = Company::factory()->create();
         $luke = User::factory()->forCompany($jedi)
             ->createAccessories()
@@ -24,7 +24,7 @@ dataset('FMCS data', [
         ];
     },
 
-    function () {
+    'User without a company should result in company_id being null' => function () {
         $userInNoCompany = User::factory()
             ->withoutCompany()
             ->createAccessories()
@@ -43,7 +43,7 @@ dataset('FMCS data', [
         ];
     },
 
-    function () {
+    'Super-User assigning across companies should result in company_id being set to what was provided' => function () {
         $superUser = User::factory()->superuser()->withoutCompany()->create();
         $company = Company::factory()->create();
 

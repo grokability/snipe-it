@@ -7,11 +7,7 @@ use App\Models\Location;
 use App\Models\Statuslabel;
 use App\Models\User;
 
-uses(\Tests\Support\ProvidesDataForFullMultipleCompanySupportTesting::class);
-
-test('adheres to full multiple companies support scoping', function ($data) {
-    ['actor' => $actor, 'company_attempting_to_associate' => $company, 'assertions' => $assertions] = $data();
-
+test('adheres to full multiple companies support scoping', function (User $actor, Company $company, Closure $assertions) {
     $this->settings->enableMultipleFullCompanySupport();
 
     $this->actingAs($actor)
@@ -25,7 +21,7 @@ test('adheres to full multiple companies support scoping', function ($data) {
     $asset = Asset::where('asset_tag', '1234')->sole();
 
     $assertions($asset);
-})->with('dataForFullMultipleCompanySupportTesting');
+})->with('FMCS data');
 
 test('non admin with pivot only company membership can create asset in their company', function () {
     $this->settings->enableScopedLocationsWithFullMultipleCompanySupport();

@@ -2,13 +2,11 @@
 
 use App\Models\Asset;
 use App\Models\AssetModel;
+use App\Models\Company;
 use App\Models\Statuslabel;
+use App\Models\User;
 
-uses(\Tests\Support\ProvidesDataForFullMultipleCompanySupportTesting::class);
-
-test('adheres to full multiple companies support scoping', function ($data) {
-    ['actor' => $actor, 'company_attempting_to_associate' => $company, 'assertions' => $assertions] = $data();
-
+test('adheres to full multiple companies support scoping', function (User $actor, Company $company, Closure $assertions) {
     $this->settings->enableMultipleFullCompanySupport();
 
     $response = $this->actingAsForApi($actor)
@@ -22,11 +20,9 @@ test('adheres to full multiple companies support scoping', function ($data) {
     $asset = Asset::withoutGlobalScopes()->findOrFail($response['payload']['id']);
 
     $assertions($asset);
-})->with('dataForFullMultipleCompanySupportTesting');
+})->with('FMCS data');
 
-test('handles company id being string', function ($data) {
-    ['actor' => $actor, 'company_attempting_to_associate' => $company, 'assertions' => $assertions] = $data();
-
+test('handles company id being string', function (User $actor, Company $company, Closure $assertions) {
     $this->settings->enableMultipleFullCompanySupport();
 
     $response = $this->actingAsForApi($actor)
@@ -40,4 +36,4 @@ test('handles company id being string', function ($data) {
     $asset = Asset::withoutGlobalScopes()->findOrFail($response['payload']['id']);
 
     $assertions($asset);
-})->with('dataForFullMultipleCompanySupportTesting');
+})->with('FMCS data');
