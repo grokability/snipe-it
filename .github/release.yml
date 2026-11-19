@@ -32,6 +32,9 @@ changelog:
     - title: 🔄 Sync Adapters
       labels:
         - sync-adapters  
+    - title: 💌 Notifications
+      labels:
+        - notifications     
     - title: 🗓️ Calendar
       labels:
         - calendar 
