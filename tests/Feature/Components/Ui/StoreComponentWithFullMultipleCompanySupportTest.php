@@ -1,34 +1,24 @@
 <?php
 
-namespace Tests\Feature\Components\Ui;
-
 use App\Models\Category;
 use App\Models\Component;
-use PHPUnit\Framework\Attributes\DataProvider;
-use Tests\Support\ProvidesDataForFullMultipleCompanySupportTesting;
-use Tests\TestCase;
 
-class StoreComponentWithFullMultipleCompanySupportTest extends TestCase
-{
-    use ProvidesDataForFullMultipleCompanySupportTesting;
+uses(\Tests\Support\ProvidesDataForFullMultipleCompanySupportTesting::class);
 
-    #[DataProvider('dataForFullMultipleCompanySupportTesting')]
-    public function test_adheres_to_full_multiple_companies_support_scoping($data)
-    {
-        ['actor' => $actor, 'company_attempting_to_associate' => $company, 'assertions' => $assertions] = $data();
+test('adheres to full multiple companies support scoping', function ($data) {
+    ['actor' => $actor, 'company_attempting_to_associate' => $company, 'assertions' => $assertions] = $data();
 
-        $this->settings->enableMultipleFullCompanySupport();
+    $this->settings->enableMultipleFullCompanySupport();
 
-        $this->actingAs($actor)
-            ->post(route('components.store'), [
-                'name' => 'My Cool Component',
-                'qty' => '1',
-                'category_id' => Category::factory()->create()->id,
-                'company_id' => $company->id,
-            ]);
+    $this->actingAs($actor)
+        ->post(route('components.store'), [
+            'name' => 'My Cool Component',
+            'qty' => '1',
+            'category_id' => Category::factory()->create()->id,
+            'company_id' => $company->id,
+        ]);
 
-        $component = Component::where('name', 'My Cool Component')->sole();
+    $component = Component::where('name', 'My Cool Component')->sole();
 
-        $assertions($component);
-    }
-}
+    $assertions($component);
+})->with('dataForFullMultipleCompanySupportTesting');
