@@ -233,8 +233,7 @@ test('asset can be checked out', function ($checkoutType, $target, $expectedLoca
 
         return true;
     });
-    $this->assertHasTheseActionLogs($asset, ['create'/* , 'checkout' */]);
-    // TODO - only getting one?
+    $this->assertHasTheseActionLogs($asset, ['create'/* , 'checkout' */]); // TODO - only getting one?
 })->with([
     'User' => [
         function () {

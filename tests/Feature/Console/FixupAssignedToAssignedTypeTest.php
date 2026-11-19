@@ -9,8 +9,7 @@ test('empty assigned type', function () {
     $admin = User::factory()->admin()->create();
 
     $asset->checkOut($user, $admin);
-    $asset->assigned_type = null;
-    // blank out the assigned type
+    $asset->assigned_type = null; // blank out the assigned type
     $asset->save();
 
     $this->artisan('snipeit:assigned-to-fixup --debug')->assertExitCode(0);
@@ -27,11 +26,9 @@ test('invalid assigned to', function () {
     $asset->checkOut($user, $admin);
     $asset->assigned_type = null;
     $asset->assigned_to = null;
-    $asset->saveOrFail();
+    $asset->saveOrFail(); // *should* generate a 'checkin'?
 
-    // *should* generate a 'checkin'?
-    $asset->assigned_to = $user->id;
-    // incorrectly mark asset as partially checked-out
+    $asset->assigned_to = $user->id; // incorrectly mark asset as partially checked-out
     $asset->saveOrFail();
 
     $this->artisan('snipeit:assigned-to-fixup --debug')->assertExitCode(0);

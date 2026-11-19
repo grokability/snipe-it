@@ -39,9 +39,8 @@ test('each location has key fields', function () {
 test('filters by parent id', function () {
     $parent = Location::factory()->create();
     $child = Location::factory()->create(['parent_id' => $parent->id]);
-    Location::factory()->create();
+    Location::factory()->create(); // another location without parent
 
-    // another location without parent
     $content = listLocationsTool(['parent_id' => $parent->id])->getStructuredContent();
 
     $ids = array_column($content['locations'], 'id');

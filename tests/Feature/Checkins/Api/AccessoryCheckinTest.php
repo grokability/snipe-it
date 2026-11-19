@@ -60,8 +60,7 @@ test('can checkin accessory', function () {
         ->assertStatusMessageIs('success');
 
     expect($accessory->fresh()->checkouts->count())->toEqual(0, 'Accessory should be checked in');
-    $this->assertHasTheseActionLogs($accessory, ['create'/* , 'checkout' */, 'checkin from']);
-    // TODO - should be the 3 events!
+    $this->assertHasTheseActionLogs($accessory, ['create'/* , 'checkout' */, 'checkin from']); // TODO - should be the 3 events!
 });
 
 test('checkin is logged', function () {

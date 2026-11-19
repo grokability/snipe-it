@@ -17,6 +17,7 @@ beforeEach(function () {
 
 test('asset model api accepts file upload', function () {
     // Upload a file to a model
+
     // Create a model to work with
     $model = AssetModel::factory()->create();
 
@@ -35,6 +36,7 @@ test('asset model api accepts file upload', function () {
 
 test('asset model api lists files', function () {
     // List all files on a model
+
     // Create an model to work with
     $model = AssetModel::factory()->create();
 
@@ -57,6 +59,7 @@ test('asset model api lists files', function () {
 
 test('asset model fails if invalid type passed in url', function () {
     // List all files on a model
+
     // Create an model to work with
     $model = AssetModel::factory()->create();
 
@@ -73,6 +76,7 @@ test('asset model fails if invalid type passed in url', function () {
 
 test('asset model fails if invalid id passed in url', function () {
     // List all files on a model
+
     // Create an model to work with
     $model = AssetModel::factory()->create();
 
@@ -90,6 +94,7 @@ test('asset model fails if invalid id passed in url', function () {
 
 test('asset model api downloads file', function () {
     // Download a file from a model
+
     // Create a model to work with
     $model = AssetModel::factory()->create();
 
@@ -169,6 +174,7 @@ test('asset model api downloads file', function () {
 
 test('asset model api deletes file', function () {
     // Delete a file from a model
+
     // Create a model to work with
     $model = AssetModel::factory()->create();
 

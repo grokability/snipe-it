@@ -128,8 +128,7 @@ test('asset audit post is redirected to asset page if redirect selection is asse
         ->assertStatus(302)
         ->assertRedirect(route('hardware.show', $asset));
     $this->followRedirects($response)->assertSee('success');
-    $this->assertHasTheseActionLogs($asset, ['create', 'audit']);
-    // WAT.
+    $this->assertHasTheseActionLogs($asset, ['create', 'audit']); // WAT.
 });
 
 test('asset audit post is redirected to audit due page if redirect selection is list', function () {

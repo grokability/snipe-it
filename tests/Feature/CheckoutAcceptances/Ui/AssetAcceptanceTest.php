@@ -125,9 +125,8 @@ test('user can accept asset with required signature', function () {
 
 test('user can decline asset', function () {
     Event::fake([CheckoutAccepted::class]);
-    $this->settings->disableAlertEmail();
+    $this->settings->disableAlertEmail(); // otherwise it tries to send an email without having enough information
 
-    // otherwise it tries to send an email without having enough information
     $checkoutAcceptance = CheckoutAcceptance::factory()->pending()->create();
 
     expect($checkoutAcceptance->isPending())->toBeTrue();

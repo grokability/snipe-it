@@ -33,8 +33,7 @@ test('notes are stored in action log on checkout to asset', function () {
         'item_type' => License::class,
         'note' => 'oh hi there',
     ]);
-    $this->assertHasTheseActionLogs($licenseSeat->license, ['add seats', 'create', 'checkout']);
-    // TODO - TOTALLY out-of-order
+    $this->assertHasTheseActionLogs($licenseSeat->license, ['add seats', 'create', 'checkout']); // TODO - TOTALLY out-of-order
 });
 
 test('notes are stored in action log on checkout to user', function () {
@@ -57,8 +56,7 @@ test('notes are stored in action log on checkout to user', function () {
         'item_type' => License::class,
         'note' => 'oh hi there',
     ]);
-    $this->assertHasTheseActionLogs($licenseSeat->license, ['add seats', 'create', 'checkout']);
-    // FIXME - out-of-order
+    $this->assertHasTheseActionLogs($licenseSeat->license, ['add seats', 'create', 'checkout']); // FIXME - out-of-order
 });
 
 test('license checkout page post is redirected if redirect selection is index', function () {

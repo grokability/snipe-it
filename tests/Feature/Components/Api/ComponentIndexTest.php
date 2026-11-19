@@ -130,13 +130,10 @@ test('can sort components by raw remaining count', function () {
     // assigned_qty on the pivot is what withSum('unconstrainedAssets')
     // sums into sum_unconstrained_assets, so one pivot row per
     // component with a distinct qty gives distinct remaining counts.
-    $lots->assets()->attach($asset->id, ['assigned_qty' => 1, 'created_at' => now(), 'created_by' => $user->id]);
-    // remaining = 9
-    $some->assets()->attach($asset->id, ['assigned_qty' => 5, 'created_at' => now(), 'created_by' => $user->id]);
-    // remaining = 5
-    $none->assets()->attach($asset->id, ['assigned_qty' => 10, 'created_at' => now(), 'created_by' => $user->id]);
+    $lots->assets()->attach($asset->id, ['assigned_qty' => 1, 'created_at' => now(), 'created_by' => $user->id]); // remaining = 9
+    $some->assets()->attach($asset->id, ['assigned_qty' => 5, 'created_at' => now(), 'created_by' => $user->id]); // remaining = 5
+    $none->assets()->attach($asset->id, ['assigned_qty' => 10, 'created_at' => now(), 'created_by' => $user->id]); // remaining = 0
 
-    // remaining = 0
     $descRows = $this->actingAsForApi($user)
         ->getJson(route('api.components.index', ['sort' => 'remaining', 'order' => 'desc']))
         ->assertOk()

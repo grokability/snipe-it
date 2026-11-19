@@ -37,6 +37,5 @@ test('license checkin', function () {
     expect($licenseSeat->asset_id)->toBeNull();
 
     expect($licenseSeat->notes)->toEqual('Checking in the seat');
-    $this->assertHasTheseActionLogs($license, ['add seats', 'create', 'checkin from']);
-    // FIXME - bad order!
+    $this->assertHasTheseActionLogs($license, ['add seats', 'create', 'checkin from']); // FIXME - bad order!
 });

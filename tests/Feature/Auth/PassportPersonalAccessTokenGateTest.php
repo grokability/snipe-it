@@ -3,9 +3,8 @@
 use App\Models\User;
 
 test('user without self api cannot create personal access token', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create(); // default: no self.api permission
 
-    // default: no self.api permission
     $this->actingAs($user)
         ->post('/oauth/personal-access-tokens', [
             'name' => 'bypass-attempt',

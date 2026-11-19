@@ -196,13 +196,10 @@ test('can sort accessories by raw remaining count', function () {
     $some = Accessory::factory()->create(['name' => 'Some left', 'qty' => 10]);
     $none = Accessory::factory()->create(['name' => 'None left', 'qty' => 10]);
 
-    AccessoryCheckout::factory()->count(1)->create(['accessory_id' => $lots->id]);
-    // remaining = 9
-    AccessoryCheckout::factory()->count(5)->create(['accessory_id' => $some->id]);
-    // remaining = 5
-    AccessoryCheckout::factory()->count(10)->create(['accessory_id' => $none->id]);
+    AccessoryCheckout::factory()->count(1)->create(['accessory_id' => $lots->id]); // remaining = 9
+    AccessoryCheckout::factory()->count(5)->create(['accessory_id' => $some->id]); // remaining = 5
+    AccessoryCheckout::factory()->count(10)->create(['accessory_id' => $none->id]); // remaining = 0
 
-    // remaining = 0
     $descRows = $this->actingAsForApi($user)
         ->getJson(route('api.accessories.index', ['sort' => 'remaining', 'order' => 'desc']))
         ->assertOk()

@@ -31,8 +31,7 @@ function seedPassportPersonalAccessClient(): void
 }
 
 test('cannot create personal access token before completing two factor', function () {
-    $this->settings->set(['two_factor_enabled' => '2']);
-    // required for everyone
+    $this->settings->set(['two_factor_enabled' => '2']); // required for everyone
     $user = User::factory()->state(fn () => ['permissions' => json_encode(['self.api' => '1'])])->create([
         'two_factor_optin' => '1',
         'two_factor_enrolled' => '1',

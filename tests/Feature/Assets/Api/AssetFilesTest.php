@@ -11,6 +11,7 @@ beforeEach(function () {
 
 test('asset api accepts file upload', function () {
     // Upload a file to an asset
+
     // Create an asset to work with
     $asset = Asset::factory()->create();
 
@@ -29,6 +30,7 @@ test('asset api accepts file upload', function () {
 
 test('asset api lists files', function () {
     // List all files on an asset
+
     // Create an asset to work with
     $asset = Asset::factory()->create();
 
@@ -49,6 +51,7 @@ test('asset api lists files', function () {
 
 test('asset api downloads file', function () {
     // Download a file from an asset
+
     // Create an asset to work with
     $asset = Asset::factory()->create();
 
@@ -72,6 +75,7 @@ test('asset api downloads file', function () {
 
 test('asset api deletes file', function () {
     // Delete a file from an asset
+
     // Create an asset to work with
     $asset = Asset::factory()->create();
 

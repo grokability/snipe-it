@@ -11,6 +11,7 @@ beforeEach(function () {
 
 test('consumable api accepts file upload', function () {
     // Upload a file to a model
+
     // Create a model to work with
     $consumable = Consumable::factory()->create();
 
@@ -29,6 +30,7 @@ test('consumable api accepts file upload', function () {
 
 test('consumable api lists files', function () {
     // List all files on a model
+
     // Create a model to work with
     $consumable = Consumable::factory()->create();
 
@@ -51,6 +53,7 @@ test('consumable api lists files', function () {
 
 test('consumable fails if invalid type passed in url', function () {
     // List all files on a model
+
     // Create an model to work with
     $consumable = Consumable::factory()->create();
 
@@ -67,6 +70,7 @@ test('consumable fails if invalid type passed in url', function () {
 
 test('consumable fails if invalid id passed in url', function () {
     // List all files on a model
+
     // Create an model to work with
     $consumable = Consumable::factory()->create();
 
@@ -84,6 +88,7 @@ test('consumable fails if invalid id passed in url', function () {
 
 test('consumable api downloads file', function () {
     // Download a file from a model
+
     // Create a model to work with
     $consumable = Consumable::factory()->create();
 
@@ -163,6 +168,7 @@ test('consumable api downloads file', function () {
 
 test('consumable api deletes file', function () {
     // Delete a file from a model
+
     // Create a model to work with
     $consumable = Consumable::factory()->create();
 

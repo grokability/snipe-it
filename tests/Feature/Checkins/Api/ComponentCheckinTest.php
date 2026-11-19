@@ -69,9 +69,8 @@ test('can checkin component', function () {
         ->assertStatusMessageIs('success');
 
     expect($component->fresh()->assets->first()->pivot->assigned_qty)->toEqual(1);
-    $this->assertHasTheseActionLogs($component, ['create']);
+    $this->assertHasTheseActionLogs($component, ['create']); // FIXME?
 
-    // FIXME?
     Event::assertDispatched(function (CheckoutableCheckedIn $event) use ($user, $component) {
         return $event->checkoutable->is($component)
             && $event->checkedOutTo->is($component->assets->first())
@@ -146,6 +145,5 @@ test('checkin is logged', function () {
         'item_id' => $component->id,
         'item_type' => Component::class,
     ]);
-    $this->assertHasTheseActionLogs($component, ['create', /* 'checkout', */ 'checkin from']);
-    // FIXME?
+    $this->assertHasTheseActionLogs($component, ['create', /* 'checkout', */ 'checkin from']); // FIXME?
 });

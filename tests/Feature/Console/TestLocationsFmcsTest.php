@@ -8,8 +8,7 @@ use App\Models\User;
 
 function mismatchedIds(array $mismatched): array
 {
-    return array_column($mismatched, 1);
-    // column 1 is the item ID
+    return array_column($mismatched, 1); // column 1 is the item ID
 }
 
 function assetAt(Location $location, array $attrs = []): Asset
@@ -161,11 +160,9 @@ test('location id option scopes check to single location', function () {
     [$companyA, $companyB] = Company::factory()->count(2)->create();
     $locationA = Location::factory()->for($companyA)->create();
     $locationB = Location::factory()->for($companyB)->create();
-    $assetA = assetAt($locationA, ['company_id' => $companyB->id]);
-    // mismatch at A
-    $assetB = assetAt($locationB, ['company_id' => $companyA->id]);
+    $assetA = assetAt($locationA, ['company_id' => $companyB->id]); // mismatch at A
+    $assetB = assetAt($locationB, ['company_id' => $companyA->id]); // mismatch at B
 
-    // mismatch at B
     $this->settings->enableMultipleFullCompanySupport();
 
     $result = Helper::test_locations_fmcs(true, $locationA->id);

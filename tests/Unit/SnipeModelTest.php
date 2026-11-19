@@ -23,8 +23,7 @@ test('sets purchase costs appropriately', function () {
     expect((float) $c->purchase_cost)->toBe(0.0);
     $c->purchase_cost = '9.54';
     expect((float) $c->purchase_cost)->toBe(9.54);
-    // already a float — no ParseCurrency needed
-    $c->purchase_cost = 12.34;
+    $c->purchase_cost = 12.34; // already a float — no ParseCurrency needed
     expect((float) $c->purchase_cost)->toBe(12.34);
 });
 

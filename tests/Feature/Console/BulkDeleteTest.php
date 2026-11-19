@@ -584,9 +584,8 @@ test('multiple companies are all processed', function () {
 
     $assetA = Asset::factory()->for($companyA)->create();
     $assetB = Asset::factory()->for($companyB)->create();
-    $assetC = Asset::factory()->create();
+    $assetC = Asset::factory()->create(); // no company — should be untouched
 
-    // no company — should be untouched
     ($this->runCommand)($admin, [$companyA->id, $companyB->id], ['assets'])
         ->assertExitCode(0);
 

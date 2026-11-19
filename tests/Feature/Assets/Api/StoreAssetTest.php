@@ -698,8 +698,7 @@ test('an asset can be checked out to asset on store', function () {
 
     // I think this makes sense, but open to a sanity check
     expect($asset->assignedAssets()->find($response['payload']['id'])->is($apiAsset))->toBeTrue();
-    $this->assertHasTheseActionLogs($asset, ['create'/* , 'checkout' */]);
-    // TODO - should be the two events
+    $this->assertHasTheseActionLogs($asset, ['create'/* , 'checkout' */]); // TODO - should be the two events
 });
 
 test('company id needs to be integer', function () {

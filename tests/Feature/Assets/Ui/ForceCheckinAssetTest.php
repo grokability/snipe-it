@@ -15,10 +15,8 @@ test('permission required to force checkin asset', function () {
 test('can force checkin asset with orphaned assigned to and missing type', function () {
     $asset = Asset::factory()->create();
     $originalCheckinCounter = (int) $asset->checkin_counter;
-    $asset->assigned_to = 999;
-    // Non-existent ID
-    $asset->assigned_type = null;
-    // Missing type
+    $asset->assigned_to = 999; // Non-existent ID
+    $asset->assigned_type = null; // Missing type
     $asset->forceSave();
 
     $response = $this->actingAs(User::factory()->checkinAssets()->create())
@@ -99,8 +97,7 @@ test('cannot force checkin asset with no assignment', function () {
 
 test('force checkin button shown on asset view when orphaned', function () {
     $asset = Asset::factory()->create();
-    $asset->assigned_to = 999;
-    // Non-existent ID
+    $asset->assigned_to = 999; // Non-existent ID
     $asset->assigned_type = User::class;
     $asset->save();
 

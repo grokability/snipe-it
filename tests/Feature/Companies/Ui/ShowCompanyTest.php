@@ -55,8 +55,7 @@ test('child companies tab appears when company has children', function () {
     $this->actingAs(User::factory()->superuser()->create())
         ->get(route('companies.show', $parent))
         ->assertOk()
-        ->assertSee('href="#companies"', false);
-    // raw HTML attribute substring
+        ->assertSee('href="#companies"', false); // raw HTML attribute substring
 });
 
 test('child companies tab does not appear for standalone company', function () {

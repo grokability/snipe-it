@@ -60,9 +60,8 @@ test('asset can be checked in', function () {
     expect($asset->name)->toEqual('Changed Name');
     expect($asset->status_id)->toEqual($status->id);
     expect($asset->location()->is($location))->toBeTrue();
-    $this->assertHasTheseActionLogs($asset, ['create'/* , 'checkout', 'checkin from' */]);
+    $this->assertHasTheseActionLogs($asset, ['create'/* , 'checkout', 'checkin from' */]); // TODO - the Event::fake() is probably getting in the way here
 
-    // TODO - the Event::fake() is probably getting in the way here
     Event::assertDispatched(function (CheckoutableCheckedIn $event) use ($currentTimestamp) {
         // this could be better mocked but is ok for now.
         return (int) Carbon::parse($event->action_date)->diffInSeconds($currentTimestamp, true) < 2;
@@ -80,8 +79,7 @@ test('location is set to rtd location by default upon checkin', function () {
         ->postJson(route('api.asset.checkin', $asset->id));
 
     expect($asset->refresh()->location()->is($rtdLocation))->toBeTrue();
-    $this->assertHasTheseActionLogs($asset, ['create', /* 'checkout', */ 'checkin from']);
-    // FIXME?
+    $this->assertHasTheseActionLogs($asset, ['create', /* 'checkout', */ 'checkin from']); // FIXME?
 });
 
 test('default location can be updated upon checkin', function () {
@@ -95,8 +93,7 @@ test('default location can be updated upon checkin', function () {
         ]);
 
     expect($asset->refresh()->defaultLoc()->is($location))->toBeTrue();
-    $this->assertHasTheseActionLogs($asset, ['create', /* 'checkout', */ 'checkin from']);
-    // FIXME?
+    $this->assertHasTheseActionLogs($asset, ['create', /* 'checkout', */ 'checkin from']); // FIXME?
 });
 
 test('assets license seats are cleared upon checkin', function () {

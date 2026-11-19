@@ -33,6 +33,7 @@ test('component api accepts file upload', function () {
 
 test('component api lists files', function () {
     // List all files on a model
+
     // Create a model to work with
     $component = Component::factory()->create();
 
@@ -55,6 +56,7 @@ test('component api lists files', function () {
 
 test('component fails if invalid type passed in url', function () {
     // List all files on a model
+
     // Create an model to work with
     $component = Component::factory()->create();
 
@@ -71,6 +73,7 @@ test('component fails if invalid type passed in url', function () {
 
 test('component fails if invalid id passed in url', function () {
     // List all files on a model
+
     // Create an model to work with
     $component = Component::factory()->create();
 
@@ -88,6 +91,7 @@ test('component fails if invalid id passed in url', function () {
 
 test('component api downloads file', function () {
     // Download a file from a model
+
     // Create a model to work with
     $component = Component::factory()->create();
 
@@ -167,6 +171,7 @@ test('component api downloads file', function () {
 
 test('component api deletes file', function () {
     // Delete a file from a model
+
     // Create a model to work with
     $component = Component::factory()->create();
 

@@ -16,6 +16,7 @@ beforeEach(function () {
 
 test('accessory api accepts file upload', function () {
     // Upload a file to a model
+
     // Create a model to work with
     $accessory = Accessory::factory()->create();
 
@@ -34,6 +35,7 @@ test('accessory api accepts file upload', function () {
 
 test('accessory api lists files', function () {
     // List all files on a model
+
     // Create a model to work with
     $accessory = Accessory::factory()->create();
 
@@ -56,6 +58,7 @@ test('accessory api lists files', function () {
 
 test('accessory fails if invalid type passed in url', function () {
     // List all files on a model
+
     // Create an model to work with
     $accessory = Accessory::factory()->create();
 
@@ -72,6 +75,7 @@ test('accessory fails if invalid type passed in url', function () {
 
 test('accessory fails if invalid id passed in url', function () {
     // List all files on a model
+
     // Create an model to work with
     $accessory = Accessory::factory()->create();
 
@@ -89,6 +93,7 @@ test('accessory fails if invalid id passed in url', function () {
 
 test('accessory api downloads file', function () {
     // Download a file from a model
+
     // Create a model to work with
     $accessory = Accessory::factory()->create();
 
@@ -168,6 +173,7 @@ test('accessory api downloads file', function () {
 
 test('accessory api deletes file', function () {
     // Delete a file from a model
+
     // Create a model to work with
     $accessory = Accessory::factory()->create();
 

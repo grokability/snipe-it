@@ -41,9 +41,8 @@ test('each model has key fields', function () {
 test('filters by category id', function () {
     $category = Category::factory()->create(['category_type' => 'asset']);
     $model = AssetModel::factory()->create(['category_id' => $category->id]);
-    AssetModel::factory()->create();
+    AssetModel::factory()->create(); // another model with different category
 
-    // another model with different category
     $content = listAssetModelsTool(['category_id' => $category->id])->getStructuredContent();
 
     $ids = array_column($content['models'], 'id');
