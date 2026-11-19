@@ -790,7 +790,7 @@ class UserPresenter extends Presenter
                 'field' => 'license',
                 'scope' => 'col',
                 'searchable' => true,
-                'sortable' => true,
+                'sortable' => false,
                 'switchable' => false,
                 'title' => trans('general.name'),
                 'visible' => true,

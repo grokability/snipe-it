@@ -1004,7 +1004,7 @@ class UsersController extends Controller
         if ($user = User::where('id', $id)->withTrashed()->first()) {
             $this->authorize('view', $user);
 
-            $query = $user->licenses();
+            $query = $user->licenses()->with('category');
 
             if ($search = $request->input('search')) {
                 $canViewKeys = Gate::allows('viewKeys', License::class);
