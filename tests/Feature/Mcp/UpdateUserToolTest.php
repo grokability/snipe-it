@@ -137,7 +137,7 @@ test('response includes id and username', function () {
 });
 
 test('non admin cannot change auth fields of admin', function () {
-    // Acting user is a plain user (set in setUp); target is an admin
+    // Acting user is a plain user (set in beforeEach); target is an admin
     $admin = User::factory()->admin()->create();
 
     $response = updateUserTool([

@@ -61,8 +61,8 @@ test('models view combined with assets view still reaches the endpoint', functio
 test('error returned if asset model does not exist', function () {
     // Snipe-IT's exception handler returns 200 + status "error" for
     // ModelNotFoundException on API requests, matching what the
-    // sibling AssetModel endpoints already do (see
-    // RestoreAssetModelTest::test_error_returned_if_asset_model_does_not_exist).
+    // sibling AssetModel endpoints already do (see 'error returned if asset model does not exist'
+    // in RestoreAssetModelTest).
     $this->actingAsForApi(User::factory()->superuser()->create())
         ->getJson(route('api.models.assets', ['id' => 999999]))
         ->assertOk()

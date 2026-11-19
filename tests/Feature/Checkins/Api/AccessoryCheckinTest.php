@@ -33,9 +33,8 @@ test('adheres to full multiple companies support scoping', function () {
     // Cross-tenant checkout is hidden from the caller by the
     // CompanyableChildScope on AccessoryCheckout, so AccessoryCheckout::find()
     // in the controller returns null and we fall into the standard
-    // does-not-exist error envelope rather than a 403. Line 50
-    // asserts the checkin didn't actually happen, which is the
-    // security property that matters.
+    // does-not-exist error envelope rather than a 403. The checkout count
+    // assertion verifies that the accessory is still checked out.
     $this->actingAsForApi($userInCompanyA)
         ->postJson(route('api.accessories.checkin', $accessoryForCompanyB->checkouts->first()))
         ->assertStatusMessageIs('error');

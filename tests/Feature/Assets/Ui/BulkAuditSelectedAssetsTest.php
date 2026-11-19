@@ -74,7 +74,7 @@ test('location controls scope to shared company when selection is uniform', func
     // `old('selected_assets')` populates from the same session
     // mechanism prod uses. Create fixtures BEFORE enabling FMCS
     // so the Asset factory's fmcs_company validation rule doesn't
-    // fail with no authenticated user during setUp.
+    // fail when creating fixtures without an authenticated user.
     $company = Company::factory()->create();
     $assets = Asset::factory()->count(3)->create(['company_id' => $company->id]);
     $actor = User::factory()->viewAssets()->auditAssets()->forCompany($company)->create();
