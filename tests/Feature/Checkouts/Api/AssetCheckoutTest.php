@@ -287,17 +287,15 @@ dataset('checkoutTargets', function () {
     ];
 });
 
-test('asset can be checked out', function ($data) {
-    ['checkout_type' => $type, 'target' => $target, 'expected_location' => $expectedLocation] = $data();
-
+test('asset can be checked out', function ($checkoutType, $target, $expectedLocation) {
     $newStatus = Statuslabel::factory()->readyToDeploy()->create();
     $asset = Asset::factory()->forLocation()->create();
     $admin = User::factory()->checkoutAssets()->create();
 
     $this->actingAsForApi($admin)
         ->postJson(route('api.asset.checkout', $asset), [
-            'checkout_to_type' => $type,
-            'assigned_'.$type => $target->id,
+            'checkout_to_type' => $checkoutType,
+            'assigned_'.$checkoutType => $target->id,
             'status_id' => $newStatus->id,
             'checkout_at' => '2024-04-01',
             'expected_checkin' => '2024-04-08',
