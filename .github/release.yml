@@ -46,6 +46,12 @@ changelog:
     - title: 🗓️ Calendar
       labels:
         - calendar 
+    - title: 🦄 Custom Fields
+      labels:
+        - custom-fields   
+    - title: 📥 Item Importer  
+      labels:
+        - importer     
     - title: 🛎️ Item Acceptance
       labels:
         - item-acceptance
