@@ -20,9 +20,9 @@ changelog:
     - title: ❤️‍🩹 Breaking Changes
       labels:
         - breaking-change
-    - title: 🤜💥🤛 Code Improvements
+    - title:  UX/UI Improvements
       labels:
-        - code-improvements
+        - breaking-change    
     - title: 👩‍🦼‍➡️ Accessibility
       labels:
         - accessibility
@@ -35,6 +35,13 @@ changelog:
     - title: 🛎️ Item Acceptance
       labels:
         - item-acceptance
-    - title: Other Changes
+   - title: 🤜💥🤛 Code Improvements
+      labels:
+        - code-improvements   
+   - title: Dependency & Security Updates
+      labels:
+        - dependencies 
+        - security       
+    - title: Everything Else
       labels:
         - "*"
