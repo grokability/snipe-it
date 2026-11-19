@@ -1,54 +1,41 @@
 <?php
 
-namespace Tests\Feature\ReportTemplates;
-
 use App\Models\ReportTemplate;
 use App\Models\User;
-use PHPUnit\Framework\Attributes\Group;
-use Tests\Concerns\TestsPermissionsRequirement;
-use Tests\TestCase;
 
-#[Group('custom-reporting')]
-class EditReportTemplateTest extends TestCase implements TestsPermissionsRequirement
-{
-    public function test_requires_permission()
-    {
-        $this->actingAs(User::factory()->create())
-            ->get(route('report-templates.edit', ReportTemplate::factory()->create()))
-            ->assertRedirectToRoute('reports/custom');
-    }
+test('requires permission', function () {
+    $this->actingAs(User::factory()->create())
+        ->get(route('report-templates.edit', ReportTemplate::factory()->create()))
+        ->assertRedirectToRoute('reports/custom');
+});
 
-    public function test_cannot_load_edit_page_for_another_users_report_template()
-    {
-        $user = User::factory()->canViewReports()->create();
-        $reportTemplate = ReportTemplate::factory()->create();
+test('cannot load edit page for another users report template', function () {
+    $user = User::factory()->canViewReports()->create();
+    $reportTemplate = ReportTemplate::factory()->create();
 
-        $this->actingAs($user)
-            ->get(route('report-templates.edit', $reportTemplate))
-            ->assertRedirectToRoute('reports/custom');
-    }
+    $this->actingAs($user)
+        ->get(route('report-templates.edit', $reportTemplate))
+        ->assertRedirectToRoute('reports/custom');
+});
 
-    public function test_cannot_load_edit_page_for_another_users_shared_report_template()
-    {
-        $user = User::factory()->canViewReports()->create();
-        $reportTemplate = ReportTemplate::factory()->shared()->create();
+test('cannot load edit page for another users shared report template', function () {
+    $user = User::factory()->canViewReports()->create();
+    $reportTemplate = ReportTemplate::factory()->shared()->create();
 
-        $this->actingAs($user)
-            ->get(route('report-templates.edit', $reportTemplate))
-            ->assertRedirectToRoute('report-templates.show', $reportTemplate->id);
-    }
+    $this->actingAs($user)
+        ->get(route('report-templates.edit', $reportTemplate))
+        ->assertRedirectToRoute('report-templates.show', $reportTemplate->id);
+});
 
-    public function test_edit_route_redirects_to_show_which_renders_for_owner()
-    {
-        $user = User::factory()->canViewReports()->create();
-        $reportTemplate = ReportTemplate::factory()->for($user, 'creator')->create();
+test('edit route redirects to show which renders for owner', function () {
+    $user = User::factory()->canViewReports()->create();
+    $reportTemplate = ReportTemplate::factory()->for($user, 'creator')->create();
 
-        $this->actingAs($user)
-            ->get(route('report-templates.edit', $reportTemplate))
-            ->assertRedirectToRoute('report-templates.show', $reportTemplate->id);
+    $this->actingAs($user)
+        ->get(route('report-templates.edit', $reportTemplate))
+        ->assertRedirectToRoute('report-templates.show', $reportTemplate->id);
 
-        $this->actingAs($user)
-            ->get(route('report-templates.show', $reportTemplate))
-            ->assertOk();
-    }
-}
+    $this->actingAs($user)
+        ->get(route('report-templates.show', $reportTemplate))
+        ->assertOk();
+});
