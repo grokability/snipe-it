@@ -1,0 +1,37 @@
+# .github/release.yml
+
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+    authors:
+      - octocat
+  categories:
+    - title: 🎁 New Features
+      labels:
+        - new-feature
+        - feature-request
+    - title: 🐛 Bugfixes
+      labels:
+        - bugfix       
+    - title: ❤️‍🩹 Breaking API Changes
+      labels:
+        - breaking-api-change
+    - title: ❤️‍🩹 Breaking Changes
+      labels:
+        - breaking-change
+    - title: 👩‍🦼‍➡️ Accessibility
+      labels:
+        - accessibility
+    - title: 🤖 MCP Updates
+      labels:
+        - mcp
+    - title: 🔄 Sync Adapters
+      labels:
+        - sync-adapters
+    - title: 🛎️ Item Acceptance
+      labels:
+        - item-acceptance
+    - title: Other Changes
+      labels:
+        - "*"
