@@ -837,8 +837,8 @@ test('is not null filter on jobtitle relation column matches assets with titled 
     $returnedIds = collect($response->json('rows'))->pluck('id')->map(fn ($id) => (int) $id)->all();
 
     expect($returnedIds)->toContain((int) $titledAsset->id);
-    expect($returnedIds)->not->toContain((int) $nullTitleAsset->id, 'Assignee with a NULL jobtitle must not surface as "has title".');
-    expect($returnedIds)->not->toContain((int) $emptyTitleAsset->id, 'Assignee with an empty-string jobtitle must not surface as "has title", the way admins read the UI column.');
+    expect($returnedIds)->not->toContain((int) $nullTitleAsset->id); // Assignee with a NULL jobtitle must not surface as "has title".
+    expect($returnedIds)->not->toContain((int) $emptyTitleAsset->id); // Assignee with an empty-string jobtitle must not surface as "has title", the way admins read the UI column.
     expect($returnedIds)->not->toContain((int) $unassignedAsset->id);
 });
 

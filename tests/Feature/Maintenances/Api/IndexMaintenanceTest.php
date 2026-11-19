@@ -43,8 +43,8 @@ test('checked out to id filter returns only matching polymorphic target', functi
 
     $ids = collect($response->json('rows'))->pluck('id');
     expect($ids)->toContain($aliceM->id);
-    expect($ids)->not->toContain($bobM->id, 'Different-user maintenances must be filtered out');
-    expect($ids)->not->toContain($unassigned->id, 'Unassigned maintenances must be filtered out');
+    expect($ids)->not->toContain($bobM->id); // Different-user maintenances must be filtered out
+    expect($ids)->not->toContain($unassigned->id); // Unassigned maintenances must be filtered out
 });
 
 test('completed filter returns only completed maintenances', function () {

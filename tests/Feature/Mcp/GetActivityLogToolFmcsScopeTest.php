@@ -36,5 +36,5 @@ test('cross tenant null company asset log is hidden from mcp activity feed', fun
 
     $returnedIds = array_column($content['activity'], 'id');
 
-    expect($returnedIds)->not->toContain($crossTenantLog->id, 'GetActivityLogTool returned a cross-tenant NULL-company Asset action_log. The Company::scopeCompanyables fix is not applying through the MCP path.');
+    expect($returnedIds)->not->toContain($crossTenantLog->id); // GetActivityLogTool returned a cross-tenant NULL-company Asset action_log. The Company::scopeCompanyables fix is not applying through the MCP path.
 });

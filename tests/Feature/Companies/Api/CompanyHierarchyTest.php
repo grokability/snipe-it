@@ -298,7 +298,7 @@ test('user in child company does not see parent company assets', function () {
 
     $foundIds = collect($response['rows'])->pluck('id')->all();
 
-    expect($foundIds)->not->toContain($assetInParent->id, 'User in child should not see parent-company assets');
+    expect($foundIds)->not->toContain($assetInParent->id); // User in child should not see parent-company assets
 });
 
 test('user in parent can filter companies selectlist and see children', function () {
