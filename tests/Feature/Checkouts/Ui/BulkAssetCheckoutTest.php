@@ -164,9 +164,7 @@ dataset('checkoutTargets', function () {
     ];
 });
 
-test('adheres to full multiple company support', function ($data) {
-    ['type' => $type, 'target' => $target] = $data();
-
+test('adheres to full multiple company support', function ($type, $target) {
     $this->settings->enableMultipleFullCompanySupport();
 
     // create two companies
@@ -198,9 +196,7 @@ test('adheres to full multiple company support', function ($data) {
     $response->assertRedirectToRoute('hardware.bulkcheckout.show');
 })->with('checkoutTargets');
 
-test('prevents checkouts of checked out items', function ($data) {
-    ['type' => $type, 'target' => $target] = $data();
-
+test('prevents checkouts of checked out items', function ($type, $target) {
     $asset = Asset::factory()->create();
     $checkedOutAsset = Asset::factory()->assignedToUser()->create();
     $existingUserId = $checkedOutAsset->assigned_to;
