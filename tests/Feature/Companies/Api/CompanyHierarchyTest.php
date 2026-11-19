@@ -278,7 +278,7 @@ test('user in parent company has fmcs access to child company assets', function 
 
     $foundIds = collect($response['rows'])->pluck('id')->all();
 
-    expect($foundIds)->toContain($assetInChild->id, 'User in parent should see child-company assets');
+    expect($foundIds)->toContain($assetInChild->id); // User in parent should see child-company assets
 });
 
 test('user in child company does not see parent company assets', function () {
@@ -427,7 +427,7 @@ test('selectlist surfaces orphaned child when parent is out of scope', function 
     $byId = collect($response['results'])->keyBy('id');
 
     $this->assertArrayNotHasKey($parent->id, $byId, 'Parent should not be visible');
-    expect($byId)->toHaveKey($child->id, 'Orphaned child should still appear');
+    expect($byId)->toHaveKey($child->id); // Orphaned child should still appear
     expect($byId[$child->id]['text'])->toEqual('VisibleChild', 'Orphan should be flat (no indent) since its parent is hidden');
 });
 
@@ -456,7 +456,7 @@ test('expand company hierarchy on assets includes parent and children', function
         ->json();
     $expandedIds = collect($expanded['rows'])->pluck('id')->all();
     expect($expandedIds)->toContain($childAsset->id);
-    expect($expandedIds)->toContain($parentAsset->id, 'Parent asset should appear on the child page when hierarchy is expanded');
+    expect($expandedIds)->toContain($parentAsset->id); // Parent asset should appear on the child page when hierarchy is expanded
     expect($expandedIds)->not->toContain($unrelatedAsset->id);
 });
 
@@ -483,7 +483,7 @@ test('expand company hierarchy on users includes parent and children members', f
         ->json();
     $expandedIds = collect($expanded['rows'])->pluck('id')->all();
     expect($expandedIds)->toContain($childMember->id);
-    expect($expandedIds)->toContain($parentMember->id, 'Parent member should appear on the child page when hierarchy is expanded');
+    expect($expandedIds)->toContain($parentMember->id); // Parent member should appear on the child page when hierarchy is expanded
 });
 
 test('asset at parent can check out to location at child', function () {
@@ -565,9 +565,9 @@ test('fmcs floater mode still works with hierarchy', function () {
 
     $foundIds = collect($response['rows'])->pluck('id')->all();
 
-    expect($foundIds)->toContain($assetInParent->id, 'Parent asset should be visible');
-    expect($foundIds)->toContain($assetInChild->id, 'Child asset should be visible via hierarchy');
-    expect($foundIds)->toContain($floaterAsset->id, 'Floater asset should be visible via null_company_is_floater');
+    expect($foundIds)->toContain($assetInParent->id); // Parent asset should be visible
+    expect($foundIds)->toContain($assetInChild->id); // Child asset should be visible via hierarchy
+    expect($foundIds)->toContain($floaterAsset->id); // Floater asset should be visible via null_company_is_floater
 });
 
 test('scoped actor cannot reparent own company under a foreign top level company', function () {

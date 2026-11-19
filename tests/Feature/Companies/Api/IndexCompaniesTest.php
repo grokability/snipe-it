@@ -49,8 +49,8 @@ test('search matches parent company name', function () {
         ->pluck('id')
         ->all();
 
-    expect($ids)->toContain($child->id, 'Child should match on parent-company name');
-    expect($ids)->toContain($parent->id, 'Parent should still match on its own name');
+    expect($ids)->toContain($child->id); // Child should match on parent-company name
+    expect($ids)->toContain($parent->id); // Parent should still match on its own name
     expect($ids)->not->toContain($standalone->id);
 });
 
