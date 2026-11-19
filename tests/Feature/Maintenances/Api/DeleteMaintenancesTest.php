@@ -1,73 +1,62 @@
 <?php
 
-namespace Tests\Feature\Maintenances\Api;
-
 use App\Models\Company;
 use App\Models\Maintenance;
 use App\Models\User;
-use Tests\Concerns\TestsFullMultipleCompaniesSupport;
-use Tests\Concerns\TestsPermissionsRequirement;
-use Tests\TestCase;
 
-class DeleteMaintenancesTest extends TestCase implements TestsFullMultipleCompaniesSupport, TestsPermissionsRequirement
-{
-    public function test_requires_permission()
-    {
-        $maintenance = Maintenance::factory()->create();
+test('requires permission', function () {
+    $maintenance = Maintenance::factory()->create();
 
-        $this->actingAsForApi(User::factory()->create())
-            ->deleteJson(route('api.maintenances.destroy', $maintenance))
-            ->assertForbidden();
+    $this->actingAsForApi(User::factory()->create())
+        ->deleteJson(route('api.maintenances.destroy', $maintenance))
+        ->assertForbidden();
 
-        $this->assertNotSoftDeleted($maintenance);
-    }
+    $this->assertNotSoftDeleted($maintenance);
+});
 
-    public function test_adheres_to_full_multiple_companies_support_scoping()
-    {
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
+test('adheres to full multiple companies support scoping', function () {
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
 
-        $maintenanceA = Maintenance::factory()->create();
-        $maintenanceB = Maintenance::factory()->create();
-        $maintenanceC = Maintenance::factory()->create();
+    $maintenanceA = Maintenance::factory()->create();
+    $maintenanceB = Maintenance::factory()->create();
+    $maintenanceC = Maintenance::factory()->create();
 
-        $maintenanceA->asset->update(['company_id' => $companyA->id]);
-        $maintenanceB->asset->update(['company_id' => $companyB->id]);
-        $maintenanceC->asset->update(['company_id' => $companyB->id]);
+    $maintenanceA->asset->update(['company_id' => $companyA->id]);
+    $maintenanceB->asset->update(['company_id' => $companyB->id]);
+    $maintenanceC->asset->update(['company_id' => $companyB->id]);
 
-        $superUser = $companyA->users()->save(User::factory()->superuser()->make());
-        $userInCompanyA = $companyA->users()->save(User::factory()->editAssets()->make());
-        $userInCompanyB = $companyB->users()->save(User::factory()->editAssets()->make());
+    $superUser = $companyA->users()->save(User::factory()->superuser()->make());
+    $userInCompanyA = $companyA->users()->save(User::factory()->editAssets()->make());
+    $userInCompanyB = $companyB->users()->save(User::factory()->editAssets()->make());
 
-        $this->settings->enableMultipleFullCompanySupport();
+    $this->settings->enableMultipleFullCompanySupport();
 
-        $this->actingAsForApi($userInCompanyA)
-            ->deleteJson(route('api.maintenances.destroy', $maintenanceB))
-            ->assertStatusMessageIs('error');
+    $this->actingAsForApi($userInCompanyA)
+        ->deleteJson(route('api.maintenances.destroy', $maintenanceB))
+        ->assertStatusMessageIs('error');
 
-        $this->actingAsForApi($userInCompanyB)
-            ->deleteJson(route('api.maintenances.destroy', $maintenanceA))
-            ->assertStatusMessageIs('error');
+    $this->actingAsForApi($userInCompanyB)
+        ->deleteJson(route('api.maintenances.destroy', $maintenanceA))
+        ->assertStatusMessageIs('error');
 
-        $this->actingAsForApi($superUser)
-            ->deleteJson(route('api.maintenances.destroy', $maintenanceC))
-            ->assertStatusMessageIs('success');
+    $this->actingAsForApi($superUser)
+        ->deleteJson(route('api.maintenances.destroy', $maintenanceC))
+        ->assertStatusMessageIs('success');
 
-        $this->assertNotSoftDeleted($maintenanceA);
-        $this->assertNotSoftDeleted($maintenanceB);
-        $this->assertSoftDeleted($maintenanceC);
-        $this->assertHasTheseActionLogs($maintenanceC, ['create', 'delete']);
-    }
+    $this->assertNotSoftDeleted($maintenanceA);
+    $this->assertNotSoftDeleted($maintenanceB);
+    $this->assertSoftDeleted($maintenanceC);
+    $this->assertHasTheseActionLogs($maintenanceC, ['create', 'delete']);
+});
 
-    public function test_can_delete_maintenance()
-    {
-        $maintenance = Maintenance::factory()->create();
+test('can delete maintenance', function () {
+    $maintenance = Maintenance::factory()->create();
 
-        $this->actingAsForApi(User::factory()->editAssets()->create())
-            ->deleteJson(route('api.maintenances.destroy', $maintenance))
-            ->assertStatusMessageIs('success');
+    $this->actingAsForApi(User::factory()->editAssets()->create())
+        ->deleteJson(route('api.maintenances.destroy', $maintenance))
+        ->assertStatusMessageIs('success');
 
-        $this->assertSoftDeleted($maintenance);
+    $this->assertSoftDeleted($maintenance);
 
-        $this->assertHasTheseActionLogs($maintenance, ['create', 'delete']);
-    }
-}
+    $this->assertHasTheseActionLogs($maintenance, ['create', 'delete']);
+});

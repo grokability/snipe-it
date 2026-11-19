@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Feature\Maintenances\Ui;
-
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\Company;
@@ -11,333 +9,320 @@ use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
 
-class EditMaintenanceTest extends TestCase
-{
-    public function test_page_renders()
-    {
-        $this->actingAs(User::factory()->superuser()->create())
-            ->get(route('maintenances.edit', Maintenance::factory()->create()->id))
-            ->assertOk();
-    }
+test('page renders', function () {
+    $this->actingAs(User::factory()->superuser()->create())
+        ->get(route('maintenances.edit', Maintenance::factory()->create()->id))
+        ->assertOk();
+});
 
-    public function test_can_update_maintenance()
-    {
-        Storage::fake('public');
-        Storage::fake('local');
+test('can update maintenance', function () {
+    Storage::fake('public');
+    Storage::fake('local');
 
-        $actor = User::factory()->superuser()->create();
-        $asset = Asset::factory()->create();
-        $maintenance = Maintenance::factory()->create(['asset_id' => $asset]);
-        $supplier = Supplier::factory()->create();
-        $type = MaintenanceType::factory()->create();
+    $actor = User::factory()->superuser()->create();
+    $asset = Asset::factory()->create();
+    $maintenance = Maintenance::factory()->create(['asset_id' => $asset]);
+    $supplier = Supplier::factory()->create();
+    $type = MaintenanceType::factory()->create();
 
-        $this->actingAs($actor)
-            ->put(route('maintenances.update', $maintenance), [
-                'name' => 'Test Maintenance',
-                'asset_id' => $asset->id,
-                'supplier_id' => $supplier->id,
-                'maintenance_type_id' => $type->id,
-                'start_date' => '2021-01-01 00:00:00',
-                'completion_date' => '2021-01-10 00:00:00',
-                'is_warranty' => 1,
-                'image' => UploadedFile::fake()->image('test_image.png'),
-                'file' => [UploadedFile::fake()->create('maintenance-update.pdf', 64, 'application/pdf')],
-                'cost' => '100.99',
-                'notes' => 'A note',
-                'url' => 'https://snipeitapp.com',
-            ])
-            ->assertSessionHasNoErrors()
-            ->assertRedirect(route('maintenances.index'));
-
-        // Since we rename the file in the ImageUploadRequest, we have to fetch the record from the database
-        $maintenance = Maintenance::where('name', 'Test Maintenance')->first();
-
-        // Assert file was stored...
-        Storage::disk('public')->assertExists(app('maintenances_path').$maintenance->image);
-
-        $uploadedLog = Actionlog::query()
-            ->where('action_type', 'uploaded')
-            ->where('item_type', Maintenance::class)
-            ->where('item_id', $maintenance->id)
-            ->latest('id')
-            ->first();
-
-        $this->assertNotNull($uploadedLog);
-        Storage::disk('local')->assertExists('private_uploads/maintenances/'.$uploadedLog->filename);
-
-        $this->assertDatabaseHas('maintenances', [
-            'item_id' => $asset->id,
-            'item_type' => \App\Models\Asset::class,
+    $this->actingAs($actor)
+        ->put(route('maintenances.update', $maintenance), [
+            'name' => 'Test Maintenance',
+            'asset_id' => $asset->id,
             'supplier_id' => $supplier->id,
             'maintenance_type_id' => $type->id,
-            'asset_maintenance_type' => $type->name,
-            'name' => 'Test Maintenance',
-            'is_warranty' => 1,
             'start_date' => '2021-01-01 00:00:00',
-            'expected_completion_date' => '2021-01-10 00:00:00',
+            'completion_date' => '2021-01-10 00:00:00',
+            'is_warranty' => 1,
+            'image' => UploadedFile::fake()->image('test_image.png'),
+            'file' => [UploadedFile::fake()->create('maintenance-update.pdf', 64, 'application/pdf')],
+            'cost' => '100.99',
             'notes' => 'A note',
             'url' => 'https://snipeitapp.com',
-            'cost' => '100.99',
-        ]);
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('maintenances.index'));
 
-        $this->assertHasTheseActionLogs($maintenance, ['create', 'update', 'uploaded']);
+    // Since we rename the file in the ImageUploadRequest, we have to fetch the record from the database
+    $maintenance = Maintenance::where('name', 'Test Maintenance')->first();
 
-        $updateLog = Actionlog::query()
-            ->where('item_type', Maintenance::class)
-            ->where('item_id', $maintenance->id)
-            ->where('action_type', 'update')
-            ->latest('id')
-            ->first();
+    // Assert file was stored...
+    Storage::disk('public')->assertExists(app('maintenances_path').$maintenance->image);
 
-        $this->assertNotNull($updateLog);
-        $this->assertNotNull($updateLog->log_meta);
-        $this->assertArrayHasKey('name', json_decode($updateLog->log_meta, true));
-    }
+    $uploadedLog = Actionlog::query()
+        ->where('action_type', 'uploaded')
+        ->where('item_type', Maintenance::class)
+        ->where('item_id', $maintenance->id)
+        ->latest('id')
+        ->first();
 
-    public function test_setting_completed_at_on_edit_marks_maintenance_complete()
-    {
-        // Editing a maintenance from null → a completed_at date is
-        // equivalent to clicking Mark Complete: stamps completed_by,
-        // computes asset_maintenance_time from created_at → the entered
-        // date, and fires the MaintenanceComplete action log. This lets
-        // users backfill completion for maintenances someone forgot to
-        // close out at the time.
-        $actor = User::factory()->superuser()->create();
-        // Pin created_at well in the past so a completion date 5 days
-        // later is still safely <= now(). The before_or_equal:now rule
-        // would otherwise reject anything that lands in the future.
-        $maintenance = Maintenance::factory()->create([
+    expect($uploadedLog)->not->toBeNull();
+    Storage::disk('local')->assertExists('private_uploads/maintenances/'.$uploadedLog->filename);
+
+    $this->assertDatabaseHas('maintenances', [
+        'item_id' => $asset->id,
+        'item_type' => \App\Models\Asset::class,
+        'supplier_id' => $supplier->id,
+        'maintenance_type_id' => $type->id,
+        'asset_maintenance_type' => $type->name,
+        'name' => 'Test Maintenance',
+        'is_warranty' => 1,
+        'start_date' => '2021-01-01 00:00:00',
+        'expected_completion_date' => '2021-01-10 00:00:00',
+        'notes' => 'A note',
+        'url' => 'https://snipeitapp.com',
+        'cost' => '100.99',
+    ]);
+
+    $this->assertHasTheseActionLogs($maintenance, ['create', 'update', 'uploaded']);
+
+    $updateLog = Actionlog::query()
+        ->where('item_type', Maintenance::class)
+        ->where('item_id', $maintenance->id)
+        ->where('action_type', 'update')
+        ->latest('id')
+        ->first();
+
+    expect($updateLog)->not->toBeNull();
+    expect($updateLog->log_meta)->not->toBeNull();
+    expect(json_decode($updateLog->log_meta, true))->toHaveKey('name');
+});
+
+test('setting completed at on edit marks maintenance complete', function () {
+    // Editing a maintenance from null → a completed_at date is
+    // equivalent to clicking Mark Complete: stamps completed_by,
+    // computes asset_maintenance_time from created_at → the entered
+    // date, and fires the MaintenanceComplete action log. This lets
+    // users backfill completion for maintenances someone forgot to
+    // close out at the time.
+    $actor = User::factory()->superuser()->create();
+
+    // Pin created_at well in the past so a completion date 5 days
+    // later is still safely <= now(). The before_or_equal:now rule
+    // would otherwise reject anything that lands in the future.
+    $maintenance = Maintenance::factory()->create([
+        'start_date' => '2021-01-01 00:00:00',
+        'completed_at' => null,
+        'created_at' => '2021-01-01 00:00:00',
+    ]);
+    $completionDate = '2021-01-06 00:00:00';
+
+    $this->actingAs($actor)
+        ->put(route('maintenances.update', $maintenance), [
+            'name' => $maintenance->name,
+            'asset_id' => $maintenance->asset_id,
+            'maintenance_type_id' => $maintenance->maintenance_type_id,
             'start_date' => '2021-01-01 00:00:00',
-            'completed_at' => null,
-            'created_at' => '2021-01-01 00:00:00',
-        ]);
-        $completionDate = '2021-01-06 00:00:00';
+            'completed_at' => $completionDate,
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('maintenances.index'));
 
-        $this->actingAs($actor)
-            ->put(route('maintenances.update', $maintenance), [
-                'name' => $maintenance->name,
-                'asset_id' => $maintenance->asset_id,
-                'maintenance_type_id' => $maintenance->maintenance_type_id,
-                'start_date' => '2021-01-01 00:00:00',
-                'completed_at' => $completionDate,
-            ])
-            ->assertSessionHasNoErrors()
-            ->assertRedirect(route('maintenances.index'));
+    $maintenance->refresh();
 
-        $maintenance->refresh();
+    expect($maintenance->completed_at)->not->toBeNull();
+    expect($maintenance->completed_at->format('Y-m-d H:i:s'))->toEqual($completionDate);
+    expect($maintenance->completed_by)->toEqual($actor->id);
+    expect($maintenance->asset_maintenance_time)->toEqual(5);
 
-        $this->assertNotNull($maintenance->completed_at);
-        $this->assertEquals($completionDate, $maintenance->completed_at->format('Y-m-d H:i:s'));
-        $this->assertEquals($actor->id, $maintenance->completed_by);
-        $this->assertEquals(5, $maintenance->asset_maintenance_time);
+    $this->assertDatabaseHas('action_logs', [
+        'item_type' => Maintenance::class,
+        'item_id' => $maintenance->id,
+        'action_type' => 'completed',
+        'created_by' => $actor->id,
+    ]);
+});
 
-        $this->assertDatabaseHas('action_logs', [
-            'item_type' => Maintenance::class,
-            'item_id' => $maintenance->id,
-            'action_type' => 'completed',
-            'created_by' => $actor->id,
-        ]);
-    }
+test('clearing completed at on edit uncompletes the maintenance', function () {
+    // Value → null on edit reverses the completion: clears
+    // completed_at, completed_by, and asset_maintenance_time so the
+    // row goes back to the active list. No new log fires.
+    $actor = User::factory()->superuser()->create();
+    $originalCompleter = User::factory()->create();
+    $maintenance = Maintenance::factory()->create([
+        'start_date' => '2021-01-01 00:00:00',
+        'completed_at' => '2021-01-10 00:00:00',
+        'completed_by' => $originalCompleter->id,
+        'asset_maintenance_time' => 9,
+    ]);
 
-    public function test_clearing_completed_at_on_edit_uncompletes_the_maintenance()
-    {
-        // Value → null on edit reverses the completion: clears
-        // completed_at, completed_by, and asset_maintenance_time so the
-        // row goes back to the active list. No new log fires.
-        $actor = User::factory()->superuser()->create();
-        $originalCompleter = User::factory()->create();
-        $maintenance = Maintenance::factory()->create([
+    $this->actingAs($actor)
+        ->put(route('maintenances.update', $maintenance), [
+            'name' => $maintenance->name,
+            'asset_id' => $maintenance->asset_id,
+            'maintenance_type_id' => $maintenance->maintenance_type_id,
             'start_date' => '2021-01-01 00:00:00',
-            'completed_at' => '2021-01-10 00:00:00',
-            'completed_by' => $originalCompleter->id,
-            'asset_maintenance_time' => 9,
-        ]);
+            'completed_at' => '',
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('maintenances.index'));
 
-        $this->actingAs($actor)
-            ->put(route('maintenances.update', $maintenance), [
-                'name' => $maintenance->name,
-                'asset_id' => $maintenance->asset_id,
-                'maintenance_type_id' => $maintenance->maintenance_type_id,
-                'start_date' => '2021-01-01 00:00:00',
-                'completed_at' => '',
-            ])
-            ->assertSessionHasNoErrors()
-            ->assertRedirect(route('maintenances.index'));
+    $maintenance->refresh();
+    expect($maintenance->completed_at)->toBeNull();
+    expect($maintenance->completed_by)->toBeNull();
+    expect($maintenance->asset_maintenance_time)->toBeNull();
+});
 
-        $maintenance->refresh();
-        $this->assertNull($maintenance->completed_at);
-        $this->assertNull($maintenance->completed_by);
-        $this->assertNull($maintenance->asset_maintenance_time);
-    }
+test('editing completed at on already completed maintenance preserves completed by and does not relog', function () {
+    // date → different-date is a corrective edit, not a fresh
+    // completion. Original completer stays put, no second
+    // MaintenanceComplete log entry gets fired.
+    $actor = User::factory()->superuser()->create();
+    $originalCompleter = User::factory()->create();
+    $maintenance = Maintenance::factory()->create([
+        'start_date' => '2021-01-01 00:00:00',
+        'completed_at' => '2021-01-10 00:00:00',
+        'completed_by' => $originalCompleter->id,
+    ]);
 
-    public function test_editing_completed_at_on_already_completed_maintenance_preserves_completed_by_and_does_not_relog()
-    {
-        // date → different-date is a corrective edit, not a fresh
-        // completion. Original completer stays put, no second
-        // MaintenanceComplete log entry gets fired.
-        $actor = User::factory()->superuser()->create();
-        $originalCompleter = User::factory()->create();
-        $maintenance = Maintenance::factory()->create([
+    $priorLogCount = Actionlog::query()
+        ->where('item_type', Maintenance::class)
+        ->where('item_id', $maintenance->id)
+        ->where('action_type', 'completed')
+        ->count();
+
+    $this->actingAs($actor)
+        ->put(route('maintenances.update', $maintenance), [
+            'name' => $maintenance->name,
+            'asset_id' => $maintenance->asset_id,
+            'maintenance_type_id' => $maintenance->maintenance_type_id,
             'start_date' => '2021-01-01 00:00:00',
-            'completed_at' => '2021-01-10 00:00:00',
-            'completed_by' => $originalCompleter->id,
-        ]);
+            'completed_at' => '2021-01-15 00:00:00',
+        ])
+        ->assertSessionHasNoErrors();
 
-        $priorLogCount = Actionlog::query()
-            ->where('item_type', Maintenance::class)
-            ->where('item_id', $maintenance->id)
-            ->where('action_type', 'completed')
-            ->count();
+    $maintenance->refresh();
+    expect($maintenance->completed_at->format('Y-m-d H:i:s'))->toEqual('2021-01-15 00:00:00');
+    expect($maintenance->completed_by)->toEqual($originalCompleter->id, 'Original completer should not be overwritten by a corrective edit');
 
-        $this->actingAs($actor)
-            ->put(route('maintenances.update', $maintenance), [
-                'name' => $maintenance->name,
-                'asset_id' => $maintenance->asset_id,
-                'maintenance_type_id' => $maintenance->maintenance_type_id,
-                'start_date' => '2021-01-01 00:00:00',
-                'completed_at' => '2021-01-15 00:00:00',
-            ])
-            ->assertSessionHasNoErrors();
+    $newLogCount = Actionlog::query()
+        ->where('item_type', Maintenance::class)
+        ->where('item_id', $maintenance->id)
+        ->where('action_type', 'completed')
+        ->count();
+    expect($newLogCount)->toEqual($priorLogCount, 'Corrective edit should not fire a fresh MaintenanceComplete action log');
+});
 
-        $maintenance->refresh();
-        $this->assertEquals('2021-01-15 00:00:00', $maintenance->completed_at->format('Y-m-d H:i:s'));
-        $this->assertEquals($originalCompleter->id, $maintenance->completed_by, 'Original completer should not be overwritten by a corrective edit');
+test('completed at rejects date before start date', function () {
+    // Model-level rule: completed_at must be >= start_date. Prevents
+    // "completed before it began" nonsense.
+    $actor = User::factory()->superuser()->create();
+    $maintenance = Maintenance::factory()->create([
+        'start_date' => '2021-06-01 00:00:00',
+        'completed_at' => null,
+    ]);
 
-        $newLogCount = Actionlog::query()
-            ->where('item_type', Maintenance::class)
-            ->where('item_id', $maintenance->id)
-            ->where('action_type', 'completed')
-            ->count();
-        $this->assertEquals($priorLogCount, $newLogCount, 'Corrective edit should not fire a fresh MaintenanceComplete action log');
-    }
-
-    public function test_completed_at_rejects_date_before_start_date()
-    {
-        // Model-level rule: completed_at must be >= start_date. Prevents
-        // "completed before it began" nonsense.
-        $actor = User::factory()->superuser()->create();
-        $maintenance = Maintenance::factory()->create([
+    $this->actingAs($actor)
+        ->from(route('maintenances.edit', $maintenance))
+        ->put(route('maintenances.update', $maintenance), [
+            'name' => $maintenance->name,
+            'asset_id' => $maintenance->asset_id,
+            'maintenance_type_id' => $maintenance->maintenance_type_id,
             'start_date' => '2021-06-01 00:00:00',
-            'completed_at' => null,
-        ]);
+            'completed_at' => '2021-05-15 00:00:00',
+        ])
+        ->assertSessionHasErrors('completed_at')
+        ->assertRedirect(route('maintenances.edit', $maintenance));
 
-        $this->actingAs($actor)
-            ->from(route('maintenances.edit', $maintenance))
-            ->put(route('maintenances.update', $maintenance), [
-                'name' => $maintenance->name,
-                'asset_id' => $maintenance->asset_id,
-                'maintenance_type_id' => $maintenance->maintenance_type_id,
-                'start_date' => '2021-06-01 00:00:00',
-                'completed_at' => '2021-05-15 00:00:00',
-            ])
-            ->assertSessionHasErrors('completed_at')
-            ->assertRedirect(route('maintenances.edit', $maintenance));
+    expect($maintenance->fresh()->completed_at)->toBeNull();
+});
 
-        $this->assertNull($maintenance->fresh()->completed_at);
-    }
+test('completed at rejects future date', function () {
+    // Model-level rule: completed_at must be <= now. You can't have
+    // completed a maintenance in the future.
+    $actor = User::factory()->superuser()->create();
+    $maintenance = Maintenance::factory()->create([
+        'start_date' => '2021-01-01 00:00:00',
+        'completed_at' => null,
+    ]);
 
-    public function test_completed_at_rejects_future_date()
-    {
-        // Model-level rule: completed_at must be <= now. You can't have
-        // completed a maintenance in the future.
-        $actor = User::factory()->superuser()->create();
-        $maintenance = Maintenance::factory()->create([
+    $this->actingAs($actor)
+        ->from(route('maintenances.edit', $maintenance))
+        ->put(route('maintenances.update', $maintenance), [
+            'name' => $maintenance->name,
+            'asset_id' => $maintenance->asset_id,
+            'maintenance_type_id' => $maintenance->maintenance_type_id,
             'start_date' => '2021-01-01 00:00:00',
-            'completed_at' => null,
-        ]);
+            'completed_at' => now()->addYear()->format('Y-m-d H:i:s'),
+        ])
+        ->assertSessionHasErrors('completed_at')
+        ->assertRedirect(route('maintenances.edit', $maintenance));
 
-        $this->actingAs($actor)
-            ->from(route('maintenances.edit', $maintenance))
-            ->put(route('maintenances.update', $maintenance), [
-                'name' => $maintenance->name,
-                'asset_id' => $maintenance->asset_id,
-                'maintenance_type_id' => $maintenance->maintenance_type_id,
-                'start_date' => '2021-01-01 00:00:00',
-                'completed_at' => now()->addYear()->format('Y-m-d H:i:s'),
-            ])
-            ->assertSessionHasErrors('completed_at')
-            ->assertRedirect(route('maintenances.edit', $maintenance));
+    expect($maintenance->fresh()->completed_at)->toBeNull();
+});
 
-        $this->assertNull($maintenance->fresh()->completed_at);
-    }
+test('edit form seeds url intended from referer and update redirects there', function () {
+    $maintenance = Maintenance::factory()->create();
+    $type = MaintenanceType::factory()->create();
+    $filteredIndex = config('app.url').'/maintenances?completed=true';
 
-    public function test_edit_form_seeds_url_intended_from_referer_and_update_redirects_there()
-    {
-        $maintenance = Maintenance::factory()->create();
-        $type = MaintenanceType::factory()->create();
-        $filteredIndex = config('app.url').'/maintenances?completed=true';
+    $actor = User::factory()->superuser()->create();
 
-        $actor = User::factory()->superuser()->create();
+    // GET the edit form with a referer set (as the browser would)
+    // to seed session()['url.intended'].
+    $this->actingAs($actor)
+        ->from($filteredIndex)
+        ->get(route('maintenances.edit', $maintenance->id))
+        ->assertOk();
 
-        // GET the edit form with a referer set (as the browser would)
-        // to seed session()['url.intended'].
-        $this->actingAs($actor)
-            ->from($filteredIndex)
-            ->get(route('maintenances.edit', $maintenance->id))
-            ->assertOk();
+    // The subsequent PUT should honor the seeded intended URL.
+    $this->actingAs($actor)
+        ->put(route('maintenances.update', $maintenance), [
+            'name' => 'Post-edit',
+            'asset_id' => $maintenance->asset_id,
+            'maintenance_type_id' => $type->id,
+            'start_date' => '2021-01-01 00:00:00',
+            'completion_date' => '2021-01-10 00:00:00',
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect($filteredIndex);
+});
 
-        // The subsequent PUT should honor the seeded intended URL.
-        $this->actingAs($actor)
-            ->put(route('maintenances.update', $maintenance), [
-                'name' => 'Post-edit',
-                'asset_id' => $maintenance->asset_id,
-                'maintenance_type_id' => $type->id,
-                'start_date' => '2021-01-01 00:00:00',
-                'completion_date' => '2021-01-10 00:00:00',
-            ])
-            ->assertSessionHasNoErrors()
-            ->assertRedirect($filteredIndex);
-    }
+test('edit update falls back to index when url intended is offsite', function () {
+    $maintenance = Maintenance::factory()->create();
+    $type = MaintenanceType::factory()->create();
 
-    public function test_edit_update_falls_back_to_index_when_url_intended_is_offsite()
-    {
-        $maintenance = Maintenance::factory()->create();
-        $type = MaintenanceType::factory()->create();
+    // Seed url.intended with an attacker-controlled URL directly, as
+    // if SamlController RelayState or a stale session value slipped
+    // it in. Helper::sameOriginUrl must reject it.
+    $this->actingAs(User::factory()->superuser()->create())
+        ->withSession(['url.intended' => 'https://evil.example.com/steal-session'])
+        ->put(route('maintenances.update', $maintenance), [
+            'name' => 'Post-edit',
+            'asset_id' => $maintenance->asset_id,
+            'maintenance_type_id' => $type->id,
+            'start_date' => '2021-01-01 00:00:00',
+            'completion_date' => '2021-01-10 00:00:00',
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('maintenances.index'));
+});
 
-        // Seed url.intended with an attacker-controlled URL directly, as
-        // if SamlController RelayState or a stale session value slipped
-        // it in. Helper::sameOriginUrl must reject it.
-        $this->actingAs(User::factory()->superuser()->create())
-            ->withSession(['url.intended' => 'https://evil.example.com/steal-session'])
-            ->put(route('maintenances.update', $maintenance), [
-                'name' => 'Post-edit',
-                'asset_id' => $maintenance->asset_id,
-                'maintenance_type_id' => $type->id,
-                'start_date' => '2021-01-01 00:00:00',
-                'completion_date' => '2021-01-10 00:00:00',
-            ])
-            ->assertSessionHasNoErrors()
-            ->assertRedirect(route('maintenances.index'));
-    }
+test('user cannot edit maintenance for another company when fmcs enabled', function () {
+    $this->settings->enableMultipleFullCompanySupport();
 
-    public function test_user_cannot_edit_maintenance_for_another_company_when_fmcs_enabled()
-    {
-        $this->settings->enableMultipleFullCompanySupport();
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
 
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
+    $userInCompanyA = $companyA->users()->save(User::factory()->editAssets()->make());
+    $maintenanceForCompanyB = Maintenance::factory()->create();
+    $maintenanceForCompanyB->asset->update(['company_id' => $companyB->id]);
 
-        $userInCompanyA = $companyA->users()->save(User::factory()->editAssets()->make());
-        $maintenanceForCompanyB = Maintenance::factory()->create();
-        $maintenanceForCompanyB->asset->update(['company_id' => $companyB->id]);
+    $this->actingAs($userInCompanyA)
+        ->get(route('maintenances.edit', $maintenanceForCompanyB))
+        ->assertRedirectToRoute('maintenances.index');
 
-        $this->actingAs($userInCompanyA)
-            ->get(route('maintenances.edit', $maintenanceForCompanyB))
-            ->assertRedirectToRoute('maintenances.index');
-
-        $this->actingAs($userInCompanyA)
-            ->put(route('maintenances.update', $maintenanceForCompanyB), [
-                'name' => 'Should Not Update',
-                'asset_id' => $maintenanceForCompanyB->asset_id,
-                'maintenance_type_id' => $maintenanceForCompanyB->maintenance_type_id,
-                'start_date' => $maintenanceForCompanyB->start_date,
-            ])
-            ->assertRedirectToRoute('maintenances.index');
-
-        $this->assertDatabaseMissing('maintenances', [
-            'id' => $maintenanceForCompanyB->id,
+    $this->actingAs($userInCompanyA)
+        ->put(route('maintenances.update', $maintenanceForCompanyB), [
             'name' => 'Should Not Update',
-        ]);
-    }
-}
+            'asset_id' => $maintenanceForCompanyB->asset_id,
+            'maintenance_type_id' => $maintenanceForCompanyB->maintenance_type_id,
+            'start_date' => $maintenanceForCompanyB->start_date,
+        ])
+        ->assertRedirectToRoute('maintenances.index');
+
+    $this->assertDatabaseMissing('maintenances', [
+        'id' => $maintenanceForCompanyB->id,
+        'name' => 'Should Not Update',
+    ]);
+});
