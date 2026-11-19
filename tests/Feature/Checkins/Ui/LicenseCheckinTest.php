@@ -136,8 +136,7 @@ test('license seat checkin clears pending acceptance when notifications are full
 
     checkInSeat($seat);
 
-    // With no email and no webhook configured, the listener returns before it reaches the delete.
-    assertSoftDeleted($acceptance);
+    assertSoftDeleted($acceptance); // The pending acceptance should have been soft-deleted when the seat was checked in, but it survived: with no email and no webhook configured the listener returns before it reaches the delete.
 });
 
 test('license seat checkin clears pending acceptance when only a webhook is configured', function () {
@@ -154,8 +153,7 @@ test('license seat checkin clears pending acceptance when only a webhook is conf
 
     $this->assertSlackNotificationSent(CheckinLicenseSeatNotification::class);
 
-    // A webhook-only install never enters the notification branch that holds the delete.
-    assertSoftDeleted($acceptance);
+    assertSoftDeleted($acceptance); // The pending acceptance should have been soft-deleted when the seat was checked in, but it survived: a webhook-only install never enters the notification branch that holds the delete.
 });
 
 test('license seat checkin does not clear a same id pending acceptance of another type', function () {
@@ -175,7 +173,7 @@ test('license seat checkin does not clear a same id pending acceptance of anothe
 
     checkInSeat($seat);
 
-    assertSoftDeleted($seatAcceptance);
+    assertSoftDeleted($seatAcceptance); // The checked-in seat's own pending acceptance should have been soft-deleted.
 
     expect(CheckoutAcceptance::withTrashed()->findOrFail($assetAcceptance->id)->deleted_at)->toBeNull('Checking in the license seat should have left the asset acceptance alone. It was soft-deleted too, because the listener matches on checkoutable_id and assigned_to_id without filtering on checkoutable_type, and the asset happens to share the seat\'s id.');
 });

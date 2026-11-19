@@ -111,7 +111,7 @@ test('accessory checkin clears pending acceptance when notifications are fully d
 
     checkInAccessoryFrom($accessory, $user);
 
-    assertSoftDeleted($acceptance);
+    assertSoftDeleted($acceptance); // The pending acceptance should have been soft-deleted when the accessory was checked in but it survived.
 });
 
 test('accessory checkin clears pending acceptance when only a webhook is configured', function () {
@@ -138,7 +138,7 @@ test('accessory checkin clears pending acceptance when only a webhook is configu
 
     $this->assertSlackNotificationSent(CheckinAccessoryNotification::class);
 
-    assertSoftDeleted($acceptance);
+    assertSoftDeleted($acceptance); // The pending acceptance should have been soft-deleted when the accessory was checked in but it survived.
 });
 
 test('accessory checkin does not clear a same id pending acceptance of another type', function () {
@@ -167,7 +167,7 @@ test('accessory checkin does not clear a same id pending acceptance of another t
 
     checkInAccessoryFrom($accessory, $user);
 
-    assertSoftDeleted($accessoryAcceptance);
+    assertSoftDeleted($accessoryAcceptance); // The checked-in accessory's own pending acceptance should have been soft-deleted.
 
     expect(CheckoutAcceptance::withTrashed()->findOrFail($assetAcceptance->id)->deleted_at)->toBeNull('Checking in the accessory should have left the asset acceptance alone. It was soft-deleted too, because the listener matches on checkoutable_id and assigned_to_id without filtering on checkoutable_type, and the asset happens to share the accessory\'s id.');
 });
