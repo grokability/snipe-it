@@ -360,6 +360,10 @@ class UsersTransformer
             'license_id' => (int) $license->id,
             'name' => e($license->name),
             'serial' => $canViewKeys ? e($license->serial) : null,
+            'category' => $license->category ? [
+                'id' => $license->category->id,
+                'name' => e($license->category->name),
+            ] : null,
             'purchase_cost' => Helper::formatCurrencyOutput($license->purchase_cost),
             'purchase_order' => e($license->purchase_order),
             'order_number' => e($license->order_number),

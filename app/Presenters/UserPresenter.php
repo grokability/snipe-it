@@ -805,6 +805,15 @@ class UserPresenter extends Presenter
                 'title' => trans('admin/licenses/form.license_key'),
                 'visible' => true,
                 'formatter' => 'licenseKeyFormatter',
+            ], [
+                'field' => 'category',
+                'scope' => 'col',
+                'searchable' => true,
+                'sortable' => true,
+                'switchable' => true,
+                'title' => trans('general.category'),
+                'visible' => false,
+                'formatter' => 'categoriesLinkObjFormatter',
             ],
             [
                 'field' => 'purchase_cost',
