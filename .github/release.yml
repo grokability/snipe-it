@@ -20,6 +20,9 @@ changelog:
     - title: ❤️‍🩹 Breaking Changes
       labels:
         - breaking-change
+    - title: 🤜💥🤛 Code Improvements
+      labels:
+        - code-improvements
     - title: 👩‍🦼‍➡️ Accessibility
       labels:
         - accessibility
