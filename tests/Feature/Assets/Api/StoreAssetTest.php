@@ -596,6 +596,7 @@ test('store rejects cross company checkout target with full company support enab
     ]);
 });
 
+/** @link https://app.shortcut.com/grokability/story/29181 */
 test('assigned field validation cannot be array', function ($key, $value) {
     $this->actingAsForApi(User::factory()->createAssets()->create())
         ->postJson(route('api.assets.store'), [
@@ -701,6 +702,9 @@ test('an asset can be checked out to asset on store', function () {
     $this->assertHasTheseActionLogs($asset, ['create'/* , 'checkout' */]); // TODO - should be the two events
 });
 
+/**
+ * @link https://app.shortcut.com/grokability/story/24475
+ */
 test('company id needs to be integer', function () {
     $this->actingAsForApi(User::factory()->createAssets()->create())
         ->postJson(route('api.assets.store'), [

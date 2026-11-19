@@ -480,6 +480,18 @@ test('asset checkout stores sign in place preference in session', function () {
     $response->assertSessionHas('sign_in_place', true);
 });
 
+/**
+ * Regression: AssetCheckoutController::store used to call
+ *   session()->put(['checkout_to_type' => $target]);
+ * with $target being the resolved Eloquent model (User/Asset/Location),
+ * not the string 'user'/'asset'/'location'. Every subsequent read of
+ * session('checkout_to_type') then compared an Eloquent instance to a
+ * string literal in the checkout-selector partial, which silently
+ * failed — no radio was rendered `checked`, no target select got
+ * `required`, and jQuery Validate had nothing to block on.
+ *
+ * @see \App\Http\Controllers\Assets\AssetCheckoutController::store
+ */
 test('asset checkout stores target type as string in session', function (string $type) {
     [$field, $target] = match ($type) {
         'user' => ['assigned_user', User::factory()->create()->id],
@@ -620,6 +632,12 @@ test('invalid location override bounces the checkout', function () {
     Event::assertNotDispatched(CheckoutableCheckedOut::class);
 });
 
+// GHSA-9wq4-gp32-rcgj: AssetCheckoutController::store looped the attached
+// license seats and wrote $seat->assigned_to without any of the guards
+// the license checkout surfaces already enforce (occupied-seat reject,
+// unreassignable_seat reject, license->reassignable reject, no
+// CheckoutableCheckedIn event for displaced holders). The asset
+// checkout path now mirrors those guards and the audit-trail event.
 test('asset checkout rejects when attached seat is unreassignable', function () {
     $previousHolder = User::factory()->create();
     $license = License::factory()->create(['seats' => 1, 'reassignable' => true]);

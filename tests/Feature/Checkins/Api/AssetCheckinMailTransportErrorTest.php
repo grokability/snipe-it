@@ -5,6 +5,17 @@ use App\Models\Category;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 
+/**
+ * Regression for issue #20009.
+ *
+ * A broken mail transport (unresolved Docker-link `MAIL_PORT`, bad host,
+ * stray TypeError from a strict-typed library) must not take down the
+ * parent checkin / transfer request. CheckoutableListener wraps its
+ * Mail::send calls in try/catch, but previously only caught Exception,
+ * which left Error subtypes (TypeError in particular) bubbling up as a
+ * 500. The listener is now Throwable-catching so transport-level
+ * failures log and move on while the asset is still checked in.
+ */
 test('broken mail transport does not 500 the checkin', function () {
     // Category that triggers the mail path on checkin so the
     // listener actually reaches Mail::send during the request.

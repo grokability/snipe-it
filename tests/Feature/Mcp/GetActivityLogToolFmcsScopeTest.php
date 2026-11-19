@@ -7,6 +7,21 @@ use App\Models\Company;
 use App\Models\User;
 use Laravel\Mcp\Request;
 
+/**
+ * MCP regression coverage for GHSA-m955-p5pg-78mv.
+ *
+ * GetActivityLogTool reads action_logs through the Actionlog model, so
+ * the fix to Company::scopeCompanyables (delegated to Actionlog::
+ * applyCrossCompanyScope) applies to MCP callers the same way it
+ * applies to HTTP API callers. This test pins that assumption by
+ * driving the tool directly and asserting a cross-tenant NULL-company
+ * Asset log does not come back in the MCP response.
+ *
+ * ListHistoryTool is not covered here. It runs a per-item history
+ * Gate before the actionlog query, so cross-tenant access is blocked
+ * at the policy layer before scope ever runs. GetActivityLogTool has
+ * no per-item gate and is the right surface to pin the scope on.
+ */
 test('cross tenant null company asset log is hidden from mcp activity feed', function () {
     $this->settings->enableMultipleFullCompanySupport();
     [$companyA, $companyB] = Company::factory()->count(2)->create();

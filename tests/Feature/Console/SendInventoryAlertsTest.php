@@ -5,6 +5,13 @@ use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Mailer\Exception\TransportException;
 
+// Assertions target artisan output rather than Mail::/Notification::fake,
+// because InventoryAlert routes through Notification::send() with an
+// AlertRecipient (Notifiable trait, no Eloquent parent), and the fake
+// helpers call ->getKey() on the notifiable during send-time tracking.
+// Output-level assertions still catch what matters: the command
+// completes without exception, took the correct branch, and reported
+// the right thing to cron.
 test('reports low inventory count when items are low', function () {
     $this->settings->set([
         'alerts_enabled' => 1,

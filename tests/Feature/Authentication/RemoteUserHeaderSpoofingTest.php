@@ -3,6 +3,25 @@
 use App\Models\Setting;
 use App\Models\User;
 
+/**
+ * Regression coverage for the REMOTE_USER-header spoofing vulnerability
+ * reported by Brayden Arnold. `LoginController::loginViaRemoteUser` read
+ * `$request->server($header_name)` where `$header_name` was any string
+ * an admin configured. PHP populates `$_SERVER[HTTP_*]` directly from
+ * inbound HTTP headers, so configuring an HTTP_-prefixed value let any
+ * unauthenticated client send the matching request header and get
+ * logged in as any active user, including superuser (pre-auth
+ * takeover).
+ *
+ * Fix is two layers:
+ *
+ *   1. Settings-side validation rejects HTTP_-prefixed values at save
+ *      time (StoreSecuritySettings::rules), so admins can't configure
+ *      the dangerous shape on new installs.
+ *   2. Runtime guard in `loginViaRemoteUser` refuses to honor an
+ *      HTTP_-prefixed header name even when one is already persisted
+ *      (covers upgrade paths from a pre-fix install).
+ */
 test('settings save rejects http prefixed header name', function () {
     $superuser = User::factory()->superuser()->create();
 

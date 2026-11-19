@@ -51,6 +51,9 @@ test('non admin with pivot only company membership can create asset in their com
     expect($asset->company_id)->toEqual($company->id, 'Asset should be assigned to the submitted company, not null.');
 });
 
+/**
+ * @link https://github.com/grokability/snipe-it/issues/18798
+ */
 test('allows creating asset with scoped location', function () {
     $this->settings->enableScopedLocationsWithFullMultipleCompanySupport();
 

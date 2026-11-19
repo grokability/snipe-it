@@ -5,6 +5,22 @@ use App\Models\Asset;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
 
+/**
+ * Regression coverage for the concurrent-checkout race reported on
+ * 2026-08-02. Api\AssetsController::checkout() checked availableForCheckout
+ * outside its transaction, then called Asset::checkOut() inside the
+ * transaction with no row lock and no re-check. Two racing requests could
+ * both see the asset as available, both invoke checkOut(), and land
+ * duplicate checkout-history rows plus a doubled checkout_counter.
+ *
+ * The fix moves the availability re-check inside the transaction with
+ * lockForUpdate on the asset row, mirroring the ConsumablesController
+ * pattern from GHSA-x4g2-87xc-m5jm. This test cannot simulate two truly
+ * concurrent HTTP requests in phpunit, but it pins the behavioral
+ * consequence: an asset that has already been assigned mid-flight cannot
+ * be checked out a second time. Any refactor that removes the lock or the
+ * availability re-check would need to preserve this observable behavior.
+ */
 beforeEach(function () {
     Event::fake([CheckoutableCheckedOut::class]);
 });

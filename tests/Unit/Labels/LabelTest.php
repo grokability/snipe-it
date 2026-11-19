@@ -7,6 +7,9 @@ use App\View\Label;
 
 use function Livewire\invade;
 
+/**
+ * @link https://app.shortcut.com/grokability/story/29302
+ */
 test('handles location not being set on asset gracefully', function () {
     $this->settings->set([
         'label2_enable' => 1,

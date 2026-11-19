@@ -34,6 +34,22 @@ use Illuminate\JsonSchema\JsonSchemaTypeFactory;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Server\Tool;
 
+/**
+ * Every MCP tool sets an outputSchema() that MCP clients use to validate
+ * structuredContent.
+ *
+ * When the handler emits a field as null BUT the schema declares it
+ * non-null, clients (Claude Code, Codex, etc) reject the whole response. The
+ * existing per-tool tests only assert known-populated fields, so
+ * nullability drift goes unnoticed until a real client hits it.
+ *
+ * This test runs each tool against a minimally-populated setup
+ * (every optional field left null) and validates the resulting
+ * structuredContent against the tool's own outputSchema.
+ *
+ * Scope: READ tools (Show / Get / Find). Write-tool coverage isn't handled
+ * here just yet.
+ */
 beforeEach(function () {
     $this->actingAs(User::factory()->superuser()->create());
 });

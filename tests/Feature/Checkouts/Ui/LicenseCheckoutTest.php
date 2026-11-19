@@ -183,6 +183,18 @@ test('license checkout stores sign in place preference in session', function () 
     $response->assertSessionHas('sign_in_place', true);
 });
 
+// -----------------------------------------------------------------------
+// GHSA-r25g-f428-466r regression coverage.
+//
+// Web license checkout must reject explicit-seat-id requests that target
+// a retired unreassignable seat (which would push a non-reassignable
+// license past its intended activation count) or an already-occupied seat
+// (which would silently displace the current holder with no audit trail).
+// The web path has no reassign opt-in flag: any reassignment goes through
+// the API's `reassign: true` request or through the UserItemTransferController
+// seat-transfer flow, which produce a proper checkin-then-checkout event
+// pair.
+// -----------------------------------------------------------------------
 test('web checkout by explicit seat id rejects retired unreassignable seat', function () {
     $license = License::factory()->create(['seats' => 2, 'reassignable' => 0]);
     $seats = $license->licenseseats()->orderBy('id')->get();

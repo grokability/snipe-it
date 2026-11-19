@@ -143,6 +143,15 @@ test('signature output exceeding 2mb cap is rejected by validator', function () 
     expect($acceptance->accepted_at)->toBeNull();
 });
 
+/**
+ * Reporter-identified residual (Wojciech Ciemski post-fd61abe
+ * patch): a header-only PNG (valid signature + IHDR + IEND, no
+ * IDAT) passes getimagesizefromstring's shallow check,
+ * imagecreatefromstring fails on it, and the earlier shape then
+ * kept the original attacker bytes and wrote them under a .png
+ * filename. Verify the submission is now rejected and no file is
+ * written.
+ */
 test('signature output with valid header but no idat is rejected', function () {
     Storage::fake();
     $this->settings->enableRequiredSignatures();
@@ -168,6 +177,12 @@ test('signature output with valid header but no idat is rejected', function () {
     expect(Storage::disk()->files('private_uploads/signatures'))->toBeEmpty('A header-only PNG must not land any file under signatures/.');
 });
 
+/**
+ * Reporter-identified residual (Wojciech Ciemski post-fd61abe
+ * patch): the IMAGETYPE check used to accept any image type
+ * getimagesizefromstring recognized, including JPEG / GIF / BMP /
+ * WEBP. A valid JPEG then landed under a .png filename.
+ */
 test('signature output with non png image type is rejected', function () {
     Storage::fake();
     $this->settings->enableRequiredSignatures();

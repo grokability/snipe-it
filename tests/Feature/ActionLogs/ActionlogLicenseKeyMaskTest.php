@@ -5,6 +5,22 @@ use App\Models\Company;
 use App\Models\License;
 use App\Models\User;
 
+/**
+ * Regression coverage for the license-key mask half of
+ * GHSA-m955-p5pg-78mv.
+ *
+ * Actionlog::logMeta masks the raw product-key values in the diff blob
+ * for any caller without the viewKeys gate on the owning License.
+ * Before the fix, the mask was keyed off `$this->item instanceof
+ * License`. For a cross-tenant license, CompanyableScope filters the
+ * related model to null, so `null instanceof License === false` and
+ * the raw product-key diff returned unmasked.
+ *
+ * After the fix, the mask is keyed off the row's item_type, not the
+ * loaded relationship, and the License is reloaded via
+ * withoutGlobalScopes to drive the viewKeys gate. Fail-closed: a
+ * missing license row (hard-deleted) applies the mask too.
+ */
 function makeViewerInCompany(Company $company, array $permissionKeys = []): User
 {
     $permissions = [];

@@ -4,6 +4,21 @@ use App\Models\Company;
 use App\Models\User;
 
 /**
+ * Regression tests for GHSA-x9rj-mmg2-wcfv. Covers the two paired
+ * controls that close the per-company webhook mass-assignment hole:
+ *
+ *   1. ExternalUrl rule layered onto Company::$rules via getRules().
+ *      Rejects loopback / RFC1918 / cloud metadata / non-HTTP schemes
+ *      at save time. These tests run AS A SUPERUSER so the request
+ *      clears the gate below and actually exercises the URL rule.
+ *
+ *   2. Authz gate in Api\CompaniesController that rejects any mass-
+ *      assign request from a non-superuser if the body touches any
+ *      Company::GATED_WEBHOOK_FIELDS. Mirrors the Livewire integration
+ *      settings form's superuser requirement.
+ */
+
+/**
  * @return array<string, array{0: string}>
  */
 dataset('internalTargetProvider', function () {

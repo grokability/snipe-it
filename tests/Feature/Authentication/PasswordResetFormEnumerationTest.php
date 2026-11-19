@@ -3,6 +3,13 @@
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 
+/*
+ * Regression coverage for GHSA-f7hg-289f-972m (CWE-203 Observable Discrepancy).
+ * GET /password/reset/{token}?email=... used to render the form (200) when the
+ * email matched an account and redirect (302) otherwise, giving an
+ * unauthenticated caller a reliable existence oracle.
+ */
+
 beforeEach(function () {
     // ResetPasswordController registers 'throttle:10,1' in its
     // constructor. The array cache driver keeps counters alive across

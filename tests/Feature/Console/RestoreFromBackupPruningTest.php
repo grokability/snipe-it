@@ -2,6 +2,17 @@
 
 use App\Console\Commands\RestoreFromBackup;
 
+/**
+ * Covers the per-upload-directory pruning step in the restore flow.
+ * Pre-fix, the restore extracted the backup's files on top of the
+ * existing install without clearing them, so any image or file that
+ * the backup did not carry survived the restore and compounded into
+ * every subsequent backup. #19770.
+ *
+ * The pruning method is factored out of handle() so this test can
+ * drive it directly against a sandbox directory tree rather than
+ * invoking the full restore (which needs a real zip + a wiped DB).
+ */
 beforeEach(function () {
     $this->sandbox = sys_get_temp_dir().'/snipeit-restore-prune-'.uniqid();
     mkdir($this->sandbox, 0755, true);

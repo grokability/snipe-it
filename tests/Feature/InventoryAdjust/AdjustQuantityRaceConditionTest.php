@@ -6,6 +6,31 @@ use App\Models\Consumable;
 use Illuminate\Support\Facades\DB;
 
 /**
+ * Regression coverage for the TOCTOU race in AdjustsQuantity::adjustQuantity()
+ * that GHSA-3wf3-jcpq-265f reported.
+ *
+ * Pre-fix, the read of $current + the read of currentlyInUseCount() + the
+ * floor invariant check all ran OUTSIDE the DB::transaction, and only the
+ * increment/decrement itself ran inside. Two concurrent adjusters each
+ * observed the same pre-decrement quantity, each independently passed the
+ * floor check, each atomically applied their own delta, and the aggregate
+ * effect drove on-hand below in-use even though every individual request
+ * looked valid on its own.
+ *
+ * The fix moves the whole read + check + write sequence inside the
+ * transaction and takes a pessimistic row lock (SELECT ... FOR UPDATE)
+ * so concurrent adjusters serialize instead of interleaving.
+ *
+ * SQLite (which the test suite uses in memory) does not enforce row locks
+ * the same way MySQL/MariaDB does, so a real concurrent-request test
+ * cannot deterministically reproduce the race here. Instead we assert on
+ * the code-path indicators the lock adds: the SELECT query must carry
+ * `for update`, and it must be emitted INSIDE the same transaction as the
+ * UPDATE. Those two invariants together are what closes the race on any
+ * ACID engine that honors row locks.
+ */
+
+/**
  * @return array<string, array{class-string}>
  */
 dataset('inventoryModelProvider', function () {

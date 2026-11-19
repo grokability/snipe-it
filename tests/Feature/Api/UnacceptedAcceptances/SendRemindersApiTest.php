@@ -7,6 +7,15 @@ use App\Models\User;
 use App\Notifications\UnacceptedAssetReminderNotification;
 use Illuminate\Support\Facades\Notification;
 
+/**
+ * API coverage for POST /api/v1/unaccepted-acceptances/send-reminders,
+ * the scheduler-friendly surface added for #19811.
+ *
+ * Shape:
+ *   - no ids in body: delegates to the snipeit:acceptance-reminder
+ *     console command (one grouped email per assignee).
+ *   - ids in body: iterates each, applies FMCS, dispatches per-row.
+ */
 test('user without checkout grant is rejected', function () {
     $this->actingAsForApi(User::factory()->create())
         ->postJson(route('api.unaccepted-acceptances.send-reminders'))

@@ -157,6 +157,16 @@ test('location is set to rtd location by default upon checkin', function () {
     $this->assertHasTheseActionLogs($asset, ['create', 'checkin from']);
 });
 
+/**
+ * Regression coverage for #19401. Pre-fix, submitting the checkin form
+ * with the location dropdown blank (which is how a browser submits an
+ * empty select) wiped the asset's current location to null instead of
+ * resetting it to rtd_location_id like the field's own helper text
+ * implied. The new form ships both pickers pre-populated with
+ * rtd_location_id, so a no-touch submit sends both values back and
+ * the asset lands at rtd. This test posts the same shape as the browser
+ * would after a no-touch submit.
+ */
 test('checkin with prepopulated location lands at rtd not null', function () {
     $rtdLocation = Location::factory()->create();
     $userLocation = Location::factory()->create();

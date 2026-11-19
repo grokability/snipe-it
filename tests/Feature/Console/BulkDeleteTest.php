@@ -418,6 +418,13 @@ test('user avatar delete cannot escape avatars prefix', function () {
     Storage::disk('public')->assertExists('barcodes/target.png');
 });
 
+/**
+ * The authoritative URL short-circuit on the delete sink: an OAuth
+ * avatar URL (Google, Microsoft, Gravatar) does not point at anything
+ * on this disk, so BulkDelete must not reach Flysystem with it at
+ * all. basename on a URL would additionally collide with an unrelated
+ * legitimately-named file inside `avatars/`. GHSA-fr6v-rhmg-9h3p.
+ */
 test('user delete does not touch disk for external avatar', function () {
     Storage::fake('public');
     Storage::disk('public')->put('avatars/photo.jpg', 'legitimate other-user avatar');

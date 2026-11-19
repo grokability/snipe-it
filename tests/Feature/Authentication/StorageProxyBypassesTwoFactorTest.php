@@ -3,6 +3,16 @@
 use App\Models\Setting;
 use App\Models\User;
 
+/**
+ * When 2FA is universally required and the current user hasn't
+ * completed it, /two-factor-enroll and related pages reference
+ * branding images via <img src="/storage-proxy/…"> when PUBLIC_S3_PROXY
+ * is enabled. Those image fetches must NOT be intercepted by
+ * CheckForTwoFactor — otherwise the browser sees broken images AND
+ * the middleware's setIntendedUrl() call clobbers the real intended
+ * URL with a storage-proxy path, causing post-2FA redirects to land
+ * on a logo URL instead of the dashboard. See issue #19457.
+ */
 test('storage proxy is not redirected for a two factor incomplete session', function () {
     // 2 = universal mandatory 2FA
     Setting::factory()->create();

@@ -153,6 +153,9 @@ test('user is not able to accept an asset assigned to a different user', functio
     expect($acceptance->fresh()->accepted_at)->toBeNull();
 });
 
+/**
+ * @link https://github.com/grokability/snipe-it/issues/17589
+ */
 test('all accessory checkout entries are removed when user declines acceptance', function () {
     $assignee = User::factory()->create();
 

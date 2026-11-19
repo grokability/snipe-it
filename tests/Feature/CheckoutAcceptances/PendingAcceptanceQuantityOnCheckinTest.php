@@ -15,6 +15,34 @@ use Illuminate\Support\Facades\Mail;
 
 use function Pest\Laravel\actingAs;
 
+/**
+ * After checking an item in, the holder should be left owing an acceptance for
+ * exactly the units they still hold and have not already accepted. No more, or
+ * they are prompted to accept units they gave back. No fewer, or a unit they
+ * still hold has no acceptance record and they are never prompted at all.
+ *
+ * Written as an assertion, that is:
+ *
+ *     SUM(pending qty) == max(0, units held - units accepted)
+ *
+ * The subtraction only matters once something has been accepted, so most tests
+ * below are really just "pending qty == units held".
+ *
+ * Why this is not trivially true: two tables look 1:1 and are not.
+ * accessories_checkout holds one row per UNIT, while checkout_acceptances holds
+ * one row per CHECKOUT ACTION carrying its qty — so checking out 3 gives three
+ * pivot rows but a single acceptance row. Checking one unit back in therefore
+ * has to retire one unit, not a row that may be worth three.
+ *
+ * Accessory units are fungible — no serial, no tag — so there is no fact about
+ * WHICH unit came back. A checkin is therefore DEFINED to retire an unaccepted
+ * unit, oldest acceptance first, which is what makes the assertion above
+ * well-defined at all.
+ *
+ * Acceptance is all-or-nothing per row, so a qty-3 row cannot be partially
+ * accepted and mixed accepted/unaccepted states only arise from separate
+ * checkouts.
+ */
 beforeEach(function () {
     Mail::fake();
     $this->settings->disableAdminCC()->disableAdminCCAlways()->disableSlackWebhook();

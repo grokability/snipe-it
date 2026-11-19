@@ -6,6 +6,9 @@ use App\Models\Company;
 use App\Models\Statuslabel;
 use App\Models\User;
 
+/**
+ * @link https://github.com/grokability/snipe-it/issues/15654
+ */
 test('adheres to full multiple companies support scoping', function (User $actor, Company $company, Closure $assertions) {
     $this->settings->enableMultipleFullCompanySupport();
 

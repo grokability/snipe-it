@@ -6,6 +6,18 @@ use App\Models\CustomField;
 use App\Models\CustomFieldset;
 use App\Models\User;
 
+/**
+ * FD-56673 regression coverage. Asserts that every element-type branch in
+ * resources/views/models/custom_fields_form.blade.php honors the
+ * assets.view.encrypted_custom_fields gate, and that the fix is picked up
+ * on each of the four form contexts that include the template
+ * (edit, checkin, checkout, audit).
+ *
+ * The pre-fix template unconditionally called Helper::gracefulDecrypt on
+ * the listbox, textarea, markdown-textarea, date_picker, datetime_picker,
+ * DATE-format, and DATETIME-format branches, leaking plaintext to any
+ * assets.edit / assets.checkin / assets.checkout / assets.audit user.
+ */
 test('edit form masks encrypted custom field for user without view encrypted', function (array $fieldAttributes, string $secret) {
     $this->markIncompleteIfMySQL('Custom Fields tests do not work on MySQL');
 

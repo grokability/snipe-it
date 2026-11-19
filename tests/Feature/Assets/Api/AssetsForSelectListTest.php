@@ -122,6 +122,14 @@ test('superuser bypasses company id filter on assets selectlist', function () {
         ->assertResponseContainsInResults($assetB);
 });
 
+/**
+ * #19394 regression: under FMCS + floater mode, a company-scoped user
+ * asking for assets narrowed by companyId should also see null-company
+ * (floater) assets in the results. This matches the documented rule
+ * that "items from any company can be checked out to targets with no
+ * company assignment" — server-side canCheckoutTo already permits the
+ * checkout, so the picker must not hide the target.
+ */
 test('floater assets appear in selectlist under floater mode when narrowed by company', function () {
     $this->settings->enableMultipleFullCompanySupport();
     $this->settings->enableFloaterMode();
@@ -141,6 +149,13 @@ test('floater assets appear in selectlist under floater mode when narrowed by co
         ->assertResponseDoesNotContainInResults($otherCompanyAsset);
 });
 
+/**
+ * #19394 negative counterpart: under FMCS + strict mode (floater OFF),
+ * the companyId narrowing stays exact — null-company assets must NOT
+ * leak into the picker for a company-scoped caller. Otherwise turning
+ * floater mode off would silently still show floaters, breaking the
+ * "null is treated as its own pseudo-company" strict-mode contract.
+ */
 test('floater assets are hidden in selectlist under strict mode when narrowed by company', function () {
     $this->settings->enableMultipleFullCompanySupport();
     $this->settings->disableFloaterMode();

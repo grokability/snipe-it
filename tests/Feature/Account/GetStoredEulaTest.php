@@ -19,6 +19,16 @@ test('nonexistent filename redirects with error', function () {
         ->assertRedirect(route('home'));
 });
 
+/**
+ * Regression for #19344: a regular end user without users.view
+ * still needs to be able to download the EULA PDF for an asset
+ * they themselves accepted. We can't verify the actual file bytes
+ * come back without wiring a real file into storage_path(), so we
+ * assert on the distinct downstream signal: authorization succeeds
+ * (no 403), storage lookup misses, controller redirects back with
+ * the "file does not exist" error. That's the exact response an
+ * end user would see if their EULA PDF had been purged.
+ */
 test('end user can reach download flow for their own accepted eula', function () {
     $endUser = User::factory()->create();
     $asset = Asset::factory()->create();

@@ -5,6 +5,23 @@ use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Regression coverage for #19919. Each entity view page loads the QR
+ * code as an <img src>, so a request to the QR route arrives right
+ * after the entity view request. Laravel's StartSession middleware
+ * stores every GET URL as the session "previous URL" by default. On
+ * a webserver that strips the Referer header (Referrer-Policy:
+ * no-referrer under cPanel's default, for example), url()->previous()
+ * on the subsequent edit page has no Referer to prefer and falls back
+ * to the session-recorded last GET, which was the QR URL. "Go to
+ * previous page" after an edit then redirected the operator to the
+ * raw PNG endpoint instead of the asset view page.
+ *
+ * The QrCodeController now sets X-Requested-With: XMLHttpRequest on
+ * the request so StartSession::storeCurrentUrl() short-circuits and
+ * leaves the previous-URL slot alone, keeping it pointed at the real
+ * view page.
+ */
 beforeEach(function () {
     Setting::factory()->create(['label2_2d_type' => 'QRCODE']);
     Storage::fake('public');

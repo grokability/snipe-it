@@ -5,6 +5,17 @@ use App\Models\Category;
 use App\Models\Component;
 use App\Models\User;
 
+/**
+ * Regression coverage for GH #19570: components with require_acceptance
+ * on their category didn't produce a CheckoutAcceptance row when the
+ * checkout target was an Asset. That left the recipient (the asset's
+ * assigned user) with an email that had a broken accept link and no
+ * pending row to accept from their profile.
+ *
+ * The fix routes any Asset target through the asset's assignedto to
+ * pick the real acceptance target, and the mail template no longer
+ * renders the "please accept" copy or button when no accept URL exists.
+ */
 test('component checkout to asset creates acceptance for the assets assigned user', function () {
     $assignedUser = User::factory()->create();
     $asset = Asset::factory()->assignedToUser($assignedUser)->create();

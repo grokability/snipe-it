@@ -484,6 +484,20 @@ test('null company asset can be checked out to companied user when floater enabl
     expect($nullCompanyAsset->fresh()->assigned_to)->toEqual($companiedUser->id);
 });
 
+/**
+ * GHSA-6hxf-hqrc-wfrp regression coverage: the reporter's PoC
+ * exactly. An empty-pivot ("null tenant") actor holding assets.checkout
+ * would previously succeed at checking out a null-company asset to a
+ * companied user in any other company under strict FMCS, because
+ * CompanyableTrait::canCheckoutTo used $target->companies()->count()
+ * to detect an uncompanied target. That subquery re-applied the actor's
+ * Company::CompanyableScope, which for an empty-pivot actor degenerates
+ * to whereNull('companies.id') and matches zero rows, making every
+ * target look pivot-less. The fix delegates to
+ * User::canReceiveFromCompany(null), which reads company_user directly
+ * via DB::table and correctly rejects a companied target under strict
+ * mode.
+ */
 test('empty pivot actor cannot check out null company asset to companied user under strict fmcs', function () {
     $this->settings->enableMultipleFullCompanySupport();
     $this->settings->disableFloaterMode();

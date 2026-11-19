@@ -217,6 +217,15 @@ test('prevents checkouts of checked out items', function ($type, $target) {
     $response->assertRedirectToRoute('hardware.bulkcheckout.show');
 })->with('checkoutTargets');
 
+/**
+ * Regression: BulkAssetsController::store used to call
+ *   session()->put(['checkout_to_type' => $target]);
+ * with $target being the resolved Eloquent model. The checkout-selector
+ * partial compares against 'user'/'asset'/'location' string literals, so
+ * an object silently mismatched and no radio rendered `checked`.
+ *
+ * @see \App\Http\Controllers\Assets\BulkAssetsController::store
+ */
 test('bulk checkout defaults to asset index when no redirect option', function () {
     Mail::fake();
     $assets = Asset::factory()->count(2)->create();

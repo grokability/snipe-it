@@ -241,6 +241,9 @@ test('asset audit is saved', function () {
     expect($asset->next_audit_date)->toEqual($future);
 });
 
+/**
+ * @link https://github.com/grokability/snipe-it/issues/18495
+ */
 test('audit does not set next audit date if given null', function () {
     $this->settings->setAuditInterval(null);
 

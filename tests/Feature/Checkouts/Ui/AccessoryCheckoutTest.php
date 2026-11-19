@@ -321,6 +321,16 @@ test('accessory checkout stores sign in place preference in session', function (
     $response->assertSessionHas('sign_in_place', true);
 });
 
+/**
+ * Regression: AccessoryCheckoutController::store used to call
+ *   session()->put(['checkout_to_type' => $target]);
+ * with $target being the resolved Eloquent model, not the string kind.
+ * The checkout-selector partial compares against 'user'/'asset'/'location'
+ * literals, so an object silently mismatched and no radio was rendered
+ * `checked`.
+ *
+ * @see \App\Http\Controllers\Accessories\AccessoryCheckoutController::store
+ */
 test('accessory checkout stores target type as string in session', function (string $type) {
     [$field, $target] = match ($type) {
         'user' => ['assigned_user', User::factory()->create()->id],

@@ -3,6 +3,19 @@
 use App\Models\Statuslabel;
 use App\Models\User;
 
+/**
+ * Regression coverage for GHSA-xwf8-rj39-5q7q. Status label color was
+ * stored verbatim from request input and rendered into an inline
+ * `style="color: ..."` attribute in the sidebar, so a low-privilege
+ * user with statuslabels.create / statuslabels.edit could plant a CSS
+ * payload (full-viewport overlay, forced url(...) request) seen by
+ * every viewer holding assets.view, including superusers.
+ *
+ * The fix validates through App\Rules\CssColor on both the web and API
+ * write paths, and adds an Attribute-cast on the model that runs
+ * CssColor::sanitize() on read for defense-in-depth against pre-fix
+ * stored values.
+ */
 test('web store rejects a css injection color', function () {
     $actor = User::factory()->createStatusLabels()->create();
     $payload = 'red;position:fixed;top:0;left:0;width:100vw;height:100vh;background:url(//attacker.example/p.png)';

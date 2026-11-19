@@ -3,6 +3,13 @@
 use App\Models\Company;
 use App\Models\User;
 
+/**
+ * Regression coverage for GH #19569: a scoped editor's user save
+ * silently detached the target from every FMCS tenant the editor was
+ * not a member of, because the update path did a full-replacement
+ * sync on the editor's submitted list without folding the target's
+ * invisible-to-editor memberships back in.
+ */
 test('scoped editor save preserves target memberships editor cannot see', function () {
     // Editor is a member of Company A only; target belongs to
     // A + B + C + D. On save, the form only offered A so the

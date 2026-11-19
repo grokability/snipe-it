@@ -6,6 +6,23 @@ use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
 use App\Models\User;
 
+/**
+ * Regression tests for the CAND-09 race on acceptance finalization.
+ *
+ * CheckoutAcceptance::accept() and decline() used to do an unconditional
+ * save() followed by the item-specific side effects (deleting an accessory
+ * checkout, nulling an asset's assigned_to, etc). Two overlapping requests
+ * could both load the acceptance while isPending() was true and both run
+ * the side-effect chain. For accessory declines in particular,
+ * Accessory::declinedCheckout picks the "latest" AccessoryCheckout row by
+ * created_at with no acceptance binding, so the second stale request would
+ * delete an older, legitimate assignment.
+ *
+ * The fix moves accept() and decline() to a compare-and-set UPDATE scoped
+ * by whereNull on both timestamps. The first caller wins at the database
+ * layer. The second caller's UPDATE affects zero rows, the method returns
+ * false, and side effects do not run.
+ */
 test('second decline on a stale acceptance does not delete an unrelated older accessory checkout', function () {
     $user = User::factory()->create();
     $accessory = Accessory::factory()->create();

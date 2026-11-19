@@ -170,6 +170,14 @@ test('license free text search on relations', function () {
         ->assertJson(fn (AssertableJson $json) => $json->has('rows', 1)->etc());
 });
 
+/**
+ * Test License structured filter search on attributes
+ *
+ * The serial-key filter case actor holds viewKeys since Api\LicensesController
+ * routes viewKeys-less callers through TextSearchWithoutSerial, which strips
+ * `serial` from the searchable attribute set (see the FD-56674 fix). The
+ * inverse behavior for non-viewKeys callers is pinned in LicenseIndexTest.
+ */
 test('license structured filter on attributes', function () {
     License::factory()->create(['name' => 'Microsoft Office', 'serial' => 'SN-OFFICE-001']);
     License::factory()->create(['name' => 'Adobe Suite', 'serial' => 'SN-ADOBE-002']);
@@ -679,6 +687,12 @@ test('is not null filter excludes blank string direct attributes', function () {
     expect($returnedIds)->not->toContain((int) $blank->id);
 });
 
+/**
+ * Regression coverage for GH #19708: `is:not_null` on a DATE column
+ * previously returned zero rows because the applyNullFilter added a
+ * `!= ''` check that MySQL evaluates as UNKNOWN against DATE columns
+ * in strict mode, excluding every row.
+ */
 test('is null filter on date column', function () {
     // AssetFactory's afterMaking hook overwrites asset_eol_date, so set it after create.
     $withEol = Asset::factory()->create();
@@ -792,6 +806,16 @@ test('is null filter on polymorphic assigned to relation key', function () {
     expect($returnedNotNullIds)->not->toContain((int) $unassignedAsset->id);
 });
 
+/**
+ * Regression coverage for the follow-up half of #19708. The "Title"
+ * column on the hardware list renders users.jobtitle via the
+ * assignedTo polymorphic morph, but the trait had no plumbing for
+ * "column on a related table surfaced as a top-level filter key",
+ * so is:null / is:not_null (and plain LIKE) silently dropped the
+ * filter and returned every row. The fix routes `jobtitle` through
+ * whereHasMorph on assignedTo so all three operators work the way
+ * the UI implies.
+ */
 test('jobtitle filter matches assigned user jobtitle', function () {
     $ts = now()->timestamp;
 

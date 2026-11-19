@@ -4,6 +4,20 @@ use App\Models\CheckoutAcceptance;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Regression coverage for Christopher Finks (christopherfi-dev) Issue 6:
+ * AcceptanceController::store used Storage::put for the signature image and
+ * for the acceptance PDF without checking the return value. On non-throwing
+ * filesystem configurations a silent put() failure returned false, but the
+ * flow continued into $acceptance->accept(), populating accepted_at, the
+ * signature/EULA filename fields, the "accepted" action log, and the
+ * downstream notifications, even though the evidence files were absent
+ * from storage. The application then presented a completed acceptance
+ * whose evidence file did not exist.
+ *
+ * The fix checks both put() returns explicitly and short-circuits with a
+ * user-visible error before advancing acceptance state.
+ */
 function acceptPayloadWithSignature(): array
 {
     // AcceptanceController rejects signature_output whose decoded

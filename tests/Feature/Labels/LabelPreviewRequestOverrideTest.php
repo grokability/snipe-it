@@ -3,6 +3,30 @@
 use App\Models\Setting;
 use App\Models\User;
 
+/**
+ * Regression tests for two defects in the label-preview endpoint:
+ *
+ *   1. The `settings[key]=value` override loop used to mutate the live
+ *      `Setting::getSettings()` singleton, poisoning the static cache for
+ *      every subsequent request on the same PHP-FPM worker. A clone keeps
+ *      preview overrides request-scoped. An allowlist on the label2_ prefix
+ *      bounds the attack surface to the keys the Settings UI actually sends.
+ *
+ *   2. The label2 renderer called `range(1, $settings->label2_empty_row_count)`
+ *      and materialized the full result before `->take()` truncated it to
+ *      the template's physical capacity. An unbounded request value therefore
+ *      scaled CPU and memory with user input (CWE-400 / CWE-1284).
+ */
+
+/**
+ * Every test here hits the label preview endpoint which routes
+ * through App\View\Label::render(), which calls TCPDF's Output()
+ * with destination='I' (inline). TCPDF's 'I' mode `print`s the
+ * PDF bytes, and PHPUnit's HTTP test harness doesn't always
+ * capture those cleanly, so without a buffer the PDF stream
+ * bleeds into CI stdout and interleaves with the progress line.
+ * Save the outer OB level so we only clean down to our own.
+ */
 beforeEach(function () {
     $this->outerObLevel = ob_get_level();
     ob_start();

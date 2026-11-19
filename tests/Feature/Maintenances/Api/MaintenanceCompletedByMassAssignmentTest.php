@@ -4,6 +4,15 @@ use App\Models\Asset;
 use App\Models\Maintenance;
 use App\Models\User;
 
+/**
+ * PATCH /api/v1/maintenances/{id} previously filled the model from
+ * request input while excluding only asset_id, item_id, and item_type.
+ * completed_by passed through, letting a user with assets.edit forge
+ * the completion attribution on a maintenance they can update
+ * (CWE-915). The fix adds completed_by to the exclusion list so the
+ * attribution column can only be written by the dedicated complete()
+ * action which sets it from the authenticated user.
+ */
 test('patch cannot set completed by to another user', function () {
     $editor = User::factory()->editAssets()->create();
     $otherAdmin = User::factory()->superuser()->create();

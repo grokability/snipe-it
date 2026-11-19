@@ -6,6 +6,30 @@ use App\Models\AssetModel;
 use App\Models\Category;
 use App\Models\User;
 
+/**
+ * Regression coverage for the arbitrary local-file read + SSRF reported by
+ * W1nterFr3ak (Chris Byron Otieno) on 2026-08-02. Category eula_text was
+ * passed raw through SnipeModel::getEula, echoed via `{!! $eula !!}` into
+ * every checkout mail template, and the resulting HTML was walked by
+ * `laravel-mail-auto-embed`, which fetched every `<img src="">`
+ * server-side (file_get_contents for local paths, curl with TLS
+ * verification disabled for remote URLs) and attached the bytes to the
+ * outbound mail. A low-privilege user with categories.create/edit +
+ * assets.checkout could set eula_text to `![x](/var/www/html/.env)` or a
+ * raw `<img>` tag, check the asset out to themselves, and receive the
+ * file contents (or any URL's response body, including cloud metadata) as
+ * a MIME attachment.
+ *
+ * The fix sanitizes at the model boundary: `SnipeModel::getEula` now
+ * pipes through `Helper::parseEscapedMarkedown` (strip_tags + Parsedown
+ * safe mode) and additionally strips `<img>` from the Parsedown output,
+ * killing both attack vectors before eula content reaches any mail
+ * template. `BlockImagesMarkdownExtension` on the mail Markdown parser
+ * from GHSA-f3vq-g24v-xc2g remains defense in depth.
+ *
+ * These tests exercise the model-layer sanitizer directly and the
+ * end-to-end mailable render so both surfaces are pinned.
+ */
 function assetWithEula(string $eulaText): Asset
 {
     $category = Category::factory()->assetLaptopCategory()->create([
