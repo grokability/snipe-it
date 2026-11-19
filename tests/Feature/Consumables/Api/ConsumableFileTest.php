@@ -1,226 +1,206 @@
 <?php
 
-namespace Tests\Feature\Consumables\Api;
-
 use App\Models\Consumable;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
 
-class ConsumableFileTest extends TestCase
-{
-    protected function setUp(): void
-    {
-        parent::setUp();
-        Storage::fake();
-    }
+beforeEach(function () {
+    Storage::fake();
+});
 
-    public function test_consumable_api_accepts_file_upload()
-    {
-        // Upload a file to a model
+test('consumable api accepts file upload', function () {
+    // Upload a file to a model
+    // Create a model to work with
+    $consumable = Consumable::factory()->create();
 
-        // Create a model to work with
-        $consumable = Consumable::factory()->create();
+    // Create a superuser to run this as
+    $user = User::factory()->superuser()->create();
 
-        // Create a superuser to run this as
-        $user = User::factory()->superuser()->create();
+    // Upload a file
+    $this->actingAsForApi($user)
+        ->post(
+            route('api.files.store', ['object_type' => 'consumables', 'id' => $consumable->id]), [
+                'file' => [UploadedFile::fake()->create('test.jpg', 100)],
+            ]
+        )
+        ->assertOk();
+});
 
-        // Upload a file
-        $this->actingAsForApi($user)
-            ->post(
-                route('api.files.store', ['object_type' => 'consumables', 'id' => $consumable->id]), [
-                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
-                ]
-            )
-            ->assertOk();
-    }
+test('consumable api lists files', function () {
+    // List all files on a model
+    // Create a model to work with
+    $consumable = Consumable::factory()->create();
 
-    public function test_consumable_api_lists_files()
-    {
-        // List all files on a model
+    // Create a superuser to run this as
+    $user = User::factory()->superuser()->create();
 
-        // Create a model to work with
-        $consumable = Consumable::factory()->create();
+    // List the files
+    $this->actingAsForApi($user)
+        ->getJson(
+            route('api.files.index', ['object_type' => 'consumables', 'id' => $consumable->id])
+        )
+        ->assertOk()
+        ->assertJsonStructure(
+            [
+                'rows',
+                'total',
+            ]
+        );
+});
 
-        // Create a superuser to run this as
-        $user = User::factory()->superuser()->create();
+test('consumable fails if invalid type passed in url', function () {
+    // List all files on a model
+    // Create an model to work with
+    $consumable = Consumable::factory()->create();
 
-        // List the files
-        $this->actingAsForApi($user)
-            ->getJson(
-                route('api.files.index', ['object_type' => 'consumables', 'id' => $consumable->id])
-            )
-            ->assertOk()
-            ->assertJsonStructure(
-                [
-                    'rows',
-                    'total',
-                ]
-            );
-    }
+    // Create a superuser to run this as
+    $user = User::factory()->superuser()->create();
 
-    public function test_consumable_fails_if_invalid_type_passed_in_url()
-    {
-        // List all files on a model
+    // List the files
+    $this->actingAsForApi($user)
+        ->getJson(
+            route('api.files.index', ['object_type' => 'shibboleeeeeet', 'id' => $consumable->id])
+        )
+        ->assertStatus(404);
+});
 
-        // Create an model to work with
-        $consumable = Consumable::factory()->create();
+test('consumable fails if invalid id passed in url', function () {
+    // List all files on a model
+    // Create an model to work with
+    $consumable = Consumable::factory()->create();
 
-        // Create a superuser to run this as
-        $user = User::factory()->superuser()->create();
+    // Create a superuser to run this as
+    $user = User::factory()->superuser()->create();
 
-        // List the files
-        $this->actingAsForApi($user)
-            ->getJson(
-                route('api.files.index', ['object_type' => 'shibboleeeeeet', 'id' => $consumable->id])
-            )
-            ->assertStatus(404);
-    }
+    // List the files
+    $this->actingAsForApi($user)
+        ->getJson(
+            route('api.files.index', ['object_type' => 'consumables', 'id' => 100000])
+        )
+        ->assertOk()
+        ->assertStatusMessageIs('error');
+});
 
-    public function test_consumable_fails_if_invalid_id_passed_in_url()
-    {
-        // List all files on a model
+test('consumable api downloads file', function () {
+    // Download a file from a model
+    // Create a model to work with
+    $consumable = Consumable::factory()->create();
 
-        // Create an model to work with
-        $consumable = Consumable::factory()->create();
+    // Create a superuser to run this as
+    $user = User::factory()->superuser()->create();
 
-        // Create a superuser to run this as
-        $user = User::factory()->superuser()->create();
+    // Upload a file
+    $this->actingAsForApi($user)
+        ->post(
+            route('api.files.store', ['object_type' => 'consumables', 'id' => $consumable->id]), [
+                'file' => [UploadedFile::fake()->create('test.jpg', 100)],
+            ]
+        )
+        ->assertOk()
+        ->assertJsonStructure(
+            [
+                'status',
+                'messages',
+            ]
+        );
 
-        // List the files
-        $this->actingAsForApi($user)
-            ->getJson(
-                route('api.files.index', ['object_type' => 'consumables', 'id' => 100000])
-            )
-            ->assertOk()
-            ->assertStatusMessageIs('error');
-    }
+    // Upload a file with notes
+    $this->actingAsForApi($user)
+        ->post(
+            route('api.files.store', ['object_type' => 'consumables', 'id' => $consumable->id]), [
+                'file' => [UploadedFile::fake()->create('test.jpg', 100)],
+                'notes' => 'manual',
+            ]
+        )
+        ->assertOk()
+        ->assertJsonStructure(
+            [
+                'status',
+                'messages',
+            ]
+        );
 
-    public function test_consumable_api_downloads_file()
-    {
-        // Download a file from a model
-
-        // Create a model to work with
-        $consumable = Consumable::factory()->create();
-
-        // Create a superuser to run this as
-        $user = User::factory()->superuser()->create();
-
-        // Upload a file
-        $this->actingAsForApi($user)
-            ->post(
-                route('api.files.store', ['object_type' => 'consumables', 'id' => $consumable->id]), [
-                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
-                ]
-            )
-            ->assertOk()
-            ->assertJsonStructure(
-                [
-                    'status',
-                    'messages',
-                ]
-            );
-
-        // Upload a file with notes
-        $this->actingAsForApi($user)
-            ->post(
-                route('api.files.store', ['object_type' => 'consumables', 'id' => $consumable->id]), [
-                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
-                    'notes' => 'manual',
-                ]
-            )
-            ->assertOk()
-            ->assertJsonStructure(
-                [
-                    'status',
-                    'messages',
-                ]
-            );
-
-        // List the files to get the file ID
-        $result = $this->actingAsForApi($user)
-            ->getJson(
-                route('api.files.index', ['object_type' => 'consumables', 'id' => $consumable->id, 'order' => 'asc'])
-            )
-            ->assertOk()
-            ->assertJsonStructure(
-                [
-                    'total',
-                    'rows' => [
-                        '*' => [
-                            'id',
-                            'filename',
-                            'url',
-                            'created_by',
-                            'created_at',
-                            'deleted_at',
-                            'note',
-                            'available_actions',
-                        ],
+    // List the files to get the file ID
+    $result = $this->actingAsForApi($user)
+        ->getJson(
+            route('api.files.index', ['object_type' => 'consumables', 'id' => $consumable->id, 'order' => 'asc'])
+        )
+        ->assertOk()
+        ->assertJsonStructure(
+            [
+                'total',
+                'rows' => [
+                    '*' => [
+                        'id',
+                        'filename',
+                        'url',
+                        'created_by',
+                        'created_at',
+                        'deleted_at',
+                        'note',
+                        'available_actions',
                     ],
+                ],
+            ]
+        )
+        ->assertJsonPath('rows.0.note', null)
+        ->assertJsonPath('rows.1.note', 'manual');
+
+    // Get the file
+    $this->actingAsForApi($user)
+        ->get(
+            route(
+                'api.files.show', [
+                    'object_type' => 'consumables',
+                    'id' => $consumable->id,
+                    'file_id' => $result->decodeResponseJson()->json()['rows'][0]['id'],
                 ]
             )
-            ->assertJsonPath('rows.0.note', null)
-            ->assertJsonPath('rows.1.note', 'manual');
+        )
+        ->assertOk();
+});
 
-        // Get the file
-        $this->actingAsForApi($user)
-            ->get(
-                route(
-                    'api.files.show', [
-                        'object_type' => 'consumables',
-                        'id' => $consumable->id,
-                        'file_id' => $result->decodeResponseJson()->json()['rows'][0]['id'],
-                    ]
-                )
-            )
-            ->assertOk();
-    }
+test('consumable api deletes file', function () {
+    // Delete a file from a model
+    // Create a model to work with
+    $consumable = Consumable::factory()->create();
 
-    public function test_consumable_api_deletes_file()
-    {
-        // Delete a file from a model
+    // Create a superuser to run this as
+    $user = User::factory()->superuser()->create();
 
-        // Create a model to work with
-        $consumable = Consumable::factory()->create();
+    // Upload a file
+    $this->actingAsForApi($user)
+        ->post(
+            route('api.files.store', ['object_type' => 'consumables', 'id' => $consumable->id]), [
+                'file' => [UploadedFile::fake()->create('test.jpg', 100)],
+            ]
+        )
+        ->assertOk();
 
-        // Create a superuser to run this as
-        $user = User::factory()->superuser()->create();
+    // List the files to get the file ID
+    $result = $this->actingAsForApi($user)
+        ->getJson(
+            route('api.files.index', ['object_type' => 'consumables', 'id' => $consumable->id])
+        )
+        ->assertOk();
 
-        // Upload a file
-        $this->actingAsForApi($user)
-            ->post(
-                route('api.files.store', ['object_type' => 'consumables', 'id' => $consumable->id]), [
-                    'file' => [UploadedFile::fake()->create('test.jpg', 100)],
+    // Delete the file
+    $this->actingAsForApi($user)
+        ->delete(
+            route(
+                'api.files.destroy', [
+                    'object_type' => 'consumables',
+                    'id' => $consumable->id,
+                    'file_id' => $result->decodeResponseJson()->json()['rows'][0]['id'],
                 ]
             )
-            ->assertOk();
-
-        // List the files to get the file ID
-        $result = $this->actingAsForApi($user)
-            ->getJson(
-                route('api.files.index', ['object_type' => 'consumables', 'id' => $consumable->id])
-            )
-            ->assertOk();
-
-        // Delete the file
-        $this->actingAsForApi($user)
-            ->delete(
-                route(
-                    'api.files.destroy', [
-                        'object_type' => 'consumables',
-                        'id' => $consumable->id,
-                        'file_id' => $result->decodeResponseJson()->json()['rows'][0]['id'],
-                    ]
-                )
-            )
-            ->assertOk()
-            ->assertJsonStructure(
-                [
-                    'status',
-                    'messages',
-                ]
-            );
-    }
-}
+        )
+        ->assertOk()
+        ->assertJsonStructure(
+            [
+                'status',
+                'messages',
+            ]
+        );
+});

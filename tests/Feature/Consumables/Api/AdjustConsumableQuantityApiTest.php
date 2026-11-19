@@ -1,61 +1,49 @@
 <?php
 
-namespace Tests\Feature\Consumables\Api;
-
 use App\Enums\ActionType;
 use App\Models\Actionlog;
 use App\Models\Consumable;
 use App\Models\User;
-use Tests\TestCase;
 
-// Focused wiring test: the shared AdjustQuantityRequest + AdjustsQuantity
-// trait + controller pattern is fully covered in AdjustAccessoryQuantityApiTest.
-// These assertions just prove the consumables route + controller are wired.
-class AdjustConsumableQuantityApiTest extends TestCase
-{
-    public function test_requires_edit_permission()
-    {
-        $consumable = Consumable::factory()->create(['qty' => 5]);
+test('requires edit permission', function () {
+    $consumable = Consumable::factory()->create(['qty' => 5]);
 
-        $this->actingAsForApi(User::factory()->create())
-            ->postJson(route('api.consumables.adjust-quantity', $consumable), [
-                'amount' => 3,
-                'note' => 'restock',
-            ])
-            ->assertForbidden();
-    }
+    $this->actingAsForApi(User::factory()->create())
+        ->postJson(route('api.consumables.adjust-quantity', $consumable), [
+            'amount' => 3,
+            'note' => 'restock',
+        ])
+        ->assertForbidden();
+});
 
-    public function test_signed_amount_writes_quantity_adjust_log()
-    {
-        $consumable = Consumable::factory()->create(['qty' => 5]);
+test('signed amount writes quantity adjust log', function () {
+    $consumable = Consumable::factory()->create(['qty' => 5]);
 
-        $this->actingAsForApi(User::factory()->editConsumables()->create())
-            ->postJson(route('api.consumables.adjust-quantity', $consumable), [
-                'amount' => 3,
-                'note' => 'restock',
-                'order_number' => 'PO-CON',
-            ])
-            ->assertOk();
+    $this->actingAsForApi(User::factory()->editConsumables()->create())
+        ->postJson(route('api.consumables.adjust-quantity', $consumable), [
+            'amount' => 3,
+            'note' => 'restock',
+            'order_number' => 'PO-CON',
+        ])
+        ->assertOk();
 
-        $this->assertSame(8, (int) $consumable->fresh()->qty);
+    expect((int) $consumable->fresh()->qty)->toBe(8);
 
-        $log = Actionlog::where('item_type', Consumable::class)
-            ->where('item_id', $consumable->id)
-            ->where('action_type', ActionType::QuantityAdjust->value)
-            ->latest('id')
-            ->firstOrFail();
+    $log = Actionlog::where('item_type', Consumable::class)
+        ->where('item_id', $consumable->id)
+        ->where('action_type', ActionType::QuantityAdjust->value)
+        ->latest('id')
+        ->firstOrFail();
 
-        $this->assertSame(3, (int) $log->quantity);
-        $this->assertSame('PO-CON', $log->orderItem->order->order_number);
-    }
+    expect((int) $log->quantity)->toBe(3);
+    expect($log->orderItem->order->order_number)->toBe('PO-CON');
+});
 
-    public function test_note_is_required()
-    {
-        $consumable = Consumable::factory()->create(['qty' => 5]);
+test('note is required', function () {
+    $consumable = Consumable::factory()->create(['qty' => 5]);
 
-        $this->actingAsForApi(User::factory()->editConsumables()->create())
-            ->postJson(route('api.consumables.adjust-quantity', $consumable), ['amount' => 2])
-            ->assertOk()
-            ->assertJsonPath('status', 'error');
-    }
-}
+    $this->actingAsForApi(User::factory()->editConsumables()->create())
+        ->postJson(route('api.consumables.adjust-quantity', $consumable), ['amount' => 2])
+        ->assertOk()
+        ->assertJsonPath('status', 'error');
+});
