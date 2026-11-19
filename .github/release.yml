@@ -27,7 +27,10 @@ changelog:
         - breaking-change
     - title: 💖 UX/UI Improvements
       labels:
-        - breaking-change    
+        - breaking-change   
+    - title: 🖨️ Label Printing
+      labels:
+        - labels 
     - title: 👩‍🦼‍➡️ Accessibility
       labels:
         - accessibility
