@@ -35,10 +35,10 @@ changelog:
     - title: 🛎️ Item Acceptance
       labels:
         - item-acceptance
-   - title: 🤜💥🤛 Code Improvements
+    - title: 🤜💥🤛 Code Improvements
       labels:
         - code-improvements   
-   - title: Dependency & Security Updates
+    - title: Dependency & Security Updates
       labels:
         - dependencies 
         - security       
