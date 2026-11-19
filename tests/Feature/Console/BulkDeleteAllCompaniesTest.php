@@ -1,23 +1,12 @@
 <?php
 
-namespace Tests\Feature\Console;
-
 use App\Models\Asset;
 use App\Models\Company;
 use App\Models\User;
 use Illuminate\Testing\PendingCommand;
-use Tests\TestCase;
 
-/**
- * Covers the '__all__' sentinel in the multisearch company picker:
- * selecting "All Companies + Unassigned" must expand to every company
- * id plus the no-company scope, so items across every tenant are
- * covered without picking each one by hand.
- */
-class BulkDeleteAllCompaniesTest extends TestCase
-{
-    private function runCommand(User $admin, array $companySelectionKeys, array $types, string $deleteType): PendingCommand
-    {
+beforeEach(function () {
+    $this->runCommand = function (User $admin, array $companySelectionKeys, array $types, string $deleteType): PendingCommand {
         $searchLabel = 'Who are you? Search by username, first or last name.';
         $companiesLabel = 'Which companies would you like to check in and delete items for?';
         $typesLabel = 'What item types would you like to check in and delete?';
@@ -57,76 +46,72 @@ class BulkDeleteAllCompaniesTest extends TestCase
         }
 
         return $cmd->expectsConfirmation('Are you sure you want to proceed? This cannot be undone.', 'yes');
-    }
+    };
+});
 
-    public function test_all_companies_sentinel_covers_every_company_plus_unassigned(): void
-    {
-        $admin = User::factory()->superuser()->create();
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
+test('all companies sentinel covers every company plus unassigned', function () {
+    $admin = User::factory()->superuser()->create();
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
 
-        $assetA = Asset::factory()->for($companyA)->create();
-        $assetB = Asset::factory()->for($companyB)->create();
-        $orphanAsset = Asset::factory()->create(['company_id' => null]);
+    $assetA = Asset::factory()->for($companyA)->create();
+    $assetB = Asset::factory()->for($companyB)->create();
+    $orphanAsset = Asset::factory()->create(['company_id' => null]);
 
-        $this->runCommand($admin, ['__all__'], ['assets'], 'soft')->assertExitCode(0);
+    ($this->runCommand)($admin, ['__all__'], ['assets'], 'soft')->assertExitCode(0);
 
-        $this->assertSoftDeleted($assetA);
-        $this->assertSoftDeleted($assetB);
-        $this->assertSoftDeleted($orphanAsset);
-    }
+    $this->assertSoftDeleted($assetA);
+    $this->assertSoftDeleted($assetB);
+    $this->assertSoftDeleted($orphanAsset);
+});
 
-    public function test_all_companies_sentinel_wins_when_combined_with_specific_picks(): void
-    {
-        // Selecting __all__ alongside a specific company id shouldn't
-        // narrow the scope. The __all__ branch resets the key list to
-        // every company plus __null__, so the specific pick becomes a
-        // no-op rather than a filter.
-        $admin = User::factory()->superuser()->create();
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
+test('all companies sentinel wins when combined with specific picks', function () {
+    // Selecting __all__ alongside a specific company id shouldn't
+    // narrow the scope. The __all__ branch resets the key list to
+    // every company plus __null__, so the specific pick becomes a
+    // no-op rather than a filter.
+    $admin = User::factory()->superuser()->create();
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
 
-        $assetA = Asset::factory()->for($companyA)->create();
-        $assetB = Asset::factory()->for($companyB)->create();
-        $orphanAsset = Asset::factory()->create(['company_id' => null]);
+    $assetA = Asset::factory()->for($companyA)->create();
+    $assetB = Asset::factory()->for($companyB)->create();
+    $orphanAsset = Asset::factory()->create(['company_id' => null]);
 
-        $this->runCommand($admin, ['__all__', $companyA->id], ['assets'], 'soft')->assertExitCode(0);
+    ($this->runCommand)($admin, ['__all__', $companyA->id], ['assets'], 'soft')->assertExitCode(0);
 
-        $this->assertSoftDeleted($assetA);
-        $this->assertSoftDeleted($assetB);
-        $this->assertSoftDeleted($orphanAsset);
-    }
+    $this->assertSoftDeleted($assetA);
+    $this->assertSoftDeleted($assetB);
+    $this->assertSoftDeleted($orphanAsset);
+});
 
-    public function test_specific_company_only_still_scopes_correctly(): void
-    {
-        // Regression guard: __all__ handling must not accidentally
-        // widen a specific-company selection.
-        $admin = User::factory()->superuser()->create();
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
+test('specific company only still scopes correctly', function () {
+    // Regression guard: __all__ handling must not accidentally
+    // widen a specific-company selection.
+    $admin = User::factory()->superuser()->create();
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
 
-        $assetA = Asset::factory()->for($companyA)->create();
-        $assetB = Asset::factory()->for($companyB)->create();
-        $orphanAsset = Asset::factory()->create(['company_id' => null]);
+    $assetA = Asset::factory()->for($companyA)->create();
+    $assetB = Asset::factory()->for($companyB)->create();
+    $orphanAsset = Asset::factory()->create(['company_id' => null]);
 
-        $this->runCommand($admin, [$companyA->id], ['assets'], 'soft')->assertExitCode(0);
+    ($this->runCommand)($admin, [$companyA->id], ['assets'], 'soft')->assertExitCode(0);
 
-        $this->assertSoftDeleted($assetA);
-        $this->assertNotSoftDeleted($assetB);
-        $this->assertNotSoftDeleted($orphanAsset);
-    }
+    $this->assertSoftDeleted($assetA);
+    $this->assertNotSoftDeleted($assetB);
+    $this->assertNotSoftDeleted($orphanAsset);
+});
 
-    public function test_null_only_still_scopes_to_unassigned_only(): void
-    {
-        // Regression guard: __null__ alone still means "no-company only".
-        $admin = User::factory()->superuser()->create();
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
+test('null only still scopes to unassigned only', function () {
+    // Regression guard: __null__ alone still means "no-company only".
+    $admin = User::factory()->superuser()->create();
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
 
-        $assetA = Asset::factory()->for($companyA)->create();
-        $assetB = Asset::factory()->for($companyB)->create();
-        $orphanAsset = Asset::factory()->create(['company_id' => null]);
+    $assetA = Asset::factory()->for($companyA)->create();
+    $assetB = Asset::factory()->for($companyB)->create();
+    $orphanAsset = Asset::factory()->create(['company_id' => null]);
 
-        $this->runCommand($admin, ['__null__'], ['assets'], 'soft')->assertExitCode(0);
+    ($this->runCommand)($admin, ['__null__'], ['assets'], 'soft')->assertExitCode(0);
 
-        $this->assertSoftDeleted($orphanAsset);
-        $this->assertNotSoftDeleted($assetA);
-        $this->assertNotSoftDeleted($assetB);
-    }
-}
+    $this->assertSoftDeleted($orphanAsset);
+    $this->assertNotSoftDeleted($assetA);
+    $this->assertNotSoftDeleted($assetB);
+});

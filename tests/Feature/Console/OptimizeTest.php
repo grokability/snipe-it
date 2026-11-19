@@ -1,86 +1,81 @@
 <?php
 
-namespace Tests\Feature\Console;
-
 use Illuminate\Support\Facades\File;
-use Tests\TestCase;
 
-class OptimizeTest extends TestCase
-{
-    private const RELOCATABLE_CACHES = [
+beforeEach(function () {
+    $relocatedCacheDirectory = storage_path('framework/testing/optimize-'.getmypid());
+
+    $relocatableCaches = [
         'APP_CONFIG_CACHE' => 'config.php',
         'APP_EVENTS_CACHE' => 'events.php',
         'APP_ROUTES_CACHE' => 'routes-v7.php',
     ];
 
-    private array $originalCacheEnv = [];
+    $originalCacheEnv = snapshotCachePathEnv(array_keys($relocatableCaches));
+    relocateFrameworkCaches($relocatedCacheDirectory, $relocatableCaches);
 
-    private string $relocatedCacheDirectory;
+    $this->beforeApplicationDestroyed(function () use ($relocatedCacheDirectory, $originalCacheEnv) {
+        File::deleteDirectory($relocatedCacheDirectory);
+        restoreCachePathEnv($originalCacheEnv);
+    });
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+test('optimize succeeds', function () {
+    $this->artisan('optimize')->assertSuccessful();
+});
 
-        $this->relocatedCacheDirectory = storage_path('framework/testing/optimize-'.getmypid());
+/**
+ * Record every cache path env var as it stands before this test
+ * relocates it.
+ *
+ * @param  list<string>  $keys
+ * @return array<string, array{env: mixed, server: mixed}>
+ */
+function snapshotCachePathEnv(array $keys): array
+{
+    $snapshot = [];
 
-        $this->snapshotCachePathEnv();
-        $this->relocateFrameworkCaches();
-
-        $this->beforeApplicationDestroyed(function () {
-            File::deleteDirectory($this->relocatedCacheDirectory);
-            $this->restoreCachePathEnv();
-        });
+    foreach ($keys as $key) {
+        $snapshot[$key] = [
+            'env' => $_ENV[$key] ?? false,
+            'server' => $_SERVER[$key] ?? false,
+        ];
     }
 
-    public function test_optimize_succeeds(): void
-    {
-        $this->artisan('optimize')->assertSuccessful();
-    }
+    return $snapshot;
+}
 
-    /**
-     * Record every cache path env var as it stands before this test
-     * relocates it.
-     */
-    private function snapshotCachePathEnv(): void
-    {
-        foreach (array_keys(self::RELOCATABLE_CACHES) as $key) {
-            $this->originalCacheEnv[$key] = [
-                'env' => $_ENV[$key] ?? false,
-                'server' => $_SERVER[$key] ?? false,
-            ];
+/**
+ * Point the relocatable caches at an isolated
+ * directory to avoid workers stepping on each other.
+ *
+ * @param  array<string, string>  $caches  env var => cache filename
+ */
+function relocateFrameworkCaches(string $directory, array $caches): void
+{
+    File::ensureDirectoryExists($directory);
+
+    foreach ($caches as $key => $filename) {
+        $_ENV[$key] = $_SERVER[$key] = $directory.'/'.$filename;
+    }
+}
+
+/**
+ * Put every cache path env var back exactly as it was before this test
+ * ran, so a relocated path can't leak into the next test's config boot.
+ *
+ * @param  array<string, array{env: mixed, server: mixed}>  $originalCacheEnv
+ */
+function restoreCachePathEnv(array $originalCacheEnv): void
+{
+    foreach ($originalCacheEnv as $key => $original) {
+        unset($_ENV[$key], $_SERVER[$key]);
+
+        if ($original['env'] !== false) {
+            $_ENV[$key] = $original['env'];
         }
-    }
-
-    /**
-     * Point the three relocatable caches at an isolated
-     * directory to avoid workers stepping on each other.
-     */
-    private function relocateFrameworkCaches(): void
-    {
-        File::ensureDirectoryExists($this->relocatedCacheDirectory);
-
-        foreach (self::RELOCATABLE_CACHES as $key => $filename) {
-            $path = $this->relocatedCacheDirectory.'/'.$filename;
-
-            $_ENV[$key] = $_SERVER[$key] = $path;
-        }
-    }
-
-    /**
-     * Put every cache path env var back exactly as it was before this test
-     * ran, so a relocated path can't leak into the next test's config boot.
-     */
-    private function restoreCachePathEnv(): void
-    {
-        foreach ($this->originalCacheEnv as $key => $original) {
-            unset($_ENV[$key], $_SERVER[$key]);
-
-            if ($original['env'] !== false) {
-                $_ENV[$key] = $original['env'];
-            }
-            if ($original['server'] !== false) {
-                $_SERVER[$key] = $original['server'];
-            }
+        if ($original['server'] !== false) {
+            $_SERVER[$key] = $original['server'];
         }
     }
 }

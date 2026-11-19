@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Feature\Console;
-
 use App\Events\CheckoutableCheckedIn;
 use App\Models\Accessory;
 use App\Models\Asset;
@@ -11,337 +9,289 @@ use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
-use Tests\TestCase;
 
-class CheckinAndDeleteItemsTest extends TestCase
-{
-    // ---------------------------------------------------------------------------
-    // Assets
-    // ---------------------------------------------------------------------------
+test('checked out asset is checked in and soft deleted', function () {
+    $user = User::factory()->create();
+    $asset = Asset::factory()->assignedToUser($user)->create();
 
-    public function test_checked_out_asset_is_checked_in_and_soft_deleted()
-    {
-        $user = User::factory()->create();
-        $asset = Asset::factory()->assignedToUser($user)->create();
+    expect($asset->assigned_to)->not->toBeNull();
 
-        $this->assertNotNull($asset->assigned_to);
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true])
+        ->assertExitCode(0);
 
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true])
-            ->assertExitCode(0);
+    $this->assertSoftDeleted($asset);
+    expect($asset->fresh()->assigned_to)->toBeNull();
+});
 
-        $this->assertSoftDeleted($asset);
-        $this->assertNull($asset->fresh()->assigned_to);
-    }
+test('unassigned asset is soft deleted without checkin log', function () {
+    $asset = Asset::factory()->create();
 
-    public function test_unassigned_asset_is_soft_deleted_without_checkin_log()
-    {
-        $asset = Asset::factory()->create();
+    expect($asset->assigned_to)->toBeNull();
 
-        $this->assertNull($asset->assigned_to);
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true])
+        ->assertExitCode(0);
 
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true])
-            ->assertExitCode(0);
+    $this->assertSoftDeleted($asset);
+});
 
-        $this->assertSoftDeleted($asset);
-    }
+test('asset checkin creates action log', function () {
+    $user = User::factory()->create();
+    $asset = Asset::factory()->assignedToUser($user)->create();
 
-    public function test_asset_checkin_creates_action_log()
-    {
-        $user = User::factory()->create();
-        $asset = Asset::factory()->assignedToUser($user)->create();
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true, '--no-notifications' => true])
+        ->assertExitCode(0);
 
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true, '--no-notifications' => true])
-            ->assertExitCode(0);
+    $this->assertHasTheseActionLogs($asset, ['create', 'checkin from', 'delete']);
+});
 
-        $this->assertHasTheseActionLogs($asset, ['create', 'checkin from', 'delete']);
-    }
+test('event is fired for checked out asset when notifications enabled', function () {
+    Event::fake([CheckoutableCheckedIn::class]);
 
-    public function test_event_is_fired_for_checked_out_asset_when_notifications_enabled()
-    {
-        Event::fake([CheckoutableCheckedIn::class]);
+    User::factory()->superuser()->create();
+    $asset = Asset::factory()->assignedToUser()->create();
 
-        User::factory()->superuser()->create();
-        $asset = Asset::factory()->assignedToUser()->create();
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true])
+        ->assertExitCode(0);
 
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true])
-            ->assertExitCode(0);
+    Event::assertDispatched(CheckoutableCheckedIn::class, function ($event) use ($asset) {
+        return $event->checkoutable->is($asset);
+    });
+});
 
-        Event::assertDispatched(CheckoutableCheckedIn::class, function ($event) use ($asset) {
-            return $event->checkoutable->is($asset);
-        });
-    }
+test('admin id option is used as checked in by user', function () {
+    Event::fake([CheckoutableCheckedIn::class]);
 
-    public function test_admin_id_option_is_used_as_checked_in_by_user()
-    {
-        Event::fake([CheckoutableCheckedIn::class]);
+    $admin = User::factory()->superuser()->create();
+    $asset = Asset::factory()->assignedToUser()->create();
 
-        $admin = User::factory()->superuser()->create();
-        $asset = Asset::factory()->assignedToUser()->create();
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true, '--admin-id' => $admin->id])
+        ->assertExitCode(0);
 
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true, '--admin-id' => $admin->id])
-            ->assertExitCode(0);
+    Event::assertDispatched(CheckoutableCheckedIn::class, function ($event) use ($admin) {
+        return $event->checkedInBy->is($admin);
+    });
+});
 
-        Event::assertDispatched(CheckoutableCheckedIn::class, function ($event) use ($admin) {
-            return $event->checkedInBy->is($admin);
-        });
-    }
+test('invalid admin id returns exit code 1', function () {
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true, '--admin-id' => 999999])
+        ->assertExitCode(1);
+});
 
-    public function test_invalid_admin_id_returns_exit_code_1()
-    {
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true, '--admin-id' => 999999])
-            ->assertExitCode(1);
-    }
+test('event is not fired when no notifications option set', function () {
+    Event::fake([CheckoutableCheckedIn::class]);
 
-    public function test_event_is_not_fired_when_no_notifications_option_set()
-    {
-        Event::fake([CheckoutableCheckedIn::class]);
+    $asset = Asset::factory()->assignedToUser()->create();
 
-        $asset = Asset::factory()->assignedToUser()->create();
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true, '--no-notifications' => true])
+        ->assertExitCode(0);
 
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true, '--no-notifications' => true])
-            ->assertExitCode(0);
+    Event::assertNotDispatched(CheckoutableCheckedIn::class);
+});
 
-        Event::assertNotDispatched(CheckoutableCheckedIn::class);
-    }
+test('company id option scopes assets', function () {
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
 
-    public function test_company_id_option_scopes_assets()
-    {
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
+    $assetA = Asset::factory()->for($companyA)->assignedToUser()->create();
+    $assetB = Asset::factory()->for($companyB)->assignedToUser()->create();
 
-        $assetA = Asset::factory()->for($companyA)->assignedToUser()->create();
-        $assetB = Asset::factory()->for($companyB)->assignedToUser()->create();
+    $this->artisan('snipeit:checkin-delete-all', [
+        '--type' => 'assets',
+        '--company-id' => $companyA->id,
+        '--force' => true,
+        '--no-notifications' => true,
+    ])->assertExitCode(0);
 
-        $this->artisan('snipeit:checkin-delete-all', [
-            '--type' => 'assets',
-            '--company-id' => $companyA->id,
-            '--force' => true,
-            '--no-notifications' => true,
-        ])->assertExitCode(0);
-
-        $this->assertSoftDeleted($assetA);
-        $this->assertNotSoftDeleted($assetB);
-    }
-
-    public function test_asset_license_seats_are_freed_on_checkin()
-    {
-        $user = User::factory()->create();
-        $asset = Asset::factory()->assignedToUser($user)->create();
-        $seat = LicenseSeat::factory()->create(['asset_id' => $asset->id, 'assigned_to' => $user->id]);
+    $this->assertSoftDeleted($assetA);
+    $this->assertNotSoftDeleted($assetB);
+});
 
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true, '--no-notifications' => true])
-            ->assertExitCode(0);
+test('asset license seats are freed on checkin', function () {
+    $user = User::factory()->create();
+    $asset = Asset::factory()->assignedToUser($user)->create();
+    $seat = LicenseSeat::factory()->create(['asset_id' => $asset->id, 'assigned_to' => $user->id]);
 
-        $this->assertNull($seat->fresh()->assigned_to);
-    }
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true, '--no-notifications' => true])
+        ->assertExitCode(0);
 
-    // ---------------------------------------------------------------------------
-    // Licenses
-    // ---------------------------------------------------------------------------
+    expect($seat->fresh()->assigned_to)->toBeNull();
+});
 
-    public function test_assigned_license_seat_is_checked_in_and_license_soft_deleted()
-    {
-        $license = License::factory()->create();
-        $seat = LicenseSeat::factory()->for($license)->assignedToUser()->create();
+test('assigned license seat is checked in and license soft deleted', function () {
+    $license = License::factory()->create();
+    $seat = LicenseSeat::factory()->for($license)->assignedToUser()->create();
 
-        $this->assertNotNull($seat->assigned_to);
-
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'licenses', '--force' => true, '--no-notifications' => true])
-            ->assertExitCode(0);
+    expect($seat->assigned_to)->not->toBeNull();
 
-        $this->assertSoftDeleted($license);
-        $this->assertNull($seat->fresh()->assigned_to);
-        $this->assertNull($seat->fresh()->asset_id);
-    }
-
-    public function test_unassigned_license_is_soft_deleted()
-    {
-        $license = License::factory()->create();
-
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'licenses', '--force' => true, '--no-notifications' => true])
-            ->assertExitCode(0);
-
-        $this->assertSoftDeleted($license);
-    }
-
-    public function test_company_id_option_scopes_licenses()
-    {
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
-
-        $licenseA = License::factory()->for($companyA)->create();
-        $licenseB = License::factory()->for($companyB)->create();
-
-        $this->artisan('snipeit:checkin-delete-all', [
-            '--type' => 'licenses',
-            '--company-id' => $companyA->id,
-            '--force' => true,
-            '--no-notifications' => true,
-        ])->assertExitCode(0);
-
-        $this->assertSoftDeleted($licenseA);
-        $this->assertNotSoftDeleted($licenseB);
-    }
-
-    // ---------------------------------------------------------------------------
-    // Accessories
-    // ---------------------------------------------------------------------------
-
-    public function test_checked_out_accessory_is_checked_in_and_soft_deleted()
-    {
-        $accessory = Accessory::factory()->checkedOutToUser()->create();
-
-        $this->assertEquals(1, $accessory->checkouts->count());
-
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'accessories', '--force' => true, '--no-notifications' => true])
-            ->assertExitCode(0);
-
-        $this->assertSoftDeleted($accessory);
-        $this->assertEquals(0, $accessory->fresh()->checkouts->count());
-    }
-
-    public function test_company_id_option_scopes_accessories()
-    {
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
-
-        $accessoryA = Accessory::factory()->for($companyA)->checkedOutToUser()->create();
-        $accessoryB = Accessory::factory()->for($companyB)->checkedOutToUser()->create();
-
-        $this->artisan('snipeit:checkin-delete-all', [
-            '--type' => 'accessories',
-            '--company-id' => $companyA->id,
-            '--force' => true,
-            '--no-notifications' => true,
-        ])->assertExitCode(0);
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'licenses', '--force' => true, '--no-notifications' => true])
+        ->assertExitCode(0);
 
-        $this->assertSoftDeleted($accessoryA);
-        $this->assertNotSoftDeleted($accessoryB);
-    }
+    $this->assertSoftDeleted($license);
+    expect($seat->fresh()->assigned_to)->toBeNull();
+    expect($seat->fresh()->asset_id)->toBeNull();
+});
 
-    // ---------------------------------------------------------------------------
-    // Components
-    // ---------------------------------------------------------------------------
+test('unassigned license is soft deleted', function () {
+    $license = License::factory()->create();
 
-    public function test_checked_out_component_is_checked_in_and_soft_deleted()
-    {
-        $component = Component::factory()->checkedOutToAsset()->create();
-
-        $this->assertDatabaseHas('components_assets', ['component_id' => $component->id]);
-
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'components', '--force' => true, '--no-notifications' => true])
-            ->assertExitCode(0);
-
-        $this->assertSoftDeleted($component);
-        $this->assertDatabaseMissing('components_assets', ['component_id' => $component->id]);
-    }
-
-    public function test_company_id_option_scopes_components()
-    {
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
-
-        $componentA = Component::factory()->for($companyA)->checkedOutToAsset()->create();
-        $componentB = Component::factory()->for($companyB)->checkedOutToAsset()->create();
-
-        $this->artisan('snipeit:checkin-delete-all', [
-            '--type' => 'components',
-            '--company-id' => $companyA->id,
-            '--force' => true,
-            '--no-notifications' => true,
-        ])->assertExitCode(0);
-
-        $this->assertSoftDeleted($componentA);
-        $this->assertNotSoftDeleted($componentB);
-    }
-
-    // ---------------------------------------------------------------------------
-    // Type filtering and general behaviour
-    // ---------------------------------------------------------------------------
-
-    public function test_type_option_limits_processing_to_specified_type()
-    {
-        $asset = Asset::factory()->assignedToUser()->create();
-        $accessory = Accessory::factory()->checkedOutToUser()->create();
-
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true, '--no-notifications' => true])
-            ->assertExitCode(0);
-
-        $this->assertSoftDeleted($asset);
-        $this->assertNotSoftDeleted($accessory);
-    }
-
-    public function test_invalid_type_returns_exit_code_1()
-    {
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'invalid', '--force' => true])
-            ->assertExitCode(1);
-    }
-
-    public function test_confirmation_is_required_without_force()
-    {
-        Asset::factory()->create();
-
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets'])
-            ->expectsConfirmation('This will check in and soft-delete all [assets] for [all companies]. Continue?', 'no')
-            ->assertExitCode(0);
-
-        $this->assertDatabaseCount('assets', 1);
-    }
-
-    public function test_force_option_skips_confirmation()
-    {
-        $asset = Asset::factory()->create();
-
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true, '--no-notifications' => true])
-            ->assertExitCode(0);
-
-        $this->assertSoftDeleted($asset);
-    }
-
-    public function test_dry_run_does_not_delete_or_checkin_assets()
-    {
-        $user = User::factory()->create();
-        $asset = Asset::factory()->assignedToUser($user)->create();
-
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--dry-run' => true])
-            ->assertExitCode(0);
-
-        $this->assertNotSoftDeleted($asset);
-        $this->assertNotNull($asset->fresh()->assigned_to);
-    }
-
-    public function test_dry_run_skips_confirmation_prompt()
-    {
-        Asset::factory()->create();
-
-        // Would hang waiting for input if confirmation were shown
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--dry-run' => true])
-            ->assertExitCode(0);
-    }
-
-    public function test_dry_run_outputs_would_be_messaging()
-    {
-        $asset = Asset::factory()->assignedToUser()->create();
-
-        $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--dry-run' => true])
-            ->expectsOutputToContain('DRY RUN')
-            ->expectsOutputToContain('Would check in asset')
-            ->expectsOutputToContain('Would delete asset')
-            ->expectsOutputToContain('Dry run complete')
-            ->assertExitCode(0);
-    }
-
-    public function test_custom_note_is_used_in_action_log()
-    {
-        $asset = Asset::factory()->assignedToUser()->create();
-
-        $this->artisan('snipeit:checkin-delete-all', [
-            '--type' => 'assets',
-            '--force' => true,
-            '--no-notifications' => true,
-            '--note' => 'Bulk removal for decommission',
-        ])->assertExitCode(0);
-
-        $this->assertDatabaseHas('action_logs', [
-            'item_id' => $asset->id,
-            'action_type' => 'checkin from',
-            'note' => 'Bulk removal for decommission',
-        ]);
-    }
-}
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'licenses', '--force' => true, '--no-notifications' => true])
+        ->assertExitCode(0);
+
+    $this->assertSoftDeleted($license);
+});
+
+test('company id option scopes licenses', function () {
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
+
+    $licenseA = License::factory()->for($companyA)->create();
+    $licenseB = License::factory()->for($companyB)->create();
+
+    $this->artisan('snipeit:checkin-delete-all', [
+        '--type' => 'licenses',
+        '--company-id' => $companyA->id,
+        '--force' => true,
+        '--no-notifications' => true,
+    ])->assertExitCode(0);
+
+    $this->assertSoftDeleted($licenseA);
+    $this->assertNotSoftDeleted($licenseB);
+});
+
+test('checked out accessory is checked in and soft deleted', function () {
+    $accessory = Accessory::factory()->checkedOutToUser()->create();
+
+    expect($accessory->checkouts->count())->toEqual(1);
+
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'accessories', '--force' => true, '--no-notifications' => true])
+        ->assertExitCode(0);
+
+    $this->assertSoftDeleted($accessory);
+    expect($accessory->fresh()->checkouts->count())->toEqual(0);
+});
+
+test('company id option scopes accessories', function () {
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
+
+    $accessoryA = Accessory::factory()->for($companyA)->checkedOutToUser()->create();
+    $accessoryB = Accessory::factory()->for($companyB)->checkedOutToUser()->create();
+
+    $this->artisan('snipeit:checkin-delete-all', [
+        '--type' => 'accessories',
+        '--company-id' => $companyA->id,
+        '--force' => true,
+        '--no-notifications' => true,
+    ])->assertExitCode(0);
+
+    $this->assertSoftDeleted($accessoryA);
+    $this->assertNotSoftDeleted($accessoryB);
+});
+
+test('checked out component is checked in and soft deleted', function () {
+    $component = Component::factory()->checkedOutToAsset()->create();
+
+    $this->assertDatabaseHas('components_assets', ['component_id' => $component->id]);
+
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'components', '--force' => true, '--no-notifications' => true])
+        ->assertExitCode(0);
+
+    $this->assertSoftDeleted($component);
+    $this->assertDatabaseMissing('components_assets', ['component_id' => $component->id]);
+});
+
+test('company id option scopes components', function () {
+    [$companyA, $companyB] = Company::factory()->count(2)->create();
+
+    $componentA = Component::factory()->for($companyA)->checkedOutToAsset()->create();
+    $componentB = Component::factory()->for($companyB)->checkedOutToAsset()->create();
+
+    $this->artisan('snipeit:checkin-delete-all', [
+        '--type' => 'components',
+        '--company-id' => $companyA->id,
+        '--force' => true,
+        '--no-notifications' => true,
+    ])->assertExitCode(0);
+
+    $this->assertSoftDeleted($componentA);
+    $this->assertNotSoftDeleted($componentB);
+});
+
+test('type option limits processing to specified type', function () {
+    $asset = Asset::factory()->assignedToUser()->create();
+    $accessory = Accessory::factory()->checkedOutToUser()->create();
+
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true, '--no-notifications' => true])
+        ->assertExitCode(0);
+
+    $this->assertSoftDeleted($asset);
+    $this->assertNotSoftDeleted($accessory);
+});
+
+test('invalid type returns exit code 1', function () {
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'invalid', '--force' => true])
+        ->assertExitCode(1);
+});
+
+test('confirmation is required without force', function () {
+    Asset::factory()->create();
+
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets'])
+        ->expectsConfirmation('This will check in and soft-delete all [assets] for [all companies]. Continue?', 'no')
+        ->assertExitCode(0);
+
+    $this->assertDatabaseCount('assets', 1);
+});
+
+test('force option skips confirmation', function () {
+    $asset = Asset::factory()->create();
+
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--force' => true, '--no-notifications' => true])
+        ->assertExitCode(0);
+
+    $this->assertSoftDeleted($asset);
+});
+
+test('dry run does not delete or checkin assets', function () {
+    $user = User::factory()->create();
+    $asset = Asset::factory()->assignedToUser($user)->create();
+
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--dry-run' => true])
+        ->assertExitCode(0);
+
+    $this->assertNotSoftDeleted($asset);
+    expect($asset->fresh()->assigned_to)->not->toBeNull();
+});
+
+test('dry run skips confirmation prompt', function () {
+    Asset::factory()->create();
+
+    // Would hang waiting for input if confirmation were shown
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--dry-run' => true])
+        ->assertExitCode(0);
+});
+
+test('dry run outputs would be messaging', function () {
+    $asset = Asset::factory()->assignedToUser()->create();
+
+    $this->artisan('snipeit:checkin-delete-all', ['--type' => 'assets', '--dry-run' => true])
+        ->expectsOutputToContain('DRY RUN')
+        ->expectsOutputToContain('Would check in asset')
+        ->expectsOutputToContain('Would delete asset')
+        ->expectsOutputToContain('Dry run complete')
+        ->assertExitCode(0);
+});
+
+test('custom note is used in action log', function () {
+    $asset = Asset::factory()->assignedToUser()->create();
+
+    $this->artisan('snipeit:checkin-delete-all', [
+        '--type' => 'assets',
+        '--force' => true,
+        '--no-notifications' => true,
+        '--note' => 'Bulk removal for decommission',
+    ])->assertExitCode(0);
+
+    $this->assertDatabaseHas('action_logs', [
+        'item_id' => $asset->id,
+        'action_type' => 'checkin from',
+        'note' => 'Bulk removal for decommission',
+    ]);
+});

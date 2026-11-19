@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Feature\Console;
-
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\CheckoutAcceptance;
@@ -10,126 +8,116 @@ use App\Models\LicenseSeat;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use Tests\TestCase;
 
-class CleanIncorrectCheckoutAcceptancesTest extends TestCase
-{
-    public function test_deletes_acceptance_when_checkout_target_is_non_user()
-    {
-        $location = Location::factory()->create();
-        $asset = Asset::factory()->create();
-        $now = now();
+test('deletes acceptance when checkout target is non user', function () {
+    $location = Location::factory()->create();
+    $asset = Asset::factory()->create();
+    $now = now();
 
-        $badAcceptance = CheckoutAcceptance::factory()
-            ->withoutActionLog()
-            ->create([
-                'checkoutable_type' => Asset::class,
-                'checkoutable_id' => $asset->id,
-                'assigned_to_id' => $location->id,
-                'created_at' => $now,
-            ]);
-
-        Actionlog::factory()->create([
-            'action_type' => 'checkout',
-            'target_id' => $location->id,
-            'target_type' => Location::class,
-            'item_id' => $asset->id,
-            'item_type' => Asset::class,
+    $badAcceptance = CheckoutAcceptance::factory()
+        ->withoutActionLog()
+        ->create([
+            'checkoutable_type' => Asset::class,
+            'checkoutable_id' => $asset->id,
+            'assigned_to_id' => $location->id,
             'created_at' => $now,
         ]);
 
-        $this->artisan('snipeit:clean-checkout-acceptances')->assertExitCode(0);
+    Actionlog::factory()->create([
+        'action_type' => 'checkout',
+        'target_id' => $location->id,
+        'target_type' => Location::class,
+        'item_id' => $asset->id,
+        'item_type' => Asset::class,
+        'created_at' => $now,
+    ]);
 
-        $this->assertDatabaseMissing('checkout_acceptances', ['id' => $badAcceptance->id]);
-    }
+    $this->artisan('snipeit:clean-checkout-acceptances')->assertExitCode(0);
 
-    public function test_preserves_acceptance_when_checkout_target_is_user()
-    {
-        // The factory creates a matching action_log with target_type = User::class by default
-        $goodAcceptance = CheckoutAcceptance::factory()->create();
+    $this->assertDatabaseMissing('checkout_acceptances', ['id' => $badAcceptance->id]);
+});
 
-        $this->artisan('snipeit:clean-checkout-acceptances')->assertExitCode(0);
+test('preserves acceptance when checkout target is user', function () {
+    // The factory creates a matching action_log with target_type = User::class by default
+    $goodAcceptance = CheckoutAcceptance::factory()->create();
 
-        $this->assertDatabaseHas('checkout_acceptances', ['id' => $goodAcceptance->id]);
-    }
+    $this->artisan('snipeit:clean-checkout-acceptances')->assertExitCode(0);
 
-    public function test_preserves_acceptance_when_action_log_timestamp_is_too_far_apart()
-    {
-        $location = Location::factory()->create();
-        $asset = Asset::factory()->create();
-        $now = now();
+    $this->assertDatabaseHas('checkout_acceptances', ['id' => $goodAcceptance->id]);
+});
 
-        $acceptance = CheckoutAcceptance::factory()
-            ->withoutActionLog()
-            ->create([
-                'checkoutable_type' => Asset::class,
-                'checkoutable_id' => $asset->id,
-                'assigned_to_id' => $location->id,
-                'created_at' => $now,
-            ]);
+test('preserves acceptance when action log timestamp is too far apart', function () {
+    $location = Location::factory()->create();
+    $asset = Asset::factory()->create();
+    $now = now();
 
-        // 10 seconds away — outside the ±5-second window
-        Actionlog::factory()->create([
-            'action_type' => 'checkout',
-            'target_id' => $location->id,
-            'target_type' => Location::class,
-            'item_id' => $asset->id,
-            'item_type' => Asset::class,
-            'created_at' => $now->copy()->addSeconds(10),
-        ]);
-
-        $this->artisan('snipeit:clean-checkout-acceptances')->assertExitCode(0);
-
-        $this->assertDatabaseHas('checkout_acceptances', ['id' => $acceptance->id]);
-    }
-
-    public function test_skips_acceptance_with_soft_deleted_checkoutable()
-    {
-        $acceptance = CheckoutAcceptance::factory()->withoutActionLog()->create();
-        Model::withoutEvents(fn () => $acceptance->checkoutable->delete());
-
-        $this->artisan('snipeit:clean-checkout-acceptances')->assertExitCode(0);
-
-        $this->assertDatabaseHas('checkout_acceptances', ['id' => $acceptance->id]);
-    }
-
-    public function test_skips_acceptance_with_null_created_at(): void
-    {
-        $acceptance = CheckoutAcceptance::factory()->withoutActionLog()->create(['created_at' => null]);
-
-        $this->artisan('snipeit:clean-checkout-acceptances')->assertExitCode(0);
-
-        $this->assertDatabaseHas('checkout_acceptances', ['id' => $acceptance->id]);
-    }
-
-    public function test_deletes_license_seat_acceptance_when_checkout_target_is_non_user()
-    {
-        $location = Location::factory()->create();
-        $licenseSeat = LicenseSeat::factory()->create();
-        $license = $licenseSeat->license;
-        $now = now();
-
-        $badAcceptance = CheckoutAcceptance::factory()
-            ->withoutActionLog()
-            ->create([
-                'checkoutable_type' => LicenseSeat::class,
-                'checkoutable_id' => $licenseSeat->id,
-                'assigned_to_id' => $location->id,
-                'created_at' => $now,
-            ]);
-
-        // Action log lives on the License, not the LicenseSeat
-        Actionlog::factory()->create([
-            'action_type' => 'checkout',
-            'target_id' => $location->id,
-            'target_type' => Location::class,
-            'item_id' => $license->id,
-            'item_type' => License::class,
+    $acceptance = CheckoutAcceptance::factory()
+        ->withoutActionLog()
+        ->create([
+            'checkoutable_type' => Asset::class,
+            'checkoutable_id' => $asset->id,
+            'assigned_to_id' => $location->id,
             'created_at' => $now,
         ]);
 
-        $this->artisan('snipeit:clean-checkout-acceptances')->assertExitCode(0);
+    // 10 seconds away — outside the ±5-second window
+    Actionlog::factory()->create([
+        'action_type' => 'checkout',
+        'target_id' => $location->id,
+        'target_type' => Location::class,
+        'item_id' => $asset->id,
+        'item_type' => Asset::class,
+        'created_at' => $now->copy()->addSeconds(10),
+    ]);
 
-        $this->assertDatabaseMissing('checkout_acceptances', ['id' => $badAcceptance->id]);
-    }
-}
+    $this->artisan('snipeit:clean-checkout-acceptances')->assertExitCode(0);
+
+    $this->assertDatabaseHas('checkout_acceptances', ['id' => $acceptance->id]);
+});
+
+test('skips acceptance with soft deleted checkoutable', function () {
+    $acceptance = CheckoutAcceptance::factory()->withoutActionLog()->create();
+    Model::withoutEvents(fn () => $acceptance->checkoutable->delete());
+
+    $this->artisan('snipeit:clean-checkout-acceptances')->assertExitCode(0);
+
+    $this->assertDatabaseHas('checkout_acceptances', ['id' => $acceptance->id]);
+});
+
+test('skips acceptance with null created at', function () {
+    $acceptance = CheckoutAcceptance::factory()->withoutActionLog()->create(['created_at' => null]);
+
+    $this->artisan('snipeit:clean-checkout-acceptances')->assertExitCode(0);
+
+    $this->assertDatabaseHas('checkout_acceptances', ['id' => $acceptance->id]);
+});
+
+test('deletes license seat acceptance when checkout target is non user', function () {
+    $location = Location::factory()->create();
+    $licenseSeat = LicenseSeat::factory()->create();
+    $license = $licenseSeat->license;
+    $now = now();
+
+    $badAcceptance = CheckoutAcceptance::factory()
+        ->withoutActionLog()
+        ->create([
+            'checkoutable_type' => LicenseSeat::class,
+            'checkoutable_id' => $licenseSeat->id,
+            'assigned_to_id' => $location->id,
+            'created_at' => $now,
+        ]);
+
+    // Action log lives on the License, not the LicenseSeat
+    Actionlog::factory()->create([
+        'action_type' => 'checkout',
+        'target_id' => $location->id,
+        'target_type' => Location::class,
+        'item_id' => $license->id,
+        'item_type' => License::class,
+        'created_at' => $now,
+    ]);
+
+    $this->artisan('snipeit:clean-checkout-acceptances')->assertExitCode(0);
+
+    $this->assertDatabaseMissing('checkout_acceptances', ['id' => $badAcceptance->id]);
+});
