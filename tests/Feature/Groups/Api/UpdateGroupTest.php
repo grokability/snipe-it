@@ -47,7 +47,7 @@ test('can update group with permissions json string payload', function () {
     $decoded = (array) $group->refresh()->decodePermissions();
 
     expect($decoded)->toHaveKey('admin');
-    expect($decoded)->toHaveKey('reports.view');
+    $this->assertArrayHasKey('reports.view', $decoded);
     $this->assertArrayNotHasKey('invalid.permission', $decoded);
 });
 

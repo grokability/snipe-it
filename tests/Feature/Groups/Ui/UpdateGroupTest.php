@@ -46,7 +46,7 @@ test('user can edit group permissions and invalid permissions are dropped', func
     $decoded = (array) $group->refresh()->decodePermissions();
 
     expect($decoded)->toHaveKey('admin');
-    expect($decoded)->toHaveKey('reports.view');
+    $this->assertArrayHasKey('reports.view', $decoded);
     $this->assertArrayNotHasKey('invalid.permission', $decoded);
 });
 

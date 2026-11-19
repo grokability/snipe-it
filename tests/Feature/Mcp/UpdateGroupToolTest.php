@@ -54,7 +54,7 @@ test('updates permissions', function () {
 
     expect($content['success'])->toBeTrue();
     $decoded = json_decode($group->fresh()->permissions, true);
-    expect($decoded)->toHaveKey('assets.create');
+    $this->assertArrayHasKey('assets.create', $decoded);
     $this->assertArrayNotHasKey('assets.view', $decoded);
 });
 
