@@ -31,14 +31,17 @@ changelog:
         - mcp
     - title: 🔄 Sync Adapters
       labels:
-        - sync-adapters
+        - sync-adapters  
     - title: 🛎️ Item Acceptance
       labels:
         - item-acceptance
     - title: 🤜💥🤛 Code Improvements
       labels:
         - code-improvements   
-    - title: Dependency & Security Updates
+    - title: 🐳 Docker
+      labels:
+        - docker    
+    - title: 🔐 Dependency & Security Updates
       labels:
         - dependencies 
         - security       
