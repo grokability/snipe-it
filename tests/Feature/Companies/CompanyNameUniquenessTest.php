@@ -1,56 +1,41 @@
 <?php
 
-namespace Tests\Feature\Companies;
-
 use App\Models\Company;
-use Tests\TestCase;
 
-/**
- * Company::name switched from global `unique_undeleted` to
- * `unique_undeleted_in_scope:parent_id` so a "West" sub-company under
- * two different parent companies can coexist.
- */
-class CompanyNameUniquenessTest extends TestCase
-{
-    public function test_two_child_companies_with_the_same_name_under_different_parents_can_coexist(): void
-    {
-        $alpha = Company::factory()->create(['name' => 'AlphaCorp']);
-        $bravo = Company::factory()->create(['name' => 'BravoCorp']);
+test('two child companies with the same name under different parents can coexist', function () {
+    $alpha = Company::factory()->create(['name' => 'AlphaCorp']);
+    $bravo = Company::factory()->create(['name' => 'BravoCorp']);
 
-        Company::factory()->create(['name' => 'West', 'parent_id' => $alpha->id]);
-        $westUnderBravo = Company::factory()->create(['name' => 'West', 'parent_id' => $bravo->id]);
+    Company::factory()->create(['name' => 'West', 'parent_id' => $alpha->id]);
+    $westUnderBravo = Company::factory()->create(['name' => 'West', 'parent_id' => $bravo->id]);
 
-        $this->assertTrue($westUnderBravo->exists);
-        $this->assertDatabaseCount('companies', 4);
-    }
+    expect($westUnderBravo->exists)->toBeTrue();
+    $this->assertDatabaseCount('companies', 4);
+});
 
-    public function test_two_child_companies_with_the_same_name_under_the_same_parent_still_collide(): void
-    {
-        $alpha = Company::factory()->create(['name' => 'AlphaCorp']);
-        Company::factory()->create(['name' => 'West', 'parent_id' => $alpha->id]);
+test('two child companies with the same name under the same parent still collide', function () {
+    $alpha = Company::factory()->create(['name' => 'AlphaCorp']);
+    Company::factory()->create(['name' => 'West', 'parent_id' => $alpha->id]);
 
-        $duplicate = new Company(['name' => 'West', 'parent_id' => $alpha->id]);
+    $duplicate = new Company(['name' => 'West', 'parent_id' => $alpha->id]);
 
-        $this->assertFalse($duplicate->save(), 'sibling company name collision should still be rejected');
-        $this->assertNotEmpty($duplicate->getErrors()->get('name'));
-    }
+    expect($duplicate->save())->toBeFalse('sibling company name collision should still be rejected');
+    expect($duplicate->getErrors()->get('name'))->not->toBeEmpty();
+});
 
-    public function test_two_top_level_companies_with_the_same_name_still_collide(): void
-    {
-        Company::factory()->create(['name' => 'AcmeGlobal', 'parent_id' => null]);
+test('two top level companies with the same name still collide', function () {
+    Company::factory()->create(['name' => 'AcmeGlobal', 'parent_id' => null]);
 
-        $duplicate = new Company(['name' => 'AcmeGlobal', 'parent_id' => null]);
+    $duplicate = new Company(['name' => 'AcmeGlobal', 'parent_id' => null]);
 
-        $this->assertFalse($duplicate->save(), 'two top-level companies sharing a name should still be rejected');
-    }
+    expect($duplicate->save())->toBeFalse('two top-level companies sharing a name should still be rejected');
+});
 
-    public function test_top_level_and_child_can_share_a_name(): void
-    {
-        $parent = Company::factory()->create(['name' => 'ParentCorp']);
-        $topLevel = Company::factory()->create(['name' => 'Sub', 'parent_id' => null]);
-        $child = Company::factory()->create(['name' => 'Sub', 'parent_id' => $parent->id]);
+test('top level and child can share a name', function () {
+    $parent = Company::factory()->create(['name' => 'ParentCorp']);
+    $topLevel = Company::factory()->create(['name' => 'Sub', 'parent_id' => null]);
+    $child = Company::factory()->create(['name' => 'Sub', 'parent_id' => $parent->id]);
 
-        $this->assertTrue($topLevel->exists);
-        $this->assertTrue($child->exists);
-    }
-}
+    expect($topLevel->exists)->toBeTrue();
+    expect($child->exists)->toBeTrue();
+});
