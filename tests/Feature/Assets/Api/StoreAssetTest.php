@@ -907,7 +907,7 @@ test('base64 asset images', function () {
         ->json();
 
     $asset = Asset::findOrFail($response['payload']['id']);
-    expect('1234')->toEqual($asset->asset_tag);
+    expect($asset->asset_tag)->toEqual('1234');
     $image_data = Storage::disk('public')->get(app('assets_upload_path').e($asset->image));
 
     // $this->assertEquals('3d67fb99a0b6926e350f7b71397525d7a6b936c1', sha1($image_data)); //this doesn't work because the image gets resized - use the resized hash instead

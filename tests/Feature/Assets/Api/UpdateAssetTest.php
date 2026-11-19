@@ -427,7 +427,7 @@ test('checkout to user on asset update', function () {
 
     $asset->refresh();
     expect($asset->assigned_to)->toEqual($assigned_user->id);
-    expect('App\Models\User')->toEqual($asset->assigned_type);
+    expect($asset->assigned_type)->toEqual('App\Models\User');
 });
 
 test('update rejects cross company checkout target with full company support enabled', function () {
@@ -575,7 +575,7 @@ test('checkout to location on asset update', function () {
 
     $asset->refresh();
     expect($asset->assigned_to)->toEqual($assigned_location->id);
-    expect('App\Models\Location')->toEqual($asset->assigned_type);
+    expect($asset->assigned_type)->toEqual('App\Models\Location');
 });
 
 test('checkout to deleted location fails on asset update', function () {
@@ -612,7 +612,7 @@ test('checkout asset on asset update', function () {
 
     $asset->refresh();
     expect($asset->assigned_to)->toEqual($assigned_asset->id);
-    expect('App\Models\Asset')->toEqual($asset->assigned_type);
+    expect($asset->assigned_type)->toEqual('App\Models\Asset');
 });
 
 test('checkout to deleted asset fails on asset update', function () {
