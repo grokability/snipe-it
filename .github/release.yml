@@ -20,7 +20,7 @@ changelog:
     - title: ❤️‍🩹 Breaking Changes
       labels:
         - breaking-change
-    - title:  UX/UI Improvements
+    - title: 💖 UX/UI Improvements
       labels:
         - breaking-change    
     - title: 👩‍🦼‍➡️ Accessibility
@@ -32,6 +32,9 @@ changelog:
     - title: 🔄 Sync Adapters
       labels:
         - sync-adapters  
+    - title: 🗓️ Calendar
+      labels:
+        - calendar 
     - title: 🛎️ Item Acceptance
       labels:
         - item-acceptance
