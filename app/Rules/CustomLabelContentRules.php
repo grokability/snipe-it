@@ -23,6 +23,7 @@ class CustomLabelContentRules
             'content.logo_margin' => ['sometimes', 'numeric'],
             'content.logo_h_align' => ['sometimes', 'string', 'in:L,C,R'],
             'content.logo_v_align' => ['sometimes', 'string', 'in:T,C,B'],
+            'content.logo_position' => ['sometimes', 'string', 'in:inline,top'],
 
             'content.tag_font_size' => ['required', 'numeric'],
             'content.tag_offset_x' => ['required', 'numeric'],
@@ -31,6 +32,7 @@ class CustomLabelContentRules
             'content.title_font_size' => ['required', 'numeric'],
             'content.title_margin' => ['required', 'numeric'],
             'content.title_offset_x' => ['required', 'numeric'],
+            'content.title_position' => ['sometimes', 'string', 'in:inline,top'],
 
             'content.field_label_font_size' => ['required', 'numeric'],
             'content.field_label_margin' => ['required', 'numeric'],

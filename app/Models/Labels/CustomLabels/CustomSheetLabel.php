@@ -291,6 +291,17 @@ abstract class CustomSheetLabel extends RectangleSheet
 
         /*
         |--------------------------------------------------------------------------
+        | Reserve top strip for logo
+        |--------------------------------------------------------------------------
+        */
+        $logoBox = null;
+
+        if ($this->getLogoPosition() === 'top') {
+            $logoBox = $this->resolveLogoBox($record, $contentBody);
+            $contentBody = $this->resolveContentBody($contentBody, $logoBox);
+        }
+        /*
+        |--------------------------------------------------------------------------
         | Reserve top strip for title
         |--------------------------------------------------------------------------
         */
@@ -306,12 +317,12 @@ abstract class CustomSheetLabel extends RectangleSheet
              * Title itself occupies the original top of the body.
              */
             $layout['title'] = [
-                'x' => $layout['body']['x1'] + $this->getTitleOffsetX(),
-                'y' => $layout['body']['y1'],
+                'x' => $contentBody['x1'] + $this->getTitleOffsetX(),
+                'y' => $contentBody['y1'],
                 'w' => max(
                     0,
-                    $layout['body']['x2']
-                    - ($layout['body']['x1'] + $this->getTitleOffsetX())
+                    $contentBody['x2']
+                    - ($contentBody['x1'] + $this->getTitleOffsetX())
                 ),
                 'h' => $titleSize,
                 'font_size' => $titleSize,
@@ -342,10 +353,12 @@ abstract class CustomSheetLabel extends RectangleSheet
         | Use $contentBody here, not $layout['body'].
         |--------------------------------------------------------------------------
         */
-        $logoBox = $this->resolveLogoBox(
-            $record,
-            $contentBody
-        );
+        if ($this->getLogoPosition() !== 'top') {
+            $logoBox = $this->resolveLogoBox(
+                $record,
+                $contentBody
+            );
+        }
 
         $barcode2dBox = $this->resolve2DBarcodeBox(
             $record,
@@ -369,13 +382,18 @@ abstract class CustomSheetLabel extends RectangleSheet
         | Derive remaining text box
         |--------------------------------------------------------------------------
         */
+        $boxes = array_filter([
+            $layout['barcode2d'],
+            $layout['tag'],
+        ]);
+
+        if ($this->getLogoPosition() !== 'top' && $layout['logo']) {
+            $boxes[] = $layout['logo'];
+        }
+
         $layout['text'] = $this->resolveTextBox(
             $contentBody,
-            array_filter([
-                $layout['logo'],
-                $layout['barcode2d'],
-                $layout['tag'],
-            ])
+            $boxes
         );
 
         $layout['text'] = $this->applyTextAreaConstraints(

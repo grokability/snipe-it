@@ -44,6 +44,7 @@ trait HasCustomLabelEditorConfig
             'logo_margin' => $this->getLogoMargin(),
             'logo_h_align' => $this->getLogoHAlign(),
             'logo_v_align' => $this->getLogoVAlign(),
+            'logo_position' => $this->getLogoPosition(),
 
             // Text Area
             'text_area_width' => $this->getTextAreaWidth(),
