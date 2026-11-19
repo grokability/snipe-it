@@ -218,75 +218,6 @@ test('checkout by tag cannot checkout across companies when full company support
     ]);
 });
 
-/**
- * This data provider contains checkout targets along with the
- * asset's expected location after the checkout process.
- */
-dataset('checkoutTargets', function () {
-    return [
-        'Checkout to User' => [
-            function () {
-                $userLocation = Location::factory()->create();
-                $user = User::factory()->for($userLocation)->create();
-
-                return [
-                    'checkout_type' => 'user',
-                    'target' => $user,
-                    'expected_location' => $userLocation,
-                ];
-            },
-        ],
-        'Checkout to User without location set' => [
-            function () {
-                $userLocation = Location::factory()->create();
-                $user = User::factory()->for($userLocation)->create(['location_id' => null]);
-
-                return [
-                    'checkout_type' => 'user',
-                    'target' => $user,
-                    'expected_location' => null,
-                ];
-            },
-        ],
-        'Checkout to Asset with location set' => [
-            function () {
-                $rtdLocation = Location::factory()->create();
-                $location = Location::factory()->create();
-                $asset = Asset::factory()->for($location)->for($rtdLocation, 'defaultLoc')->create();
-
-                return [
-                    'checkout_type' => 'asset',
-                    'target' => $asset,
-                    'expected_location' => $location,
-                ];
-            },
-        ],
-        'Checkout to Asset without location set' => [
-            function () {
-                $rtdLocation = Location::factory()->create();
-                $asset = Asset::factory()->for($rtdLocation, 'defaultLoc')->create(['location_id' => null]);
-
-                return [
-                    'checkout_type' => 'asset',
-                    'target' => $asset,
-                    'expected_location' => $rtdLocation,
-                ];
-            },
-        ],
-        'Checkout to Location' => [
-            function () {
-                $location = Location::factory()->create();
-
-                return [
-                    'checkout_type' => 'location',
-                    'target' => $location,
-                    'expected_location' => $location,
-                ];
-            },
-        ],
-    ];
-});
-
 test('asset can be checked out', function ($checkoutType, $target, $expectedLocation) {
     $newStatus = Statuslabel::factory()->readyToDeploy()->create();
     $asset = Asset::factory()->forLocation()->create();
@@ -324,7 +255,68 @@ test('asset can be checked out', function ($checkoutType, $target, $expectedLoca
 
         return true;
     });
-})->with('checkoutTargets');
+})->with([
+    'Checkout to User' => [
+        function () {
+            $userLocation = Location::factory()->create();
+            $user = User::factory()->for($userLocation)->create();
+
+            return [
+                'checkout_type' => 'user',
+                'target' => $user,
+                'expected_location' => $userLocation,
+            ];
+        },
+    ],
+    'Checkout to User without location set' => [
+        function () {
+            $userLocation = Location::factory()->create();
+            $user = User::factory()->for($userLocation)->create(['location_id' => null]);
+
+            return [
+                'checkout_type' => 'user',
+                'target' => $user,
+                'expected_location' => null,
+            ];
+        },
+    ],
+    'Checkout to Asset with location set' => [
+        function () {
+            $rtdLocation = Location::factory()->create();
+            $location = Location::factory()->create();
+            $asset = Asset::factory()->for($location)->for($rtdLocation, 'defaultLoc')->create();
+
+            return [
+                'checkout_type' => 'asset',
+                'target' => $asset,
+                'expected_location' => $location,
+            ];
+        },
+    ],
+    'Checkout to Asset without location set' => [
+        function () {
+            $rtdLocation = Location::factory()->create();
+            $asset = Asset::factory()->for($rtdLocation, 'defaultLoc')->create(['location_id' => null]);
+
+            return [
+                'checkout_type' => 'asset',
+                'target' => $asset,
+                'expected_location' => $rtdLocation,
+            ];
+        },
+    ],
+    'Checkout to Location' => [
+        function () {
+            $location = Location::factory()->create();
+
+            return [
+                'checkout_type' => 'location',
+                'target' => $location,
+                'expected_location' => $location,
+            ];
+        },
+    ],
+]);
 
 test('asset can be checked out to user in same company via pivot when fmcs enabled', function () {
     // Regression: company check used to compare asset company_id to user's primary company_id only.
