@@ -47,7 +47,7 @@ test('ids for returns matching status labels per kind', function () {
     expect(Statuslabel::idsFor('pending')->all())->not->toContain($rtd->id);
 
     expect(Statuslabel::idsFor('archived')->all())->toContain($archived->id);
-    expect($rtd->id)->toBeIn(Statuslabel::idsFor('not_archived')->all(), 'RTD label is "not archived"');
+    expect(Statuslabel::idsFor('not_archived')->all())->toContain($rtd->id); // RTD label is "not archived"
     expect(Statuslabel::idsFor('not_archived')->all())->not->toContain($archived->id);
 });
 
