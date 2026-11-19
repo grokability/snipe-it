@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
+pest()->group('auditing');
+
 test('permission required to submit', function () {
     $this->actingAs(User::factory()->create())
         ->post(route('hardware.bulk-audit.store'), [

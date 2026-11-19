@@ -7,6 +7,8 @@ use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
+pest()->group('auditing');
+
 test('permission required to bulk audit assets', function () {
     $this->actingAsForApi(User::factory()->create())
         ->postJson(route('api.asset.audit', Asset::factory()->create()))

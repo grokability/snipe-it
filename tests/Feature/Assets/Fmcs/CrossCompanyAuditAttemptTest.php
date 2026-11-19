@@ -5,6 +5,8 @@ use App\Models\Asset;
 use App\Models\Company;
 use App\Models\User;
 
+pest()->group('auditing', 'fmcs');
+
 beforeEach(function () {
     $this->settings->enableMultipleFullCompanySupport();
 

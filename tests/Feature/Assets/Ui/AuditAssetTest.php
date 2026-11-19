@@ -5,6 +5,8 @@ use App\Models\Location;
 use App\Models\User;
 use Carbon\Carbon;
 
+pest()->group('auditing');
+
 test('permission required to view audit create page', function () {
     $this->actingAs(User::factory()->create())
         ->get(route('asset.audit.create', Asset::factory()->create()))

@@ -3,6 +3,8 @@
 use App\Models\User;
 use Carbon\Carbon;
 
+pest()->group('auditing');
+
 beforeEach(function () {
     $this->actor = User::factory()->auditAssets()->create();
 });

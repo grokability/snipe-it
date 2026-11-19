@@ -3,6 +3,8 @@
 use App\Models\ReportTemplate;
 use App\Models\User;
 
+pest()->group('custom-reporting');
+
 test('requires permission', function () {
     $this->actingAs(User::factory()->create())
         ->get(route('report-templates.show', ReportTemplate::factory()->create()))

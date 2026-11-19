@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
+pest()->group('auditing');
+
 test('audits all assets and returns per row envelope', function () {
     [$a, $b, $c] = Asset::factory()->count(3)->create();
     $future = now()->addMonths(4)->toDateString();

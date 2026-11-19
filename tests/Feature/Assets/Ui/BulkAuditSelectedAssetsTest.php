@@ -4,6 +4,8 @@ use App\Models\Asset;
 use App\Models\Company;
 use App\Models\User;
 
+pest()->group('auditing');
+
 test('permission required to view form', function () {
     $this->actingAs(User::factory()->create())
         ->get(route('hardware.bulk-audit.show'))
