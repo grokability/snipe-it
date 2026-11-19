@@ -22,12 +22,12 @@ changelog:
     - title: ❤️‍🩹 Breaking API Changes
       labels:
         - breaking-api-change
-    - title: ❤️‍🩹 Breaking Changes
+    - title: ⚠️ Breaking Changes
       labels:
         - breaking-change
     - title: 💖 UX/UI Improvements
       labels:
-        - breaking-change   
+        - ux-ui  
     - title: 🖨️ Label Printing
       labels:
         - labels 
@@ -58,7 +58,10 @@ changelog:
     - title: 🔐 Dependency & Security Updates
       labels:
         - dependencies 
-        - security       
+        - security    
+    - title: ⛑️ Tests & Testing
+      labels:
+        - tests-and-testing     
     - title: Everything Else
       labels:
         - "*"
