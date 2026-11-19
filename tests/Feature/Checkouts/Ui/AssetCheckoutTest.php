@@ -193,57 +193,8 @@ test('page renders', function () {
         ->assertOk();
 });
 
-/**
- * This data provider contains checkout targets along with the
- * asset's expected location after the checkout process.
- */
-dataset('checkoutTargets', function () {
-    return [
-        'User' => [function () {
-            $userLocation = Location::factory()->create();
-            $user = User::factory()->for($userLocation)->create();
-
-            return [
-                'checkout_type' => 'user',
-                'target' => $user,
-                'expected_location' => $userLocation,
-            ];
-        }],
-        'Asset without location set' => [function () {
-            $rtdLocation = Location::factory()->create();
-            $asset = Asset::factory()->for($rtdLocation, 'defaultLoc')->create(['location_id' => null]);
-
-            return [
-                'checkout_type' => 'asset',
-                'target' => $asset,
-                'expected_location' => $rtdLocation,
-            ];
-        }],
-        'Asset with location set' => [function () {
-            $rtdLocation = Location::factory()->create();
-            $location = Location::factory()->create();
-            $asset = Asset::factory()->for($location)->for($rtdLocation, 'defaultLoc')->create();
-
-            return [
-                'checkout_type' => 'asset',
-                'target' => $asset,
-                'expected_location' => $location,
-            ];
-        }],
-        'Location' => [function () {
-            $location = Location::factory()->create();
-
-            return [
-                'checkout_type' => 'location',
-                'target' => $location,
-                'expected_location' => $location,
-            ];
-        }],
-    ];
-});
-
-test('asset can be checked out', function ($data) {
-    ['checkout_type' => $type, 'target' => $target, 'expected_location' => $expectedLocation] = $data();
+test('asset can be checked out', function ($checkoutType, $target, $expectedLocation) {
+    // ['checkout_type' => $type, 'target' => $target, 'expected_location' => $expectedLocation] = $data();
 
     $newStatus = Statuslabel::factory()->readyToDeploy()->create();
     $asset = Asset::factory()->create();
@@ -257,9 +208,9 @@ test('asset can be checked out', function ($data) {
 
     $this->actingAs($admin)
         ->post(route('hardware.checkout.store', $asset), array_merge($defaultFieldsAlwaysIncludedInUIFormSubmission, [
-            'checkout_to_type' => $type,
+            'checkout_to_type' => $checkoutType,
             // overwrite the value from the default fields set above
-            'assigned_'.$type => (string) $target->id,
+            'assigned_'.$checkoutType => (string) $target->id,
             'name' => 'Changed Name',
             'status_id' => (string) $newStatus->id,
             'checkout_at' => '2024-03-18',
@@ -286,7 +237,56 @@ test('asset can be checked out', function ($data) {
     });
     $this->assertHasTheseActionLogs($asset, ['create'/* , 'checkout' */]);
     // TODO - only getting one?
-})->with('checkoutTargets');
+})->with([
+    'User' => [
+        function () {
+            $userLocation = Location::factory()->create();
+            $user = User::factory()->for($userLocation)->create();
+
+            return [
+                'checkout_type' => 'user',
+                'target' => $user,
+                'expected_location' => $userLocation,
+            ];
+        },
+    ],
+    'Asset without location set' => [
+        function () {
+            $rtdLocation = Location::factory()->create();
+            $asset = Asset::factory()->for($rtdLocation, 'defaultLoc')->create(['location_id' => null]);
+
+            return [
+                'checkout_type' => 'asset',
+                'target' => $asset,
+                'expected_location' => $rtdLocation,
+            ];
+        },
+    ],
+    'Asset with location set' => [
+        function () {
+            $rtdLocation = Location::factory()->create();
+            $location = Location::factory()->create();
+            $asset = Asset::factory()->for($location)->for($rtdLocation, 'defaultLoc')->create();
+
+            return [
+                'checkout_type' => 'asset',
+                'target' => $asset,
+                'expected_location' => $location,
+            ];
+        },
+    ],
+    'Location' => [
+        function () {
+            $location = Location::factory()->create();
+
+            return [
+                'checkout_type' => 'location',
+                'target' => $location,
+                'expected_location' => $location,
+            ];
+        },
+    ],
+]);
 
 test('license seats are assigned to user upon checkout', function () {
     $asset = Asset::factory()->create();
@@ -501,15 +501,11 @@ test('asset checkout stores target type as string in session', function (string 
     $stored = session('checkout_to_type');
     expect($stored)->toBeString('checkout_to_type must be a string, not an Eloquent model');
     expect($stored)->toBe($type);
-})->with('checkoutTargetTypesProvider');
-
-dataset('checkoutTargetTypesProvider', function () {
-    return [
-        'user target' => ['user'],
-        'asset target' => ['asset'],
-        'location target' => ['location'],
-    ];
-});
+})->with([
+    'user target' => ['user'],
+    'asset target' => ['asset'],
+    'location target' => ['location'],
+]);
 
 test('license seats are not reassigned when cross company checkout is rejected', function () {
     // The company-boundary gate has to fire before the license-seat

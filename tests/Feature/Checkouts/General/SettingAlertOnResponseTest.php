@@ -20,7 +20,13 @@ test('sets alert on response if enabled by category for accessory', function () 
         'alert_on_response' => true,
     ]);
 
-    postAccessoryCheckout($accessory);
+    $this->actingAs($this->actor)
+        ->post(route('accessories.checkout.store', $accessory), [
+            'checkout_to_type' => 'user',
+            'status_id' => (string) Statuslabel::factory()->readyToDeploy()->create()->id,
+            'assigned_user' => $this->assignedUser->id,
+            'checkout_qty' => 1,
+        ]);
 
     $this->assertDatabaseHas('checkout_acceptances', [
         'checkoutable_type' => Accessory::class,
@@ -38,7 +44,13 @@ test('does not set alert on response if disabled by category for accessory', fun
         'alert_on_response' => false,
     ]);
 
-    postAccessoryCheckout($accessory);
+    $this->actingAs($this->actor)
+        ->post(route('accessories.checkout.store', $accessory), [
+            'checkout_to_type' => 'user',
+            'status_id' => (string) Statuslabel::factory()->readyToDeploy()->create()->id,
+            'assigned_user' => $this->assignedUser->id,
+            'checkout_qty' => 1,
+        ]);
 
     $this->assertDatabaseHas('checkout_acceptances', [
         'checkoutable_type' => Accessory::class,
@@ -55,7 +67,12 @@ test('sets alert on response if enabled by category for asset', function () {
         'alert_on_response' => true,
     ]);
 
-    postAssetCheckout($asset);
+    $this->actingAs($this->actor)
+        ->post(route('hardware.checkout.store', $asset), [
+            'checkout_to_type' => 'user',
+            'status_id' => (string) Statuslabel::factory()->readyToDeploy()->create()->id,
+            'assigned_user' => $this->assignedUser->id,
+        ]);
 
     $this->assertDatabaseHas('checkout_acceptances', [
         'checkoutable_type' => Asset::class,
@@ -73,7 +90,12 @@ test('does not set alert on response if disabled by category for asset', functio
         'alert_on_response' => false,
     ]);
 
-    postAssetCheckout($asset);
+    $this->actingAs($this->actor)
+        ->post(route('hardware.checkout.store', $asset), [
+            'checkout_to_type' => 'user',
+            'status_id' => (string) Statuslabel::factory()->readyToDeploy()->create()->id,
+            'assigned_user' => $this->assignedUser->id,
+        ]);
 
     $this->assertDatabaseHas('checkout_acceptances', [
         'checkoutable_type' => Asset::class,
@@ -91,7 +113,11 @@ test('sets alert on response if enabled by category for license', function () {
         'alert_on_response' => true,
     ]);
 
-    postLicenseCheckout($license);
+    $this->actingAs($this->actor)
+        ->post("/licenses/{$license->id}/checkout/", [
+            'checkout_to_type' => 'user',
+            'assigned_user' => $this->assignedUser->id,
+        ]);
 
     $this->assertDatabaseHas('checkout_acceptances', [
         'checkoutable_type' => LicenseSeat::class,
@@ -109,7 +135,11 @@ test('does not set alert on response if disabled by category for license', funct
         'alert_on_response' => false,
     ]);
 
-    postLicenseCheckout($license);
+    $this->actingAs($this->actor)
+        ->post("/licenses/{$license->id}/checkout/", [
+            'checkout_to_type' => 'user',
+            'assigned_user' => $this->assignedUser->id,
+        ]);
 
     $this->assertDatabaseHas('checkout_acceptances', [
         'checkoutable_type' => LicenseSeat::class,
@@ -125,7 +155,12 @@ test('sets alert on response if enabled by category for consumable', function ()
         'alert_on_response' => true,
     ]);
 
-    postConsumableCheckout($consumable);
+    $this->actingAs($this->actor)
+        ->post(route('consumables.checkout.store', $consumable), [
+            'checkout_to_type' => 'user',
+            'assigned_user' => $this->assignedUser->id,
+            'checkout_qty' => 1,
+        ]);
 
     $this->assertDatabaseHas('checkout_acceptances', [
         'checkoutable_type' => Consumable::class,
@@ -142,7 +177,12 @@ test('does not set alert on response if disabled by category for consumable', fu
         'alert_on_response' => false,
     ]);
 
-    postConsumableCheckout($consumable);
+    $this->actingAs($this->actor)
+        ->post(route('consumables.checkout.store', $consumable), [
+            'checkout_to_type' => 'user',
+            'assigned_user' => $this->assignedUser->id,
+            'checkout_qty' => 1,
+        ]);
 
     $this->assertDatabaseHas('checkout_acceptances', [
         'checkoutable_type' => Consumable::class,
@@ -151,43 +191,3 @@ test('does not set alert on response if disabled by category for consumable', fu
         'alert_on_response_id' => null,
     ]);
 });
-
-function postAssetCheckout(Asset $asset): void
-{
-    $this->actingAs($this->actor)
-        ->post(route('hardware.checkout.store', $asset), [
-            'checkout_to_type' => 'user',
-            'status_id' => (string) Statuslabel::factory()->readyToDeploy()->create()->id,
-            'assigned_user' => $this->assignedUser->id,
-        ]);
-}
-
-function postAccessoryCheckout(Accessory $accessory): void
-{
-    $this->actingAs($this->actor)
-        ->post(route('accessories.checkout.store', $accessory), [
-            'checkout_to_type' => 'user',
-            'status_id' => (string) Statuslabel::factory()->readyToDeploy()->create()->id,
-            'assigned_user' => $this->assignedUser->id,
-            'checkout_qty' => 1,
-        ]);
-}
-
-function postLicenseCheckout(License $license): void
-{
-    $this->actingAs($this->actor)
-        ->post("/licenses/{$license->id}/checkout/", [
-            'checkout_to_type' => 'user',
-            'assigned_user' => $this->assignedUser->id,
-        ]);
-}
-
-function postConsumableCheckout(Consumable $consumable): void
-{
-    $this->actingAs($this->actor)
-        ->post(route('consumables.checkout.store', $consumable), [
-            'checkout_to_type' => 'user',
-            'assigned_user' => $this->assignedUser->id,
-            'checkout_qty' => 1,
-        ]);
-}
