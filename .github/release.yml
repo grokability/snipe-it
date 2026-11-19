@@ -4,6 +4,7 @@ changelog:
   exclude:
     labels:
       - ignore-for-release
+      - github_actions
     authors:
       - octocat
   categories:
@@ -11,6 +12,10 @@ changelog:
       labels:
         - new-feature
         - feature-request
+    - title: 🎉 Improvements
+      labels:
+        - improvements
+        - feature-improvements
     - title: 🐛 Bugfixes
       labels:
         - bugfix       
