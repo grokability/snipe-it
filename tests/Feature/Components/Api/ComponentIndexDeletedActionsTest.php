@@ -5,7 +5,7 @@ use App\Models\User;
 
 function rowFor(Component $component): array
 {
-    $response = $this->actingAsForApi(User::factory()->superuser()->create())
+    $response = actingAsForApi(User::factory()->superuser()->create())
         ->getJson(route('api.components.index', ['status' => 'Deleted']))
         ->assertOk();
 
