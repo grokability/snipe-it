@@ -1,156 +1,140 @@
 <?php
 
-namespace Tests\Unit\Actions\Permissions;
-
 use App\Actions\Permissions\PreserveUnauthorizedPrivilegedPermissionsAction;
 use App\Models\User;
-use Tests\TestCase;
 
-class PreserveUnauthorizedPrivilegedPermissionsActionTest extends TestCase
-{
-    public function test_superuser_can_modify_privileged_keys(): void
-    {
-        $actor = User::factory()->superuser()->create();
+test('superuser can modify privileged keys', function () {
+    $actor = User::factory()->superuser()->create();
 
-        $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
-            requestedPermissions: ['admin' => '0', 'superuser' => '0', 'users.view' => '1'],
-            authenticatedUser: $actor,
-            originalPermissions: ['admin' => '1', 'superuser' => '1']
-        );
+    $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
+        requestedPermissions: ['admin' => '0', 'superuser' => '0', 'users.view' => '1'],
+        authenticatedUser: $actor,
+        originalPermissions: ['admin' => '1', 'superuser' => '1']
+    );
 
-        $this->assertSame('0', (string) $normalized['admin']);
-        $this->assertSame('0', (string) $normalized['superuser']);
-        $this->assertSame('1', (string) $normalized['users.view']);
-    }
+    expect((string) $normalized['admin'])->toBe('0');
+    expect((string) $normalized['superuser'])->toBe('0');
+    expect((string) $normalized['users.view'])->toBe('1');
+});
 
-    public function test_admin_cannot_change_existing_superuser_key(): void
-    {
-        $actor = User::factory()->admin()->create();
+test('admin cannot change existing superuser key', function () {
+    $actor = User::factory()->admin()->create();
 
-        $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
-            requestedPermissions: ['admin' => '0', 'superuser' => '0', 'users.view' => '1'],
-            authenticatedUser: $actor,
-            originalPermissions: ['admin' => '1', 'superuser' => '1']
-        );
+    $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
+        requestedPermissions: ['admin' => '0', 'superuser' => '0', 'users.view' => '1'],
+        authenticatedUser: $actor,
+        originalPermissions: ['admin' => '1', 'superuser' => '1']
+    );
 
-        $this->assertSame('0', (string) $normalized['admin']);
-        $this->assertSame('1', (string) $normalized['superuser']);
-        $this->assertSame('1', (string) $normalized['users.view']);
-    }
+    expect((string) $normalized['admin'])->toBe('0');
+    expect((string) $normalized['superuser'])->toBe('1');
+    expect((string) $normalized['users.view'])->toBe('1');
+});
 
-    public function test_admin_cannot_add_superuser_key_when_original_is_missing(): void
-    {
-        $actor = User::factory()->admin()->create();
+test('admin cannot add superuser key when original is missing', function () {
+    $actor = User::factory()->admin()->create();
 
-        $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
-            requestedPermissions: ['admin' => '1', 'superuser' => '1', 'users.view' => '1'],
-            authenticatedUser: $actor,
-            originalPermissions: ['admin' => '0']
-        );
+    $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
+        requestedPermissions: ['admin' => '1', 'superuser' => '1', 'users.view' => '1'],
+        authenticatedUser: $actor,
+        originalPermissions: ['admin' => '0']
+    );
 
-        $this->assertArrayNotHasKey('superuser', $normalized);
-        $this->assertSame('1', (string) $normalized['admin']);
-        $this->assertSame('1', (string) $normalized['users.view']);
-    }
+    $this->assertArrayNotHasKey('superuser', $normalized);
+    expect((string) $normalized['admin'])->toBe('1');
+    expect((string) $normalized['users.view'])->toBe('1');
+});
 
-    public function test_non_admin_cannot_change_existing_admin_or_superuser_keys(): void
-    {
-        $actor = User::factory()->editUsers()->create();
+test('non admin cannot change existing admin or superuser keys', function () {
+    $actor = User::factory()->editUsers()->create();
 
-        $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
-            requestedPermissions: ['admin' => '1', 'superuser' => '1', 'users.view' => '1'],
-            authenticatedUser: $actor,
-            originalPermissions: ['admin' => '0', 'superuser' => '0']
-        );
+    $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
+        requestedPermissions: ['admin' => '1', 'superuser' => '1', 'users.view' => '1'],
+        authenticatedUser: $actor,
+        originalPermissions: ['admin' => '0', 'superuser' => '0']
+    );
 
-        $this->assertSame('0', (string) $normalized['admin']);
-        $this->assertSame('0', (string) $normalized['superuser']);
-        $this->assertSame('1', (string) $normalized['users.view']);
-    }
+    expect((string) $normalized['admin'])->toBe('0');
+    expect((string) $normalized['superuser'])->toBe('0');
+    expect((string) $normalized['users.view'])->toBe('1');
+});
 
-    public function test_non_admin_cannot_add_missing_admin_or_superuser_keys(): void
-    {
-        $actor = User::factory()->editUsers()->create();
+test('non admin cannot add missing admin or superuser keys', function () {
+    $actor = User::factory()->editUsers()->create();
 
-        $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
-            requestedPermissions: ['admin' => '1', 'superuser' => '1', 'users.view' => '1'],
-            authenticatedUser: $actor,
-            originalPermissions: []
-        );
+    $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
+        requestedPermissions: ['admin' => '1', 'superuser' => '1', 'users.view' => '1'],
+        authenticatedUser: $actor,
+        originalPermissions: []
+    );
 
-        $this->assertArrayNotHasKey('admin', $normalized);
-        $this->assertArrayNotHasKey('superuser', $normalized);
-        $this->assertSame('1', (string) $normalized['users.view']);
-    }
+    $this->assertArrayNotHasKey('admin', $normalized);
+    $this->assertArrayNotHasKey('superuser', $normalized);
+    expect((string) $normalized['users.view'])->toBe('1');
+});
 
-    public function test_non_admin_cannot_grant_themselves_additional_permissions(): void
-    {
-        $actor = User::factory()->editUsers()->create();
+test('non admin cannot grant themselves additional permissions', function () {
+    $actor = User::factory()->editUsers()->create();
 
-        $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
-            requestedPermissions: ['users.edit' => '1', 'assets.view' => '1', 'reports.view' => '1'],
-            authenticatedUser: $actor,
-            originalPermissions: ['users.edit' => '1'],
-            targetUser: $actor,
-        );
+    $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
+        requestedPermissions: ['users.edit' => '1', 'assets.view' => '1', 'reports.view' => '1'],
+        authenticatedUser: $actor,
+        originalPermissions: ['users.edit' => '1'],
+        targetUser: $actor,
+    );
 
-        $this->assertSame(['users.edit' => '1'], $normalized);
-    }
+    expect($normalized)->toBe(['users.edit' => '1']);
+});
 
-    public function test_non_admin_cannot_remove_their_own_permissions(): void
-    {
-        $actor = User::factory()->editUsers()->create();
+test('non admin cannot remove their own permissions', function () {
+    $actor = User::factory()->editUsers()->create();
 
-        $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
-            requestedPermissions: [],
-            authenticatedUser: $actor,
-            originalPermissions: ['users.edit' => '1'],
-            targetUser: $actor,
-        );
+    $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
+        requestedPermissions: [],
+        authenticatedUser: $actor,
+        originalPermissions: ['users.edit' => '1'],
+        targetUser: $actor,
+    );
 
-        $this->assertSame(['users.edit' => '1'], $normalized);
-    }
+    expect($normalized)->toBe(['users.edit' => '1']);
+});
 
-    public function test_admin_cannot_modify_their_own_permissions(): void
-    {
-        $actor = User::factory()->admin()->create();
+test('admin cannot modify their own permissions', function () {
+    $actor = User::factory()->admin()->create();
 
-        $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
-            requestedPermissions: ['admin' => '1', 'assets.view' => '1'],
-            authenticatedUser: $actor,
-            originalPermissions: ['admin' => '1'],
-            targetUser: $actor,
-        );
+    $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
+        requestedPermissions: ['admin' => '1', 'assets.view' => '1'],
+        authenticatedUser: $actor,
+        originalPermissions: ['admin' => '1'],
+        targetUser: $actor,
+    );
 
-        $this->assertSame(['admin' => '1'], $normalized);
-    }
+    expect($normalized)->toBe(['admin' => '1']);
+});
 
-    public function test_superuser_can_modify_their_own_permissions(): void
-    {
-        $actor = User::factory()->superuser()->create();
+test('superuser can modify their own permissions', function () {
+    $actor = User::factory()->superuser()->create();
 
-        $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
-            requestedPermissions: ['superuser' => '1', 'assets.view' => '1'],
-            authenticatedUser: $actor,
-            originalPermissions: ['superuser' => '1'],
-            targetUser: $actor,
-        );
+    $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
+        requestedPermissions: ['superuser' => '1', 'assets.view' => '1'],
+        authenticatedUser: $actor,
+        originalPermissions: ['superuser' => '1'],
+        targetUser: $actor,
+    );
 
-        $this->assertSame('1', (string) $normalized['assets.view']);
-    }
+    expect((string) $normalized['assets.view'])->toBe('1');
+});
 
-    public function test_non_admin_can_modify_permissions_of_a_different_user(): void
-    {
-        $actor = User::factory()->editUsers()->create();
-        $target = User::factory()->create();
+test('non admin can modify permissions of a different user', function () {
+    $actor = User::factory()->editUsers()->create();
+    $target = User::factory()->create();
 
-        $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
-            requestedPermissions: ['assets.view' => '1'],
-            authenticatedUser: $actor,
-            originalPermissions: [],
-            targetUser: $target,
-        );
+    $normalized = PreserveUnauthorizedPrivilegedPermissionsAction::run(
+        requestedPermissions: ['assets.view' => '1'],
+        authenticatedUser: $actor,
+        originalPermissions: [],
+        targetUser: $target,
+    );
 
-        $this->assertSame('1', (string) $normalized['assets.view']);
-    }
-}
+    expect((string) $normalized['assets.view'])->toBe('1');
+});

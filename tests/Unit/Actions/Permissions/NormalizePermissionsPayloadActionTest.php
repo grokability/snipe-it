@@ -1,44 +1,34 @@
 <?php
 
-namespace Tests\Unit\Actions\Permissions;
-
 use App\Actions\Permissions\NormalizePermissionsPayloadAction;
-use Tests\TestCase;
 
-class NormalizePermissionsPayloadActionTest extends TestCase
-{
-    public function test_it_returns_arrays_unchanged(): void
-    {
-        $permissions = ['users.view' => '1', 'reports.view' => 0];
+test('it returns arrays unchanged', function () {
+    $permissions = ['users.view' => '1', 'reports.view' => 0];
 
-        $normalized = NormalizePermissionsPayloadAction::run($permissions);
+    $normalized = NormalizePermissionsPayloadAction::run($permissions);
 
-        $this->assertSame($permissions, $normalized);
-    }
+    expect($normalized)->toBe($permissions);
+});
 
-    public function test_it_decodes_valid_json_objects(): void
-    {
-        $normalized = NormalizePermissionsPayloadAction::run('{"users.view":"1","reports.view":"0"}');
+test('it decodes valid json objects', function () {
+    $normalized = NormalizePermissionsPayloadAction::run('{"users.view":"1","reports.view":"0"}');
 
-        $this->assertSame(['users.view' => '1', 'reports.view' => '0'], $normalized);
-    }
+    expect($normalized)->toBe(['users.view' => '1', 'reports.view' => '0']);
+});
 
-    public function test_it_casts_std_class_payloads_to_arrays(): void
-    {
-        $permissions = (object) ['users.view' => '1'];
+test('it casts std class payloads to arrays', function () {
+    $permissions = (object) ['users.view' => '1'];
 
-        $normalized = NormalizePermissionsPayloadAction::run($permissions);
+    $normalized = NormalizePermissionsPayloadAction::run($permissions);
 
-        $this->assertSame(['users.view' => '1'], $normalized);
-    }
+    expect($normalized)->toBe(['users.view' => '1']);
+});
 
-    public function test_it_returns_empty_array_for_invalid_json_or_non_array_values(): void
-    {
-        $this->assertSame([], NormalizePermissionsPayloadAction::run('{not-valid-json}'));
-        $this->assertSame([], NormalizePermissionsPayloadAction::run('null'));
-        $this->assertSame([], NormalizePermissionsPayloadAction::run('"users.view"'));
-        $this->assertSame([], NormalizePermissionsPayloadAction::run(null));
-        $this->assertSame([], NormalizePermissionsPayloadAction::run(123));
-        $this->assertSame([], NormalizePermissionsPayloadAction::run(true));
-    }
-}
+test('it returns empty array for invalid json or non array values', function () {
+    expect(NormalizePermissionsPayloadAction::run('{not-valid-json}'))->toBe([]);
+    expect(NormalizePermissionsPayloadAction::run('null'))->toBe([]);
+    expect(NormalizePermissionsPayloadAction::run('"users.view"'))->toBe([]);
+    expect(NormalizePermissionsPayloadAction::run(null))->toBe([]);
+    expect(NormalizePermissionsPayloadAction::run(123))->toBe([]);
+    expect(NormalizePermissionsPayloadAction::run(true))->toBe([]);
+});
