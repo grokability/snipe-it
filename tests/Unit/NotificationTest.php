@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Unit;
-
 use App\Mail\CheckoutAssetMail;
 use App\Models\Asset;
 use App\Models\AssetModel;
@@ -9,56 +7,50 @@ use App\Models\Category;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
-use Tests\TestCase;
 
-class NotificationTest extends TestCase
-{
-    public function test_a_user_is_emailed_if_they_checkout_an_asset_with_eula()
-    {
-        $admin = User::factory()->superuser()->create();
-        $user = User::factory()->create();
-        $asset = Asset::factory()
-            ->create(
-                [
-                    'model_id' => AssetModel::factory()
-                        ->create(
-                            [
-                                'category_id' => Category::factory()->assetLaptopCategory()->create()->id,
-                            ]
-                        )->id,
-                    'warranty_months' => 24,
-                    'purchase_date' => Carbon::createFromDate(2017, 1, 1)->hour(0)->minute(0)->second(0)->format('Y-m-d'),
-                ]);
+test('a user is emailed if they checkout an asset with eula', function () {
+    $admin = User::factory()->superuser()->create();
+    $user = User::factory()->create();
+    $asset = Asset::factory()
+        ->create(
+            [
+                'model_id' => AssetModel::factory()
+                    ->create(
+                        [
+                            'category_id' => Category::factory()->assetLaptopCategory()->create()->id,
+                        ]
+                    )->id,
+                'warranty_months' => 24,
+                'purchase_date' => Carbon::createFromDate(2017, 1, 1)->hour(0)->minute(0)->second(0)->format('Y-m-d'),
+            ]);
 
-        Mail::fake();
-        $asset->checkOut($user, $admin->id);
-        Mail::assertSent(CheckoutAssetMail::class, function (CheckoutAssetMail $mail) use ($user, $asset) {
-            return $mail->hasTo($user->email) && $mail->hasSubject(trans('mail.Asset_Checkout_Notification', ['tag' => $asset->asset_tag]));
-        });
-    }
+    Mail::fake();
+    $asset->checkOut($user, $admin->id);
+    Mail::assertSent(CheckoutAssetMail::class, function (CheckoutAssetMail $mail) use ($user, $asset) {
+        return $mail->hasTo($user->email) && $mail->hasSubject(trans('mail.Asset_Checkout_Notification', ['tag' => $asset->asset_tag]));
+    });
+});
 
-    public function test_default_eula_is_sent_when_set_in_category()
-    {
-        Mail::fake();
+test('default eula is sent when set in category', function () {
+    Mail::fake();
 
-        $this->settings->setEula('My Custom EULA Text');
+    $this->settings->setEula('My Custom EULA Text');
 
-        $user = User::factory()->create();
+    $user = User::factory()->create();
 
-        $category = Category::factory()->create([
-            'use_default_eula' => 1,
-            'eula_text' => 'EULA Text that should not be used',
-        ]);
+    $category = Category::factory()->create([
+        'use_default_eula' => 1,
+        'eula_text' => 'EULA Text that should not be used',
+    ]);
 
-        $model = AssetModel::factory()->for($category)->create();
-        $asset = Asset::factory()->for($model, 'model')->create();
+    $model = AssetModel::factory()->for($category)->create();
+    $asset = Asset::factory()->for($model, 'model')->create();
 
-        $asset->checkOut($user, User::factory()->superuser()->create()->id);
+    $asset->checkOut($user, User::factory()->superuser()->create()->id);
 
-        Mail::assertSent(CheckoutAssetMail::class, function ($mail) use ($user) {
-            return $mail->hasTo($user->email) &&
-                str_contains($mail->render(), 'My Custom EULA Text') &&
-                ! str_contains($mail->render(), 'EULA Text that should not be used');
-        });
-    }
-}
+    Mail::assertSent(CheckoutAssetMail::class, function ($mail) use ($user) {
+        return $mail->hasTo($user->email) &&
+            str_contains($mail->render(), 'My Custom EULA Text') &&
+            ! str_contains($mail->render(), 'EULA Text that should not be used');
+    });
+});

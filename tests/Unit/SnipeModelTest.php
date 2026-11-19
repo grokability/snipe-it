@@ -1,108 +1,94 @@
 <?php
 
-namespace Tests\Unit;
-
 use App\Models\SnipeModel;
-use Tests\TestCase;
 
-class SnipeModelTest extends TestCase
-{
-    public function test_sets_purchase_dates_appropriately()
-    {
-        $c = new SnipeModel;
-        $c->purchase_date = '';
-        $this->assertNull($c->purchase_date);
-        $c->purchase_date = null;
-        $this->assertNull($c->purchase_date);
-        $c->purchase_date = '2016-03-25';
-        $this->assertTrue($c->purchase_date === '2016-03-25');
-        $this->assertEquals('2016-03-25', $c->purchase_date);
-    }
+test('sets purchase dates appropriately', function () {
+    $c = new SnipeModel;
+    $c->purchase_date = '';
+    expect($c->purchase_date)->toBeNull();
+    $c->purchase_date = null;
+    expect($c->purchase_date)->toBeNull();
+    $c->purchase_date = '2016-03-25';
+    expect($c->purchase_date === '2016-03-25')->toBeTrue();
+    expect($c->purchase_date)->toEqual('2016-03-25');
+});
 
-    public function test_sets_purchase_costs_appropriately()
-    {
-        $c = new SnipeModel;
-        $c->purchase_cost = '';
-        $this->assertNull($c->purchase_cost);
-        $c->purchase_cost = null;
-        $this->assertNull($c->purchase_cost);
-        $c->purchase_cost = '0.00';
-        $this->assertSame(0.0, (float) $c->purchase_cost);
-        $c->purchase_cost = '9.54';
-        $this->assertSame(9.54, (float) $c->purchase_cost);
-        $c->purchase_cost = 12.34;             // already a float — no ParseCurrency needed
-        $this->assertSame(12.34, (float) $c->purchase_cost);
-    }
+test('sets purchase costs appropriately', function () {
+    $c = new SnipeModel;
+    $c->purchase_cost = '';
+    expect($c->purchase_cost)->toBeNull();
+    $c->purchase_cost = null;
+    expect($c->purchase_cost)->toBeNull();
+    $c->purchase_cost = '0.00';
+    expect((float) $c->purchase_cost)->toBe(0.0);
+    $c->purchase_cost = '9.54';
+    expect((float) $c->purchase_cost)->toBe(9.54);
+    // already a float — no ParseCurrency needed
+    $c->purchase_cost = 12.34;
+    expect((float) $c->purchase_cost)->toBe(12.34);
+});
 
-    public function test_sets_purchase_cost_from_us_format_with_thousands()
-    {
-        $this->settings->set(['digit_separator' => '1,234.56']);
-        $c = new SnipeModel;
+test('sets purchase cost from us format with thousands', function () {
+    $this->settings->set(['digit_separator' => '1,234.56']);
+    $c = new SnipeModel;
 
-        $c->purchase_cost = '8,888.00';
-        $this->assertSame(8888.0, (float) $c->purchase_cost);
+    $c->purchase_cost = '8,888.00';
+    expect((float) $c->purchase_cost)->toBe(8888.0);
 
-        $c->purchase_cost = '8888.00';
-        $this->assertSame(8888.0, (float) $c->purchase_cost);
-    }
+    $c->purchase_cost = '8888.00';
+    expect((float) $c->purchase_cost)->toBe(8888.0);
+});
 
-    public function test_sets_purchase_cost_from_eu_format_with_thousands()
-    {
-        $this->settings->set(['digit_separator' => '1.234,56']);
-        $c = new SnipeModel;
+test('sets purchase cost from eu format with thousands', function () {
+    $this->settings->set(['digit_separator' => '1.234,56']);
+    $c = new SnipeModel;
 
-        $c->purchase_cost = '8.888,00';
-        $this->assertSame(8888.0, (float) $c->purchase_cost);
+    $c->purchase_cost = '8.888,00';
+    expect((float) $c->purchase_cost)->toBe(8888.0);
 
-        $c->purchase_cost = '8888,00';
-        $this->assertSame(8888.0, (float) $c->purchase_cost);
+    $c->purchase_cost = '8888,00';
+    expect((float) $c->purchase_cost)->toBe(8888.0);
 
-        $c->purchase_cost = '12,34';
-        $this->assertSame(12.34, (float) $c->purchase_cost);
-    }
+    $c->purchase_cost = '12,34';
+    expect((float) $c->purchase_cost)->toBe(12.34);
+});
 
-    public function test_nulls_blank_location_ids_but_not_others()
-    {
-        $c = new SnipeModel;
-        $c->location_id = '';
-        $this->assertTrue($c->location_id === null);
-        $c->location_id = '5';
-        $this->assertTrue($c->location_id == 5);
-    }
+test('nulls blank location ids but not others', function () {
+    $c = new SnipeModel;
+    $c->location_id = '';
+    expect($c->location_id === null)->toBeTrue();
+    $c->location_id = '5';
+    expect($c->location_id == 5)->toBeTrue();
+});
 
-    public function test_nulls_blank_categories_but_not_others()
-    {
-        $c = new SnipeModel;
-        $c->category_id = '';
-        $this->assertTrue($c->category_id === null);
-        $c->category_id = '1';
-        $this->assertTrue($c->category_id == 1);
-    }
+test('nulls blank categories but not others', function () {
+    $c = new SnipeModel;
+    $c->category_id = '';
+    expect($c->category_id === null)->toBeTrue();
+    $c->category_id = '1';
+    expect($c->category_id == 1)->toBeTrue();
+});
 
-    public function test_nulls_blank_suppliers_but_not_others()
-    {
-        $c = new SnipeModel;
-        $c->supplier_id = '';
-        $this->assertTrue($c->supplier_id === null);
-        $c->supplier_id = '4';
-        $this->assertTrue($c->supplier_id == 4);
-    }
+test('nulls blank suppliers but not others', function () {
+    $c = new SnipeModel;
+    $c->supplier_id = '';
+    expect($c->supplier_id === null)->toBeTrue();
+    $c->supplier_id = '4';
+    expect($c->supplier_id == 4)->toBeTrue();
+});
 
-    public function test_nulls_blank_depreciations_but_not_others()
-    {
-        $c = new SnipeModel;
-        $c->depreciation_id = '';
-        $this->assertTrue($c->depreciation_id === null);
-        $c->depreciation_id = '4';
-        $this->assertTrue($c->depreciation_id == 4);
-    }
+test('nulls blank depreciations but not others', function () {
+    $c = new SnipeModel;
+    $c->depreciation_id = '';
+    expect($c->depreciation_id === null)->toBeTrue();
+    $c->depreciation_id = '4';
+    expect($c->depreciation_id == 4)->toBeTrue();
+});
 
-    public function test_nulls_blank_manufacturers_but_not_others()
-    {
-        $c = new SnipeModel;
-        $c->manufacturer_id = '';
-        $this->assertTrue($c->manufacturer_id === null);
-        $c->manufacturer_id = '4';
-        $this->assertTrue($c->manufacturer_id == 4);
-    }
-}
+test('nulls blank manufacturers but not others', function () {
+    $c = new SnipeModel;
+    $c->manufacturer_id = '';
+    expect($c->manufacturer_id === null)->toBeTrue();
+    $c->manufacturer_id = '4';
+    expect($c->manufacturer_id == 4)->toBeTrue();
+});

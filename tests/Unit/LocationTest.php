@@ -1,55 +1,45 @@
 <?php
 
-namespace Tests\Unit;
-
 use App\Models\Company;
 use App\Models\Location;
 use Illuminate\Support\Facades\DB;
-use Tests\TestCase;
 
-class LocationTest extends TestCase
-{
-    public function test_passes_if_not_self_parent()
-    {
-        $a = Location::factory()->make([
-            'name' => 'Test Location',
-            'id' => 1,
-            'parent_id' => Location::factory()->create(['id' => 10])->id,
-        ]);
+test('passes if not self parent', function () {
+    $a = Location::factory()->make([
+        'name' => 'Test Location',
+        'id' => 1,
+        'parent_id' => Location::factory()->create(['id' => 10])->id,
+    ]);
 
-        $this->assertTrue($a->isValid());
-    }
+    expect($a->isValid())->toBeTrue();
+});
 
-    public function test_fails_if_self_parent()
-    {
-        $a = Location::factory()->make([
-            'name' => 'Test Location',
-            'id' => 1,
-            'parent_id' => 1,
-        ]);
+test('fails if self parent', function () {
+    $a = Location::factory()->make([
+        'name' => 'Test Location',
+        'id' => 1,
+        'parent_id' => 1,
+    ]);
 
-        $this->assertFalse($a->isValid());
-        $this->assertStringContainsString(trans('validation.non_circular', ['attribute' => 'parent id']), $a->getErrors());
-    }
+    expect($a->isValid())->toBeFalse();
+    $this->assertStringContainsString(trans('validation.non_circular', ['attribute' => 'parent id']), $a->getErrors());
+});
 
-    public function test_effective_fmcs_company_id_inherits_from_nearest_ancestor_with_a_company()
-    {
-        $company = Company::factory()->create();
-        $grandparent = Location::factory()->create(['company_id' => $company->id]);
-        $parent = Location::factory()->create(['parent_id' => $grandparent->id]);
-        $child = Location::factory()->create(['parent_id' => $parent->id]);
+test('effective fmcs company id inherits from nearest ancestor with a company', function () {
+    $company = Company::factory()->create();
+    $grandparent = Location::factory()->create(['company_id' => $company->id]);
+    $parent = Location::factory()->create(['parent_id' => $grandparent->id]);
+    $child = Location::factory()->create(['parent_id' => $parent->id]);
 
-        $this->assertSame($company->id, $child->effectiveFmcsCompanyId());
-    }
+    expect($child->effectiveFmcsCompanyId())->toBe($company->id);
+});
 
-    public function test_effective_fmcs_company_id_terminates_on_a_parent_cycle()
-    {
-        $locationA = Location::factory()->create();
-        $locationB = Location::factory()->create();
+test('effective fmcs company id terminates on a parent cycle', function () {
+    $locationA = Location::factory()->create();
+    $locationB = Location::factory()->create();
 
-        DB::table('locations')->where('id', $locationA->id)->update(['parent_id' => $locationB->id]);
-        DB::table('locations')->where('id', $locationB->id)->update(['parent_id' => $locationA->id]);
+    DB::table('locations')->where('id', $locationA->id)->update(['parent_id' => $locationB->id]);
+    DB::table('locations')->where('id', $locationB->id)->update(['parent_id' => $locationA->id]);
 
-        $this->assertNull($locationA->fresh()->effectiveFmcsCompanyId());
-    }
-}
+    expect($locationA->fresh()->effectiveFmcsCompanyId())->toBeNull();
+});
