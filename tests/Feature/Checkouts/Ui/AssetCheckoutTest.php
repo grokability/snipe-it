@@ -194,8 +194,6 @@ test('page renders', function () {
 });
 
 test('asset can be checked out', function ($checkoutType, $target, $expectedLocation) {
-    // ['checkout_type' => $type, 'target' => $target, 'expected_location' => $expectedLocation] = $data();
-
     $newStatus = Statuslabel::factory()->readyToDeploy()->create();
     $asset = Asset::factory()->create();
     $admin = User::factory()->checkoutAssets()->create();

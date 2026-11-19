@@ -2,7 +2,6 @@
 
 use App\Models\Company;
 use App\Models\User;
-use PHPUnit\Framework\Attributes\Test;
 
 test('scoped editor save preserves target memberships editor cannot see', function () {
     // Editor is a member of Company A only; target belongs to

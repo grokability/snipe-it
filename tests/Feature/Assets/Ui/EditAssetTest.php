@@ -82,8 +82,8 @@ test('new checkin is logged if status changed to undeployable', function () {
         ],
         )
         ->assertStatus(302);
-
     // ->assertRedirect(route('hardware.show', ['hardware' => $asset->id]));;
+
     // $asset->refresh();
     $asset = Asset::find($asset->id);
     expect($asset->assigned_to)->toBeNull();

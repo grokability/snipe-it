@@ -11,7 +11,6 @@ use App\Models\User;
 use App\Notifications\CheckinLicenseSeatNotification;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
-use PHPUnit\Framework\Attributes\Test;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertSoftDeleted;

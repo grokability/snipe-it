@@ -596,47 +596,7 @@ test('store rejects cross company checkout target with full company support enab
     ]);
 });
 
-// dataset('checkoutTargets', function () {
-//     yield 'Users' => [
-//         function () {
-//             return [
-//                 'key' => 'assigned_user',
-//                 'value' => [
-//                     User::factory()->create()->id,
-//                     User::factory()->create()->id,
-//                 ],
-//             ];
-//         },
-//     ];
-//
-//     yield 'Locations' => [
-//         function () {
-//             return [
-//                 'key' => 'assigned_location',
-//                 'value' => [
-//                     Location::factory()->create()->id,
-//                     Location::factory()->create()->id,
-//                 ],
-//             ];
-//         },
-//     ];
-//
-//     yield 'Assets' => [
-//         function () {
-//             return [
-//                 'key' => 'assigned_asset',
-//                 'value' => [
-//                     Asset::factory()->create()->id,
-//                     Asset::factory()->create()->id,
-//                 ],
-//             ];
-//         },
-//     ];
-// });
-
 test('assigned field validation cannot be array', function ($key, $value) {
-    // ['key' => $key, 'value' => $value] = $data();
-
     $this->actingAsForApi(User::factory()->createAssets()->create())
         ->postJson(route('api.assets.store'), [
             'asset_tag' => '123456',
@@ -649,7 +609,6 @@ test('assigned field validation cannot be array', function ($key, $value) {
             $json->has("messages.{$key}")->etc();
         });
 })
-    // ->with('checkoutTargets');
     ->with([
         'Users' => [
             function () {

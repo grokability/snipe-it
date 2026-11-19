@@ -7,7 +7,6 @@ use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as SocialiteUser;
-use PHPUnit\Framework\Attributes\Test;
 
 test('successful google callback updates the last login timestamp', function () {
     $user = User::factory()->create([

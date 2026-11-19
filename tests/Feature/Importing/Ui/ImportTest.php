@@ -5,7 +5,6 @@ namespace Tests\Feature\Importing\Ui;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ImportTest extends TestCase
