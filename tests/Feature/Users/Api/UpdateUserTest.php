@@ -712,6 +712,63 @@ class UpdateUserTest extends TestCase
         ])->assertStatusMessageIs('error');
     }
 
+    public function test_patch_without_company_ids_does_not_require_company_when_floater_mode_disabled()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+        $this->settings->disableFloaterMode();
+
+        $company = Company::factory()->create();
+        $admin = User::factory()->forCompany($company)->admin()->create();
+        $user = User::factory()->forCompany($company)->create();
+
+        $this->actingAsForApi($admin)
+            ->patchJson(route('api.users.update', $user), [
+                'first_name' => 'Mabel',
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+
+        $this->assertEquals('Mabel', $user->refresh()->first_name);
+        $this->assertTrue($user->companies->contains($company));
+    }
+
+    public function test_patch_without_company_ids_does_not_require_company_when_floater_mode_enabled()
+    {
+        $this->settings->enableFloaterMode();
+
+        $company = Company::factory()->create();
+        $admin = User::factory()->forCompany($company)->admin()->create();
+        $user = User::factory()->forCompany($company)->create();
+
+        $this->actingAsForApi($admin)
+            ->patchJson(route('api.users.update', $user), [
+                'first_name' => 'Mabel',
+            ])
+            ->assertOk()
+            ->assertStatusMessageIs('success');
+
+        $this->assertEquals('Mabel', $user->refresh()->first_name);
+        $this->assertTrue($user->companies->contains($company));
+    }
+
+    public function test_patch_with_empty_company_ids_still_requires_company_when_floater_mode_disabled()
+    {
+        $this->settings->enableMultipleFullCompanySupport();
+        $this->settings->disableFloaterMode();
+
+        $company = Company::factory()->create();
+        $admin = User::factory()->forCompany($company)->admin()->create();
+        $user = User::factory()->forCompany($company)->create();
+
+        $this->actingAsForApi($admin)
+            ->patchJson(route('api.users.update', $user), [
+                'company_ids' => [],
+            ])
+            ->assertStatusMessageIs('error');
+
+        $this->assertTrue($user->refresh()->companies->contains($company));
+    }
+
     public function test_edit_users_permission_cannot_escalate_empty_permissions_user_to_admin_or_superuser_via_api()
     {
         $editingUser = User::factory()->editUsers()->create();
