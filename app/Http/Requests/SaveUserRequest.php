@@ -111,9 +111,10 @@ class SaveUserRequest extends FormRequest
                 return;
             }
 
-            // A PATCH that doesn't send company_ids or company_id leaves the
-            // user's memberships untouched, so there's nothing to gate.
-            if ($this->isMethod('PATCH') && ! $this->has('company_ids') && ! $this->filled('company_id')) {
+            // An API PATCH that doesn't send company_ids or company_id leaves
+            // the user's memberships untouched, so there's nothing to gate.
+            // The web update always syncs companies, so it stays gated.
+            if ($this->routeIs('api.users.update') && $this->isMethod('PATCH') && ! $this->has('company_ids') && ! $this->filled('company_id')) {
                 return;
             }
 
