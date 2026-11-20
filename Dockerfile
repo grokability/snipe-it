@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 LABEL maintainer="Brady Wetherington <bwetherington@grokability.com>"
 
 # No need to add `apt-get clean` here, reference:
@@ -14,16 +14,17 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
 apt-utils \
 apache2 \
 apache2-bin \
-libapache2-mod-php8.3 \
-php8.3-curl \
-php8.3-ldap \
-php8.3-mysql \
-php8.3-gd \
-php8.3-xml \
-php8.3-mbstring \
-php8.3-zip \
-php8.3-bcmath \
-php8.3-redis \
+libapache2-mod-php8.5 \
+php8.5-curl \
+php8.5-ldap \
+php8.5-mysql \
+php8.5-gd \
+php8.5-xml \
+php8.5-mbstring \
+php8.5-zip \
+php8.5-bcmath \
+php8.5-redis \
+php8.5-dev \
 php-memcached \
 patch \
 curl \
@@ -39,7 +40,6 @@ autoconf \
 libc-dev \
 libldap-common \
 pkg-config \
-php8.3-dev \
 ca-certificates \
 unzip \
 dnsutils \
@@ -52,8 +52,8 @@ RUN php go-pear.phar
 RUN phpenmod gd
 RUN phpenmod bcmath
 
-RUN sed -i 's/variables_order = .*/variables_order = "EGPCS"/' /etc/php/8.3/apache2/php.ini
-RUN sed -i 's/variables_order = .*/variables_order = "EGPCS"/' /etc/php/8.3/cli/php.ini
+RUN sed -i 's/variables_order = .*/variables_order = "EGPCS"/' /etc/php/8.5/apache2/php.ini
+RUN sed -i 's/variables_order = .*/variables_order = "EGPCS"/' /etc/php/8.5/cli/php.ini
 
 RUN useradd -m --uid 10000 --gid 50 docker
 
@@ -118,7 +118,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Get dependencies
 USER docker
-RUN COMPOSER_CACHE_DIR=/dev/null composer install --no-dev --working-dir=/var/www/html && rm -rf /var/www/html/vendor/*/*/.git
+RUN COMPOSER_CACHE_DIR=/dev/null /usr/bin/php /usr/bin/composer install --no-dev --working-dir=/var/www/html && rm -rf /var/www/html/vendor/*/*/.git
 USER root
 
 ############### APPLICATION INSTALL/INIT #################
