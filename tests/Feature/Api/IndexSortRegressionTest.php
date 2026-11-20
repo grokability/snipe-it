@@ -20,6 +20,7 @@ use App\Models\Statuslabel;
 use App\Models\Supplier;
 use App\Models\User;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group as TestGroup;
 use Tests\TestCase;
 
 /**
@@ -41,6 +42,7 @@ use Tests\TestCase;
  * where it's exposed in the response, so the N+1 regression that
  * `addSelect` prevents also has a test teeth here.
  */
+#[TestGroup('mysql')]
 class IndexSortRegressionTest extends TestCase
 {
     public static function sortCases(): array

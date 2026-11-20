@@ -79,7 +79,7 @@ jobs:
           chmod -R 777 storage bootstrap/cache
           chmod 600 storage/oauth-private.key storage/oauth-public.key
 
-      - name: Execute tests (Unit and Feature tests) via PHPUnit
+      - name: Execute MySQL-compatible tests
         env:
           DB_CONNECTION: mysql
           DB_DATABASE: snipeit
@@ -87,7 +87,7 @@ jobs:
           DB_USERNAME: root
           LOG_CHANNEL: single
           LOG_LEVEL: debug
-        run: php artisan test --parallel
+        run: composer test:mysql
 
       - name: Upload Laravel logs as artifacts
         if: always()

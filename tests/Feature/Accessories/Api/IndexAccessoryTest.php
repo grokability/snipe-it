@@ -13,6 +13,7 @@ use App\Models\OrderItem;
 use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Testing\Fluent\AssertableJson;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\Concerns\TestsFullMultipleCompaniesSupport;
 use Tests\Concerns\TestsPermissionsRequirement;
 use Tests\TestCase;
@@ -76,6 +77,7 @@ class IndexAccessoryTest extends TestCase implements TestsFullMultipleCompaniesS
             ->assertResponseContainsInRows($accessoryB);
     }
 
+    #[Group('mysql')]
     public function test_can_filter_accessories_by_searchable_count_alias()
     {
         $this->markIncompleteIfSqlite('This test is not compatible with SQLite');
@@ -103,6 +105,7 @@ class IndexAccessoryTest extends TestCase implements TestsFullMultipleCompaniesS
             ->assertJson(fn (AssertableJson $json) => $json->has('rows', 1)->where('rows.0.name', 'Accessory With Two Checkouts')->etc());
     }
 
+    #[Group('mysql')]
     public function test_can_filter_accessories_by_remaining_count()
     {
         $this->markIncompleteIfSqlite('This test is not compatible with SQLite');
@@ -123,6 +126,7 @@ class IndexAccessoryTest extends TestCase implements TestsFullMultipleCompaniesS
             ->assertResponseDoesNotContainInRows($empty);
     }
 
+    #[Group('mysql')]
     public function test_can_filter_accessories_by_checkouts_count_range()
     {
         $this->markIncompleteIfSqlite('This test is not compatible with SQLite');

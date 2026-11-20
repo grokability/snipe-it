@@ -5,6 +5,7 @@ namespace Tests\Feature\CalendarEvents;
 use App\Models\Asset;
 use App\Models\CalendarEvent;
 use App\Models\Maintenance;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
 /**
@@ -20,6 +21,7 @@ use Tests\TestCase;
  *   - Reconcile heals drift (direct DB update on the source) and
  *     removes orphaned rows.
  */
+#[Group('mysql')]
 class CalendarEventsSyncTest extends TestCase
 {
     public function test_saving_a_maintenance_creates_a_calendar_event_row(): void

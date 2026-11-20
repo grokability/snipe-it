@@ -27,6 +27,7 @@ use Tests\TestCase;
  * 3. Relation aliases (e.g., status_label → status) work correctly
  * 4. Multi-word searches work as expected
  */
+#[Group('mysql')]
 class SearchableTraitTest extends TestCase
 {
     /**

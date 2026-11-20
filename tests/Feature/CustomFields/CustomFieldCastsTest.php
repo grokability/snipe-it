@@ -13,8 +13,10 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
+#[Group('mysql')]
 class CustomFieldCastsTest extends TestCase
 {
     public function test_model_without_a_fieldset_keeps_its_normal_casts(): void
