@@ -46,14 +46,12 @@ dnsutils \
 && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 
-RUN curl -L -O https://github.com/pear/pearweb_phars/raw/master/go-pear.phar
-RUN php go-pear.phar
-
 RUN phpenmod gd
 RUN phpenmod bcmath
 
 RUN sed -i 's/variables_order = .*/variables_order = "EGPCS"/' /etc/php/8.5/apache2/php.ini
 RUN sed -i 's/variables_order = .*/variables_order = "EGPCS"/' /etc/php/8.5/cli/php.ini
+RUN sed -i 's/session.upload_progress.enabled = .*/session.upload_progress.enabled = 0/' /etc/php/8.5/cli/php.ini
 
 RUN useradd -m --uid 10000 --gid 50 docker
 
