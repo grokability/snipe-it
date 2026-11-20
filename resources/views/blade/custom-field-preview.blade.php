@@ -4,12 +4,16 @@
     'format' => 'ANY',
     'helpText' => '',
     'fieldValues' => '',
+    'linkTemplate' => '',
 ])
 
 @php
     $displayName = trim((string) $name) !== '' ? $name : trans('admin/custom_fields/general.field_name');
     $valuesArray = array_values(array_filter(array_map('trim', preg_split('/\r?\n/', (string) $fieldValues)), fn ($v) => $v !== ''));
     $formatIcon = \App\Models\CustomField::iconForFormat($format);
+    $linkTemplate = trim((string) $linkTemplate);
+    $showLinkPreview = $linkTemplate !== '' && \App\Models\CustomField::supportsLinkTemplate($element, $format);
+    $linkSampleValue = $valuesArray[0] ?? '123456789';
 @endphp
 
 {{--
@@ -116,6 +120,18 @@
 
             @if (trim((string) $helpText) !== '')
                 <p class="help-block">{{ $helpText }}</p>
+            @endif
+
+            @if ($showLinkPreview)
+                <p class="help-block js-link-template-preview">
+                    @if (\App\Models\CustomField::isValidLinkTemplate($linkTemplate))
+                        {{ trans('admin/custom_fields/general.link_template_preview') }}
+                        <a href="{{ \App\Models\CustomField::buildLink($linkTemplate, $linkSampleValue) }}" tabindex="-1" style="pointer-events: none;">{{ $linkSampleValue }}</a>
+                        <br><code>{{ \App\Models\CustomField::buildLink($linkTemplate, $linkSampleValue) }}</code>
+                    @else
+                        <span class="text-danger">{{ trans('admin/custom_fields/general.validation.link_template_invalid') }}</span>
+                    @endif
+                </p>
             @endif
 
         </div>

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Gate;
 class CustomFieldValuesTransformer
 {
     /**
-     * @return ($valuesOnly is true ? array<string, mixed> : array<string, array{field: string, value: mixed, field_format: mixed, element: mixed}>)
+     * @return ($valuesOnly is true ? array<string, mixed> : array<string, array{field: string, value: mixed, field_format: mixed, element: mixed, link: string|null}>)
      */
     public function transform(Model $item, bool $includeEncrypted = true, bool $renderMarkdown = true, ?string $filterFieldExpression = null, bool $valuesOnly = false): array
     {
@@ -29,9 +29,13 @@ class CustomFieldValuesTransformer
             }
 
             $value = $item->getAttribute($field->db_column);
+            $link = null;
             if ($field->isFieldDecryptable($value) && ! Gate::allows('assets.view.encrypted_custom_fields')) {
                 $value = e(strtoupper(trans('admin/custom_fields/general.encrypted')));
             } else {
+                // Build the link from the raw value, before it is formatted or escaped
+                $link = is_scalar($value) ? $field->linkForValue((string) $value) : null;
+
                 if (in_array($field->format, ['DATE', 'DATETIME'], true) && $value !== null && $value !== '') {
                     $value = Helper::getFormattedDateObject($value, $field->format === 'DATETIME' ? 'datetime' : 'date', false);
                 }
@@ -47,6 +51,7 @@ class CustomFieldValuesTransformer
                     'value' => $value,
                     'field_format' => $field->format,
                     'element' => $field->element,
+                    'link' => $link ? e($link) : null,
                 ];
             }
         }

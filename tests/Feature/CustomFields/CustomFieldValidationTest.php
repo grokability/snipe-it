@@ -344,4 +344,42 @@ class CustomFieldValidationTest extends TestCase
         $this->assertTrue($field2->save(), 'Errors: '.json_encode($field2->getErrors()->toArray()));
         $this->assertSame('FAX', $field2->fresh()->format, 'FAX must reverse-map to its label, not ANY');
     }
+
+    public function test_valid_link_template_is_saved(): void
+    {
+        $field = $this->newField(['link_template' => 'anydesk:{VALUE}']);
+        $field->format = 'ANY';
+
+        $this->assertTrue($field->save(), 'Errors: '.json_encode($field->getErrors()->toArray()));
+        $this->assertDatabaseHas('custom_fields', ['id' => $field->id, 'link_template' => 'anydesk:{VALUE}']);
+    }
+
+    public static function invalidLinkTemplates(): array
+    {
+        return [
+            'missing placeholder' => ['anydesk:'],
+            'missing scheme' => ['{VALUE}'],
+            'javascript scheme' => ['javascript:alert({VALUE})'],
+            'data scheme' => ['data:text/html,{VALUE}'],
+        ];
+    }
+
+    #[DataProvider('invalidLinkTemplates')]
+    public function test_invalid_link_template_is_rejected(string $template): void
+    {
+        $field = $this->newField(['link_template' => $template]);
+        $field->format = 'ANY';
+
+        $this->assertFalse($field->isValid());
+        $this->assertArrayHasKey('link_template', $field->getErrors()->toArray());
+    }
+
+    public function test_link_template_is_rejected_for_unsupported_element(): void
+    {
+        $field = $this->newField(['element' => 'textarea', 'link_template' => 'anydesk:{VALUE}']);
+        $field->format = 'ANY';
+
+        $this->assertFalse($field->isValid());
+        $this->assertArrayHasKey('link_template', $field->getErrors()->toArray());
+    }
 }
