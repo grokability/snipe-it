@@ -148,9 +148,7 @@
                 <ul class="list-unstyled" style="max-height: 70vh; overflow-y: auto; margin-bottom: 0;">
                     @foreach ($locations as $location)
                         <li style="padding: 4px 0; border-bottom: 1px solid #f0f0f0;">
-                            @if ($location->tag_color)
-                                <x-icon type="square" class="fa-fw" style="color: {{ $location->tag_color }};"/>
-                            @endif
+                            <x-tag-color :color="$location->tag_color" />
                             {{ $location->name }}
                         </li>
                     @endforeach

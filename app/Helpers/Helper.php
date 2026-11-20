@@ -3,7 +3,6 @@
 namespace App\Helpers;
 
 use App\Models\Accessory;
-use App\Models\Asset;
 use App\Models\AssetModel;
 use App\Models\Component;
 use App\Models\Consumable;
@@ -100,6 +99,86 @@ class Helper
         if ($str) {
             return $Parsedown->text(strip_tags($str));
         }
+    }
+
+    /**
+     * Scheme deny-list for user-supplied URLs rendered as hrefs.
+     *
+     * Scoped to the code-executing schemes a browser will evaluate in
+     * the page origin. Everything else passes through (`file://`,
+     * `vnc://`, `ssh://`, `rdp://`, `smb://`, `obsidian://`, and other
+     * custom app protocols) because the browser delegates those to an
+     * external handler rather than executing them in the page origin.
+     *
+     * Normalization matches what the browser normalizes before it
+     * parses the scheme: strips leading whitespace + ASCII control
+     * characters, lowercases, and resolves embedded tab / CR / LF in
+     * the scheme portion. Without this a payload like
+     * `JavaScr\tipt:alert(1)` would sail past a naive prefix check.
+     */
+    public static function safeUrl(?string $value): string
+    {
+        if ($value === null || $value === '') {
+            return '';
+        }
+
+        // Browsers strip tabs, CRs, LFs and null bytes anywhere inside
+        // the scheme portion before parsing. Mirror that here so
+        // `java\tscript:...` is caught the same way `javascript:...` is.
+        $cleaned = preg_replace('/[\x00-\x1f]+/', '', $value);
+        $trimmed = ltrim((string) $cleaned);
+
+        $colonPos = strpos($trimmed, ':');
+        if ($colonPos === false) {
+            // Relative URL / fragment / query-string. No scheme to
+            // delegate to, so the browser treats it as same-origin.
+            return $value;
+        }
+
+        $scheme = strtolower(substr($trimmed, 0, $colonPos));
+        $denied = ['javascript', 'vbscript', 'livescript', 'mocha', 'data'];
+
+        return in_array($scheme, $denied, true) ? '' : $value;
+    }
+
+    /**
+     * Strict-hex allow-list for user-supplied colors rendered inside
+     * an inline `style` attribute. A model row carrying a bad value
+     * (either pre-validation or from a bulk importer bypass) renders
+     * as empty, which collapses the `style` attribute at the sink
+     * site rather than leaking CSS declarations to every viewer.
+     *
+     * Matches the four CSS hex-color shapes browsers accept: #RGB,
+     * #RGBA, #RRGGBB, #RRGGBBAA. Anything else, including CSS color
+     * keywords (`red`), `rgb()`, `hsl()`, is rejected because the
+     * color-picker inputs on every model that owns a `tag_color`
+     * column emit hex strings exclusively.
+     */
+    public static function safeColor(?string $value): string
+    {
+        if ($value === null || $value === '') {
+            return '';
+        }
+
+        return preg_match('/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/', $value) === 1
+            ? $value
+            : '';
+    }
+
+    /**
+     * String-returning wrapper around the `<x-tag-color>` Blade
+     * component for presenters that build HTML via concatenation.
+     * `$type` is an icon-helper key (default `square`), `$color` is
+     * the model's `tag_color` (nullable). Empty string when the
+     * color is missing or does not pass safeColor(), so callers can
+     * `.`-concatenate unconditionally.
+     */
+    public static function tagColorIcon(?string $color, string $type = 'square', ?string $title = null): string
+    {
+        return trim((string) \Illuminate\Support\Facades\Blade::render(
+            '<x-tag-color :color="$color" :type="$type" :title="$title" />',
+            compact('color', 'type', 'title'),
+        ));
     }
 
     /**

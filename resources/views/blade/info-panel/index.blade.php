@@ -664,10 +664,9 @@
         @endif
 
 
-        @if ($infoPanelObj->tag_color)
-            <x-info-element>
-                <x-icon type="square" class="fa-fw" style="color: {{ $infoPanelObj->tag_color }}" title="{{ trans('general.tag_color') }}"/>
-                {{ $infoPanelObj->tag_color }}
+        @if (\App\Helpers\Helper::safeColor($infoPanelObj->tag_color) !== '')
+            <x-info-element icon_type="square" :icon_color="$infoPanelObj->tag_color" :title="trans('general.tag_color')">
+                {{ \App\Helpers\Helper::safeColor($infoPanelObj->tag_color) }}
             </x-info-element>
         @endif
 

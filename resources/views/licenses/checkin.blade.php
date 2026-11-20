@@ -25,7 +25,7 @@
 
             @if ($licenseSeat->license->category)
                 <x-form.static :label="trans('general.category')">
-                    <x-icon type="category" class="fa-fw" style="{{ $licenseSeat->license->category->tag_color ? 'color: '.e($licenseSeat->license->category->tag_color).';' : '' }}" />
+                    <x-tag-color :color="$licenseSeat->license->category->tag_color" />
                     {{ $licenseSeat->license->category->name }}
                 </x-form.static>
             @endif

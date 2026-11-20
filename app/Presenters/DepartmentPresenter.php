@@ -161,10 +161,10 @@ class DepartmentPresenter extends Presenter
     {
 
         if (auth()->user()->can('view', ['\App\Models\Department', $this])) {
-            return ($this->tag_color ? "<i class='fa-solid fa-fw fa-square' style='color: ".e($this->tag_color)."' aria-hidden='true'></i>" : '').'<a href="'.route('departments.show', e($this->id)).'">'.e($this->name).'</a>';
+            return \App\Helpers\Helper::tagColorIcon($this->tag_color).'<a href="'.route('departments.show', e($this->id)).'">'.e($this->name).'</a>';
         }
 
-        return ($this->tag_color ? "<i class='fa-solid fa-fw fa-square' style='color: ".e($this->tag_color)."' aria-hidden='true'></i>" : '').e($this->name);
+        return \App\Helpers\Helper::tagColorIcon($this->tag_color).e($this->name);
     }
 
     public function nameUrl()

@@ -87,9 +87,9 @@ class GroupPresenter extends Presenter
     {
 
         if (auth()->user()->can('view', ['\App\Models\Groups', $this])) {
-            return '<a href="' . route('groups.show', e($this->id)) . '" class="label label-light" style="padding-left: 5px;"> ' . e($this->display_name) . '</a>';
+            return '<a href="'.route('groups.show', e($this->id)).'" class="label label-light" style="padding-left: 5px;"> '.e($this->display_name).'</a>';
         }
 
-        return '<span class="label label-light" style="padding-left: 5px;"> ' . e($this->display_name) . '</span>';
+        return '<span class="label label-light" style="padding-left: 5px;"> '.e($this->display_name).'</span>';
     }
 }

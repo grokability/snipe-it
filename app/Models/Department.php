@@ -57,6 +57,7 @@ class Department extends SnipeModel
         'phone' => 'string|max:255|nullable',
         'fax' => 'string|max:255|nullable',
         'notes' => 'string|max:255|nullable',
+        'tag_color' => ['nullable', 'regex:/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/'],
     ];
 
     /**

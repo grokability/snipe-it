@@ -230,9 +230,9 @@ class ManufacturerPresenter extends Presenter
     {
 
         if (auth()->user()->can('view', ['\App\Models\Manufacturer', $this])) {
-            return ($this->tag_color ? "<i class='fa-solid fa-fw fa-square' style='color: ".e($this->tag_color)."' aria-hidden='true'></i>" : '').'<a href="'.route('manufacturers.show', e($this->id)).'">'.e($this->display_name).'</a>';
+            return \App\Helpers\Helper::tagColorIcon($this->tag_color).'<a href="'.route('manufacturers.show', e($this->id)).'">'.e($this->display_name).'</a>';
         }
 
-        return ($this->tag_color ? "<i class='fa-solid fa-fw fa-square' style='color: ".e($this->tag_color)."' aria-hidden='true'></i>" : '').e($this->display_name);
+        return \App\Helpers\Helper::tagColorIcon($this->tag_color).e($this->display_name);
     }
 }

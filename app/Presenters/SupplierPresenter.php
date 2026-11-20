@@ -300,9 +300,9 @@ class SupplierPresenter extends Presenter
     {
 
         if (auth()->user()->can('view', ['\App\Models\Supplier', $this])) {
-            return ($this->tag_color ? "<i class='fa-solid fa-square fa-fw' style='color: ".e($this->tag_color)."' aria-hidden='true'></i> " : '').'<a href="'.route('suppliers.show', e($this->id)).'">'.e($this->name).'</a>';
+            return \App\Helpers\Helper::tagColorIcon($this->tag_color).'<a href="'.route('suppliers.show', e($this->id)).'">'.e($this->name).'</a>';
         }
 
-        return ($this->tag_color ? "<i class='fa-solid fa-square fa-fw' style='color: ".e($this->tag_color)."' aria-hidden='true'></i> " : '').e($this->name);
+        return \App\Helpers\Helper::tagColorIcon($this->tag_color).e($this->name);
     }
 }

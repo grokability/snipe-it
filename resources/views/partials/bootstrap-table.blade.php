@@ -3339,9 +3339,14 @@
 
 
     function colorTagFormatter(value, row) {
-        if (value) {
-            return '<i class="fa-solid fa-square" style="color: ' + value + ';" aria-hidden="true"></i> ' + value;
+        if (!value) {
+            return;
         }
+       
+        if (!/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(value)) {
+            return '';
+        }
+        return '<i class="fa-solid fa-square" style="color: ' + value + ';" aria-hidden="true"></i> ' + value;
     }
 
 

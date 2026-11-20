@@ -29,6 +29,7 @@ use Watson\Validating\ValidatingTrait;
  * Model for Companies.
  *
  * @version v1.8
+ *
  * @mixin IdeHelperCompany
  */
 final class Company extends SnipeModel
@@ -69,6 +70,7 @@ final class Company extends SnipeModel
         'webhook_selected' => 'nullable|string|in:slack,general,google,microsoft',
         'webhook_channel' => 'nullable|string',
         'webhook_botname' => 'nullable|string|max:255',
+        'tag_color' => ['nullable', 'regex:/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/'],
     ];
 
     /**

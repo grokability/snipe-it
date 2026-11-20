@@ -47,6 +47,7 @@ class Supplier extends SnipeModel implements Importable
         'country' => 'min:2|max:191|nullable',
         'zip' => 'max:10|nullable',
         'url' => 'sometimes|url|nullable|string|max:250',
+        'tag_color' => ['nullable', 'regex:/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/'],
     ];
 
     /**

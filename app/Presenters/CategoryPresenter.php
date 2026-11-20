@@ -186,14 +186,14 @@ class CategoryPresenter extends Presenter
 
         // We use soft-deletes for categories, but we don't give you a way to restore them right now. This would be the method we'd use when that happens
         //        if (auth()->user()->can('view', ['\App\Models\Category', $this])) {
-        //            return ($this->tag_color ? "<i class='fa-solid fa-fw fa-square' style='color: ".e($this->tag_color)."' aria-hidden='true'></i>" : '').'<a href="'.route('models.show', e($this->id)).'" class="'. (($this->deleted_at!='') ? 'deleted' : '').'">'.e($this->display_name).'</a>';
+        //            return \App\Helpers\Helper::tagColorIcon($this->tag_color).'<a href="'.route('models.show', e($this->id)).'" class="'. (($this->deleted_at!='') ? 'deleted' : '').'">'.e($this->display_name).'</a>';
         //        }
 
         if ((auth()->user()->can('view', ['\App\Models\Category', $this])) && ($this->deleted_at == '')) {
-            return ($this->tag_color ? "<i class='fa-solid fa-fw fa-square' style='color: ".e($this->tag_color)."' aria-hidden='true'></i>" : '').'<a href="'.route('categories.show', e($this->id)).'">'.e($this->name).'</a>';
+            return \App\Helpers\Helper::tagColorIcon($this->tag_color).'<a href="'.route('categories.show', e($this->id)).'">'.e($this->name).'</a>';
         }
 
-        return ($this->tag_color ? "<i class='fa-solid fa-fw fa-square' style='color: ".e($this->tag_color)."' aria-hidden='true'></i>" : '').'<span class="'.(($this->deleted_at != '') ? 'deleted' : '').'">'.e($this->display_name).'</span>';
+        return \App\Helpers\Helper::tagColorIcon($this->tag_color).'<span class="'.(($this->deleted_at != '') ? 'deleted' : '').'">'.e($this->display_name).'</span>';
 
     }
 }

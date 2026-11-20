@@ -38,7 +38,7 @@
 
                     @if ($asset->model->category)
                         <x-form.static :label="trans('general.category')">
-                            <x-icon type="category" class="fa-fw" style="{{ $asset->model->category->tag_color ? 'color: '.e($asset->model->category->tag_color).';' : '' }}" />
+                            <x-tag-color :color="$asset->model->category->tag_color" />
                             {{ $asset->model->category->name }}
                         </x-form.static>
                     @endif

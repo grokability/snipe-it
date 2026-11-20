@@ -27,6 +27,7 @@ class MaintenanceType extends SnipeModel
 
     protected $rules = [
         'name' => 'required|max:100|unique:maintenance_types,name,NULL,id,deleted_at,NULL',
+        'tag_color' => ['nullable', 'regex:/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/'],
     ];
 
     protected $injectUniqueIdentifier = true;

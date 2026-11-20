@@ -9,7 +9,11 @@
     <li {{ $attributes->merge(['class' => 'list-group-item']) }} id="{{ strtolower(str_slug($title)) }}">
 
         @if ($icon_type)
-            <x-icon type="{{ $icon_type }}" :title="$title" class="fa-fw" style="{{ 'color: '.$icon_color.' !important' ?? '' }}" />
+            @if (\App\Helpers\Helper::safeColor($icon_color) !== '')
+                <x-tag-color :color="$icon_color" :type="$icon_type" :title="$title" />
+            @else
+                <x-icon :type="$icon_type" :title="$title" class="fa-fw" />
+            @endif
         @elseif ($icon)
            <i class="{{ $icon }}"{!! $title ? ' data-tooltip="true" data-title="'.$title.'"' : '' !!}></i>
         @endif

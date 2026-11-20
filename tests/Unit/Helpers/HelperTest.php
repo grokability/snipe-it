@@ -676,4 +676,128 @@ class HelperTest extends TestCase
 
         $this->assertSame('2028 1st Qtr', Helper::customFieldFormValue($field, $asset));
     }
+
+    // =====================================================================
+    // safeUrl: GHSA-65hf-5j7r-2xvv sink helper for user-supplied URLs
+    // rendered as hrefs. Deny-list of code-executing schemes.
+    // =====================================================================
+
+    public function test_safe_url_passes_through_http_and_https(): void
+    {
+        $this->assertSame('http://example.com/x', Helper::safeUrl('http://example.com/x'));
+        $this->assertSame('https://example.com/x', Helper::safeUrl('https://example.com/x'));
+    }
+
+    public function test_safe_url_passes_through_custom_app_schemes(): void
+    {
+        // file://, vnc://, ssh://, rdp://, smb://, obsidian://, etc.
+        // delegate to an external handler and do not execute code
+        // in the page origin, so they stay allowed.
+        $this->assertSame('file:///etc/hosts', Helper::safeUrl('file:///etc/hosts'));
+        $this->assertSame('vnc://corp.example.com', Helper::safeUrl('vnc://corp.example.com'));
+        $this->assertSame('obsidian://open?vault=x', Helper::safeUrl('obsidian://open?vault=x'));
+    }
+
+    public function test_safe_url_passes_through_relative_urls(): void
+    {
+        $this->assertSame('/hardware/5', Helper::safeUrl('/hardware/5'));
+        $this->assertSame('hardware/5', Helper::safeUrl('hardware/5'));
+        $this->assertSame('#fragment', Helper::safeUrl('#fragment'));
+    }
+
+    public function test_safe_url_returns_empty_for_null_or_empty_input(): void
+    {
+        $this->assertSame('', Helper::safeUrl(null));
+        $this->assertSame('', Helper::safeUrl(''));
+    }
+
+    public function test_safe_url_rejects_javascript_scheme(): void
+    {
+        $this->assertSame('', Helper::safeUrl('javascript:alert(document.domain)'));
+    }
+
+    public function test_safe_url_rejects_javascript_scheme_case_insensitive(): void
+    {
+        $this->assertSame('', Helper::safeUrl('JavaScript:alert(1)'));
+        $this->assertSame('', Helper::safeUrl('JAVASCRIPT:alert(1)'));
+    }
+
+    public function test_safe_url_rejects_other_executable_schemes(): void
+    {
+        $this->assertSame('', Helper::safeUrl('vbscript:MsgBox(1)'));
+        $this->assertSame('', Helper::safeUrl('livescript:foo'));
+        $this->assertSame('', Helper::safeUrl('mocha:foo'));
+        $this->assertSame('', Helper::safeUrl('data:text/html,<script>alert(1)</script>'));
+    }
+
+    public function test_safe_url_strips_control_characters_in_scheme_before_check(): void
+    {
+        // Browsers normalize these out before parsing the scheme,
+        // so the helper must too or a payload like java\tscript:...
+        // would sail past the prefix check.
+        $this->assertSame('', Helper::safeUrl("java\tscript:alert(1)"));
+        $this->assertSame('', Helper::safeUrl("java\nscript:alert(1)"));
+        $this->assertSame('', Helper::safeUrl("java\rscript:alert(1)"));
+        $this->assertSame('', Helper::safeUrl("javascript\0:alert(1)"));
+    }
+
+    public function test_safe_url_strips_leading_whitespace_before_scheme_check(): void
+    {
+        $this->assertSame('', Helper::safeUrl(' javascript:alert(1)'));
+        $this->assertSame('', Helper::safeUrl("\t javascript:alert(1)"));
+        $this->assertSame('', Helper::safeUrl("\n\tjavascript:alert(1)"));
+    }
+
+    // =====================================================================
+    // safeColor: GHSA-8rcp-h6xj-5v7h sink helper for user-supplied
+    // colors rendered inside an inline style attribute. Strict hex-only
+    // allow-list so a CSS declaration cannot inject.
+    // =====================================================================
+
+    public function test_safe_color_accepts_valid_hex_shapes(): void
+    {
+        $this->assertSame('#abc', Helper::safeColor('#abc'));
+        $this->assertSame('#abcd', Helper::safeColor('#abcd'));
+        $this->assertSame('#aabbcc', Helper::safeColor('#aabbcc'));
+        $this->assertSame('#aabbccdd', Helper::safeColor('#aabbccdd'));
+        $this->assertSame('#FFFFFF', Helper::safeColor('#FFFFFF'));
+    }
+
+    public function test_safe_color_rejects_css_declarations(): void
+    {
+        // Core advisory payload: semicolon escape into additional
+        // CSS declarations.
+        $this->assertSame('', Helper::safeColor('red; position:fixed; top:0; left:0;'));
+        $this->assertSame('', Helper::safeColor('#aaa; display:none'));
+    }
+
+    public function test_safe_color_rejects_color_keywords(): void
+    {
+        // Keywords are technically valid CSS, but the color-picker
+        // inputs emit hex only. Stricter is safer.
+        $this->assertSame('', Helper::safeColor('red'));
+        $this->assertSame('', Helper::safeColor('transparent'));
+        $this->assertSame('', Helper::safeColor('currentColor'));
+    }
+
+    public function test_safe_color_rejects_rgb_hsl_functions(): void
+    {
+        $this->assertSame('', Helper::safeColor('rgb(255, 0, 0)'));
+        $this->assertSame('', Helper::safeColor('hsl(120, 100%, 50%)'));
+    }
+
+    public function test_safe_color_rejects_malformed_hex(): void
+    {
+        $this->assertSame('', Helper::safeColor('#'));
+        $this->assertSame('', Helper::safeColor('#x'));
+        $this->assertSame('', Helper::safeColor('#aabbccdde'));
+        $this->assertSame('', Helper::safeColor('aabbcc'));
+        $this->assertSame('', Helper::safeColor('#aa bb'));
+    }
+
+    public function test_safe_color_returns_empty_for_null_or_empty_input(): void
+    {
+        $this->assertSame('', Helper::safeColor(null));
+        $this->assertSame('', Helper::safeColor(''));
+    }
 }

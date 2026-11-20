@@ -14,9 +14,9 @@ class ConsumablePresenter extends Presenter
      *                               by default. Passed from the Deleted-index view so admins
      *                               see when each row was deleted. Still switchable elsewhere.
      * @param  array<int, string>  $hide_fields  Column `field` names to drop
-     *                               from the layout entirely. The Archived and Deleted index
-     *                               views hide `remaining` + `percent_remaining` here because
-     *                               neither applies to retired or soft-deleted rows.
+     *                                           from the layout entirely. The Archived and Deleted index
+     *                                           views hide `remaining` + `percent_remaining` here because
+     *                                           neither applies to retired or soft-deleted rows.
      * @return string
      */
     public static function dataTableLayout(bool $showDeletedAt = false, array $hide_fields = [])

@@ -64,7 +64,12 @@
     @if (($field->format=='BOOLEAN') && ($item->{$field->db_column_name()}!=''))
         {!! ($item->{$field->db_column_name()} == 1) ? "<span class='fas fa-check-circle' style='color:green' />" : "<span class='fas fa-times-circle' style='color:red' />" !!}
     @elseif (($field->format=='URL') && ($item->{$field->db_column_name()}!=''))
-        <a href="{{ $item->{$field->db_column_name()} }}" target="_new">{{ $item->{$field->db_column_name()} }}</a>
+        @php $customFieldUrl = \App\Helpers\Helper::safeUrl($item->{$field->db_column_name()}); @endphp
+        @if ($customFieldUrl !== '')
+            <a href="{{ $customFieldUrl }}" target="_new">{{ $item->{$field->db_column_name()} }}</a>
+        @else
+            {{ $item->{$field->db_column_name()} }}
+        @endif
     @elseif (($field->format=='DATE') && ($item->{$field->db_column_name()}!=''))
         {{ \App\Helpers\Helper::getFormattedDateObject($item->{$field->db_column_name()}, 'date', false) }}
     @elseif (($field->format=='DATETIME') && ($item->{$field->db_column_name()}!=''))
