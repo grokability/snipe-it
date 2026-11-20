@@ -24,7 +24,6 @@ php8.5-mbstring \
 php8.5-zip \
 php8.5-bcmath \
 php8.5-redis \
-php8.5-dev \
 php-memcached \
 patch \
 curl \
@@ -34,12 +33,7 @@ git \
 cron \
 mariadb-client \
 supervisor \
-gcc \
-make \
-autoconf \
-libc-dev \
 libldap-common \
-pkg-config \
 ca-certificates \
 unzip \
 dnsutils \
