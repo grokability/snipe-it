@@ -111,6 +111,12 @@ class SaveUserRequest extends FormRequest
                 return;
             }
 
+            // A PATCH that doesn't send company_ids or company_id leaves the
+            // user's memberships untouched, so there's nothing to gate.
+            if ($this->isMethod('PATCH') && ! $this->has('company_ids') && ! $this->filled('company_id')) {
+                return;
+            }
+
             // Mirror the controller's resolution: prefer company_ids[], fall
             // back to legacy company_id, intval, drop empties.
             $submitted = (array) ($this->input('company_ids') ?? ($this->filled('company_id') ? [$this->input('company_id')] : []));
