@@ -216,10 +216,10 @@ class AssetsController extends Controller
 
                     $source_image = $cloned->image;
                     if ($source_image) {
-                        $new_image_name = 'clone-' . date('U') . '-' . $source_image;
+                        $new_image_name = 'clone-'.date('U').'-'.$source_image;
                         Storage::disk('public')->copy(
-                            FileStorage::Assets->publicPath() . $source_image,
-                            FileStorage::Assets->publicPath() . $new_image_name,
+                            FileStorage::Assets->publicPath().$source_image,
+                            FileStorage::Assets->publicPath().$new_image_name,
                         );
                         $asset->image = $new_image_name;
                     }
@@ -751,8 +751,6 @@ class AssetsController extends Controller
      * @author [A. Gianotto] [<snipe@snipe.net>]
      *
      * @since [v1.0]
-     *
-     * @return View
      */
     public function getClone(Asset $asset): View
     {
@@ -819,7 +817,7 @@ class AssetsController extends Controller
     {
         $this->authorize('audit', Asset::class);
         $settings = Setting::getSettings();
-        $dt = Carbon::now()->addMonths($settings->audit_interval)->toDateString();
+        $dt = Carbon::now()->addMonths((int) $settings->audit_interval)->toDateString();
 
         return view('hardware/quickscan')->with('next_audit_date', $dt);
     }
@@ -1026,6 +1024,7 @@ class AssetsController extends Controller
         return redirect()->route('requests.index')
             ->with('success', trans('admin/hardware/message.requests.canceled'));
     }
+
     /** @return array{selected_model: ?AssetModel, fieldset: ?CustomFieldset, defaultValues: array<string, mixed>} */
     protected function customFieldFormData(mixed $modelId): array
     {
@@ -1039,5 +1038,4 @@ class AssetsController extends Controller
             'defaultValues' => CustomFieldDefault::valuesFor($model),
         ];
     }
-
 }

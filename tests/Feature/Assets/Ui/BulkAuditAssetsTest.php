@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Assets\Ui;
 
+use App\Models\Setting;
 use App\Models\User;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Group;
@@ -51,5 +52,24 @@ class BulkAuditAssetsTest extends TestCase
             ->get(route('assets.bulkaudit'))
             ->assertViewIs('hardware.quickscan')
             ->assertViewHas('next_audit_date', Carbon::now()->addMonths(5)->toDateString());
+    }
+
+    public function test_bulk_audit_page_survives_string_typed_audit_interval()
+    {
+        $this->settings->setAuditInterval(6);
+
+        Setting::$_cache = null;
+        $cached = Setting::first();
+        $cached->setRawAttributes(
+            array_merge($cached->getAttributes(), ['audit_interval' => '6']),
+            true,
+        );
+        Setting::$_cache = $cached;
+
+        $this->actingAs($this->actor)
+            ->get(route('assets.bulkaudit'))
+            ->assertOk()
+            ->assertViewIs('hardware.quickscan')
+            ->assertViewHas('next_audit_date', Carbon::now()->addMonths(6)->toDateString());
     }
 }
