@@ -126,7 +126,7 @@ class DepreciationPresenter extends Presenter
 
     public function formattedNameLink()
     {
-        return ($this->tag_color ? "<i class='fa-solid fa-fw fa-square' style='color: ".e($this->tag_color)."' aria-hidden='true'></i> " : '').e($this->display_name);
+        return \App\Helpers\Helper::tagColorIcon($this->tag_color).e($this->display_name);
     }
 
     public function nameUrl()

@@ -36,6 +36,10 @@ class CustomFieldValuesTransformer
                     $value = Helper::getFormattedDateObject($value, $field->format === 'DATETIME' ? 'datetime' : 'date', false);
                 }
 
+                if ($field->format === 'URL') {
+                    $value = Helper::safeUrl($value);
+                }
+
                 $value = $renderMarkdown && $field->element === 'markdown-textarea' ? Helper::renderMarkdown($value) : e($value);
             }
 

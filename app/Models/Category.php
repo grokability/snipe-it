@@ -25,6 +25,7 @@ use Watson\Validating\ValidatingTrait;
  * send a EULA to the user, etc.
  *
  * @version v1.0
+ *
  * @mixin IdeHelperCategory
  */
 class Category extends SnipeModel implements Importable
@@ -54,6 +55,7 @@ class Category extends SnipeModel implements Importable
         'require_acceptance' => 'boolean',
         'use_default_eula' => 'boolean',
         'category_type' => 'required|in:asset,accessory,consumable,component,license',
+        'tag_color' => ['nullable', 'regex:/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/'],
     ];
 
     /**

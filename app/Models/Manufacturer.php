@@ -36,6 +36,7 @@ class Manufacturer extends SnipeModel implements Importable
         'support_email' => 'email|nullable',
         'support_url' => 'nullable|starts_with:http://,https://,afp://,facetime://,file://,irc://',
         'warranty_lookup_url' => 'nullable|starts_with:http://,https://,afp://,facetime://,file://,irc://',
+        'tag_color' => ['nullable', 'regex:/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/'],
     ];
 
     protected $hidden = ['user_id'];

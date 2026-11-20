@@ -1,7 +1,7 @@
 ![snipe-it-by-grok](https://github.com/grokability/snipe-it/assets/197404/b515673b-c7c8-4d9a-80f5-9fa58829a602)
 
 [![Crowdin](https://d322cqt584bo4o.cloudfront.net/snipe-it/localized.svg)](https://crowdin.com/project/snipe-it) [![Docker Pulls](https://img.shields.io/docker/pulls/snipe/snipe-it.svg)](https://hub.docker.com/r/snipe/snipe-it/)  [![Tests in MySQL](https://github.com/grokability/snipe-it/actions/workflows/tests-mysql.yml/badge.svg)](https://github.com/grokability/snipe-it/actions/workflows/tests-mysql.yml)
-[![All Contributors](https://img.shields.io/badge/all_contributors-331-orange.svg?style=flat-square)](#contributing) [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/yZFtShAcKk)
+[![All Contributors](https://img.shields.io/badge/all_contributors-331-orange.svg?style=flat-square)](#contributing) [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/yZFtShAcKk) [![Repocharts](https://repocharts.com/badge/github/grokability/snipe-it.svg)](https://repocharts.com/repo/github/grokability/snipe-it/?ref=badge)
 
 # Snipe-IT - Open Source Asset Management System
 
@@ -21,6 +21,7 @@ have a [Docker image](https://snipe-it.readme.io/docs/docker) available if that'
 
 * [General Features](#general-features)
 * [Included Sync Adapters](#included-sync-adapters)
+* [MCP Server](#mcp-server)
 * [Live Demo](#live-demo)
 * [Installation](#installation)
 * [User's Manual](#users-manual)
@@ -55,12 +56,12 @@ have a [Docker image](https://snipe-it.readme.io/docs/docker) available if that'
 🎉 Easy transferring of items between users<br />
 🎉 Per-user light/dark mode<br />
 🎉 Optional digital signatures on item acceptance<br />
-
+🎉 Robust JSON REST API<br />
 
 </td>
 <td valign="top" width="50%">
 
-🎉 Includes a robust JSON REST API<br />
+
 🎉 Translated into over 55 languages for easy localization<br />
 🎉 Per-user language support for distributed teams<br />
 🎉 One-click (or cron) backups<br />
@@ -72,6 +73,7 @@ have a [Docker image](https://snipe-it.readme.io/docs/docker) available if that'
 🎉 Supports multiple companies within one installation<br />
 🎉 Native MDM/RMM sync adapters 🆕<br />
 🎉 Calendar view 🆕<br />
+🎉 Native MCP Server 🆕<br />
 
 </td>
 </tr>
@@ -132,6 +134,14 @@ useful) MDM and RMM systems with Snipe-IT so that everything stays updated acros
 </tr>
 </table>
 
+-----
+
+<a name="mcp-server"></a>
+
+## 🤖 MCP Server
+
+The Model Context Protocol (MCP) is a protocol for managing inventory systems. Snipe-IT includes an MCP server that
+allows other systems like Claude or ChatGPT to query and update Snipe-IT's inventory data in real-time.
 
 -----
 
@@ -182,7 +192,9 @@ If you're having trouble with the installation, please check the [Common Issues]
 For help using Snipe-IT, check out the [user's manual](https://snipe-it.readme.io/docs/overview).
 
 -----
+<a href="https://repocharts.com/repo/github/grokability/snipe-it/?ref=card"><picture><source media="(prefers-color-scheme: dark)" srcset="https://repocharts.com/og/live/growth.png?repo=github%2Fgrokability%2Fsnipe-it&theme=dark&size=wide&src=readme"><img alt="snipe-it star growth on Repocharts" src="https://repocharts.com/og/live/growth.png?repo=github%2Fgrokability%2Fsnipe-it&theme=light&size=wide&src=readme" width="600"></picture></a>
 
+-----
 <a name="bug-reports--feature-requests"></a>
 
 ## 🐛 Bug Reports & Feature Requests
@@ -220,9 +232,11 @@ We use GitHub Security Advisories (GHSAs) to manage responsible disclosure for t
 week of the initial disclosure. If you report a vulnerability we've already received from someone else, we will add your
 GitHub username to the original GHSA so you get credit for the parallel discovery.
 
-🏆 We do not run a bug bounty program and do not offer monetary rewards, but researchers who report multiple
+> [!NOTE]
+> 🏆 We do not run a bug bounty program and do not offer monetary rewards, but researchers who report multiple
 high-quality vulnerabilities may be added to
 our [Security Researchers Hall of Fame](https://snipeitapp.com/thanks#security-researcher-hall-of-fame).
+
 
 -----
 

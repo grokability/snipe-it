@@ -21,7 +21,7 @@
 
             @if ($snipe_component->category)
                 <x-form.static :label="trans('general.category')">
-                    <x-icon type="category" class="fa-fw" style="{{ $snipe_component->category->tag_color ? 'color: '.e($snipe_component->category->tag_color).';' : '' }}" />
+                    <x-tag-color :color="$snipe_component->category->tag_color" />
                     {{ $snipe_component->category->name }}
                 </x-form.static>
             @endif

@@ -51,6 +51,7 @@ class Location extends SnipeModel implements Importable
         'manager_id' => 'exists:users,id|nullable|fmcs_manager',
         'parent_id' => 'nullable|exists:locations,id|non_circular:locations,id|parent_matches_location_company',
         'company_id' => 'integer|nullable|exists:companies,id|fmcs_company',
+        'tag_color' => ['nullable', 'regex:/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/'],
     ];
 
     protected $casts = [
