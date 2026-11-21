@@ -37,6 +37,26 @@ class UpdateAssetModelsTest extends TestCase
         ]);
     }
 
+    public function test_user_can_update_marketing_name_and_release_dates()
+    {
+        $model = AssetModel::factory()->create();
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->put(route('models.update', $model), [
+                'name' => $model->name,
+                'category_id' => $model->category_id,
+                'mfg_marketing_name' => 'Marketing Name',
+                'mfg_release_date' => '2024-01-15',
+                'mfg_discontinued_date' => '2026-03-20',
+            ])
+            ->assertSessionHasNoErrors();
+
+        $model->refresh();
+        $this->assertEquals('Marketing Name', $model->mfg_marketing_name);
+        $this->assertEquals('2024-01-15', $model->mfg_release_date->toDateString());
+        $this->assertEquals('2026-03-20', $model->mfg_discontinued_date->toDateString());
+    }
+
     public function test_permission_required_to_update_asset_model()
     {
         $this->actingAs(User::factory()->create())
