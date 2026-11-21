@@ -33,6 +33,24 @@ class CreateAssetModelsTest extends TestCase
         $this->assertDatabaseMissing('models_custom_fields', ['custom_field_id' => $field->id]);
     }
 
+    public function test_user_can_create_asset_model_with_marketing_name_and_release_dates()
+    {
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('models.store'), [
+                'name' => 'Test Model',
+                'category_id' => Category::factory()->forAssets()->create()->id,
+                'mfg_marketing_name' => 'Marketing Name',
+                'mfg_release_date' => '2024-01-15',
+                'mfg_discontinued_date' => '2026-03-20',
+            ])
+            ->assertSessionHasNoErrors();
+
+        $model = AssetModel::where('name', 'Test Model')->firstOrFail();
+        $this->assertEquals('Marketing Name', $model->mfg_marketing_name);
+        $this->assertEquals('2024-01-15', $model->mfg_release_date->toDateString());
+        $this->assertEquals('2026-03-20', $model->mfg_discontinued_date->toDateString());
+    }
+
     public function test_permission_required_to_create_asset_model()
     {
         $this->actingAs(User::factory()->create())
