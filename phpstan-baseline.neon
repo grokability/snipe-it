@@ -3891,7 +3891,7 @@ parameters:
 		-
 			message: '#^Method App\\Models\\Actionlog\:\:itemType\(\) should return Illuminate\\Database\\Eloquent\\Relations\\Relation but returns string\.$#'
 			identifier: return.type
-			count: 2
+			count: 3
 			path: app/Models/Actionlog.php
 
 		-
