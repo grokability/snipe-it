@@ -9,11 +9,14 @@ use App\Models\Asset;
 use App\Models\CompanyableScope;
 use App\Models\Contracts\CompanyableChild;
 use App\Models\Contracts\HasCustomFields;
+use App\Models\Group;
 use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\Location;
 use App\Models\Maintenance;
 use App\Models\OrderItem;
+use App\Models\SCIMGroup;
+use App\Models\SCIMUser;
 use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\AuditNotification;
@@ -48,6 +51,31 @@ trait Loggable
         $this->order_item = $order_item;
 
         return $this;
+    }
+
+    /**
+     * Canonical class name for an `action_logs.item_type` /
+     * `action_logs.target_type` column. `SCIMUser` and `SCIMGroup`
+     * are subclasses of `User` and `Group` that share the same
+     * table and exist only to route SCIM library stuff. Logging
+     * them as their SCIM subclass names leaves `action_logs` rows
+     * the frontend cannot link and potentally missing data when
+     * filtered by target_type User, etc. Normalize these so the stored
+     * type is always the correct canonical model.
+     */
+    protected static function normalizeLoggableClass(mixed $modelOrClass): string
+    {
+        if ($modelOrClass === null) {
+            return '';
+        }
+
+        $class = is_object($modelOrClass) ? $modelOrClass::class : (string) $modelOrClass;
+
+        return match ($class) {
+            SCIMUser::class => User::class,
+            SCIMGroup::class => Group::class,
+            default => $class,
+        };
     }
 
     public static function bootLoggable(): void
@@ -134,7 +162,7 @@ trait Loggable
     protected function makeLifecycleLog(array $changed): Actionlog
     {
         $logAction = new Actionlog;
-        $logAction->item_type = $this::class;
+        $logAction->item_type = self::normalizeLoggableClass($this);
         $logAction->item_id = $this->id;
         $logAction->action_date = date('Y-m-d H:i:s');
         $logAction->created_at = now();
@@ -437,7 +465,7 @@ trait Loggable
             throw new MissingLogTarget('That target seems invalid (no target ID available).');
         }
 
-        $log->target_type = get_class($target);
+        $log->target_type = self::normalizeLoggableClass($target);
         $log->target_id = $target->id;
 
         // Figure out what the target is
@@ -496,7 +524,7 @@ trait Loggable
             $log->item_type = License::class;
             $log->item_id = $this->license_id;
         } else {
-            $log->item_type = static::class;
+            $log->item_type = self::normalizeLoggableClass($this);
             $log->item_id = $this->id;
         }
 
@@ -548,7 +576,7 @@ trait Loggable
         $fields_array = [];
 
         if ($target != null) {
-            $log->target_type = get_class($target);
+            $log->target_type = self::normalizeLoggableClass($target);
             $log->target_id = $target->id;
 
         }
@@ -557,7 +585,7 @@ trait Loggable
             $log->item_type = License::class;
             $log->item_id = $this->license_id;
         } else {
-            $log->item_type = static::class;
+            $log->item_type = self::normalizeLoggableClass($this);
             $log->item_id = $this->id;
 
             if ($this instanceof HasCustomFields) {
@@ -695,7 +723,7 @@ trait Loggable
             $log->item_type = License::class;
             $log->item_id = $this->license_id;
         } else {
-            $log->item_type = static::class;
+            $log->item_type = self::normalizeLoggableClass($this);
             $log->item_id = $this->id;
         }
         $log->location_id = ($location_id) ? $location_id : null;
@@ -788,7 +816,7 @@ trait Loggable
             $log->item_type = License::class;
             $log->item_id = $this->license_id;
         } else {
-            $log->item_type = static::class;
+            $log->item_type = self::normalizeLoggableClass($this);
             $log->item_id = $this->id;
         }
         $log->created_by = auth()->id();
