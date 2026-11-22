@@ -6,10 +6,13 @@ use App\Events\CheckoutableCheckedOut;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BulkAccessoryCheckoutRequest;
-use App\Http\Traits\CheckInOutTrait;
 use App\Models\Accessory;
 use App\Models\AccessoryCheckout;
+use App\Models\Asset;
 use App\Models\Company;
+use App\Models\Location;
+use App\Models\SnipeModel;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -21,8 +24,6 @@ use Illuminate\Validation\ValidationException;
 
 class BulkAccessoriesController extends Controller
 {
-    use CheckInOutTrait;
-
     /**
      * Fields admins may bulk-write across the selected rows. Mirrors
      * BulkComponentsController::EDITABLE_FIELDS. qty / supplier_id /
@@ -96,7 +97,7 @@ class BulkAccessoriesController extends Controller
         $this->authorize('checkout', Accessory::class);
 
         [$selectable, $excluded] = $accessories->partition(
-            fn(Accessory $accessory) => !$accessory->archived && $accessory->numRemaining() > 0
+            fn (Accessory $accessory) => ! $accessory->archived && $accessory->numRemaining() > 0
         );
 
         if ($selectable->isEmpty()) {
@@ -133,7 +134,7 @@ class BulkAccessoriesController extends Controller
                 ->with('error', trans('admin/accessories/message.bulk.no_accessories_selected'));
         }
 
-        $target = $this->determineCheckoutTarget();
+        $target = $this->resolveCheckoutTarget($request);
         // Eager-load category, manufacturer, and company so the per-row
         // CheckoutableCheckedOut event listeners (notification mails,
         // slack formatting) don't each re-query those relations on the
@@ -156,60 +157,12 @@ class BulkAccessoriesController extends Controller
         $errors = [];
 
         foreach ($accessories as $accessory) {
-            if ($accessory->archived) {
-                $errors[] = trans('admin/accessories/message.bulk.checkout.skipped_archived', ['name' => $accessory->name]);
-
-                continue;
+            $error = $this->checkoutSingleAccessoryForBulk($accessory, $target, $note, $checkoutAt);
+            if ($error === null) {
+                $checkedOut++;
+            } else {
+                $errors[] = $error;
             }
-
-            if (!$accessory->canCheckoutTo($target)) {
-                $errors[] = trans('admin/accessories/message.bulk.checkout.skipped_company_mismatch', [
-                    'name' => $accessory->name,
-                    'item_company' => $accessory->company?->name ?? trans('general.unassigned'),
-                ]);
-
-                continue;
-            }
-
-            $overAllocated = false;
-
-            DB::transaction(function () use ($accessory, $target, $note, $checkoutAt, &$overAllocated): void {
-                $locked = Accessory::whereKey($accessory->id)->lockForUpdate()->first();
-
-                if (!$locked || $locked->numRemaining() < 1) {
-                    $overAllocated = true;
-
-                    return;
-                }
-
-                $checkout = new AccessoryCheckout([
-                    'accessory_id' => $accessory->id,
-                    'created_at' => $checkoutAt,
-                    'assigned_to' => $target->id,
-                    'assigned_type' => $target::class,
-                    'note' => $note,
-                ]);
-                $checkout->created_by = auth()->id();
-                $checkout->save();
-            });
-
-            if ($overAllocated) {
-                $errors[] = trans('admin/accessories/message.bulk.checkout.skipped_unavailable', ['name' => $accessory->name]);
-
-                continue;
-            }
-
-            event(new CheckoutableCheckedOut(
-                $accessory,
-                $target,
-                auth()->user(),
-                $note,
-                [],
-                1,
-                false,
-            ));
-
-            $checkedOut++;
         }
 
         session()->put([
@@ -226,6 +179,86 @@ class BulkAccessoriesController extends Controller
         return Helper::getRedirectOption($request, null, 'Accessories')
             ->with($flash, $summary)
             ->with('multi_error_messages', $errors);
+    }
+
+    /**
+     * Run a single accessory's checkout iteration for the bulk flow.
+     * Returns null on success, or a human-readable error string when
+     * the row was skipped (archived, cross-company, over-allocated).
+     * Successful rows fire CheckoutableCheckedOut here so the downstream
+     * listener stack (notifications, pending-request resolution, action
+     * log) stays identical to the single-accessory path.
+     */
+    private function checkoutSingleAccessoryForBulk(
+        Accessory $accessory,
+        SnipeModel $target,
+        ?string $note,
+        $checkoutAt,
+    ): ?string {
+        if ($accessory->archived) {
+            return trans('admin/accessories/message.bulk.checkout.skipped_archived', ['name' => $accessory->name]);
+        }
+
+        if (! $accessory->canCheckoutTo($target)) {
+            return trans('admin/accessories/message.bulk.checkout.skipped_company_mismatch', [
+                'name' => $accessory->name,
+                'item_company' => $accessory->company ? $accessory->company->name : trans('general.unassigned'),
+            ]);
+        }
+
+        $overAllocated = false;
+
+        DB::transaction(function () use ($accessory, $target, $note, $checkoutAt, &$overAllocated): void {
+            $locked = Accessory::whereKey($accessory->id)->lockForUpdate()->first();
+
+            if (! $locked || $locked->numRemaining() < 1) {
+                $overAllocated = true;
+
+                return;
+            }
+
+            $checkout = new AccessoryCheckout([
+                'accessory_id' => $accessory->id,
+                'created_at' => $checkoutAt,
+                'assigned_to' => $target->id,
+                'assigned_type' => $target::class,
+                'note' => $note,
+            ]);
+            $checkout->created_by = auth()->id();
+            $checkout->save();
+        });
+
+        if ($overAllocated) {
+            return trans('admin/accessories/message.bulk.checkout.skipped_unavailable', ['name' => $accessory->name]);
+        }
+
+        event(new CheckoutableCheckedOut(
+            $accessory,
+            $target,
+            auth()->user(),
+            $note,
+            [],
+            1,
+            false,
+        ));
+
+        return null;
+    }
+
+    /**
+     * Resolve the User / Asset / Location target for bulk checkout
+     * from the validated request. Inlined rather than pulling in
+     * CheckInOutTrait so this class doesn't inherit updateAssetLocation()
+     * (unused here, and its SnipeModel property accesses trigger
+     * phpstan's writeOnly reports in every consumer of the trait).
+     */
+    private function resolveCheckoutTarget(BulkAccessoryCheckoutRequest $request): SnipeModel
+    {
+        return match ($request->input('checkout_to_type')) {
+            'location' => Location::findOrFail($request->input('assigned_location')),
+            'asset' => Asset::findOrFail($request->input('assigned_asset')),
+            default => User::findOrFail($request->input('assigned_user')),
+        };
     }
 
     /**
