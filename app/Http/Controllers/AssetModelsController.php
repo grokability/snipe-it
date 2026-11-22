@@ -84,6 +84,9 @@ class AssetModelsController extends Controller
         $model->manufacturer_id = $request->input('manufacturer_id');
         $model->category_id = $request->input('category_id');
         $model->notes = $request->input('notes');
+        $model->mfg_marketing_name = $request->input('mfg_marketing_name');
+        $model->mfg_release_date = $request->input('mfg_release_date');
+        $model->mfg_discontinued_date = $request->input('mfg_discontinued_date');
         $model->created_by = auth()->id();
         $model->requestable = $request->has('requestable');
         $model->require_serial = $request->input('require_serial', 0);
@@ -162,6 +165,9 @@ class AssetModelsController extends Controller
         $model->manufacturer_id = $request->input('manufacturer_id');
         $model->category_id = $request->input('category_id');
         $model->notes = $request->input('notes');
+        $model->mfg_marketing_name = $request->input('mfg_marketing_name');
+        $model->mfg_release_date = $request->input('mfg_release_date');
+        $model->mfg_discontinued_date = $request->input('mfg_discontinued_date');
         $model->requestable = $request->input('requestable', '0');
         $model->require_serial = $request->input('require_serial', 0);
         $model->fieldset_id = $request->input('fieldset_id');
