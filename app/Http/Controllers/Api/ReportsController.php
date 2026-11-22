@@ -116,11 +116,11 @@ class ReportsController extends Controller
         }
 
         if ($request->filled('action_type')) {
-            $actionlogs = $actionlogs->whereIn('action_type', (array) $request->input('action_type'));
+            $actionlogs = $actionlogs->whereIn('action_logs.action_type', (array) $request->input('action_type'));
         }
 
         if ($request->filled('created_by')) {
-            $actionlogs = $actionlogs->whereIn('created_by', (array) $request->input('created_by'));
+            $actionlogs = $actionlogs->whereIn('action_logs.created_by', (array) $request->input('created_by'));
         }
 
         // Toolbar date range on action_logs.created_at. _from gates
@@ -134,15 +134,15 @@ class ReportsController extends Controller
         }
 
         if ($request->filled('action_source')) {
-            $actionlogs = $actionlogs->where('action_source', '=', $request->input('action_source'));
+            $actionlogs = $actionlogs->where('action_logs.action_source', '=', $request->input('action_source'));
         }
 
         if ($request->filled('remote_ip')) {
-            $actionlogs = $actionlogs->where('remote_ip', '=', $request->input('remote_ip'));
+            $actionlogs = $actionlogs->where('action_logs.remote_ip', '=', $request->input('remote_ip'));
         }
 
         if ($request->filled('uploads')) {
-            $actionlogs = $actionlogs->whereNotNull('filename');
+            $actionlogs = $actionlogs->whereNotNull('action_logs.filename');
         }
 
         $allowed_columns = [
