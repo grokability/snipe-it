@@ -343,10 +343,10 @@ class IntuneAdapterTest extends TestCase
         $this->assertSame('3,7', $records[0]->extra['intune_role_scope_tag_ids']);
     }
 
-    private function configuredAdapter(?string $scopeTagFilter = null): IntuneAdapter
+    private function configuredAdapter(?string $scopeTagFilter = null, string $url = 'https://graph.microsoft.com'): IntuneAdapter
     {
         $instance = SyncAdapterInstance::where('slug', 'intune')->firstOrFail();
-        SyncAdapterConfig::put($instance->id, 'url', 'https://graph.microsoft.com');
+        SyncAdapterConfig::put($instance->id, 'url', $url);
         SyncAdapterConfig::put($instance->id, 'tenant_id', 'stub-tenant');
         SyncAdapterConfig::put($instance->id, 'client_id', 'stub-client');
         SyncAdapterConfig::put($instance->id, 'client_secret', Crypt::encrypt('fake-secret'));
@@ -355,6 +355,74 @@ class IntuneAdapterTest extends TestCase
         }
 
         return new IntuneAdapter($instance->fresh());
+    }
+
+    public function test_base_url_presets_cover_every_microsoft_graph_cloud_still_in_service()
+    {
+        $adapter = $this->configuredAdapter();
+
+        $presets = $adapter->baseUrlPresets();
+
+        $this->assertIsArray($presets);
+        $this->assertContains('https://graph.microsoft.com', $presets);
+        $this->assertContains('https://graph.microsoft.us', $presets);
+        $this->assertContains('https://microsoftgraph.chinacloudapi.cn', $presets);
+    }
+
+    public function test_url_validation_rejects_non_preset_hosts_with_a_listed_error()
+    {
+        // An admin typing `https://not-graph.example.com` would otherwise
+        // see Laravel's stock "The selected intune_url is invalid"
+        // message, which doesn't tell them WHICH URLs would be valid.
+        // The adapter supplies a custom message that lists the three
+        // live Microsoft Graph clouds.
+        $rules = (new IntuneAdapter(SyncAdapterInstance::where('slug', 'intune')->firstOrFail()))->validationRules();
+        $messages = (new IntuneAdapter(SyncAdapterInstance::where('slug', 'intune')->firstOrFail()))->validationMessages();
+
+        $this->assertArrayHasKey('intune_url.in', $messages);
+        $this->assertStringContainsString('https://graph.microsoft.com', $messages['intune_url.in']);
+        $this->assertStringContainsString('https://graph.microsoft.us', $messages['intune_url.in']);
+        $this->assertStringContainsString('https://microsoftgraph.chinacloudapi.cn', $messages['intune_url.in']);
+
+        $this->assertContains('required', $rules['intune_url']);
+        $this->assertNotEmpty(
+            array_filter($rules['intune_url'], fn ($rule) => $rule instanceof \Illuminate\Validation\Rules\In),
+            'intune_url rules must include an In:[presets] constraint',
+        );
+    }
+
+    public function test_oauth_scope_is_graph_origin_only_regardless_of_configured_base_url_path()
+    {
+        // Regression for issue #20118 field report. Admins who follow
+        // Microsoft's "Graph starts at this URL" docs sometimes paste
+        // the full endpoint (`https://graph.microsoft.com/beta/
+        // deviceManagement/managedDevices`) into the Base URL field.
+        // Entra rejects a client-credentials scope that carries a
+        // path with AADSTS500011 because there's no service
+        // principal registered at that URI. The Graph service
+        // principal is identified by the origin only. Scope must be
+        // `https://graph.microsoft.com/.default` regardless of which
+        // Graph endpoint the caller plans to hit.
+        $adapter = $this->configuredAdapter(
+            url: 'https://graph.microsoft.com/beta/deviceManagement/managedDevices',
+        );
+
+        $capturedScope = null;
+        Http::fake([
+            '*/oauth2/v2.0/token' => function ($request) use (&$capturedScope) {
+                parse_str($request->body(), $parsed);
+                $capturedScope = $parsed['scope'] ?? null;
+
+                return Http::response(['access_token' => 'stub-bearer', 'expires_in' => 3600]);
+            },
+            '*' => Http::response(['value' => []]),
+        ]);
+
+        foreach ($adapter->pull() as $_record) {
+            // Draining the iterator triggers the token request.
+        }
+
+        $this->assertSame('https://graph.microsoft.com/.default', $capturedScope);
     }
 
     /**

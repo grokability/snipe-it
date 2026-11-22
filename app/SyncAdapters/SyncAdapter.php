@@ -632,7 +632,18 @@ abstract class SyncAdapter
         }
 
         if ($this->usesConfigurableUrl()) {
-            $rules[$slug.'_url'] = ['required', new ExternalUrl('app.sync_adapter_allow_internal_targets')];
+            $urlRules = ['required', new ExternalUrl('app.sync_adapter_allow_internal_targets')];
+            // Preset-locked adapters (Intune's Microsoft Graph cloud
+            // picker, etc.) only accept the exact URLs the adapter
+            // ships as presets. Blocks admins from routing the sync
+            // at a loopback host, a cloud-metadata endpoint, or a
+            // typo'd graph URL. Trailing-slash normalization happens
+            // in the controller before this rule runs so a stored
+            // `https://graph.microsoft.com/` still matches.
+            if (($presets = $this->baseUrlPresets()) !== null) {
+                $urlRules[] = \Illuminate\Validation\Rule::in(array_values($presets));
+            }
+            $rules[$slug.'_url'] = $urlRules;
         }
 
         foreach ($this->settingsSchema() as $field) {
@@ -684,6 +695,32 @@ abstract class SyncAdapter
         }
 
         return $rules;
+    }
+
+    /**
+     * Companion to validationRules(). Returns a laravel-shaped
+     * attribute-rule => message map that the controller passes as
+     * the second argument to `$request->validate()`. Default only
+     * carries the preset-locked URL message because Laravel's stock
+     * `in:` message ("The selected intune_url is invalid") doesn't
+     * tell the admin WHICH URLs would be valid. Override in a
+     * subclass to add more per-field messages.
+     *
+     * @return array<string, string>
+     */
+    public function validationMessages(): array
+    {
+        $messages = [];
+        $slug = $this->instance->slug;
+
+        if ($this->usesConfigurableUrl() && ($presets = $this->baseUrlPresets()) !== null) {
+            $messages[$slug.'_url.in'] = trans(
+                'admin/settings/sync_adapters.base_url_must_be_preset',
+                ['urls' => implode(', ', array_values($presets))],
+            );
+        }
+
+        return $messages;
     }
 
     public function saveConfig(Request $request): void
@@ -836,12 +873,25 @@ abstract class SyncAdapter
                 continue;
             }
 
+            $isSecret = $field['secret'] ?? false;
+
             if (! $request->filled($fieldName)) {
+                // Secrets preserve on blank so admins don't have to
+                // re-type the password to save an unrelated field.
+                // Non-secret text fields overwrite on blank so a
+                // deliberately cleared value (e.g. scope_tag_filter)
+                // actually clears the stored value instead of
+                // sticking around on the next reload.
+                if ($isSecret) {
+                    continue;
+                }
+                SyncAdapterConfig::put($this->instance->id, $field['key'], '');
+
                 continue;
             }
 
             $value = $request->input($fieldName);
-            if ($field['secret'] ?? false) {
+            if ($isSecret) {
                 $value = Crypt::encrypt($value);
             }
             SyncAdapterConfig::put($this->instance->id, $field['key'], $value);
@@ -1783,6 +1833,25 @@ abstract class SyncAdapter
      * null falls back to the generic base_url_help lang key.
      */
     public function baseUrlHelp(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * Preset URL shortcuts for the base-URL input, rendered as a
+     * dropdown in front of the text field. Shape:
+     * `['Human label' => 'https://...', ...]`. Admins pick a known
+     * cloud instead of typing the URL by hand. Leaving the default
+     * (null) keeps the plain free-text input every other adapter
+     * uses. Intune overrides with the four Microsoft Graph clouds
+     * (commercial / US Gov / China / Germany-deprecated) so the
+     * 99%-case admin never has to look up the exact URL. Picking
+     * the "Custom" option in the UI reveals the plain input for
+     * sovereign clouds or non-standard proxies.
+     *
+     * @return array<string, string>|null
+     */
+    public function baseUrlPresets(): ?array
     {
         return null;
     }
