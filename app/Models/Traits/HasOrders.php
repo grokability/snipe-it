@@ -172,10 +172,12 @@ trait HasOrders
      */
     public function lastOrderDefaults(): ?array
     {
-        $line = $this->orderItems()
-            ->with('order:id,currency,purchase_date,supplier_id')
-            ->latest('id')
-            ->first();
+        $line = $this->relationLoaded('orderItems')
+            ? $this->orderItems->sortByDesc('id')->first()
+            : $this->orderItems()
+                ->with('order:id,currency,purchase_date,supplier_id')
+                ->latest('id')
+                ->first();
 
         if ($line) {
             return [
@@ -465,9 +467,11 @@ trait HasOrders
      */
     public function totalCostSumByCurrency(): array
     {
-        return $this->orderItems()
-            ->with('order:id,currency')
-            ->get()
+        $lines = $this->relationLoaded('orderItems')
+            ? $this->orderItems
+            : $this->orderItems()->with('order:id,currency')->get();
+
+        return $lines
             ->reduce(function (array $carry, OrderItem $line) {
                 if ($line->price === null) {
                     return $carry;
@@ -498,9 +502,11 @@ trait HasOrders
      */
     public function hasConsistentSupplier(): bool
     {
-        return $this->orderItems()
-            ->with('order:id,supplier_id')
-            ->get()
+        $lines = $this->relationLoaded('orderItems')
+            ? $this->orderItems
+            : $this->orderItems()->with('order:id,supplier_id')->get();
+
+        return $lines
             ->map(fn (OrderItem $line) => $line->order?->supplier_id)
             ->filter()
             ->unique()

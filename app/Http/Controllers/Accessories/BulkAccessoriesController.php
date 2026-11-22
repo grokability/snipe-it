@@ -2,12 +2,23 @@
 
 namespace App\Http\Controllers\Accessories;
 
+use App\Events\CheckoutableCheckedOut;
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BulkAccessoryCheckoutRequest;
 use App\Models\Accessory;
+use App\Models\AccessoryCheckout;
+use App\Models\Asset;
 use App\Models\Company;
+use App\Models\Location;
+use App\Models\SnipeModel;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 
@@ -47,10 +58,15 @@ class BulkAccessoriesController extends Controller
         }
 
         // Restore acts on soft-deleted rows, so widen the lookup with
-        // withTrashed for that branch only.
+        // withTrashed for that branch only. The checkout branch needs
+        // checkouts_count so Accessory::numRemaining() can read from the
+        // cached subquery result instead of firing a COUNT per row.
         $query = Accessory::whereIn('id', $request->input('ids'));
         if ($request->input('bulk_actions') === 'restore') {
             $query->withTrashed();
+        }
+        if ($request->input('bulk_actions') === 'checkout') {
+            $query->withCount('checkouts as checkouts_count');
         }
         $accessories = $query->get();
 
@@ -63,8 +79,185 @@ class BulkAccessoriesController extends Controller
             'edit' => $this->showEdit($accessories),
             'delete' => $this->showDelete($accessories),
             'restore' => $this->doRestore($accessories),
+            'checkout' => $this->showCheckout($accessories),
             default => redirect()->route('accessories.index')
                 ->with('error', trans('admin/accessories/message.bulk.no_action_selected')),
+        };
+    }
+
+    /**
+     * Render the bulk-checkout form for the selected accessories.
+     * Rows that aren't checkoutable (archived, zero remaining) are
+     * also disabled at the row-checkbox level via the transformer's
+     * bulk_selectable.checkout flag, but we filter again here as a
+     * defensive backstop in case the UI was tampered with.
+     */
+    protected function showCheckout(Collection $accessories): View|RedirectResponse
+    {
+        $this->authorize('checkout', Accessory::class);
+
+        [$selectable, $excluded] = $accessories->partition(
+            fn (Accessory $accessory) => ! $accessory->archived && $accessory->numRemaining() > 0
+        );
+
+        if ($selectable->isEmpty()) {
+            return redirect()->route('accessories.index')
+                ->with('error', trans('admin/accessories/message.bulk.checkout.nothing_selectable'));
+        }
+
+        return view('accessories.bulk-checkout', [
+            'accessories' => $selectable,
+            'excluded' => $excluded,
+        ]);
+    }
+
+    /**
+     * Process bulk checkout of multiple accessories to ONE target
+     * (user, asset, or location). Each accessory row is checked out
+     * in its own transaction with a lockForUpdate re-check against
+     * numRemaining, mirroring the single-checkout concurrency guard
+     * in AccessoryCheckoutController::store. Qty is fixed at 1 per
+     * selected accessory for now. (We change change that if it comes up later.)
+     *
+     * Partial-success: archived, zero-remaining, company-mismatched,
+     * and over-allocated rows are skipped and reported in the
+     * summary flash so the operator sees which rows didn't go
+     * through and can retry them individually.
+     */
+    public function storeCheckout(BulkAccessoryCheckoutRequest $request): RedirectResponse
+    {
+        $this->authorize('checkout', Accessory::class);
+
+        $ids = array_values(array_unique(array_map('intval', (array) $request->input('ids', []))));
+        if ($ids === []) {
+            return redirect()->route('accessories.index')
+                ->with('error', trans('admin/accessories/message.bulk.no_accessories_selected'));
+        }
+
+        $target = $this->resolveCheckoutTarget($request);
+        // Eager-load category, manufacturer, and company so the per-row
+        // CheckoutableCheckedOut event listeners (notification mails,
+        // slack formatting) don't each re-query those relations on the
+        // accessory inside the foreach below.
+        $accessories = Accessory::whereIn('id', $ids)
+            ->with(['category', 'manufacturer', 'company'])
+            ->get();
+
+        if ($accessories->isEmpty()) {
+            return redirect()->route('accessories.index')
+                ->with('error', trans('admin/accessories/message.bulk.no_accessories_selected'));
+        }
+
+        $checkoutAt = $request->filled('checkout_at')
+            ? $request->input('checkout_at')
+            : Carbon::now();
+        $note = $request->input('note');
+
+        $checkedOut = 0;
+        $errors = [];
+
+        foreach ($accessories as $accessory) {
+            $error = $this->checkoutSingleAccessoryForBulk($accessory, $target, $note, $checkoutAt);
+            if ($error === null) {
+                $checkedOut++;
+            } else {
+                $errors[] = $error;
+            }
+        }
+
+        session()->put([
+            'checkout_to_type' => $request->input('checkout_to_type'),
+            'redirect_option' => $request->input('redirect_option'),
+        ]);
+
+        $flash = $checkedOut > 0 ? 'success' : 'warning';
+        $summary = trans('admin/accessories/message.bulk.checkout.summary', [
+            'checked_out' => $checkedOut,
+            'total' => count($accessories),
+        ]);
+
+        return Helper::getRedirectOption($request, null, 'Accessories')
+            ->with($flash, $summary)
+            ->with('multi_error_messages', $errors);
+    }
+
+    /**
+     * Run a single accessory's checkout iteration for the bulk flow.
+     * Returns null on success, or a human-readable error string when
+     * the row was skipped (archived, cross-company, over-allocated).
+     * Successful rows fire CheckoutableCheckedOut here so the downstream
+     * listener stack (notifications, pending-request resolution, action
+     * log) stays identical to the single-accessory path.
+     */
+    private function checkoutSingleAccessoryForBulk(
+        Accessory $accessory,
+        SnipeModel $target,
+        ?string $note,
+        $checkoutAt,
+    ): ?string {
+        if ($accessory->archived) {
+            return trans('admin/accessories/message.bulk.checkout.skipped_archived', ['name' => $accessory->name]);
+        }
+
+        if (! $accessory->canCheckoutTo($target)) {
+            return trans('admin/accessories/message.bulk.checkout.skipped_company_mismatch', [
+                'name' => $accessory->name,
+                'item_company' => $accessory->company ? $accessory->company->name : trans('general.unassigned'),
+            ]);
+        }
+
+        $overAllocated = false;
+
+        DB::transaction(function () use ($accessory, $target, $note, $checkoutAt, &$overAllocated): void {
+            $locked = Accessory::whereKey($accessory->id)->lockForUpdate()->first();
+
+            if (! $locked || $locked->numRemaining() < 1) {
+                $overAllocated = true;
+
+                return;
+            }
+
+            $checkout = new AccessoryCheckout([
+                'accessory_id' => $accessory->id,
+                'created_at' => $checkoutAt,
+                'assigned_to' => $target->id,
+                'assigned_type' => $target::class,
+                'note' => $note,
+            ]);
+            $checkout->created_by = auth()->id();
+            $checkout->save();
+        });
+
+        if ($overAllocated) {
+            return trans('admin/accessories/message.bulk.checkout.skipped_unavailable', ['name' => $accessory->name]);
+        }
+
+        event(new CheckoutableCheckedOut(
+            $accessory,
+            $target,
+            auth()->user(),
+            $note,
+            [],
+            1,
+            false,
+        ));
+
+        return null;
+    }
+
+    /**
+     * Resolve the User / Asset / Location target for bulk checkout
+     * from the validated request. Inlined rather than pulling in
+     * CheckInOutTrait so this class doesn't inherit updateAssetLocation()
+     * (unused here, and its SnipeModel property accesses trigger
+     * phpstan's writeOnly reports in every consumer of the trait).
+     */
+    private function resolveCheckoutTarget(BulkAccessoryCheckoutRequest $request): SnipeModel
+    {
+        return match ($request->input('checkout_to_type')) {
+            'location' => Location::findOrFail($request->input('assigned_location')),
+            'asset' => Asset::findOrFail($request->input('assigned_asset')),
+            default => User::findOrFail($request->input('assigned_user')),
         };
     }
 
