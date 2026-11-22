@@ -117,10 +117,10 @@ class ActivityWidgetTest extends TestCase
 
         Passport::actingAs(User::factory()->viewAccessories()->create());
 
-        $unfiltered = $this->getJson(route('api.dashboard.activity'))
+        $unfiltered = count($this->getJson(route('api.dashboard.activity'))
             ->assertOk()
-            ->json('total');
-        $withProbe = $this->getJson(route('api.dashboard.activity', [
+            ->json('rows'));
+        $withProbe = count($this->getJson(route('api.dashboard.activity', [
             'filter' => 'never-matches-anything',
             'action_type' => 'delete',
             'created_by' => 999_999,
@@ -129,7 +129,7 @@ class ActivityWidgetTest extends TestCase
             'item_type' => 'App\Models\Asset',
         ]))
             ->assertOk()
-            ->json('total');
+            ->json('rows'));
 
         $this->assertSame($unfiltered, $withProbe);
     }
@@ -158,9 +158,9 @@ class ActivityWidgetTest extends TestCase
 
         Passport::actingAs(User::factory()->viewAccessories()->create());
 
-        $matched = $this->getJson(route('api.dashboard.activity', ['search' => 'MATCH_ME_SPECIFICALLY']))
+        $matched = count($this->getJson(route('api.dashboard.activity', ['search' => 'MATCH_ME_SPECIFICALLY']))
             ->assertOk()
-            ->json('total');
+            ->json('rows'));
         $this->assertSame(1, $matched);
     }
 
@@ -221,9 +221,9 @@ class ActivityWidgetTest extends TestCase
 
         Passport::actingAs(User::factory()->viewAccessories()->create());
 
-        $matched = $this->getJson(route('api.dashboard.activity', ['search' => 'CROSS_TYPE_SENTINEL']))
+        $matched = count($this->getJson(route('api.dashboard.activity', ['search' => 'CROSS_TYPE_SENTINEL']))
             ->assertOk()
-            ->json('total');
+            ->json('rows'));
         $this->assertSame(0, $matched);
     }
 }
