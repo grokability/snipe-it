@@ -191,6 +191,12 @@ class SyncAdapterController extends Controller
             abort(404);
         }
 
+        // Canonicalize the submitted URL before validation
+        $urlField = $instance->slug . '_url';
+        if ($request->filled($urlField)) {
+            $request->merge([$urlField => rtrim(trim((string) $request->input($urlField)), '/')]);
+        }
+
         // Adapter declares its own validation (ExternalUrl on the URL
         // field blocks loopback / RFC-1918 / metadata targets so the
         // sync path can't be abused as an SSRF or port-scan primitive).
@@ -208,7 +214,8 @@ class SyncAdapterController extends Controller
                     \Illuminate\Validation\Rule::unique('sync_adapter_instances', 'label')->ignore($instance->id),
                 ],
                 'company_id' => ['nullable', 'integer', 'exists:companies,id'],
-            ]
+            ],
+            $adapter->validationMessages(),
         );
 
         // "active" checkbox lives on the shared partial with a slug-

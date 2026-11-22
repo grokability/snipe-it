@@ -49,6 +49,28 @@ class IntuneAdapter extends PushableSyncAdapter
         return 'https://graph.microsoft.com';
     }
 
+    public function baseUrlHelp(): ?string
+    {
+        return trans('admin/settings/sync_adapters.intune_base_url_help');
+    }
+
+    /**
+     * Microsoft Graph's three live sovereign-cloud hosts, keyed on
+     * the cloud label admins would recognize. The save path blocks
+     * any value that isn't one of these (see SyncAdapter::validationRules)
+     * so a typo'd or loopback URL can't route the sync. Germany
+     * (`graph.microsoft.de`) is omitted because Microsoft retired
+     * that cloud in 2021.
+     */
+    public function baseUrlPresets(): ?array
+    {
+        return [
+            'Commercial (worldwide)' => 'https://graph.microsoft.com',
+            'US Government (GCC High / DoD)' => 'https://graph.microsoft.us',
+            'China (21Vianet)' => 'https://microsoftgraph.chinacloudapi.cn',
+        ];
+    }
+
     public function settingsSchema(): array
     {
         return [

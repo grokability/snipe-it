@@ -226,6 +226,14 @@ class IntuneClient
 
         $tokenUrl = rtrim($this->loginBaseUrl, '/').'/'.$this->tenantId.'/oauth2/v2.0/token';
 
+        // Microsoft Graph's client-credentials scope must be the
+        // Graph service-principal identifier URI, which is the
+        // Graph origin only (`https://graph.microsoft.com/.default`)
+        // regardless of which endpoint the caller plans to hit.
+        // Entra rejects a scope that carries a path with AADSTS500011
+        // ("resource principal not found in tenant"). Sovereign
+        // clouds swap the host but are still origin-only.
+        // See https://learn.microsoft.com/en-us/graph/auth-v2-service.
         $response = Http::asForm()
             ->withOptions(['allow_redirects' => false])
             ->timeout(30)
@@ -233,7 +241,7 @@ class IntuneClient
                 'grant_type' => 'client_credentials',
                 'client_id' => $this->clientId,
                 'client_secret' => $this->clientSecret,
-                'scope' => rtrim($this->graphBaseUrl, '/').'/.default',
+                'scope' => ($this->origin($this->graphBaseUrl) ?? rtrim($this->graphBaseUrl, '/')) . '/.default',
             ])
             ->throw()
             ->json();
