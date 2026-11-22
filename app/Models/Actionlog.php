@@ -636,6 +636,10 @@ class Actionlog extends SnipeModel
             return 'model';
         }
 
+        if (in_array($this->item_type, [User::class, SCIMUser::class])) {
+            return 'user';
+        }
+
         return camel_case(class_basename($this->item_type));
     }
 
@@ -650,7 +654,7 @@ class Actionlog extends SnipeModel
      */
     public function targetType()
     {
-        if ($this->target_type == User::class) {
+        if (in_array($this->target_type, [User::class, SCIMUser::class])) {
             return 'user';
         }
 
