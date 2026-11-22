@@ -10,7 +10,6 @@ use Carbon\CarbonImmutable;
 use ForceUTF8\Encoding;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use League\Csv\Reader;
 
@@ -362,11 +361,20 @@ abstract class Importer
 
         $this->populateCustomFields($headerRow);
 
-        DB::transaction(function () use ($headerRow, $offset, $limit) {
-            $importedItemsCount = 0;
-            $processedInSlice = 0;
-            Model::unguard();
+        // Per-row saves run as their own implicit transactions rather
+        // than batching under one outer DB::transaction. AssetObserver's
+        // `created` hook defers the `next_auto_tag_base` bump into a
+        // DB::afterCommit callback (the #19744 fix for MariaDB 12 error
+        // 1020 on concurrent asset-creates). An outer wrap would queue
+        // every row's afterCommit until the whole batch commits, and
+        // every row after the first would read the same stale base and
+        // collide on asset tag (#20108). The try/catch below already
+        // handles per-row rejection without needing a batch rollback.
+        $importedItemsCount = 0;
+        $processedInSlice = 0;
+        Model::unguard();
 
+        try {
             // Sliced imports: when the caller passes offset+limit we only
             // process rows [offset, offset+limit). Preserves the original
             // "iterate everything" behavior when neither is provided so
@@ -412,8 +420,9 @@ abstract class Importer
 
                 $this->log('------------- Action Summary ----------------');
             }
+        } finally {
             Model::reguard();
-        });
+        }
     }
 
     abstract protected function handle($row);
