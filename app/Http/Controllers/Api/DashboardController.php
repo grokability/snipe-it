@@ -90,14 +90,19 @@ class DashboardController extends Controller
         $limit = max(1, min(500, (int) $request->input('limit', 25)));
         $offset = max(0, (int) $request->input('offset', 0));
 
-        $total = $query->count();
+        // No count() on the backing query. The widget renders
+        // data-pagination="false", so bs-table never consumes `total`,
+        // and on large action_logs tables a scoped-viewer count has to
+        // visit every row the OR predicate matches (millions on big
+        // installs) which times out the request before the cheap
+        // backward-scan row fetch underneath ever runs.
         $rows = $query->orderByDesc('action_logs.created_at')
             ->skip($offset)
             ->take($limit)
             ->get();
 
         return response()->json(
-            (new ActionlogsTransformer)->transformActionlogs($rows, $total),
+            (new ActionlogsTransformer)->transformActionlogs($rows, $rows->count()),
             200,
             ['Content-Type' => 'application/json;charset=utf8'],
             JSON_UNESCAPED_UNICODE,
