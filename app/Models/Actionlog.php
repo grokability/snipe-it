@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ActionSource;
 use App\Enums\ActionType;
 use App\Enums\FileStorage;
 use App\Models\Builders\ActionlogQueryBuilder;
@@ -26,6 +27,7 @@ use Illuminate\Support\Str;
  * checkouts, checkins, and updates).
  *
  * @version v1.0
+ *
  * @mixin IdeHelperActionlog
  */
 class Actionlog extends SnipeModel
@@ -37,17 +39,23 @@ class Actionlog extends SnipeModel
     protected ?string $source = null;
 
     /**
-     * Ambient action-source for every action_log written inside a
+     * Action-source for every action_log written inside a
      * long-running operation (LDAP sync, sync-adapter pulls) that has
-     * no HTTP context to infer `gui` / `api` from and that spawns many
-     * observer-driven writes we can't reach into individually.
-     *
-     * Set + restored around a callback via withActionSource(). The
-     * priority order in determineActionSource() is: explicit per-log
-     * $this->source first, ambient second, then the request-shape
-     * fallbacks.
+     * no HTTP context (`gui` / `api`) from and that kicks off many
+     * observer-driven writes we can't see individually.
      */
     protected static ?string $ambientSource = null;
+
+    /**
+     * `user_agent` for every action_log written inside a
+     * context where `request()->header('User-Agent')` would record
+     * the wrong thing. The MCP middleware sets this to `Snipe-IT MCP`
+     * so tool-driven writes show up as MCP activity instead of the
+     * triggering HTTP client's UA. Sync-adapter pulls set it to the
+     * adapter slug so "Sync Now" writes aren't attributed to the
+     * admin's browser.
+     */
+    protected static ?string $ambientUserAgent = null;
 
     protected $with = ['adminuser'];
 
@@ -861,7 +869,12 @@ class Actionlog extends SnipeModel
         }
         $this->action_type = $actiontype->value;
         $this->remote_ip = request()->ip();
-        $this->user_agent = request()->header('User-Agent');
+        // Ambient value wins over the triggering HTTP request's UA.
+        // A sync-adapter "Sync Now" click would otherwise attribute
+        // every write to the admin's browser, and MCP tool calls
+        // would carry the MCP client's UA instead of a clear
+        // "Snipe-IT MCP" marker. See withActionSource().
+        $this->user_agent = self::$ambientUserAgent ?? request()->header('User-Agent');
         $this->action_source = $this->determineActionSource();
 
         if ($this->save()) {
@@ -933,17 +946,44 @@ class Actionlog extends SnipeModel
      * Run $callback with every action_log it writes stamped as $source.
      * Previous ambient value is restored on exit (including on
      * exception) so nested wraps don't leak out of their scope. Used by
-     * LdapSync + the sync-adapter pull entry points to attribute
-     * observer-driven writes to the owning operation.
+     * LdapSync + the sync-adapter pull entry points + the MCP
+     * middleware to attribute observer-driven writes to the owning
+     * operation.
+     *
+     * Pass `$userAgent` to additionally override `action_logs.user_agent`
+     * for every write inside the callback. Needed for GUI-triggered
+     * sync runs where `request()->header('User-Agent')` would otherwise
+     * record the admin's browser instead of the adapter, and for the
+     * MCP server which wants every tool-driven write tagged as
+     * `Snipe-IT MCP` regardless of the triggering HTTP client.
      */
-    public static function withActionSource(string $source, callable $callback): mixed
+    public static function withActionSource(ActionSource|string $source, callable $callback, ActionSource|string|null $userAgent = null): mixed
     {
-        $previous = self::$ambientSource;
-        self::$ambientSource = $source;
+        $sourceValue = $source instanceof ActionSource ? $source->value : $source;
+
+        // Convenience: when the caller passes an ActionSource case
+        // without an explicit userAgent override, fall back to the
+        // enum's canonical label (Snipe-IT MCP, Snipe-IT LDAP sync,
+        // etc.). HTTP-driven sources (Gui / Api / Cli) return null
+        // from defaultUserAgent() so the real request header stays.
+        $resolvedUserAgent = $userAgent instanceof ActionSource
+            ? $userAgent->defaultUserAgent()
+            : $userAgent;
+        if ($resolvedUserAgent === null && $source instanceof ActionSource) {
+            $resolvedUserAgent = $source->defaultUserAgent();
+        }
+
+        $previousSource = self::$ambientSource;
+        $previousUserAgent = self::$ambientUserAgent;
+        self::$ambientSource = $sourceValue;
+        if ($resolvedUserAgent !== null) {
+            self::$ambientUserAgent = $resolvedUserAgent;
+        }
         try {
             return $callback();
         } finally {
-            self::$ambientSource = $previous;
+            self::$ambientSource = $previousSource;
+            self::$ambientUserAgent = $previousUserAgent;
         }
     }
 
@@ -966,16 +1006,16 @@ class Actionlog extends SnipeModel
         if (((request()->header('content-type') && (request()->header('accept')) == 'application/json'))
             && (starts_with(request()->header('authorization'), 'Bearer '))
         ) {
-            return 'api';
+            return ActionSource::Api->value;
         }
 
         // This is probably NOT an API call
         if (request()->filled('_token')) {
-            return 'gui';
+            return ActionSource::Gui->value;
         }
 
         // We're not sure, probably cli
-        return 'cli/unknown';
+        return ActionSource::Cli->value;
 
     }
 

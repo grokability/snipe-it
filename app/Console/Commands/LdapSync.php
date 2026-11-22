@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\ActionSource;
 use App\Models\Actionlog;
 use App\Models\Asset;
 use App\Models\Group;
@@ -81,14 +82,14 @@ class LdapSync extends Command
             return 1;
         }
 
-        Log::channel('ldap')->info('LDAP sync started by ' . $this->describeInitiator() . '.');
+        Log::channel('ldap')->info('LDAP sync started by '.$this->describeInitiator().'.');
 
         try {
             // Tag every action_log written during this run (direct writes
             // and the observer-driven writes User saves trigger) as `ldap`
             // so the activity report distinguishes LDAP-created entries
             // from gui / api / sync-adapter origins.
-            return Actionlog::withActionSource('ldap', fn () => $this->runSync());
+            return Actionlog::withActionSource(ActionSource::Ldap, fn () => $this->runSync());
         } finally {
             $this->releaseOperationLock(self::LDAP_SYNC_LOCK);
         }
@@ -104,7 +105,7 @@ class LdapSync extends Command
             $user = auth()->user();
             $via = request()->is('api/*') ? 'API' : 'GUI';
 
-            return 'user ' . $user->username . ' (ID ' . $user->id . ') via ' . $via;
+            return 'user '.$user->username.' (ID '.$user->id.') via '.$via;
         }
 
         $script = $_SERVER['argv'][1] ?? '';
@@ -117,7 +118,7 @@ class LdapSync extends Command
             : null;
         $osUser = $osUser ?: (get_current_user() ?: 'unknown');
 
-        return 'CLI as OS user ' . $osUser;
+        return 'CLI as OS user '.$osUser;
     }
 
     /**
@@ -167,7 +168,7 @@ class LdapSync extends Command
                 foreach ($this->option('location_id') as $location_id) {
                     $location_ou = Location::where('id', '=', $location_id)->value('ldap_ou');
                     $search_base = $location_ou;
-                    Log::channel('ldap')->debug('Importing users from specified location OU: \"' . $search_base . '\".');
+                    Log::channel('ldap')->debug('Importing users from specified location OU: \"'.$search_base.'\".');
                 }
             }
 
@@ -177,7 +178,7 @@ class LdapSync extends Command
              */
             if ($this->option('base_dn') != '') {
                 $search_base = $this->option('base_dn');
-                Log::channel('ldap')->debug('Importing users from specified base DN: \"' . $search_base . '\".');
+                Log::channel('ldap')->debug('Importing users from specified base DN: \"'.$search_base.'\".');
             }
 
             /**
@@ -218,16 +219,16 @@ class LdapSync extends Command
         $default_location = null;
         if ($this->option('location') != '') {
             if ($default_location = Location::where('name', '=', $this->option('location'))->first()) {
-                Log::channel('ldap')->debug('Location name ' . $this->option('location') . ' passed');
-                Log::channel('ldap')->debug('Importing to ' . $default_location->name . ' (' . $default_location->id . ')');
+                Log::channel('ldap')->debug('Location name '.$this->option('location').' passed');
+                Log::channel('ldap')->debug('Importing to '.$default_location->name.' ('.$default_location->id.')');
             }
 
         } elseif ($this->option('location_id')) {
             // TODO - figure out how or why this is an array?
             foreach ($this->option('location_id') as $location_id) {
                 if ($default_location = Location::where('id', '=', $location_id)->first()) {
-                    Log::channel('ldap')->debug('Location ID ' . $location_id . ' passed');
-                    Log::channel('ldap')->debug('Importing to ' . $default_location->name . ' (' . $default_location->id . ')');
+                    Log::channel('ldap')->debug('Location ID '.$location_id.' passed');
+                    Log::channel('ldap')->debug('Importing to '.$default_location->name.' ('.$default_location->id.')');
                 }
 
             }
@@ -356,7 +357,7 @@ class LdapSync extends Command
                         try {
                             $ldap_manager = Ldap::findLdapUsers($item['manager'], -1, $this->option('filter'));
                         } catch (\Exception $e) {
-                            Log::channel('ldap')->warning('Manager lookup caused an exception: ' . $e->getMessage() . '. Falling back to direct username lookup');
+                            Log::channel('ldap')->warning('Manager lookup caused an exception: '.$e->getMessage().'. Falling back to direct username lookup');
                             $ldap_manager = ['count' => 0];
                         }
 
@@ -386,7 +387,7 @@ class LdapSync extends Command
                                 }
                             } catch (\Exception $e) {
                                 $add_manager_to_cache = false;
-                                \Log::channel('ldap')->warning('Handling ldap manager ' . $item['manager'] . ' caused an exception: ' . $e->getMessage() . '. Continuing synchronization.');
+                                \Log::channel('ldap')->warning('Handling ldap manager '.$item['manager'].' caused an exception: '.$e->getMessage().'. Continuing synchronization.');
                             }
                         }
                         if ($add_manager_to_cache) {
@@ -398,7 +399,7 @@ class LdapSync extends Command
             }
 
             // Sync activated state for Active Directory.
-            if (!empty($ldap_map['activated'])) {
+            if (! empty($ldap_map['activated'])) {
                 // IF we have an 'active' flag set, then *most* things that are truthy will activate the user.
                 // Anything falsey will deactivate them. (Specifically, we don't handle a value of '0.0' correctly)
                 $raw_value = @$results[$i][$ldap_map['activated']][0];
@@ -536,10 +537,10 @@ class LdapSync extends Command
         }
 
         $elapsed = number_format(microtime(true) - $startedAt, 3);
-        $successCount = count(array_filter($summary, fn($row) => ($row['status'] ?? '') === 'success'));
+        $successCount = count(array_filter($summary, fn ($row) => ($row['status'] ?? '') === 'success'));
         Log::channel('ldap')->info(
-            'LDAP sync completed in ' . $elapsed . 's. '
-            . count($summary) . ' users processed (' . $successCount . ' success).',
+            'LDAP sync completed in '.$elapsed.'s. '
+            .count($summary).' users processed ('.$successCount.' success).',
         );
 
         return self::SUCCESS;
@@ -574,6 +575,6 @@ class LdapSync extends Command
         $isDisabled = ($useraccountcontrol & 0x2) !== 0;
         $isLockedOut = ($useraccountcontrol & 0x10) !== 0;
 
-        return $isNormalAccount && !$isDisabled && !$isLockedOut;
+        return $isNormalAccount && ! $isDisabled && ! $isLockedOut;
     }
 }
