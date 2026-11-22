@@ -142,6 +142,10 @@ class AccessoriesTransformer
                 // Restore is only meaningful on the Deleted index.
                 // Delete-tier action (matches postRestore pattern).
                 'restore' => $isDeleted && Gate::allows('delete', $accessory),
+                'checkout' => Gate::allows('checkout', $accessory)
+                    && !$isDeleted
+                    && !$accessory->archived
+                    && ($accessory->qty - $accessory->checkouts_count) > 0,
             ],
         ];
 

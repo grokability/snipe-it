@@ -99,6 +99,7 @@ Route::group(['prefix' => 'accessories', 'middleware' => ['auth']], function () 
             $label = match (request()->input('bulk_actions')) {
                 'edit' => trans('general.bulk_edit'),
                 'delete' => trans('general.bulk_delete'),
+                'checkout' => trans('admin/accessories/general.bulk_checkout'),
                 default => trans('general.bulk_actions'),
             };
 
@@ -112,6 +113,10 @@ Route::group(['prefix' => 'accessories', 'middleware' => ['auth']], function () 
     Route::post('bulkdelete',
         [BulkAccessoriesController::class, 'destroy']
     )->name('accessories.bulkdelete.store');
+
+    Route::post('bulkcheckout/store',
+        [BulkAccessoriesController::class, 'storeCheckout']
+    )->name('accessories.bulkcheckout.store');
 
 });
 

@@ -1,9 +1,11 @@
-@if (Gate::any(['update', 'delete'], \App\Models\Accessory::class))
+@if (Gate::any(['update', 'delete', 'checkout'], \App\Models\Accessory::class))
     <x-table.bulk-actions
         name="accessories"
         :action_route="route('accessories.bulkedit.show')"
         model_name="accessory"
         :actions="array_filter([
+            'checkout' => (request('status') !== 'Deleted' && request('status') !== 'Archived' && Gate::allows('checkout', \App\Models\Accessory::class))
+                ? ['label' => trans('general.checkout')] : null,
             'edit' => (request('status') !== 'Deleted' && Gate::allows('update', \App\Models\Accessory::class))
                 ? ['label' => trans('general.bulk_edit')] : null,
             'delete' => (request('status') !== 'Deleted' && Gate::allows('delete', \App\Models\Accessory::class))
