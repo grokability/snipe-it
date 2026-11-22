@@ -53,6 +53,23 @@ class FloaterModeGateTest extends TestCase
         $this->assertNotEmpty($victim->fresh()->companies, 'Victim pivot should not be wiped');
     }
 
+    public function test_non_superuser_cannot_blank_their_own_companies_via_patch_in_floater_mode()
+    {
+        $this->settings->enableFloaterMode();
+
+        $company = Company::factory()->create();
+        $actor = $company->users()->save(User::factory()->editUsers()->create());
+
+        $this->actingAs($actor)
+            ->patch(route('users.update', $actor), [
+                'first_name' => $actor->first_name,
+                'username' => $actor->username,
+            ])
+            ->assertSessionHasErrors('company_ids');
+
+        $this->assertNotEmpty($actor->fresh()->companies, 'Actor pivot should not be wiped');
+    }
+
     public function test_superuser_can_save_a_user_with_no_companies_in_floater_mode()
     {
         $this->settings->enableFloaterMode();
