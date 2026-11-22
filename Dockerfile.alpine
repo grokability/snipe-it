@@ -1,7 +1,6 @@
 FROM alpine:3.24
 # Apache + PHP
 RUN  apk add --no-cache \
-        apache2 \
         php84 \
         php84-common \
         php84-apache2 \
@@ -19,7 +18,6 @@ RUN  apk add --no-cache \
         php84-opcache \
         php84-bcmath \
         php84-phar \
-        php84-json \
         php84-iconv \
         php84-fileinfo \
         php84-simplexml \
@@ -45,6 +43,7 @@ COPY docker/column-statistics.cnf /etc/mysql/conf.d/column-statistics.cnf
 RUN mkdir -p /run/apache2 && chown apache:apache /run/apache2
 
 RUN sed -i 's/variables_order = .*/variables_order = "EGPCS"/' /etc/php84/php.ini
+RUN sed -i 's/session.upload_progress.enabled = .*/session.upload_progress.enabled = 0/' /etc/php84/php.ini
 COPY  docker/000-default-2.4.conf /etc/apache2/conf.d/default.conf
 # Apache Limits Defaults
 COPY  docker/apache-limits.conf /etc/apache2/conf.d/limits.conf
