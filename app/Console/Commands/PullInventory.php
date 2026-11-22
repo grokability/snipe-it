@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\ActionSource;
 use App\Models\Actionlog;
 use App\Models\SyncAdapterInstance;
 use App\SyncAdapters\SyncAdapter;
@@ -168,7 +169,7 @@ class PullInventory extends Command
             }
 
             try {
-                Actionlog::withActionSource('sync:' . $slug, function () use ($adapter, $slug, $dryRun, $limit, &$seen, &$skipped, &$errors, &$seenExternalIds) {
+                Actionlog::withActionSource(ActionSource::syncAdapter($slug), function () use ($adapter, $slug, $dryRun, $limit, &$seen, &$skipped, &$errors, &$seenExternalIds) {
                     foreach ($adapter->pull() as $record) {
                         if ($limit !== null && ($seen + $skipped + $errors) >= $limit) {
                             Log::channel('sync-adapters')->info("{$slug} sync: --limit {$limit} reached, stopping early");
@@ -193,7 +194,7 @@ class PullInventory extends Command
                                     $vendorReportsGone ? ' (vendor reports removed)' : '',
                                 ));
                                 $seen++;
-                                if (!$vendorReportsGone && $record->sourceId !== null && $record->sourceId !== '') {
+                                if (! $vendorReportsGone && $record->sourceId !== null && $record->sourceId !== '') {
                                     $seenExternalIds[] = (string) $record->sourceId;
                                 }
 
@@ -209,7 +210,7 @@ class PullInventory extends Command
 
                             // Record what the vendor returned regardless of
                             // whether syncFromRecord upserted.
-                            if (!$vendorReportsGone && $record->sourceId !== null && $record->sourceId !== '') {
+                            if (! $vendorReportsGone && $record->sourceId !== null && $record->sourceId !== '') {
                                 $seenExternalIds[] = (string) $record->sourceId;
                             }
                         } catch (Throwable $e) {
@@ -222,7 +223,7 @@ class PullInventory extends Command
                             Log::channel('sync-adapters')->warning("{$slug} sync: failed to upsert host {$sourceId}: {$message}");
                         }
                     }
-                });
+                }, userAgent: ActionSource::syncAdapterUserAgent($slug));
             } catch (Throwable $e) {
                 // Brief summary for the UI "Last Synced" field and the
                 // console error output.
@@ -250,7 +251,7 @@ class PullInventory extends Command
             // API outage would sweep every linked asset to the
             // configured status.
             $reconcileSummary = null;
-            if (!$dryRun && $seen > 0 && $adapter->archivesMissingLinks()) {
+            if (! $dryRun && $seen > 0 && $adapter->archivesMissingLinks()) {
                 try {
                     $recon = $adapter->reconcileMissingLinks($seenExternalIds);
                     $reconcileSummary = trans('admin/settings/sync_adapters.archive_missing_sync_summary', [
@@ -266,7 +267,7 @@ class PullInventory extends Command
                     // must not mark the whole pull as failed, so swallow
                     // and log. Admins see it in the sync-adapters log.
                     Log::channel('sync-adapters')->warning(
-                        "{$slug} sync: auto-archive reconcile failed: " . SyncErrorFormatter::summary($e),
+                        "{$slug} sync: auto-archive reconcile failed: ".SyncErrorFormatter::summary($e),
                         SyncErrorFormatter::logContext($e),
                     );
                 }
@@ -280,7 +281,7 @@ class PullInventory extends Command
                 'errors' => $errors,
             ]);
             if ($reconcileSummary !== null) {
-                $result .= ' ' . $reconcileSummary;
+                $result .= ' '.$reconcileSummary;
             }
             $instance->last_synced_at = now();
             $instance->last_sync_result = $result;

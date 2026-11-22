@@ -4,6 +4,7 @@ use App\Enums\McpScope;
 use App\Http\Middleware\CheckUserIsActivated;
 use App\Http\Middleware\EnforceApiTwoFactorEnrollment;
 use App\Http\Middleware\ForceJsonAcceptableOnMcp;
+use App\Http\Middleware\SetMcpActionContext;
 use App\Mcp\Servers\SnipeMCPServer;
 use Illuminate\Support\Facades\Route;
 use Laravel\Mcp\Facades\Mcp;
@@ -112,4 +113,5 @@ Mcp::web('/mcp/snipe-it', SnipeMCPServer::class)->middleware([
     EnforceApiTwoFactorEnrollment::class,
     'mcp.scope.handshake',
     'api-throttle:api',
+    SetMcpActionContext::class,
 ]);

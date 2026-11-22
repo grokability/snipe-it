@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ActionSource;
 use App\Models\Actionlog;
 use App\Rules\ExternalUrl;
 use App\SyncAdapters\PushableSyncAdapter;
@@ -306,7 +307,7 @@ class SyncAdapterController extends Controller
             $seenExternalIds = [];
             $this->captureSyncRunLog($instance->slug, 'pull', function () use ($adapter, $instance, $dryRun, $limit, &$seen, &$skipped, &$errors, &$abortedRedirect, &$seenExternalIds) {
                 try {
-                    Actionlog::withActionSource('sync:'.$instance->slug, function () use ($adapter, $instance, $dryRun, $limit, &$seen, &$skipped, &$errors, &$seenExternalIds) {
+                    Actionlog::withActionSource(ActionSource::syncAdapter($instance->slug), function () use ($adapter, $instance, $dryRun, $limit, &$seen, &$skipped, &$errors, &$seenExternalIds) {
                         foreach ($adapter->pull() as $record) {
                             if ($limit !== null && ($seen + $skipped + $errors) >= $limit) {
                                 Log::channel('sync-adapters')->info($instance->slug.' sync: limit '.$limit.' reached, stopping early');
@@ -355,7 +356,7 @@ class SyncAdapterController extends Controller
                                 Log::channel('sync-adapters')->warning($instance->slug.' sync: failed to upsert host '.$record->sourceId.': '.$e->getMessage());
                             }
                         }
-                    });
+                    }, userAgent: ActionSource::syncAdapterUserAgent($instance->slug));
                 } catch (\Throwable $e) {
                     Log::channel('sync-adapters')->warning(
                         $instance->slug.' sync aborted: '.SyncErrorFormatter::summary($e),
