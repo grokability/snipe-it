@@ -11,7 +11,6 @@ return [
     'settings_title' => 'Model Context Protocol (MCP)',
     'settings_intro' => 'OAuth clients that self-register via Dynamic Client Registration (DCR) land in the pending queue below if their redirect URL is not a loopback address (<code>localhost</code>, <code>127.0.0.1</code>) or a trusted URI scheme. Pending clients cannot complete an OAuth flow until you approve them. Admin-created clients and auto-approved registrations go straight to the Approved tab.',
 
-    'trusted_lists_fieldset_legend' => 'MCP Trusted Redirect Allow-list',
     'trusted_schemes_label' => 'Trusted Custom URI Schemes',
     'trusted_schemes_help' => 'One scheme per line (for example: <code>com.example.myapp</code>). Mobile apps that register with a scheme on this list skip the pending queue. The first-party Snipe-IT mobile app is always trusted. Lines starting with # are treated as comments.',
     'trusted_domains_label' => 'Trusted Redirect Domain Prefixes',

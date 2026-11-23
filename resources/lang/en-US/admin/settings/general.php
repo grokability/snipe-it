@@ -629,7 +629,7 @@ return [
 
     'legends' => [
         'api_user_agent_filtering' => 'User-Agent Filtering',
-        'mcp_trusted_lists' => 'MCP Trusted Redirect Allow-list',
+        'oauth_trusted_lists' => 'OAuth Trusted Redirect Allow-list',
         'notes' => 'Notes Preferences',
         'colors' => 'Colors & Skins',
         'dashboard' => 'Login & Dashboard Preferences',

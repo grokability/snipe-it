@@ -85,9 +85,9 @@
                                     />
                                 </fieldset>
 
-                                <fieldset name="mcp-trusted-lists">
+                                <fieldset name="oauth-trusted-lists">
                                     <x-form.legend>
-                                        {{ trans('admin/settings/general.legends.mcp_trusted_lists') }}
+                                        {{ trans('admin/settings/general.legends.oauth_trusted_lists') }}
                                     </x-form.legend>
 
                                     <x-form.row
