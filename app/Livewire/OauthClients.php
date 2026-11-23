@@ -32,11 +32,25 @@ class OauthClients extends Component
 
     public $authorizationError;
 
+    /**
+     * Toggle for the Approved OAuth Clients tab. When false, revoked
+     * clients are hidden from the table (default). When true, they're
+     * included so admins can see historical registrations that were
+     * revoked via the per-client delete action.
+     */
+    public bool $showRevoked = false;
+
     public function mount(?string $section = null): void
     {
         if ($section !== null) {
             $this->section = $section;
         }
+
+        // Pick up the ?revoked=1 URL param set by the Show Revoked
+        // bs-table button in oauthButtons. Matches the archived-toggle
+        // pattern on other list views (query-param-driven, page reload
+        // on toggle).
+        $this->showRevoked = request()->boolean('revoked');
     }
 
     /**
@@ -72,7 +86,22 @@ class OauthClients extends Component
     {
         $clients = collect();
         if ($this->showOauthClients()) {
+            // The OAuth Clients tab lists approved + non-revoked
+            // third-party OAuth clients. Excludes:
+            //   - Pending/rejected clients (own tab for pending,
+            //     dead rows for rejected until the pruner sweeps)
+            //   - Personal access clients (Passport internal plumbing
+            //     for the PAT grant, with no user-visible redirect;
+            //     the Personal Access Tokens tab handles PATs)
+            //   - Revoked clients unless $showRevoked is toggled on
+            // Toggle semantics mirror the Show Archived pattern on
+            // other list views. Default state shows only active (non-
+            // revoked) clients. Toggle shows ONLY revoked clients,
+            // not revoked PLUS active in the same list.
             $clients = Client::query()
+                ->where('status', \App\Models\OAuthClient::STATUS_APPROVED)
+                ->where('personal_access_client', false)
+                ->where('revoked', $this->showRevoked ? true : false)
                 ->orderByDesc('created_at')
                 ->get();
 
