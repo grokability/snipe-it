@@ -16,6 +16,7 @@ use App\Models\Consumable;
 use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\Maintenance;
+use App\Models\OAuthClient;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
@@ -67,6 +68,8 @@ class NeedsAttention extends Component
     public int $assetsPastEol = 0;
 
     public int $usersOffboardingSoon = 0;
+
+    public int $pendingOauthClients = 0;
 
     // Days window for the offboarding tile. Fixed at 30 since there's
     // no admin-level "offboarding alert" setting the way there is for
@@ -175,6 +178,16 @@ class NeedsAttention extends Component
         if ($requestTypes !== []) {
             $this->pendingRequestsCount = CheckoutRequest::pending()
                 ->whereHasMorph('requestedItem', $requestTypes)
+                ->count();
+        }
+
+        // Pending MCP OAuth clients. Superuser-only because only
+        // superusers can act on the approval queue (route gate at
+        // /oauth/mcp enforces the same). Non-superusers see zero for
+        // this tile, so the tile hides for them.
+        if (auth()->user()?->isSuperUser()) {
+            $this->pendingOauthClients = OAuthClient::query()
+                ->where('status', OAuthClient::STATUS_PENDING)
                 ->count();
         }
     }

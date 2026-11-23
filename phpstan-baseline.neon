@@ -2236,37 +2236,37 @@ parameters:
 			message: '#^Access to an undefined property App\\Models\\Setting\:\:\$label2_template_name\.$#'
 			identifier: property.notFound
 			count: 1
-			path: app/Http/Controllers/SettingsController.php
+			path: app/Http/Controllers/Settings/SettingsController.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\SnipeModel\:\:\$default_avatar\.$#'
 			identifier: property.notFound
 			count: 1
-			path: app/Http/Controllers/SettingsController.php
+			path: app/Http/Controllers/Settings/SettingsController.php
 
 		-
 			message: '#^Property App\\Models\\IdeHelperSetting\:\:\$null_company_is_floater \(int\) does not accept string\.$#'
 			identifier: assign.propertyType
 			count: 1
-			path: app/Http/Controllers/SettingsController.php
+			path: app/Http/Controllers/Settings/SettingsController.php
 
 		-
 			message: '#^Property App\\Models\\IdeHelperSetting\:\:\$scope_locations_fmcs \(int\) does not accept string\.$#'
 			identifier: assign.propertyType
 			count: 1
-			path: app/Http/Controllers/SettingsController.php
+			path: app/Http/Controllers/Settings/SettingsController.php
 
 		-
 			message: '#^Using nullsafe property access "\?\-\>blocked_api_user_agents" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
-			path: app/Http/Controllers/SettingsController.php
+			path: app/Http/Controllers/Settings/SettingsController.php
 
 		-
 			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
-			path: app/Http/Controllers/SettingsController.php
+			path: app/Http/Controllers/Settings/SettingsController.php
 
 		-
 			message: '#^Method App\\Http\\Controllers\\SetupController\:\:getSetupIndex\(\) should return Illuminate\\Contracts\\View\\View but returns Illuminate\\Http\\Response\.$#'

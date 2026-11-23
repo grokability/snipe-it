@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Settings;
 
 use App\Enums\ActionType;
 use App\Helpers\Helper;
 use App\Helpers\StorageHelper;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\ImageUploadRequest;
 use App\Http\Requests\SettingsSamlRequest;
 use App\Http\Requests\StoreLabelSettings;
@@ -1423,6 +1424,15 @@ class SettingsController extends Controller
             ->where('oauth_clients.personal_access_client', true)
             ->count();
 
+        // Tab-count badge for the Approved OAuth Clients tab. Matches
+        // the Livewire oauth-clients filter (approved + non-personal-
+        // access + non-revoked) so the badge and list stay in sync.
+        $approvedOauthClientCount = \App\Models\OAuthClient::query()
+            ->where('status', \App\Models\OAuthClient::STATUS_APPROVED)
+            ->where('personal_access_client', false)
+            ->where('revoked', false)
+            ->count();
+
         $setting = Setting::getSettings();
         $blockApiUserAgents = (bool) old('block_api_user_agents', $setting?->block_api_user_agents);
         $blockedApiUserAgents = old(
@@ -1431,12 +1441,27 @@ class SettingsController extends Controller
         );
         $blockBlankApiUserAgents = (bool) old('block_blank_api_user_agents', $setting?->block_blank_api_user_agents);
 
+        // MCP approval workflow data for the MCP Clients tab. The tab
+        // renders alongside the existing Personal Access Tokens + OAuth
+        // Clients tabs so admins find it in the same place they already
+        // manage OAuth tokens.
+        $pendingMcpClients = \App\Models\OAuthClient::query()
+            ->where('status', \App\Models\OAuthClient::STATUS_PENDING)
+            ->orderByDesc('created_at')
+            ->get();
+        $mcpTrustedCustomSchemes = old('mcp_trusted_custom_schemes', $setting?->mcp_trusted_custom_schemes);
+        $mcpTrustedRedirectDomains = old('mcp_trusted_redirect_domains', $setting?->mcp_trusted_redirect_domains);
+
         return view('settings.api', [
             'personalAccessTokenCount' => $personalAccessTokenCount,
+            'approvedOauthClientCount' => $approvedOauthClientCount,
             'setting' => $setting,
             'blockApiUserAgents' => $blockApiUserAgents,
             'blockedApiUserAgents' => $blockedApiUserAgents,
             'blockBlankApiUserAgents' => $blockBlankApiUserAgents,
+            'pendingMcpClients' => $pendingMcpClients,
+            'mcpTrustedCustomSchemes' => $mcpTrustedCustomSchemes,
+            'mcpTrustedRedirectDomains' => $mcpTrustedRedirectDomains,
         ]);
     }
 
@@ -1462,6 +1487,13 @@ class SettingsController extends Controller
         $blockedUserAgents = trim((string) $request->input('blocked_api_user_agents', ''));
         $setting->blocked_api_user_agents = $blockedUserAgents === '' ? null : $blockedUserAgents;
         $setting->block_blank_api_user_agents = $request->boolean('block_blank_api_user_agents');
+
+        // MCP trusted-list fieldset lives in the same form now, so both
+        // batches of fields save in one submit.
+        $trustedSchemes = trim((string) $request->input('mcp_trusted_custom_schemes', ''));
+        $setting->mcp_trusted_custom_schemes = $trustedSchemes === '' ? null : $trustedSchemes;
+        $trustedDomains = trim((string) $request->input('mcp_trusted_redirect_domains', ''));
+        $setting->mcp_trusted_redirect_domains = $trustedDomains === '' ? null : $trustedDomains;
 
         if ($setting->save()) {
             return redirect()

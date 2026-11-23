@@ -61,7 +61,7 @@ class AppServiceProvider extends ServiceProvider
         // authorization request actually targets an MCP scope.
         Passport::authorizationView(function (array $parameters) {
             $requestsMcpScope = collect($parameters['scopes'] ?? [])
-                ->contains(fn($scope) => str_starts_with($scope->id, 'mcp:'));
+                ->contains(fn ($scope) => str_starts_with($scope->id, 'mcp:'));
 
             return view($requestsMcpScope ? 'mcp.authorize' : 'passport.authorize', $parameters);
         });
@@ -76,6 +76,8 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Paginator::useBootstrap();
+
+        $this->mergeMcpTrustedListsFromSettings();
 
         View::composer('layouts.default', SidebarComposer::class);
         View::composer('partials.impersonation-banner', ImpersonationBannerComposer::class);
@@ -127,5 +129,76 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton('ArieTimmerman\Laravel\SCIMServer\SCIMConfig', SnipeSCIMConfig::class); // this overrides the default SCIM configuration with our own
 
+    }
+
+    /**
+     * Merge the admin-configured MCP trusted lists from the settings
+     * table into the mcp config so laravel/mcp's OAuthRegisterController
+     * reads a unified view (hardcoded safe defaults + admin additions)
+     * without a config:cache rebuild when the admin updates the
+     * Settings -> MCP page.
+     *
+     * Guarded against (1) the settings table not yet existing on a
+     * fresh install pre-migration and (2) the mcp_trusted_* columns
+     * not yet existing on an upgrading install between
+     * composer-update and migrate. Either case silently falls back to
+     * the config-file defaults, so a half-upgraded install still has
+     * a safe baseline.
+     */
+    private function mergeMcpTrustedListsFromSettings(): void
+    {
+        try {
+            $settings = Setting::getSettings();
+        } catch (\Throwable) {
+            return;
+        }
+        if ($settings === null) {
+            return;
+        }
+
+        $schemes = $this->splitTrustedList($settings->mcp_trusted_custom_schemes ?? null);
+        if ($schemes !== []) {
+            config([
+                'mcp.custom_schemes' => array_values(array_unique(array_merge(
+                    (array) config('mcp.custom_schemes', []),
+                    $schemes,
+                ))),
+            ]);
+        }
+
+        $domains = $this->splitTrustedList($settings->mcp_trusted_redirect_domains ?? null);
+        if ($domains !== []) {
+            config([
+                'mcp.redirect_domains' => array_values(array_unique(array_merge(
+                    (array) config('mcp.redirect_domains', []),
+                    $domains,
+                ))),
+            ]);
+        }
+    }
+
+    /**
+     * Normalize a newline-separated textarea value into a trimmed, non-
+     * empty string list. Commented lines starting with # are skipped so
+     * admins can document why they trust a given entry inline.
+     *
+     * @return array<int, string>
+     */
+    private function splitTrustedList(?string $raw): array
+    {
+        if (! is_string($raw) || trim($raw) === '') {
+            return [];
+        }
+
+        $out = [];
+        foreach (preg_split('/\r\n|\r|\n/', $raw) as $line) {
+            $trimmed = trim((string) $line);
+            if ($trimmed === '' || str_starts_with($trimmed, '#')) {
+                continue;
+            }
+            $out[] = $trimmed;
+        }
+
+        return $out;
     }
 }

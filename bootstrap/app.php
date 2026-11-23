@@ -11,10 +11,12 @@ use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\EnforceApiTwoFactorEnrollment;
 use App\Http\Middleware\EnforceApiUserAgent;
 use App\Http\Middleware\EnforceMcpScopeHandshake;
+use App\Http\Middleware\EnsureOAuthClientApproved;
 use App\Http\Middleware\IssueFreshApiTokenIfTwoFactorComplete;
 use App\Http\Middleware\LogAuthedUserHeader;
 use App\Http\Middleware\NoSessionStore;
 use App\Http\Middleware\PreventBackHistory;
+use App\Http\Middleware\RejectMcpOnlyTokensOnRestApi;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetAPIResponseHeaders;
 use App\Http\Middleware\SetPaginationDefaults;
@@ -27,7 +29,6 @@ use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Session\Middleware\AuthenticateSession;
@@ -66,6 +67,8 @@ $app = Application::configure(basePath: dirname(__DIR__))
             CheckForDebug::class,
             SecurityHeaders::class,
             PreventBackHistory::class,
+            // Blocks OAuth authorize + token for pending/rejected clients.
+            EnsureOAuthClientApproved::class,
         ]);
 
         // --- Groups (explicit, not merged with Laravel's group defaults: Snipe-IT's
@@ -98,6 +101,8 @@ $app = Application::configure(basePath: dirname(__DIR__))
             LogAuthedUserHeader::class,
             SetPaginationDefaults::class,
             SubstituteBindings::class,
+            // Rejects tokens scoped for MCP-only use against /api/v1 routes.
+            RejectMcpOnlyTokensOnRestApi::class,
         ]);
 
         $middleware->group('health', []);

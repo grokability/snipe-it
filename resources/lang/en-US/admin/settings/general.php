@@ -451,7 +451,7 @@ return [
     'oauth_client_type_password_grant' => 'Password Grant Client',
     'oauth_associated_token_count' => 'Token Count',
     'oauth_callback_url' => 'Your application authorization callback URL.',
-    'oauth_personal_access_tokens' => 'User API Tokens (Personal Access Tokens)',
+    'oauth_personal_access_tokens' => 'Personal Access Tokens',
     'oauth_personal_access_tokens_none' => 'No personal access tokens found.',
     'oauth_client' => 'Client',
     'oauth_deleted_user' => 'Deleted user (ID: :id)',
@@ -628,6 +628,8 @@ return [
     ],
 
     'legends' => [
+        'api_user_agent_filtering' => 'User-Agent Filtering',
+        'oauth_trusted_lists' => 'OAuth Trusted Redirect Allow-list',
         'notes' => 'Notes Preferences',
         'colors' => 'Colors & Skins',
         'dashboard' => 'Login & Dashboard Preferences',
@@ -662,7 +664,7 @@ return [
         'purge' => 'permanently delete',
         'security' => 'password, passwords, requirements, two factor, two-factor, common passwords, remote login, logout, authentication',
         'notifications' => 'alerts, email, notifications, audit, threshold, email alerts, cc',
-        'oauth' => 'oauth, oath, api, personal access keys, tokens',
+        'oauth' => 'oauth, oath, api, personal access keys, pat, tokens, mcp, api keys',
     ],
 
 ];

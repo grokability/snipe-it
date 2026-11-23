@@ -1257,6 +1257,7 @@
                     'columns',
                     'btnAdd',
                     'btnShowArchived',
+                    'btnShowRevoked',
                     'btnShowDeleted',
                     'btnToggleCompleted',
                     'btnDue',
@@ -1842,6 +1843,20 @@
                 @if ($snipeSettings->shortcuts_enabled == 1)
                 accesskey: 'n'
                 @endif
+            },
+        },
+
+        {{-- Toggle between the active and revoked OAuth clients --}}
+        btnShowRevoked: {
+            text: '{{ request()->input('revoked') ? trans('general.show_current') : trans('admin/settings/mcp.show_revoked_toggle_show') }}',
+            icon: '{{ \App\Helpers\IconHelper::icon('archived') }}',
+            event() {
+                var href = '{{ route('settings.oauth.index') }}' + ('{{ request()->input('revoked') ? '' : '?revoked=1' }}') + '#oauth-clients';
+                window.location.href = href;
+            },
+            attributes: {
+                class: '{{ request()->input('revoked') ? 'btn-selected' : '' }}',
+                title: '{{ request()->input('revoked') ? trans('general.show_current') : trans('admin/settings/mcp.show_revoked_toggle_show') }}',
             },
         },
 

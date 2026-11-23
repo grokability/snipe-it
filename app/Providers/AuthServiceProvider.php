@@ -113,6 +113,11 @@ class AuthServiceProvider extends ServiceProvider
 
         Passport::cookie(config('passport.cookie_name'));
 
+        // Snipe-IT's OAuth client subclass adds the approval workflow on top of Passport's base Client.
+        // Every Passport code path (ClientRepository, client:create commands,
+        // laravel/mcp DCR) reads/writes through this.
+        Passport::useClientModel(\App\Models\OAuthClient::class);
+
         // Register the MCP scopes so Passport recognizes them during
         // token issuance (OAuth consent and PATs). Tool-level
         // enforcement lives in the SnipeMcpTool trait, which calls
