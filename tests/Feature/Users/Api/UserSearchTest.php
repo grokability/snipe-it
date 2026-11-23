@@ -5,6 +5,7 @@ namespace Tests\Feature\Users\Api;
 use App\Models\Company;
 use App\Models\User;
 use Laravel\Passport\Passport;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
 class UserSearchTest extends TestCase
@@ -162,6 +163,7 @@ class UserSearchTest extends TestCase
         );
     }
 
+    #[Group('mysql')]
     public function test_users_index_when_invalid_sort_field_is_passed()
     {
         $this->markIncompleteIfSqlite('This test is not compatible with SQLite');

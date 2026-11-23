@@ -6,11 +6,13 @@ use App\Models\CustomField;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\Support\MySqlDatabaseSnapshot;
 use Tests\TestCase;
 
 class MySqlDatabaseSnapshotTest extends TestCase
 {
+    #[Group('mysql')]
     public function test_restoring_the_baseline_removes_test_schema_and_data_but_preserves_migration_rows(): void
     {
         if (! MySqlDatabaseSnapshot::isSupported(DB::connection())) {

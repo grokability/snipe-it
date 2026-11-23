@@ -67,12 +67,12 @@ jobs:
           chmod -R 777 storage bootstrap/cache
           chmod 600 storage/oauth-private.key storage/oauth-public.key
 
-      - name: Execute tests (Unit and Feature tests) via PHPUnit
+      - name: Execute SQLite-compatible tests
         env:
           DB_CONNECTION: sqlite
           LOG_CHANNEL: single
           LOG_LEVEL: debug
-        run: php artisan test --parallel
+        run: composer test:sqlite
 
       - name: Upload Laravel logs as artifacts
         if: always()

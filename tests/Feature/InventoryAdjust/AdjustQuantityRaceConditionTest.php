@@ -8,6 +8,7 @@ use App\Models\Consumable;
 use DomainException;
 use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
 /**
@@ -49,6 +50,7 @@ class AdjustQuantityRaceConditionTest extends TestCase
     }
 
     #[DataProvider('inventoryModelProvider')]
+    #[Group('mysql')]
     public function test_adjust_quantity_takes_pessimistic_row_lock(string $modelClass): void
     {
         // SQLite's Laravel grammar strips the FOR UPDATE clause on
@@ -85,6 +87,7 @@ class AdjustQuantityRaceConditionTest extends TestCase
     }
 
     #[DataProvider('inventoryModelProvider')]
+    #[Group('mysql')]
     public function test_adjust_quantity_lock_and_write_share_a_transaction(string $modelClass): void
     {
         // The lock is only meaningful if it holds through the write. If

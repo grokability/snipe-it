@@ -19,6 +19,8 @@
   </testsuites>
   <php>
     <env name="APP_ENV" value="testing"/>
+    <!-- Default direct PHPUnit and IDE runs to SQLite; explicit MySQL selections still override this. -->
+    <env name="DB_CONNECTION" value="sqlite"/>
     <env name="BCRYPT_ROUNDS" value="4"/>
     <!-- Match CI's memory budget, including commands that set their own PHP limit. -->
     <env name="IMPORT_MEMORY_LIMIT" value="1G"/>

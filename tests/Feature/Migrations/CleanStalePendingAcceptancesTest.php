@@ -10,8 +10,10 @@ use App\Models\Consumable;
 use App\Models\LicenseSeat;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
+#[Group('mysql')]
 class CleanStalePendingAcceptancesTest extends TestCase
 {
     public function test_it_clears_a_pending_acceptance_for_an_asset_the_user_no_longer_holds(): void

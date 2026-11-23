@@ -130,6 +130,18 @@
     }
   },
   "scripts": {
+    "test:split": [
+      "@test:sqlite",
+      "@test:mysql --group=mysql"
+    ],
+    "test:sqlite": [
+      "@putenv DB_CONNECTION=sqlite",
+      "@php artisan test --parallel"
+    ],
+    "test:mysql": [
+      "@putenv DB_CONNECTION=mysql",
+      "@php artisan test --parallel"
+    ],
     "post-autoload-dump": [
       "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
       "@php artisan package:discover --ansi",
@@ -148,6 +160,11 @@
     "analyse:phpstan:baseline": "phpstan analyse --memory-limit=2G --generate-baseline=phpstan-baseline.neon",
     "analyse:phpmd": "phpmd app text phpmd-ruleset.xml --baseline-file phpmd.baseline.xml",
     "analyse:phpmd:baseline": "phpmd app xml phpmd-ruleset.xml --generate-baseline"
+  },
+  "scripts-descriptions": {
+    "test:split": "Run SQLite then MySQL-sensitive tests; stop on the first failure.",
+    "test:sqlite": "Run all SQLite-compatible tests in parallel.",
+    "test:mysql": "Run all MySQL-compatible tests in parallel."
   },
   "config": {
     "preferred-install": "dist",

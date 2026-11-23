@@ -5,8 +5,10 @@ namespace Tests\Feature\Migrations;
 use App\Models\SyncAdapterInstance;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
+#[Group('mysql')]
 class NormalizeSyncAdapterStorageExtrasToGbTest extends TestCase
 {
     private function runMigration(): void
