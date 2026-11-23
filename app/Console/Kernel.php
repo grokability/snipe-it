@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('backup:clean')->daily();
         $schedule->command('auth:clear-resets')->everyFifteenMinutes();
         $schedule->command('saml:clear_expired_nonces')->weekly();
-        
+
         $schedule->command('snipeit:pull-inventory')
             ->daily()
             ->withoutOverlapping();
@@ -35,6 +35,12 @@ class Kernel extends ConsoleKernel
         // adapter's pull runs long.
         $schedule->command('snipeit:push-inventory')
             ->dailyAt('03:00')
+            ->withoutOverlapping();
+
+        // Deletes pending / rejected MCP OAuth clients older than 30
+        // days
+        $schedule->command('snipeit:prune-pending-oauth-clients')
+            ->dailyAt('03:15')
             ->withoutOverlapping();
     }
 
