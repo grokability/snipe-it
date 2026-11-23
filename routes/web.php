@@ -32,7 +32,8 @@ use App\Http\Controllers\Reports\CustomComponentReportController;
 use App\Http\Controllers\Reports\CustomConsumableReportController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\ReportTemplatesController;
-use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\Settings\McpSettingsController;
+use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\StatuslabelsController;
 use App\Http\Controllers\StorageProxyController;
@@ -100,6 +101,19 @@ Route::middleware(['web', 'auth', 'authorize:superuser'])->prefix('oauth')->grou
         ->name('passport.clients.update');
     Route::delete('clients/{client_id}', [\Laravel\Passport\Http\Controllers\ClientController::class, 'destroy'])
         ->name('passport.clients.destroy');
+
+    // MCP OAuth client approve/reject actions. The pending-clients
+    // list renders inside the shared OAuth Clients tab at /admin/oauth
+    // above the general client table. Trusted-list textareas live on
+    // the API Request Filtering tab in the same form as the user-agent
+    // filters, so both batches of settings save together via
+    // postApiRequestFilters. Only the per-client state transitions
+    // live here as their own routes.
+    Route::post('mcp/clients/{client}/approve', [McpSettingsController::class, 'approve'])
+        ->name('settings.oauth.mcp.clients.approve');
+
+    Route::post('mcp/clients/{client}/reject', [McpSettingsController::class, 'reject'])
+        ->name('settings.oauth.mcp.clients.reject');
 });
 
 Route::group(['middleware' => 'auth'], function () {
@@ -413,12 +427,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'authorize:superuser
 
     Route::get('/settings/labels/create', [LabelsController::class, 'create'])
         ->name('settings.labels.create')
-        ->breadcrumbs(fn(Trail $trail) => $trail->parent('settings.labels.index')
+        ->breadcrumbs(fn (Trail $trail) => $trail->parent('settings.labels.index')
             ->push(ucfirst(trans('general.create')), route('settings.labels.create')));
     Route::get('/settings/labels/{label}/edit', [LabelsController::class, 'edit'])
         ->name('settings.labels.edit')
-        ->breadcrumbs(fn(Trail $trail) => $trail->parent('settings.labels.index')
-            ->push(ucfirst(trans('general.edit')), route('settings.labels.edit', request()->route('label'))));;
+        ->breadcrumbs(fn (Trail $trail) => $trail->parent('settings.labels.index')
+            ->push(ucfirst(trans('general.edit')), route('settings.labels.edit', request()->route('label'))));
     Route::post('/settings/labels', [LabelsController::class, 'store'])
         ->name('settings.labels.store');
     Route::put('/settings/labels/{label}', [LabelsController::class, 'update'])

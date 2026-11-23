@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\McpScope;
+use App\Http\Controllers\Settings\McpOAuthRegisterController;
 use App\Http\Middleware\CheckUserIsActivated;
 use App\Http\Middleware\EnforceApiTwoFactorEnrollment;
 use App\Http\Middleware\ForceJsonAcceptableOnMcp;
@@ -69,6 +70,16 @@ $protectedResourceMetadata = function (string $path = ''): array {
 // wins for the same URI pattern, so this order guarantees ours win
 // even for the nested routes that Laravel MCP would otherwise own.
 Mcp::oauthRoutes();
+
+// Override laravel/mcp's POST /oauth/register with Snipe-IT's
+// approval-aware controller. Router matches last-registered-wins for
+// the same URI pattern, so this takes precedence over the vendor
+// registration above. Our controller accepts the same request shape
+// but sets status=pending for off-allow-list redirect URIs instead of
+// rejecting them outright, so admins can approve third-party mobile
+// apps + hosted MCP clients from the admin UI.
+Route::post('/oauth/register', McpOAuthRegisterController::class)
+    ->name('mcp.oauth.register');
 
 Route::get('/.well-known/oauth-authorization-server', fn () => response()->json($authServerMetadata()))
     ->name('mcp.oauth.authorization-server');
