@@ -34,6 +34,10 @@ class CreateCompanyTool extends Tool
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
+        if ($denied = $this->rejectUnauthorizedWebhookFields($request)) {
+            return $denied;
+        }
+
         $company = new Company;
         try {
             $validated = Validator::make($request->all(), $company->getPreparedRules())->validate();
@@ -78,5 +82,25 @@ class CreateCompanyTool extends Tool
             'id' => $schema->number()->description('Numeric ID of the new company'),
             'name' => $schema->string()->description('Name of the new company'),
         ];
+    }
+
+    /**
+     * Returns an error response when the caller sent any
+     * Company::GATED_WEBHOOK_FIELDS and is not a superuser.
+     */
+    private function rejectUnauthorizedWebhookFields(Request $request): ?ResponseFactory
+    {
+        $requested = array_values(array_intersect(
+            Company::GATED_WEBHOOK_FIELDS,
+            array_keys($request->all())
+        ));
+
+        if (empty($requested) || auth()->user()->isSuperUser()) {
+            return null;
+        }
+
+        return Response::make(Response::error(trans('admin/companies/message.webhook_fields_require_superuser', [
+            'fields' => implode(', ', $requested),
+        ])));
     }
 }

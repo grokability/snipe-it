@@ -5,7 +5,9 @@ namespace App\Mcp\Tools;
 use App\Enums\McpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
 use App\Mcp\Traits\SnipeMcpTool;
+use App\Models\Company;
 use App\Models\Location;
+use App\Models\Setting;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
@@ -61,6 +63,11 @@ class CreateLocationTool extends Tool
         }
 
         $location->fill(array_merge($input, $validated));
+        // Location-level company scoping is only on when scope_locations_fmcs
+        // is enabled.
+        if (Setting::getSettings()->scope_locations_fmcs) {
+            $location->company_id = Company::getIdForCurrentUser($input['company_id'] ?? null);
+        }
 
         if ($location->save()) {
             return $this->structuredResponse(

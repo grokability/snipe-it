@@ -69,12 +69,8 @@ class ListUploadsTool extends Tool
 
         $object = $modelClass::withTrashed()->find($request->get('id'));
 
-        if (! $object) {
+        if (! $object || ! Gate::allows('files', $object)) {
             return Response::make(Response::error(trans('mcp.object_not_found', ['type' => $objectType])));
-        }
-
-        if (! Gate::allows('files', $object)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         $limit = $request->filled('limit') ? max(1, min(config('app.max_results'), (int) $request->get('limit'))) : 25;

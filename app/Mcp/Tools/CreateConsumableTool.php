@@ -82,6 +82,9 @@ class CreateConsumableTool extends Tool
         }
 
         $consumable->fill(array_merge($input, $validated));
+        // Scope the submitted company_id to one the caller can see, so
+        // a non-superuser can't plant a consumable into another tenant.
+        $consumable->company_id = Company::getIdForCurrentUser($input['company_id'] ?? null);
         $consumable->created_by = auth()->id();
 
         if ($consumable->save()) {

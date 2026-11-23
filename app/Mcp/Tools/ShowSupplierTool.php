@@ -33,18 +33,14 @@ class ShowSupplierTool extends Tool
             'name' => 'nullable|string|max:255',
         ]);
 
-        $supplier = $this->resolveSupplier($request);
-
-        if (! $supplier) {
-            if (! $request->filled('id') && ! $request->filled('name')) {
-                return Response::make(Response::error(trans('mcp.id_or_name_required')));
-            }
-
-            return Response::make(Response::error(trans('mcp.supplier_not_found')));
+        if (! $request->filled('id') && ! $request->filled('name')) {
+            return Response::make(Response::error(trans('mcp.id_or_name_required')));
         }
 
-        if (! Gate::allows('view', $supplier)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        $supplier = $this->resolveSupplier($request);
+
+        if (! $supplier || ! Gate::allows('view', $supplier)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.supplier')])));
         }
 
         $supplier->loadCount('assets as assets_count', 'licenses as licenses_count');

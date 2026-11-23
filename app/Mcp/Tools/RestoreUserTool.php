@@ -28,10 +28,6 @@ class RestoreUserTool extends Tool
             return $denied;
         }
 
-        if (! Gate::allows('delete', User::class)) {
-            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.user')])));
-        }
-
         $request->validate([
             'id' => 'required|integer',
         ]);
@@ -44,6 +40,14 @@ class RestoreUserTool extends Tool
 
         if (! $user->deleted_at) {
             return Response::make(Response::error(trans('mcp.user_not_deleted')));
+        }
+
+        // Instance-level delete gate. The policy's delete() returns
+        // false when deleted_at is set unless the caller is a
+        // superuser. Passing the class instead of the instance here
+        // skipped that conditional.
+        if (! Gate::allows('delete', $user)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.user')])));
         }
 
         $user->restore();

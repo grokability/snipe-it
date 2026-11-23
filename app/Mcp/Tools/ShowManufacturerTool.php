@@ -33,18 +33,14 @@ class ShowManufacturerTool extends Tool
             'name' => 'nullable|string|max:255',
         ]);
 
-        $manufacturer = $this->resolveManufacturer($request);
-
-        if (! $manufacturer) {
-            if (! $request->filled('id') && ! $request->filled('name')) {
-                return Response::make(Response::error(trans('mcp.id_or_name_required')));
-            }
-
-            return Response::make(Response::error(trans('mcp.manufacturer_not_found')));
+        if (! $request->filled('id') && ! $request->filled('name')) {
+            return Response::make(Response::error(trans('mcp.id_or_name_required')));
         }
 
-        if (! Gate::allows('view', $manufacturer)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        $manufacturer = $this->resolveManufacturer($request);
+
+        if (! $manufacturer || ! Gate::allows('view', $manufacturer)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.manufacturer')])));
         }
 
         $manufacturer->loadCount('assets as assets_count');

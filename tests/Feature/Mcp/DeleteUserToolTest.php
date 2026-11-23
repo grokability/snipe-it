@@ -95,4 +95,41 @@ class DeleteUserToolTest extends TestCase
         $this->assertTrue($this->handle(['id' => $user->id])->responses()->first()->isError());
         $this->assertNotSoftDeleted('users', ['id' => $user->id]);
     }
+
+    public function test_users_delete_holder_cannot_soft_delete_an_admin()
+    {
+        $admin = User::factory()->admin()->create();
+
+        $response = $this->handle(['id' => $admin->id]);
+
+        $this->assertTrue($response->responses()->first()->isError());
+        $this->assertNotSoftDeleted('users', ['id' => $admin->id]);
+    }
+
+    public function test_users_delete_holder_cannot_soft_delete_a_superuser()
+    {
+        $superuser = User::factory()->superuser()->create();
+
+        $response = $this->handle(['id' => $superuser->id]);
+
+        $this->assertTrue($response->responses()->first()->isError());
+        $this->assertNotSoftDeleted('users', ['id' => $superuser->id]);
+    }
+
+    public function test_bulk_delete_by_ids_skips_admin_in_batch()
+    {
+        $regular = User::factory()->create();
+        $admin = User::factory()->admin()->create();
+
+        $response = $this->handle([
+            'ids' => [$regular->id, $admin->id],
+            'dry_run' => false,
+            'skip_undeletable' => true,
+        ]);
+        $content = $response->getStructuredContent();
+
+        $this->assertSoftDeleted('users', ['id' => $regular->id]);
+        $this->assertNotSoftDeleted('users', ['id' => $admin->id]);
+        $this->assertEquals(1, $content['deleted_count']);
+    }
 }

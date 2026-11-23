@@ -3,6 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
+use App\Events\CheckoutableCheckedIn;
 use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\AccessoryCheckout;
 use App\Models\Asset;
@@ -88,10 +89,6 @@ class OffboardUserTool extends Tool
             return Response::make(Response::error(trans('mcp.offboard_identifier_required')));
         }
 
-        if ($matches->isEmpty()) {
-            return Response::make(Response::error(trans('mcp.user_not_found')));
-        }
-
         if ($matches->count() > 1) {
             return $this->structuredResponse(
                 trans('mcp.offboard_ambiguous_user'),
@@ -111,8 +108,11 @@ class OffboardUserTool extends Tool
 
         $user = $matches->first();
 
-        if (! Gate::allows('update', $user)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        // Single error path for not-found and every denial case so the
+        // response cannot be used to probe which usernames exist or
+        // which ones belong to admins / superusers.
+        if (! $user || ! Gate::allows('delete', $user) || ! Gate::allows('canEditAuthFields', $user)) {
+            return Response::make(Response::error(trans('mcp.user_not_found')));
         }
 
         // Cross-company guard. The target user resolution + Gate check
@@ -231,16 +231,34 @@ class OffboardUserTool extends Tool
                 }
 
                 foreach ($accessoryCheckouts as $checkout) {
+                    $accessory = $checkout->accessory;
+                    if (! $accessory || ! Gate::allows('checkin', $accessory)) {
+                        $failures[] = "accessory checkout {$checkout->id}: permission denied";
+
+                        continue;
+                    }
                     if (! $checkout->delete()) {
                         $failures[] = "accessory checkout {$checkout->id}: delete failed";
+
+                        continue;
                     }
+                    event(new CheckoutableCheckedIn($accessory, $user, $actor, $note));
                 }
 
                 foreach ($licenseSeats as $seat) {
+                    $license = $seat->license;
+                    if (! $license || ! Gate::allows('checkin', $license)) {
+                        $failures[] = "license seat {$seat->id}: permission denied";
+
+                        continue;
+                    }
                     $seat->assigned_to = null;
                     if (! $seat->save()) {
                         $failures[] = "license seat {$seat->id}: release failed";
+
+                        continue;
                     }
+                    event(new CheckoutableCheckedIn($seat, $user, $actor, $note));
                 }
 
                 User::whereIn('id', $managedUsers->pluck('id'))->update(['manager_id' => null]);

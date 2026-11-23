@@ -5,7 +5,9 @@ namespace App\Mcp\Tools;
 use App\Enums\McpScope;
 use App\Mcp\Traits\ResolvesForeignKeyByName;
 use App\Mcp\Traits\SnipeMcpTool;
+use App\Models\Company;
 use App\Models\Location;
+use App\Models\Setting;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
@@ -69,6 +71,11 @@ class UpdateLocationTool extends Tool
         }
 
         $location->fill(array_merge($input, $validated));
+        // Only re-scope company when the caller actually tried to
+        // change it, and only when scope_locations_fmcs is on.
+        if (array_key_exists('company_id', $input) && Setting::getSettings()->scope_locations_fmcs) {
+            $location->company_id = Company::getIdForCurrentUser($input['company_id']);
+        }
 
         if ($location->save()) {
             return $this->structuredResponse(

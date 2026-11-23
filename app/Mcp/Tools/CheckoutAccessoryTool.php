@@ -53,12 +53,8 @@ class CheckoutAccessoryTool extends Tool
 
         $accessory = $this->resolveAccessory($request);
 
-        if (! $accessory) {
-            return Response::make(Response::error(trans('mcp.accessory_not_found')));
-        }
-
-        if (! Gate::allows('checkout', $accessory)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $accessory || ! Gate::allows('checkout', $accessory)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.accessory')])));
         }
 
         if ($accessory->archived) {

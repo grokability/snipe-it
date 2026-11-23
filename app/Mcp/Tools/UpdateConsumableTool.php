@@ -87,6 +87,12 @@ class UpdateConsumableTool extends Tool
         }
 
         $consumable->fill(array_merge($input, $validated));
+        // Only re-scope company when the caller actually tried to
+        // change it, so an unrelated update doesn't move the
+        // consumable to the floater.
+        if (array_key_exists('company_id', $input)) {
+            $consumable->company_id = Company::getIdForCurrentUser($input['company_id']);
+        }
 
         if ($consumable->save()) {
             return $this->structuredResponse(

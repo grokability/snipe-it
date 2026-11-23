@@ -7,6 +7,7 @@ use App\Mcp\Traits\ResolvesForeignKeyByName;
 use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
 use App\Models\AssetModel;
+use App\Models\Company;
 use App\Models\Location;
 use App\Models\Statuslabel;
 use App\Models\Supplier;
@@ -87,6 +88,12 @@ class UpdateAssetTool extends Tool
         }
 
         $asset->fill(array_merge($input, $validated));
+        // Only re-scope company when the caller actually tried to
+        // change it. Otherwise fill() leaves the existing company_id
+        // untouched and we don't want to overwrite it with a floater.
+        if (array_key_exists('company_id', $input)) {
+            $asset->company_id = Company::getIdForCurrentUser($input['company_id']);
+        }
 
         if ($asset->save()) {
             return $this->structuredResponse(

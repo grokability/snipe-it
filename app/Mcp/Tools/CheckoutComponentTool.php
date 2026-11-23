@@ -45,12 +45,8 @@ class CheckoutComponentTool extends Tool
 
         $component = $this->resolveComponent($request);
 
-        if (! $component) {
-            return Response::make(Response::error(trans('mcp.component_not_found')));
-        }
-
-        if (! Gate::allows('checkout', $component)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $component || ! Gate::allows('checkout', $component)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.component')])));
         }
 
         if ($component->archived) {

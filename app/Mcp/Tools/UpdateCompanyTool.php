@@ -45,6 +45,10 @@ class UpdateCompanyTool extends Tool
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.company')])));
         }
 
+        if ($denied = $this->rejectUnauthorizedWebhookFields($request)) {
+            return $denied;
+        }
+
         $input = $request->all();
         if ($request->filled('new_name')) {
             $input['name'] = $request->get('new_name');
@@ -84,6 +88,26 @@ class UpdateCompanyTool extends Tool
         }
 
         return null;
+    }
+
+    /**
+     * Returns an error response when the caller sent any
+     * Company::GATED_WEBHOOK_FIELDS and is not a superuser.
+     */
+    private function rejectUnauthorizedWebhookFields(Request $request): ?ResponseFactory
+    {
+        $requested = array_values(array_intersect(
+            Company::GATED_WEBHOOK_FIELDS,
+            array_keys($request->all())
+        ));
+
+        if (empty($requested) || auth()->user()->isSuperUser()) {
+            return null;
+        }
+
+        return Response::make(Response::error(trans('admin/companies/message.webhook_fields_require_superuser', [
+            'fields' => implode(', ', $requested),
+        ])));
     }
 
     public function schema(JsonSchema $schema): array

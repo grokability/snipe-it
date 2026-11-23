@@ -83,4 +83,39 @@ class UpdateCompanyToolTest extends TestCase
 
         $this->assertDatabaseHas('companies', ['id' => $company->id, 'name' => 'Unchanged Corp']);
     }
+
+    public function test_non_superuser_cannot_set_webhook_fields()
+    {
+        $this->actingAs(User::factory()->admin()->create());
+        $company = Company::factory()->create(['name' => 'Target Corp', 'webhook_endpoint' => null]);
+
+        $response = $this->handle([
+            'id' => $company->id,
+            'webhook_endpoint' => 'https://attacker.example/hook',
+            'webhook_selected' => 'slack',
+        ]);
+
+        $this->assertTrue($response->responses()->first()->isError());
+        $this->assertDatabaseHas('companies', ['id' => $company->id, 'webhook_endpoint' => null]);
+    }
+
+    public function test_superuser_can_set_webhook_fields()
+    {
+        $this->actingAs(User::factory()->superuser()->create());
+        $company = Company::factory()->create(['name' => 'Target Corp']);
+        $webhook = 'https://hooks.slack.com/services/T0/B0/X';
+
+        $content = $this->handle([
+            'id' => $company->id,
+            'webhook_endpoint' => $webhook,
+            'webhook_selected' => 'slack',
+        ])->getStructuredContent();
+
+        $this->assertTrue($content['success']);
+        $this->assertDatabaseHas('companies', [
+            'id' => $company->id,
+            'webhook_endpoint' => $webhook,
+            'webhook_selected' => 'slack',
+        ]);
+    }
 }

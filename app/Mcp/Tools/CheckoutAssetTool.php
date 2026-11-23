@@ -55,12 +55,8 @@ class CheckoutAssetTool extends Tool
 
         $asset = $this->resolveAsset($request);
 
-        if (! $asset) {
-            return Response::make(Response::error(trans('mcp.asset_not_found')));
-        }
-
-        if (! Gate::allows('checkout', $asset)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $asset || ! Gate::allows('checkout', $asset)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset')])));
         }
 
         if (! $asset->availableForCheckout()) {

@@ -71,6 +71,9 @@ class CreateAssetTool extends Tool
         }
 
         $asset->fill(array_merge($input, $validated));
+        // Scope the submitted company_id to one the caller can see, so
+        // a non-superuser can't plant an asset into another tenant.
+        $asset->company_id = Company::getIdForCurrentUser($input['company_id'] ?? null);
         $asset->created_by = auth()->id();
 
         if ($asset->save()) {

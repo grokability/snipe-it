@@ -70,12 +70,8 @@ class CreateMaintenanceTool extends Tool
             ? Asset::where('asset_tag', $request->get('asset_tag'))->first()
             : Asset::find($request->get('asset_id'));
 
-        if (! $asset) {
-            return Response::make(Response::error(trans('mcp.asset_not_found')));
-        }
-
-        if (! Gate::allows('update', $asset)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $asset || ! Gate::allows('update', $asset)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset')])));
         }
 
         // Build input with MCP aliases mapped to model column names.

@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -125,7 +126,7 @@ class DeleteUserTool extends Tool
             }
         }
 
-        [$deletable, $undeletable] = $targets->partition(fn (User $u) => $u->isDeletable());
+        [$deletable, $undeletable] = $targets->partition(fn (User $u) => $this->canDeleteTarget($u));
 
         if ($undeletable->isNotEmpty() && ! $request->boolean('skip_undeletable', false)) {
             return Response::make(Response::error(trans('mcp.bulk_batch_has_undeletable', [
@@ -134,6 +135,18 @@ class DeleteUserTool extends Tool
         }
 
         return $this->commitBulkDelete($deletable);
+    }
+
+    /**
+     * Combined gate every bulk target has to pass. Used by both the
+     * preview and the commit paths so the dry-run reflects what
+     * would actually happen.
+     */
+    private function canDeleteTarget(User $user): bool
+    {
+        return Gate::allows('delete', $user)
+            && Gate::allows('canEditAuthFields', $user)
+            && $user->isDeletable();
     }
 
     private function detectShape(Request $request): string
@@ -171,7 +184,10 @@ class DeleteUserTool extends Tool
     {
         $user = $this->resolveSingle($request);
 
-        if (! $user) {
+        // Single error path for not-found and every denial case so the
+        // response cannot be used to probe which user IDs / usernames
+        // / emails exist.
+        if (! $user || ! Gate::allows('delete', $user) || ! Gate::allows('canEditAuthFields', $user)) {
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.user')])));
         }
 
@@ -280,7 +296,7 @@ class DeleteUserTool extends Tool
 
     private function buildPreview(Collection $targets): ResponseFactory
     {
-        [$deletable, $undeletable] = $targets->partition(fn (User $u) => $u->isDeletable());
+        [$deletable, $undeletable] = $targets->partition(fn (User $u) => $this->canDeleteTarget($u));
 
         $sampleRows = $targets->take(10)->map(fn (User $u) => [
             'id' => $u->id,

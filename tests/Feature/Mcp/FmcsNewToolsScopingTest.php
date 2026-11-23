@@ -38,6 +38,7 @@ class FmcsNewToolsScopingTest extends TestCase
         $this->userInA = $this->companyA->users()->save(
             User::factory()
                 ->editUsers()
+                ->deleteUsers()
                 ->editAssets()
                 ->checkinAssets()
                 ->checkoutAssets()

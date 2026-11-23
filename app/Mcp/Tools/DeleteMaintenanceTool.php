@@ -33,12 +33,8 @@ class DeleteMaintenanceTool extends Tool
 
         $maintenance = Maintenance::find($request->get('id'));
 
-        if (! $maintenance) {
-            return Response::make(Response::error(trans('admin/maintenances/message.not_found')));
-        }
-
-        if (! $maintenance->isDeletable()) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $maintenance || ! $maintenance->isDeletable()) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('admin/maintenances/general.maintenance')])));
         }
 
         $maintenanceName = $maintenance->name;

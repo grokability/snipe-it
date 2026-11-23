@@ -57,4 +57,19 @@ class RestoreUserToolTest extends TestCase
         $this->assertTrue($this->handle(['id' => $user->id])->responses()->first()->isError());
         $this->assertSoftDeleted('users', ['id' => $user->id]);
     }
+
+    public function test_non_admin_with_users_delete_cannot_restore()
+    {
+        // Policy's delete() returns false when the target is trashed,
+        // so a non-admin holding users.delete must not be able to
+        // undo another admin's delete decision.
+        $this->actingAs(User::factory()->deleteUsers()->create());
+        $user = User::factory()->create();
+        $user->delete();
+
+        $response = $this->handle(['id' => $user->id]);
+
+        $this->assertTrue($response->responses()->first()->isError());
+        $this->assertSoftDeleted('users', ['id' => $user->id]);
+    }
 }

@@ -181,4 +181,39 @@ class OffboardUserToolTest extends TestCase
         $this->assertContains($report->id, $managedUserIds);
         $this->assertContains($location->id, $managedLocationIds);
     }
+
+    public function test_users_edit_alone_cannot_offboard()
+    {
+        // users.edit was previously enough. Now the final step is a
+        // soft-delete, so users.delete is required too.
+        $this->actingAs(User::factory()->editUsers()->create());
+        $target = User::factory()->create(['username' => 'leaver']);
+
+        $response = $this->handle(['username' => 'leaver', 'dry_run' => false]);
+
+        $this->assertTrue($response->responses()->first()->isError());
+        $this->assertNull($target->fresh()->deleted_at);
+    }
+
+    public function test_non_admin_cannot_offboard_an_admin()
+    {
+        $this->actingAs(User::factory()->editUsers()->deleteUsers()->create());
+        $admin = User::factory()->admin()->create(['username' => 'adminleaver']);
+
+        $response = $this->handle(['username' => 'adminleaver', 'dry_run' => false]);
+
+        $this->assertTrue($response->responses()->first()->isError());
+        $this->assertNull($admin->fresh()->deleted_at);
+    }
+
+    public function test_non_admin_cannot_offboard_a_superuser()
+    {
+        $this->actingAs(User::factory()->editUsers()->deleteUsers()->create());
+        $super = User::factory()->superuser()->create(['username' => 'superleaver']);
+
+        $response = $this->handle(['username' => 'superleaver', 'dry_run' => false]);
+
+        $this->assertTrue($response->responses()->first()->isError());
+        $this->assertNull($super->fresh()->deleted_at);
+    }
 }

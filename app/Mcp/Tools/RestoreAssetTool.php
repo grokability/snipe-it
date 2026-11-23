@@ -28,10 +28,6 @@ class RestoreAssetTool extends Tool
             return $denied;
         }
 
-        if (! Gate::allows('delete', Asset::class)) {
-            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset')])));
-        }
-
         $request->validate([
             'id' => 'required|integer',
         ]);
@@ -44,6 +40,14 @@ class RestoreAssetTool extends Tool
 
         if (! $asset->deleted_at) {
             return Response::make(Response::error(trans('mcp.asset_not_deleted')));
+        }
+
+        // Instance-level delete gate. The policy's delete() returns
+        // false when deleted_at is set unless the caller is a
+        // superuser. Passing the class instead of the instance here
+        // skipped that conditional.
+        if (! Gate::allows('delete', $asset)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.asset')])));
         }
 
         $asset->restore();

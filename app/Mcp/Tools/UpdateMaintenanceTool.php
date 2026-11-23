@@ -48,12 +48,8 @@ class UpdateMaintenanceTool extends Tool
 
         $maintenance = Maintenance::find($request->get('id'));
 
-        if (! $maintenance) {
-            return Response::make(Response::error(trans('admin/maintenances/message.not_found')));
-        }
-
-        if (! Gate::allows('update', $maintenance)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $maintenance || ! Gate::allows('update', $maintenance)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('admin/maintenances/general.maintenance')])));
         }
 
         $resolvedFks = $this->resolveForeignKeys($request);

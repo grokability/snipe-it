@@ -39,12 +39,8 @@ class CheckoutConsumableTool extends Tool
 
         $consumable = $this->resolveConsumable($request);
 
-        if (! $consumable) {
-            return Response::make(Response::error(trans('mcp.consumable_not_found')));
-        }
-
-        if (! Gate::allows('checkout', $consumable)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $consumable || ! Gate::allows('checkout', $consumable)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.consumable')])));
         }
 
         if ($consumable->archived) {

@@ -4,6 +4,7 @@ namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
 use App\Mcp\Traits\SnipeMcpTool;
+use App\Models\Actionlog;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Gate;
@@ -28,24 +29,37 @@ class Reset2FATool extends Tool
             return $denied;
         }
 
-        if (! Gate::allows('update', User::class)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
-        }
-
         $request->validate([
             'id' => 'required|integer',
         ]);
 
         $user = User::find($request->get('id'));
 
-        if (! $user) {
+        // Single error path for every denial case (not found, policy,
+        // canEditAuthFields, twoFactorResettable, demo mode) so the
+        // response cannot be used to probe which user IDs exist.
+        if (! $user
+            || ! Gate::allows('update', $user)
+            || ! $user->twoFactorResettable()
+            || ! Gate::allows('canEditAuthFields', $user)
+            || ! Gate::allows('editableOnDemo')
+        ) {
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.user')])));
         }
 
         $user->two_factor_secret = null;
         $user->two_factor_enrolled = 0;
         $user->two_factor_optin = 0;
-        $user->save();
+        $user->saveQuietly();
+
+        $log = new Actionlog;
+        $log->target_type = User::class;
+        $log->target_id = $user->id;
+        $log->item_type = User::class;
+        $log->item_id = $user->id;
+        $log->created_at = now();
+        $log->created_by = auth()->id();
+        $log->logaction('2FA reset');
 
         return $this->structuredResponse(
             trans('mcp.two_factor_reset', ['username' => $user->username]),

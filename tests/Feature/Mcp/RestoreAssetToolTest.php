@@ -58,4 +58,19 @@ class RestoreAssetToolTest extends TestCase
         $this->assertTrue($this->handle(['id' => $asset->id])->responses()->first()->isError());
         $this->assertSoftDeleted('assets', ['id' => $asset->id]);
     }
+
+    public function test_non_admin_with_assets_delete_cannot_restore()
+    {
+        // Policy's delete() returns false when the target is trashed,
+        // so a non-admin holding assets.delete must not be able to
+        // undo another admin's delete decision.
+        $this->actingAs(User::factory()->deleteAssets()->create());
+        $asset = Asset::factory()->create();
+        $asset->delete();
+
+        $response = $this->handle(['id' => $asset->id]);
+
+        $this->assertTrue($response->responses()->first()->isError());
+        $this->assertSoftDeleted('assets', ['id' => $asset->id]);
+    }
 }

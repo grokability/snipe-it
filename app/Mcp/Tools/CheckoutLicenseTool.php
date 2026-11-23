@@ -41,12 +41,8 @@ class CheckoutLicenseTool extends Tool
 
         $license = $this->resolveLicense($request);
 
-        if (! $license) {
-            return Response::make(Response::error(trans('mcp.license_not_found')));
-        }
-
-        if (! Gate::allows('checkout', $license)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+        if (! $license || ! Gate::allows('checkout', $license)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.license')])));
         }
 
         if ($license->numRemaining() < 1) {
