@@ -15,7 +15,6 @@ use App\Models\Setting;
 use App\Models\Statuslabel;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -255,9 +254,9 @@ class Helper
      * use this so the ?all=1 contract (used by the select2-checkboxes
      * Select All button) behaves the same across every picker.
      */
-    public static function paginateBuilderOrAll(Builder $query, int $defaultPerPage = 50, ?int $cap = null): LengthAwarePaginatorContract
+    public static function paginateBuilderOrAll(Builder $query, int $defaultPerPage = 50, ?int $cap = null): LengthAwarePaginator
     {
-        if (!request()->boolean('all')) {
+        if (! request()->boolean('all')) {
             return $query->paginate($defaultPerPage);
         }
 

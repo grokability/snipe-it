@@ -376,7 +376,7 @@ class StatuslabelsController extends Controller
         // This lets us have more flexibility in special cases like assets, where
         // they may not have a ->name value but we want to display something anyway
         foreach ($statuslabels as $statuslabel) {
-            $statuslabels->use_text = $statuslabel->name;
+            $statuslabel->use_text = $statuslabel->name;
         }
 
         return (new SelectlistTransformer)->transformSelectlist($statuslabels);
