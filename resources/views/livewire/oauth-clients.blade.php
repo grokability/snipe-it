@@ -69,7 +69,7 @@
                                     </span>
                                 @endif
                             </td>
-                            <td><code>{{ $client->redirect }}</code></td>
+                            <td>@if ($client->redirect)<code>{{ $client->redirect }}</code>@endif</td>
                             <td>{{ $client->associated_token_count ?? 0 }}</td>
                             <td>{{ $client->created_at ? Helper::getFormattedDateObject($client->created_at, 'datetime', false) : '' }}</td>
                             <td>
