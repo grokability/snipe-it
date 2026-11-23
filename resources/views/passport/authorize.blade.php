@@ -33,6 +33,26 @@
                                 {{ trans('passport.authorize_logged_in_as', ['username' => $user->username]) }}
                             </p>
 
+                            {{-- Show the exact redirect URI the OAuth
+                                 code will be delivered to. Users
+                                 browsing a phishing link won't see
+                                 attacker-controlled hosts in the
+                                 client name alone, so this is the last
+                                 chance for them to notice a redirect
+                                 to a domain they don't recognize. --}}
+                            @php
+                                $primaryRedirect = method_exists($client, 'getAttribute')
+                                    ? $client->primary_redirect_uri
+                                    : null;
+                            @endphp
+                            @if ($primaryRedirect)
+                                <x-callout type="warning" icon="warning">
+                                    {{ trans('admin/settings/mcp.consent_redirect_warning') }}
+                                    <br>
+                                    <code>{{ $primaryRedirect }}</code>
+                                </x-callout>
+                            @endif
+
                             @if (count($scopes) > 0)
                                 <p>{{ trans('general.permissions') }}</p>
 
