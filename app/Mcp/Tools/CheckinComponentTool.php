@@ -44,12 +44,12 @@ class CheckinComponentTool extends Tool
         // is typed cleanly below.
         $componentAsset = DB::table('components_assets')->find($request->get('component_asset_id'));
         if (! is_object($componentAsset)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.component')])));
         }
 
         $component = Component::find($componentAsset->component_id);
         if (! $component || ! Gate::allows('checkin', $component)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.component')])));
         }
 
         $maxCheckin = $componentAsset->assigned_qty ?? 1;

@@ -38,7 +38,7 @@ class CheckinAccessoryTool extends Tool
         $accessory = $checkout ? Accessory::find($checkout->accessory_id) : null;
 
         if (! $checkout || ! $accessory || ! Gate::allows('checkin', $accessory)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.accessory')])));
         }
 
         $target = $checkout->assigned_type && $checkout->assigned_to

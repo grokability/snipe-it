@@ -44,7 +44,7 @@ class CheckinLicenseTool extends Tool
         // "no" cases so seat state can't be probed by an unauthorized
         // caller.
         if (! $seat || ! $license || ! Gate::allows('checkout', $license)) {
-            return Response::make(Response::error(trans('mcp.unauthorized')));
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.license')])));
         }
 
         if (is_null($seat->assigned_to) && is_null($seat->asset_id)) {
