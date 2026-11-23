@@ -409,14 +409,24 @@ $(function () {
                 options.minimumResultsForSearch = minResults === 'Infinity' ? Infinity : minResults;
             }
             // Any select2 that lives inside a Bootstrap 3 modal has to be
-            // initialized with dropdownParent set to the modal, or the
-            // search input gets appended to <body> where Bootstrap 3's
-            // modal enforceFocus handler steals focus away from it. See
-            // the same fix on initLivewireSelect2 below for the full
-            // failure-mode explanation.
+            // initialized with dropdownParent set to an element INSIDE the
+            // modal, or the search input gets appended to <body> where
+            // Bootstrap 3's modal enforceFocus handler steals focus away
+            // from it. See the same fix on initLivewireSelect2 below for
+            // the full failure-mode explanation.
+            //
+            // Prefer .modal-content over the outer .modal element. In BS3
+            // the modal itself has overflow-y: auto and .modal-dialog
+            // scrolls inside it; attaching the dropdown to .modal parks
+            // it at absolute coords in the modal's coordinate space, so
+            // once the user scrolls the dialog the dropdown visually
+            // detaches from its button. .modal-content lives inside
+            // .modal-dialog, so it scrolls with the content and the
+            // dropdown stays glued to the button (#20125).
             var $modal = $obj.closest('.modal');
             if ($modal.length) {
-                options.dropdownParent = $modal;
+                var $modalContent = $modal.find('.modal-content').first();
+                options.dropdownParent = $modalContent.length ? $modalContent : $modal;
             }
             $obj.select2(options);
         });
@@ -430,7 +440,12 @@ $(function () {
         // Same modal-detection as the plain select2 init above: scope the
         // dropdown panel to any enclosing Bootstrap 3 modal so its search
         // input doesn't get its focus stolen by the modal's enforceFocus.
+        // Prefer .modal-content so the dropdown scrolls with the dialog
+        // rather than parking at the modal's coordinate-space absolute
+        // position (#20125).
         var $modal = link.closest('.modal');
+        var $modalContent = $modal.find('.modal-content').first();
+        var $ajaxDropdownParent = $modalContent.length ? $modalContent : ($modal.length ? $modal : $(document.body));
 
         link.select2({
 
@@ -440,7 +455,7 @@ $(function () {
              */
             placeholder: '',
             allowClear: true,
-            dropdownParent: $modal.length ? $modal : $(document.body),
+            dropdownParent: $ajaxDropdownParent,
             language: $('meta[name="language"]').attr('content'),
             dir: $('meta[name="language-direction"]').attr('content'),
             
@@ -746,6 +761,11 @@ $(function () {
         var link = $(item);
         var endpoint = link.data('endpoint');
         var $modal = link.closest('.modal');
+        // Prefer .modal-content so the dropdown scrolls with the dialog
+        // instead of parking at the modal's absolute-coord position
+        // (#20125).
+        var $checkboxesModalContent = $modal.find('.modal-content').first();
+        var $checkboxesDropdownParent = $checkboxesModalContent.length ? $checkboxesModalContent : ($modal.length ? $modal : $(document.body));
         var placeholder = link.data('placeholder') || '';
         var countLabel = link.data('count-label') || '{n} selected';
 
@@ -761,7 +781,7 @@ $(function () {
             placeholder: placeholder,
             allowClear: false,
             closeOnSelect: false,
-            dropdownParent: $modal.length ? $modal : $(document.body),
+            dropdownParent: $checkboxesDropdownParent,
             language: $('meta[name="language"]').attr('content'),
             dir: $('meta[name="language-direction"]').attr('content'),
             templateResult: function (data) {
@@ -2321,7 +2341,11 @@ function initLivewireSelect2($scope) {
         var opts = {};
         var $modal = $el.closest('.modal');
         if ($modal.length) {
-            opts.dropdownParent = $modal;
+            // Prefer .modal-content so the dropdown scrolls with the
+            // dialog body. See the same note on the plain .select2
+            // init above and GH #20125.
+            var $modalContent = $modal.find('.modal-content').first();
+            opts.dropdownParent = $modalContent.length ? $modalContent : $modal;
         }
         $el.select2(opts);
     });
