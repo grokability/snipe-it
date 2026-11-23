@@ -800,4 +800,60 @@ class HelperTest extends TestCase
         $this->assertSame('', Helper::safeColor(null));
         $this->assertSame('', Helper::safeColor(''));
     }
+
+    public function test_paginate_builder_or_all_uses_default_per_page_without_all_flag(): void
+    {
+        // Baseline: a plain selectlist call (no ?all=1) must behave as
+        // if the controller had called ->paginate(50) directly, so the
+        // helper is a safe drop-in for every endpoint it's wired into.
+        Location::factory()->count(5)->create();
+
+        $paginator = Helper::paginateBuilderOrAll(Location::query());
+
+        $this->assertSame(50, $paginator->perPage());
+        $this->assertSame(5, $paginator->total());
+    }
+
+    public function test_paginate_builder_or_all_expands_to_cap_when_all_flag_set(): void
+    {
+        // With ?all=1 the helper must return every row in one page so
+        // the select2-checkboxes Select All button doesn't need to walk
+        // paginated pages (which is the whole gap #20106 reported).
+        Location::factory()->count(75)->create();
+
+        $this->app['request']->merge(['all' => 1]);
+
+        $paginator = Helper::paginateBuilderOrAll(Location::query());
+
+        $this->assertSame(75, $paginator->total());
+        $this->assertCount(75, $paginator->items(), 'All 75 rows must land on page 1 under ?all=1.');
+    }
+
+    public function test_paginate_builder_or_all_honors_client_cap_as_lowering_only_ceiling(): void
+    {
+        // A client ?cap=N is a suggestion that can only LOWER the
+        // effective cap, never raise it above the server knob. This
+        // test pins the lowering-only direction.
+        Location::factory()->count(30)->create();
+
+        $this->app['request']->merge(['all' => 1, 'cap' => 10]);
+
+        $paginator = Helper::paginateBuilderOrAll(Location::query());
+
+        $this->assertCount(10, $paginator->items(), 'Client ?cap=10 must lower the returned set to 10 rows.');
+    }
+
+    public function test_paginate_builder_or_all_rejects_cap_higher_than_server_ceiling(): void
+    {
+        // Malicious ?cap=99999999 must not blow past the server-side
+        // MAX_UNPAGINATED config, so cap the cap at the server value.
+        config(['app.max_unpaginated_records' => 25]);
+        Location::factory()->count(40)->create();
+
+        $this->app['request']->merge(['all' => 1, 'cap' => 99999999]);
+
+        $paginator = Helper::paginateBuilderOrAll(Location::query());
+
+        $this->assertCount(25, $paginator->items(), 'Client cap must be clamped to the server-side ceiling.');
+    }
 }

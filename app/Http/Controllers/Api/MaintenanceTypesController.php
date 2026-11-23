@@ -121,7 +121,7 @@ class MaintenanceTypesController extends Controller
             $types = $types->where('name', 'LIKE', '%'.$request->input('search').'%');
         }
 
-        $types = $types->orderBy('name', 'ASC')->paginate(50);
+        $types = Helper::paginateBuilderOrAll($types->orderBy('name', 'ASC'));
 
         foreach ($types as $type) {
             $type->use_text = $type->name;

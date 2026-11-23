@@ -273,7 +273,9 @@ class CategoriesController extends Controller
             $categories = $categories->where('name', 'LIKE', '%'.$request->input('search').'%');
         }
 
-        $categories = $categories->where('category_type', $category_type)->orderBy('name', 'ASC')->paginate(50);
+        $categories = Helper::paginateBuilderOrAll(
+            $categories->where('category_type', $category_type)->orderBy('name', 'ASC')
+        );
 
         // Loop through and set some custom properties for the transformer to use.
         // This lets us have more flexibility in special cases like assets, where

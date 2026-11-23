@@ -370,7 +370,7 @@ class StatuslabelsController extends Controller
             $statuslabels = $statuslabels->where('archived', '=', '1');
         }
 
-        $statuslabels = $statuslabels->orderBy('name', 'ASC')->paginate(50);
+        $statuslabels = Helper::paginateBuilderOrAll($statuslabels->orderBy('name', 'ASC'));
 
         // Loop through and set some custom properties for the transformer to use.
         // This lets us have more flexibility in special cases like assets, where

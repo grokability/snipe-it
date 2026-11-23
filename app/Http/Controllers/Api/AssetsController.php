@@ -782,7 +782,7 @@ class AssetsController extends Controller
             $assets = $assets->AssignedSearch($request->input('search'));
         }
 
-        $assets = $assets->paginate(50);
+        $assets = Helper::paginateBuilderOrAll($assets);
 
         // Loop through and set some custom properties for the transformer to use.
         // This lets us have more flexibility in special cases like assets, where

@@ -288,7 +288,7 @@ class ManufacturersController extends Controller
             $manufacturers = $manufacturers->where('name', 'LIKE', '%'.$request->input('search').'%');
         }
 
-        $manufacturers = $manufacturers->orderBy('name', 'ASC')->paginate(50);
+        $manufacturers = Helper::paginateBuilderOrAll($manufacturers->orderBy('name', 'ASC'));
 
         // Loop through and set some custom properties for the transformer to use.
         // This lets us have more flexibility in special cases like assets, where

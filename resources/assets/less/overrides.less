@@ -4298,6 +4298,26 @@ dl.table-display {
   padding-right: 28px;
 }
 
+/* select2 4.0.x clears .select2-search__field's placeholder attribute
+   every time a selection changes (Search.prototype.update) and then
+   calls resizeSearch, which without a placeholder shrinks the inline
+   search field to (val.length + 1) * 0.75em — about 9px when empty.
+   For our multi-select checkbox pickers that's an invisible stub
+   wedged between the pills, and the operator can't find where to type
+   next. This forced the inline search field onto its own full-width line
+   underneath the chips so it never disappears regardless of what
+   resizeSearch set its width to. */
+.js-select2-checkboxes-search-container .select2-search--inline {
+  display: block;
+  width: 100%;
+}
+
+.js-select2-checkboxes-search-container .select2-search--inline .select2-search__field {
+  width: 100% !important;
+  min-width: 100px;
+  margin-left: 0;
+}
+
 .js-select2-checkboxes-search-clear {
   position: absolute;
   right: 10px;

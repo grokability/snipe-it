@@ -244,4 +244,38 @@ class LocationsForSelectListTest extends TestCase
         $this->assertContains($companyLocation->id, $ids);
         $this->assertNotContains($floaterLocation->id, $ids, 'Null-company location must not appear under strict mode.');
     }
+
+    public function test_all_1_returns_every_matching_location_past_page_size_and_honors_search(): void
+    {
+        // #20106: Select All on the advanced-filter multi-select was
+        // returning page 1 only (hard cap at 50) when ?all=1 was set,
+        // and (via a JS bug) was posting search='' from the wrong DOM
+        // location so the server returned everything instead of the
+        // operator's typed scope. Server-side half of the fix: the
+        // locations selectlist now routes through paginateCollectionOrAll,
+        // which honors ?all=1 AND still applies the search filter the
+        // controller already runs earlier in the method. Names must be
+        // unique per Location's unique_undeleted rule, so each row gets
+        // a distinct integer suffix while still sharing the typeahead
+        // substring.
+        for ($i = 0; $i < 60; $i++) {
+            Location::factory()->create(['name' => 'Scope Match 1-'.$i]);
+        }
+        for ($i = 0; $i < 60; $i++) {
+            Location::factory()->create(['name' => 'Scope Match 2-'.$i]);
+        }
+        for ($i = 0; $i < 10; $i++) {
+            Location::factory()->create(['name' => 'Unrelated Zone '.$i]);
+        }
+
+        $response = $this->actingAsForApi(User::factory()->createUsers()->create())
+            ->getJson(route('api.locations.selectlist', ['all' => 1, 'search' => 'Scope Match']))
+            ->assertOk();
+
+        $texts = collect($response->json('results'))->pluck('text')->all();
+        $this->assertCount(120, $texts, '?all=1 must return every search-matching row, not just page 1.');
+        foreach ($texts as $text) {
+            $this->assertStringContainsString('Scope Match', $text, 'Non-matching row leaked past the typeahead filter.');
+        }
+    }
 }
