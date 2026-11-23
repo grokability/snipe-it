@@ -133,6 +133,7 @@ class IconHelper
             case 'alerts':
                 return 'far fa-flag';
             case 'password':
+            case 'key':
                 return 'fa-solid fa-key';
             case 'api-key':
                 return 'fas fa-user-secret';
