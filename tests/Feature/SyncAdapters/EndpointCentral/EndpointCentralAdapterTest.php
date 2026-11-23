@@ -45,6 +45,41 @@ class EndpointCentralAdapterTest extends TestCase
         $this->assertDatabaseHas('assets', ['name' => 'win-01']);
     }
 
+    public function test_computers_endpoint_is_called_with_size_and_page_query_params()
+    {
+
+        $adapter = $this->configuredCloudAdapter();
+
+        Http::fake([
+            'accounts.zoho.com/oauth/v2/token' => Http::response([
+                'access_token' => 'fake-access-token',
+                'expires_in' => 3600,
+            ]),
+            '*/dcapi/som/computersInfo*' => Http::response($this->computersListResponse([
+                $this->computer(id: 'ec-1', name: 'host1'),
+            ])),
+        ]);
+
+        iterator_to_array($adapter->pull());
+
+        Http::assertSent(function ($request) {
+            if (! str_contains($request->url(), '/dcapi/som/computersInfo')) {
+                return false;
+            }
+
+            $query = [];
+            $queryString = parse_url($request->url(), PHP_URL_QUERY);
+            if (is_string($queryString)) {
+                parse_str($queryString, $query);
+            }
+
+            return array_key_exists('size', $query)
+                && array_key_exists('page', $query)
+                && ! array_key_exists('pageLimit', $query)
+                && ! array_key_exists('pagelimit', $query);
+        });
+    }
+
     public function test_access_token_is_cached_across_requests_within_a_pull()
     {
         $adapter = $this->configuredCloudAdapter();
@@ -96,8 +131,8 @@ class EndpointCentralAdapterTest extends TestCase
 
         iterator_to_array($adapter->pull());
 
-        Http::assertSent(fn($request) => str_contains($request->url(), 'accounts.zoho.eu/oauth/v2/token'));
-        Http::assertNotSent(fn($request) => str_contains($request->url(), 'accounts.zoho.com/oauth/v2/token'));
+        Http::assertSent(fn ($request) => str_contains($request->url(), 'accounts.zoho.eu/oauth/v2/token'));
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), 'accounts.zoho.com/oauth/v2/token'));
     }
 
     public function test_onprem_mode_sends_authtoken_header_and_skips_oauth()
@@ -117,7 +152,7 @@ class EndpointCentralAdapterTest extends TestCase
 
         iterator_to_array($adapter->pull());
 
-        Http::assertNotSent(fn($request) => str_contains($request->url(), 'accounts.zoho'));
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), 'accounts.zoho'));
         Http::assertSent(function ($request) {
             return $request->hasHeader('Authorization', 'Zoho-authtoken fake-onprem-token');
         });
@@ -142,13 +177,13 @@ class EndpointCentralAdapterTest extends TestCase
                         [
                             'serialNumber' => 'ABC123SERIAL',
                             'hardwareManufacturer' => 'Dell',
-                        ]
+                        ],
                     ],
                     'motherBoardDetails' => [
                         [
                             'hardwareName' => 'Latitude 7420',
                             'hardwareManufacturer' => 'Dell',
-                        ]
+                        ],
                     ],
                 ],
             ]),
@@ -175,7 +210,7 @@ class EndpointCentralAdapterTest extends TestCase
         $records = iterator_to_array($adapter->pull());
 
         $this->assertNull($records[0]->hardwareSerial);
-        Http::assertNotSent(fn($request) => str_contains($request->url(), '/hardware'));
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), '/hardware'));
     }
 
     public function test_push_sends_remarks_update_with_asset_tag()
@@ -205,7 +240,7 @@ class EndpointCentralAdapterTest extends TestCase
         $this->assertTrue($adapter->push($asset, ['asset_tag']));
 
         Http::assertSent(function ($request) {
-            if (!str_contains($request->url(), '/updateRemarks')) {
+            if (! str_contains($request->url(), '/updateRemarks')) {
                 return false;
             }
             $body = json_decode($request->body(), true);
@@ -258,7 +293,7 @@ class EndpointCentralAdapterTest extends TestCase
         return [
             'computerId' => $id,
             'computerName' => $name,
-            'computerFQDNName' => $name . '.example.com',
+            'computerFQDNName' => $name.'.example.com',
             'ipAddress' => $ip,
             'macAddress' => $mac,
             'osName' => $os,
