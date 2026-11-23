@@ -147,7 +147,7 @@
 
 
 
-    <x-input.image-upload :item="$item" :imagePath="app('assets_upload_path')" />
+    <x-input.image-upload :item="$item" :imagePath="app('assets_upload_path')" :clonedModel="$cloned_model ?? null" />
 
 
     <div id='custom_fields_content'>
