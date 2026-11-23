@@ -75,8 +75,7 @@ class EndpointCentralClient
         private readonly ?string $accountsHost = null,
         // On-prem mode: API Key / AuthToken from Admin -> Integrations in the on-prem console.
         private readonly ?string $authToken = null,
-    ) {
-    }
+    ) {}
 
     /**
      * Iterate every managed computer on the tenant, one page at a
@@ -98,10 +97,11 @@ class EndpointCentralClient
         $page = 1;
 
         do {
+
             $response = $this->request()
                 ->get('/dcapi/som/computersInfo', [
                     'page' => $page,
-                    'pageLimit' => $pageSize,
+                    'size' => $pageSize,
                 ])
                 ->throw()
                 ->json();
@@ -111,7 +111,7 @@ class EndpointCentralClient
                 ?? $response['computers']
                 ?? (is_array($response) ? $response : []);
 
-            if (!is_array($results)) {
+            if (! is_array($results)) {
                 $results = [];
             }
 
@@ -124,7 +124,7 @@ class EndpointCentralClient
             // shape, so a short page is the terminal signal.
             $done = count($results) < $pageSize;
             $page++;
-        } while (!$done);
+        } while (! $done);
     }
 
     /**
@@ -142,14 +142,14 @@ class EndpointCentralClient
     {
         try {
             $response = $this->request()
-                ->get('/dcapi/inventory/computers/' . rawurlencode($resourceId) . '/hardware')
+                ->get('/dcapi/inventory/computers/'.rawurlencode($resourceId).'/hardware')
                 ->throwIfServerError()
                 ->json();
         } catch (\Throwable) {
             return null;
         }
 
-        if (!is_array($response)) {
+        if (! is_array($response)) {
             return null;
         }
 
@@ -189,13 +189,13 @@ class EndpointCentralClient
 
         if ($this->mode === self::MODE_CLOUD) {
             $request = $request->withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->bearer(),
+                'Authorization' => 'Zoho-oauthtoken '.$this->bearer(),
             ]);
         } else {
             // On-prem AuthToken header per ME's historical scheme.
             // FIXME: confirm against a modern on-prem tenant.
             $request = $request->withHeaders([
-                'Authorization' => 'Zoho-authtoken ' . $this->authToken,
+                'Authorization' => 'Zoho-authtoken '.$this->authToken,
             ]);
         }
 
@@ -221,7 +221,7 @@ class EndpointCentralClient
         $response = Http::asForm()
             ->withOptions(['allow_redirects' => false])
             ->timeout(30)
-            ->post(rtrim((string) $this->accountsHost, '/') . '/oauth/v2/token', [
+            ->post(rtrim((string) $this->accountsHost, '/').'/oauth/v2/token', [
                 'grant_type' => 'refresh_token',
                 'refresh_token' => $this->refreshToken,
                 'client_id' => $this->clientId,
