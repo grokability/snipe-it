@@ -90,6 +90,16 @@
                     </a>
                 </li>
             @endcan
+
+                @if (auth()->user()?->isSuperUser())
+                    <li class="list-group-item">
+                        <a href="{{ route('settings.oauth.index').'#pending-oauth-clients' }}">
+                            <x-icon type="oauth" class="fa-fw"/>
+                            <span class="dashboard-attention-label">{{ trans('admin/settings/mcp.dashboard_tile_label') }}</span>
+                            <span class="badge dashboard-attention-count">{{ number_format($pendingOauthClients) }}</span>
+                        </a>
+                    </li>
+                @endif
         </ul>
     </div>
 </div>
