@@ -16,9 +16,9 @@ use Illuminate\Support\Facades\Http;
  * via the vendor-specific `X-Cisco-Meraki-API-Key` header.
  *
  * Pagination: Meraki returns a `Link` HTTP response header containing
- * a rel=next URL when more pages exist. Follow it until the header
- * is absent. Batch size configurable via `perPage` up to Meraki's
- * cap of 1000.
+ * a rel=next URL, even on the last page. Follow it until the header
+ * is absent or a page comes back short. Batch size configurable via
+ * `perPage` up to Meraki's cap of 1000.
  */
 class MerakiClient
 {
@@ -51,12 +51,13 @@ class MerakiClient
             do {
                 $response = $this->request()->get($url)->throw();
                 $devices = $response->json();
+                $devices = is_array($devices) ? $devices : [];
 
-                foreach ((is_array($devices) ? $devices : []) as $device) {
+                foreach ($devices as $device) {
                     yield $device + ['_networkId' => $networkId];
                 }
 
-                $url = $this->extractNextLink($response);
+                $url = count($devices) < $perPage ? null : $this->extractNextLink($response);
             } while ($url !== null);
         }
     }
@@ -95,11 +96,17 @@ class MerakiClient
 
         if (preg_match('/<([^>]+)>;\s*rel="?next"?/', $link, $m)) {
             // Meraki returns absolute URLs in the Link header. Strip
-            // the base host so the PendingRequest's baseUrl still
-            // applies uniformly.
+            // the base host and the base URL's path (/api/v1) so the
+            // PendingRequest's baseUrl still applies uniformly.
             $parsed = parse_url($m[1]);
+            $path = $parsed['path'] ?? '/';
+            $basePath = rtrim(parse_url($this->baseUrl, PHP_URL_PATH) ?? '', '/');
 
-            return ($parsed['path'] ?? '/').(isset($parsed['query']) ? '?'.$parsed['query'] : '');
+            if ($basePath !== '' && str_starts_with($path, $basePath.'/')) {
+                $path = substr($path, strlen($basePath));
+            }
+
+            return $path.(isset($parsed['query']) ? '?'.$parsed['query'] : '');
         }
 
         return null;

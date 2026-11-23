@@ -5,8 +5,10 @@ namespace Tests\Feature\SyncAdapters\MerakiSystemsManager;
 use App\Models\Statuslabel;
 use App\Models\SyncAdapterConfig;
 use App\Models\SyncAdapterInstance;
+use App\SyncAdapters\MerakiSystemsManager\MerakiClient;
 use App\SyncAdapters\MerakiSystemsManager\MerakiSystemsManagerAdapter;
 use App\SyncAdapters\SyncAdapter;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -87,6 +89,32 @@ class MerakiSystemsManagerAdapterTest extends TestCase
         $this->assertSame('10.0.0.7', $record->primaryIp);
         $this->assertSame('macOS', $record->os);
         $this->assertNotNull($record->lastSeen);
+    }
+
+    public function test_follows_next_link_and_stops_on_short_page()
+    {
+        $nextUrl = 'https://api.meraki.com/api/v1/networks/N_100/sm/devices?perPage=2&startingAfter=D_2';
+
+        Http::fake([
+            '*/organizations/*/networks*' => Http::response([
+                ['id' => 'N_100', 'productTypes' => ['systemsManager']],
+            ]),
+            '*/networks/N_100/sm/devices*' => Http::sequence()
+                ->push([
+                    $this->merakiDevice(id: 'D_1', name: 'meraki-host-1'),
+                    $this->merakiDevice(id: 'D_2', name: 'meraki-host-2'),
+                ], 200, ['Link' => '<'.$nextUrl.'>; rel=next'])
+                ->push([
+                    $this->merakiDevice(id: 'D_3', name: 'meraki-host-3'),
+                ], 200, ['Link' => '<https://api.meraki.com/api/v1/networks/N_100/sm/devices?perPage=2&startingAfter=D_3>; rel=next']),
+        ]);
+
+        $client = new MerakiClient('https://api.meraki.com/api/v1', 'fake-key', '111111');
+        $devices = iterator_to_array($client->devices(perPage: 2), false);
+
+        $this->assertSame(['D_1', 'D_2', 'D_3'], array_column($devices, 'id'));
+        Http::assertSent(fn (Request $request) => $request->url() === $nextUrl);
+        Http::assertSentCount(3);
     }
 
     private function configuredAdapter(): MerakiSystemsManagerAdapter
