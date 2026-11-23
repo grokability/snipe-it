@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Settings;
 
-use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\Settings\SettingsController;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request;
