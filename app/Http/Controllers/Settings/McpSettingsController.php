@@ -98,9 +98,14 @@ class McpSettingsController extends Controller
                 return;
             }
 
+            // Active superusers with a usable mail address, minus the
+            // acting superuser. Empty / null emails are filtered at
+            // the query so the mail driver never gets a blank To.
             $recipients = User::query()
                 ->where('activated', 1)
                 ->where('id', '!=', $actor->id)
+                ->whereNotNull('email')
+                ->where('email', '!=', '')
                 ->onlySuperAdmins()
                 ->get();
 

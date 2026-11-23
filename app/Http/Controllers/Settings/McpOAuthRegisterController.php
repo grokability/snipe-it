@@ -189,8 +189,11 @@ class McpOAuthRegisterController extends OAuthRegisterController
     protected function notifyPendingSuperusers(OAuthClient $client, ?string $registeredIp): void
     {
         try {
+            // Active superusers with an mail address.
             $recipients = User::query()
                 ->where('activated', 1)
+                ->whereNotNull('email')
+                ->where('email', '!=', '')
                 ->onlySuperAdmins()
                 ->get();
 
