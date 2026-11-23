@@ -15,6 +15,8 @@ use App\Models\Setting;
 use App\Models\Statuslabel;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -246,6 +248,26 @@ class Helper
             max($capped->count(), 1),
             1,
         );
+    }
+
+    /**
+     * Selectlist endpoints that pass an Eloquent builder straight to ->paginate()
+     * use this so the ?all=1 contract (used by the select2-checkboxes
+     * Select All button) behaves the same across every picker.
+     */
+    public static function paginateBuilderOrAll(Builder $query, int $defaultPerPage = 50, ?int $cap = null): LengthAwarePaginatorContract
+    {
+        if (!request()->boolean('all')) {
+            return $query->paginate($defaultPerPage);
+        }
+
+        $cap ??= (int) config('app.max_unpaginated_records', 5000);
+        $clientCap = (int) request()->integer('cap', PHP_INT_MAX);
+        if ($clientCap > 0) {
+            $cap = min($cap, $clientCap);
+        }
+
+        return $query->paginate(max($cap, 1));
     }
 
     public static function parseEscapedMarkedownInline($str = null)

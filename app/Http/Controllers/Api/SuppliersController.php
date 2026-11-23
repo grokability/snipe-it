@@ -268,7 +268,7 @@ class SuppliersController extends Controller
             $suppliers = $suppliers->where('suppliers.name', 'LIKE', '%'.$request->input('search').'%');
         }
 
-        $suppliers = $suppliers->orderBy('name', 'ASC')->paginate(50);
+        $suppliers = Helper::paginateBuilderOrAll($suppliers->orderBy('name', 'ASC'));
 
         // Loop through and set some custom properties for the transformer to use.
         // This lets us have more flexibility in special cases like assets, where

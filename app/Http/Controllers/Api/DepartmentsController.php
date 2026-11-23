@@ -217,7 +217,7 @@ class DepartmentsController extends Controller
             $departments = $departments->where('name', 'LIKE', '%'.$request->input('search').'%');
         }
 
-        $departments = $departments->orderBy('name', 'ASC')->paginate(50);
+        $departments = Helper::paginateBuilderOrAll($departments->orderBy('name', 'ASC'));
 
         // Loop through and set some custom properties for the transformer to use.
         // This lets us have more flexibility in special cases like assets, where

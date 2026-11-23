@@ -550,7 +550,7 @@ class LocationsController extends Controller
             $locations_formatted = new Collection($location_options);
         }
 
-        return (new SelectlistTransformer)->transformSelectlist(Helper::paginateCollection($locations_formatted));
+        return (new SelectlistTransformer)->transformSelectlist(Helper::paginateCollectionOrAll($locations_formatted));
     }
 
     public function history(Request $request, Location $location): JsonResponse|array

@@ -1048,20 +1048,50 @@ $(function () {
                 var $clearSearch = $('<button type="button" class="js-select2-checkboxes-search-clear" aria-label="Clear search">&times;</button>');
                 $search.after($clearSearch);
 
+                // Re-resolve the search field each call rather than
+                // capturing it once at select2:open time. On multi-
+                // select pickers the inline .select2-search__field
+                // sits inside a .select2-search--inline wrapper whose
+                // width tracks the typed text, and select2 can
+                // re-render that subtree as text changes. A closure-
+                // captured jQuery reference then points at a detached
+                // input that no longer has select2's live keyup
+                // listener bound, so .val('').trigger('keyup') fires
+                // events into the void and the dropdown never re-
+                // queries. Reading it fresh keeps the handler bound
+                // to whichever node is live right now.
+                function liveSearchField() {
+                    var $live = $dropdown.find('.select2-search__field');
+                    if ($live.length) {
+                        return $live;
+                    }
+                    return link.data('select2').$selection.find('.select2-search__field');
+                }
                 function toggleClearSearch() {
-                    var value = $search.val();
+                    var value = liveSearchField().val();
                     $searchContainer.toggleClass('has-content', typeof value === 'string' && value.length > 0);
                 }
                 toggleClearSearch();
-                $search.on('input', toggleClearSearch);
-                $clearSearch.on('mousedown', function (e) {
-                    // mousedown rather than click so this fires before
-                    // select2's own result-click handling swallows the
-                    // event.
+                // Delegate the input listener on the persistent
+                // container instead of the field itself, so select2
+                // re-renders of the inline search field don't lose
+                // the has-content toggle.
+                $searchContainer.on('input', '.select2-search__field', toggleClearSearch);
+                $clearSearch.on('mousedown click', function (e) {
+                    // mousedown rather than click alone so this fires
+                    // before select2's own result-click handling
+                    // swallows the event (single-select case, where
+                    // the × sits inside the dropdown). Bind click too
+                    // so the subsequent click event is also consumed
+                    // on multi-select pickers where the × lives in
+                    // the selection control and select2's own
+                    // selection-mousedown would otherwise toggle the
+                    // dropdown.
                     e.preventDefault();
                     e.stopPropagation();
-                    $search.val('').trigger('input').trigger('keyup');
-                    $search.focus();
+                    var $live = liveSearchField();
+                    $live.val('').trigger('input').trigger('keyup');
+                    $live.focus();
                 });
             }
 
@@ -1096,7 +1126,19 @@ $(function () {
                     renderBadges();
                     return;
                 }
+                // select2 puts the search field in different places
+                // depending on single- vs multi-select. For multi (which
+                // every advanced-filter widget is) the search input
+                // lives inline in the selection control, NOT in the
+                // dropdown. Reading it from $dropdown alone misses the
+                // typed term and posts search='' to the server, which
+                // then returns every row and makes Select All select
+                // things outside the operator's filter. Mirror the two-
+                // location probe earlier in this handler (lines ~1026).
                 var $search = $dropdown.find('.select2-search__field');
+                if (! $search.length) {
+                    $search = link.data('select2').$selection.find('.select2-search__field');
+                }
                 var searchTerm = $search.val() || '';
                 var payload = {
                     all: 1,

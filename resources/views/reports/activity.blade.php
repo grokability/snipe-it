@@ -98,6 +98,9 @@
                             data-endpoint="users"
                             data-placeholder="{{ trans('general.created_by_label') }}"
                             aria-label="{{ trans('general.created_by_label') }}"
+                            data-select-all="1"
+                            data-select-all-label="{{ trans('general.select_all') }}"
+                            data-clear-all-label="{{ trans('general.deselect_all') }}"
                             multiple
                             style="width: 100%;"
                         >
