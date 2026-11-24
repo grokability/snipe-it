@@ -1162,6 +1162,20 @@ class User extends SnipeModel implements AuthenticatableContract, AuthorizableCo
     }
 
     /**
+     * Passport v13's `Laravel\Passport\Bridge\User::__construct` is
+     * strictly typed `string $identifier`, and the default
+     * `Authenticatable::getAuthIdentifier` returns the primary key as-is
+     * (users.id is an auto-increment integer, so a plain int). Cast to
+     * string here so the bridge accepts it. Without the override,
+     * every token-issuance path fires a TypeError before the response
+     * is built.
+     */
+    public function getAuthIdentifier(): string
+    {
+        return (string) $this->getKey();
+    }
+
+    /**
      * The association-blocker half of isDeletable(): true only when the
      * user has no assigned assets / accessories / licenses / consumables
      * and isn't managing any users or locations. Split out from
