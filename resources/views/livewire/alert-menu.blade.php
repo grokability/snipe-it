@@ -39,32 +39,34 @@
                 </li>
                 <li>
                     <ul class="menu">
-                        {{-- Cap the visual list at 50 to keep the dropdown a
-                             sensible height even when a big deployment has
-                             hundreds of low-inventory items simultaneously. --}}
-                        @if (count($alert_items) <= 50)
-                            @foreach ($alert_items as $alert_item)
-                                <li>
-                                    <a href="{{ route($alert_item['type'].'.show', $alert_item['id']) }}">
-                                        <h2 class="task_menu">{{ $alert_item['name'] }}
-                                            <small class="pull-right">
-                                                {{ $alert_item['remaining'] }} {{ trans('general.remaining') }}
-                                            </small>
-                                        </h2>
-                                        <div class="progress xs">
-                                            <div class="progress-bar progress-bar-yellow"
-                                                 style="width: {{ $alert_item['percent'] }}%"
-                                                 role="progressbar"
-                                                 aria-valuenow="{{ $alert_item['percent'] }}"
-                                                 aria-valuemin="0"
-                                                 aria-valuemax="100">
-                                                <span class="sr-only">{{ $alert_item['percent'] }}%</span>
-                                            </div>
+                        {{-- Cap the visual list at 50 so the dropdown stays
+                             a sensible height even when a big deployment has
+                             hundreds of low-inventory items simultaneously.
+                             Earlier form gated the entire @foreach on count
+                             <= 50, which rendered an empty menu when the
+                             count exceeded 50. Slice-then-render shows the
+                             first 50 regardless of total. --}}
+                        @foreach (array_slice($alert_items, 0, 50) as $alert_item)
+                            <li>
+                                <a href="{{ route($alert_item['type'].'.show', $alert_item['id']) }}">
+                                    <h2 class="task_menu">{{ $alert_item['name'] }}
+                                        <small class="pull-right">
+                                            {{ $alert_item['remaining'] }} {{ trans('general.remaining') }}
+                                        </small>
+                                    </h2>
+                                    <div class="progress xs">
+                                        <div class="progress-bar progress-bar-yellow"
+                                             style="width: {{ $alert_item['percent'] }}%"
+                                             role="progressbar"
+                                             aria-valuenow="{{ $alert_item['percent'] }}"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100">
+                                            <span class="sr-only">{{ $alert_item['percent'] }}%</span>
                                         </div>
-                                    </a>
-                                </li>
-                            @endforeach
-                        @endif
+                                    </div>
+                                </a>
+                            </li>
+                        @endforeach
                     </ul>
                 </li>
             @endif
