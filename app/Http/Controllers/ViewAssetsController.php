@@ -178,7 +178,7 @@ class ViewAssetsController extends Controller
         // information falls out of comparing $requestingUser to
         // the auth id.
         $cancel_by_admin = $requestingUser !== null
-            && (int) $requestingUser !== (int) auth()->id();
+            && (int) $requestingUser !== auth()->id();
         $fullItemType = 'App\\Models\\'.studly_case($itemType);
 
         if ($itemType == 'asset_model') {

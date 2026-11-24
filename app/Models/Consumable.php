@@ -62,6 +62,11 @@ class Consumable extends SnipeModel implements Checkoutable, Importable
         'company_id' => 'integer',
         'qty' => 'integer',
         'min_amt' => 'integer',
+        'auto_consume_on_checkout' => 'boolean',
+    ];
+
+    protected $attributes = [
+        'auto_consume_on_checkout' => true,
     ];
 
     /**
@@ -70,7 +75,7 @@ class Consumable extends SnipeModel implements Checkoutable, Importable
     public $rules = [
         'name' => 'required|max:255',
         'qty' => 'required|integer|min:0|max:99999',
-        'category_id' => 'required|integer',
+        'category_id' => 'required|integer|exists:categories,id,category_type,consumable',
         'company_id' => 'integer|nullable|exists:companies,id|fmcs_company',
         'location_id' => 'exists:locations,id|nullable|fmcs_location',
         'min_amt' => 'integer|min:0|max:99999|nullable',
@@ -80,6 +85,7 @@ class Consumable extends SnipeModel implements Checkoutable, Importable
         'default_purchase_cost' => 'numeric|nullable|gte:0|max:99999999999999999.99',
         'requestable' => ['nullable', 'boolean'],
         'archived' => ['nullable', 'boolean'],
+        'auto_consume_on_checkout' => ['nullable', 'boolean'],
     ];
 
     /**
@@ -142,6 +148,7 @@ class Consumable extends SnipeModel implements Checkoutable, Importable
         'model_number',
         'qty',
         'min_amt',
+        'auto_consume_on_checkout',
         'requestable',
         'archived',
         'notes',
@@ -240,6 +247,11 @@ class Consumable extends SnipeModel implements Checkoutable, Importable
                 'field' => 'requestable',
                 'type' => 'boolean',
                 'label' => trans('admin/hardware/general.requestable'),
+            ],
+            [
+                'field' => 'auto_consume_on_checkout',
+                'type' => 'boolean',
+                'label' => trans('admin/consumables/general.auto_consume_on_checkout'),
             ],
             [
                 'field' => 'qty',
@@ -451,6 +463,18 @@ class Consumable extends SnipeModel implements Checkoutable, Importable
             $value = null;
         }
         $this->attributes['archived'] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * Same empty-string normalization as the requestable/archived
+     * setters.
+     */
+    public function setAutoConsumeOnCheckoutAttribute($value): void
+    {
+        if ($value == '') {
+            $value = null;
+        }
+        $this->attributes['auto_consume_on_checkout'] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
 
     public function isDeletable()

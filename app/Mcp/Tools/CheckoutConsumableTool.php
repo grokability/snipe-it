@@ -62,6 +62,7 @@ class CheckoutConsumableTool extends Tool
             'created_by' => auth()->id(),
             'assigned_to' => $user->id,
             'note' => $request->get('note'),
+            'consumed_at' => $consumable->auto_consume_on_checkout ? now() : null,
         ]);
 
         event(new CheckoutableCheckedOut(

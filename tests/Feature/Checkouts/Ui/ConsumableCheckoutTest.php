@@ -251,6 +251,54 @@ class ConsumableCheckoutTest extends TestCase
         $response->assertSessionHas('sign_in_place', true);
     }
 
+    public function test_checkout_stamps_consumed_at_when_auto_consume_flag_is_on()
+    {
+        $consumable = Consumable::factory()->create([
+            'qty' => 5,
+            'auto_consume_on_checkout' => true,
+        ]);
+        $user = User::factory()->create();
+
+        $this->actingAs(User::factory()->checkoutConsumables()->create())
+            ->post(route('consumables.checkout.store', $consumable), [
+                'assigned_user' => $user->id,
+                'checkout_qty' => 2,
+            ]);
+
+        $pivots = \Illuminate\Support\Facades\DB::table('consumables_users')
+            ->where('consumable_id', $consumable->id)
+            ->get();
+
+        $this->assertCount(2, $pivots);
+        foreach ($pivots as $pivot) {
+            $this->assertNotNull($pivot->consumed_at, 'consumed_at should be stamped at checkout when auto_consume_on_checkout is true');
+        }
+    }
+
+    public function test_checkout_leaves_consumed_at_null_when_auto_consume_flag_is_off()
+    {
+        $consumable = Consumable::factory()->create([
+            'qty' => 5,
+            'auto_consume_on_checkout' => false,
+        ]);
+        $user = User::factory()->create();
+
+        $this->actingAs(User::factory()->checkoutConsumables()->create())
+            ->post(route('consumables.checkout.store', $consumable), [
+                'assigned_user' => $user->id,
+                'checkout_qty' => 2,
+            ]);
+
+        $pivots = \Illuminate\Support\Facades\DB::table('consumables_users')
+            ->where('consumable_id', $consumable->id)
+            ->get();
+
+        $this->assertCount(2, $pivots);
+        foreach ($pivots as $pivot) {
+            $this->assertNull($pivot->consumed_at, 'consumed_at should stay null at checkout when auto_consume_on_checkout is false');
+        }
+    }
+
     public function test_cannot_check_out_more_than_physically_remain_when_units_are_held_outside_viewers_company()
     {
         $this->settings->enableMultipleFullCompanySupport();

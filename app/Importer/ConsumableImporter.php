@@ -59,6 +59,7 @@ class ConsumableImporter extends ItemImporter
         $this->setItemFromCsvIfPresent($row, 'qty', 'quantity');
         $this->setItemFromCsvIfPresent($row, 'requestable');
         $this->setItemFromCsvIfPresent($row, 'archived');
+        $this->setItemFromCsvIfPresent($row, 'auto_consume_on_checkout');
         $this->setItemFromCsvIfPresent($row, 'item_no');
 
         if ($this->csvRowHas($row, 'purchase_date')) {
@@ -189,6 +190,7 @@ class ConsumableImporter extends ItemImporter
             'created_by' => $this->created_by,
             'assigned_to' => $target->id,
             'note' => 'Checkout from CSV Importer',
+            'consumed_at' => $consumable->auto_consume_on_checkout ? now() : null,
         ]);
 
         event(new CheckoutableCheckedOut(

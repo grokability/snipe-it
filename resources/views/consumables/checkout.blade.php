@@ -16,6 +16,12 @@
 
             <x-box header="{{ $consumable->name }}">
 
+            @if ($consumable->auto_consume_on_checkout)
+                <x-callout type="info" icon="info">
+                    {{ trans('admin/consumables/general.auto_consume_checkout_notice') }}
+                </x-callout>
+            @endif
+
             @if ($consumable->name)
                 <x-form.static :label="trans('admin/consumables/general.consumable_name')">{{ $consumable->name }}</x-form.static>
             @endif

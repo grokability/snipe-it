@@ -17,6 +17,7 @@
 
         <x-form :$item route="{{ isset($item->id) ? route('consumables.update', ['consumable' => $item->id]) : route('consumables.store') }}">
 
+
             <x-box top_submit>
                 @if ($item->id)
                     <x-slot:header>{{ $item->name }}</x-slot:header>
@@ -132,7 +133,14 @@
 
                 <x-input.image-upload :item="$item" :imagePath="app('consumables_upload_path')" :clonedModel="$cloned_model ?? null" />
 
-                <x-form.checkbox-row
+                    <x-form.checkbox-row
+                        name="auto_consume_on_checkout"
+                        :label="trans('admin/consumables/general.auto_consume_on_checkout')"
+                        :help_text="trans('admin/consumables/general.auto_consume_on_checkout_help')"
+                        :item="$item"
+                    />
+
+                    <x-form.checkbox-row
                     name="requestable"
                     :label="trans('admin/hardware/general.requestable')"
                     :item="$item"

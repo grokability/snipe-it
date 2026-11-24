@@ -99,6 +99,98 @@ class CheckLowInventoryTest extends TestCase
         );
     }
 
+    /**
+     * auto_consume_on_checkout = true: every checkout is treated as
+     * destroyed stock. qty=5, min_amt=3, 3 outstanding (no consumed_at)
+     * must fire the alert because the flag collapses outstanding into
+     * consumed for alert-trigger purposes.
+     */
+    public function test_consumable_with_auto_consume_flag_counts_outstanding_as_consumed()
+    {
+        $this->settings->set(['alert_threshold' => 0]);
+
+        $consumable = Consumable::factory()->create([
+            'qty' => 5,
+            'min_amt' => 3,
+            'auto_consume_on_checkout' => true,
+        ]);
+        $user = User::factory()->create();
+        for ($i = 0; $i < 3; $i++) {
+            $consumable->users()->attach($consumable->id, [
+                'consumable_id' => $consumable->id,
+                'assigned_to' => $user->id,
+                'created_by' => $user->id,
+                'consumed_at' => null,
+            ]);
+        }
+
+        $this->assertContains(
+            $consumable->id,
+            $this->idsForType(Helper::checkLowInventory(), 'consumables'),
+        );
+    }
+
+    /**
+     * auto_consume_on_checkout = false: outstanding rows do NOT trigger
+     * the alert. qty=5, min_amt=3, 3 outstanding (no consumed_at) must
+     * leave the item above the floor because outstanding stock could
+     * come back.
+     */
+    public function test_consumable_without_auto_consume_ignores_outstanding_rows()
+    {
+        $this->settings->set(['alert_threshold' => 0]);
+
+        $consumable = Consumable::factory()->create([
+            'qty' => 5,
+            'min_amt' => 3,
+            'auto_consume_on_checkout' => false,
+        ]);
+        $user = User::factory()->create();
+        for ($i = 0; $i < 3; $i++) {
+            $consumable->users()->attach($consumable->id, [
+                'consumable_id' => $consumable->id,
+                'assigned_to' => $user->id,
+                'created_by' => $user->id,
+                'consumed_at' => null,
+            ]);
+        }
+
+        $this->assertNotContains(
+            $consumable->id,
+            $this->idsForType(Helper::checkLowInventory(), 'consumables'),
+        );
+    }
+
+    /**
+     * Regardless of the flag, rows with consumed_at set count against
+     * the alert math. This also pins the display "remaining" to
+     * numRemaining()'s (qty - total_checkouts) shape so the number on
+     * the alert dropdown doesn't drift from the UI grid.
+     */
+    public function test_consumable_remaining_on_alert_matches_ui_grid()
+    {
+        $this->settings->set(['alert_threshold' => 0]);
+
+        $consumable = Consumable::factory()->create([
+            'qty' => 5,
+            'min_amt' => 3,
+            'auto_consume_on_checkout' => true,
+        ]);
+        $user = User::factory()->create();
+        for ($i = 0; $i < 3; $i++) {
+            $consumable->users()->attach($consumable->id, [
+                'consumable_id' => $consumable->id,
+                'assigned_to' => $user->id,
+                'created_by' => $user->id,
+                'consumed_at' => now(),
+            ]);
+        }
+
+        $rows = collect(Helper::checkLowInventory())->where('type', 'consumables')->keyBy('id');
+        $this->assertTrue($rows->has($consumable->id));
+        $this->assertSame(2, (int) $rows[$consumable->id]['remaining']);
+    }
+
     public function test_accessory_at_min_amt_is_not_flagged_as_low()
     {
         $this->settings->set(['alert_threshold' => 0]);

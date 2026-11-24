@@ -4365,10 +4365,21 @@
         return actions;
     };
 
+    // Status pill for the Assigned tab on the consumable show page.
+    // row.status is the flat enum from the API ('consumed' / 'outstanding').
+    // Falls back to outstanding styling if the field is missing so a stale
+    // JS bundle rendering fresh API data doesn't produce an empty cell.
+    window.consumableAssignmentStatusFormatter = function (value, row) {
+        if (row.status === 'consumed') {
+            return '<span class="label label-default">{{ trans('general.consumed') }}</span>';
+        }
+        return '<span class="label label-warning">{{ trans('general.outstanding') }}</span>';
+    };
+
     // Actions column for the Assigned tab on the consumable show page.
-    // The Assigned tab only lists outstanding rows, so when the consume
-    // action isn't available the row shouldn't be here at all. Fail
-    // closed to an empty cell.
+    // Consumed rows render an empty actions cell (available_actions.consume
+    // is false on them from the API). Outstanding rows get a Mark Consumed
+    // button.
     window.consumablesConsumeActionFormatter = function (value, row) {
         if (!row.available_actions || !row.available_actions.consume) {
             return '';

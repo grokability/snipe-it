@@ -30,20 +30,71 @@
             </x-page-column>
         @endif
 
+            @can('checkout', $consumable)
+
+                @if (! $consumable->auto_consume_on_checkout && $consumable->numOutstanding() > 0)
+                    <x-page-column>
+                        <x-callout type="info" icon="info">
+                            {{ trans_choice('admin/consumables/general.outstanding_bulk_consume_callout', $consumable->numOutstanding(), ['count' => $consumable->numOutstanding()]) }}
+                            <form method="POST" action="{{ route('consumables.bulkconsume.store') }}" style="display:inline; margin-left:1em;">
+                                @csrf
+                                <input type="hidden" name="bulk_actions" value="consume">
+                                @foreach ($consumable->outstandingAssignments()->pluck('id') as $pivotId)
+                                    <input type="hidden" name="ids[]" value="{{ $pivotId }}">
+                                @endforeach
+                                <button type="submit" class="btn btn-sm bg-purple text-right">
+                                    {{ trans('admin/consumables/general.outstanding_bulk_consume_action') }}
+                                </button>
+                            </form>
+                        </x-callout>
+                    </x-page-column>
+                @endif
+            @endcan
+
         <x-page-column class="col-md-9 main-panel">
+            @php
+                // Auto-consume parents land new checkouts directly on the
+                // Consumed tab, so default Assigned active means admins
+                // open the show page to an almost-always-empty table.
+                // Flip the ordering so Consumed is the default active
+                // tab for auto-consume items.
+                $consumedFirst = (bool) $consumable->auto_consume_on_checkout;
+            @endphp
             <x-tabs>
                 <x-slot:tabnav>
 
-                    <x-tabs.nav-item
+                    @if ($consumedFirst)
+                        <x-tabs.nav-item
+                            name="consumed"
+                            icon_type="consumed"
+                            label="{{ trans('general.consumed') }}"
+                            count="{{ $consumable->numConsumed() }}"
+                        />
+
+                        <x-tabs.nav-item
                             name="assigned"
-                            class="active"
                             icon_type="checkedout"
                             label="{{ trans('general.assigned') }}"
                             count="{{ $consumable->numOutstanding() }}"
-                    />
+                        />
+                    @else
+                        <x-tabs.nav-item
+                            name="assigned"
+                            icon_type="checkedout"
+                            label="{{ trans('general.assigned') }}"
+                            count="{{ $consumable->numOutstanding() }}"
+                        />
+
+                        <x-tabs.nav-item
+                            name="consumed"
+                            icon_type="consumed"
+                            label="{{ trans('general.consumed') }}"
+                            count="{{ $consumable->numConsumed() }}"
+                        />
+                    @endif
 
                     <x-tabs.files-tab :item="$consumable" count="{{ $consumable->uploads()->count() }}"/>
-                    <x-tabs.orders-tab count="{{ $consumable->ordersCount() }}"/>
+                    <x-tabs.orders-tab count="{{ $consumable->orderItemsCount() }}"/>
                     <x-tabs.history-tab count="{{ $consumable->history()->count() }}" :model="$consumable"/>
                     <x-tabs.upload-tab :item="$consumable"/>
 
@@ -57,7 +108,7 @@
                             <x-slot:bulkactions>
                                 <x-table.bulk-actions
                                     name="consumableCheckedOut"
-                                    :action_route="route('consumables.bulkconsume.show')"
+                                    :action_route="route('consumables.bulkconsume.store')"
                                     model_name="consumables_user"
                                     :actions="[
                                         'consume' => ['label' => trans('admin/consumables/general.bulk_consume')],
@@ -68,9 +119,16 @@
 
                         <x-table
                             name="consumableCheckedOut" :presenter="\App\Presenters\ConsumablePresenter::checkedOut()"
-                            :api_url="route('api.consumables.show.users', $consumable->id)"
+                            :api_url="route('api.consumables.show.users', $consumable->id).'?status=outstanding'"
                         />
 
+                    </x-tabs.pane>
+
+                    <x-tabs.pane name="consumed">
+                        <x-table
+                            name="consumableConsumed" :presenter="\App\Presenters\ConsumablePresenter::consumed()"
+                            :api_url="route('api.consumables.show.users', $consumable->id).'?status=consumed'"
+                        />
                     </x-tabs.pane>
 
                     <x-tabs.pane name="files">

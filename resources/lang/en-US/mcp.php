@@ -154,6 +154,8 @@ return [
     'consumable_updated' => 'Consumable :name updated successfully',
     'consumable_deleted' => 'Consumable :name deleted successfully',
     'consumable_checked_out' => 'Consumable :name checked out to :username',
+    'consumable_outstanding_consumed' => ':count outstanding distribution of :name was marked consumed.|:count outstanding distributions of :name were marked consumed.',
+    'consumable_no_outstanding_to_consume' => 'Consumable :name has no outstanding distributions to mark consumed.',
 
     // -----------------------------------------------------------------
     // License messages

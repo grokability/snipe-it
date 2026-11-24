@@ -1021,23 +1021,18 @@ class Helper
         // alias directly, which MySQL accepts but PostgreSQL rejects
         // ("column does not exist" because PG won't resolve SELECT
         // aliases in HAVING). See issue #19891.
-        //
-        // Low-stock alert fires when the "still-in-play" count drops
-        // below (min_amt + threshold). Still-in-play means not yet
-        // marked consumed, so an outstanding distribution (handed out,
-        // not yet reported used up) still counts against min_amt
-        // rather than tripping the alert. This matches the Consumable
-        // policy decision that consumed is terminal and permanent.
-        $consumablesSub = Consumable::select('id', 'name', 'qty', 'min_amt')
+
+        $consumablesSub = Consumable::select('id', 'name', 'qty', 'min_amt', 'auto_consume_on_checkout')
             ->withCount(['consumableAssignments as consumed_count' => function ($query) {
                 $query->whereNotNull('consumed_at');
             }])
+            ->withCount('consumableAssignments as checkouts_count')
             ->whereNotNull('min_amt')
             ->notArchived();
         $consumables = Consumable::query()
             ->withoutGlobalScopes()
             ->fromSub($consumablesSub, 'consumables')
-            ->whereRaw('(qty - consumed_count) < (min_amt + ?)', [$alert_threshold])
+            ->whereRaw('(qty - CASE WHEN auto_consume_on_checkout THEN checkouts_count ELSE consumed_count END) < (min_amt + ?)', [$alert_threshold])
             ->get();
 
         // Archived accessories are retired from active inventory and
@@ -1107,7 +1102,10 @@ class Helper
         $all_count = 0;
 
         foreach ($consumables as $consumable) {
-            $avail = $consumable->qty - $consumable->consumables_users_count;
+            // Match numRemaining() on the UI grid. See the subquery
+            // comment above for why the display number diverges from
+            // the trigger threshold's CASE math.
+            $avail = $consumable->qty - $consumable->checkouts_count;
             $percent = $consumable->qty > 0
                 ? number_format((($avail / $consumable->qty) * 100), 0)
                 : 100;

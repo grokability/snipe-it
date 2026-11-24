@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Consumables;
 
 use App\Http\Controllers\Controller;
+use App\Models\Actionlog;
 use App\Models\Company;
 use App\Models\Consumable;
+use App\Models\ConsumableAssignment;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,6 +32,7 @@ class BulkConsumablesController extends Controller
         'min_amt',
         'requestable',
         'archived',
+        'auto_consume_on_checkout',
     ];
 
     /**
@@ -129,7 +132,9 @@ class BulkConsumablesController extends Controller
             }
         }
 
-        if (empty($updateData)) {
+        $markOutstandingConsumed = $request->boolean('mark_outstanding_consumed');
+
+        if (empty($updateData) && !$markOutstandingConsumed) {
             return redirect()->route('consumables.index')
                 ->with('warning', trans('admin/consumables/message.bulk.no_fields_updated'));
         }
@@ -139,14 +144,22 @@ class BulkConsumablesController extends Controller
 
         $updated = 0;
         $failed_rows = [];
+        $consumedRows = 0;
         foreach ($authorized as $consumable) {
-            $consumable->fill($updateData);
-            if ($consumable->save()) {
-                $updated++;
+            if (!empty($updateData)) {
+                $consumable->fill($updateData);
+                if (!$consumable->save()) {
+                    $failed_rows[] = $consumable->name . ': ' . $consumable->getErrors()->first();
 
-                continue;
+                    continue;
+                }
+                $updated++;
             }
-            $failed_rows[] = $consumable->name.': '.$consumable->getErrors()->first();
+
+            // Mark consumed
+            if ($markOutstandingConsumed && Gate::allows('checkout', $consumable)) {
+                $consumedRows += $this->markOutstandingConsumedFor($consumable);
+            }
         }
 
         $failed = count($failed_rows);
@@ -158,7 +171,7 @@ class BulkConsumablesController extends Controller
 
         // All target rows rejected by validation. Don't dress a zero-row
         // update up as a success - the model errors tell the real story.
-        if ($updated === 0 && $failed > 0) {
+        if ($updated === 0 && $failed > 0 && $consumedRows === 0) {
             return $redirect->with('error', trans_choice(
                 'admin/consumables/message.bulk.update.none_updated',
                 $failed,
@@ -168,6 +181,10 @@ class BulkConsumablesController extends Controller
 
         $message = trans_choice('admin/consumables/message.bulk.update.success', $updated, ['count' => $updated]);
 
+        if ($consumedRows > 0) {
+            $message .= ' ' . trans_choice('admin/consumables/message.bulk.consumed_appended', $consumedRows, ['count' => $consumedRows]);
+        }
+
         if ($skipped > 0) {
             $message .= ' '.trans('admin/consumables/message.bulk.skipped_unauthorized', ['count' => $skipped]);
         }
@@ -175,6 +192,33 @@ class BulkConsumablesController extends Controller
         return $failed > 0
             ? $redirect->with('warning', $message)
             : $redirect->with('success', $message);
+    }
+
+    /**
+     * Stamp consumed_at = now() on every outstanding pivot row for the
+     * given consumable. Writes ONE summary Actionlog with quantity=N
+     * rather than a per-row log, so a batch close-out on a popular
+     * consumable doesn't flood the dashboard activity feed.
+     * Returns the number of rows stamped.
+     */
+    private function markOutstandingConsumedFor(Consumable $consumable): int
+    {
+        $stamped = ConsumableAssignment::where('consumable_id', $consumable->id)
+            ->whereNull('consumed_at')
+            ->update(['consumed_at' => now()]);
+
+        if ($stamped === 0) {
+            return 0;
+        }
+
+        $log = new Actionlog;
+        $log->item_type = Consumable::class;
+        $log->item_id = $consumable->id;
+        $log->created_by = auth()->id();
+        $log->quantity = $stamped;
+        $log->logaction('consumed');
+
+        return $stamped;
     }
 
     public function destroy(Request $request)

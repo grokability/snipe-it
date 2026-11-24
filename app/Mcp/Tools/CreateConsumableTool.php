@@ -127,6 +127,7 @@ class CreateConsumableTool extends Tool
             'min_amt' => $schema->number()->description('Minimum quantity threshold for alerts'),
             'requestable' => $schema->boolean()->description('Whether users can request this consumable. Mutually exclusive with archived.'),
             'archived' => $schema->boolean()->description('Whether the consumable is archived. Archived consumables are hidden from the default list, cannot be checked out, and are excluded from low-stock alerts. Mutually exclusive with requestable, and cannot be set while outstanding distributions remain.'),
+            'auto_consume_on_checkout' => $schema->boolean()->description('When true, every checkout of this consumable is immediately stamped consumed. Use for items that leave the shelf used up (toner, cleaning supplies). Leave false to track outstanding distributions. Defaults to true if omitted.'),
             'notes' => $schema->string()->description('Notes'),
         ];
     }

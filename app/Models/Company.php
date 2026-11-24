@@ -527,7 +527,7 @@ final class Company extends SnipeModel
             // per-target path, which left actors able to see users they
             // couldn't then edit. One check, one query, same logic as the list.
             if ($companyable instanceof User) {
-                return self::userIsVisibleToActor((int) auth()->id(), (int) $companyable->id);
+                return self::userIsVisibleToActor(auth()->id(), (int) $companyable->id);
             }
 
             $userCompanyIds = self::getCurrentUserCompanyIds();

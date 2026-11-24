@@ -103,25 +103,31 @@ class MarkConsumedTest extends TestCase
         ]);
     }
 
-    public function test_bulk_consume_show_filters_already_consumed_rows(): void
+    public function test_bulk_consume_store_skips_already_consumed_rows(): void
     {
+        // Mixing an already-consumed id into the request must not
+        // stamp it a second time. bulkConsumeStore filters on
+        // consumed_at IS NULL before writing so the terminal row
+        // keeps its original stamp.
         $consumable = Consumable::factory()->checkedOutToUser()->checkedOutToUser()->create();
         $assignments = ConsumableAssignment::where('consumable_id', $consumable->id)->get();
         $outstanding = $assignments->first();
         $alreadyConsumed = $assignments->last();
-        $alreadyConsumed->consumed_at = now();
+        $originalConsumedAt = now()->subDay();
+        $alreadyConsumed->consumed_at = $originalConsumedAt;
         $alreadyConsumed->save();
 
-        $response = $this->actingAs(User::factory()->superuser()->create())
-            ->post(route('consumables.bulkconsume.show'), [
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('consumables.bulkconsume.store'), [
                 'ids' => [$outstanding->id, $alreadyConsumed->id],
             ])
-            ->assertOk()
-            ->assertViewIs('consumables.bulk-consume');
+            ->assertRedirect(route('consumables.show', $consumable));
 
-        $visible = $response->viewData('assignments');
-        $this->assertTrue($visible->contains('id', $outstanding->id));
-        $this->assertFalse($visible->contains('id', $alreadyConsumed->id));
+        $this->assertNotNull($outstanding->fresh()->consumed_at);
+        $this->assertSame(
+            $originalConsumedAt->format('Y-m-d H:i:s'),
+            $alreadyConsumed->fresh()->consumed_at->format('Y-m-d H:i:s'),
+        );
     }
 
     public function test_bulk_consume_store_marks_every_selected_row(): void
@@ -175,11 +181,14 @@ class MarkConsumedTest extends TestCase
         $this->assertNull($assignmentB->fresh()->consumed_at);
     }
 
-    public function test_bulk_consume_store_writes_one_log_per_row(): void
+    public function test_bulk_consume_store_writes_one_summary_log(): void
     {
+        // Per-row logs on bulk operations would flood the dashboard.
+        // Exactly one `consumed` entry per parent with quantity=N.
         $consumable = Consumable::factory()->checkedOutToUser()->checkedOutToUser()->create();
         $assignments = ConsumableAssignment::where('consumable_id', $consumable->id)->get();
         $before = Actionlog::where('item_type', Consumable::class)
+            ->where('item_id', $consumable->id)
             ->where('action_type', 'consumed')
             ->count();
 
@@ -188,9 +197,11 @@ class MarkConsumedTest extends TestCase
                 'ids' => $assignments->pluck('id')->all(),
             ]);
 
-        $after = Actionlog::where('item_type', Consumable::class)
+        $logs = Actionlog::where('item_type', Consumable::class)
+            ->where('item_id', $consumable->id)
             ->where('action_type', 'consumed')
-            ->count();
-        $this->assertSame($before + $assignments->count(), $after);
+            ->get();
+        $this->assertSame($before + 1, $logs->count());
+        $this->assertSame($assignments->count(), (int) $logs->last()->quantity);
     }
 }

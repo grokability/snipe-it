@@ -101,6 +101,7 @@ class ConsumablesController extends Controller
         // normalizes the truthy branch.
         $consumable->requestable = $request->input('requestable', false);
         $consumable->archived = $request->input('archived', 0);
+        $consumable->auto_consume_on_checkout = $request->input('auto_consume_on_checkout', false);
         // Seed the template supplier from the initial-acquisition
         // supplier on the create form, editable afterwards.
         $consumable->default_supplier_id = $request->input('default_supplier_id', $request->input('supplier_id'));
@@ -202,6 +203,7 @@ class ConsumablesController extends Controller
         // absence to false so unchecking really turns the flag off.
         $consumable->requestable = $request->input('requestable', false);
         $consumable->archived = $request->input('archived', 0);
+        $consumable->auto_consume_on_checkout = $request->input('auto_consume_on_checkout', false);
 
         $consumable = $request->handleImages($consumable);
 

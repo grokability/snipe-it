@@ -144,6 +144,7 @@ class UpdateConsumableTool extends Tool
             'min_amt' => $schema->number()->description('Minimum quantity alert threshold'),
             'requestable' => $schema->boolean()->description('Whether users can request this consumable. Mutually exclusive with archived.'),
             'archived' => $schema->boolean()->description('Set true to archive, false to unarchive. Archived consumables cannot be checked out and are hidden from the default list. Cannot be archived while outstanding distributions remain.'),
+            'auto_consume_on_checkout' => $schema->boolean()->description('When true, every checkout of this consumable is immediately stamped consumed. Use for items that leave the shelf used up (toner, cleaning supplies). Leave false to track outstanding distributions.'),
             'notes' => $schema->string()->description('Notes'),
         ];
     }

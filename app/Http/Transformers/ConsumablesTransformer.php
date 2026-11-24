@@ -60,7 +60,9 @@ class ConsumablesTransformer
             'min_amt' => (int) $consumable->min_amt,
             'model_number' => ($consumable->model_number != '') ? e($consumable->model_number) : null,
             'remaining' => $consumable->numRemaining(),
-            'checked_out' => $consumable->numOutstanding(),
+            // Lifetime total, not just outstanding. Something consumed
+            // was still a checkout, so checked_out must be >= consumed.
+            'checked_out' => $consumable->numCheckedOut(),
             'consumed' => $consumable->numConsumed(),
             'percent_remaining' => round($consumable->percentRemaining()),
             // See AccessoriesTransformer for why order_number is no longer
@@ -78,6 +80,7 @@ class ConsumablesTransformer
             'notes' => ($consumable->notes) ? Helper::parseEscapedMarkedownInline($consumable->notes) : null,
             'requestable' => (bool) $consumable->requestable,
             'archived' => (bool) $consumable->archived,
+            'auto_consume_on_checkout' => (bool) $consumable->auto_consume_on_checkout,
             'created_by' => ($consumable->adminuser) ? [
                 'id' => (int) $consumable->adminuser->id,
                 'name' => e($consumable->adminuser->display_name),
@@ -99,7 +102,7 @@ class ConsumablesTransformer
         // gate keeps the standard-index path from firing an N+1 (only
         // the requestable() endpoint preloads `requests`).
         $userHasOpenRequest = auth()->check() && $consumable->relationLoaded('requests') && $consumable->requests->contains(
-            fn (\App\Models\CheckoutRequest $request) => $request->user_id === (int) auth()->id() && $request->canceled_at === null
+            fn (\App\Models\CheckoutRequest $request) => $request->user_id === auth()->id() && $request->canceled_at === null
         );
         $permissions_array['assigned_to_self'] = $userHasOpenRequest;
 
@@ -156,7 +159,7 @@ class ConsumablesTransformer
     public function transformRequestedConsumable(Consumable $consumable)
     {
         $userHasOpenRequest = auth()->check() && $consumable->relationLoaded('requests') && $consumable->requests->contains(
-            fn (\App\Models\CheckoutRequest $request) => $request->user_id === (int) auth()->id() && $request->canceled_at === null
+            fn (\App\Models\CheckoutRequest $request) => $request->user_id === auth()->id() && $request->canceled_at === null
         );
 
         return [
@@ -171,7 +174,9 @@ class ConsumablesTransformer
             ] : null,
             'qty' => (int) $consumable->qty,
             'remaining' => $consumable->numRemaining(),
-            'checked_out' => $consumable->numOutstanding(),
+            // Lifetime total, not just outstanding. Something consumed
+            // was still a checkout, so checked_out must be >= consumed.
+            'checked_out' => $consumable->numCheckedOut(),
             'consumed' => $consumable->numConsumed(),
             'requestable' => (bool) $consumable->requestable,
             'assigned_to_self' => $userHasOpenRequest,

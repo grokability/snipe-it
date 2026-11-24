@@ -34,7 +34,7 @@ class ReportTemplatesController extends Controller
     {
         $this->authorize('reports.view');
 
-        if ($reportTemplate->created_by !== (int) auth()->id() && ! $reportTemplate->is_shared) {
+        if ($reportTemplate->created_by !== auth()->id() && ! $reportTemplate->is_shared) {
             abort(404, trans('general.generic_model_not_found', ['model' => trans('general.report_template')]));
         }
 

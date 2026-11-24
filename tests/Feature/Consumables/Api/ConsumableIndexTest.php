@@ -90,8 +90,8 @@ class ConsumableIndexTest extends TestCase
 
         $targetCompany = Company::factory()->create();
         $otherCompany = Company::factory()->create();
-        $targetCategory = Category::factory()->create();
-        $otherCategory = Category::factory()->create();
+        $targetCategory = Category::factory()->create(['category_type' => 'consumable']);
+        $otherCategory = Category::factory()->create(['category_type' => 'consumable']);
         $targetManufacturer = Manufacturer::factory()->create();
         $otherManufacturer = Manufacturer::factory()->create();
         $targetSupplier = Supplier::factory()->create();

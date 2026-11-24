@@ -301,7 +301,7 @@ class ImportController extends Controller
         // don't leak existence of another user's uploaded import file, and so
         // an attacker with the `import` permission can't replay a stored file
         // by guessing its (sequential) ID. Superusers can process any import.
-        if (is_null($import) || ($import->created_by !== (int) auth()->id() && ! auth()->user()->isSuperUser())) {
+        if (is_null($import) || ($import->created_by !== auth()->id() && ! auth()->user()->isSuperUser())) {
             $error[0][0] = trans('validation.exists', ['attribute' => 'file']);
 
             return response()->json(Helper::formatStandardApiResponse('import-errors', null, $error), 500);

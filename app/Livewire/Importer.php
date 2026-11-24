@@ -441,6 +441,7 @@ class Importer extends Component
         ]);
 
         $this->consumables_fields = array_merge([
+            'auto_consume_on_checkout' => trans('admin/consumables/general.auto_consume_on_checkout'),
             'category' => trans('general.category'),
             'company' => trans('general.company'),
             'item_name' => trans('general.item_name_var', ['item' => trans('general.consumable')]),
