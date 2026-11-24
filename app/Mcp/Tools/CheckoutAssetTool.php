@@ -76,6 +76,10 @@ class CheckoutAssetTool extends Tool
             return Response::make(Response::error(trans('mcp.checkout_target_not_found', ['type' => $checkoutType])));
         }
 
+        if (! in_array($target::class, Asset::allowedCheckoutTargetTypes(), true)) {
+            return Response::make(Response::error(trans('mcp.checkout_target_not_found', ['type' => $checkoutType])));
+        }
+
         // AssetCheckoutService throws CheckoutNotAllowed when an attached
         // license seat fails the seat-propagation guards (GHSA-9wq4-gp32-rcgj):
         // unreassignable seat, or occupied seat on a non-reassignable
