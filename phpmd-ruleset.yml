@@ -1,0 +1,15 @@
+# PHPMD configuration, see https://phpmd.org/documentation/creating-a-ruleset.html
+name: 'Snipe-IT PHPMD Ruleset'
+description: |-
+  Targeted PHPMD rules for the classes of finding PHPStan doesn't cover.
+  Scoped narrowly on purpose: broad PHPMD rulesets create thousands of
+  style-level warnings on a large Laravel codebase. This one focuses on
+  the concrete gap (unused code) so signal stays useful and CI stays fast.
+exclude-pattern:
+  - 'database/migrations/*'
+  - 'tests/*'
+rules:
+  - ref: rulesets/unusedcode.xml/UnusedFormalParameter
+  - ref: rulesets/unusedcode.xml/UnusedLocalVariable
+  - ref: rulesets/unusedcode.xml/UnusedPrivateMethod
+  - ref: rulesets/unusedcode.xml/UnusedPrivateField
