@@ -102,7 +102,7 @@ class ConsumablesTransformer
         // gate keeps the standard-index path from firing an N+1 (only
         // the requestable() endpoint preloads `requests`).
         $userHasOpenRequest = auth()->check() && $consumable->relationLoaded('requests') && $consumable->requests->contains(
-            fn (\App\Models\CheckoutRequest $request) => $request->user_id === (int) auth()->id() && $request->canceled_at === null
+            fn (\App\Models\CheckoutRequest $request) => $request->user_id === auth()->id() && $request->canceled_at === null
         );
         $permissions_array['assigned_to_self'] = $userHasOpenRequest;
 
@@ -159,7 +159,7 @@ class ConsumablesTransformer
     public function transformRequestedConsumable(Consumable $consumable)
     {
         $userHasOpenRequest = auth()->check() && $consumable->relationLoaded('requests') && $consumable->requests->contains(
-            fn (\App\Models\CheckoutRequest $request) => $request->user_id === (int) auth()->id() && $request->canceled_at === null
+            fn (\App\Models\CheckoutRequest $request) => $request->user_id === auth()->id() && $request->canceled_at === null
         );
 
         return [

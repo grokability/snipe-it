@@ -91,6 +91,27 @@ class AuthServiceProvider extends ServiceProvider
     ];
 
     /**
+     * Narrow Passport v13's string-identifier requirement to its two
+     * instantiation sites (Bridge\UserRepository + AuthorizationController)
+     * so User::getAuthIdentifier() stays int everywhere else. See
+     * App\Auth\Passport\BridgeUserRepository for the full rationale.
+     */
+    public function register(): void
+    {
+        parent::register();
+
+        $this->app->bind(
+            \Laravel\Passport\Bridge\UserRepository::class,
+            \App\Auth\Passport\BridgeUserRepository::class,
+        );
+
+        $this->app->bind(
+            \Laravel\Passport\Http\Controllers\AuthorizationController::class,
+            \App\Auth\Passport\AuthorizationController::class,
+        );
+    }
+
+    /**
      * Register any authentication / authorization services.
      *
      * @return void

@@ -210,8 +210,8 @@ class CustomConsumableReportTest extends TestCase
         [$categoryA, $categoryB] = Category::factory()
             ->count(2)
             ->sequence(
-                ['name' => 'Category A'],
-                ['name' => 'Category B'],
+                ['name' => 'Category A', 'category_type' => 'consumable'],
+                ['name' => 'Category B', 'category_type' => 'consumable'],
             )
             ->create()
             ->all();

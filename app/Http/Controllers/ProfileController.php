@@ -300,7 +300,7 @@ class ProfileController extends Controller
         // EULA without holding users.view. Anyone else falls back to the
         // regular view-user permission check.
         $isOwnAcceptance = $logentry->target_type === User::class
-            && (int) $logentry->target_id === (int) auth()->id();
+            && (int) $logentry->target_id === auth()->id();
 
         if (! $isOwnAcceptance) {
             $this->authorize('view', $logentry->target);

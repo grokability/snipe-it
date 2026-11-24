@@ -1228,20 +1228,17 @@ class Asset extends Depreciable implements Checkoutable, HasCustomFields, Import
     /**
      * Checks the asset out to the target
      *
-     * @todo The admin parameter is never used. Can probably be removed.
-     *
-     * @author [A. Gianotto] [<snipe@snipe.net>]
-     *
-     * @param  User  $admin
+     * @param  User|int|string|null  $admin  User instance or user id. The importer threads auth()->id() (now a string via User::getAuthIdentifier()) through as the id form.
      * @param  Carbon  $checkout_at
      * @param  Carbon  $expected_checkin
      * @param  string  $note
      * @param  string|null  $name
      * @return bool
-     *
-     * @since  [v3.0]
-     *
      * @return bool
+     *
+     *@since  [v3.0]
+     *
+     * @author [A. Gianotto] [<snipe@snipe.net>]
      */
     public function checkOut($target, $admin = null, $checkout_at = null, $expected_checkin = null, $note = null, $name = null, $location = null, bool $signInPlace = false)
     {
@@ -1280,9 +1277,11 @@ class Asset extends Depreciable implements Checkoutable, HasCustomFields, Import
         }
 
         if ($this->save()) {
-            if (is_int($admin)) {
-                $checkedOutBy = User::findOrFail($admin);
-            } elseif ($admin && get_class($admin) === User::class) {
+            // Numeric-string ids (not just ints) because auth()->id()
+            // now returns a string via User::getAuthIdentifier()
+            if (is_numeric($admin)) {
+                $checkedOutBy = User::findOrFail((int) $admin);
+            } elseif ($admin instanceof User) {
                 $checkedOutBy = $admin;
             } else {
                 $checkedOutBy = auth()->user();
@@ -1308,7 +1307,7 @@ class Asset extends Depreciable implements Checkoutable, HasCustomFields, Import
      * checkin_counter is incremented by the Loggable trait's event
      * listener, not here.
      *
-     * @param  User|null  $admin  Actor performing the checkin. Defaults to the authed user.
+     * @param  User|int|string|null  $admin  Actor performing the checkin. Defaults to the authed user. Accepts either a User instance or a user id (int or numeric string).
      * @param  string|null  $note  Optional checkin note recorded on the event.
      * @param  string|null  $checkin_at  Optional timestamp. Defaults to now.
      * @param  int|null  $location  Optional location override. Null keeps the rtd-reset default.
@@ -1347,21 +1346,23 @@ class Asset extends Depreciable implements Checkoutable, HasCustomFields, Import
             }
         }
 
-        $this->licenseseats->each(fn($seat) => $seat->update(['assigned_to' => null]));
+        $this->licenseseats->each(fn ($seat) => $seat->update(['assigned_to' => null]));
 
         CheckoutAcceptance::pending()
-            ->whereHasMorph('checkoutable', [self::class], fn(Builder $q) => $q->where('id', $this->id))
+            ->whereHasMorph('checkoutable', [self::class], fn (Builder $q) => $q->where('id', $this->id))
             ->get()
-            ->each(fn($acceptance) => $acceptance->delete());
+            ->each(fn ($acceptance) => $acceptance->delete());
 
         if ($this->save()) {
             self::where('assigned_type', self::class)
                 ->where('assigned_to', $this->id)
                 ->update(['location_id' => $this->location_id]);
 
-            if (is_int($admin)) {
-                $checkedInBy = User::findOrFail($admin);
-            } elseif ($admin && get_class($admin) === User::class) {
+            // See checkOut() above for the is_numeric + instanceof
+            // rationale around string ids from auth()->id().
+            if (is_numeric($admin)) {
+                $checkedInBy = User::findOrFail((int) $admin);
+            } elseif ($admin instanceof User) {
                 $checkedInBy = $admin;
             } else {
                 $checkedInBy = auth()->user();
