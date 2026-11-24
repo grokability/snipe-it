@@ -86,13 +86,6 @@ Route::group(['prefix' => 'consumables', 'middleware' => ['auth']], function () 
     )->where(['consumable' => '[0-9]+', 'assignment' => '[0-9]+'])
         ->name('consumables.consume');
 
-    Route::post('bulkconsume',
-        [Consumables\ConsumableCheckoutController::class, 'bulkConsumeShow']
-    )->name('consumables.bulkconsume.show')
-        ->breadcrumbs(function (Trail $trail) {
-            return $trail->parent('consumables.index')->push(trans('admin/consumables/general.bulk_consume'), route('consumables.index'));
-        });
-
     Route::post('bulkconsume/store',
         [Consumables\ConsumableCheckoutController::class, 'bulkConsumeStore']
     )->name('consumables.bulkconsume.store');
