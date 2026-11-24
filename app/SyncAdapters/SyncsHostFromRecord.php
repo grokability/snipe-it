@@ -1205,6 +1205,12 @@ trait SyncsHostFromRecord
         // number. More than one match is ambiguous, so fall through.
         $model = self::uniqueModelByNumber($modelName);
         if ($model !== null) {
+            $perRecordId = self::perRecordCategoryId($instance, $record);
+            if ($perRecordId !== null && $model->category_id !== $perRecordId) {
+                $model->category_id = $perRecordId;
+                $model->save();
+            }
+
             return $model->id;
         }
 
