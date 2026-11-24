@@ -171,7 +171,8 @@ trait SyncsHostFromRecord
         if ($record->hardwareSerial === null || $record->hardwareSerial === '') {
             $modelName = self::resolveModelSourceValue($record, $mapping);
             if ($modelName !== null && $modelName !== '') {
-                $existingModel = AssetModel::where('name', $modelName)->first();
+                $existingModel = AssetModel::where('name', $modelName)->first()
+                    ?? self::uniqueModelByNumber($modelName);
                 if ($existingModel !== null && (string) $existingModel->require_serial === '1') {
                     Log::channel('sync-adapters')->warning(sprintf(
                         '%s sync: skipped %s record %s (no serial, and asset model "%s" requires one)',
@@ -1197,6 +1198,16 @@ trait SyncsHostFromRecord
             return $model->id;
         }
 
+        // Some vendors report a model number where we expect a name
+        // (Intune's `model` is "20UHCTO1WW" on Lenovo hardware). If the
+        // admin already has exactly one model with that model number,
+        // reuse it instead of creating a duplicate named after the
+        // number. More than one match is ambiguous, so fall through.
+        $model = self::uniqueModelByNumber($modelName);
+        if ($model !== null) {
+            return $model->id;
+        }
+
         $model = new AssetModel;
         $model->name = $modelName;
         $model->category_id = self::categoryIdFor($instance, $record);
@@ -1214,6 +1225,17 @@ trait SyncsHostFromRecord
         $model->save();
 
         return $model->id;
+    }
+
+    /**
+     * Find the one existing model whose model number equals the
+     * vendor's model string. Returns null when none or several match.
+     */
+    private static function uniqueModelByNumber(string $modelNumber): ?AssetModel
+    {
+        $matches = AssetModel::where('model_number', $modelNumber)->limit(2)->get();
+
+        return $matches->count() === 1 ? $matches->first() : null;
     }
 
     /**
