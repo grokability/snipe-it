@@ -54,6 +54,7 @@ return [
         'no_action_selected' => 'Please pick an action from the dropdown.',
         'no_fields_updated' => 'No fields were changed, so nothing was updated.',
         'skipped_unauthorized' => ':count consumable(s) were skipped because you do not have permission to update them.',
+        'consumed_appended' => ':count outstanding distribution was marked consumed.|:count outstanding distributions were marked consumed.',
 
         'update' => [
             'success' => ':count consumable was updated.|:count consumables were updated.',
