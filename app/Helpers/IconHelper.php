@@ -318,6 +318,8 @@ class IconHelper
                 return 'fa-solid fa-dungeon';
             case 'min-qty':
                 return 'fa-solid fa-chart-pie';
+            case 'docs':
+                return 'fa-brands fa-readme';
 
         }
     }
