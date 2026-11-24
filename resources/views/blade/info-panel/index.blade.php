@@ -619,6 +619,17 @@
                 {{ trans('general.byod') }}
             </x-info-element>
         @endif
+        {{-- Only consumables have auto-consume --}}
+        @if ($infoPanelObj instanceof \App\Models\Consumable)
+            <x-info-element title="{{ trans('admin/consumables/general.auto_consume_on_checkout') }}">
+                @if ($infoPanelObj->auto_consume_on_checkout == '1')
+                    <x-icon type="checkmark" class="fa-fw text-success"/>
+                @else
+                    <x-icon type="x" class="fa-fw text-danger"/>
+                @endif
+                {{ trans('admin/consumables/general.auto_consume_on_checkout') }}
+            </x-info-element>
+        @endif
 
         @if (isset($infoPanelObj->requestable))
             <x-info-element title="{{ trans('general.requestable') }}">
