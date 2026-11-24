@@ -63,6 +63,7 @@ class ConsumablesController extends Controller
             'id',
             'name',
             'min_amt',
+            'auto_consume_on_checkout',
             'purchase_date',
             'purchase_cost',
             'company',
@@ -418,28 +419,70 @@ class ConsumablesController extends Controller
      *
      * @param  int  $consumableId
      */
-    public function getDataView($consumableId): array
+    public function getDataView(Request $request, $consumableId): array
     {
-        // Only outstanding pivot rows surface on the Assigned tab.
-        // Rows marked consumed drop out of the checkouts view because
-        // they are no longer "currently distributed." The audit trail
-        // for each consume still lives on the item's History tab.
-        $consumable = Consumable::with(['consumableAssignments' => function ($query) {
-            $query->outstanding()->orderBy($query->getModel()->getTable().'.created_at', 'DESC');
-        },
-            'consumableAssignments.adminuser' => function ($query) {},
-            'consumableAssignments.user' => function ($query) {},
-        ])->find($consumableId);
+        $consumable = Consumable::find($consumableId);
 
-        if (! Company::isCurrentUserHasAccess($consumable)) {
+        if (! $consumable || ! Company::isCurrentUserHasAccess($consumable)) {
             return ['total' => 0, 'rows' => []];
         }
         $this->authorize('view', Consumable::class);
-        $rows = [];
+
+        $query = $consumable->consumableAssignments()
+            ->leftJoin('users', 'consumables_users.assigned_to', '=', 'users.id')
+            ->leftJoin('users as admin_users', 'consumables_users.created_by', '=', 'admin_users.id')
+            ->select('consumables_users.*');
+
+        // Lifecycle filter so the split Assigned / Consumed tabs on
+        // the show page share this one endpoint. Absent = all rows
+        // (back-compat for any caller that never passed status).
+        $status = (string) $request->input('status', '');
+        if ($status === 'outstanding') {
+            $query->whereNull('consumables_users.consumed_at');
+        } elseif ($status === 'consumed') {
+            $query->whereNotNull('consumables_users.consumed_at');
+        }
+
+        $search = trim((string) $request->input('search', ''));
+        if ($search !== '') {
+            $like = '%'.$search.'%';
+            $query->where(function ($q) use ($like) {
+                $q->where('users.first_name', 'LIKE', $like)
+                    ->orWhere('users.last_name', 'LIKE', $like)
+                    ->orWhere('users.username', 'LIKE', $like)
+                    ->orWhere('admin_users.first_name', 'LIKE', $like)
+                    ->orWhere('admin_users.last_name', 'LIKE', $like)
+                    ->orWhere('admin_users.username', 'LIKE', $like)
+                    ->orWhere('consumables_users.note', 'LIKE', $like);
+            });
+        }
+
+        $allowedSorts = [
+            'user' => 'users.last_name',
+            'created_by' => 'admin_users.last_name',
+            'created_at' => 'consumables_users.created_at',
+            'consumed_at' => 'consumables_users.consumed_at',
+            'note' => 'consumables_users.note',
+        ];
+        $sortKey = (string) $request->input('sort', 'created_at');
+        $sortColumn = $allowedSorts[$sortKey] ?? 'consumables_users.created_at';
+        $order = strtolower((string) $request->input('order')) === 'asc' ? 'asc' : 'desc';
+        $query->orderBy($sortColumn, $order);
+
+        $offset = (int) app('api_offset_value');
+        $limit = (int) app('api_limit_value');
+        $total = (clone $query)->count();
+        $assignments = $query
+            ->with(['user', 'adminuser'])
+            ->skip($offset)
+            ->take($limit)
+            ->get();
 
         $canConsume = Gate::allows('checkout', $consumable);
-
-        foreach ($consumable->consumableAssignments as $consumable_assignment) {
+        $rows = [];
+        foreach ($assignments as $consumable_assignment) {
+            $isConsumed = $consumable_assignment->consumed_at !== null;
+            $rowCanConsume = $canConsume && ! $isConsumed;
             $rows[] = [
                 'id' => (int) $consumable_assignment->id,
                 'consumable_id' => (int) $consumable_assignment->consumable_id,
@@ -449,21 +492,23 @@ class ConsumablesController extends Controller
                     'name' => e($consumable_assignment->user->display_name),
                 ] : null,
                 'created_at' => Helper::getFormattedDateObject($consumable_assignment->created_at, 'datetime'),
+                'consumed_at' => $isConsumed ? Helper::getFormattedDateObject($consumable_assignment->consumed_at, 'datetime') : null,
+                'status' => $isConsumed ? 'consumed' : 'outstanding',
                 'note' => ($consumable_assignment->note) ? e($consumable_assignment->note) : null,
                 'created_by' => ($consumable_assignment->adminuser) ? [
                     'id' => (int) $consumable_assignment->adminuser->id,
                     'name' => e($consumable_assignment->adminuser->display_name),
                 ] : null,
                 'available_actions' => [
-                    'consume' => $canConsume,
+                    'consume' => $rowCanConsume,
                     'bulk_selectable' => [
-                        'consume' => $canConsume,
+                        'consume' => $rowCanConsume,
                     ],
                 ],
             ];
         }
 
-        return ['total' => count($rows), 'rows' => $rows];
+        return ['total' => $total, 'rows' => $rows];
     }
 
     /**
@@ -546,6 +591,7 @@ class ConsumablesController extends Controller
                 return;
             }
 
+            $consumedAt = $consumable->auto_consume_on_checkout ? now() : null;
             for ($i = 0; $i < $consumable->checkout_qty; $i++) {
                 $consumable->users()->attach($consumable->id,
                     [
@@ -557,6 +603,7 @@ class ConsumablesController extends Controller
                         'created_by' => auth()->id(),
                         'assigned_to' => $request->input('assigned_to'),
                         'note' => $request->input('note'),
+                        'consumed_at' => $consumedAt,
                     ]
                 );
             }

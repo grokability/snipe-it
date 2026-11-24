@@ -144,6 +144,7 @@ class ToolScopeMap
         Tools\CheckoutAssetTool::class => McpScope::Checkout,
         Tools\CheckoutComponentTool::class => McpScope::Checkout,
         Tools\CheckoutConsumableTool::class => McpScope::Checkout,
+        Tools\MarkConsumableOutstandingConsumedTool::class => McpScope::Checkout,
         Tools\CheckoutLicenseTool::class => McpScope::Checkout,
         Tools\OffboardUserTool::class => McpScope::Checkout,
         Tools\TransferAssetsTool::class => McpScope::Checkout,
