@@ -227,6 +227,15 @@ class ConsumablePresenter extends Presenter
                 'title' => trans('admin/hardware/general.requestable'),
                 'formatter' => 'trueFalseFormatter',
             ], [
+                'field' => 'auto_consume_on_checkout',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => true,
+                'switchable' => true,
+                'visible' => false,
+                'title' => trans('admin/consumables/general.auto_consume_on_checkout'),
+                'formatter' => 'trueFalseFormatter',
+            ], [
                 'field' => 'archived',
                 'scope' => 'col',
                 'searchable' => false,
@@ -301,9 +310,15 @@ class ConsumablePresenter extends Presenter
         return json_encode($layout);
     }
 
-    public static function checkedOut()
+    /**
+     * Outstanding (Assigned) tab layout. Every row here is still
+     * actionable: admins can mark each one consumed individually or
+     * bulk-close several at once. consumed_at is always null in this
+     * view so the column is omitted.
+     */
+    public static function checkedOut(): string
     {
-        $layout = [
+        return json_encode([
             [
                 'field' => 'checkbox',
                 'scope' => 'col',
@@ -325,8 +340,8 @@ class ConsumablePresenter extends Presenter
             [
                 'field' => 'user',
                 'scope' => 'col',
-                'searchable' => false,
-                'sortable' => false,
+                'searchable' => true,
+                'sortable' => true,
                 'title' => trans('general.name'),
                 'visible' => true,
                 'formatter' => 'usersLinkObjFormatter',
@@ -335,7 +350,7 @@ class ConsumablePresenter extends Presenter
                 'field' => 'created_at',
                 'scope' => 'col',
                 'searchable' => false,
-                'sortable' => false,
+                'sortable' => true,
                 'title' => trans('general.date'),
                 'visible' => true,
                 'formatter' => 'dateDisplayFormatter',
@@ -343,16 +358,16 @@ class ConsumablePresenter extends Presenter
             [
                 'field' => 'note',
                 'scope' => 'col',
-                'searchable' => false,
-                'sortable' => false,
+                'searchable' => true,
+                'sortable' => true,
                 'title' => trans('general.notes'),
                 'visible' => true,
             ],
             [
                 'field' => 'created_by',
                 'scope' => 'col',
-                'searchable' => false,
-                'sortable' => false,
+                'searchable' => true,
+                'sortable' => true,
                 'title' => trans('general.created_by'),
                 'visible' => true,
                 'formatter' => 'usersLinkObjFormatter',
@@ -368,9 +383,71 @@ class ConsumablePresenter extends Presenter
                 'printIgnore' => true,
                 'class' => 'hidden-print',
             ],
-        ];
+        ]);
+    }
 
-        return json_encode($layout);
+    /**
+     * Consumed tab layout. Terminal rows only. No checkboxes, no
+     * actions. consumed_at replaces the actions column so the admin
+     * sees when the row left the outstanding bucket.
+     */
+    public static function consumed(): string
+    {
+        return json_encode([
+            [
+                'field' => 'avatar',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => false,
+                'title' => trans('general.image'),
+                'visible' => true,
+                'formatter' => 'imageFormatter',
+            ],
+            [
+                'field' => 'user',
+                'scope' => 'col',
+                'searchable' => true,
+                'sortable' => true,
+                'title' => trans('general.name'),
+                'visible' => true,
+                'formatter' => 'usersLinkObjFormatter',
+            ],
+            [
+                'field' => 'created_at',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => true,
+                'title' => trans('general.date'),
+                'visible' => true,
+                'formatter' => 'dateDisplayFormatter',
+            ],
+            [
+                'field' => 'consumed_at',
+                'scope' => 'col',
+                'searchable' => false,
+                'sortable' => true,
+                'title' => trans('admin/consumables/general.consumed_at'),
+                'visible' => true,
+                'formatter' => 'dateDisplayFormatter',
+            ],
+            [
+                'field' => 'note',
+                'scope' => 'col',
+                'searchable' => true,
+                'sortable' => true,
+                'title' => trans('general.notes'),
+                'visible' => true,
+            ],
+            [
+                'field' => 'created_by',
+                'scope' => 'col',
+                'searchable' => true,
+                'sortable' => true,
+                'title' => trans('general.created_by'),
+                'visible' => true,
+                'formatter' => 'usersLinkObjFormatter',
+            ],
+        ]);
     }
 
     /**
