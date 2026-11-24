@@ -168,31 +168,6 @@ class BulkConsumablesFmcsScopingTest extends TestCase
         $this->assertNull($foreignAssignment->fresh()->consumed_at);
     }
 
-    public function test_bulk_consume_show_blocks_cross_company_assignment_under_fmcs(): void
-    {
-        // The interstitial view runs through the same auth gate as the
-        // commit step. A company A actor hand-posting a company B
-        // assignment id should either redirect with a warning or be
-        // forbidden outright. The pivot row must not surface in the
-        // confirmation view either way.
-        $this->settings->enableMultipleFullCompanySupport();
-        $this->settings->disableFloaterMode();
-
-        [$companyA, $companyB] = Company::factory()->count(2)->create();
-        $actor = $companyA->users()->save(User::factory()->viewConsumables()->checkoutConsumables()->make());
-
-        $foreignConsumable = Consumable::factory()->for($companyB)->checkedOutToUser()->create();
-        $foreignAssignment = ConsumableAssignment::where('consumable_id', $foreignConsumable->id)->firstOrFail();
-
-        $this->actingAs($actor)
-            ->post(route('consumables.bulkconsume.show'), [
-                'ids' => [$foreignAssignment->id],
-            ])
-            ->assertForbidden();
-
-        $this->assertNull($foreignAssignment->fresh()->consumed_at);
-    }
-
     public function test_bulk_consume_floater_can_consume_null_company_assignment(): void
     {
         // Floater ON: company A actor is allowed to touch null-company

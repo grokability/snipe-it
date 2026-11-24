@@ -184,4 +184,128 @@ class BulkEditConsumablesTest extends TestCase
         $this->assertTrue((bool) $fresh->requestable);
         $this->assertFalse((bool) $fresh->archived);
     }
+
+    public function test_bulk_edit_toggles_auto_consume_on_checkout(): void
+    {
+        $alwaysOn = Consumable::factory()->create(['auto_consume_on_checkout' => false]);
+        $alwaysOff = Consumable::factory()->create(['auto_consume_on_checkout' => true]);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('consumables.bulkedit.store'), [
+                'ids' => [$alwaysOn->id],
+                'auto_consume_on_checkout' => '1',
+            ])
+            ->assertRedirect(route('consumables.index'));
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('consumables.bulkedit.store'), [
+                'ids' => [$alwaysOff->id],
+                'auto_consume_on_checkout' => '0',
+            ])
+            ->assertRedirect(route('consumables.index'));
+
+        $this->assertTrue((bool) $alwaysOn->fresh()->auto_consume_on_checkout);
+        $this->assertFalse((bool) $alwaysOff->fresh()->auto_consume_on_checkout);
+    }
+
+    public function test_bulk_edit_leaves_auto_consume_on_checkout_alone_when_blank(): void
+    {
+        // "Don't change" radio posts an empty string. Must not touch
+        // either consumable's existing flag value.
+        $alwaysOn = Consumable::factory()->create(['auto_consume_on_checkout' => true]);
+        $alwaysOff = Consumable::factory()->create(['auto_consume_on_checkout' => false]);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('consumables.bulkedit.store'), [
+                'ids' => [$alwaysOn->id, $alwaysOff->id],
+                'min_amt' => '99',
+                'auto_consume_on_checkout' => '',
+            ])
+            ->assertRedirect(route('consumables.index'));
+
+        $this->assertTrue((bool) $alwaysOn->fresh()->auto_consume_on_checkout);
+        $this->assertFalse((bool) $alwaysOff->fresh()->auto_consume_on_checkout);
+    }
+
+    public function test_bulk_edit_marks_all_outstanding_consumed(): void
+    {
+        $consumable = \App\Models\Consumable::factory()
+            ->checkedOutToUser()
+            ->checkedOutToUser()
+            ->checkedOutToUser()
+            ->create();
+        $assignments = \App\Models\ConsumableAssignment::where('consumable_id', $consumable->id)->get();
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('consumables.bulkedit.store'), [
+                'ids' => [$consumable->id],
+                'mark_outstanding_consumed' => '1',
+            ])
+            ->assertRedirect(route('consumables.index'));
+
+        $assignments->each(fn ($a) => $this->assertNotNull($a->fresh()->consumed_at));
+        $this->assertSame(0, $consumable->fresh()->numOutstanding());
+    }
+
+    public function test_bulk_edit_mark_outstanding_writes_one_summary_action_log(): void
+    {
+        // Per-row logs on bulk operations would flood the dashboard.
+        // Exactly one `consumed` entry per parent with quantity=N.
+        $consumable = \App\Models\Consumable::factory()
+            ->checkedOutToUser()
+            ->checkedOutToUser()
+            ->create();
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('consumables.bulkedit.store'), [
+                'ids' => [$consumable->id],
+                'mark_outstanding_consumed' => '1',
+            ])
+            ->assertRedirect(route('consumables.index'));
+
+        $logs = \App\Models\Actionlog::where('action_type', 'consumed')
+            ->where('item_type', Consumable::class)
+            ->where('item_id', $consumable->id)
+            ->get();
+        $this->assertCount(1, $logs);
+        $this->assertSame(2, (int) $logs->first()->quantity);
+    }
+
+    public function test_bulk_edit_skips_mark_outstanding_without_checkout_permission(): void
+    {
+        $consumable = \App\Models\Consumable::factory()->checkedOutToUser()->create();
+        $assignment = \App\Models\ConsumableAssignment::where('consumable_id', $consumable->id)->firstOrFail();
+        $actor = User::factory()->editConsumables()->create();
+
+        $this->actingAs($actor)
+            ->post(route('consumables.bulkedit.store'), [
+                'ids' => [$consumable->id],
+                'mark_outstanding_consumed' => '1',
+            ])
+            ->assertRedirect(route('consumables.index'));
+
+        $this->assertNull($assignment->fresh()->consumed_at);
+    }
+
+    public function test_bulk_edit_flip_auto_consume_and_mark_outstanding_in_one_submit(): void
+    {
+        // Admin opts a batch of items into auto-consume AND closes
+        // out their existing outstanding distributions in one submit.
+        $consumable = \App\Models\Consumable::factory()
+            ->checkedOutToUser()
+            ->checkedOutToUser()
+            ->create(['auto_consume_on_checkout' => false]);
+
+        $this->actingAs(User::factory()->superuser()->create())
+            ->post(route('consumables.bulkedit.store'), [
+                'ids' => [$consumable->id],
+                'auto_consume_on_checkout' => '1',
+                'mark_outstanding_consumed' => '1',
+            ])
+            ->assertRedirect(route('consumables.index'));
+
+        $fresh = $consumable->fresh();
+        $this->assertTrue((bool) $fresh->auto_consume_on_checkout);
+        $this->assertSame(0, $fresh->numOutstanding());
+    }
 }
