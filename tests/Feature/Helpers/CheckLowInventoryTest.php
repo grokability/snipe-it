@@ -379,12 +379,13 @@ class CheckLowInventoryTest extends TestCase
         DB::enableQueryLog();
 
         Helper::checkLowInventory();
-
         // Ceiling covers: 1 settings + 5 category queries + 1 status_labels
         // lookup for the RTD() scope in the AssetModel branch = 7. Held to
         // 10 to leave a little headroom for a future settings-related
         // memoization change without loosening the N+1 guard.
         $count = count(DB::getQueryLog());
+        DB::disableQueryLog();
+
         $this->assertLessThanOrEqual(
             10,
             $count,
