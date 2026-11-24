@@ -165,6 +165,10 @@ class AccessoryImporter extends ItemImporter
             return;
         }
 
+        if (! $this->targetPermittedByContract(Accessory::class, $target, trans('general.accessory'), $accessory->name)) {
+            return;
+        }
+
         if ($accessory->numRemaining() < 1) {
             $this->log('Accessory '.$accessory->name.' has no free units - skipping checkout');
 

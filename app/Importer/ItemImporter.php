@@ -7,12 +7,14 @@ use App\Models\AssetModel;
 use App\Models\Category;
 use App\Models\Company;
 use App\Models\CompanyableScope;
+use App\Models\Contracts\Checkoutable;
 use App\Models\Location;
 use App\Models\Manufacturer;
 use App\Models\Setting;
 use App\Models\Statuslabel;
 use App\Models\Supplier;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 
 class ItemImporter extends Importer
 {
@@ -223,6 +225,38 @@ class ItemImporter extends Importer
         }
 
         return $asset;
+    }
+
+    /**
+     * Reject a resolved checkout target that doesn't match the parent's
+     * Checkoutable contract. Example: a consumable row with a CSV-mapped
+     * checkout_location would resolve to a Location target, but
+     * ConsumableAssignment's contract only allows User. Logs a warning
+     * naming the item, the target type, and the contract's allowed
+     * types, then returns false so the caller skips the checkout step
+     * without aborting the whole row. Create and update of the parent
+     * record still succeed. Only the import's checkout step is dropped.
+     *
+     * @param  class-string<Checkoutable>  $parentClass
+     */
+    protected function targetPermittedByContract(string $parentClass, ?Model $target, string $parentLabel, string $parentName): bool
+    {
+        if ($target === null) {
+            return true;
+        }
+
+        $allowed = $parentClass::allowedCheckoutTargetTypes();
+        foreach ($allowed as $type) {
+            if ($target instanceof $type) {
+                return true;
+            }
+        }
+
+        $allowedLabels = implode(', ', array_map(fn ($c) => class_basename($c), $allowed));
+        $targetLabel = class_basename($target::class);
+        $this->log('WARNING: '.$parentLabel.' '.$parentName.' cannot be checked out to '.$targetLabel.' - this item type only supports '.$allowedLabels.'. Checkout skipped.');
+
+        return false;
     }
 
     /**
