@@ -65,7 +65,7 @@ class ImpersonateUserTest extends TestCase
             ->post(route('users.impersonate.start', $target), ['note' => 'Investigating ticket #4242']);
 
         $response->assertRedirect(route('home'));
-        $this->assertSame($target->id, auth()->id());
+        $this->assertEquals($target->id, auth()->id());
         $this->assertSame($actor->id, session('impersonator_id'));
 
         $log = Actionlog::where('item_type', User::class)
@@ -90,7 +90,7 @@ class ImpersonateUserTest extends TestCase
             ->assertRedirect(route('users.show', $target))
             ->assertSessionHas('error', trans('admin/users/general.impersonate_note_required'));
 
-        $this->assertSame($actor->id, auth()->id());
+        $this->assertEquals($actor->id, auth()->id());
         $this->assertNull(session('impersonator_id'));
 
         // Whitespace-only note
@@ -112,7 +112,7 @@ class ImpersonateUserTest extends TestCase
             ->post(route('users.impersonate.start', $target))
             ->assertRedirect(route('users.show', $target));
 
-        $this->assertSame($actor->id, auth()->id());
+        $this->assertEquals($actor->id, auth()->id());
         $this->assertNull(session('impersonator_id'));
     }
 
@@ -126,7 +126,7 @@ class ImpersonateUserTest extends TestCase
             ->post(route('users.impersonate.start', $target))
             ->assertRedirect(route('users.show', $target));
 
-        $this->assertSame($actor->id, auth()->id());
+        $this->assertEquals($actor->id, auth()->id());
         $this->assertNull(session('impersonator_id'));
     }
 
@@ -179,12 +179,12 @@ class ImpersonateUserTest extends TestCase
             ->post(route('users.impersonate.start', $target), ['note' => 'test note'])
             ->assertRedirect(route('home'));
 
-        $this->assertSame($target->id, auth()->id());
+        $this->assertEquals($target->id, auth()->id());
 
         $stop = $this->post(route('users.impersonate.stop'));
 
         $stop->assertRedirect(route('users.show', $target));
-        $this->assertSame($actor->id, auth()->id());
+        $this->assertEquals($actor->id, auth()->id());
         $this->assertNull(session('impersonator_id'));
 
         $this->assertDatabaseHas('action_logs', [
@@ -232,7 +232,7 @@ class ImpersonateUserTest extends TestCase
             ->post(route('users.impersonate.start', $target), ['note' => 'test note'])
             ->assertRedirect(route('home'));
 
-        $this->assertSame($target->id, auth()->id());
+        $this->assertEquals($target->id, auth()->id());
         $this->assertSame($actor->id, session('impersonator_id'));
 
         $follow = $this->followingRedirects()->get(route('home'));
@@ -243,7 +243,7 @@ class ImpersonateUserTest extends TestCase
         $this->post(route('users.impersonate.stop'))
             ->assertRedirect(route('users.show', $target));
 
-        $this->assertSame($actor->id, auth()->id());
+        $this->assertEquals($actor->id, auth()->id());
     }
 
     public function test_stop_impersonation_no_op_when_not_impersonating()
@@ -254,7 +254,7 @@ class ImpersonateUserTest extends TestCase
             ->post(route('users.impersonate.stop'))
             ->assertRedirect(route('home'));
 
-        $this->assertSame($actor->id, auth()->id());
+        $this->assertEquals($actor->id, auth()->id());
     }
 
     public function test_button_hidden_when_list_is_empty()
