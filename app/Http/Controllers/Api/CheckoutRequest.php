@@ -91,7 +91,7 @@ class CheckoutRequest extends Controller
 
         if (Company::isFullMultipleCompanySupportEnabled() && ! auth()->user()->isSuperUser()) {
             $requests = $requests->filter(function (CheckoutRequestModel $r): bool {
-                if (!$r->requestable || !Company::isCurrentUserHasAccess($r->requestable)) {
+                if (! $r->requestable || ! Company::isCurrentUserHasAccess($r->requestable)) {
                     return false;
                 }
 
@@ -317,7 +317,7 @@ class CheckoutRequest extends Controller
 
         $data = [
             'item' => $requestable,
-            'item_type' => strtolower(class_basename($requestable)),
+            'item_type' => Helper::shortTypeName($requestable),
             'item_quantity' => 1,
             'target' => $user,
             'requested_by' => $user->display_name,

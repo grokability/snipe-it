@@ -4,6 +4,7 @@ namespace App\Actions\CheckoutRequests;
 
 use App\Exceptions\DuplicateCheckoutRequest;
 use App\Exceptions\ItemNotRequestable;
+use App\Helpers\Helper;
 use App\Models\Accessory;
 use App\Models\Actionlog;
 use App\Models\Asset;
@@ -76,7 +77,7 @@ class CreateCheckoutRequestAction
         $now = date('Y-m-d H:i:s');
         $data = [
             'item' => $requestable,
-            'item_type' => strtolower(class_basename($requestable)),
+            'item_type' => Helper::shortTypeName($requestable),
             'item_quantity' => $qty ?? 1,
             'target' => $user,
             'requested_by' => $user->display_name,
