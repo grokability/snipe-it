@@ -31,12 +31,12 @@ class PendingOauthClientNotification extends Notification implements ShouldQueue
     /**
      * @return array<int, string>
      */
-    public function via(object $notifiable): array
+    public function via(): array
     {
         return ['mail'];
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(): MailMessage
     {
         $redirect = $this->client->primary_redirect_uri ?? '(unknown)';
         $ip = $this->registeredIp ?? '(unknown)';

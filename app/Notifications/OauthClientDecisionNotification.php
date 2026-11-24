@@ -35,12 +35,12 @@ class OauthClientDecisionNotification extends Notification implements ShouldQueu
     /**
      * @return array<int, string>
      */
-    public function via(object $notifiable): array
+    public function via(): array
     {
         return ['mail'];
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(): MailMessage
     {
         $isApproved = $this->decision === self::DECISION_APPROVED;
         $subjectKey = $isApproved

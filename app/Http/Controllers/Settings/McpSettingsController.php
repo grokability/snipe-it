@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Notification;
  */
 class McpSettingsController extends Controller
 {
-    public function approve(Request $request, string $client): RedirectResponse
+    public function approve(string $client): RedirectResponse
     {
         $this->enforceSuperuser();
 

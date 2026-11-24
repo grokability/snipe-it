@@ -1253,7 +1253,7 @@ class SettingsController extends Controller
                 ]);
                 $guess_prefix_output = Artisan::output();
                 Log::debug("Sanitize output is: $guess_prefix_output");
-                [$prefix, $_output] = explode("\n", $guess_prefix_output);
+                $prefix = explode("\n", $guess_prefix_output, 2)[0];
                 Log::debug("prefix is: '$prefix'");
                 $restore_params['--sanitize-with-prefix'] = $prefix;
             }
