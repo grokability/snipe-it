@@ -79,4 +79,18 @@
 @section('moar_scripts')
     @include ('partials.bootstrap-table')
 
+    <x-table.advanced-search
+        tableId="depreciationAssetsListingTable"
+        :model="\App\Models\Asset::class"
+    />
+    <x-table.advanced-search
+        tableId="depreciationLicensesListingTable"
+        :model="\App\Models\License::class"
+    />
+    @can('view', \App\Models\AssetModel::class)
+        <x-table.advanced-search
+            tableId="depreciationModelsListingTable"
+            :model="\App\Models\AssetModel::class"
+        />
+    @endcan
 @stop

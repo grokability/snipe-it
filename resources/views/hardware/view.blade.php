@@ -517,6 +517,15 @@
     @endcan
         @include ('partials.bootstrap-table')
         <x-modals.maintenance-complete />
+
+        <x-table.advanced-search
+            tableId="assetChildAssetsListingTable"
+            :model="\App\Models\Asset::class"
+        />
+        <x-table.advanced-search
+            tableId="assetMaintenanceListingTable"
+            :model="\App\Models\Maintenance::class"
+        />
     @endsection
 
 @stop

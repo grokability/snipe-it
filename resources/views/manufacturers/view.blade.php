@@ -73,4 +73,24 @@
 @section('moar_scripts')
 @include ('partials.bootstrap-table', ['exportFile' => 'manufacturer' . $manufacturer->name . '-export', 'search' => false])
 
+    <x-table.advanced-search
+        tableId="manufacturerAssetsListingTable"
+        :model="\App\Models\Asset::class"
+    />
+    <x-table.advanced-search
+        tableId="manufacturerLicensesListingTable"
+        :model="\App\Models\License::class"
+    />
+    <x-table.advanced-search
+        tableId="manufacturerAccessoriesListingTable"
+        :model="\App\Models\Accessory::class"
+    />
+    <x-table.advanced-search
+        tableId="manufacturerConsumablesListingTable"
+        :model="\App\Models\Consumable::class"
+    />
+    <x-table.advanced-search
+        tableId="manufacturerComponentsListingTable"
+        :model="\App\Models\Component::class"
+    />
 @stop

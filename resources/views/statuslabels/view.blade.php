@@ -39,4 +39,8 @@
         'columns' => \App\Presenters\AssetPresenter::dataTableLayout()
     ])
 
+    <x-table.advanced-search
+        tableId="statuslabelAssetsListingTable"
+        :model="\App\Models\Asset::class"
+    />
 @stop

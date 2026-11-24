@@ -94,4 +94,9 @@
     @endcan
 
     @include ('partials.bootstrap-table', ['exportFile' => 'models-' . $model->name . '-export', 'search' => false])
+
+    <x-table.advanced-search
+        tableId="modelAssetsListingTable"
+        :model="\App\Models\Asset::class"
+    />
 @endsection

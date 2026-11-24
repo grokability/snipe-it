@@ -112,4 +112,35 @@
 @endsection
 @section('moar_scripts')
     @include ('partials.bootstrap-table')
+
+    @if ($category->category_type == 'asset')
+        <x-table.advanced-search
+            tableId="categoryAssetsListingTable"
+            :model="\App\Models\Asset::class"
+        />
+        <x-table.advanced-search
+            tableId="categoryModelsListingTable"
+            :model="\App\Models\AssetModel::class"
+        />
+    @elseif ($category->category_type == 'license')
+        <x-table.advanced-search
+            tableId="categoryLicensesListingTable"
+            :model="\App\Models\License::class"
+        />
+    @elseif ($category->category_type == 'accessory')
+        <x-table.advanced-search
+            tableId="categoryAccessoriesListingTable"
+            :model="\App\Models\Accessory::class"
+        />
+    @elseif ($category->category_type == 'consumable')
+        <x-table.advanced-search
+            tableId="categoryConsumablesListingTable"
+            :model="\App\Models\Consumable::class"
+        />
+    @elseif ($category->category_type == 'component')
+        <x-table.advanced-search
+            tableId="categoryComponentsListingTable"
+            :model="\App\Models\Component::class"
+        />
+    @endif
 @stop

@@ -404,25 +404,7 @@
                     </x-tabs.pane>
 
                     <x-tabs.pane name="managed-users" :count="$user->managesUsers()->count()">
-                        @include('partials.users-bulk-actions')
-
-                        <table
-                            data-columns="{{ \App\Presenters\UserPresenter::dataTableLayout() }}"
-                            data-cookie-id-table="managedUsersTable"
-                            data-id-table="managedUsersTable"
-                            data-toolbar="#usersBulkEditToolbar"
-                            data-bulk-button-id="#bulkUserEditButton"
-                            data-bulk-form-id="#usersBulkForm"
-                            data-side-pagination="server"
-                            id="managedUsersTable"
-                            data-buttons="userButtons"
-                            class="table table-striped snipe-table"
-                            data-url="{{ route('api.users.index', ['manager_id' => $user->id]) }}"
-                            data-export-options='{
-              "fileName": "export-users-{{ date('Y-m-d') }}",
-              "ignoreColumn": ["actions","image","change","checkbox","checkincheckout","icon"]
-              }'>
-                        </table>
+                        <x-table.users name="managedUsers" :route="route('api.users.index', ['manager_id' => $user->id])"/>
                     </x-tabs.pane>
 
 
@@ -586,6 +568,26 @@
     @endcan
 
     @include ('partials.bootstrap-table', ['simple_view' => true])
+
+    <x-table.advanced-search
+        tableId="userAssetsListingTable"
+        :model="\App\Models\Asset::class"
+    />
+    <x-table.advanced-search
+        tableId="userMaintenancesListingTable"
+        :model="\App\Models\Maintenance::class"
+    />
+    @can('view', \App\Models\Location::class)
+        <x-table.advanced-search
+            tableId="userLocations_{{ $user->id }}ListingTable"
+            :model="\App\Models\Location::class"
+        />
+    @endcan
+    <x-table.advanced-search
+        tableId="managedUsersListingTable"
+        :model="\App\Models\User::class"
+    />
+
 <script nonce="{{ csrf_token() }}">
 $(function () {
 
