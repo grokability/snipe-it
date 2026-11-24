@@ -386,7 +386,7 @@ class Importer extends Component
         /**
          * These are the item-type specific columns
          */
-        $this->accessories_fields = [
+        $this->accessories_fields = array_merge([
             'archived' => trans('general.archived'),
             'category' => trans('general.category'),
             'company' => trans('general.company'),
@@ -402,9 +402,9 @@ class Importer extends Component
             'quantity' => trans('general.qty'),
             'requestable' => trans('general.requestable'),
             'supplier' => trans('general.supplier'),
-        ];
+        ], $this->checkoutTargetFields(Accessory::class));
 
-        $this->assets_fields = [
+        $this->assets_fields = array_merge([
             'id' => trans('general.id'),
             'asset_eol_date' => trans('admin/hardware/form.eol_date'),
             'asset_model' => trans('general.model_name'),
@@ -428,23 +428,7 @@ class Importer extends Component
             'status' => trans('general.status'),
             'supplier' => trans('general.supplier'),
             'warranty_months' => trans('admin/hardware/form.warranty'),
-            /**
-             * Checkout fields. Assets can be checked out to other assets, people, or
-             * locations. Which target the importer picks is inferred from which of the
-             * three target-shape columns has a value on the row (checkout_asset,
-             * checkout_location, or the user-identity columns). checkout_class stays
-             * available as an explicit override when a row has more than one populated
-             * and needs disambiguation, or for backward-compat with pre-inference CSVs.
-             **/
-            'checkout_class' => trans('general.importer.checkout_type'),
-            'first_name' => trans('general.importer.checked_out_to_first_name'),
-            'last_name' => trans('general.importer.checked_out_to_last_name'),
-            'full_name' => trans('general.importer.checked_out_to_fullname'),
-            'email' => trans('general.importer.checked_out_to_email'),
-            'username' => trans('general.importer.checked_out_to_username'),
-            'checkout_location' => trans('general.importer.checkout_location'),
-            'checkout_asset' => trans('general.importer.checkout_asset'),
-            'checkout_user' => trans('general.importer.checkout_user'),
+        ], $this->checkoutTargetFields(Asset::class), [
             /**
              * These are here so users can import history, to replace the dinosaur that
              * was the history importer
@@ -454,11 +438,10 @@ class Importer extends Component
             'expected_checkin' => trans('admin/hardware/form.expected_checkin'),
             'last_audit_date' => trans('general.last_audit'),
             'next_audit_date' => trans('general.next_audit_date'),
-        ];
+        ]);
 
-        $this->consumables_fields = [
+        $this->consumables_fields = array_merge([
             'category' => trans('general.category'),
-            'checkout_class' => trans('general.importer.checkout_type'),
             'company' => trans('general.company'),
             'item_name' => trans('general.item_name_var', ['item' => trans('general.consumable')]),
             'item_no' => trans('admin/consumables/general.item_no'),
@@ -476,7 +459,7 @@ class Importer extends Component
             'quantity' => trans('general.qty'),
             'requestable' => trans('general.requestable'),
             'supplier' => trans('general.supplier'),
-        ];
+        ], $this->checkoutTargetFields(Consumable::class));
 
         $this->components_fields = [
             'archived' => trans('general.archived'),
@@ -1391,13 +1374,56 @@ class Importer extends Component
     }
 
     /**
+     * Mappable checkout-target CSV columns for the given checkoutable
+     * model. Reads the model's Checkoutable contract so the importer's
+     * field list stays in sync. This will hopefully be unnecessary down
+     * the line when we normalize using the full model in the DB and
+     * either full model OR shortname in API/UI/Import, etc.
+     *
+     * It's a little all over the map throughout the system right now. :(
+     *
+     * @param  class-string<\App\Models\Contracts\Checkoutable>  $modelClass
+     * @return array<string, string>
+     */
+    private function checkoutTargetFields(string $modelClass): array
+    {
+        $allowed = $modelClass::allowedCheckoutTargetTypes();
+        $fields = [];
+
+        if (in_array(User::class, $allowed, true)) {
+            $fields += [
+                'checkout_user' => trans('general.importer.checkout_user'),
+                'email' => trans('general.importer.checked_out_to_email'),
+                'first_name' => trans('general.importer.checked_out_to_first_name'),
+                'full_name' => trans('general.importer.checked_out_to_fullname'),
+                'last_name' => trans('general.importer.checked_out_to_last_name'),
+                'username' => trans('general.importer.checked_out_to_username'),
+            ];
+        }
+
+        if (in_array(Asset::class, $allowed, true)) {
+            $fields += ['checkout_asset' => trans('general.importer.checkout_asset')];
+        }
+
+        if (in_array(Location::class, $allowed, true)) {
+            $fields += ['checkout_location' => trans('general.importer.checkout_location')];
+        }
+
+        if (count($allowed) > 1) {
+            $fields += ['checkout_class' => trans('general.importer.checkout_type')];
+        }
+
+        return $fields;
+    }
+
+    /**
      * True when the current field_map maps any user-identifying column
      * (username, email, first/last/full/display name, or checkout_user).
-     * Asset / accessory / consumable / license imports may check items
+     * Asset/accessory/consumable/license imports may check items
      * out to users, in which case the wizard should surface the
      * send-welcome checkbox even though the import type isn't 'user'.
      * The welcome email itself only fires when a new user is actually
-     * created; existing-user matches don't retrigger it.
+     * created.
      */
     #[Computed]
     public function hasUserCheckoutMapping(): bool
