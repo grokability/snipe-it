@@ -221,7 +221,7 @@ class IndexUsersTest extends TestCase
             'end_date' => null,
         ]);
 
-        $response = $this->actingAsForApi(User::factory()->viewUsers()->create())
+        $response = $this->actingAsForApi(User::factory()->viewUsers()->create(['end_date' => null]))
             ->getJson(route('api.users.index', ['end_date_within' => 30]))
             ->assertOk();
 
