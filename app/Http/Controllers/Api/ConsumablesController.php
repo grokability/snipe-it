@@ -427,8 +427,8 @@ class ConsumablesController extends Controller
             return ['total' => 0, 'rows' => []];
         }
         $this->authorize('view', Consumable::class);
-
-        $query = $consumable->consumableAssignments()
+        
+        $query = ConsumableAssignment::where('consumable_id', $consumable->id)
             ->leftJoin('users', 'consumables_users.assigned_to', '=', 'users.id')
             ->leftJoin('users as admin_users', 'consumables_users.created_by', '=', 'admin_users.id')
             ->select('consumables_users.*');

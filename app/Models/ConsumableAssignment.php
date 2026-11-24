@@ -35,17 +35,17 @@ class ConsumableAssignment extends Model implements Checkoutable
         'assigned_to' => 'required|exists:users,id',
     ];
 
-    public function consumable()
+    public function consumable(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Consumable::class);
     }
 
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_to');
     }
 
-    public function adminuser()
+    public function adminuser(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by')->withTrashed();
     }
