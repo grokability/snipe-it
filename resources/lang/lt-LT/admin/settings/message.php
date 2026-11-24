@@ -25,7 +25,7 @@ return [
     'purge' => [
         'error' => 'Valymo metu įvyko klaida. ',
         'validation_failed' => 'Jūsų įvestas išvalymo patvirtinimas yra neteisingas. Patvirtinimo lauke įveskite žodį „DELETE“.',
-        'success' => 'Anksčiau panaikinti įrašai sėkmingai pašalinti.',
+        'success' => 'Anksčiau ištrinti įrašai sėkmingai pašalinti.',
     ],
     'mail' => [
         'sending' => 'Siunčiamas bandomasis el. laiškas...',

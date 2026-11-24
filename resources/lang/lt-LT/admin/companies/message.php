@@ -2,8 +2,8 @@
 
 return [
     'does_not_exist' => 'Tokios įmonės nėra.',
-    'deleted' => 'Panaikinta įmonė',
-    'assoc_users' => 'This company is currently associated with at least one other item (location, user, license, asset, etc.) in Snipe-IT and cannot be deleted. Please update your models to no longer reference this company and try again. ',
+    'deleted' => 'Ištrinta įmonė',
+    'assoc_users' => 'Ši įmonė šiuo metu yra susieta bent su vienu kitu elementu („Snipe-IT“ sistemoje esančia vieta, naudotoju, licencija, turtu ir kt.), todėl negali būti ištrinta. Atnaujinkite savo modelius, kad jie nebebūtų susieti su šia įmone, ir bandykite dar kartą. ',
     'create' => [
         'error' => 'Įmonė nebuvo sukurta, bandykite dar kartą.',
         'success' => 'Įmonė sėkmingai sukurta.',
@@ -14,10 +14,10 @@ return [
     ],
     'delete' => [
         'confirm' => 'Ar tikrai norite ištrinti šią įmonę?',
-        'error' => 'Bandant panaikinti įmonę įvyko klaida. Bandykite dar kartą.',
-        'success' => 'Įmonė sėkmingai panaikinta.',
+        'error' => 'Bandant ištrinti įmonę įvyko klaida. Bandykite dar kartą.',
+        'success' => 'Įmonė sėkmingai ištrinta.',
         'bulk_success' => 'Įmonė sėkmingai ištrinta.|Įmonės (:count) sėkmingai ištrintos.',
         'partial_success' => 'Įmonė sėkmingai ištrinta. Daugiau informacijos rasite žemiau. | Įmonės (:count) buvo sėkmingai ištrintos. Daugiau informacijos rasite žemiau.',
     ],
-    'webhook_fields_require_superuser' => 'Webhook configuration fields (:fields) can only be modified by a superuser.',
+    'webhook_fields_require_superuser' => '„Webhook“ konfigūracijos laukus (:fields) gali keisti tik supernaudotojas.',
 ];

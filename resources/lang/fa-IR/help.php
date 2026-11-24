@@ -15,7 +15,7 @@ return [
 
     'more_info_title' => 'اطلاعات بیشتر',
 
-    'audit_help' => 'Checking this box will edit the asset record to reflect this new location. Leaving it unchecked will simply note the location in the audit log.<br><br>Note that if this asset is checked out, it will not change the location of the person, asset or location it is checked out to.',
+    'audit_help' => 'علامت زدن این کادر رکورد دارایی را برای ثبت این مکان جدید ویرایش می‌کند. در صورت عدم علامت‌گذاری، صرفاً مکان در گزارش ممیزی ثبت می‌شود.<br><br>توجه داشته باشید اگر این دارایی واگذار شده باشد، مکان فرد، دارایی یا مکانی که به آن واگذار شده تغییر نخواهد کرد.',
 
     'assets' => 'دارایی ها مواردی هستند که توسط شماره سریال یا برچسب دارایی دنبال می شوند. آنها تمایل دارند که مقادیر ارزش بیشتری داشته باشند که در آن شناسایی یک مورد خاص موردنیاز باشد.',
 
@@ -31,5 +31,5 @@ return [
 
     'depreciations' => 'شما می توانید استهلاک دارایی را فعال کنید تا دارایی ها را بر اساس استهلاک خطی مستقیم، کم بهاء کنید.',
 
-    'empty_file' => 'The importer detects that this file is empty.',
+    'empty_file' => 'سیستم واردکننده تشخیص داد که این فایل خالی است.',
 ];

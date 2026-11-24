@@ -188,6 +188,7 @@ return [
     'eloquent_model_class' => 'The :attribute field must be the fully-qualified class name of an Eloquent model.',
     'fmcs_company' => 'Il campo :attribute è obbligatorio perché è attivato il supporto completo per aziende multiple e gli elementi "fluttuanti" non sono ammessi.',
     'fmcs_location' => 'La sede ":location" appartiene a :location_company, che non corrisponde all\'azienda selezionata.',
+    'fmcs_target_compat' => 'The :attribute does not belong to a company this user can report to.',
     'is_unique_across_company_and_location' => 'L\' :attributo deve essere univoco all\'interno dell\'azienda e della sede selezionata.',
 
     /*

@@ -15,14 +15,14 @@ return [
     ],
 
     'restore' => [
-        'error' => 'Component was not restored, please try again',
+        'error' => 'Komponentas nebuvo atkurtas, bandykite dar kartą',
         'success' => 'Komponentas sėkmingai atkurtas.',
     ],
 
     'delete' => [
-        'confirm' => 'Ar tikrai norite panaikinti šį komponentą?',
-        'error' => 'Bandant panaikinti komponentą įvyko klaida. Bandykite dar kartą.',
-        'success' => 'Komponentas sėkmingai panaikintas.',
+        'confirm' => 'Ar tikrai norite ištrinti šį komponentą?',
+        'error' => 'Bandant ištrinti komponentą įvyko klaida. Bandykite dar kartą.',
+        'success' => 'Komponentas sėkmingai ištrintas.',
         'error_qty' => 'Kai kurie šio tipo komponentai vis dar yra išduoti. Paimkite juos ir bandykite dar kartą.',
     ],
 
@@ -35,27 +35,27 @@ return [
 
     'bulk' => [
         'no_components_selected' => 'Nebuvo pasirinkta jokių komponentų.',
-        'no_action_selected' => 'Please pick an action from the dropdown.',
+        'no_action_selected' => 'Pasirinkite veiksmą iš išskleidžiamojo sąrašo.',
         'no_fields_updated' => 'Jokie laukai nebuvo pakeisti, todėl niekas nebuvo atnaujinta.',
-        'skipped_unauthorized' => ':count component(s) were skipped because you do not have permission to update them.',
+        'skipped_unauthorized' => 'Komponentai (:count) buvo praleisti, nes neturite teisės jų atnaujinti.',
 
         'update' => [
-            'success' => ':count component was updated.|:count components were updated.',
-            'none_updated' => 'The selected component could not be updated. See errors below for details.|None of the selected components could be updated. See errors below for details.',
+            'success' => 'Buvo atnaujintas :count komponentas.|Buvo atnaujinti :count komponentai.',
+            'none_updated' => 'Pasirinkto komponento nepavyko atnaujinti. Daugiau informacijos rasite žemiau pateiktuose klaidų pranešimuose.| Nepavyko atnaujinti nė vieno iš pasirinktų komponentų. Daugiau informacijos rasite žemiau pateiktuose klaidų pranešimuose.',
         ],
 
         'delete' => [
-            'success' => ':count component was deleted.|:count components were deleted.',
-            'partial_success' => ':count component was deleted. See errors below for the rest.|:count components were deleted. See errors below for the rest.',
+            'success' => 'Buvo ištrintas :count komponentas.|Buvo ištrinti :count komponentai.',
+            'partial_success' => 'Komponentas (:count) buvo ištrintas. Dėl likusių peržiūrėkite žemiau pateiktas klaidas.|Komponentai (:count) buvo ištrinti. Dėl likusių peržiūrėkite žemiau pateiktas klaidas.',
         ],
 
         'restore' => [
-            'success' => ':count component was restored.|:count components were restored.',
+            'success' => 'Buvo atkurtas :count komponentas.|Buvo atkurti :count komponentai.',
         ],
 
         'checkin_selected' => [
-            'no_rows_selected' => 'No checked-out components were selected.',
-            'success' => ':unit_count unit returned across :count checkout.|:unit_count units returned across :count checkouts.',
+            'no_rows_selected' => 'Nepasirinkta jokių išduotų komponentų.',
+            'success' => ':unit_count vienetas grąžintas per :count išdavimą.|:unit_count vienetai grąžinti per :count išdavimus.',
         ],
     ],
 

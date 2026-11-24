@@ -571,6 +571,7 @@ return [
     'new_component' => '新增組件',
     'new_user' => '新增使用者',
     'collapse' => '收起',
+    'compact_view' => 'Compact view',
     'assigned' => '已分配',
     'asset_count' => '資產數量',
     'accessories_count' => '配件數量',

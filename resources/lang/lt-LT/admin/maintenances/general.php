@@ -5,7 +5,7 @@ return [
     'maintenances' => 'Aptarnavimai',
     'create' => 'Registruoti turto aptarnavimą',
     'edit' => 'Redaguoti turto aptarnavimą',
-    'delete' => 'Panaikinti turto aptarnavimą',
+    'delete' => 'Ištrinti turto aptarnavimo įrašą',
     'view' => 'Peržiūrėti turto aptarnavimo informaciją',
     'repair' => 'Remontas',
     'maintenance' => 'Aptarnavimas',

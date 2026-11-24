@@ -5,7 +5,7 @@ return [
     'field' => [
         'invalid' => 'این زمینه وجود ندارد.',
         'already_added' => 'زمینه اضافه شده است',
-        'none_selected' => 'No field selected',
+        'none_selected' => 'هیچ فیلدی انتخاب نشده است',
 
         'create' => [
             'error' => 'فیلد ایجاد نشده است، لطفا دوباره تلاش کنید.',
@@ -23,9 +23,9 @@ return [
             'error' => 'در حذف کردن این فیلد مشکلی وجود داشت. لطفا دوباره تلاش کنید.',
             'success' => 'فیلد با موفقیت حذف شد.',
             'in_use' => 'فیلد همچنان در حال استفاده است.',
-            'in_use_named' => ':name is still attached to at least one fieldset and cannot be deleted.',
-            'bulk_success' => 'Field deleted successfully.|:count fields were deleted successfully.',
-            'partial_success' => ':count field was deleted successfully, but others could not be deleted. See below for details.|:count fields were deleted successfully, but others could not be deleted. See below for details.',
+            'in_use_named' => ':name هنوز به حداقل یک مجموعه فیلد متصل است و نمی‌توان آن را حذف کرد.',
+            'bulk_success' => 'فیلد با موفقیت حذف شد.|:count فیلد با موفقیت حذف شدند.',
+            'partial_success' => ':count فیلد با موفقیت حذف شد، اما موارد دیگر حذف نشدند. جزئیات را در زیر مشاهده کنید.|:count فیلد با موفقیت حذف شدند، اما موارد دیگر حذف نشدند. جزئیات را در زیر مشاهده کنید.',
         ],
 
     ],
@@ -49,13 +49,13 @@ return [
             'error' => 'در حذف کردن تنظیمات فیلد مشکلی وجود داشت. لطفا دوباره تلاش کنید.',
             'success' => 'تنظیمات فیلد با موفقیت حذف شد.',
             'in_use' => 'تنظیمات فیلد همچنان در حال استفاده است.',
-            'in_use_named' => ':name is still attached to at least one asset model and cannot be deleted.',
-            'bulk_success' => 'Fieldset deleted successfully.|:count fieldsets were deleted successfully.',
-            'partial_success' => ':count fieldset was deleted successfully, but others could not be deleted. See below for details.|:count fieldsets were deleted successfully, but others could not be deleted. See below for details.',
+            'in_use_named' => ':name هنوز به حداقل یک مدل دارایی متصل است و نمی‌توان آن را حذف کرد.',
+            'bulk_success' => 'مجموعه فیلد با موفقیت حذف شد.|:count مجموعه فیلد با موفقیت حذف شدند.',
+            'partial_success' => ':count مجموعه فیلد با موفقیت حذف شد، اما موارد دیگر حذف نشدند. جزئیات را در زیر مشاهده کنید.|:count مجموعه فیلد با موفقیت حذف شدند، اما موارد دیگر حذف نشدند. جزئیات را در زیر مشاهده کنید.',
         ],
 
         'clone' => [
-            'success' => 'Fieldset cloned successfully.',
+            'success' => 'مجموعه فیلد با موفقیت همانندسازی شد.',
         ],
 
     ],

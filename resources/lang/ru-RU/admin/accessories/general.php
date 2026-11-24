@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Категория аксессуара',
     'accessory_name' => 'Имя аксессуара',
     'checkout' => 'Выдать аксессуар',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Вернуть аксессуар',
     'create' => 'Создать аксессуар',
     'edit' => 'Редактировать аксессуар',

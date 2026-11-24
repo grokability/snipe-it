@@ -3,12 +3,12 @@
 return [
 
     'does_not_exist' => 'مکان وجود ندارد.',
-    'assoc_users' => 'This location is not currently deletable because it is the location of record for at least one item or user, has assets assigned to it, or is the parent location of another location. Please update your records to no longer reference this location and try again ',
+    'assoc_users' => 'این مکان در حال حاضر قابل حذف نیست زیرا مکان ثبت‌شده برای حداقل یک مورد یا کاربر است، دارایی‌هایی به آن اختصاص داده شده یا مکان والد مکان دیگری است. لطفاً سوابق خود را به‌گونه‌ای به‌روزرسانی کنید که دیگر به این مکان ارجاع ندهند و دوباره تلاش کنید ',
     'assoc_assets' => 'این مکان در حال حاضر همراه با حداقل یک دارایی است و قادر به حذف نمی شود. لطفا بروز دارایی های خود را به دیگر این مکان مرجع و دوباره امتحان کنید. ',
     'assoc_child_loc' => 'این مکان در حال حاضر پدر و مادر کودک حداقل یک مکان است و قادر به حذف نمی شود. لطفا به روز رسانی مکان خود را به دیگر این مکان مرجع و دوباره امتحان کنید. ',
-    'assigned_assets' => 'Assigned Assets',
-    'current_location' => 'Current Location',
-    'deleted_warning' => 'This location has been deleted. Please restore it before attempting to make any changes.',
+    'assigned_assets' => 'دارایی‌های اختصاص‌یافته',
+    'current_location' => 'مکان فعلی',
+    'deleted_warning' => 'این مکان حذف شده است. لطفاً قبل از هرگونه تغییر آن را بازیابی کنید.',
 
     'create' => [
         'error' => 'مکان ایجاد نشد،دوباره سعی کنید.',
@@ -21,8 +21,8 @@ return [
     ],
 
     'restore' => [
-        'error' => 'Location was not restored, please try again',
-        'success' => 'Location restored successfully.',
+        'error' => 'مکان بازیابی نشد، لطفاً دوباره امتحان کنید',
+        'success' => 'مکان با موفقیت بازیابی شد.',
     ],
 
     'delete' => [
@@ -33,13 +33,13 @@ return [
 
     'bulkedit' => [
         'error' => 'هیچ فیلدی تغییر نکرده بود، بنابراین چیزی به روز نشد.',
-        'success' => 'Location successfully updated.|:count locations successfully updated.',
-        'warn' => 'Edit the fields below to update this location. Fields you leave blank will not change on the location.|Edit the fields below to update all :count selected locations. Fields you leave blank will not change on any of them.',
-        'show_selected' => '1 selected location|:count selected locations',
-        'company_scope_mismatch_partial' => 'The company was not changed on 1 location because items or users at that location belong to different companies. Update or move those first.|The company was not changed on :count locations because items or users at those locations belong to different companies. Update or move those first.',
-        'company_scope_mismatch_all' => 'No locations were reassigned. The requested company does not match items or users at the selected location.|No locations were reassigned. The requested company does not match items or users at any of the :count selected locations.',
-        'parent_company_mismatch_partial' => 'The parent or company was not changed on 1 location because it would leave the location in a different company than its parent.|The parent or company was not changed on :count locations because it would leave those locations in a different company than their parent.',
-        'parent_company_mismatch_all' => 'No changes were saved. The requested parent or company would leave the location in a different company than its parent.|No changes were saved. The requested parent or company would leave every one of the :count selected locations in a different company than their parent.',
+        'success' => 'مکان با موفقیت به‌روزرسانی شد.|:count مکان با موفقیت به‌روزرسانی شدند.',
+        'warn' => 'فیلدهای زیر را برای به‌روزرسانی این مکان ویرایش کنید. فیلدهایی که خالی می‌گذارید در مکان تغییری نخواهند کرد.|فیلدهای زیر را برای به‌روزرسانی همه :count مکان انتخاب‌شده ویرایش کنید. فیلدهایی که خالی می‌گذارید در هیچ‌یک از آنها تغییر نخواهند کرد.',
+        'show_selected' => '۱ مکان انتخاب‌شده|:count مکان انتخاب‌شده',
+        'company_scope_mismatch_partial' => 'شرکت در ۱ مکان تغییر نکرد زیرا اقلام یا کاربران آن مکان متعلق به شرکت‌های متفاوتی هستند. ابتدا آنها را به‌روزرسانی یا منتقل کنید.|شرکت در :count مکان تغییر نکرد زیرا اقلام یا کاربران آن مکان‌ها متعلق به شرکت‌های متفاوتی هستند. ابتدا آنها را به‌روزرسانی یا منتقل کنید.',
+        'company_scope_mismatch_all' => 'هیچ مکانی مجدداً تخصیص نیافت. شرکت درخواستی با اقلام یا کاربران مکان انتخاب‌شده مطابقت ندارد.|هیچ مکانی مجدداً تخصیص نیافت. شرکت درخواستی با اقلام یا کاربران هیچ‌یک از :count مکان انتخاب‌شده مطابقت ندارد.',
+        'parent_company_mismatch_partial' => 'والد یا شرکت در ۱ مکان تغییر نکرد زیرا باعث می‌شد این مکان در شرکتی متفاوت از والد خود قرار گیرد.|والد یا شرکت در :count مکان تغییر نکرد زیرا باعث می‌شد آن مکان‌ها در شرکتی متفاوت از والد خود قرار گیرند.',
+        'parent_company_mismatch_all' => 'هیچ تغییری ذخیره نشد. والد یا شرکت درخواستی باعث می‌شد مکان در شرکتی متفاوت از والد خود قرار گیرد.|هیچ تغییری ذخیره نشد. والد یا شرکت درخواستی باعث می‌شد تک‌تک :count مکان انتخاب‌شده در شرکتی متفاوت از والد خود قرار گیرند.',
     ],
 
 ];

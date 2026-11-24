@@ -21,8 +21,8 @@ return [
     ],
 
     'fields' => [
-        'width' => 'Lehe laius',
-        'height' => 'Lehe kõrgus',
+        'width' => 'Label Width',
+        'height' => 'Label Height',
         'label_gap' => 'Siltide vahe',
         'margin_top' => 'Ülemine veeris',
         'margin_right' => 'Parem veeris',
@@ -63,6 +63,7 @@ return [
         'logo_max_width' => 'Maksimaalne laius',
         'logo_margin' => 'Veeris',
         'logo_h_align' => 'Horisontaalne joondus',
+        'logo_position' => 'Logo Position',
         'asset_tag' => 'Vahendi silt',
         'barcode_1d' => '1D-vöötkood',
         'barcode_2d' => '2D-vöötkood',

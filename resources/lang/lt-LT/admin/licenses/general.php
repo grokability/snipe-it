@@ -19,7 +19,7 @@ return [
     'software_licenses' => 'Programinės įrangos licencijos',
     'user' => 'Naudotojas',
     'view' => 'Peržiūrėti licenciją',
-    'delete_disabled' => 'Ši licencija negali būti panaikinta, kadangi kai kurios vietos vis dar yra išduotos.',
+    'delete_disabled' => 'Ši licencija negali būti ištrinta, kadangi kai kurios vietos vis dar yra išduotos.',
     'bulk' => [
         'checkin_all' => [
             'button' => 'Paimti visas vietas',

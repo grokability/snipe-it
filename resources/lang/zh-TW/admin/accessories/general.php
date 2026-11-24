@@ -4,6 +4,8 @@ return [
     'accessory_category' => '配件類別',
     'accessory_name' => '配件名稱',
     'checkout' => '配件借出',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => '配件繳回',
     'create' => '新增配件',
     'edit' => '編輯配件',

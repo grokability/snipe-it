@@ -3,7 +3,7 @@
 return [
     'does_not_exist' => 'شرکت وجود ندارد.',
     'deleted' => 'شرکت حذف شده',
-    'assoc_users' => 'This company is currently associated with at least one other item (location, user, license, asset, etc.) in Snipe-IT and cannot be deleted. Please update your models to no longer reference this company and try again. ',
+    'assoc_users' => 'این شرکت در حال حاضر به حداقل یک مورد دیگر (مکان، کاربر، مجوز، دارایی و غیره) در Snipe-IT مرتبط است و نمی‌توان آن را حذف کرد. لطفاً مدل‌های خود را به‌گونه‌ای به‌روزرسانی کنید که دیگر به این شرکت ارجاع ندهند و سپس دوباره امتحان کنید. ',
     'create' => [
         'error' => 'شرکت ایجاد نشد،دوباره سعی کنید.',
         'success' => 'شرکت ایجاد شد.',
@@ -16,8 +16,8 @@ return [
         'confirm' => 'آیا مطمعن هستید میخواهید این شرکت را پاک کنید؟',
         'error' => 'موضوع شرکت حذف شد. لطفا دوباره سعی کنید.',
         'success' => 'این شرکت پاک شد.',
-        'bulk_success' => 'Company deleted successfully.|:count companies were deleted successfully.',
-        'partial_success' => 'Company deleted successfully. See additional information below. | :count companies were deleted successfully. See additional information below.',
+        'bulk_success' => 'شرکت با موفقیت حذف شد.|:count شرکت با موفقیت حذف شدند.',
+        'partial_success' => 'شرکت با موفقیت حذف شد. اطلاعات تکمیلی را در زیر مشاهده کنید. | :count شرکت با موفقیت حذف شدند. اطلاعات تکمیلی را در زیر مشاهده کنید.',
     ],
-    'webhook_fields_require_superuser' => 'Webhook configuration fields (:fields) can only be modified by a superuser.',
+    'webhook_fields_require_superuser' => 'فیلدهای پیکربندی وب‌هوک (:fields) فقط توسط کاربر ارشد قابل تغییر است.',
 ];

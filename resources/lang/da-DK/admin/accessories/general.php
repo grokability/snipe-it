@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Tilbehør Kategori',
     'accessory_name' => 'Tilbehør Navn',
     'checkout' => 'Tjek tilbehør ud',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Tjek tilbehør ind',
     'create' => 'Opret tilbehør',
     'edit' => 'Rediger tilbehør',

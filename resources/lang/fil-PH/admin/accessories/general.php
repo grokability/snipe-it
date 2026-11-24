@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Ang Katergorya sa Aksesorya',
     'accessory_name' => 'Ang Pangalan ng Aksesorya',
     'checkout' => 'I-checkout ang Aksesorya',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'I-checkin ang Aksesorya',
     'create' => 'Magsagawa ng Aksesorya',
     'edit' => 'I-edit ang Aksesorya',

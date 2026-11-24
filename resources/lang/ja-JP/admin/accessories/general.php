@@ -4,6 +4,8 @@ return [
     'accessory_category' => '付属品カテゴリー',
     'accessory_name' => '付属品名',
     'checkout' => '付属品の貸し出し',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => '付属品の返却',
     'create' => '付属品の作成',
     'edit' => '付属品の編集',

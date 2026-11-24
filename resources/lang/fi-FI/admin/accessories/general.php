@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Kategoria',
     'accessory_name' => 'Oheistarvikkeen nimi',
     'checkout' => 'Oheistarvikkeen luovutus',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Oheistarvikkeen palautus',
     'create' => 'Luo oheistarvike',
     'edit' => 'Muokkaa oheistarviketta',

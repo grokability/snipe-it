@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Категорія аксесуарів',
     'accessory_name' => 'Назва аксесуара',
     'checkout' => 'Видати аксесуар',
+    'bulk_checkout' => 'Масова видача аксесуарів',
+    'accessories_selected' => 'Вибрано аксесуари',
     'checkin' => 'Прийняти аксесуар',
     'create' => 'Створити аксесуар',
     'edit' => 'Редагувати аксесуар',

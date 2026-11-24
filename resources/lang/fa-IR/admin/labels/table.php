@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'example_company' => 'Test Company Limited',
-    'example_defaultloc' => 'Building 1',
-    'example_category' => 'Test Category',
-    'example_location' => 'Building 2',
-    'example_manufacturer' => 'Test Manufacturing Inc.',
-    'example_model' => 'Test Model',
-    'example_supplier' => 'Test Company Limited',
+    'example_company' => 'شرکت آزمایشی با مسئولیت محدود',
+    'example_defaultloc' => 'ساختمان ۱',
+    'example_category' => 'دسته‌بندی آزمایشی',
+    'example_location' => 'ساختمان ۲',
+    'example_manufacturer' => 'شرکت تولیدی آزمایشی.',
+    'example_model' => 'مدل آزمایشی',
+    'example_supplier' => 'شرکت تامین‌کننده آزمایشی',
     'labels_per_page' => 'برچسب ها',
     'support_fields' => 'فیلدها',
     'support_asset_tag' => 'برچسب',

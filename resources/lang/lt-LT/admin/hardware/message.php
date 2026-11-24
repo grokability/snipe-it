@@ -7,7 +7,7 @@ return [
     'does_not_exist_var' => 'Turtas su numeriu :asset_tag nerastas.',
     'no_tag' => 'Nenurodytas inventorinis numeris.',
     'does_not_exist_or_not_requestable' => 'Tokio turto nėra arba jo negalima užsakyti.',
-    'assoc_users' => 'Šis turtas šiuo metu yra išduotas naudotojui ir negali būti panaikintas. Pirmiausia paimkite turtą ir tuomet vėl bandykite jį panaikinti. ',
+    'assoc_users' => 'Šis turtas šiuo metu yra išduotas naudotojui ir negali būti ištrintas. Pirmiausia paimkite turtą ir tuomet vėl bandykite jį ištrinti. ',
     'warning_audit_date_mismatch' => 'Šio turto kito audito data (:next_audit_date) yra ankstesnė už paskutinio audito datą (:last_audit_date). Atnaujinkite kito audito datą.',
     'labels_generated' => 'Etiketės sėkmingai sugeneruotos.',
     'error_generating_labels' => 'Generuojant etiketes įvyko klaida.',
@@ -75,7 +75,7 @@ return [
         'file_delete_success' => 'Jūsų failas buvo sėkmingai ištrintas',
         'file_delete_error' => 'Šio failo ištrinti nepavyko',
         'file_missing' => 'Pažymėtas failas nerastas',
-        'file_already_deleted' => 'Pasirinktas failas jau buvo panaikintas',
+        'file_already_deleted' => 'Pasirinktas failas jau buvo ištrintas',
         'file_missing_on_disk' => 'Šio importo failo diske nebėra. Jis galėjo būti ištrintas ne „Snipe-IT“ programoje. Ištrinkite šį įrašą ir iš naujo įkelkite failą, kad galėtumėte pabandyti dar kartą.',
         'file_empty' => 'Šiame faile nėra duomenų eilučių. Iš jo negalima nieko importuoti.',
         'already_processing' => 'Šį importavimą šiuo metu apdoroja kitas naudotojas. Palaukite, kol jis bus baigtas, ir tada bandykite dar kartą.',
@@ -87,7 +87,7 @@ return [
             'button' => 'Ištrinti pasirinktus (:count)',
             'confirm_title' => 'Ištrinti pasirinktus importavimo failus?',
             'confirm_body' => 'Jūs ketinate visam laikui ištrinti :count importo failą (-us). Šio veiksmo negalima atšaukti.',
-            'confirm_button' => 'Panaikinti',
+            'confirm_button' => 'Ištrinti',
             'success' => 'Importavimo failas sėkmingai ištrintas.|Importavimo failai (:count) sėkmingai ištrinti.',
             'skipped' => 'Failai (:count) buvo praleisti, nes neturite teisės jų ištrinti.',
             'select_all' => 'Pažymėti visus šiame puslapyje esančius failus',
@@ -128,11 +128,11 @@ return [
     ],
 
     'delete' => [
-        'confirm' => 'Ar tikrai norite panaikinti šį turtą?',
-        'error' => 'Bandant panaikinti turtą įvyko klaida. Bandykite dar kartą.',
-        'assigned_to_error' => '{1}Inventorinis numeris: :asset_tag šiuo metu yra išduotas. Paimkite šį įrenginį prieš panaikindami.|[2,*]Inventoriniai numeriai: :asset_tag šiuo metu yra išduoti. Paimkite šiuos įrenginius prieš panaikindami.',
-        'nothing_updated' => 'Nebuvo pasirinkta jokio turto, todėl nieko nebuvo panaikinta.',
-        'success' => 'Turtas sėkmingai panaikintas.',
+        'confirm' => 'Ar tikrai norite ištrinti šį turtą?',
+        'error' => 'Bandant ištrinti turtą įvyko klaida. Bandykite dar kartą.',
+        'assigned_to_error' => '{1}Inventorinis numeris: :asset_tag šiuo metu yra išduotas. Paimkite šį įrenginį prieš ištrindami.|[2,*]Inventoriniai numeriai: :asset_tag šiuo metu yra išduoti. Paimkite šiuos įrenginius prieš ištrindami.',
+        'nothing_updated' => 'Nebuvo pasirinkta jokio turto, todėl nieko nebuvo ištrinta.',
+        'success' => 'Turtas sėkmingai ištrintas.',
     ],
 
     'checkout' => [
@@ -163,7 +163,7 @@ return [
     'checkin' => [
         'error' => 'Turtas nebuvo paimtas, bandykite dar kartą',
         'success' => 'Turtas sėkmingai paimtas.',
-        'updated_without_checkin' => 'Asset was already checked in, but the form fields you set (status, location, name, notes) were applied anyway.',
+        'updated_without_checkin' => 'Turtas jau buvo paimtas, bet jūsų nustatyti formos laukai (būsena, vieta, pavadinimas, pastabos) vis tiek buvo pritaikyti.',
         'user_does_not_exist' => 'Neteisingas naudotojas. Bandykite dar kartą.',
         'already_checked_in' => 'Šis turtas jau yra paimtas.',
         'force_checkin_orphaned_success' => 'Neteisingas priskyrimas sėkmingai ištrintas.',

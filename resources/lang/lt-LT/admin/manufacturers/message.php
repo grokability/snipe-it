@@ -4,7 +4,7 @@ return [
 
     'support_url_help' => 'Kintamieji: <code>{LOCALE}</code>, <code>{SERIAL}</code>, <code>{MODEL_NUMBER}</code> ir <code>{MODEL_NAME}</code> gali būti naudojami jūsų URL, kad šios reikšmės būtų automatiškai įvestos, kai peržiūrite turtą. Pvz., https://checkcoverage.apple.com/{LOCALE}/{SERIAL}.',
     'does_not_exist' => 'Tokio gamintojo nėra.',
-    'assoc_users' => 'Šis gamintojas šiuo metu yra susieta bent su vienu modeliu ir negali būti panaikintas. Atnaujinkite savo modelius, kad nebebūtų sąsajos su šiuo gamintoju, ir bandykite dar kartą. ',
+    'assoc_users' => 'Šis gamintojas šiuo metu yra susieta bent su vienu modeliu ir negali būti ištrintas. Atnaujinkite savo modelius, kad nebebūtų sąsajos su šiuo gamintoju, ir bandykite dar kartą. ',
 
     'create' => [
         'error' => 'Gamintojas nebuvo sukurtas, bandykite dar kartą.',
@@ -22,11 +22,11 @@ return [
     ],
 
     'delete' => [
-        'confirm' => 'Ar jūs tikrai norite panaikinti šį gamintoją?',
-        'error' => 'Bandant panaikinti gamintoją įvyko klaida. Bandykite dar kartą.',
-        'success' => 'Gamintojas sėkmingai panaikintas.',
+        'confirm' => 'Ar jūs tikrai norite ištrinti šį gamintoją?',
+        'error' => 'Bandant ištrinti gamintoją įvyko klaida. Bandykite dar kartą.',
+        'success' => 'Gamintojas sėkmingai ištrintas.',
         'bulk_success' => 'Gamintojas sėkmingai ištrintas.|Gamintojai (:count) sėkmingai ištrinti.',
-        'partial_success' => 'Gamintojas sėkmingai panaikintas. Daugiau informacijos rasite žemiau. | Gamintojai (:count) buvo sėkmingai panaikinti. Daugiau informacijos rasite žemiau.',
+        'partial_success' => 'Gamintojas sėkmingai ištrintas. Daugiau informacijos rasite žemiau. | Gamintojai (:count) buvo sėkmingai ištrinti. Daugiau informacijos rasite žemiau.',
     ],
 
 ];

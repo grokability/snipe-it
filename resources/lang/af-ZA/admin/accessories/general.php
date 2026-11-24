@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Toebehore Kategorie',
     'accessory_name' => 'Toebehore Naam',
     'checkout' => 'Checkout Accessory',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Checkin Accessory',
     'create' => 'Skep bykomstighede',
     'edit' => 'Wysig bykomstighede',

@@ -16,11 +16,11 @@ return [
     ],
 
     'delete' => [
-        'confirm' => 'Ar tikrai norite panaikinti šią eksploatacinę medžiagą?',
-        'error' => 'Bandant panaikinti eksploatacinę medžiagą įvyko klaida. Bandykite dar kartą.',
-        'success' => 'Eksploatacinė medžiaga sėkmingai panaikinta.',
-        'bulk_success' => 'Consumable deleted successfully.|:count consumables were deleted successfully.',
-        'partial_success' => ':count consumable was deleted successfully, but others could not be deleted. See below for details.|:count consumables were deleted successfully, but others could not be deleted. See below for details.',
+        'confirm' => 'Ar tikrai norite ištrinti šią eksploatacinę medžiagą?',
+        'error' => 'Bandant ištrinti eksploatacinę medžiagą įvyko klaida. Bandykite dar kartą.',
+        'success' => 'Eksploatacinė medžiaga sėkmingai ištrinta.',
+        'bulk_success' => 'Eksploatacinė medžiaga sėkmingai ištrinta.|Eksploatacinės medžiagos (:count) sėkmingai ištrintos.',
+        'partial_success' => ':count eksploatacinė medžiaga buvo sėkmingai ištrinta, tačiau kitų ištrinti nepavyko. Daugiau informacijos rasite žemiau.|Eksploatacinės medžiagos (:count) buvo sėkmingai ištrintos, tačiau kitų ištrinti nepavyko. Daugiau informacijos rasite žemiau.',
     ],
 
     'checkout' => [
@@ -46,12 +46,12 @@ return [
 
     'restore' => [
         'error' => 'Consumable was not restored, please try again',
-        'success' => 'Consumable restored successfully.',
+        'success' => 'Eksploatacinė medžiaga sėkmingai atkurta.',
     ],
 
     'bulk' => [
-        'no_consumables_selected' => 'No consumables were selected.',
-        'no_action_selected' => 'Please pick an action from the dropdown.',
+        'no_consumables_selected' => 'Nepasirinkta jokių eksploatacinių medžiagų.',
+        'no_action_selected' => 'Pasirinkite veiksmą iš išskleidžiamojo sąrašo.',
         'no_fields_updated' => 'Jokie laukai nebuvo pakeisti, todėl niekas nebuvo atnaujinta.',
         'skipped_unauthorized' => ':count consumable(s) were skipped because you do not have permission to update them.',
 

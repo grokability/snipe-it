@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Flokkur aukabúnaðs',
     'accessory_name' => 'Nafn aukabúnaðs',
     'checkout' => 'Afgreiða aukabúnað',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Skrá inn aukabúnað',
     'create' => 'Stofna aukabúnað',
     'edit' => 'Breyta aukabúnaði',

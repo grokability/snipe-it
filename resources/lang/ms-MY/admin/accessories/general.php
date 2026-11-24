@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Kategori Aksesori',
     'accessory_name' => 'Nama Aksesori',
     'checkout' => 'Semak keluar aksesori',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Semak masuk aksesori',
     'create' => 'Cipta Aksesori',
     'edit' => 'Pinda Aksesori',

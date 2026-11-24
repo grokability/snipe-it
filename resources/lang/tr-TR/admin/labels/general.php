@@ -21,8 +21,8 @@ return [
     ],
 
     'fields' => [
-        'width' => 'Sayfa genişliği',
-        'height' => 'Sayfa yüksekliği',
+        'width' => 'Label Width',
+        'height' => 'Label Height',
         'label_gap' => 'Etiket aralığı',
         'margin_top' => 'Üst kenar boşluğu',
         'margin_right' => 'Sağ kenar boşluğu',
@@ -63,6 +63,7 @@ return [
         'logo_max_width' => 'Maksimum genişlik',
         'logo_margin' => 'Kenar boşluğu',
         'logo_h_align' => 'Yatay hizalama',
+        'logo_position' => 'Logo Position',
         'asset_tag' => 'Demirbaş Etiketi',
         'barcode_1d' => '1D barkod',
         'barcode_2d' => '2D barkod',

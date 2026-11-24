@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Kaatagarii Gabaadaa',
     'accessory_name' => 'Maqaa Gabaadaa',
     'checkout' => 'Gabaadaa Baafachuu',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Gabaadaa Galchu',
     'create' => 'Gabaadaa Uumuu',
     'edit' => 'Gabaadaa Haaromsuu',

@@ -91,6 +91,7 @@ return [
     // -----------------------------------------------------------------
     'create_failed' => 'Loomine ebaõnnestus: :error',
     'update_failed' => 'Uuendamine ebaõnnestus: :error',
+    'update_no_fields' => 'No updatable fields were supplied',
     'delete_failed' => 'Kustutamine ebaõnnestus',
     'delete_failed_error' => 'Kustutamine ebaõnnestus: :error',
     'checkin_failed' => 'Tagastamine ebaõnnestus',
@@ -249,6 +250,7 @@ return [
     // Maintenance messages
     // -----------------------------------------------------------------
     'maintenance_created' => 'Hoolduse :name loomine õnnestus',
+    'maintenance_already_completed' => 'Maintenance :name was already completed on :completed_at',
 
     // -----------------------------------------------------------------
     // List messages

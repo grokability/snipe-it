@@ -21,8 +21,8 @@ return [
     ],
 
     'fields' => [
-        'width' => 'Puslapio plotis',
-        'height' => 'Puslapio aukštis',
+        'width' => 'Etiketės plotis',
+        'height' => 'Etiketės aukštis',
         'label_gap' => 'Tarpas tarp etikečių',
         'margin_top' => 'Viršutinė paraštė',
         'margin_right' => 'Dešinioji paraštė',
@@ -63,6 +63,7 @@ return [
         'logo_max_width' => 'Didžiausias plotis',
         'logo_margin' => 'Paraštė',
         'logo_h_align' => 'Horizontalusis lygiavimas',
+        'logo_position' => 'Logo Position',
         'asset_tag' => 'Inventorinis numeris',
         'barcode_1d' => '1D brūkšninis kodas',
         'barcode_2d' => '2D brūkšninis kodas',

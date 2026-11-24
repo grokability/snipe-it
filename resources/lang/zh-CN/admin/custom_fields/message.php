@@ -23,9 +23,9 @@ return [
             'error' => '删除字段失败，请重试。',
             'success' => '删除字段成功',
             'in_use' => '字段还在使用中',
-            'in_use_named' => ':name is still attached to at least one fieldset and cannot be deleted.',
-            'bulk_success' => 'Field deleted successfully.|:count fields were deleted successfully.',
-            'partial_success' => ':count field was deleted successfully, but others could not be deleted. See below for details.|:count fields were deleted successfully, but others could not be deleted. See below for details.',
+            'in_use_named' => ':name 仍附加到至少一个字段集，无法删除。',
+            'bulk_success' => '字段删除成功。|:count 个字段已成功删除。',
+            'partial_success' => ':count 个字段已成功删除，但其他字段无法删除。详情见下方。|:count 个字段已成功删除，但其他字段无法删除。详情见下方。',
         ],
 
     ],
@@ -49,9 +49,9 @@ return [
             'error' => '删除字段集失败，请重试。',
             'success' => '删除字段集成功',
             'in_use' => '字段集还在使用中',
-            'in_use_named' => ':name is still attached to at least one asset model and cannot be deleted.',
-            'bulk_success' => 'Fieldset deleted successfully.|:count fieldsets were deleted successfully.',
-            'partial_success' => ':count fieldset was deleted successfully, but others could not be deleted. See below for details.|:count fieldsets were deleted successfully, but others could not be deleted. See below for details.',
+            'in_use_named' => ':name 仍附加到至少一个资产型号，无法删除。',
+            'bulk_success' => '字段集删除成功。|:count 个字段集已成功删除。',
+            'partial_success' => ':count 个字段集已成功删除，但其他字段集无法删除。详情见下方。|:count 个字段集已成功删除，但其他字段集无法删除。详情见下方。',
         ],
 
         'clone' => [

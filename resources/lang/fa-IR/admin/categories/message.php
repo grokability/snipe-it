@@ -21,15 +21,15 @@ return [
         'confirm' => 'آیا از حذف این دسته بندی اطمینان دارید؟',
         'error' => 'اشکال در حذف دسته بندی.لطفا دوباره تلاش کنید.',
         'success' => 'Category was deleted successfully',
-        'bulk_success' => 'Category deleted successfully.|:count categories were deleted successfully.',
-        'partial_success' => 'Category deleted successfully. See additional information below. | :count categories were deleted successfully. See additional information below.',
+        'bulk_success' => 'دسته‌بندی با موفقیت حذف شد.|:count دسته‌بندی با موفقیت حذف شدند.',
+        'partial_success' => 'دسته‌بندی با موفقیت حذف شد. اطلاعات تکمیلی را در زیر مشاهده کنید. | :count دسته‌بندی با موفقیت حذف شدند. اطلاعات تکمیلی را در زیر مشاهده کنید.',
     ],
 
     'bulkedit' => [
-        'warn' => 'You are about to edit the properties of the following category:|You are about to edit the properties of the following :count categories:',
-        'no_selection' => 'You must select at least one category to edit.',
+        'warn' => 'شما در حال ویرایش ویژگی‌های دسته‌بندی زیر هستید:|شما در حال ویرایش ویژگی‌های :count دسته‌بندی زیر هستید:',
+        'no_selection' => 'باید حداقل یک دسته‌بندی را برای ویرایش انتخاب کنید.',
         'no_changes' => 'هیچ فیلدی تغییر نکرده بود، بنابراین چیزی به روز نشد.',
-        'success' => 'Category successfully updated.|:count categories successfully updated.',
+        'success' => 'دسته‌بندی با موفقیت به‌روزرسانی شد.|:count دسته‌بندی با موفقیت به‌روزرسانی شدند.',
     ],
 
 ];

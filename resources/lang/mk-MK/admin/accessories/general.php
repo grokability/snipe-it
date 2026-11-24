@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Категорија на додаток',
     'accessory_name' => 'Име на додаток',
     'checkout' => 'Задолжи додаток',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Раздолжи додаток',
     'create' => 'Направете додаток',
     'edit' => 'Уредување на додаток',

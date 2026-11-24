@@ -15,8 +15,8 @@ return [
 ',
     'username_help_bottom' => 'نام کاربری و آدرس ایمیل شما <em>ممکن است</em> یکسان باشد، اما ممکن است نباشد، بسته به پیکربندی شما. اگر نمی توانید نام کاربری خود را به خاطر بسپارید، با سرپرست خود تماس بگیرید. <br><br><strong>برای نام‌های کاربری بدون آدرس ایمیل مرتبط، پیوند بازنشانی رمز عبور ایمیل ارسال نمی‌شود.</strong>
 ',
-    'google_login' => 'Login with Google Workspace',
-    'google_login_failed' => 'Google Login failed, please try again.',
-    'invite_password_expires' => 'This password reset link will expire on :expire_date. You can use the manual password reset link to receive a new reset token by clicking here',
+    'google_login' => 'ورود با Google Workspace',
+    'google_login_failed' => 'ورود با گوگل ناموفق بود، لطفاً دوباره تلاش کنید.',
+    'invite_password_expires' => 'این پیوند بازنشانی رمز عبور در تاریخ :expire_date منقضی خواهد شد. می‌توانید از پیوند دستی بازنشانی رمز عبور با کلیک در اینجا برای دریافت توکن بازنشانی جدید استفاده کنید',
 
 ];

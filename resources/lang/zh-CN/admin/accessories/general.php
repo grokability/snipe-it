@@ -4,6 +4,8 @@ return [
     'accessory_category' => '配件类别',
     'accessory_name' => '配件名称',
     'checkout' => '签出配件',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => '归还配件',
     'create' => '新增配件',
     'edit' => '编辑配件',

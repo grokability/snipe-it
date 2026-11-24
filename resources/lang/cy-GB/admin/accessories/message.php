@@ -65,5 +65,14 @@ return [
             'no_rows_selected' => 'No checked-out accessories were selected.',
             'success' => ':count accessory checkout was returned.|:count accessory checkouts were returned.',
         ],
+
+        'checkout' => [
+            'nothing_selectable' => 'None of the selected accessories can be checked out. Archived accessories and accessories with no remaining stock are excluded.',
+            'excluded_notice' => 'The following accessories were excluded from this checkout because they are archived or have no remaining stock:',
+            'skipped_archived' => ':name was skipped because it is archived.',
+            'skipped_unavailable' => ':name was skipped because no units are currently available.',
+            'skipped_company_mismatch' => ':name was skipped because it belongs to a different company (:item_company) than the selected target.',
+            'summary' => ':checked_out of :total accessories were checked out.',
+        ],
     ],
 ];

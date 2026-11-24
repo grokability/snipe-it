@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'துணை வகை',
     'accessory_name' => 'துணை பெயர்',
     'checkout' => 'புதுப்பித்துக்கொள்ளும் சேவை',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Checkin Accessory',
     'create' => 'அசெஸரி உருவாக்கவும்',
     'edit' => 'துணை திருத்தும்',

@@ -13,7 +13,7 @@ return [
     'total' => 'مجموع',
     'update' => 'بروزرسانی کامپیوننت',
     'checkin_limit' => 'مقدار دریافت باید کمتر یا مساوی :assigned_qty باشد',
-    'exclude_deleted' => 'Exclude Deleted Components',
-    'include_deleted' => 'Include Deleted Components',
-    'only_deleted' => 'Only Deleted Components',
+    'exclude_deleted' => 'مستثنی کردن قطعات حذف‌شده',
+    'include_deleted' => 'شامل کردن قطعات حذف‌شده',
+    'only_deleted' => 'فقط قطعات حذف‌شده',
 ];

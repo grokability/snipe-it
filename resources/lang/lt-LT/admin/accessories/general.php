@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Priedų kategorija',
     'accessory_name' => 'Priedo pavadinimas',
     'checkout' => 'Išduoti priedą',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Paimti priedą',
     'create' => 'Sukurti priedą',
     'edit' => 'Redaguoti priedą',
@@ -18,7 +20,7 @@ return [
     'use_default_eula' => 'Vietoj to naudokite <a href="#" data-toggle="modal" data-target="#eulaModal"> pirminį numatytąjį licencinį sutikimą (EULA)</a>.',
     'use_default_eula_disabled' => '<del>Naudokite pirminį numatytąjį licencinį sutikimą (EULA).</del> Pirminis numatytasis EULA neparinktas. Pridėkite jį nustatymuose.',
     'clone' => 'Klonuoti priedą',
-    'delete_disabled' => 'Šis priedas negali būti panaikintas, kadangi kai kurie jo elementai vis dar yra išduoti.',
-    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
+    'delete_disabled' => 'Šis priedas negali būti ištrintas, kadangi kai kurie jo elementai vis dar yra išduoti.',
+    'accessory_deleted_warning' => 'Šis priedas buvo ištrintas. Jūs turite jį atkurti, kad galėtumėte vėl jį išduoti.',
 
 ];

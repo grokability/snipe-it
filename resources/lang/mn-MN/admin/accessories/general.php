@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Дагалдах хэрэгслийн ангилал',
     'accessory_name' => 'Дагалдах хэрэгслийн нэр',
     'checkout' => 'Төлбөрийн дагалдах хэрэгсэл',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Дагалдах хэрэгслийг шалгах',
     'create' => 'Дагалдах хэрэгсэл үүсгэх',
     'edit' => 'Дагалдах хэрэгслийг засах',

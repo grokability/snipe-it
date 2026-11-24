@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Hạng Mục Phụ Kiện',
     'accessory_name' => 'Tên Phụ Kiện',
     'checkout' => 'Xuất kho Phụ kiện',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Nhập kho Phụ kiện',
     'create' => 'Tạo Phụ Kiện',
     'edit' => 'Sửa Phụ kiện',

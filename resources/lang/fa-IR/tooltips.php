@@ -3,22 +3,22 @@
 return [
 
     'disabled_assoc' => [
-        'accessory' => 'This accessory cannot be deleted because it still has items, users, or locations associated with it',
-        'asset' => 'This asset cannot be deleted because it still has items associated with it',
-        'category' => 'This category cannot be deleted because it still has items associated with it',
-        'company' => 'This company cannot be deleted because it still has items or users associated with it',
-        'component' => 'This component cannot be deleted because it still has items associated with it',
-        'custom_field' => 'This custom field cannot be deleted because it is still associated with at least one fieldset',
-        'department' => 'This department cannot be deleted because it still has users associated with it',
-        'location' => 'This location cannot be deleted because it still has items or users associated with it',
-        'manufacturer' => 'This manufacturer cannot be deleted because it still has items associated with it',
-        'supplier' => 'This supplier cannot be deleted because it still has items associated with it',
-        'user' => 'This user cannot be deleted because it still has items associated with it',
-        'user_self' => 'You cannot delete yourself',
+        'accessory' => 'این لوازم جانبی قابل حذف نیست زیرا همچنان موارد، کاربران یا مکان‌هایی به آن مرتبط هستند',
+        'asset' => 'این دارایی قابل حذف نیست زیرا همچنان مواردی به آن مرتبط هستند',
+        'category' => 'این دسته‌بندی قابل حذف نیست زیرا همچنان مواردی به آن مرتبط هستند',
+        'company' => 'این شرکت قابل حذف نیست زیرا همچنان موارد یا کاربرانی به آن مرتبط هستند',
+        'component' => 'این قطعه قابل حذف نیست زیرا همچنان مواردی به آن مرتبط هستند',
+        'custom_field' => 'این فیلد سفارشی قابل حذف نیست زیرا همچنان به حداقل یک مجموعه فیلد مرتبط است',
+        'department' => 'این دپارتمان قابل حذف نیست زیرا همچنان کاربرانی به آن مرتبط هستند',
+        'location' => 'این مکان قابل حذف نیست زیرا همچنان موارد یا کاربرانی به آن مرتبط هستند',
+        'manufacturer' => 'این سازنده قابل حذف نیست زیرا همچنان مواردی به آن مرتبط هستند',
+        'supplier' => 'این تأمین‌کننده قابل حذف نیست زیرا همچنان مواردی به آن مرتبط هستند',
+        'user' => 'این کاربر قابل حذف نیست زیرا همچنان مواردی به او مرتبط هستند',
+        'user_self' => 'شما نمی‌توانید خودتان را حذف کنید',
     ],
 
     'checkin_all' => [
-        'user' => 'Checkin all items for this user and optionally delete them. You will be able to confirm this on the next page.',
+        'user' => 'تحویل گرفتن تمام موارد این کاربر و حذف اختیاری آن‌ها. در صفحه بعدی قادر به تأیید این کار خواهید بود.',
     ],
 
 ];

@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Kāwai Accessory',
     'accessory_name' => 'Ingoa Whakauru',
     'checkout' => 'Whakaritea Whakairinga',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Tirohia Access Access',
     'create' => 'Waihanga Whakairinga',
     'edit' => 'Whakatikahia te Uru',

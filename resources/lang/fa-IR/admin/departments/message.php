@@ -3,7 +3,7 @@
 return [
 
     'does_not_exist' => 'اداره وجود ندارد',
-    'department_already_exists' => 'A department already exists with that name at this company location. Or choose a more specific name for this department. ',
+    'department_already_exists' => 'دپارتمانی با این نام از قبل در این موقعیت شرکت وجود دارد. یا نام مشخص‌تری برای این دپارتمان انتخاب کنید. ',
     'assoc_users' => 'این بخش در حال حاضر حداقل با یک کاربر مرتبط است و نمی تواند حذف شود. لطفا کاربران خود را به دیگران مراجعه کنید و دوباره امتحان کنید.',
     'create' => [
         'error' => 'وزارت ایجاد نشد، لطفا دوباره امتحان کنید',
@@ -17,8 +17,8 @@ return [
         'confirm' => 'آیا مطمئن هستید که می خواهید این بخش را حذف کنید؟',
         'error' => 'یک مسئله حذف بخش وجود داشت. لطفا دوباره تلاش کنید.',
         'success' => 'بخش با موفقیت حذف شد.',
-        'bulk_success' => 'Department deleted successfully.|:count departments were deleted successfully.',
-        'partial_success' => 'Department deleted successfully. See additional information below. | :count departments were deleted successfully. See additional information below.',
+        'bulk_success' => 'دپارتمان با موفقیت حذف شد.|:count دپارتمان با موفقیت حذف شدند.',
+        'partial_success' => 'دپارتمان با موفقیت حذف شد. اطلاعات تکمیلی را در زیر مشاهده کنید. | :count دپارتمان با موفقیت حذف شدند. اطلاعات تکمیلی را در زیر مشاهده کنید.',
     ],
 
 ];

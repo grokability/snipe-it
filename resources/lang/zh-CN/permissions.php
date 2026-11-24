@@ -36,12 +36,12 @@ return [
 
     'assets' => [
         'name' => '资产',
-        'note' => 'Grants access to the Assets section of the application. ',
+        'note' => '授予对应用程序“资产”部分的访问权限。 ',
     ],
 
     'assetsview' => [
         'name' => '查看资产',
-        'note' => 'Note that users with this permission will also be able to see (not modify or delete) files uploaded to the asset model as well. This is to make it easier to share common documents like user manuals across assets without having to upload them to every asset, and to avoid having to grant the user permission to modify asset files. Users with this permission will also be able to view edit and checkin history.',
+        'note' => '请注意，拥有此权限的用户还可以查看（但不能修改或删除）上传到资产型号的文件。这样可以更轻松地在资产之间共享用户手册等常用文档，而无需将文件上传到每个资产，也无需授予用户修改资产文件的权限。拥有此权限的用户还可以查看编辑和签入历史。',
     ],
 
     'assetscreate' => [
@@ -72,8 +72,8 @@ return [
     ],
 
     'assetsviewrequestable' => [
-        'name' => 'View Requestable Items',
-        'note' => 'Allows the user to view items that are marked as requestable.',
+        'name' => '查看可申请项目',
+        'note' => '允许用户查看标记为可申请的项目。',
     ],
 
     'assetsviewencrypted-custom-fields' => [
@@ -108,47 +108,47 @@ return [
     ],
     'accessoriesfiles' => [
         'name' => '管理配件文件',
-        'note' => 'Allows the user to upload, download, and delete files associated with accessories. (This only makes sense with view privileges or higher.)',
+        'note' => '允许用户上传、下载和删除与配件关联的文件。（仅在具有查看或更高权限时才有意义。）',
     ],
 
     'assetsfiles' => [
-        'name' => 'Manage Asset Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with assets. (This only makes sense with view privileges or higher.)',
+        'name' => '管理资产文件',
+        'note' => '允许用户上传、下载和删除与资产关联的文件。（仅在具有查看或更高权限时才有意义。）',
     ],
 
     'usersfiles' => [
-        'name' => 'Manage User Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with users. (This only makes sense with view privileges or higher.)',
+        'name' => '管理用户文件',
+        'note' => '允许用户上传、下载和删除与用户关联的文件。（仅在具有查看或更高权限时才有意义。）',
     ],
 
     'modelsfiles' => [
         'name' => '管理型号的文件',
-        'note' => 'Allows the user to upload, download, and delete files associated with asset models on both the model view and the asset view screens. (This only makes sense with view privileges or higher.)',
+        'note' => '允许用户上传、下载和删除与资产型号关联的文件，在型号视图和资产视图界面均可操作。（仅在具有查看或更高权限时才有意义。）',
     ],
 
     'departmentsfiles' => [
-        'name' => 'Manage Department Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with departments. (This only makes sense with view privileges or higher.)',
+        'name' => '管理部门文件',
+        'note' => '允许用户上传、下载和删除与部门关联的文件。（仅在具有查看或更高权限时才有意义。）',
     ],
 
     'suppliersfiles' => [
-        'name' => 'Manage Supplier Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with suppliers. (This only makes sense with view privileges or higher.)',
+        'name' => '管理供应商文件',
+        'note' => '允许用户上传、下载和删除与供应商关联的文件。（仅在具有查看或更高权限时才有意义。）',
     ],
 
     'locationsfiles' => [
-        'name' => 'Manage Location Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with locations.(This only makes sense with view privileges or higher.)',
+        'name' => '管理位置文件',
+        'note' => '允许用户上传、下载和删除与位置关联的文件。（仅在具有查看或更高权限时才有意义。）',
     ],
 
     'companiesfiles' => [
-        'name' => 'Manage Company Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with companies. (This only makes sense with view privileges or higher.)',
+        'name' => '管理公司文件',
+        'note' => '允许用户上传、下载和删除与公司关联的文件。（仅在具有查看或更高权限时才有意义。）',
     ],
 
     'consumablesfiles' => [
         'name' => '管理耗材文件',
-        'note' => 'Allows the user to upload, download, and delete files associated with consumables. (This only makes sense with view privileges or higher.)',
+        'note' => '允许用户上传、下载和删除与消耗品关联的文件。（仅在具有查看或更高权限时才有意义。）',
     ],
 
     'consumables' => [
@@ -256,7 +256,7 @@ return [
     ],
     'usersview' => [
         'name' => '查看用户',
-        'note' => 'Users with this permission will also be able to view edit and checkin history. Access to files uploaded to a user is gated separately by the Manage User Files permission.',
+        'note' => '拥有此权限的用户还可以查看编辑和签入历史。对上传到用户的文件的访问权限由“管理用户文件”权限单独控制。',
     ],
     'userscreate' => [
         'name' => '创建新用户',

@@ -9,9 +9,9 @@ return [
     'bulk_delete_warn' => '您即将删除一个资产型号。 |您将删除 :model_count 个资产型号。',
     'restore' => '恢复型号',
     'requestable' => '用户可申请此型号',
-    'mfg_marketing_name' => 'Marketing name',
-    'mfg_release_date' => 'Release date',
-    'mfg_discontinued_date' => 'Discontinued date',
+    'mfg_marketing_name' => '营销名称',
+    'mfg_release_date' => '发布日期',
+    'mfg_discontinued_date' => '停产日期',
     'show_mac_address' => '在此型号资产中显示MAC地址',
     'view_deleted' => '查看已删除',
     'view_models' => '查看型号',
@@ -19,7 +19,7 @@ return [
     'no_custom_field' => '没有自定义字段',
     'add_default_values' => '添加默认值',
     'importer' => [
-        'require_serial' => 'Require Serial',
-        'serial_required' => 'Serial Required',
+        'require_serial' => '要求序列号',
+        'serial_required' => '序列号必填',
     ],
 ];

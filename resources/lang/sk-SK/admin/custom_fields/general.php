@@ -5,7 +5,7 @@ return [
     'manage' => 'Spravovať',
     'field' => 'Pole',
     'about_fieldsets_title' => 'O skupinách polí',
-    'about_fieldsets_text' => 'Skupina polí umožňuje vytvoriť skupinu vlastných polí ktoré sú často prepoužívané pre špecifické typy modelov majetku.',
+    'about_fieldsets_text' => 'Sady polí vám umožňujú vytvárať skupiny vlastných polí, ktoré sa často opakovane používajú pre konkrétne typy modelov majetku.',
     'custom_format' => 'Vlastný formát regexu...',
     'encrypt_field' => 'Zašifrovať hodnotu tohto poľa v databáze',
     'encrypt_field_help' => 'VAROVANIE: Šifrované pole bude nevyhľadateľné.',

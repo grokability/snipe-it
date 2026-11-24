@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Piederumu kategorija',
     'accessory_name' => 'Piederuma nosaukums',
     'checkout' => 'Izrakstīšanās Piederums',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Reģistrēšanās piederums',
     'create' => 'Izveidotu piederums',
     'edit' => 'Labot piederums',

@@ -4,16 +4,18 @@ return [
     'accessory_category' => 'دسته بندی لوازم جانبی',
     'accessory_name' => 'نام وسیله',
     'checkout' => 'چک کردن وسیله',
+    'bulk_checkout' => 'واگذاری گروهی لوازم جانبی',
+    'accessories_selected' => 'لوازم جانبی انتخاب‌شده',
     'checkin' => 'چک کردن وسیله',
     'create' => 'ایجاد وسیله',
     'edit' => 'ویرایش وسیله',
     'eula_text' => 'دسته بندی EULA',
     'eula_text_help' => 'این فید به امکان این را میدهد که EULA های خود را با توجه به دارایی سفارشی سازی کنید. اگر شما فقط یک EULA برای تمام دارایی خود دارید،میتوانید گزینه زیر را فعال کنید تا از پیشفرض اولیه استفاده کنید.',
-    'require_acceptance' => 'Require users to confirm acceptance of item in this category.',
+    'require_acceptance' => 'الزام کاربران به تأیید پذیرش موارد موجود در این دسته‌بندی.',
     'no_default_eula' => 'هیچ EULA اولیه پیشفرضی یافت نشد.در تنظیمات اضافه کنید',
     'total' => 'مجموع',
     'remaining' => 'سود',
-    'requestable' => 'Users may request this accessory',
+    'requestable' => 'کاربران می‌توانند این لوازم جانبی را درخواست کنند',
     'update' => 'به روزرساتی وسیله',
     'use_default_eula' => 'از Use the <a href="#" data-toggle="modal" data-target="#eulaModal">EULA پیشفرض اولیه</a> instead.
  استفاده کنید',
@@ -21,6 +23,6 @@ return [
 در تنظیمات اضافه کنید',
     'clone' => 'کپی کردن وسیله',
     'delete_disabled' => 'امکان حذف وسیله وجود ندارد چون هنوز تعدادی از آیتم ها تحویل شده اند.',
-    'accessory_deleted_warning' => 'This accessory has been deleted. You must restore it before you can assign it.',
+    'accessory_deleted_warning' => 'این لوازم جانبی حذف شده است. برای تخصیص آن باید ابتدا بازیابی‌اش کنید.',
 
 ];

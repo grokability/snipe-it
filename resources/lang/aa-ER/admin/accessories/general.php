@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'crwdns1207:0crwdne1207:0',
     'accessory_name' => 'crwdns1208:0crwdne1208:0',
     'checkout' => 'crwdns1604:0crwdne1604:0',
+    'bulk_checkout' => 'crwdns18849:0crwdne18849:0',
+    'accessories_selected' => 'crwdns18851:0crwdne18851:0',
     'checkin' => 'crwdns1605:0crwdne1605:0',
     'create' => 'crwdns1385:0crwdne1385:0',
     'edit' => 'crwdns1606:0crwdne1606:0',

@@ -571,6 +571,7 @@ return [
     'new_component' => 'Nowy komponent',
     'new_user' => 'Nowy użytkownik',
     'collapse' => 'Zwiń',
+    'compact_view' => 'Compact view',
     'assigned' => 'Przypisane',
     'asset_count' => 'Liczba aktywów',
     'accessories_count' => 'Liczba akcesoriów',

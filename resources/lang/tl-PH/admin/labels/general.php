@@ -21,8 +21,8 @@ return [
     ],
 
     'fields' => [
-        'width' => 'Page Width',
-        'height' => 'Page Height',
+        'width' => 'Label Width',
+        'height' => 'Label Height',
         'label_gap' => 'Label Gap',
         'margin_top' => 'Top Margin',
         'margin_right' => 'Right Margin',
@@ -63,6 +63,7 @@ return [
         'logo_max_width' => 'Maximum Width',
         'logo_margin' => 'Margin',
         'logo_h_align' => 'Horizontal Alignment',
+        'logo_position' => 'Logo Position',
         'asset_tag' => 'Asset Tag',
         'barcode_1d' => '1D Barcode',
         'barcode_2d' => '2D Barcode',

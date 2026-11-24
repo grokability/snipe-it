@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Kategorija dodatne opreme',
     'accessory_name' => 'Naziv dodatne opreme',
     'checkout' => 'Dodatna oprema za naplatu',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Checkin dodatak',
     'create' => 'Stvorite dodatnu opremu',
     'edit' => 'Uređivanje dodatne opreme',

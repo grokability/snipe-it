@@ -191,6 +191,7 @@ Match / Size / Format',
     'eloquent_model_class' => 'The :attribute field must be the fully-qualified class name of an Eloquent model.',
     'fmcs_company' => 'The :attribute field is required because full multiple companies support is enabled and floaters are not allowed.',
     'fmcs_location' => 'Location ":location" belongs to :location_company, which does not match the selected company.',
+    'fmcs_target_compat' => 'The :attribute does not belong to a company this user can report to.',
     'is_unique_across_company_and_location' => ':attribute-ը պետք է եզակի լինի ընտրված ընկերության և տեղադրության շրջանակում։',
 
     /*

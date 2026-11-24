@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Կատեգորիա',
     'accessory_name' => 'Աքսեսուարի անվանումը',
     'checkout' => 'Մուտքագրել աքսեսուար',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Դուրսգրել աքսեսուար',
     'create' => 'Ստեղծել աքսեսուար',
     'edit' => 'Խմբագրել աքսեսուար',

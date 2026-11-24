@@ -188,6 +188,7 @@ return [
     'eloquent_model_class' => 'Väli :attribute peab olema Eloquenti mudeli täielikult kvalifitseeritud klassinimi.',
     'fmcs_company' => 'Väli :attribute on kohustuslik, sest täielik mitme ettevõtte tugi on lubatud ja ettevõtteta kirjed pole lubatud.',
     'fmcs_location' => 'Asukoht „:location” kuulub ettevõttele :location_company, mis ei vasta valitud ettevõttele.',
+    'fmcs_target_compat' => 'The :attribute does not belong to a company this user can report to.',
     'is_unique_across_company_and_location' => 'Väli :attribute peab olema valitud ettevõtte ja asukoha piires kordumatu.',
 
     /*

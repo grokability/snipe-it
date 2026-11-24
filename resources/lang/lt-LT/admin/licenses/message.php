@@ -6,7 +6,7 @@ return [
     'user_does_not_exist' => 'Tokio naudotojo nėra arba jūs neturite teisės jo peržiūrėti.',
     'asset_does_not_exist' => 'Tokio turto, kurį bandote susieti su šia licencija, nėra.',
     'owner_doesnt_match_asset' => 'Turtas, kurį bandote susieti su šia licencija, yra išduotas kažkam kitam, o ne asmeniui, pasirinktam iš sąrašo.',
-    'assoc_users' => 'Ši licencija šiuo metu yra išduota naudotojui ir negali būti panaikinta. Pirmiausia paimkite licenciją ir tuomet vėl bandykite panaikinti. ',
+    'assoc_users' => 'Ši licencija šiuo metu yra išduota naudotojui ir negali būti ištrinta. Pirmiausia paimkite licenciją ir tuomet vėl bandykite ištrinti. ',
     'select_asset_or_person' => 'Turite pasirinkti turtą arba naudotoją, bet ne abu.',
     'not_found' => 'Licencija nerasta',
     'seats_available' => 'Liko vietų: :seat_count',
@@ -17,8 +17,8 @@ return [
     ],
 
     'deletefile' => [
-        'error' => 'Failas nebuvo panaikintas. Bandykite dar kartą.',
-        'success' => 'Failas sėkmingai panaikintas.',
+        'error' => 'Failas nebuvo ištrintas. Bandykite dar kartą.',
+        'success' => 'Failas sėkmingai ištrintas.',
     ],
 
     'upload' => [
@@ -34,12 +34,12 @@ return [
     ],
 
     'delete' => [
-        'confirm' => 'Ar tikrai norite panaikinti šią licenciją?',
-        'error' => 'Bandant panaikinti licenciją įvyko klaida. Bandykite dar kartą.',
-        'success' => 'Licencija sėkmingai panaikinta.',
-        'bulk_success' => 'Pasirinktos licencijos sėkmingai panaikintos.',
-        'partial_success' => 'Licencija sėkmingai panaikinta. Daugiau informacijos rasite žemiau. | Licencijos (:count) buvo sėkmingai panaikintos. Daugiau informacijos rasite žemiau.',
-        'bulk_checkout_warning' => ':license_name turi vietų, kurios šiuo metu yra išduotos ir negali būti panaikintos. Tam, kad panaikintumėte, turite paimti šias vietas.',
+        'confirm' => 'Ar tikrai norite ištrinti šią licenciją?',
+        'error' => 'Bandant ištrinti licenciją įvyko klaida. Bandykite dar kartą.',
+        'success' => 'Licencija sėkmingai ištrinta.',
+        'bulk_success' => 'Pasirinktos licencijos sėkmingai ištrintos.',
+        'partial_success' => 'Licencija sėkmingai ištrinta. Daugiau informacijos rasite žemiau. | Licencijos (:count) buvo sėkmingai ištrintos. Daugiau informacijos rasite žemiau.',
+        'bulk_checkout_warning' => ':license_name turi vietų, kurios šiuo metu yra išduotos ir negali būti ištrinta. Tam, kad galėtumėte ištrinti, turite susigrąžinti šias vietas.',
     ],
 
     'delete_with_checkin' => [

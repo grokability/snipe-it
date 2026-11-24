@@ -188,6 +188,7 @@ return [
     'eloquent_model_class' => 'The :attribute field must be the fully-qualified class name of an Eloquent model.',
     'fmcs_company' => 'Birden fazla şirket için tam destek etkin ve geçici atamalara izin verilmiyor; bu nedenle :attribute alanı zorunludur.',
     'fmcs_location' => '":location" konumu, seçilen şirketle eşleşmeyen :location_company şirketine ait.',
+    'fmcs_target_compat' => 'The :attribute does not belong to a company this user can report to.',
     'is_unique_across_company_and_location' => ':attribute, seçilen şirket ve konum içinde benzersiz olmalıdır.',
 
     /*

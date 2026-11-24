@@ -2,7 +2,7 @@
 
 return [
 
-    'support_url_help' => 'Variables <code>{LOCALE}</code>, <code>{SERIAL}</code>, <code>{MODEL_NUMBER}</code>, and <code>{MODEL_NAME}</code> may be used in your URL to have those values auto-populate when viewing assets - for example https://checkcoverage.apple.com/{LOCALE}/{SERIAL}.',
+    'support_url_help' => 'متغیرهای <code>{LOCALE}</code>، <code>{SERIAL}</code>، <code>{MODEL_NUMBER}</code> و <code>{MODEL_NAME}</code> می‌توانند در نشانی وب شما استفاده شوند تا هنگام مشاهده دارایی‌ها این مقادیر به‌طور خودکار پر شوند - برای مثال https://checkcoverage.apple.com/{LOCALE}/{SERIAL}.',
     'does_not_exist' => 'تولید کننده وجود ندارد.',
     'assoc_users' => 'این تولید کننده در حال حاضر با حداقل یک مدل همراه است و نمی تواند حذف شود. لطفا مدل های خود را به دیگر مرجع این تولید کننده به روز رسانی کنید و دوباره امتحان کنید.',
 
@@ -26,9 +26,9 @@ return [
     'delete' => [
         'confirm' => 'آیا شما مطمئن هستید که میخواهید این تولید کننده را حذف کنید؟',
         'error' => 'مسئله ای در حذف سازنده وجود دارد. لطفا دوباره تلاش کنید.',
-        'success' => 'Manufacturer deleted successfully.',
-        'bulk_success' => 'Manufacturer deleted successfully.|:count manufacturers were deleted successfully.',
-        'partial_success' => 'Manufacturer deleted successfully. See additional information below. | :count manufacturers were deleted successfully. See additional information below.',
+        'success' => 'سازنده با موفقیت حذف شد.',
+        'bulk_success' => 'سازنده با موفقیت حذف شد.|:count سازنده با موفقیت حذف شدند.',
+        'partial_success' => 'سازنده با موفقیت حذف شد. اطلاعات تکمیلی را در زیر مشاهده کنید. | :count سازنده با موفقیت حذف شدند. اطلاعات تکمیلی را در زیر مشاهده کنید.',
     ],
 
 ];

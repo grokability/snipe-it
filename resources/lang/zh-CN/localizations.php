@@ -9,7 +9,7 @@ return [
         'am-ET' => 'Amharic',
         'af-ZA' => '南非荷兰语',
         'ar-SA' => '阿拉伯语',
-        'hy-AM' => 'Armenian',
+        'hy-AM' => '亚美尼亚语',
         'bg-BG' => '保加利亚语',
         'zh-CN' => '简体中文',
         'zh-TW' => '繁体中文',
@@ -70,7 +70,7 @@ return [
     ],
 
     'select_country' => '选择一个国家或地区',
-    'select_currency' => 'Select a currency',
+    'select_currency' => '选择一种货币',
 
     'countries' => [
         'AC' => '阿森松岛',

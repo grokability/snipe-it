@@ -91,6 +91,7 @@ return [
     // -----------------------------------------------------------------
     'create_failed' => 'crwdns18465:0crwdne18465:0',
     'update_failed' => 'crwdns18467:0crwdne18467:0',
+    'update_no_fields' => 'crwdns18757:0crwdne18757:0',
     'delete_failed' => 'crwdns18469:0crwdne18469:0',
     'delete_failed_error' => 'crwdns18471:0crwdne18471:0',
     'checkin_failed' => 'crwdns18473:0crwdne18473:0',
@@ -249,6 +250,7 @@ return [
     // Maintenance messages
     // -----------------------------------------------------------------
     'maintenance_created' => 'crwdns18647:0crwdne18647:0',
+    'maintenance_already_completed' => 'crwdns18759:0crwdne18759:0',
 
     // -----------------------------------------------------------------
     // List messages

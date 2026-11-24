@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Tartozék kategória',
     'accessory_name' => 'Tartozék neve',
     'checkout' => 'Kiadott tartozék',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Tartozék visszavétele',
     'create' => 'Tartozék létrehozása',
     'edit' => 'Tartozék szerkesztése',

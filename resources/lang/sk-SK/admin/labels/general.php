@@ -21,8 +21,8 @@ return [
     ],
 
     'fields' => [
-        'width' => 'Šírka stránky',
-        'height' => 'Výška stránky',
+        'width' => 'Label Width',
+        'height' => 'Label Height',
         'label_gap' => 'Medzera medzi štítkami',
         'margin_top' => 'Horný okraj',
         'margin_right' => 'Pravý okraj',
@@ -63,6 +63,7 @@ return [
         'logo_max_width' => 'Maximálna šírka',
         'logo_margin' => 'Okraj',
         'logo_h_align' => 'Vodorovné zarovnanie',
+        'logo_position' => 'Logo Position',
         'asset_tag' => 'Označenie majetku',
         'barcode_1d' => '1D čiarový kód',
         'barcode_2d' => '2D čiarový kód',

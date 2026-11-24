@@ -2,11 +2,11 @@
 
 return [
 
-    'invalid_return_count' => 'Invalid count returned from :name. Expected :expected, got :actual.',
-    'invalid_return_type' => 'Invalid type returned from :name. Expected :expected, got :actual.',
-    'invalid_return_value' => 'Invalid value returned from :name. Expected :expected, got :actual.',
+    'invalid_return_count' => 'تعداد نامعتبر از :name بازگردانده شد. مورد انتظار :expected، دریافت شد :actual.',
+    'invalid_return_type' => 'نوع نامعتبر از :name بازگردانده شد. مورد انتظار :expected، دریافت شد :actual.',
+    'invalid_return_value' => 'مقدار نامعتبر از :name بازگردانده شد. مورد انتظار :expected، دریافت شد :actual.',
 
-    'does_not_exist' => 'Label does not exist',
-    'use_new_label_engine_for_api' => 'Enable the New Label Engine to load labels via the API',
-    'label_not_created' => 'Label object could not be created',
+    'does_not_exist' => 'برچسب وجود ندارد',
+    'use_new_label_engine_for_api' => 'موتور جدید برچسب را برای بارگذاری برچسب‌ها از طریق API فعال کنید',
+    'label_not_created' => 'شیء برچسب ایجاد نشد',
 ];

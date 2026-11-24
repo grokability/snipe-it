@@ -32,8 +32,8 @@ return [
         ],
 
         'checkin_selected' => [
-            'success' => ':count seat checked in successfully. | :count seats checked in successfully.',
-            'no_seats_selected' => 'No seats were selected.',
+            'success' => ':count 个席位已成功签入。|:count 个席位已成功签入。',
+            'no_seats_selected' => '未选择任何席位。',
         ],
 
         'checkout_all' => [
@@ -50,8 +50,8 @@ return [
         ],
 
         'delete_with_checkin' => [
-            'label' => 'Check in seats and delete',
-            'log_msg' => 'Checked in via bulk delete-with-checkin in license index',
+            'label' => '签入席位并删除',
+            'log_msg' => '通过许可证列表中的批量“签入并删除”完成签入',
         ],
     ],
 

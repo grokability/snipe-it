@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Kategorija pribora',
     'accessory_name' => 'Naziv pribora',
     'checkout' => 'Izdaj pribor',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Checkin Accessory',
     'create' => 'Kreiraj pribor',
     'edit' => 'Izmeni atribute pribora',

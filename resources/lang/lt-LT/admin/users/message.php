@@ -8,7 +8,7 @@ return [
     'accept_pdf_write_failed' => 'Patvirtinimo PDF failo nepavyko išsaugoti saugykloje. Patvirtinimas nebuvo užregistruotas. Kreipkitės į savo administratorių.',
     'bulk_manager_warn' => 'Jūsų naudotojai buvo sėkmingai atnaujinti, tačiau tiesioginio vadovo informacija nebuvo išsaugota, nes jūsų nurodytas tiesioginis vadovas taip pat buvo redaguojamų naudotojų sąraše. Naudotojas negali būti savo paties tiesioginiu vadovu, todėl dar kartą pasirinkite naudotojus, neįtraukdami tiesioginio vadovo.',
     'user_exists' => 'Toks naudotojas jau yra!',
-    'cannot_delete' => 'Tokio naudotojo nėra arba jūs neturite teisės jo panaikinti.',
+    'cannot_delete' => 'Tokio naudotojo nėra arba jūs neturite teisės jo ištrinti.',
     'user_not_found' => 'Tokio naudotojo nėra arba jūs neturite teisės jo peržiūrėti.',
     'user_login_required' => 'Prisijungimo laukas yra privalomas',
     'user_has_no_assets_assigned' => 'Naudotojui neišduotas joks turtas.',
@@ -16,7 +16,7 @@ return [
     'user_password_required' => 'Slaptažodis yra privalomas.',
     'insufficient_permissions' => 'Nepakanka teisių.',
     'auth_fields_denied' => 'Jūs neturite teisės keisti šio naudotojo prisijungimo duomenų ar aktyvinimo laukų. Šie laukai nebuvo atnaujinti: :fields',
-    'user_deleted_warning' => 'Šis naudotojas buvo panaikintas. Turėsite atkurti naudotoją, jeigu norėsite jį redaguoti ar priskirti jam naują turtą.',
+    'user_deleted_warning' => 'Šis naudotojas buvo ištrintas. Turėsite atkurti naudotoją, kad galėtumėte jį redaguoti ar priskirti jam naują turtą.',
     'ldap_not_configured' => 'LDAP integracija nebuvo sukonfigūruota šiam diegimui.',
     'password_resets_sent' => 'Pasirinktiems naudotojams, kurie yra aktyvuoti ir turi galiojančius el. pašto adresus, buvo išsiųsta slaptažodžio nustatymo iš naujo nuoroda.',
     'not_activated' => 'Šis naudotojas negali prisijungti, todėl negali priimti turto el. paštu.',
@@ -37,7 +37,7 @@ return [
         'create' => 'Naudotojas sėkmingai sukurtas.',
         'update' => 'Naudotojas atnaujintas sėkmingai.',
         'update_bulk' => 'Naudotojai sėkmingai atnaujinti!',
-        'delete' => 'Naudotojas sėkmingai panaikintas.',
+        'delete' => 'Naudotojas sėkmingai ištrintas.',
         'ban' => 'Naudotojas sėkmingai užblokuotas.',
         'unban' => 'Naudotojas sėkmingai atblokuotas.',
         'suspend' => 'Naudotojas sėkmingai išjungtas.',
@@ -50,8 +50,8 @@ return [
     'error' => [
         'create' => 'Bandant sukurti naudotoją įvyko klaida. Bandykite dar kartą.',
         'update' => 'Bandant atnaujinti naudotoją įvyko klaida. Bandykite dar kartą.',
-        'delete' => 'Bandant panaikinti naudotoją įvyko klaida. Bandykite dar kartą.',
-        'delete_has_assets' => 'Šis naudotojas turi jam išduotų daiktų, todėl jo panaikinti negalima.',
+        'delete' => 'Bandant ištrinti naudotoją įvyko klaida. Bandykite dar kartą.',
+        'delete_has_assets' => 'Šis naudotojas turi jam išduotų daiktų, todėl jo ištrinti negalima.',
         'delete_has_assets_var' => 'Šiam naudotojui yra išduotas turtas. Pirmiausia paimkite jį.|Šiam naudotojui yra išduoti :count vienetai (-ų) turto. Pirmiausia paimkite jų turtą.',
         'delete_has_licenses_var' => 'Šiam naudotojui yra priskirta licencija. Pirmiausia paimkite ją.|Šiam naudotojui yra priskirtos :count licencijos (-ų). Pirmiausia paimkite jas.',
         'delete_has_accessories_var' => 'Šiam naudotojui yra išduotas priedas. Pirmiausia paimkite jį.|Šiam naudotojui yra išduoti :count priedai (-ų). Pirmiausia paimkite juos.',
@@ -61,7 +61,7 @@ return [
         'import' => 'Bandant importuoti naudotojus įvyko klaida. Bandykite dar kartą.',
         'asset_already_accepted' => 'Šis daiktas jau buvo priimtas.',
         'accept_or_decline' => 'Turite arba priimti šį turtą, arba jo atsisakyti.',
-        'cannot_delete_yourself' => 'Jaustumėmės labai blogai, jei panaikintumėte save, dar kartą apsvarstykite.',
+        'cannot_delete_yourself' => 'Jaustumėmės labai blogai, jei ištrintumėte save, dar kartą apsvarstykite tai.',
         'incorrect_user_accepted' => 'Turtas kurį bandote priimti, nebuvo jums išduotas.',
         'ldap_could_not_connect' => 'Nepavyko prisijungti prie LDAP serverio. Patikrinkite LDAP serverio konfigūraciją LDAP konfigūracijos faile. <br>LDAP serverio klaida:',
         'ldap_could_not_bind' => 'Nepavyko susieti su LDAP serveriu. Patikrinkite LDAP serverio konfigūraciją LDAP konfigūracijos faile. <br>LDAP serverio klaida: ',
@@ -74,8 +74,8 @@ return [
     ],
 
     'deletefile' => [
-        'error' => 'Failas nebuvo panaikintas. Bandykite dar kartą.',
-        'success' => 'Failas sėkmingai panaikintas.',
+        'error' => 'Failas nebuvo ištrintas. Bandykite dar kartą.',
+        'success' => 'Failas sėkmingai ištrintas.',
     ],
 
     'upload' => [

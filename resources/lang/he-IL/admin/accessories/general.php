@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'סוג האביזר',
     'accessory_name' => 'שם אביזר',
     'checkout' => 'נפק עזר',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'החזר עזר',
     'create' => 'ליצור אביזר',
     'edit' => 'ערוך עזר',

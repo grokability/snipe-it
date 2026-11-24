@@ -70,7 +70,7 @@ return [
 ',
     'accessory_deleted' => 'حذف با موفقیت انجام شد
 ',
-    'accessory_none' => 'The accessory does not exist',
+    'accessory_none' => 'لوازم جانبی وجود ندارد',
     'checkout_success' => 'بررسی با موفقیت انجام شد',
     'checkout_error' => 'خطا در بررسی',
     'kit_none' => 'کیت وجود ندارد
@@ -85,5 +85,5 @@ return [
 ',
     'kit_model_updated' => 'کاربر با موفقیت به روز شد',
     'kit_model_detached' => 'کاربر با موفقیت حذف شد',
-    'model_already_attached' => 'Model already attached to kit',
+    'model_already_attached' => 'مدل از قبل به کیت پیوست شده است',
 ];

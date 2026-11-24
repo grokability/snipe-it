@@ -1,24 +1,24 @@
 <?php
 
 return [
-    'not_found' => 'Maintenance type not found.',
+    'not_found' => 'نوع تعمیر و نگهداری یافت نشد.',
     'create' => [
-        'error' => 'Maintenance type was not created, please try again.',
-        'success' => 'Maintenance type created successfully.',
+        'error' => 'نوع تعمیر و نگهداری ایجاد نشد، لطفاً دوباره تلاش کنید.',
+        'success' => 'نوع تعمیر و نگهداری با موفقیت ایجاد شد.',
     ],
     'update' => [
-        'error' => 'Maintenance type was not updated, please try again.',
-        'success' => 'Maintenance type updated successfully.',
+        'error' => 'نوع تعمیر و نگهداری به‌روزرسانی نشد، لطفاً دوباره تلاش کنید.',
+        'success' => 'نوع تعمیر و نگهداری با موفقیت به‌روزرسانی شد.',
     ],
     'delete' => [
-        'confirm' => 'Are you sure you wish to delete this maintenance type?',
-        'error' => 'There was an issue deleting this maintenance type. Please try again.',
-        'success' => 'The maintenance type was deleted successfully.',
-        'bulk_success' => 'Maintenance type deleted successfully.|:count maintenance types were deleted successfully.',
-        'partial_success' => 'Maintenance type deleted successfully. See additional information below. | :count maintenance types were deleted successfully. See additional information below.',
+        'confirm' => 'آیا مطمئن هستید که می‌خواهید این نوع تعمیر و نگهداری را حذف کنید؟',
+        'error' => 'در حذف این نوع تعمیر و نگهداری مشکلی رخ داد. لطفاً دوباره تلاش کنید.',
+        'success' => 'نوع تعمیر و نگهداری با موفقیت حذف شد.',
+        'bulk_success' => 'نوع تعمیر و نگهداری با موفقیت حذف شد.|:count نوع تعمیر و نگهداری با موفقیت حذف شدند.',
+        'partial_success' => 'نوع تعمیر و نگهداری با موفقیت حذف شد. اطلاعات تکمیلی را در زیر مشاهده کنید. | :count نوع تعمیر و نگهداری با موفقیت حذف شدند. اطلاعات تکمیلی را در زیر مشاهده کنید.',
     ],
     'complete' => [
-        'success' => 'Maintenance marked as complete.',
-        'error' => 'There was an issue marking this maintenance as complete. Please try again.',
+        'success' => 'تعمیر و نگهداری به عنوان تکمیل‌شده علامت‌گذاری شد.',
+        'error' => 'در علامت‌گذاری این تعمیر و نگهداری به عنوان تکمیل‌شده خطایی رخ داد. لطفاً دوباره تلاش کنید.',
     ],
 ];

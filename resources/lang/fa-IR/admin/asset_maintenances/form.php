@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'select_type' => 'Select Maintenance Type',
+    'select_type' => 'نوع تعمیر و نگهداری را انتخاب کنید',
     'asset_maintenance_type' => 'نوع نگهداری دارایی',
     'title' => 'عنوان',
     'start_date' => 'تاریخ شروع',

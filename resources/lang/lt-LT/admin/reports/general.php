@@ -2,12 +2,12 @@
 
 return [
     'info' => 'Pasirinkite tai, ką norite matyti savo turto ataskaitoje.',
-    'deleted_user' => 'Panaikintas naudotojas',
+    'deleted_user' => 'Ištrintas naudotojas',
     'send_reminder' => 'Siųsti priminimą',
-    'cannot_send_reminder' => 'Naudotojas buvo panaikintas arba neturi el. pašto adreso, todėl negali gauti priminimo',
+    'cannot_send_reminder' => 'Naudotojas buvo ištrintas arba neturi el. pašto adreso, todėl negali gauti priminimo',
     'reminder_sent' => 'Priminimas išsiųstas',
-    'reminder_sent_count' => '{0}No reminders sent|{1}Sent one reminder|[2,*]Sent :count reminders',
-    'acceptance_deleted' => 'Sutikimo užklausa panaikinta',
+    'reminder_sent_count' => '{0}Priminimų neišsiųsta|{1}Išsiųstas vienas priminimas|[2,*]Išsiųsti :count priminimai',
+    'acceptance_deleted' => 'Sutikimo užklausa ištrinta',
     'acceptance_request' => 'Sutikimo užklausa',
     'custom_export' => [
         'asset_company' => 'Turto įmonė',

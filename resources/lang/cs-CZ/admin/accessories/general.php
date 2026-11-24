@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Kategorie příslušenství',
     'accessory_name' => 'Název příslušenství',
     'checkout' => 'Předat příslušenství',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Převzít příslušenství',
     'create' => 'Vytvoř příslušenství',
     'edit' => 'Upravit Příslušenství',

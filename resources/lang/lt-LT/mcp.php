@@ -5,8 +5,8 @@ return [
     // -----------------------------------------------------------------
     // Generic errors
     // -----------------------------------------------------------------
-    'not_authenticated' => 'Not authenticated',
-    'unauthorized' => 'Unauthorized',
+    'not_authenticated' => 'Neautentifikuota',
+    'unauthorized' => 'Neautorizuota',
     'scope_denied' => 'This token does not have the :scope scope required for this action',
     'scope_handshake_required' => 'This token does not carry any MCP scopes. Re-authorize the connector and grant at least one mcp:* scope before calling MCP tools.',
     'scope_session_description' => 'Open an MCP session and discover available tools. Does NOT grant permission to call any tool. Capability scopes (read, write, etc.) are required for tool calls.',
@@ -14,36 +14,36 @@ return [
     'scope_write_description' => 'Create or edit inventory items and their attributes',
     'scope_delete_description' => 'Soft-delete items and restore deleted ones',
     'scope_checkout_description' => 'Check assets, accessories, components, consumables, and licenses out to users, locations, or assets',
-    'scope_checkin_description' => 'Check assets, accessories, components, and licenses back in',
+    'scope_checkin_description' => 'Paimti turtą, priedus, komponentus ir licencijas',
     'scope_superadmin_description' => 'Manage permission groups. Required for group create / update / delete and viewing the group list',
-    'id_or_name_required' => 'Either id or name is required',
+    'id_or_name_required' => 'Būtina nurodyti ID arba vardą',
     'id_username_or_email_required' => 'Provide an id, username, or email',
     'provide_user_or_asset' => 'Provide either assigned_to (user ID) or asset_id',
 
     // -----------------------------------------------------------------
     // "Not found" errors
     // -----------------------------------------------------------------
-    'object_not_found' => 'The specified :type was not found',
-    'asset_not_found' => 'Asset not found',
-    'user_not_found' => 'Tokio naudotojo nėra',
-    'accessory_not_found' => 'Accessory not found',
-    'accessory_checkout_not_found' => 'Accessory checkout record not found',
-    'component_not_found' => 'Component not found',
-    'component_checkout_not_found' => 'Component checkout record not found',
-    'consumable_not_found' => 'Consumable not found',
+    'object_not_found' => 'Nurodytas :type nerastas',
+    'asset_not_found' => 'Turtas nerastas',
+    'user_not_found' => 'Naudotojas nerastas',
+    'accessory_not_found' => 'Priedas nerastas',
+    'accessory_checkout_not_found' => 'Priedo išdavimo įrašas nerastas',
+    'component_not_found' => 'Komponentas nerastas',
+    'component_checkout_not_found' => 'Komponento išdavimo įrašas nerastas',
+    'consumable_not_found' => 'Eksploatacinė medžiaga nerasta',
     'license_not_found' => 'Licencija nerasta',
-    'license_seat_not_found' => 'License seat not found',
-    'department_not_found' => 'Department not found',
-    'company_not_found' => 'Company not found',
-    'category_not_found' => 'Category not found',
-    'manufacturer_not_found' => 'Manufacturer not found',
+    'license_seat_not_found' => 'Licencijos vieta nerasta',
+    'department_not_found' => 'Skyrius nerastas',
+    'company_not_found' => 'Įmonė nerasta',
+    'category_not_found' => 'Kategorija nerasta',
+    'manufacturer_not_found' => 'Gamintojas nerastas',
     'supplier_not_found' => 'Tiekėjas nerastas',
-    'status_label_not_found' => 'Status label not found',
-    'location_not_found' => 'Location not found',
-    'asset_model_not_found' => 'Asset model not found',
+    'status_label_not_found' => 'Būsenos žyma nerasta',
+    'location_not_found' => 'Vieta nerasta',
+    'asset_model_not_found' => 'Turto modelis nerastas',
     'depreciation_not_found' => 'Depreciation not found',
-    'group_not_found' => 'Group not found',
-    'checkout_target_not_found' => 'The specified :type was not found',
+    'group_not_found' => 'Grupė nerasta',
+    'checkout_target_not_found' => 'Nurodytas :type nerastas',
 
     // -----------------------------------------------------------------
     // Business rule errors
@@ -91,6 +91,7 @@ return [
     // -----------------------------------------------------------------
     'create_failed' => 'Create failed: :error',
     'update_failed' => 'Update failed: :error',
+    'update_no_fields' => 'No updatable fields were supplied',
     'delete_failed' => 'Delete failed',
     'delete_failed_error' => 'Delete failed: :error',
     'checkin_failed' => 'Checkin failed',
@@ -249,6 +250,7 @@ return [
     // Maintenance messages
     // -----------------------------------------------------------------
     'maintenance_created' => 'Maintenance :name created successfully',
+    'maintenance_already_completed' => 'Maintenance :name was already completed on :completed_at',
 
     // -----------------------------------------------------------------
     // List messages

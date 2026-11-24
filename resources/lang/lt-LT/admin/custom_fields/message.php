@@ -20,12 +20,12 @@ return [
 
         'delete' => [
             'confirm' => 'Ar tikrai norite ištrinti šį lauką?',
-            'error' => 'Bandant panaikinti lauką įvyko klaida. Bandykite dar kartą.',
-            'success' => 'Laukas sėkmingai panaikintas.',
+            'error' => 'Bandant ištrinti lauką įvyko klaida. Bandykite dar kartą.',
+            'success' => 'Laukas sėkmingai ištrintas.',
             'in_use' => 'Laukas yra naudojamas.',
             'in_use_named' => ':name is still attached to at least one fieldset and cannot be deleted.',
-            'bulk_success' => 'Field deleted successfully.|:count fields were deleted successfully.',
-            'partial_success' => ':count field was deleted successfully, but others could not be deleted. See below for details.|:count fields were deleted successfully, but others could not be deleted. See below for details.',
+            'bulk_success' => 'Laukas sėkmingai ištrintas.|Laukai (:count) sėkmingai ištrinti.',
+            'partial_success' => ':count laukas buvo sėkmingai ištrintas, tačiau kitų ištrinti nepavyko. Daugiau informacijos rasite žemiau.|Laukai (:count) buvo sėkmingai ištrinti, tačiau kitų ištrinti nepavyko. Daugiau informacijos rasite žemiau.',
         ],
 
     ],
@@ -46,12 +46,12 @@ return [
 
         'delete' => [
             'confirm' => 'Ar tikrai norite ištrinti šį laukų rinkinį?',
-            'error' => 'Bandant panaikinti laukų rinkinį įvyko klaida. Bandykite dar kartą.',
-            'success' => 'Laukų rinkinys sėkmingai panaikintas.',
+            'error' => 'Bandant ištrinti laukų rinkinį įvyko klaida. Bandykite dar kartą.',
+            'success' => 'Laukų rinkinys sėkmingai ištrintas.',
             'in_use' => 'Laukų rinkinys yra naudojamas.',
             'in_use_named' => ':name is still attached to at least one asset model and cannot be deleted.',
-            'bulk_success' => 'Fieldset deleted successfully.|:count fieldsets were deleted successfully.',
-            'partial_success' => ':count fieldset was deleted successfully, but others could not be deleted. See below for details.|:count fieldsets were deleted successfully, but others could not be deleted. See below for details.',
+            'bulk_success' => 'Laukų rinkinys sėkmingai ištrintas.|Laukų rinkiniai (:count) sėkmingai ištrinti.',
+            'partial_success' => ':count laukų rinkinys buvo sėkmingai ištrintas, tačiau kitų ištrinti nepavyko. Daugiau informacijos rasite žemiau.|Laukų rinkiniai (:count) buvo sėkmingai ištrinti, tačiau kitų ištrinti nepavyko. Daugiau informacijos rasite žemiau.',
         ],
 
         'clone' => [

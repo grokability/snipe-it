@@ -10,7 +10,7 @@ return [
         'success' => 'Šablonas sėkmingai atnaujintas',
     ],
     'delete' => [
-        'success' => 'Šablonas panaikintas',
+        'success' => 'Šablonas ištrintas',
         'no_delete_permission' => 'Tokio šablono nėra arba jūs neturite teisės jį ištrinti.',
     ],
 ];

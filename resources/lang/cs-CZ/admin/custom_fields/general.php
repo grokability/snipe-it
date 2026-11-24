@@ -5,7 +5,7 @@ return [
     'manage' => 'Spravovat',
     'field' => 'Pole',
     'about_fieldsets_title' => 'O sadách polí',
-    'about_fieldsets_text' => 'Sady polí Vám umožňují vytvořit si vlastní hodnoty, které chcete evidovat u modelů majetku.',
+    'about_fieldsets_text' => 'Sady polí Vám umožňují vytvořit si skupiny vlastních polí, která jsou často znovu použita u specifických typů modelů zařízení.',
     'custom_format' => 'Vlastní formát regexu...',
     'encrypt_field' => 'Zašifrovat hodnotu tohoto pole v databázi',
     'encrypt_field_help' => 'UPOZORNĚNÍ: Šifrování pole je udělá nevyhledatelné.',

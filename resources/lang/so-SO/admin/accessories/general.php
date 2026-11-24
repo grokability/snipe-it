@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Qaybta Agabka',
     'accessory_name' => 'Magaca dheeriga ah',
     'checkout' => 'Hubinta Agabka',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Hubi Agabka',
     'create' => 'Abuur Agabka',
     'edit' => 'Wax ka beddel Agabka',

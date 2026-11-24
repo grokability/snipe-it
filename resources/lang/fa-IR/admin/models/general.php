@@ -7,12 +7,12 @@ return [
     'bulk_delete' => 'حذف دسته جمعی مدل های دارایی',
     'bulk_delete_help' => 'برای تأیید حذف مدل‌های دارایی انتخاب شده از کادرهای تأیید زیر استفاده کنید. مدل‌های دارایی‌هایی که دارایی‌های مرتبط با آن‌ها هستند، تا زمانی که دارایی‌ها با مدل دیگری مرتبط نشوند، قابل حذف نیستند.
 ',
-    'bulk_delete_warn' => 'You are about to delete one asset model.|You are about to delete :model_count asset models.',
+    'bulk_delete_warn' => 'شما در حال حذف یک مدل دارایی هستید.|شما در حال حذف :model_count مدل دارایی هستید.',
     'restore' => 'بازیابی مدل',
     'requestable' => 'کاربران ممکن است از این مدل درخواست کنند',
-    'mfg_marketing_name' => 'Marketing name',
-    'mfg_release_date' => 'Release date',
-    'mfg_discontinued_date' => 'Discontinued date',
+    'mfg_marketing_name' => 'نام تجاری',
+    'mfg_release_date' => 'تاریخ عرضه',
+    'mfg_discontinued_date' => 'تاریخ توقف تولید',
     'show_mac_address' => 'نمایش قسمت آدرس MAC در دارایی در این مدل',
     'view_deleted' => 'دیدن پاک شده ها',
     'view_models' => 'دیدن مدل ها',
@@ -21,7 +21,7 @@ return [
 ',
     'add_default_values' => 'مقادیر پیش فرض',
     'importer' => [
-        'require_serial' => 'Require Serial',
-        'serial_required' => 'Serial Required',
+        'require_serial' => 'الزام شماره سریال',
+        'serial_required' => 'شماره سریال الزامی است',
     ],
 ];

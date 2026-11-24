@@ -21,8 +21,8 @@ return [
     ],
 
     'fields' => [
-        'width' => 'Seitenbreite',
-        'height' => 'Seitenhöhe',
+        'width' => 'Label Width',
+        'height' => 'Label Height',
         'label_gap' => 'Etikett-Lücke',
         'margin_top' => 'Oberer Rand',
         'margin_right' => 'Rechter Rand',
@@ -63,6 +63,7 @@ return [
         'logo_max_width' => 'Maximale Breite',
         'logo_margin' => 'Rand',
         'logo_h_align' => 'Horizontale Ausrichtung',
+        'logo_position' => 'Logo Position',
         'asset_tag' => 'Asset Tag',
         'barcode_1d' => '1D Barcode',
         'barcode_2d' => '2D Barcode',

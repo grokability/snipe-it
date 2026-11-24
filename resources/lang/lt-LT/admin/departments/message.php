@@ -15,8 +15,8 @@ return [
     ],
     'delete' => [
         'confirm' => 'Ar tikrai norite ištrinti šį skyrių?',
-        'error' => 'Bandant panaikinti skyrių įvyko klaida. Bandykite dar kartą.',
-        'success' => 'Skyrius sėkmingai panaikintas.',
+        'error' => 'Bandant ištrinti skyrių įvyko klaida. Bandykite dar kartą.',
+        'success' => 'Skyrius sėkmingai ištrintas.',
         'bulk_success' => 'Skyrius sėkmingai ištrintas.|Skyriai (:count) sėkmingai ištrinti.',
         'partial_success' => 'Skyrius sėkmingai ištrintas. Daugiau informacijos rasite žemiau. | Skyriai (:count) buvo sėkmingai ištrinti. Daugiau informacijos rasite žemiau.',
     ],

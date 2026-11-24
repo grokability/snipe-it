@@ -571,6 +571,7 @@ return [
     'new_component' => 'Nový komponent',
     'new_user' => 'Nový uživatel',
     'collapse' => 'Sbalit',
+    'compact_view' => 'Compact view',
     'assigned' => 'Přiřazené',
     'asset_count' => 'Počet aktiv',
     'accessories_count' => 'Počet příslušenství',

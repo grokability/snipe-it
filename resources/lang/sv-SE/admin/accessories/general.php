@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Tillbehörskategori',
     'accessory_name' => 'Tillbehörsnamn',
     'checkout' => 'Checka ut tillbehör',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Checka in tillbehör',
     'create' => 'Skapa tillbehör',
     'edit' => 'Redigera tillbehör',

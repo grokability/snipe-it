@@ -21,8 +21,8 @@ return [
     ],
 
     'fields' => [
-        'width' => 'ページの幅',
-        'height' => 'ページの高さ',
+        'width' => 'Label Width',
+        'height' => 'Label Height',
         'label_gap' => 'ラベルの間隔',
         'margin_top' => '上余白',
         'margin_right' => '右余白',
@@ -63,6 +63,7 @@ return [
         'logo_max_width' => '最大の幅',
         'logo_margin' => '余白',
         'logo_h_align' => '横方向の配置',
+        'logo_position' => 'Logo Position',
         'asset_tag' => '資産タグ',
         'barcode_1d' => '1次元バーコード',
         'barcode_2d' => '2次元バーコード',

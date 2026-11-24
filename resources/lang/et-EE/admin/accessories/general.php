@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Tarvikute kategooria',
     'accessory_name' => 'Tarviku Nimi',
     'checkout' => 'Checkout Lisavarustus',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Checkin Accessory',
     'create' => 'Loo lisavarustus',
     'edit' => 'Lisaseadme muutmine',

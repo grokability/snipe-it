@@ -333,6 +333,8 @@ return [
     'saml_slo_label' => 'SAML միասնական ելք (Single Log Out)',
     'saml_slo' => 'Ելք կատարելիս IdP-ին ուղարկել LogoutRequest',
     'saml_slo_help' => 'Սա կհանգեցնի նրան, որ օգտատերը ելքի ժամանակ նախ կվերաուղղվի դեպի IdP։ Թողեք չնշված, եթե IdP-ը ճիշտ չի աջակցում SP-initiated SAML SLO-ին։',
+    'saml_auto_create_users' => 'Create users on first SAML login',
+    'saml_auto_create_users_help' => 'When a SAML login matches no user, create an activated user with no permissions from the SAML claims. Only enable this if your IdP restricts who can obtain an assertion for Snipe-IT. Usernames belonging to deactivated or deleted users are never re-created.',
     'saml_custom_settings' => 'SAML լրացուցիչ կարգավորումներ',
     'saml_custom_settings_help' => 'Կարող եք նշել լրացուցիչ կարգավորումներ onelogin/php-saml գրադարանի համար։ Օգտագործեք ձեր պատասխանատվությամբ։',
     'saml_download' => 'Ներբեռնել Metadata',
@@ -427,6 +429,8 @@ return [
     'require_accept_signature_help_text' => 'When enabled, users must provide a signature to accept an item, in addition to clicking accept. This only applies when the item\'s category has "Require acceptance" turned on. It does not send acceptance requests on its own.',
     'require_checkinout_notes' => 'Պահանջել նշում Checkin/Checkout-ի ժամանակ',
     'require_checkinout_notes_help_text' => 'Այս ֆունկցիան միացնելու դեպքում Checkin կամ Checkout անելիս անհրաժեշտ կլինի լրացնել նշումների դաշտերը։',
+    'require_adjust_quantity_notes' => 'Require Notes on Quantity Adjustments',
+    'require_adjust_quantity_notes_help_text' => 'When enabled, the Adjust Quantity modal on accessories, consumables, and components requires a note on every submission. Turn off to make the note optional.',
     'left' => 'ձախ',
     'right' => 'աջ',
     'top' => 'վերև',
@@ -443,7 +447,6 @@ return [
     'oauth_help' => 'OAuth վերջնակետի կարգավորումներ և API նշաններ',
     'oauth_no_clients' => 'Դուք դեռ չեք ստեղծել OAuth հաճախորդներ։',
     'oauth_no_applications' => 'Դուք դեռ չեք ստեղծել որևէ լիազորված հավելված։',
-    'oauth_secret' => 'Գաղտնի բանալի',
     'oauth_authorized_apps' => 'Թույլատրված հավելվածներ',
     'oauth_redirect_url' => 'Վերաուղղման URL',
     'oauth_name_help' => ' Անվանում, որը ձեր օգտատերերը կճանաչեն և կհավատան։',
@@ -454,7 +457,7 @@ return [
     'oauth_client_type_password_grant' => 'Գաղտնաբառի թույլտվության հաճախորդ',
     'oauth_associated_token_count' => 'Տոկենների քանակ',
     'oauth_callback_url' => 'Ձեր հավելվածի authorization callback URL-ը։',
-    'oauth_personal_access_tokens' => 'Օգտատիրոջ API նշաններ (անձնական մուտքի նշաններ)',
+    'oauth_personal_access_tokens' => 'Personal Access Tokens',
     'oauth_personal_access_tokens_none' => 'Անձնական մուտքի նշաններ չեն գտնվել։',
     'oauth_client' => 'Հաճախորդ',
     'oauth_deleted_user' => 'Ջնջված օգտատեր (ID՝ :id)',
@@ -632,7 +635,9 @@ return [
     ],
 
     'legends' => [
-        'checkin' => 'Վերադարձի նախընտրություններ',
+        'api_user_agent_filtering' => 'User-Agent Filtering',
+        'oauth_trusted_lists' => 'OAuth Trusted Redirect Allow-list',
+        'notes' => 'Notes Preferences',
         'colors' => 'Գույներ և թեմաներ',
         'dashboard' => 'Մուտք և վահանակի նախընտրություններ',
         'email' => 'Էլ. փոստի նախընտրություններ',
@@ -669,7 +674,7 @@ return [
         'security' => 'password, passwords, requirements, two factor, two-factor, common passwords, remote login, logout, authentication
 ',
         'notifications' => 'alerts, email, notifications, audit, threshold, email alerts, cc',
-        'oauth' => 'oauth, oath, api, personal access keys, tokens',
+        'oauth' => 'oauth, oath, api, personal access keys, pat, tokens, mcp, api keys',
     ],
 
 ];

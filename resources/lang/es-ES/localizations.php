@@ -9,7 +9,7 @@ return [
         'am-ET' => 'Amharic',
         'af-ZA' => 'Afrikaans',
         'ar-SA' => 'Árabe',
-        'hy-AM' => 'Armenian',
+        'hy-AM' => 'Armenio',
         'bg-BG' => 'Búlgaro',
         'zh-CN' => 'Chino simplificado',
         'zh-TW' => 'Chino tradicional',
@@ -70,7 +70,7 @@ return [
     ],
 
     'select_country' => 'Seleccione un país',
-    'select_currency' => 'Select a currency',
+    'select_currency' => 'Seleccione una divisa',
 
     'countries' => [
         'AC' => 'Isla de Ascensión',

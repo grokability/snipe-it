@@ -3,7 +3,7 @@
 return [
     'asset_maintenances' => 'Turto aptarnavimas',
     'edit' => 'Redaguoti turto aptarnavimą',
-    'delete' => 'Panaikinti turto aptarnavimą',
+    'delete' => 'Ištrinti turto aptarnavimą',
     'view' => 'Peržiūrėti turto aptarnavimo informaciją',
     'repair' => 'Remontas',
     'maintenance' => 'Aptarnavimas',

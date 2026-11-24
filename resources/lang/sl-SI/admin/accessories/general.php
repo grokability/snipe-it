@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Kategorija Dodatki',
     'accessory_name' => 'Ime Dodatka',
     'checkout' => 'Izdaj Dodatek',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Prevzemi Dodatek',
     'create' => 'Ustvari Dodatek',
     'edit' => 'Uredi Dodatek',

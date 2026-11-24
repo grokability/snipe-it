@@ -3,8 +3,8 @@
 return [
 
     'does_not_exist' => 'Tokios būsenos žymos nėra.',
-    'deleted_label' => 'Panaikinta būsenos žyma',
-    'assoc_assets' => 'Ši būsenos žyma šiuo metu yra susieta bent su vienu turto vienetu ir negali būti panaikinta. Atnaujinkite savo turtą, kad nebebūtų sąsajos su šia būsenos žyma, ir bandykite dar kartą. ',
+    'deleted_label' => 'Ištrinta būsenos žyma',
+    'assoc_assets' => 'Ši būsenos žyma šiuo metu yra susieta bent su vienu turto vienetu ir negali būti ištrinta. Atnaujinkite savo turtą, kad nebebūtų sąsajos su šia būsenos žyma, ir bandykite dar kartą. ',
 
     'create' => [
         'error' => 'Būsenos žyma nebuvo sukurta, bandykite dar kartą.',
@@ -17,9 +17,9 @@ return [
     ],
 
     'delete' => [
-        'confirm' => 'Ar tikrai norite panaikinti šią būsenos žymą?',
-        'error' => 'Bandant panaikinti būsenos žymą įvyko klaida. Bandykite dar kartą.',
-        'success' => 'Būsenos žyma sėkmingai panaikinta.',
+        'confirm' => 'Ar tikrai norite ištrinti šią būsenos žymą?',
+        'error' => 'Bandant ištrinti būsenos žymą įvyko klaida. Bandykite dar kartą.',
+        'success' => 'Būsenos žyma sėkmingai ištrinta.',
         'bulk_success' => 'Būsenos žyma sėkmingai ištrinta.|Būsenos žymos (:count) sėkmingai ištrintos.',
         'partial_success' => 'Būsenos žyma sėkmingai ištrinta. Daugiau informacijos rasite žemiau. | Būsenos žymos (:count) buvo sėkmingai ištrintos. Daugiau informacijos rasite žemiau.',
     ],

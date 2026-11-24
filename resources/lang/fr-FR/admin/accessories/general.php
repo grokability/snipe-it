@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Catégorie d\'accessoire',
     'accessory_name' => 'Nom de l\'accessoire',
     'checkout' => 'Attribuer l\'accessoire',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Dissocier l\'accessoire',
     'create' => 'Création d\'accessoire',
     'edit' => 'Modifier l\'accessoire',

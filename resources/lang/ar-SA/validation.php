@@ -188,6 +188,7 @@ return [
     'eloquent_model_class' => 'يجب أن يحتوي الحقل :attribute على اسم الصنف المؤهل بالكامل لطراز Eloquent.',
     'fmcs_company' => 'الحقل :attribute مطلوب لأن دعم الشركات المتعددة الكامل مفعّل، ولا يُسمح بالعناصر غير التابعة لأي شركة.',
     'fmcs_location' => 'الموقع ":location" يتبع الشركة :location_company، وهي لا تطابق الشركة المحددة.',
+    'fmcs_target_compat' => 'The :attribute does not belong to a company this user can report to.',
     'is_unique_across_company_and_location' => 'يجب أن تكون قيمة :attribute فريدة ضمن الشركة والموقع المحددين.',
 
     /*

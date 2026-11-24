@@ -15,15 +15,15 @@ return [
     ],
 
     'restore' => [
-        'error' => 'Component was not restored, please try again',
-        'success' => 'Component restored successfully.',
+        'error' => 'قطعه بازیابی نشد، لطفاً دوباره امتحان کنید',
+        'success' => 'قطعه با موفقیت بازیابی شد.',
     ],
 
     'delete' => [
         'confirm' => 'آیا مطمعن هستید میخواهید این کامپیوننت را پاک کنید؟?',
         'error' => 'موضوع کامپوننت حذف شد. لطفا دوباره سعی کنید.',
         'success' => 'کامپیوننت حذف شد.',
-        'error_qty' => 'Some components of this type are still checked out. Please check them in and try again.',
+        'error_qty' => 'برخی از قطعات این نوع هنوز واگذار شده‌اند. لطفاً قبل از حذف، آنها را تحویل بگیرید و دوباره امتحان کنید.',
     ],
 
     'checkout' => [
@@ -34,28 +34,28 @@ return [
     ],
 
     'bulk' => [
-        'no_components_selected' => 'No components were selected.',
-        'no_action_selected' => 'Please pick an action from the dropdown.',
+        'no_components_selected' => 'هیچ قطعه‌ای انتخاب نشده است.',
+        'no_action_selected' => 'لطفاً یک اقدام را از منوی کشویی انتخاب کنید.',
         'no_fields_updated' => 'هیچ فیلدی تغییر نکرده بود، بنابراین چیزی به روز نشد.',
-        'skipped_unauthorized' => ':count component(s) were skipped because you do not have permission to update them.',
+        'skipped_unauthorized' => ':count قطعه نادیده گرفته شد زیرا مجوز به‌روزرسانی آن را ندارید.',
 
         'update' => [
-            'success' => ':count component was updated.|:count components were updated.',
-            'none_updated' => 'The selected component could not be updated. See errors below for details.|None of the selected components could be updated. See errors below for details.',
+            'success' => ':count قطعه به‌روزرسانی شد.|:count قطعه به‌روزرسانی شدند.',
+            'none_updated' => 'قطعه انتخاب‌شده به‌روزرسانی نشد. برای جزئیات خطاهای زیر را مشاهده کنید.|هیچ‌یک از قطعات انتخاب‌شده به‌روزرسانی نشدند. برای جزئیات خطاهای زیر را مشاهده کنید.',
         ],
 
         'delete' => [
-            'success' => ':count component was deleted.|:count components were deleted.',
-            'partial_success' => ':count component was deleted. See errors below for the rest.|:count components were deleted. See errors below for the rest.',
+            'success' => ':count قطعه حذف شد.|:count قطعه حذف شدند.',
+            'partial_success' => ':count قطعه حذف شد. خطاهای زیر را برای بقیه مشاهده کنید.|:count قطعه حذف شدند. خطاهای زیر را برای بقیه مشاهده کنید.',
         ],
 
         'restore' => [
-            'success' => ':count component was restored.|:count components were restored.',
+            'success' => ':count قطعه بازیابی شد.|:count قطعه بازیابی شدند.',
         ],
 
         'checkin_selected' => [
-            'no_rows_selected' => 'No checked-out components were selected.',
-            'success' => ':unit_count unit returned across :count checkout.|:unit_count units returned across :count checkouts.',
+            'no_rows_selected' => 'هیچ قطعه واگذارشده‌ای انتخاب نشده است.',
+            'success' => ':unit_count واحد در :count واگذاری بازگردانده شد.|:unit_count واحد در :count واگذاری بازگردانده شدند.',
         ],
     ],
 

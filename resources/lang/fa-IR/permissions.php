@@ -16,450 +16,450 @@ return [
     */
 
     'superuser' => [
-        'name' => 'Super User',
-        'note' => 'Determines whether the user has full access to all aspects of the admin. This setting overrides ALL more specific and restrictive permissions throughout the system. ',
+        'name' => 'کاربر ارشد',
+        'note' => 'تعیین می‌کند که آیا کاربر به تمام بخش‌های مدیریت دسترسی کامل دارد یا خیر. این تنظیم بر تمام مجوزهای خاص‌تر و محدودکننده‌تر در سراسر سیستم اولویت دارد. ',
     ],
     'admin' => [
-        'name' => 'Admin Access',
-        'note' => 'Determines whether the user has access to most aspects of the system EXCEPT the System Admin Settings. These users will be able to manage users, locations, categories, etc, but ARE constrained by Full Multiple Company Support if it is enabled.',
+        'name' => 'دسترسی مدیر',
+        'note' => 'تعیین می‌کند که آیا کاربر به اکثر بخش‌های سیستم به جز تنظیمات مدیریت سیستم دسترسی دارد یا خیر. این کاربران قادر خواهند بود کاربران، مکان‌ها، دسته‌بندی‌ها و غیره را مدیریت کنند، اما در صورت فعال بودن پشتیبانی کامل از چندشرکتی، محدود به آن خواهند بود.',
     ],
 
     'import' => [
-        'name' => 'CSV Import',
-        'note' => 'This will allow users to import even if access to users, assets, etc is denied elsewhere.',
+        'name' => 'واردسازی CSV',
+        'note' => 'این تنظیم به کاربران اجازه واردسازی می‌دهد، حتی اگر دسترسی به کاربران، دارایی‌ها و غیره در جای دیگر منع شده باشد.',
     ],
 
     'reports' => [
-        'name' => 'Reports Access',
-        'note' => 'Determines whether the user has access to the Reports section of the application.',
+        'name' => 'دسترسی به گزارش‌ها',
+        'note' => 'تعیین می‌کند که آیا کاربر به بخش گزارش‌های برنامه دسترسی دارد یا خیر.',
     ],
 
     'assets' => [
         'name' => 'دارایی',
-        'note' => 'Grants access to the Assets section of the application. ',
+        'note' => 'دسترسی به بخش دارایی‌های برنامه را اعطا می‌کند. ',
     ],
 
     'assetsview' => [
-        'name' => 'View Assets',
-        'note' => 'Note that users with this permission will also be able to see (not modify or delete) files uploaded to the asset model as well. This is to make it easier to share common documents like user manuals across assets without having to upload them to every asset, and to avoid having to grant the user permission to modify asset files. Users with this permission will also be able to view edit and checkin history.',
+        'name' => 'مشاهده دارایی‌ها',
+        'note' => 'توجه داشته باشید کاربرانی که این مجوز را دارند قادر خواهند بود فایل‌های بارگذاری‌شده در مدل دارایی را نیز مشاهده کنند (نه ویرایش یا حذف). این امر برای آسان‌تر شدن اشتراک‌گذاری اسناد مشترک مانند دفترچه‌های راهنمای کاربر بین دارایی‌ها بدون نیاز به بارگذاری آنها برای هر دارایی، و جلوگیری از نیاز به اعطای مجوز ویرایش فایل‌های دارایی به کاربر است. کاربران دارای این مجوز همچنین قادر خواهند بود تاریخچه ویرایش و تحویل گرفتن را مشاهده کنند.',
     ],
 
     'assetscreate' => [
-        'name' => 'Create New Assets',
+        'name' => 'ایجاد دارایی‌های جدید',
     ],
 
     'assetsedit' => [
-        'name' => 'Edit Assets',
+        'name' => 'ویرایش دارایی‌ها',
     ],
 
     'assetsdelete' => [
-        'name' => 'Delete Assets',
+        'name' => 'حذف دارایی‌ها',
     ],
 
     'assetscheckin' => [
-        'name' => 'Check In',
-        'note' => 'Check assets back into inventory that are currently checked out.',
+        'name' => 'تحویل گرفتن',
+        'note' => 'تحویل گرفتن دارایی‌های واگذارشده به موجودی انبار.',
     ],
 
     'assetscheckout' => [
-        'name' => 'Check Out',
-        'note' => 'Assign assets in inventory by checking them out.',
+        'name' => 'واگذاری',
+        'note' => 'تخصیص دارایی‌های موجود در انبار از طریق واگذاری آنها.',
     ],
 
     'assetsaudit' => [
-        'name' => 'Audit Assets',
-        'note' => 'Allows the user to mark an asset as physically inventoried.',
+        'name' => 'ممیزی دارایی‌ها',
+        'note' => 'به کاربر اجازه می‌دهد دارایی را به عنوان موجودی‌گیری فیزیکی‌شده علامت‌گذاری کند.',
     ],
 
     'assetsviewrequestable' => [
-        'name' => 'View Requestable Items',
-        'note' => 'Allows the user to view items that are marked as requestable.',
+        'name' => 'مشاهده اقلام قابل درخواست',
+        'note' => 'به کاربر اجازه می‌دهد اقلام علامت‌گذاری‌شده به عنوان قابل درخواست را مشاهده کند.',
     ],
 
     'assetsviewencrypted-custom-fields' => [
-        'name' => 'View Encrypted Custom Fields',
-        'note' => 'Allows the user to view and modify encrypted custom fields on assets.',
+        'name' => 'مشاهده فیلدهای سفارشی رمزگذاری‌شده',
+        'note' => 'به کاربر اجازه می‌دهد فیلدهای سفارشی رمزگذاری‌شده روی دارایی‌ها را مشاهده و ویرایش کند.',
     ],
 
     'accessories' => [
         'name' => 'تجهیزات جانبی',
-        'note' => 'Grants access to the Accessories section of the application.',
+        'note' => 'دسترسی به بخش لوازم جانبی برنامه را اعطا می‌کند.',
     ],
 
     'accessoriesview' => [
-        'name' => 'View Accessories',
+        'name' => 'مشاهده لوازم جانبی',
     ],
     'accessoriescreate' => [
-        'name' => 'Create New Accessories',
+        'name' => 'ایجاد لوازم جانبی جدید',
     ],
     'accessoriesedit' => [
-        'name' => 'Edit Accessories',
+        'name' => 'ویرایش لوازم جانبی',
     ],
     'accessoriesdelete' => [
-        'name' => 'Delete Accessories',
+        'name' => 'حذف لوازم جانبی',
     ],
     'accessoriescheckout' => [
-        'name' => 'Check Out Accessories',
-        'note' => 'Assign accessories in inventory by checking them out.',
+        'name' => 'واگذاری لوازم جانبی',
+        'note' => 'تخصیص لوازم جانبی در انبار از طریق واگذاری آنها.',
     ],
     'accessoriescheckin' => [
-        'name' => 'Check In Accessories',
-        'note' => 'Check accessories back into inventory that are currently checked out.',
+        'name' => 'تحویل گرفتن لوازم جانبی',
+        'note' => 'تحویل گرفتن لوازم جانبی واگذارشده به انبار.',
     ],
     'accessoriesfiles' => [
-        'name' => 'Manage Accessory Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with accessories. (This only makes sense with view privileges or higher.)',
+        'name' => 'مدیریت فایل‌های لوازم جانبی',
+        'note' => 'به کاربر اجازه می‌دهد فایل‌های مرتبط با لوازم جانبی را بارگذاری، دانلود و حذف کند. (این ویژگی فقط با داشتن دسترسی مشاهده یا بالاتر معنادار است.)',
     ],
 
     'assetsfiles' => [
-        'name' => 'Manage Asset Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with assets. (This only makes sense with view privileges or higher.)',
+        'name' => 'مدیریت فایل‌های دارایی',
+        'note' => 'به کاربر اجازه می‌دهد فایل‌های مرتبط با دارایی‌ها را بارگذاری، دانلود و حذف کند. (این ویژگی فقط با داشتن دسترسی مشاهده یا بالاتر معنادار است.)',
     ],
 
     'usersfiles' => [
-        'name' => 'Manage User Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with users. (This only makes sense with view privileges or higher.)',
+        'name' => 'مدیریت فایل‌های کاربر',
+        'note' => 'به کاربر اجازه می‌دهد فایل‌های مرتبط با کاربران را بارگذاری، دانلود و حذف کند. (این ویژگی فقط با داشتن دسترسی مشاهده یا بالاتر معنادار است.)',
     ],
 
     'modelsfiles' => [
-        'name' => 'Manage Model Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with asset models on both the model view and the asset view screens. (This only makes sense with view privileges or higher.)',
+        'name' => 'مدیریت فایل‌های مدل',
+        'note' => 'به کاربر اجازه می‌دهد فایل‌های مرتبط با مدل‌های دارایی را در هر دو صفحه نمای مدل و نمای دارایی بارگذاری، دانلود و حذف کند. (این ویژگی فقط با داشتن دسترسی مشاهده یا بالاتر معنادار است.)',
     ],
 
     'departmentsfiles' => [
-        'name' => 'Manage Department Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with departments. (This only makes sense with view privileges or higher.)',
+        'name' => 'مدیریت فایل‌های دپارتمان',
+        'note' => 'به کاربر اجازه می‌دهد فایل‌های مرتبط با دپارتمان‌ها را بارگذاری، دانلود و حذف کند. (این ویژگی فقط با داشتن دسترسی مشاهده یا بالاتر معنادار است.)',
     ],
 
     'suppliersfiles' => [
-        'name' => 'Manage Supplier Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with suppliers. (This only makes sense with view privileges or higher.)',
+        'name' => 'مدیریت فایل‌های تامین‌کننده',
+        'note' => 'به کاربر اجازه می‌دهد فایل‌های مرتبط با تامین‌کنندگان را بارگذاری، دانلود و حذف کند. (این ویژگی فقط با داشتن دسترسی مشاهده یا بالاتر معنادار است.)',
     ],
 
     'locationsfiles' => [
-        'name' => 'Manage Location Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with locations.(This only makes sense with view privileges or higher.)',
+        'name' => 'مدیریت فایل‌های مکان',
+        'note' => 'به کاربر اجازه می‌دهد فایل‌های مرتبط با مکان‌ها را بارگذاری، دانلود و حذف کند. (این ویژگی فقط با داشتن دسترسی مشاهده یا بالاتر معنادار است.)',
     ],
 
     'companiesfiles' => [
-        'name' => 'Manage Company Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with companies. (This only makes sense with view privileges or higher.)',
+        'name' => 'مدیریت فایل‌های شرکت',
+        'note' => 'به کاربر اجازه می‌دهد فایل‌های مرتبط با شرکت‌ها را بارگذاری، دانلود و حذف کند. (این ویژگی فقط با داشتن دسترسی مشاهده یا بالاتر معنادار است.)',
     ],
 
     'consumablesfiles' => [
-        'name' => 'Manage Consumable Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with consumables. (This only makes sense with view privileges or higher.)',
+        'name' => 'مدیریت فایل‌های اقلام مصرفی',
+        'note' => 'به کاربر اجازه می‌دهد فایل‌های مرتبط با اقلام مصرفی را بارگذاری، دانلود و حذف کند. (این ویژگی فقط با داشتن دسترسی مشاهده یا بالاتر معنادار است.)',
     ],
 
     'consumables' => [
         'name' => 'اقلام قابل مصرف',
-        'note' => 'Grants access to the Consumables section of the application.',
+        'note' => 'دسترسی به بخش اقلام مصرفی برنامه را اعطا می‌کند.',
     ],
     'consumablesview' => [
-        'name' => 'View Consumables',
+        'name' => 'مشاهده اقلام مصرفی',
     ],
     'consumablescreate' => [
-        'name' => 'Create New Consumables',
+        'name' => 'ایجاد اقلام مصرفی جدید',
     ],
     'consumablesedit' => [
-        'name' => 'Edit Consumables',
+        'name' => 'ویرایش اقلام مصرفی',
     ],
     'consumablesdelete' => [
-        'name' => 'Delete Consumables',
+        'name' => 'حذف اقلام مصرفی',
     ],
     'consumablescheckout' => [
-        'name' => 'Check Out Consumables',
-        'note' => 'Assign consumables in inventory by checking them out.',
+        'name' => 'واگذاری اقلام مصرفی',
+        'note' => 'تخصیص اقلام مصرفی در انبار از طریق واگذاری آنها.',
     ],
 
     'licenses' => [
         'name' => 'گواهی نامه ها',
-        'note' => 'Grants access to the Licenses section of the application.',
+        'note' => 'دسترسی به بخش مجوزهای برنامه را اعطا می‌کند.',
     ],
     'licensesview' => [
-        'name' => 'View Licenses',
+        'name' => 'مشاهده مجوزها',
     ],
     'licensescreate' => [
-        'name' => 'Create New Licenses',
+        'name' => 'ایجاد مجوزهای جدید',
     ],
     'licensesedit' => [
-        'name' => 'Edit Licenses',
+        'name' => 'ویرایش مجوزها',
     ],
     'licensesdelete' => [
-        'name' => 'Delete Licenses',
+        'name' => 'حذف مجوزها',
     ],
     'licensescheckout' => [
-        'name' => 'Assign Licenses',
-        'note' => 'Allows the user to assign licenses to assets or users.',
+        'name' => 'تخصیص مجوزها',
+        'note' => 'به کاربر اجازه می‌دهد مجوزها را به دارایی‌ها یا کاربران اختصاص دهد.',
     ],
     'licensescheckin' => [
-        'name' => 'Unassign Licenses',
-        'note' => 'Allows the user to unassign licenses from assets or users.',
+        'name' => 'لغو تخصیص مجوزها',
+        'note' => 'به کاربر اجازه می‌دهد تخصیص مجوزها را از دارایی‌ها یا کاربران لغو کند.',
     ],
     'licensesfiles' => [
-        'name' => 'Manage License Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with licenses.',
+        'name' => 'مدیریت فایل‌های مجوز',
+        'note' => 'به کاربر اجازه می‌دهد فایل‌های مرتبط با مجوزها را بارگذاری، دانلود و حذف کند.',
     ],
     'componentsfiles' => [
-        'name' => 'Manage Component Files',
-        'note' => 'Allows the user to upload, download, and delete files associated with components.',
+        'name' => 'مدیریت فایل‌های قطعه',
+        'note' => 'به کاربر اجازه می‌دهد فایل‌های مرتبط با قطعات را بارگذاری، دانلود و حذف کند.',
     ],
 
     'licenseskeys' => [
-        'name' => 'Manage License Keys',
-        'note' => 'Allows the user to view product keys associated with licenses.',
+        'name' => 'مدیریت کلیدهای مجوز',
+        'note' => 'به کاربر اجازه می‌دهد کلیدهای محصول مرتبط با مجوزها را مشاهده کند.',
     ],
     'components' => [
         'name' => 'کامپوننت ها',
-        'note' => 'Grants access to the Components section of the application.',
+        'note' => 'دسترسی به بخش قطعات برنامه را اعطا می‌کند.',
     ],
     'componentsview' => [
-        'name' => 'View Components',
+        'name' => 'مشاهده قطعات',
     ],
     'componentscreate' => [
-        'name' => 'Create New Components',
+        'name' => 'ایجاد قطعات جدید',
     ],
     'componentsedit' => [
-        'name' => 'Edit Components',
+        'name' => 'ویرایش قطعات',
     ],
     'componentsdelete' => [
-        'name' => 'Delete Components',
+        'name' => 'حذف قطعات',
     ],
 
     'componentscheckout' => [
-        'name' => 'Check Out Components',
-        'note' => 'Assign components in inventory by checking them out.',
+        'name' => 'واگذاری قطعات',
+        'note' => 'تخصیص قطعات در انبار از طریق واگذاری آنها.',
     ],
     'componentscheckin' => [
-        'name' => 'Check In Components',
-        'note' => 'Check components back into inventory that are currently checked out.',
+        'name' => 'تحویل گرفتن قطعات',
+        'note' => 'تحویل گرفتن قطعات واگذارشده به انبار.',
     ],
     'kits' => [
         'name' => 'مقادیر از پیش تعریف شده',
-        'note' => 'Grants access to the Predefined Kits section of the application.',
+        'note' => 'دسترسی به بخش کیت‌های از پیش تعریف‌شده برنامه را اعطا می‌کند.',
     ],
     'kitsview' => [
-        'name' => 'View Predefined Kits',
+        'name' => 'مشاهده کیت‌های از پیش تعریف‌شده',
     ],
     'kitscreate' => [
-        'name' => 'Create New Predefined Kits',
+        'name' => 'ایجاد کیت‌های از پیش تعریف‌شده جدید',
     ],
     'kitsedit' => [
-        'name' => 'Edit Predefined Kits',
+        'name' => 'ویرایش کیت‌های از پیش تعریف‌شده',
     ],
     'kitsdelete' => [
-        'name' => 'Delete Predefined Kits',
+        'name' => 'حذف کیت‌های از پیش تعریف‌شده',
     ],
     'users' => [
         'name' => 'کاربران',
-        'note' => 'Grants access to the Users section of the application.',
+        'note' => 'دسترسی به بخش کاربران برنامه را اعطا می‌کند.',
     ],
     'usersview' => [
         'name' => 'مشاهده کاربران',
-        'note' => 'Users with this permission will also be able to view edit and checkin history. Access to files uploaded to a user is gated separately by the Manage User Files permission.',
+        'note' => 'کاربران دارای این مجوز همچنین قادر خواهند بود تاریخچه ویرایش و تحویل گرفتن را مشاهده کنند. دسترسی به فایل‌های بارگذاری‌شده برای کاربر به طور جداگانه با مجوز مدیریت فایل‌های کاربر کنترل می‌شود.',
     ],
     'userscreate' => [
-        'name' => 'Create New Users',
+        'name' => 'ایجاد کاربران جدید',
     ],
     'usersedit' => [
-        'name' => 'Edit Users',
+        'name' => 'ویرایش کاربران',
     ],
     'usersdelete' => [
-        'name' => 'Delete Users',
+        'name' => 'حذف کاربران',
     ],
     'models' => [
-        'name' => 'Models',
-        'note' => 'Grants access to the Models section of the application.',
+        'name' => 'مدل‌ها',
+        'note' => 'دسترسی به بخش مدل‌های برنامه را اعطا می‌کند.',
     ],
     'modelsview' => [
         'name' => 'دیدن مدل ها',
     ],
 
     'modelscreate' => [
-        'name' => 'Create New Models',
+        'name' => 'ایجاد مدل‌های جدید',
     ],
     'modelsedit' => [
-        'name' => 'Edit Models',
+        'name' => 'ویرایش مدل‌ها',
     ],
     'modelsdelete' => [
-        'name' => 'Delete Models',
+        'name' => 'حذف مدل‌ها',
     ],
     'categories' => [
         'name' => 'دسته‌بندی‌ها',
-        'note' => 'Grants access to the Categories section of the application.',
+        'note' => 'دسترسی به بخش دسته‌بندی‌های برنامه را اعطا می‌کند.',
     ],
     'categoriesview' => [
-        'name' => 'View Categories',
+        'name' => 'مشاهده دسته‌بندی‌ها',
     ],
     'categoriescreate' => [
-        'name' => 'Create New Categories',
+        'name' => 'ایجاد دسته‌بندی‌های جدید',
     ],
     'categoriesedit' => [
-        'name' => 'Edit Categories',
+        'name' => 'ویرایش دسته‌بندی‌ها',
     ],
     'categoriesdelete' => [
-        'name' => 'Delete Categories',
+        'name' => 'حذف دسته‌بندی‌ها',
     ],
     'departments' => [
         'name' => 'گروه ها',
-        'note' => 'Grants access to the Departments section of the application.',
+        'note' => 'دسترسی به بخش دپارتمان‌های برنامه را اعطا می‌کند.',
     ],
     'departmentsview' => [
-        'name' => 'View Departments',
+        'name' => 'مشاهده دپارتمان‌ها',
     ],
     'departmentscreate' => [
-        'name' => 'Create New Departments',
+        'name' => 'ایجاد دپارتمان‌های جدید',
     ],
     'departmentsedit' => [
-        'name' => 'Edit Departments',
+        'name' => 'ویرایش دپارتمان‌ها',
     ],
     'departmentsdelete' => [
-        'name' => 'Delete Departments',
+        'name' => 'حذف دپارتمان‌ها',
     ],
     'locations' => [
         'name' => 'مکانها',
-        'note' => 'Grants access to the Locations section of the application.',
+        'note' => 'دسترسی به بخش مکان‌های برنامه را اعطا می‌کند.',
     ],
     'locationsview' => [
-        'name' => 'View Locations',
+        'name' => 'مشاهده مکان‌ها',
     ],
     'locationscreate' => [
-        'name' => 'Create New Locations',
+        'name' => 'ایجاد مکان‌های جدید',
     ],
     'locationsedit' => [
-        'name' => 'Edit Locations',
+        'name' => 'ویرایش مکان‌ها',
     ],
     'locationsdelete' => [
-        'name' => 'Delete Locations',
+        'name' => 'حذف مکان‌ها',
     ],
     'status-labels' => [
         'name' => 'برچسب های وضعیت',
-        'note' => 'Grants access to the Status Labels section of the application used by Assets.',
+        'note' => 'دسترسی به بخش برچسب‌های وضعیت برنامه که توسط دارایی‌ها استفاده می‌شود را اعطا می‌کند.',
     ],
     'statuslabelsview' => [
-        'name' => 'View Status Labels',
+        'name' => 'مشاهده برچسب‌های وضعیت',
     ],
     'statuslabelscreate' => [
-        'name' => 'Create New Status Labels',
+        'name' => 'ایجاد برچسب‌های وضعیت جدید',
     ],
     'statuslabelsedit' => [
-        'name' => 'Edit Status Labels',
+        'name' => 'ویرایش برچسب‌های وضعیت',
     ],
     'statuslabelsdelete' => [
-        'name' => 'Delete Status Labels',
+        'name' => 'حذف برچسب‌های وضعیت',
     ],
     'custom-fields' => [
         'name' => 'فیلدهای سفارشی',
-        'note' => 'Grants access to the Custom Fields section of the application used by Assets.',
+        'note' => 'دسترسی به بخش فیلدهای سفارشی برنامه که توسط دارایی‌ها استفاده می‌شود را اعطا می‌کند.',
     ],
     'customfieldsview' => [
-        'name' => 'View Custom Fields',
+        'name' => 'مشاهده فیلدهای سفارشی',
     ],
     'customfieldscreate' => [
-        'name' => 'Create New Custom Fields',
+        'name' => 'ایجاد فیلدهای سفارشی جدید',
     ],
     'customfieldsedit' => [
-        'name' => 'Edit Custom Fields',
+        'name' => 'ویرایش فیلدهای سفارشی',
     ],
     'customfieldsdelete' => [
-        'name' => 'Delete Custom Fields',
+        'name' => 'حذف فیلدهای سفارشی',
     ],
     'suppliers' => [
         'name' => 'تامین کننده',
-        'note' => 'Grants access to the Suppliers section of the application.',
+        'note' => 'دسترسی به بخش تامین‌کنندگان برنامه را اعطا می‌کند.',
     ],
     'suppliersview' => [
-        'name' => 'View Suppliers',
+        'name' => 'مشاهده تامین‌کنندگان',
     ],
     'supplierscreate' => [
-        'name' => 'Create New Suppliers',
+        'name' => 'ایجاد تامین‌کنندگان جدید',
     ],
     'suppliersedit' => [
-        'name' => 'Edit Suppliers',
+        'name' => 'ویرایش تامین‌کنندگان',
     ],
     'suppliersdelete' => [
-        'name' => 'Delete Suppliers',
+        'name' => 'حذف تامین‌کنندگان',
     ],
     'manufacturers' => [
         'name' => 'تولیدکننده‌ها',
-        'note' => 'Grants access to the Manufacturers section of the application.',
+        'note' => 'دسترسی به بخش سازندگان برنامه را اعطا می‌کند.',
     ],
     'manufacturersview' => [
-        'name' => 'View Manufacturers',
+        'name' => 'مشاهده سازندگان',
     ],
     'manufacturerscreate' => [
-        'name' => 'Create New Manufacturers',
+        'name' => 'ایجاد سازندگان جدید',
     ],
     'manufacturersedit' => [
-        'name' => 'Edit Manufacturers',
+        'name' => 'ویرایش سازندگان',
     ],
     'manufacturersdelete' => [
-        'name' => 'Delete Manufacturers',
+        'name' => 'حذف سازندگان',
     ],
     'companies' => [
         'name' => 'شرکت ها',
-        'note' => 'Grants access to the Companies section of the application.',
+        'note' => 'دسترسی به بخش شرکت‌های برنامه را اعطا می‌کند.',
     ],
     'companiesview' => [
-        'name' => 'View Companies',
+        'name' => 'مشاهده شرکت‌ها',
     ],
     'companiescreate' => [
-        'name' => 'Create New Companies',
+        'name' => 'ایجاد شرکت‌های جدید',
     ],
     'companiesedit' => [
-        'name' => 'Edit Companies',
+        'name' => 'ویرایش شرکت‌ها',
     ],
     'companiesdelete' => [
-        'name' => 'Delete Companies',
+        'name' => 'حذف شرکت‌ها',
     ],
     'user-self-accounts' => [
-        'name' => 'User Self Accounts',
-        'note' => 'Grants non-admin users the ability to manage certain aspects of their own user accounts.',
+        'name' => 'حساب‌های کاربری شخصی',
+        'note' => 'به کاربران غیرمدیر امکان مدیریت جنبه‌های خاصی از حساب‌های کاربری خودشان را می‌دهد.',
     ],
     'selftwo-factor' => [
-        'name' => 'Manage Two-Factor Authentication',
-        'note' => 'Allows users to enable, disable, and manage two-factor authentication for their own accounts.',
+        'name' => 'مدیریت احراز هویت دو مرحله‌ای',
+        'note' => 'به کاربران اجازه می‌دهد احراز هویت دو مرحله‌ای را برای حساب‌های کاربری خود فعال، غیرفعال و مدیریت کنند.',
     ],
     'selfapi' => [
-        'name' => 'Manage API Tokens',
-        'note' => 'Allows users to create, view, and revoke their own API tokens. User tokens will have the same permissions as the user who created them.',
+        'name' => 'مدیریت توکن‌های API',
+        'note' => 'به کاربران اجازه می‌دهد توکن‌های API خود را ایجاد، مشاهده و باطل کنند. توکن‌های کاربر همان مجوزهای کاربری را خواهند داشت که آنها را ایجاد کرده است.',
     ],
     'selfedit-location' => [
-        'name' => 'Edit Location',
-        'note' => 'Allows users to edit the location associated with their own user account.',
+        'name' => 'ویرایش مکان',
+        'note' => 'به کاربران اجازه می‌دهد مکان مرتبط با حساب کاربری خود را ویرایش کنند.',
     ],
     'selfcheckout-assets' => [
-        'name' => 'Self Check Out Assets',
-        'note' => 'Allows users to check out assets to themselves without admin intervention.',
+        'name' => 'واگذاری خودکار دارایی به خود',
+        'note' => 'به کاربران اجازه می‌دهد بدون دخالت مدیر دارایی‌ها را به خود واگذار کنند.',
     ],
     'selfview-purchase-cost' => [
-        'name' => 'View Purchase Cost',
-        'note' => 'Allows users to view the purchase cost of items in their account view.',
+        'name' => 'مشاهده قیمت خرید',
+        'note' => 'به کاربران اجازه می‌دهد قیمت خرید اقلام را در نمای حساب خود مشاهده کنند.',
     ],
 
     'depreciations' => [
-        'name' => 'Depreciation Management',
-        'note' => 'Allows users to manage and view asset depreciation details.',
+        'name' => 'مدیریت استهلاک',
+        'note' => 'به کاربران اجازه می‌دهد جزئیات استهلاک دارایی‌ها را مدیریت و مشاهده کنند.',
     ],
     'depreciationsview' => [
-        'name' => 'View Depreciation Details',
+        'name' => 'مشاهده جزئیات استهلاک',
     ],
     'depreciationsedit' => [
-        'name' => 'Edit Depreciation Settings',
+        'name' => 'ویرایش تنظیمات استهلاک',
     ],
     'depreciationsdelete' => [
-        'name' => 'Delete Depreciation Records',
+        'name' => 'حذف رکوردهای استهلاک',
     ],
     'depreciationscreate' => [
-        'name' => 'Create Depreciation Records',
+        'name' => 'ایجاد رکوردهای استهلاک',
     ],
 
-    'grant_all' => 'Grant all permissions for :area',
-    'deny_all' => 'Deny all permissions for :area',
-    'inherit_all' => 'Inherit all permissions for :area from permission groups',
-    'grant' => 'Grant Permission for :area',
-    'deny' => 'Deny Permission for :area',
-    'inherit' => 'Inherit Permission for :area from permission groups',
-    'use_groups' => 'We strongly suggest using Permission Groups instead of assigning individual permissions for easier management.',
+    'grant_all' => 'اعطای تمام مجوزها برای :area',
+    'deny_all' => 'رد تمام مجوزها برای :area',
+    'inherit_all' => 'ارث‌بری تمام مجوزها برای :area از گروه‌های مجوز',
+    'grant' => 'اعطای مجوز برای :area',
+    'deny' => 'رد مجوز برای :area',
+    'inherit' => 'ارث‌بری مجوز برای :area از گروه‌های مجوز',
+    'use_groups' => 'ما اکیداً پیشنهاد می‌کنیم برای مدیریت آسان‌تر، به جای تخصیص مجوزهای فردی از گروه‌های مجوز استفاده کنید.',
 
 ];

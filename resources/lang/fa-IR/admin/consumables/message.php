@@ -2,7 +2,7 @@
 
 return [
 
-    'invalid_category_type' => 'The category must be a consumable category.',
+    'invalid_category_type' => 'دسته‌بندی باید یک دسته‌بندی مصرفی باشد.',
     'does_not_exist' => 'مواد مصرفی یافت نشد.',
 
     'create' => [
@@ -19,23 +19,23 @@ return [
         'confirm' => 'آیا مطمعنید که می خواهید این ماده مصرفی را حذف کنید؟',
         'error' => 'یک مشکل در حذف کردن ماده مصرفی وجود دارد،دوباره سعی کنید.',
         'success' => 'مواد مصرفی حذف شد.',
-        'bulk_success' => 'Consumable deleted successfully.|:count consumables were deleted successfully.',
-        'partial_success' => ':count consumable was deleted successfully, but others could not be deleted. See below for details.|:count consumables were deleted successfully, but others could not be deleted. See below for details.',
+        'bulk_success' => 'قلم مصرفی با موفقیت حذف شد.|:count قلم مصرفی با موفقیت حذف شدند.',
+        'partial_success' => ':count قلم مصرفی با موفقیت حذف شد، اما موارد دیگر حذف نشدند. جزئیات را در زیر مشاهده کنید.|:count قلم مصرفی با موفقیت حذف شدند، اما موارد دیگر حذف نشدند. جزئیات را در زیر مشاهده کنید.',
     ],
 
     'checkout' => [
         'error' => 'مواد مصرفی بررسی نشد ، دوباره سعی کنید.',
         'success' => 'مواد مصرفی بررسی شد.',
         'user_does_not_exist' => 'کاربر نامعتبر است لطفا دوباره امتحان کنید.',
-        'unavailable' => 'There are not enough consumables for this checkout. Please check the quantity left. ',
+        'unavailable' => 'اقلام مصرفی کافی برای این واگذاری وجود ندارد. لطفاً موجودی باقی‌مانده را بررسی کنید. ',
     ],
 
     'consumed' => [
-        'success' => 'Distribution marked as consumed.',
-        'bulk_success' => ':count distribution was marked as consumed.|:count distributions were marked as consumed.',
-        'already' => 'That distribution was already marked as consumed.',
-        'error' => 'Could not mark the distribution as consumed, please try again.',
-        'no_rows_selected' => 'No valid distributions were selected.',
+        'success' => 'توزیع به عنوان مصرف‌شده علامت‌گذاری شد.',
+        'bulk_success' => ':count توزیع به عنوان مصرف‌شده علامت‌گذاری شد.|:count توزیع به عنوان مصرف‌شده علامت‌گذاری شدند.',
+        'already' => 'آن توزیع از قبل به عنوان مصرف‌شده علامت‌گذاری شده بود.',
+        'error' => 'علامت‌گذاری توزیع به عنوان مصرف‌شده ممکن نشد، لطفاً دوباره تلاش کنید.',
+        'no_rows_selected' => 'هیچ توزیع معتبری انتخاب نشد.',
     ],
 
     'checkin' => [
@@ -45,23 +45,23 @@ return [
     ],
 
     'restore' => [
-        'error' => 'Consumable was not restored, please try again',
-        'success' => 'Consumable restored successfully.',
+        'error' => 'قلم مصرفی بازیابی نشد، لطفاً دوباره تلاش کنید',
+        'success' => 'قلم مصرفی با موفقیت بازیابی شد.',
     ],
 
     'bulk' => [
-        'no_consumables_selected' => 'No consumables were selected.',
-        'no_action_selected' => 'Please pick an action from the dropdown.',
+        'no_consumables_selected' => 'هیچ قلم مصرفی انتخاب نشد.',
+        'no_action_selected' => 'لطفاً یک اقدام را از منوی کشویی انتخاب کنید.',
         'no_fields_updated' => 'هیچ فیلدی تغییر نکرده بود، بنابراین چیزی به روز نشد.',
-        'skipped_unauthorized' => ':count consumable(s) were skipped because you do not have permission to update them.',
+        'skipped_unauthorized' => ':count قلم مصرفی نادیده گرفته شد زیرا شما مجوز به‌روزرسانی آنها را ندارید.',
 
         'update' => [
-            'success' => ':count consumable was updated.|:count consumables were updated.',
-            'none_updated' => 'The selected consumable could not be updated. See errors below for details.|None of the selected consumables could be updated. See errors below for details.',
+            'success' => ':count قلم مصرفی به‌روزرسانی شد.|:count قلم مصرفی به‌روزرسانی شدند.',
+            'none_updated' => 'قلم مصرفی انتخاب‌شده به‌روزرسانی نشد. برای جزئیات خطاهای زیر را مشاهده کنید.|هیچ‌یک از اقلام مصرفی انتخاب‌شده به‌روزرسانی نشدند. برای جزئیات خطاهای زیر را مشاهده کنید.',
         ],
 
         'restore' => [
-            'success' => ':count consumable was restored.|:count consumables were restored.',
+            'success' => ':count قلم مصرفی بازیابی شد.|:count قلم مصرفی بازیابی شدند.',
         ],
     ],
 ];

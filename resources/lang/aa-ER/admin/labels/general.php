@@ -21,8 +21,8 @@ return [
     ],
 
     'fields' => [
-        'width' => 'crwdns17381:0crwdne17381:0',
-        'height' => 'crwdns17383:0crwdne17383:0',
+        'width' => 'crwdns18769:0crwdne18769:0',
+        'height' => 'crwdns18771:0crwdne18771:0',
         'label_gap' => 'crwdns17385:0crwdne17385:0',
         'margin_top' => 'crwdns17387:0crwdne17387:0',
         'margin_right' => 'crwdns17389:0crwdne17389:0',
@@ -63,6 +63,7 @@ return [
         'logo_max_width' => 'crwdns17459:0crwdne17459:0',
         'logo_margin' => 'crwdns17461:0crwdne17461:0',
         'logo_h_align' => 'crwdns17463:0crwdne17463:0',
+        'logo_position' => 'crwdns18789:0crwdne18789:0',
         'asset_tag' => 'crwdns17465:0crwdne17465:0',
         'barcode_1d' => 'crwdns17467:0crwdne17467:0',
         'barcode_2d' => 'crwdns17469:0crwdne17469:0',

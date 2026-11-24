@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Aksesuar Kategorisi',
     'accessory_name' => 'Aksesuar Adı',
     'checkout' => 'Aksesuar Çıkışı',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Aksesuar Atama',
     'create' => 'Aksesuar oluşturun',
     'edit' => 'Aksesuarı Düzenle',

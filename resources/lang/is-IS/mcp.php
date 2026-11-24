@@ -91,6 +91,7 @@ return [
     // -----------------------------------------------------------------
     'create_failed' => 'Create failed: :error',
     'update_failed' => 'Update failed: :error',
+    'update_no_fields' => 'No updatable fields were supplied',
     'delete_failed' => 'Delete failed',
     'delete_failed_error' => 'Delete failed: :error',
     'checkin_failed' => 'Checkin failed',
@@ -249,6 +250,7 @@ return [
     // Maintenance messages
     // -----------------------------------------------------------------
     'maintenance_created' => 'Maintenance :name created successfully',
+    'maintenance_already_completed' => 'Maintenance :name was already completed on :completed_at',
 
     // -----------------------------------------------------------------
     // List messages

@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Isigaba sokufinyelela',
     'accessory_name' => 'Igama lokufinyelela',
     'checkout' => 'I-Checkout Accessory',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'I-Checkin Yokufinyelela',
     'create' => 'Dala ukufinyelela',
     'edit' => 'Hlela Ukufinyelela',

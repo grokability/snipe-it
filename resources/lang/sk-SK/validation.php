@@ -188,6 +188,7 @@ return [
     'eloquent_model_class' => 'Pole :attribute musí byť plne kvalifikovaný názov triedy modelu Eloquent.',
     'fmcs_company' => 'Pole :attribute je povinné, pretože je zapnutá plná podpora pre viacero spoločností a nezaradené položky nie sú povolené.',
     'fmcs_location' => 'Lokalita ":location" patrí spoločnosti :location_company, ktorá nezodpovedá vybranej spoločnosti.',
+    'fmcs_target_compat' => 'The :attribute does not belong to a company this user can report to.',
     'is_unique_across_company_and_location' => 'Atribút :attribute musí byť jedinečný v rámci vybranej spoločnosti a lokality.',
 
     /*

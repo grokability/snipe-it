@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Catagóir Cúlpháirtí',
     'accessory_name' => 'Ainm Cúlpháirtí',
     'checkout' => 'Seiceáil Cúlpháirtí',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Cúlpháirtí Checkin',
     'create' => 'Cruthaigh Cúlpháirtí',
     'edit' => 'Cuir Cúlpháirtí in eagar',

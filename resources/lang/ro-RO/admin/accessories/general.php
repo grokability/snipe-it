@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Categorie Accesorii',
     'accessory_name' => 'Nume Accesoriu',
     'checkout' => 'Predare accesoriu',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Predare accesoriu',
     'create' => 'Adaugă accesoriu',
     'edit' => 'Actualizare Accesoriu',

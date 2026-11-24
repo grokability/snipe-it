@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'ប្រភេទគ្រឿងបន្លាស់',
     'accessory_name' => 'ឈ្មោះគ្រឿងបន្លាស់',
     'checkout' => 'Checkout Accessory',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Checkin Accessory',
     'create' => 'បង្កើតគ្រឿងបន្លាស់',
     'edit' => 'កែសម្រួលគ្រឿងបន្លាស់',

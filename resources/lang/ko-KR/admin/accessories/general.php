@@ -4,6 +4,8 @@ return [
     'accessory_category' => '부속품 분류',
     'accessory_name' => '부속품 명',
     'checkout' => '부속품 반출',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => '부속품 반입',
     'create' => '부속품 생성',
     'edit' => '부속품 수정',

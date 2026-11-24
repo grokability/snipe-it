@@ -21,8 +21,8 @@ return [
     ],
 
     'fields' => [
-        'width' => 'عرض الصفحة',
-        'height' => 'ارتفاع الصفحة',
+        'width' => 'Label Width',
+        'height' => 'Label Height',
         'label_gap' => 'فجوة الملصق',
         'margin_top' => 'الهامش العلوي',
         'margin_right' => 'الهامش الأيمن',
@@ -63,6 +63,7 @@ return [
         'logo_max_width' => 'أقصى عرض',
         'logo_margin' => 'الهامش',
         'logo_h_align' => 'محاذاة أفقية',
+        'logo_position' => 'Logo Position',
         'asset_tag' => 'ترميز الأصل',
         'barcode_1d' => '1D الباركود',
         'barcode_2d' => 'باركود 2D',

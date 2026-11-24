@@ -188,6 +188,7 @@ return [
     'eloquent_model_class' => 'The :attribute field must be the fully-qualified class name of an Eloquent model.',
     'fmcs_company' => 'The :attribute field is required because full multiple companies support is enabled and floaters are not allowed.',
     'fmcs_location' => '位置「:location」屬於 :location_company，與所選公司不符。',
+    'fmcs_target_compat' => 'The :attribute does not belong to a company this user can report to.',
     'is_unique_across_company_and_location' => ':attribute 在所選公司和位置中必須是唯一的。',
 
     /*

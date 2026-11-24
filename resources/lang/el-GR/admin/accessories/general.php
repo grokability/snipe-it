@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Κατηγορία αξεσουάρ',
     'accessory_name' => 'Όνομα ανταλλακτικού',
     'checkout' => 'Checkout αξεσουάρ',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Checkin Αξεσουάρ',
     'create' => 'Το πεδίο ενημερώθηκε επιτυχώς',
     'edit' => 'Επεξεργασία αξεσουάρ',

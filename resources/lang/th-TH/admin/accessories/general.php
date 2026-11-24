@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'หมวดหมู่อุปกรณ์เสริม',
     'accessory_name' => 'ชื่ออุปกรณ์เสริม',
     'checkout' => 'เชคเอาท์อุปกรณ์เสริม',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'เช็คอินอุปกรณ์เสริม',
     'create' => 'สร้างอุปกรณ์เสริม',
     'edit' => 'แก้ไขอุปกรณ์เสริม',

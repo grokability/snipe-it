@@ -32,7 +32,7 @@ return [
     'show_deleted' => 'Mostrar usuarios eliminados',
     'title' => 'Cargo',
     'to_restore_them' => 'para restaurarlos.',
-    'total_assets_cost' => 'Total Cost',
+    'total_assets_cost' => 'Coste total',
     'updateuser' => 'Actualizar usuario',
     'username' => 'Nombre de usuario',
     'display_name' => 'Nombre para mostrar',

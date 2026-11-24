@@ -18,7 +18,7 @@ return [
     ],
 
     'checkin_all' => [
-        'user' => 'Checkin all items for this user and optionally delete them. You will be able to confirm this on the next page.',
+        'user' => 'Check-in de todos os itens para este usuário e, opcionalmente, excluí-los. Você poderá confirmar isso na próxima página.',
     ],
 
 ];

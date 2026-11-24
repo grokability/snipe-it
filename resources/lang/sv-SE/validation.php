@@ -188,6 +188,7 @@ return [
     'eloquent_model_class' => 'The :attribute field must be the fully-qualified class name of an Eloquent model.',
     'fmcs_company' => 'Fältet :attribute krävs eftersom fullt stöd för flera företag är aktiverat och flytande tillgångar inte tillåts.',
     'fmcs_location' => 'Platsen ":location" tillhör :location_company, vilket inte matchar det valda företaget.',
+    'fmcs_target_compat' => 'The :attribute does not belong to a company this user can report to.',
     'is_unique_across_company_and_location' => 'Värdet för :attribute måste vara unikt inom det valda företaget och platsen.',
 
     /*

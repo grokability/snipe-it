@@ -4,7 +4,7 @@ return [
 
     'deleted' => 'Упаковуючий постачальник видалено',
     'does_not_exist' => 'Постачальник не існує.',
-    'assoc_items' => 'This supplier is currently associated with at least one asset, accessory, consumable, component, license, or maintenance record and cannot be deleted. Please update those items to no longer reference this supplier and try again. ',
+    'assoc_items' => 'Цей постачальник наразі пов’язаний принаймні з одним активом, аксесуаром, витратним матеріалом, компонентом, ліцензією або записом про технічне обслуговування, тому його неможливо видалити. Оновіть відповідні записи, вилучивши з них посилання на цього постачальника, і повторіть спробу. ',
 
     'create' => [
         'error' => 'Постачальник не був створений, будь ласка, повторіть спробу.',

@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'تصنيف الملحق',
     'accessory_name' => 'اسم الملحق',
     'checkout' => 'اخراج الملحق',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'إدخال الملحق',
     'create' => 'إنشاء ملحق',
     'edit' => 'تعديل الملحق',

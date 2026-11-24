@@ -1,25 +1,25 @@
 <?php
 
 return [
-    'select_type' => 'Select Maintenance Type',
+    'select_type' => 'نوع تعمیر و نگهداری را انتخاب کنید',
     'asset_maintenance_type' => 'نوع',
     'title' => 'عنوان',
     'start_date' => 'تاریخ شروع',
-    'completion_date' => 'Expected Completion',
+    'completion_date' => 'تاریخ تکمیل مورد انتظار',
     'cost' => 'هزینه',
     'is_warranty' => 'بهبود ضمانت',
-    'asset_maintenance_time' => 'Duration',
+    'asset_maintenance_time' => 'مدت زمان',
     'notes' => 'نت ها',
     'update' => 'بروزرسانی نگهداشت دارایی',
     'create' => 'ایجاد نگهداشت دارایی',
-    'responsible_party' => 'Responsible Party',
+    'responsible_party' => 'مسئول انجام',
     'checked_out_to_at_creation' => 'تحویل شده به
 
 ',
-    'completed_at' => 'Completed At',
-    'completed_at_help' => 'When this maintenance was actually finished. Leave blank if not yet complete. Setting a date here is equivalent to clicking Mark Complete but lets you enter a past date instead of using the current time.',
-    'completed_by' => 'Completed By',
-    'mark_complete' => 'Mark Complete',
-    'already_complete' => 'Already Completed',
-    'completion_notes' => 'Completion Notes',
+    'completed_at' => 'تکمیل‌شده در',
+    'completed_at_help' => 'زمانی که این تعمیر و نگهداری واقعاً پایان یافت. اگر هنوز کامل نشده خالی بگذارید. تنظیم تاریخ در اینجا معادل کلیک روی «علامت‌گذاری به عنوان تکمیل‌شده» است، اما به شما امکان می‌دهد به جای استفاده از زمان فعلی، تاریخی در گذشته را وارد کنید.',
+    'completed_by' => 'تکمیل‌شده توسط',
+    'mark_complete' => 'علامت‌گذاری به عنوان تکمیل‌شده',
+    'already_complete' => 'از قبل تکمیل شده',
+    'completion_notes' => 'یادداشت‌های تکمیل',
 ];

@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Categori Ategolyn',
     'accessory_name' => 'Enw Ategolyn',
     'checkout' => 'Cofnodi ategolyn allan',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Cofnodi ategolyn i fewn',
     'create' => 'Creu Ategolyn',
     'edit' => 'Golygu Ategolyn',

@@ -4,6 +4,8 @@ return [
     'accessory_category' => 'Accessoirecategorie',
     'accessory_name' => 'Accessoirenaam',
     'checkout' => 'Accessoire uitchecken',
+    'bulk_checkout' => 'Bulk Checkout Accessories',
+    'accessories_selected' => 'Accessories Selected',
     'checkin' => 'Accessoire inchecken',
     'create' => 'Accessoire aanmaken',
     'edit' => 'Accessoire bewerken',

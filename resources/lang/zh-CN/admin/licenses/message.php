@@ -37,14 +37,14 @@ return [
         'confirm' => '确定删除这条许可信息？',
         'error' => '删除许可信息的过程中出现了一些问题，请重试。',
         'success' => '许可信息已经被成功删除。',
-        'bulk_success' => 'The selected licenses were deleted successfully.',
-        'partial_success' => 'License deleted successfully. See additional information below. | :count licenses were deleted successfully. See additional information below.',
-        'bulk_checkout_warning' => ':license_name has seats that are currently checked out and cannot be deleted. Please check in all seats before deleting.',
+        'bulk_success' => '选定的许可证已成功删除。',
+        'partial_success' => '许可证删除成功。请参阅下方附加信息。| :count 个许可证已成功删除。请参阅下方附加信息。',
+        'bulk_checkout_warning' => ':license_name 仍有已签出的席位，无法删除。请在删除前签入所有席位。',
     ],
 
     'delete_with_checkin' => [
-        'bulk_success' => ':count licenses were deleted successfully after checking in :seats seats.',
-        'partial_success' => ':count licenses were deleted successfully after checking in :seats seats. See additional information below.',
+        'bulk_success' => '已签入 :seats 个席位，成功删除了 :count 个许可证。',
+        'partial_success' => '已签入 :seats 个席位，成功删除了 :count 个许可证。请参阅下方附加信息。',
     ],
 
     'checkout' => [
@@ -63,7 +63,7 @@ return [
     ],
 
     'import' => [
-        'no_free_seats' => 'License ":license" has no free seats. ":target" was not assigned to a seat.',
+        'no_free_seats' => '许可证“:license”没有空闲席位。“:target”未分配到席位。',
     ],
 
 ];

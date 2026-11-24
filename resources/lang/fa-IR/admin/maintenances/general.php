@@ -18,10 +18,10 @@ return [
 ',
     'pat_test' => 'تست PAT
 ',
-    'checked_out_to_help' => 'The user, etc that the asset was checked out to at the time of maintenance creation. This is for historical reference and does not affect the current checkout status of the asset.',
-    'show_completed' => 'Show Completed',
-    'show_active' => 'Show Active',
-    'due' => 'Due',
-    'overdue' => 'Overdue',
+    'checked_out_to_help' => 'کاربر و مواردی که دارایی در زمان ایجاد تعمیر و نگهداری به آنها واگذار شده بود. این صرفاً برای سوابق تاریخی است و بر وضعیت فعلی واگذاری دارایی تأثیری ندارد.',
+    'show_completed' => 'نمایش تکمیل‌شده‌ها',
+    'show_active' => 'نمایش فعال‌ها',
+    'due' => 'سررسید',
+    'overdue' => 'گذشته از موعد',
     'completed' => 'تکمیل شده',
 ];

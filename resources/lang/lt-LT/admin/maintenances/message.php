@@ -3,9 +3,9 @@
 return [
     'not_found' => 'Jūsų ieškomas turto aptarnavimas nebuvo rastas!',
     'delete' => [
-        'confirm' => 'Ar tikrai norite ištrinti šį turto aptarnavimą?',
-        'error' => 'Bandant panaikinti turto aptarnavimą įvyko klaida. Bandykite dar kartą.',
-        'success' => 'Turto aptarnavimo įrašas sėkmingai panaikintas.',
+        'confirm' => 'Ar tikrai norite ištrinti šį turto aptarnavimo įrašą?',
+        'error' => 'Bandant ištrinti turto aptarnavimo įrašą įvyko klaida. Bandykite dar kartą.',
+        'success' => 'Turto aptarnavimo įrašas sėkmingai ištrintas.',
     ],
     'create' => [
         'error' => 'Turto aptarnavimas nebuvo sukurtas, bandykite dar kartą.',

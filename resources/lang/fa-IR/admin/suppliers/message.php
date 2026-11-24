@@ -2,9 +2,9 @@
 
 return [
 
-    'deleted' => 'Deleted supplier',
+    'deleted' => 'تامین‌کننده حذف شد',
     'does_not_exist' => 'تامین کننده وجود ندارد.',
-    'assoc_items' => 'This supplier is currently associated with at least one asset, accessory, consumable, component, license, or maintenance record and cannot be deleted. Please update those items to no longer reference this supplier and try again. ',
+    'assoc_items' => 'این تامین‌کننده در حال حاضر به حداقل یک دارایی، لوازم جانبی، اقلام مصرفی، قطعه، مجوز یا رکورد تعمیر و نگهداری مرتبط است و نمی‌توان آن را حذف کرد. لطفاً این موارد را به‌گونه‌ای به‌روزرسانی کنید که دیگر به این تامین‌کننده ارجاع ندهند و سپس دوباره امتحان کنید. ',
 
     'create' => [
         'error' => 'تامین کننده ایجاد نشد, لطفا دوباره سعی کنید.',
@@ -20,8 +20,8 @@ return [
         'confirm' => 'آیا شما مطمئن هستید که می خواهید این کارپرداز را حذف کنید؟',
         'error' => 'در حذف کردن این کارپرداز مشکلی وجود داشت. لطفا دوباره تلاش کنید.',
         'success' => 'کارپرداز با موفقیت حذف شد.',
-        'not_found' => 'Supplier not found.',
-        'bulk_success' => 'Supplier deleted successfully.|:count suppliers were deleted successfully.',
+        'not_found' => 'تامین‌کننده یافت نشد.',
+        'bulk_success' => 'تامین‌کننده با موفقیت حذف شد.|:count تامین‌کننده با موفقیت حذف شدند.',
         'partial_success' => '.',
     ],
 

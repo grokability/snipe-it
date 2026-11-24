@@ -3,7 +3,7 @@
 return [
 
     'does_not_exist' => 'برچسب وضعیت موجود نیست',
-    'deleted_label' => 'Deleted Status Label',
+    'deleted_label' => 'برچسب وضعیت حذف‌شده',
     'assoc_assets' => 'این برچسب وضعیت در حال حاضر حداقل با یک دارایی همراه است و نمی تواند حذف شود. لطفا دارایی های خود را به روز کنید تا دیگر این وضعیت را رد نکنید و دوباره امتحان کنید.',
 
     'create' => [
@@ -20,8 +20,8 @@ return [
         'confirm' => 'آیا مطمئنید که میخواهید این برچسب وضعیت را حذف کنید؟',
         'error' => 'یک مسئله حذف برچسب وضعیت وجود داشت. لطفا دوباره تلاش کنید.',
         'success' => 'برچسب وضعیت با موفقیت حذف شد.',
-        'bulk_success' => 'Status Label deleted successfully.|:count status labels were deleted successfully.',
-        'partial_success' => 'Status Label deleted successfully. See additional information below. | :count status labels were deleted successfully. See additional information below.',
+        'bulk_success' => 'برچسب وضعیت با موفقیت حذف شد.|:count برچسب وضعیت با موفقیت حذف شدند.',
+        'partial_success' => 'برچسب وضعیت با موفقیت حذف شد. اطلاعات تکمیلی را در زیر مشاهده کنید. | :count برچسب وضعیت با موفقیت حذف شدند. اطلاعات تکمیلی را در زیر مشاهده کنید.',
     ],
 
     'help' => [

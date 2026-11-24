@@ -4,7 +4,7 @@ return [
 
     'assigned_to' => 'Priskirta',
     'checkout' => 'Į/Iš',
-    'deleted_at' => 'Panaikinta',
+    'deleted_at' => 'Ištrinta',
     'id' => 'ID',
     'license_email' => 'Licencijos el. paštas',
     'license_name' => 'Licencija išduota',

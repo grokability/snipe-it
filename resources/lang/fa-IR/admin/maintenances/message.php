@@ -19,10 +19,10 @@ return [
     'warranty' => 'گارانتی',
     'not_warranty' => 'بدون ضمانت',
     'complete' => [
-        'confirm' => 'Are you sure you want to mark this maintenance as complete? This cannot be undone.',
-        'success' => 'Maintenance marked as complete.',
-        'error' => 'There was an issue marking this maintenance as complete. Please try again.',
+        'confirm' => 'آیا مطمئن هستید که می‌خواهید این مورد تعمیر و نگهداری را به عنوان تکمیل‌شده علامت‌گذاری کنید؟ این عمل غیرقابل بازگشت است.',
+        'success' => 'تعمیر و نگهداری به عنوان تکمیل‌شده علامت‌گذاری شد.',
+        'error' => 'در علامت‌گذاری این تعمیر و نگهداری به عنوان تکمیل‌شده خطایی رخ داد. لطفاً دوباره تلاش کنید.',
     ],
-    'bulk_delete' => 'No maintenance records were deleted (:skipped skipped).|Deleted :count maintenance record. (:skipped skipped)|Deleted :count maintenance records. (:skipped skipped)',
-    'bulk_complete' => 'No maintenance records were marked complete (:skipped skipped or already complete).|Marked :count maintenance record complete. (:skipped skipped or already complete)|Marked :count maintenance records complete. (:skipped skipped or already complete)',
+    'bulk_delete' => 'هیچ رکورد تعمیر و نگهداری حذف نشد (:skipped مورد نادیده گرفته شد).|:count رکورد تعمیر و نگهداری حذف شد. (:skipped مورد نادیده گرفته شد)|:count رکورد تعمیر و نگهداری حذف شدند. (:skipped مورد نادیده گرفته شد)',
+    'bulk_complete' => 'هیچ رکورد تعمیر و نگهداری به عنوان تکمیل‌شده علامت نخورد (:skipped مورد نادیده گرفته شد یا از قبل کامل بود).|:count رکورد تعمیر و نگهداری به عنوان تکمیل‌شده علامت خورد. (:skipped مورد نادیده گرفته شد یا از قبل کامل بود)|:count رکورد تعمیر و نگهداری به عنوان تکمیل‌شده علامت خوردند. (:skipped مورد نادیده گرفته شد یا از قبل کامل بود)',
 ];

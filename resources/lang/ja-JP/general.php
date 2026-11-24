@@ -571,6 +571,7 @@ return [
     'new_component' => '新しいコンポーネント',
     'new_user' => '新しいユーザー',
     'collapse' => '折りたたむ',
+    'compact_view' => 'Compact view',
     'assigned' => '割り当て済み',
     'asset_count' => '資産数',
     'accessories_count' => 'アクセサリ数',

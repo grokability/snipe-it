@@ -70,7 +70,7 @@ return [
     'seat_not_checked_out' => 'This seat is not currently checked out',
     'no_units_available' => 'No units of this accessory are available for checkout',
     'no_units_remaining' => 'No units remaining',
-    'accessory_has_checkouts' => 'Accessory has units checked out and cannot be deleted. Check them in first.',
+    'accessory_has_checkouts' => 'Dodatna oprema ima zadužene komade i nije je moguće obrisati. Najprije razdužite zadužene komade.',
     'component_has_checkouts' => 'Component has units checked out and cannot be deleted. Check them in first.',
     'consumable_has_checkouts' => 'Consumable has items checked out and cannot be deleted',
     'license_has_seats_assigned' => 'License has seats currently assigned and cannot be deleted. Check in all seats first.',
@@ -91,6 +91,7 @@ return [
     // -----------------------------------------------------------------
     'create_failed' => 'Create failed: :error',
     'update_failed' => 'Update failed: :error',
+    'update_no_fields' => 'No updatable fields were supplied',
     'delete_failed' => 'Delete failed',
     'delete_failed_error' => 'Delete failed: :error',
     'checkin_failed' => 'Checkin failed',
@@ -133,8 +134,8 @@ return [
     'accessory_created' => 'Accessory :name created successfully',
     'accessory_updated' => 'Accessory :name updated successfully',
     'accessory_deleted' => 'Accessory :name deleted successfully',
-    'accessory_checked_out' => 'Accessory :name checked out successfully',
-    'accessory_checked_in' => 'Accessory :name checked in successfully',
+    'accessory_checked_out' => 'Dodatna oprema :name uspješno je zadužena',
+    'accessory_checked_in' => 'Dodatna oprema :name uspješno je razdužena',
 
     // -----------------------------------------------------------------
     // Component messages
@@ -249,6 +250,7 @@ return [
     // Maintenance messages
     // -----------------------------------------------------------------
     'maintenance_created' => 'Maintenance :name created successfully',
+    'maintenance_already_completed' => 'Maintenance :name was already completed on :completed_at',
 
     // -----------------------------------------------------------------
     // List messages

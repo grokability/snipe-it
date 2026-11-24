@@ -10,14 +10,14 @@ return [
     'success' => [
         'create' => 'Grupė sėkmingai sukurta.',
         'update' => 'Grupė sėkmingai atnaujinta.',
-        'delete' => 'Grupė sėkmingai panaikinta.',
+        'delete' => 'Grupė sėkmingai ištrinta.',
     ],
 
     'delete' => [
-        'confirm' => 'Ar tikrai norite panaikinti šią grupę?',
+        'confirm' => 'Ar tikrai norite ištrinti šią grupę?',
         'create' => 'Bandant sukurti grupę įvyko klaida. Bandykite dar kartą.',
         'update' => 'Bandant atnaujinti grupę įvyko klaida. Bandykite dar kartą.',
-        'delete' => 'Bandant panaikinti grupę įvyko klaida. Bandykite dar kartą.',
+        'delete' => 'Bandant ištrinti grupę įvyko klaida. Bandykite dar kartą.',
     ],
 
 ];
