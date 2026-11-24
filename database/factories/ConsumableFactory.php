@@ -28,7 +28,7 @@ class ConsumableFactory extends Factory
     public function definition()
     {
         return [
-            'category_id' => Category::factory(),
+            'category_id' => Category::factory()->state(['category_type' => 'consumable']),
             'company_id' => Company::factory(),
             'created_by' => User::factory()->superuser(),
             'item_no' => $this->faker->numberBetween(1000000, 50000000),
