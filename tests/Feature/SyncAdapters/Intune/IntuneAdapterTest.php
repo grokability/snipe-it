@@ -536,4 +536,61 @@ class IntuneAdapterTest extends TestCase
 
         $this->assertDatabaseHas('asset_external_sources', ['source' => 'intune', 'external_id' => 'guid-no-serial-ok']);
     }
+
+    public function test_model_string_matching_an_existing_model_number_reuses_that_model()
+    {
+        // Regression for #19781. Intune reports Lenovo machine types like
+        // "20UHCTO1WW" in `model`. When an admin already has a model with
+        // that model number, sync should use it rather than create a
+        // duplicate named after the number.
+        $existing = AssetModel::factory()->create([
+            'name' => 'ThinkPad T14 Gen 1',
+            'model_number' => '20UHCTO1WW',
+        ]);
+
+        $this->pullIntuneDevice(['id' => 'guid-lenovo', 'deviceName' => 'lenovo-1', 'serialNumber' => 'PF-1', 'model' => '20UHCTO1WW']);
+
+        $this->assertDatabaseHas('assets', ['serial' => 'PF-1', 'model_id' => $existing->id]);
+        $this->assertDatabaseMissing('models', ['name' => '20UHCTO1WW']);
+    }
+
+    public function test_model_string_matching_several_model_numbers_creates_a_new_model()
+    {
+        AssetModel::factory()->count(2)->create(['model_number' => '20UHCTO1WW']);
+
+        $this->pullIntuneDevice(['id' => 'guid-lenovo', 'deviceName' => 'lenovo-1', 'serialNumber' => 'PF-1', 'model' => '20UHCTO1WW']);
+
+        $created = AssetModel::where('name', '20UHCTO1WW')->firstOrFail();
+        $this->assertDatabaseHas('assets', ['serial' => 'PF-1', 'model_id' => $created->id]);
+    }
+
+    public function test_vendor_record_without_serial_is_skipped_when_model_matched_by_number_requires_serial()
+    {
+        AssetModel::factory()->create([
+            'name' => 'ThinkPad T14 Gen 1',
+            'model_number' => '20UHCTO1WW',
+            'require_serial' => 1,
+        ]);
+
+        $this->pullIntuneDevice(['id' => 'guid-no-serial', 'deviceName' => 'lenovo-2', 'serialNumber' => '', 'model' => '20UHCTO1WW']);
+
+        $this->assertSame(0, Asset::query()->count());
+    }
+
+    /**
+     * @param  array<string, mixed>  $device
+     */
+    private function pullIntuneDevice(array $device): void
+    {
+        $adapter = $this->configuredAdapter();
+
+        Http::fake([
+            '*/oauth2/v2.0/token' => Http::response(['access_token' => 'stub-bearer', 'expires_in' => 3600]),
+            '*/v1.0/deviceManagement/managedDevices*' => Http::response(['value' => [$device]]),
+        ]);
+
+        foreach ($adapter->pull() as $record) {
+            SyncAdapter::syncFromRecord($record);
+        }
+    }
 }
