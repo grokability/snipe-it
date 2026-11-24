@@ -41,7 +41,7 @@
                         </x-callout>
                     @endif
 
-                    @include('partials.forms.checkout-selector', ['item' => $accessories->first()])
+                    <x-checkout.target-selector :item="$accessories->first()" />
                     <x-input.user-select
                         :label="trans('general.user')"
                         name="assigned_user"

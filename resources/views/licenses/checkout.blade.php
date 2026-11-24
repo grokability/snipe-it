@@ -42,7 +42,7 @@
                         @endcan
                     @endif
 
-                    @include ('partials.forms.checkout-selector', ['item' => $license])
+                    <x-checkout.target-selector :item="$license" />
                     <x-input.user-select
                         :label="trans('general.user')"
                         name="assigned_user"

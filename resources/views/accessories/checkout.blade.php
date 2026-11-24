@@ -36,7 +36,7 @@
 
             <x-form.static :label="trans('admin/components/general.remaining')">{{ $accessory->numRemaining() }}</x-form.static>
 
-            @include ('partials.forms.checkout-selector', ['item' => $accessory])
+            <x-checkout.target-selector :item="$accessory" />
             <x-input.user-select
                 :label="trans('general.user')"
                 name="assigned_user"
