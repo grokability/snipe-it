@@ -432,15 +432,12 @@ class ConsumablesController extends Controller
             ->leftJoin('users', 'consumables_users.assigned_to', '=', 'users.id')
             ->leftJoin('users as admin_users', 'consumables_users.created_by', '=', 'admin_users.id')
             ->select('consumables_users.*');
-
-        // Lifecycle filter so the split Assigned / Consumed tabs on
-        // the show page share this one endpoint. Absent = all rows
-        // (back-compat for any caller that never passed status).
+        
         $status = (string) $request->input('status', '');
         if ($status === 'outstanding') {
-            $query->whereNull('consumables_users.consumed_at');
+            $query->outstanding();
         } elseif ($status === 'consumed') {
-            $query->whereNotNull('consumables_users.consumed_at');
+            $query->consumed();
         }
 
         $search = trim((string) $request->input('search', ''));
