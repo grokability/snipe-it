@@ -35,7 +35,7 @@
                         <strong>{{ trans('account/general.api_base_url') }}</strong>
                     </x-info-element>
 
-                    <x-info-element icon_type="globe-us" title="API">
+                    <x-info-element icon_type="code" title="API">
                         <x-copy-to-clipboard class="pull-right" copy_what="API">
                             <code>{{ url('/api/v1') }}{!! trans('account/general.api_base_url_endpoint') !!}</code>
                         </x-copy-to-clipboard>
@@ -52,7 +52,7 @@
                         <strong>{{ trans('account/general.mcp_url') }}</strong>
                     </x-info-element>
 
-                    <x-info-element icon_type="globe-us" title="MCP">
+                    <x-info-element icon_type="mcp" title="MCP">
                         <x-copy-to-clipboard class="pull-right" copy_what="MCP">
                             <code>{{ url('/mcp/snipe-it') }}</code>
                         </x-copy-to-clipboard>
