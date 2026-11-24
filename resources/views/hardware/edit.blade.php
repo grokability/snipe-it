@@ -99,7 +99,7 @@
     @include ('partials.forms.edit.status', [ 'required' => 'true'])
     @if (!$item->id)
         
-                    @include ('partials.forms.checkout-selector', ['item' => $item, 'style' => 'display:none;', 'optional' => true])
+                    <x-checkout.target-selector :item="$item" style="display:none;" :optional="true" />
         <x-input.user-select
             :label="trans('general.user')"
             name="assigned_user"
