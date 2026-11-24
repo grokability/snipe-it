@@ -92,6 +92,7 @@ use App\Mcp\Tools\ListStatusLabelsTool;
 use App\Mcp\Tools\ListSuppliersTool;
 use App\Mcp\Tools\ListUploadsTool;
 use App\Mcp\Tools\ListUsersTool;
+use App\Mcp\Tools\MarkConsumableOutstandingConsumedTool;
 use App\Mcp\Tools\OffboardUserTool;
 use App\Mcp\Tools\Reset2FATool;
 use App\Mcp\Tools\RestoreAssetTool;
@@ -199,6 +200,7 @@ class SnipeMCPServer extends Server
         UpdateConsumableTool::class,
         DeleteConsumableTool::class,
         CheckoutConsumableTool::class,
+        MarkConsumableOutstandingConsumedTool::class,
 
         // Licenses
         ListLicensesTool::class,
