@@ -160,8 +160,14 @@
                 {{ trans('general.min_amt') }} {{ $infoPanelObj->min_amt }}
             </x-info-element>
         @endif
-
-        @if (method_exists($infoPanelObj, 'numCheckedOut'))
+        
+        @if (method_exists($infoPanelObj, 'numConsumed'))
+            <x-info-element icon_type="checkedout" title="{{ trans('general.outstanding') }}">
+                {{ (int) $infoPanelObj->numOutstanding() }}
+                {{ trans('general.outstanding') }}
+                / {{ (int) $infoPanelObj->numConsumed() }} {{ trans('general.consumed') }}
+            </x-info-element>
+        @elseif (method_exists($infoPanelObj, 'numCheckedOut'))
             <x-info-element icon_type="checkedout" title="{{ trans('general.checked_out') }}">
                 {{ (int) $infoPanelObj->numCheckedOut() }}
                 {{ trans('general.checked_out') }}
@@ -264,8 +270,7 @@
             @if ($ordersCount > 0)
                 <x-info-element>
                     <x-icon type="order" class="fa-fw" title="{{ trans('general.total_orders') }}"/>
-                    {{ trans('general.total_orders') }}
-                    <span class="pull-right">{{ $ordersCount }}</span>
+                    {{ trans_choice('general.total_orders_count', $ordersCount, ['count' => $ordersCount]) }}
                 </x-info-element>
             @endif
         @endif
