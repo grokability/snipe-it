@@ -20,6 +20,7 @@ use App\Http\Middleware\RejectMcpOnlyTokensOnRestApi;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetAPIResponseHeaders;
 use App\Http\Middleware\SetPaginationDefaults;
+use App\Http\Middleware\TrustHosts;
 use App\Http\Middleware\TrustProxies;
 use App\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Auth\Middleware\Authenticate;
@@ -45,6 +46,9 @@ $app = Application::configure(basePath: dirname(__DIR__))
         // all come from Laravel's own defaults now, so future additions there show up
         // automatically. Only Snipe-IT's own additions are listed explicitly below.
         $middleware->trustHosts();
+        // Swap so we let /health through, so container probes hitting the pod IP or
+        // loopback don't get rejected with 400 via our custom TrustHosts middleware.
+        $middleware->replace(\Illuminate\Http\Middleware\TrustHosts::class, TrustHosts::class);
         $middleware->prepend(TrustProxies::class);
         // this was overridden, inherits from the parents but makes some changes.
         // to keep this change small enough, we keep it for now
