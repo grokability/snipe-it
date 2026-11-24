@@ -106,7 +106,7 @@ class DeleteUserTool extends Tool
 
         // Self-delete guard: never let the signed-in admin land in a
         // bulk batch, same reason the single-identifier path blocks it.
-        $targets = $targets->reject(fn (User $u) => $u->id === auth()->id())->values();
+        $targets = $targets->reject(fn (User $u) => $u->id === (int) auth()->id())->values();
 
         $dryRun = $request->boolean('dry_run', true);
 
@@ -191,7 +191,7 @@ class DeleteUserTool extends Tool
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.user')])));
         }
 
-        if ($user->id === auth()->id()) {
+        if ($user->id === (int) auth()->id()) {
             return Response::make(Response::error(trans('mcp.user_cannot_delete_self')));
         }
 

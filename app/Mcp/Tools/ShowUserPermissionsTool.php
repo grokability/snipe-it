@@ -50,7 +50,7 @@ class ShowUserPermissionsTool extends Tool
         // permissions requires the standard user-view gate. Collapse
         // missing-user and gate-refused into the same response so an
         // unauthorized caller can't probe user IDs by diffing errors.
-        $isSelf = $user && $user->id === auth()->id();
+        $isSelf = $user && $user->id === (int) auth()->id();
         if (! $user || (! $isSelf && ! Gate::allows('view', $user))) {
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.user')])));
         }

@@ -99,7 +99,7 @@ class AccessoriesTransformer
         // standard index endpoint doesn't preload requests, so the
         // relationLoaded gate keeps a per-row query out of that path.
         $userHasOpenRequest = auth()->check() && $accessory->relationLoaded('requests') && $accessory->requests->contains(
-            fn (\App\Models\CheckoutRequest $request) => $request->user_id === auth()->id() && $request->canceled_at === null
+            fn (\App\Models\CheckoutRequest $request) => $request->user_id === (int) auth()->id() && $request->canceled_at === null
         );
 
         $permissions_array = [];
@@ -143,8 +143,8 @@ class AccessoriesTransformer
                 // Delete-tier action (matches postRestore pattern).
                 'restore' => $isDeleted && Gate::allows('delete', $accessory),
                 'checkout' => Gate::allows('checkout', $accessory)
-                    && !$isDeleted
-                    && !$accessory->archived
+                    && ! $isDeleted
+                    && ! $accessory->archived
                     && ($accessory->qty - $accessory->checkouts_count) > 0,
             ],
         ];
@@ -173,7 +173,7 @@ class AccessoriesTransformer
     public function transformRequestedAccessory(Accessory $accessory)
     {
         $userHasOpenRequest = auth()->check() && $accessory->relationLoaded('requests') && $accessory->requests->contains(
-            fn (\App\Models\CheckoutRequest $request) => $request->user_id === auth()->id() && $request->canceled_at === null
+            fn (\App\Models\CheckoutRequest $request) => $request->user_id === (int) auth()->id() && $request->canceled_at === null
         );
 
         return [
