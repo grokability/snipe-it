@@ -320,6 +320,10 @@ class IconHelper
                 return 'fa-solid fa-chart-pie';
             case 'docs':
                 return 'fa-brands fa-readme';
+            case 'mcp':
+                return 'fa-solid fa-robot';
+            case 'code':
+                return 'fa-solid fa-code';
 
         }
     }
