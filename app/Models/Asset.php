@@ -9,6 +9,7 @@ use App\Exceptions\CheckoutNotAllowed;
 use App\Helpers\Helper;
 use App\Http\Traits\UniqueUndeletedTrait;
 use App\Models\Builders\AssetQueryBuilder;
+use App\Models\Contracts\Checkoutable;
 use App\Models\Contracts\HasCustomFields;
 use App\Models\Contracts\Importable;
 use App\Models\Traits\Acceptable;
@@ -35,12 +36,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 /**
  * Model for Assets.
  *
  * @version v1.0
+ *
  * @property ?int $location_id
  * @property \Carbon\Carbon|string|null $next_audit_date
  * @property \Carbon\Carbon|string|null $last_audit_date
@@ -50,11 +53,17 @@ use Illuminate\Validation\Validator;
  * @property bool $requestable
  * @property Asset|Location|User|null $assigned Current checkout target. morphTo relation named `assigned` (declared on method `assignedTo()`). Eloquent resolves the dynamic property by the morphTo name arg, not the method name, so this `@property` is distinct from `@property ... $assignedTo` written by ide-helper.
  * @property Asset|Location|User|null $assignedTo Current checkout target. morphTo relation named `assigned` (declared on method `assignedTo()`). Eloquent resolves the dynamic property by the morphTo name arg, not the method name, so this `@property` is distinct from `@property ... $assigned` written by ide-helper.
+ *
  * @mixin IdeHelperAsset
  */
-class Asset extends Depreciable implements HasCustomFields, Importable
+class Asset extends Depreciable implements Checkoutable, HasCustomFields, Importable
 {
     protected $presenter = AssetPresenter::class;
+
+    public static function allowedCheckoutTargetTypes(): array
+    {
+        return [User::class, Asset::class, Location::class];
+    }
 
     // protected $with = ['model', 'adminuser', 'location', 'company'];
 
@@ -182,6 +191,24 @@ class Asset extends Depreciable implements HasCustomFields, Importable
         );
     }
 
+    /**
+     * $rules is static array syntax, so Rule::in can't be referenced
+     * at property-default time (PHP forbids method calls in property
+     * initializers). Inject the Checkoutable contract's in: list into
+     * the assigned_type rule here so HasAndValidatesCustomFields'
+     * getRules() picks it up without this model needing to override
+     * getRules() and drop the custom-field rule merge.
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->rules['assigned_type'] = array_merge(
+            $this->rules['assigned_type'] ?? [],
+            [Rule::in(static::allowedCheckoutTargetTypes())],
+        );
+    }
+
     protected $rules = [
         'model_id' => ['required', 'integer', 'exists:models,id,deleted_at,NULL', 'not_array'],
         'status_id' => ['required', 'integer', 'exists:status_labels,id'],
@@ -206,7 +233,10 @@ class Asset extends Depreciable implements HasCustomFields, Importable
         'order_number' => ['nullable', 'string', 'max:191'],
         'notes' => ['nullable', 'string', 'max:65535'],
         'assigned_to' => ['nullable', 'integer', 'required_with:assigned_type'],
-        'assigned_type' => ['nullable', 'required_with:assigned_to', 'in:'.User::class.','.Location::class.','.Asset::class],
+        // in: list is injected dynamically in getRules() from
+        // allowedCheckoutTargetTypes() so this rule can't drift from
+        // the Checkoutable contract.
+        'assigned_type' => ['nullable', 'required_with:assigned_to'],
         'requestable' => ['nullable', 'boolean'],
         'assigned_user' => ['integer', 'nullable', 'exists:users,id,deleted_at,NULL'],
         'assigned_location' => ['integer', 'nullable', 'exists:locations,id,deleted_at,NULL', 'fmcs_location'],
@@ -1561,7 +1591,7 @@ class Asset extends Depreciable implements HasCustomFields, Importable
      */
     public function assignedType()
     {
-        return $this->assigned_type ? strtolower(class_basename($this->assigned_type)) : null;
+        return $this->assigned_type ? Helper::shortTypeName($this->assigned_type) : null;
     }
 
     /**

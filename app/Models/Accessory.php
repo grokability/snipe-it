@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\FileStorage;
 use App\Models\Builders\AccessoryQueryBuilder;
+use App\Models\Contracts\Checkoutable;
 use App\Models\Contracts\Importable;
 use App\Models\Traits\Acceptable;
 use App\Models\Traits\AdjustsQuantity;
@@ -31,10 +32,19 @@ use Watson\Validating\ValidatingTrait;
  * Model for Accessories.
  *
  * @version v1.0
+ *
  * @mixin IdeHelperAccessory
  */
-class Accessory extends SnipeModel implements Importable
+class Accessory extends SnipeModel implements Checkoutable, Importable
 {
+    /**
+     * Passthrough to the child (AccessoryCheckout)
+     */
+    public static function allowedCheckoutTargetTypes(): array
+    {
+        return AccessoryCheckout::allowedCheckoutTargetTypes();
+    }
+
     use Acceptable;
     use AdjustsQuantity;
     use CompanyableTrait;

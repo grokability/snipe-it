@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\FileStorage;
 use App\Models\Builders\ComponentQueryBuilder;
+use App\Models\Contracts\Checkoutable;
 use App\Models\Contracts\Importable;
 use App\Models\Traits\Acceptable;
 use App\Models\Traits\AdjustsQuantity;
@@ -31,10 +32,19 @@ use Watson\Validating\ValidatingTrait;
  * Model for Components.
  *
  * @version v1.0
+ *
  * @mixin IdeHelperComponent
  */
-class Component extends SnipeModel implements Importable
+class Component extends SnipeModel implements Checkoutable, Importable
 {
+    /**
+     * Passthrough to the child.
+     */
+    public static function allowedCheckoutTargetTypes(): array
+    {
+        return ComponentAssignment::allowedCheckoutTargetTypes();
+    }
+
     use HasFactory;
 
     protected $presenter = ComponentPresenter::class;

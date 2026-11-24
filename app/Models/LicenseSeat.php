@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Builders\LicenseSeatQueryBuilder;
+use App\Models\Contracts\Checkoutable;
 use App\Models\Contracts\CompanyableChild;
 use App\Models\Traits\Acceptable;
 use App\Models\Traits\CompanyableChildTrait;
@@ -18,8 +19,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @mixin IdeHelperLicenseSeat
  */
-class LicenseSeat extends SnipeModel implements CompanyableChild
+class LicenseSeat extends SnipeModel implements Checkoutable, CompanyableChild
 {
+    public static function allowedCheckoutTargetTypes(): array
+    {
+        return [User::class, Asset::class];
+    }
+
     use Acceptable;
     use CompanyableChildTrait;
     use HasFactory;
