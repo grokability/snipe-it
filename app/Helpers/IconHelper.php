@@ -294,6 +294,8 @@ class IconHelper
                 return 'fa-solid fa-box';
             case 'checkedout':
                 return 'fa-solid fa-box-open';
+            case 'consumed':
+                return 'fa-solid fa-clipboard-check';
             case 'purchase_order':
                 return 'fa-solid fa-file-invoice-dollar';
             case 'order':
