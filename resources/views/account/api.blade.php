@@ -6,33 +6,75 @@
 @stop
 {{-- Page content --}}
 @section('content')
-        <div class="row">
-            <div class="col-md-8">
+    <x-container>
 
+        <x-page-column class="col-md-9">
                 @if (! config('app.lock_passwords'))
-                    <livewire:personal-access-tokens />
+                <livewire:personal-access-tokens/>
                 @else
-                    <x-demo-lock>{{ trans('general.feature_disabled') }}</x-demo-lock>
+                <x-box style="height: 300px">
+                    {{ trans('general.feature_disabled') }}
+                </x-box>
                 @endif
-            </div>
-            <div class="col-md-4">
+        </x-page-column>
+
+        <x-page-column class="col-md-3">
+            <x-box>
+                <x-slot:header>
+                    <x-icon type="oauth"/> {{ trans('account/general.personal_api_keys') }}
+                </x-slot:header>
+
                 <x-alert type="warning" icon="warning">
                     {{ trans('account/general.api_key_warning') }}
                 </x-alert>
 
-                <p>{{ trans('account/general.api_base_url') }}<br>
-                    <code>{{ url('/api/v1') }}{!! trans('account/general.api_base_url_endpoint') !!}</code></p>
-
-                <p>{{ trans('account/general.mcp_url') }} <span class="label label-warning">beta</span><br>
-                    <code>{{ url('/mcp/snipe-it') }}</code></p>
-
-                <p>{{ trans('account/general.api_token_expiration_time') }}
-                    <strong>{{ config('passport.expiration_years') }} {{ trans('general.years') }}</strong>.</p>
+                <ul class="list-group list-group-unbordered">
 
 
-                <p>{!! trans('account/general.api_reference') !!}</p>
-            </div>
-        </div>
+                    <x-info-element>
+                        <strong>{{ trans('account/general.api_base_url') }}</strong>
+                    </x-info-element>
+
+                    <x-info-element icon_type="globe-us" title="API">
+                        <x-copy-to-clipboard class="pull-right" copy_what="API">
+                            <code>{{ url('/api/v1') }}{!! trans('account/general.api_base_url_endpoint') !!}</code>
+                        </x-copy-to-clipboard>
+                    </x-info-element>
+
+
+                    <x-info-element icon_type="docs" title="Documentation">
+                        <a href="https://snipe-it.readme.io/reference/api-overview" target="_blank">https://snipe-it.readme.io/docs/mcp-server
+                            <x-icon type="external-link" class="fa-fw pull-right"/>
+                        </a>
+                    </x-info-element>
+
+                    <x-info-element>
+                        <strong>{{ trans('account/general.mcp_url') }}</strong>
+                    </x-info-element>
+
+                    <x-info-element icon_type="globe-us" title="MCP">
+                        <x-copy-to-clipboard class="pull-right" copy_what="MCP">
+                            <code>{{ url('/mcp/snipe-it') }}</code>
+                        </x-copy-to-clipboard>
+                    </x-info-element>
+
+                    <x-info-element icon_type="docs" title="Documentation">
+                        <a href="https://snipe-it.readme.io/docs/mcp-server" target="_blank">https://snipe-it.readme.io/docs/mcp-server
+                            <x-icon type="external-link" class="fa-fw pull-right"/>
+                        </a>
+                    </x-info-element>
+
+                    <x-info-element style="border-bottom: 0px;">
+                        {{ trans('account/general.api_token_expiration_time') }}
+                        <strong>{{ config('passport.expiration_years') }} {{ trans('general.years') }}</strong>.
+                    </x-info-element>
+                </ul>
+
+
+            </x-box>
+
+        </x-page-column>
+    </x-container>
 
 @stop
 
