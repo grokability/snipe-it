@@ -252,5 +252,46 @@
     @endcan
 
     @include ('partials.bootstrap-table')
+
+    <x-table.advanced-search
+        tableId="locationAssignedAssetsListingTable"
+        :model="\App\Models\Asset::class"
+    />
+    <x-table.advanced-search
+        tableId="locationCurrentAssetsListingTable"
+        :model="\App\Models\Asset::class"
+    />
+    <x-table.advanced-search
+        tableId="locationRtdAssetsListingTable"
+        :model="\App\Models\Asset::class"
+    />
+    @can('view', \App\Models\User::class)
+        <x-table.advanced-search
+            tableId="locationUsersListingTable"
+            :model="\App\Models\User::class"
+        />
+    @endcan
+    @can('view', \App\Models\Accessory::class)
+        <x-table.advanced-search
+            tableId="locationAccessoriesListingTable"
+            :model="\App\Models\Accessory::class"
+        />
+    @endcan
+    @can('view', \App\Models\Consumable::class)
+        <x-table.advanced-search
+            tableId="locationConsumablesListingTable"
+            :model="\App\Models\Consumable::class"
+        />
+    @endcan
+    @can('view', \App\Models\Component::class)
+        <x-table.advanced-search
+            tableId="locationComponentsListingTable"
+            :model="\App\Models\Component::class"
+        />
+    @endcan
+    <x-table.advanced-search
+        tableId="locationLocationsListingTable"
+        :model="\App\Models\Location::class"
+    />
 @endsection
 

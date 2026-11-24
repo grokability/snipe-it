@@ -139,5 +139,36 @@
         window.viewingCompanyHierarchyIds = {!! json_encode(\App\Models\Company::reachableCompanyIds($company->id)) !!};
     </script>
     @include ('partials.bootstrap-table')
+
+    <x-table.advanced-search
+        tableId="companyUsersListingTable"
+        :model="\App\Models\User::class"
+    />
+    <x-table.advanced-search
+        tableId="companyAssetsListingTable"
+        :model="\App\Models\Asset::class"
+    />
+    <x-table.advanced-search
+        tableId="companyLicensesListingTable"
+        :model="\App\Models\License::class"
+    />
+    <x-table.advanced-search
+        tableId="companyAccessoriesListingTable"
+        :model="\App\Models\Accessory::class"
+    />
+    <x-table.advanced-search
+        tableId="companyConsumablesListingTable"
+        :model="\App\Models\Consumable::class"
+    />
+    <x-table.advanced-search
+        tableId="companyComponentsListingTable"
+        :model="\App\Models\Component::class"
+    />
+    @if ($company->children->isNotEmpty())
+        <x-table.advanced-search
+            tableId="companyCompaniesListingTable"
+            :model="\App\Models\Company::class"
+        />
+    @endif
 @endsection
 

@@ -155,5 +155,32 @@
     @endcan
 
     @include ('partials.bootstrap-table', ['exportFile' => 'suppliers-' . $supplier->name . '-export', 'search' => false])
+
+    <x-table.advanced-search
+        tableId="supplierAssetsListingTable"
+        :model="\App\Models\Asset::class"
+    />
+    <x-table.advanced-search
+        tableId="supplierLicensesListingTable"
+        :model="\App\Models\License::class"
+    />
+    <x-table.advanced-search
+        tableId="supplierAccessoriesListingTable"
+        :model="\App\Models\Accessory::class"
+    />
+    <x-table.advanced-search
+        tableId="supplierComponentsListingTable"
+        :model="\App\Models\Component::class"
+    />
+    <x-table.advanced-search
+        tableId="supplierConsumablesListingTable"
+        :model="\App\Models\Consumable::class"
+    />
+    @can('view', \App\Models\Asset::class)
+        <x-table.advanced-search
+            tableId="supplierMaintenancesListingTable"
+            :model="\App\Models\Maintenance::class"
+        />
+    @endcan
 @endsection
 
