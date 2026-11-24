@@ -99,8 +99,8 @@ class AppleDbEnrichment
             imageFilename: $imageFilename,
             marketingName: $marketingName,
             modelNumber: self::firstModelNumber($device['model'] ?? null),
-            releaseDate: self::parseDate($device['released'] ?? null),
-            discontinuedDate: self::parseDate($device['discontinued'] ?? null),
+            releaseDate: self::parseDate($device['released'] ?? null, latest: false),
+            discontinuedDate: self::parseDate($device['discontinued'] ?? null, latest: true),
         );
     }
 
@@ -134,8 +134,8 @@ class AppleDbEnrichment
         return new AppleDbRecord(
             marketingName: $marketingName,
             modelNumber: self::firstModelNumber($device['model'] ?? null),
-            releaseDate: self::parseDate($device['released'] ?? null),
-            discontinuedDate: self::parseDate($device['discontinued'] ?? null),
+            releaseDate: self::parseDate($device['released'] ?? null, latest: false),
+            discontinuedDate: self::parseDate($device['discontinued'] ?? null, latest: true),
         );
     }
 
@@ -157,8 +157,28 @@ class AppleDbEnrichment
         return is_string($first) && $first !== '' ? $first : null;
     }
 
-    private static function parseDate(mixed $value): ?CarbonImmutable
+    /**
+     * appledb.dev gives a single date string for most devices, but a
+     * list when a model shipped on more than one date (iPhone 14 is
+     * ['2022-09-16', '2023-03-14'] because the yellow model came later).
+     * For a list, take the earliest date as the release date and the
+     * latest as the discontinued date.
+     */
+    private static function parseDate(mixed $value, bool $latest): ?CarbonImmutable
     {
+        if (is_array($value)) {
+            $dates = array_filter(array_map(
+                fn ($item) => self::parseDate($item, $latest),
+                array_values($value),
+            ));
+            if ($dates === []) {
+                return null;
+            }
+            usort($dates, fn (CarbonImmutable $a, CarbonImmutable $b) => $a <=> $b);
+
+            return $latest ? end($dates) : reset($dates);
+        }
+
         if (! is_string($value) || $value === '') {
             return null;
         }
