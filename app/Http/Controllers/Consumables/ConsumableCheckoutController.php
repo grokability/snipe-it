@@ -144,12 +144,14 @@ class ConsumableCheckoutController extends Controller
                 return;
             }
 
+            $consumedAt = $consumable->auto_consume_on_checkout ? now() : null;
             for ($i = 0; $i < $quantity; $i++) {
                 $consumable->users()->attach($consumable->id, [
                     'consumable_id' => $consumable->id,
                     'created_by' => $admin_user->id,
                     'assigned_to' => e($request->input('assigned_user')),
                     'note' => $request->input('note'),
+                    'consumed_at' => $consumedAt,
                 ]);
             }
         });
@@ -333,12 +335,14 @@ class ConsumableCheckoutController extends Controller
                     return;
                 }
 
+                $consumedAt = $consumable->auto_consume_on_checkout ? now() : null;
                 for ($i = 0; $i < $qty; $i++) {
                     $consumable->users()->attach($consumable->id, [
                         'consumable_id' => $consumable->id,
                         'created_by' => $adminUser->id,
                         'assigned_to' => $targetUser->id,
                         'note' => $note,
+                        'consumed_at' => $consumedAt,
                     ]);
                 }
             });
@@ -411,50 +415,6 @@ class ConsumableCheckoutController extends Controller
             ->with('success', trans('admin/consumables/message.consumed.success'));
     }
 
-    /**
-     * Confirmation view for marking several pivot rows consumed at
-     * once. The POST comes from the bootstrap-table bulk-actions
-     * dropdown on the consumable show page's assigned tab. Already-
-     * consumed rows and cross-consumable rows are filtered out here
-     * so the confirmation page only lists valid targets.
-     */
-    public function bulkConsumeShow(Request $request): View|RedirectResponse
-    {
-        $pivotIds = (array) $request->input('ids', []);
-        if ($pivotIds === []) {
-            return redirect()->back()
-                ->with('error', trans('admin/consumables/message.consumed.no_rows_selected'));
-        }
-
-        $assignments = ConsumableAssignment::with('consumable', 'user')
-            ->whereIn('id', $pivotIds)
-            ->whereNull('consumed_at')
-            ->get();
-
-        if ($assignments->isEmpty()) {
-            return redirect()->back()
-                ->with('error', trans('admin/consumables/message.consumed.no_rows_selected'));
-        }
-
-        // Every row has to belong to the same parent consumable since
-        // this flow runs off the show page's assigned tab. Mixed-parent
-        // submissions are a sign the UI was tampered with, so bail.
-        $consumableIds = $assignments->pluck('consumable_id')->unique();
-        if ($consumableIds->count() !== 1) {
-            return redirect()->back()
-                ->with('error', trans('admin/consumables/message.consumed.no_rows_selected'));
-        }
-
-        $consumable = $assignments->first()->consumable;
-        $this->authorize('checkout', $consumable);
-
-        return view('consumables.bulk-consume', [
-            'consumable' => $consumable,
-            'assignments' => $assignments,
-            'ids' => $assignments->pluck('id')->all(),
-        ]);
-    }
-
     public function bulkConsumeStore(Request $request): RedirectResponse
     {
         $pivotIds = (array) $request->input('ids', []);
@@ -482,14 +442,16 @@ class ConsumableCheckoutController extends Controller
         $consumable = $assignments->first()->consumable;
         $this->authorize('checkout', $consumable);
 
-        $now = now();
-        $consumed = 0;
-        foreach ($assignments as $assignment) {
-            $assignment->consumed_at = $now;
-            if ($assignment->save()) {
-                $consumed++;
-                $this->writeConsumeLog($consumable, $assignment);
-            }
+        // Single-shot UPDATE + one summary Actionlog with quantity=N.
+        // Per-row logs would flood the dashboard activity feed on
+        // batch close-outs. The pivot's consumed_at timestamp is the
+        // per-row audit trail. Single-row consume() still writes a
+        // targeted log.
+        $consumed = ConsumableAssignment::whereIn('id', $assignments->pluck('id'))
+            ->update(['consumed_at' => now()]);
+
+        if ($consumed > 0) {
+            $this->writeBulkConsumeLog($consumable, $consumed);
         }
 
         return redirect()->route('consumables.show', $consumable)
@@ -505,6 +467,16 @@ class ConsumableCheckoutController extends Controller
         $log->target_id = $assignment->assigned_to;
         $log->created_at = date('Y-m-d H:i:s');
         $log->created_by = auth()->id();
+        $log->logaction('consumed');
+    }
+
+    private function writeBulkConsumeLog(Consumable $consumable, int $count): void
+    {
+        $log = new Actionlog;
+        $log->item_type = Consumable::class;
+        $log->item_id = $consumable->id;
+        $log->created_by = auth()->id();
+        $log->quantity = $count;
         $log->logaction('consumed');
     }
 }
