@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Helpers\Helper;
 use App\Models\Builders\LicenseQueryBuilder;
+use App\Models\Contracts\Checkoutable;
 use App\Models\Contracts\Importable;
 use App\Models\Traits\CompanyableTrait;
 use App\Models\Traits\HasCalendarEvents;
@@ -27,8 +28,16 @@ use Watson\Validating\ValidatingTrait;
 /**
  * @mixin IdeHelperLicense
  */
-class License extends Depreciable implements Importable
+class License extends Depreciable implements Checkoutable, Importable
 {
+    /**
+     * Passthrough to the child.
+     */
+    public static function allowedCheckoutTargetTypes(): array
+    {
+        return LicenseSeat::allowedCheckoutTargetTypes();
+    }
+
     use HasFactory;
 
     protected $presenter = LicensePresenter::class;

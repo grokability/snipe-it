@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\FileStorage;
 use App\Models\Builders\ConsumableQueryBuilder;
+use App\Models\Contracts\Checkoutable;
 use App\Models\Contracts\Importable;
 use App\Models\Traits\Acceptable;
 use App\Models\Traits\AdjustsQuantity;
@@ -29,8 +30,16 @@ use Watson\Validating\ValidatingTrait;
 /**
  * @mixin IdeHelperConsumable
  */
-class Consumable extends SnipeModel implements Importable
+class Consumable extends SnipeModel implements Checkoutable, Importable
 {
+    /**
+     * Passthrough to the child.
+     */
+    public static function allowedCheckoutTargetTypes(): array
+    {
+        return ConsumableAssignment::allowedCheckoutTargetTypes();
+    }
+
     use HasFactory;
 
     protected $presenter = ConsumablePresenter::class;

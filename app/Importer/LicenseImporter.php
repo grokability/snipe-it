@@ -228,6 +228,10 @@ class LicenseImporter extends ItemImporter
             return;
         }
 
+        if ($checkout_target && ! $this->targetPermittedByContract(License::class, $checkout_target, trans('general.license'), $license->name)) {
+            return;
+        }
+
         $targetLicense = $license->freeSeat();
         if (is_null($targetLicense)) {
             // No free seats left on the license. The row's license

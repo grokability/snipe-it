@@ -43,7 +43,7 @@ class UploadedFilesTransformer
             'name' => e($file->filename),
             'item' => ($file->item_type) ? [
                 'id' => (int) $file->item_id,
-                'type' => str_plural(strtolower(class_basename($file->item_type))),
+                'type' => str_plural(Helper::shortTypeName($file->item_type)),
             ] : null,
             'filename' => e($file->filename),
             'filetype' => StorageHelper::getFiletype($file->uploads_file_path()),

@@ -28,6 +28,17 @@ use Intervention\Image\ImageManagerStatic as Image;
 class Helper
 {
     /**
+     * Lowercased short-name of a model's FQCN.
+     *
+     *   Helper::shortTypeName(\App\Models\User::class)     === 'user'
+     *   Helper::shortTypeName(\App\Models\Location::class) === 'location'
+     */
+    public static function shortTypeName(string|object $classOrObject): string
+    {
+        return strtolower(class_basename($classOrObject));
+    }
+
+    /**
      * This is only used for reversing the migration that updates the locale to the 5-6 letter codes from two
      * letter codes. The normal dropdowns use the autoglossonyms in the language files located
      * in resources/en-US/localizations.php.

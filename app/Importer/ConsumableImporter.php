@@ -160,7 +160,11 @@ class ConsumableImporter extends ItemImporter
     private function maybeCheckoutConsumable(Consumable $consumable): void
     {
         $target = $this->item['checkout_target'] ?? null;
-        if (! $target || ! ($target instanceof User)) {
+        if (! $target) {
+            return;
+        }
+
+        if (! $this->targetPermittedByContract(Consumable::class, $target, trans('general.consumable'), $consumable->name)) {
             return;
         }
 

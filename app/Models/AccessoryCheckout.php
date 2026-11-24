@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Helpers\Helper;
 use App\Models\Builders\AccessoryCheckoutQueryBuilder;
+use App\Models\Contracts\Checkoutable;
 use App\Models\Traits\CompanyableChildTrait;
 use App\Models\Traits\Searchable;
 use App\Presenters\AccessoryPresenter;
@@ -11,18 +13,46 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Validation\Rule;
+use Watson\Validating\ValidatingTrait;
 
 /**
  * Model for Accessories.
  *
  * @version v1.0
+ *
  * @mixin IdeHelperAccessoryCheckout
  */
-class AccessoryCheckout extends Model
+class AccessoryCheckout extends Model implements Checkoutable
 {
     use CompanyableChildTrait;
     use HasFactory;
     use Searchable;
+    use ValidatingTrait;
+
+    public static function allowedCheckoutTargetTypes(): array
+    {
+        return [User::class, Asset::class, Location::class];
+    }
+
+    /**
+     * Rule::in can't live in a property default (PHP forbids method
+     * calls in property initializers), so the Checkoutable contract's
+     * assigned_type whitelist gets spliced into $rules here.
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->rules['assigned_type'] = array_merge(
+            $this->rules['assigned_type'] ?? [],
+            [Rule::in(static::allowedCheckoutTargetTypes())],
+        );
+    }
+
+    protected $rules = [
+        'assigned_type' => ['required'],
+    ];
 
     protected $fillable = [
         'accessory_id',
@@ -106,7 +136,7 @@ class AccessoryCheckout extends Model
      */
     public function assignedType()
     {
-        return $this->assigned_type ? strtolower(class_basename($this->assigned_type)) : null;
+        return $this->assigned_type ? Helper::shortTypeName($this->assigned_type) : null;
     }
 
     /**

@@ -75,7 +75,7 @@
                         data-had-old-input="{{ ((bool) old('requestable', false)) || session()->has('_old_input.requestable') ? '1' : '0' }}"
                     />
 
-                    @include ('partials.forms.checkout-selector', ['user_select' => 'true', 'asset_select' => 'true', 'location_select' => 'true'])
+                    @include ('partials.forms.checkout-selector', ['item' => $asset])
                     <x-input.user-select
                         :label="trans('general.user')"
                         name="assigned_user"

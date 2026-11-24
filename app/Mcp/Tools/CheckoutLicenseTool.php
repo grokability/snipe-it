@@ -66,6 +66,10 @@ class CheckoutLicenseTool extends Tool
             if (! $target) {
                 return Response::make(Response::error(trans('mcp.user_not_found')));
             }
+           
+            if (!in_array($target::class, License::allowedCheckoutTargetTypes(), true)) {
+                return Response::make(Response::error(trans('mcp.checkout_target_not_found', ['type' => 'user'])));
+            }
             $seat->assigned_to = $target->id;
             $seat->notes = $note;
 
@@ -89,6 +93,9 @@ class CheckoutLicenseTool extends Tool
             $target = Asset::find($request->get('asset_id'));
             if (! $target) {
                 return Response::make(Response::error(trans('mcp.asset_not_found')));
+            }
+            if (!in_array($target::class, License::allowedCheckoutTargetTypes(), true)) {
+                return Response::make(Response::error(trans('mcp.checkout_target_not_found', ['type' => 'asset'])));
             }
             $seat->asset_id = $target->id;
             if ($target->checkedOutToUser()) {

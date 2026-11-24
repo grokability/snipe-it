@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Contracts\Checkoutable;
 use App\Models\Traits\CompanyableTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -10,10 +11,15 @@ use Watson\Validating\ValidatingTrait;
 /**
  * @mixin IdeHelperConsumableAssignment
  */
-class ConsumableAssignment extends Model
+class ConsumableAssignment extends Model implements Checkoutable
 {
     use CompanyableTrait;
     use ValidatingTrait;
+    
+    public static function allowedCheckoutTargetTypes(): array
+    {
+        return [User::class];
+    }
 
     protected $table = 'consumables_users';
 

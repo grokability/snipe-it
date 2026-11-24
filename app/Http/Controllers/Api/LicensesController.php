@@ -22,6 +22,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class LicensesController extends Controller
 {
@@ -322,7 +323,7 @@ class LicensesController extends Controller
 
         $validated = $this->validate($request, [
             'seat_id' => 'sometimes|integer|nullable',
-            'target_type' => 'required|in:user,asset',
+            'target_type' => ['required', Rule::in(array_map([Helper::class, 'shortTypeName'], License::allowedCheckoutTargetTypes()))],
             'assigned_to' => 'required_if:target_type,user|integer|nullable',
             'asset_id' => 'required_if:target_type,asset|integer|nullable',
             'notes' => 'sometimes|string|nullable',

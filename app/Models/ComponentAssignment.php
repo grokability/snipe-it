@@ -3,22 +3,51 @@
 namespace App\Models;
 
 use App\Models\Builders\ComponentAssignmentQueryBuilder;
+use App\Models\Contracts\Checkoutable;
 use App\Models\Traits\Searchable;
 use App\Presenters\ComponentPresenter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Validation\Rule;
+use Watson\Validating\ValidatingTrait;
 
 /**
  * Model for Accessories.
  *
  * @version v1.0
+ *
  * @mixin IdeHelperComponentAssignment
  */
-class ComponentAssignment extends Model
+class ComponentAssignment extends Model implements Checkoutable
 {
     use HasFactory;
     use Searchable;
+    use ValidatingTrait;
+
+    public static function allowedCheckoutTargetTypes(): array
+    {
+        return [Asset::class];
+    }
+
+    /**
+     * Rule::in can't live in a property default (PHP forbids method
+     * calls in property initializers), so the Checkoutable contract's
+     * assigned_type whitelist gets spliced into $rules here.
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->rules['assigned_type'] = array_merge(
+            $this->rules['assigned_type'] ?? [],
+            [Rule::in(static::allowedCheckoutTargetTypes())],
+        );
+    }
+
+    protected $rules = [
+        'assigned_type' => ['required'],
+    ];
 
     protected $fillable = [
         'accessory_id',

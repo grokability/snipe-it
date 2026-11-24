@@ -78,6 +78,12 @@ class CheckoutAccessoryTool extends Tool
             return Response::make(Response::error(trans('mcp.checkout_target_not_found', ['type' => $checkoutType])));
         }
 
+        // Reject any resolved target class that isn't in the Checkoutable
+        // contract.
+        if (!in_array($target::class, Accessory::allowedCheckoutTargetTypes(), true)) {
+            return Response::make(Response::error(trans('mcp.checkout_target_not_found', ['type' => $checkoutType])));
+        }
+
         $checkout = new AccessoryCheckout([
             'accessory_id' => $accessory->id,
             'created_at' => Carbon::now(),

@@ -45,8 +45,16 @@ class UpdateAccessoryTest extends TestCase
     public function test_cannot_set_quantity_to_amount_lower_than_what_is_checked_out()
     {
         $accessory = Accessory::factory()->create(['qty' => 2]);
-        $accessory->checkouts()->create(['assigned_to' => User::factory()->create()->id, 'qty' => 1]);
-        $accessory->checkouts()->create(['assigned_to' => User::factory()->create()->id, 'qty' => 1]);
+        $accessory->checkouts()->create([
+            'assigned_type' => User::class,
+            'assigned_to' => User::factory()->create()->id,
+            'qty' => 1,
+        ]);
+        $accessory->checkouts()->create([
+            'assigned_type' => User::class,
+            'assigned_to' => User::factory()->create()->id,
+            'qty' => 1,
+        ]);
 
         $this->assertEquals(2, $accessory->checkouts->count());
 

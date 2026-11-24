@@ -2,11 +2,13 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\Helper;
 use App\Http\Requests\Traits\InfersCheckoutToType;
 use App\Models\Accessory;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class BulkAccessoryCheckoutRequest extends FormRequest
 {
@@ -38,7 +40,7 @@ class BulkAccessoryCheckoutRequest extends FormRequest
             'checkout_at' => ['nullable', 'date'],
             'note' => ['nullable', 'string'],
             'redirect_option' => ['nullable', 'string'],
-            'checkout_to_type' => ['required', 'in:user,asset,location'],
+            'checkout_to_type' => ['required', Rule::in(array_map([Helper::class, 'shortTypeName'], Accessory::allowedCheckoutTargetTypes()))],
         ]);
     }
 }
