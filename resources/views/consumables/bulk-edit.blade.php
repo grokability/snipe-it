@@ -99,6 +99,25 @@
                     ]"
                 />
 
+                <x-form.radio-row
+                    :label="trans('admin/consumables/general.auto_consume_on_checkout')"
+                    name="auto_consume_on_checkout"
+                    :selected="old('auto_consume_on_checkout', '')"
+                    :options="[
+                        '' => trans('general.do_not_change'),
+                        '1' => trans('general.yes'),
+                        '0' => trans('general.no'),
+                    ]"
+                    :help_text="trans('admin/consumables/general.auto_consume_on_checkout_help')"
+                />
+
+                <x-form.checkbox-row
+                    name="mark_outstanding_consumed"
+                    :label="trans('admin/consumables/general.mark_outstanding_consumed_bulk_label')"
+                    :help_text="trans('admin/consumables/general.mark_outstanding_consumed_bulk_help')"
+                    :checked="(bool) old('mark_outstanding_consumed', false)"
+                />
+
                 <x-slot:customfooter>
                     <div class="box-footer text-right">
                         <a class="btn btn-link pull-left" href="{{ URL::previous() }}">{{ trans('button.cancel') }}</a>
