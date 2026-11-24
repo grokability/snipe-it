@@ -24,7 +24,7 @@ parameters:
     # the noise budget allows. Baseline captures pre-existing findings
     # so CI stays green on this PR; new findings on future PRs will
     # still fail the check. Unused-parameter detection is handled by
-    # PHPMD (see phpmd-ruleset.xml) since PHPStan intentionally omits
+    # PHPMD (see phpmd-ruleset.yml) since PHPStan intentionally omits
     # that check to avoid false positives on interface-conforming
     # methods.
     level: 4
