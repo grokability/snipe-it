@@ -68,6 +68,91 @@
         // name).
         var cachedRows = [];
 
+        // Reserved key name used to stamp the save-time URL scope
+        // (pathname + server-side scope params) into the stored
+        // query_string.
+        var SCOPE_KEY = '__scope';
+
+        // Keys that are the frontend's own state (pagination, column
+        // sort, bs-table filter + operator, simple-search box) and
+        // therefore MUST be excluded from the scope key. 
+        function isFrontendOwnedKey(key) {
+            if (key.indexOf('filter[') === 0) {
+                return true;
+            }
+            if (key === 'filter_operator') {
+                return true;
+            }
+            if (key === 'sort' || key === 'order') {
+                return true;
+            }
+            if (key === 'page' || key === 'size' || key === 'offset' || key === 'pageNumber') {
+                return true;
+            }
+            if (key === 'search') {
+                return true;
+            }
+            return false;
+        }
+
+        // Builds the scope key for the current URL. Shape is
+        //   "<pathname>" | "<pathname>?<sorted scope qs>"
+        // The sorted canonicalization makes `?a=1&b=2` and
+        // `?b=2&a=1` compare equal. preserveParams keys are
+        // excluded from the scope because the saved query_string
+        // already carries them as filter-shaped values (see
+        // captureCurrentFilterState below). Including them in the
+        // scope would double-count them and prevent matches when a
+        // preserveParams-driven filter changes.
+        function computeCurrentScopeKey() {
+            var preserveSet = {};
+            preserveParams.forEach(function (k) {
+                preserveSet[k] = true;
+                preserveSet[k + '[]'] = true;
+            });
+            var entries = [];
+            new URLSearchParams(window.location.search).forEach(function (value, key) {
+                if (isFrontendOwnedKey(key) || preserveSet[key]) {
+                    return;
+                }
+                entries.push([key, value]);
+            });
+            entries.sort(function (a, b) {
+                if (a[0] !== b[0]) {
+                    return a[0] < b[0] ? -1 : 1;
+                }
+                return a[1] < b[1] ? -1 : (a[1] > b[1] ? 1 : 0);
+            });
+            var qs = entries.map(function (e) {
+                return encodeURIComponent(e[0]) + '=' + encodeURIComponent(e[1]);
+            }).join('&');
+            return window.location.pathname + (qs === '' ? '' : '?' + qs);
+        }
+
+        // Pulls the stored scope key out of a saved row's
+        // query_string. Returns null for legacy rows that were
+        // saved before the scope-key stamp existed.
+        function extractSavedScope(queryString) {
+            if (!queryString) {
+                return null;
+            }
+            return new URLSearchParams(queryString).get(SCOPE_KEY);
+        }
+
+        // True when a saved row applies to the URL currently in the
+        // address bar. Legacy rows (no scope stamp) are always
+        // included. Rows from a different pathname-plus-scope are
+        // filtered out so the "MacBooks" saved on /hardware?status_type=RTD
+        // doesn't appear on /hardware?status_type=Deployed, and a
+        // save made on /models/4 doesn't appear on /models/7.
+        function savedSearchMatchesCurrentScope(row) {
+            var savedScope = extractSavedScope(row && row.query_string);
+            if (savedScope === null) {
+                return true;
+            }
+            return savedScope === computeCurrentScopeKey();
+        }
+
         // Sort params so `?filter[a]=1&filter[b]=2` compares equal to
         // `?filter[b]=2&filter[a]=1`. The capture function appends
         // keys in object-iteration order which is NOT stable across
@@ -142,8 +227,8 @@
             });
 
             // Carry caller-declared extra params. Each key may appear
-            // as a scalar (?k=v) or as a repeated array (?k[]=a&k[]=b);
-            // both forms are preserved so the deeplink restores
+            // as a scalar (?k=v) or as a repeated array (?k[]=a&k[]=b).
+            // Both forms are preserved so the deeplink restores
             // identically to what the toolbar wrote.
             preserveParams.forEach(function (k) {
                 current.getAll(k + '[]').forEach(function (v) {
@@ -153,6 +238,12 @@
                     params.append(k, current.get(k));
                 }
             });
+
+            // Stamp the URL scope so the dropdown on another entity
+            // instance (e.g. a sibling /models/N page) can filter
+            // this row out and the load handler can route the
+            // bookmark back to the exact URL it was saved from.
+            params.append(SCOPE_KEY, computeCurrentScopeKey());
 
             return params.toString();
         }
@@ -228,8 +319,17 @@
                 data: {table_name: tableId},
             }).done(function (response) {
                 var rows = (response && response.rows) ? response.rows : [];
+                // cachedRows keeps every row the server returned so
+                // the Save-flow dedup check sees matches across all
+                // scopes. The dropdown itself only renders the rows
+                // whose stamped scope matches the current URL, so a
+                // "MacBooks on /models/4" bookmark stays out of the
+                // /models/7 menu but a Save-flow attempt that
+                // re-creates its exact query_string on /models/4 is
+                // still recognized as a duplicate.
                 cachedRows = rows;
-                appendRows($('.js-saved-searches-menu'), rows);
+                var visibleRows = rows.filter(savedSearchMatchesCurrentScope);
+                appendRows($('.js-saved-searches-menu'), visibleRows);
                 updateVisibility();
             });
         }
@@ -471,8 +571,36 @@
             }
             var $row = $(this).closest('.js-saved-searches-row');
             var query = $row.attr('data-query') || '';
-            var sep = query === '' ? '' : '?';
-            window.location.href = window.location.pathname + sep + query;
+
+            // Pull the stamped scope so the bookmark navigates back
+            // to the URL it was saved from (e.g. /hardware?status_type=RTD
+            // or /models/4), not the current pathname. Strip the
+            // reserved key from the outgoing query so bs-table does
+            // not see it as a filter. Legacy rows without a stamp
+            // fall through to the previous "current pathname" path
+            // for back-compat.
+            var params = new URLSearchParams(query);
+            var savedScope = params.get(SCOPE_KEY);
+            params.delete(SCOPE_KEY);
+            var rebuiltQuery = params.toString();
+
+            var targetPath = window.location.pathname;
+            var scopeSearch = '';
+            if (savedScope) {
+                var qIdx = savedScope.indexOf('?');
+                targetPath = qIdx >= 0 ? savedScope.slice(0, qIdx) : savedScope;
+                scopeSearch = qIdx >= 0 ? savedScope.slice(qIdx + 1) : '';
+            }
+
+            // Merge scope params ahead of the saved filter params so
+            // the scope (status_type, assigned_to, etc.) reads cleanly
+            // in the URL and the filter[...] keys land after.
+            var finalSearch = scopeSearch;
+            if (rebuiltQuery !== '') {
+                finalSearch = finalSearch === '' ? rebuiltQuery : finalSearch + '&' + rebuiltQuery;
+            }
+
+            window.location.href = targetPath + (finalSearch === '' ? '' : '?' + finalSearch);
         });
 
         $(document).on('click', '.js-saved-searches-delete', function (e) {
