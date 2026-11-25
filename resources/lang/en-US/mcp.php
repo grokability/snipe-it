@@ -315,6 +315,9 @@ return [
     'transfer_dry_run_summary' => 'Transfer preview from :from to :to: :assets assets, :accessories accessories, :seats license seats would move.',
     'transfer_completed_message' => 'Transfer complete from :from to :to.',
     'transfer_completed_summary' => 'Transferred from :from to :to: :assets assets, :accessories accessories, :seats license seats moved.',
+    'transfer_non_reassignable_prompt' => ':count license seat(s) cannot be transferred because the license is marked non-reassignable (:names). Would you like to check them in instead? Once checked in, these seats stay unavailable and cannot be checked out to anyone else. Call this tool again with checkin_non_reassignable_seats=true to check them in, or =false to leave them with the source user.',
+    'transfer_checked_in_suffix' => ':count non-reassignable license seat(s) were checked in. They stay unavailable: :names',
+    'transfer_skipped_suffix' => ':count non-reassignable license seat(s) were left with the source user: :names',
     'transfer_failed' => 'Transfer failed, rolled back. Reason: :failures',
 
 ];

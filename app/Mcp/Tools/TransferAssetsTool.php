@@ -3,9 +3,12 @@
 namespace App\Mcp\Tools;
 
 use App\Enums\McpScope;
+use App\Events\CheckoutableCheckedIn;
+use App\Events\CheckoutableCheckedOut;
 use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\AccessoryCheckout;
 use App\Models\Asset;
+use App\Models\CheckoutAcceptance;
 use App\Models\LicenseSeat;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -55,6 +58,7 @@ class TransferAssetsTool extends Tool
             'to_first_name' => 'nullable|string|max:191',
             'to_last_name' => 'nullable|string|max:191',
             'dry_run' => 'nullable|boolean',
+            'checkin_non_reassignable_seats' => 'nullable|boolean',
             'note' => 'nullable|string|max:65535',
         ]);
 
@@ -86,6 +90,11 @@ class TransferAssetsTool extends Tool
             return Response::make(Response::error(trans('mcp.transfer_same_user')));
         }
 
+        // Require view on the source user.
+        if (! Gate::allows('view', $from)) {
+            return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.user')])));
+        }
+
         // Query Asset directly instead of via $from->assets() so
         // the collection is typed as Collection<int, Asset> for the
         // downstream loop. The relation method on User has no return
@@ -99,7 +108,14 @@ class TransferAssetsTool extends Tool
             ->where('assigned_type', User::class)
             ->where('assigned_to', $from->id)
             ->get();
-        $licenseSeats = LicenseSeat::with('license')->where('assigned_to', $from->id)->get();
+        $allLicenseSeats = LicenseSeat::with('license')->where('assigned_to', $from->id)->get();
+        // Non-reassignable seats stay with the source user by design
+        // (matches UserItemTransferController::transferLicenseSeats skip
+        // response). Put them in a dedicated skipped list so the caller
+        // sees the seats that will NOT move, rather than silently dropping
+        // them from the preview.
+        $licenseSeats = $allLicenseSeats->filter(fn (LicenseSeat $s) => (bool) $s->license?->reassignable)->values();
+        $skippedLicenseSeats = $allLicenseSeats->reject(fn (LicenseSeat $s) => (bool) $s->license?->reassignable)->values();
 
         $preview = [
             'from' => $this->userSummary($from),
@@ -118,6 +134,12 @@ class TransferAssetsTool extends Tool
                 'seat_id' => $s->id,
                 'license_id' => $s->license_id,
                 'license_name' => $s->license?->name,
+            ])->all(),
+            'license_seats_skipped' => $skippedLicenseSeats->map(fn (LicenseSeat $s) => [
+                'seat_id' => $s->id,
+                'license_id' => $s->license_id,
+                'license_name' => $s->license?->name,
+                'reason' => 'non_reassignable',
             ])->all(),
         ];
 
@@ -139,12 +161,38 @@ class TransferAssetsTool extends Tool
             );
         }
 
+        // If the source holds seats on a license whose reassignable flag
+        // is off, and the MCP caller has not told us what to do with them,
+        // stop and return a prompt so the caller can decide. Checking such
+        // a seat in sets license_seats.unreassignable_seat to true
+        // (LicenseCheckinController does this write), which excludes the
+        // seat from free-seat queries from then on. Default to no action
+        // until the caller is explicit.
+        $hasNonReassignable = count($preview['license_seats_skipped']) > 0;
+        if ($hasNonReassignable && ! $request->has('checkin_non_reassignable_seats')) {
+            $names = implode(', ', array_filter(array_column($preview['license_seats_skipped'], 'license_name')));
+
+            return $this->structuredResponse(
+                trans('mcp.transfer_non_reassignable_prompt', [
+                    'count' => count($preview['license_seats_skipped']),
+                    'names' => $names,
+                ]),
+                [
+                    'success' => false,
+                    'requires_decision' => 'checkin_non_reassignable_seats',
+                    'non_reassignable_license_seats' => $preview['license_seats_skipped'],
+                    'preview' => $preview,
+                ]
+            );
+        }
+        $checkInNonReassignable = $request->boolean('checkin_non_reassignable_seats', false);
+
         $note = $request->get('note');
         $actor = auth()->user();
         $failures = [];
 
         try {
-            DB::transaction(function () use ($assets, $accessoryCheckouts, $licenseSeats, $to, $note, $actor, &$failures) {
+            DB::transaction(function () use ($assets, $accessoryCheckouts, $licenseSeats, $skippedLicenseSeats, $checkInNonReassignable, $from, $to, $note, $actor, &$failures) {
                 foreach ($assets as $asset) {
                     if (! Gate::allows('checkin', $asset) || ! Gate::allows('checkout', $asset)) {
                         $failures[] = "asset {$asset->asset_tag}: permission denied";
@@ -168,7 +216,7 @@ class TransferAssetsTool extends Tool
 
                 foreach ($accessoryCheckouts as $checkout) {
                     $accessory = $checkout->accessory;
-                    if ($accessory && ! Gate::allows('checkout', $accessory)) {
+                    if ($accessory && (! Gate::allows('checkin', $accessory) || ! Gate::allows('checkout', $accessory))) {
                         $failures[] = "accessory {$accessory->name}: permission denied";
 
                         continue;
@@ -181,24 +229,85 @@ class TransferAssetsTool extends Tool
                     $checkout->assigned_to = $to->id;
                     if (! $checkout->save()) {
                         $failures[] = "accessory checkout {$checkout->id}: reassignment failed";
+
+                        continue;
                     }
+                    // Fire the same check-in and check-out events the web
+                    // transfer fires so the move shows up in the activity
+                    // log the same way a direct accessory check-in does.
+                    event(new CheckoutableCheckedIn($accessory, $from, $actor, $note));
+                    event(new CheckoutableCheckedOut($accessory, $to, $actor, $note, [], 1, false));
                 }
 
                 foreach ($licenseSeats as $seat) {
                     $license = $seat->license;
-                    if ($license && ! Gate::allows('checkout', $license)) {
+                    if (! $license || ! Gate::allows('checkin', $license) || ! Gate::allows('checkout', $license)) {
                         $failures[] = "license {$license->name}: permission denied";
 
                         continue;
                     }
-                    if ($license && ! $license->canCheckoutTo($to)) {
+                    if (! $license->canCheckoutTo($to)) {
                         $failures[] = "license {$license->name}: target user is not allowed to receive items from this license's company";
 
                         continue;
                     }
+                    // Mirror the web transfer: delete pending acceptances on
+                    // the source side, then check in and check out as two
+                    // saves so the activity log records both halves.
+                    CheckoutAcceptance::pending()
+                        ->where('checkoutable_type', LicenseSeat::class)
+                        ->where('checkoutable_id', $seat->id)
+                        ->where('assigned_to_id', $from->id)
+                        ->get()
+                        ->each(fn ($acceptance) => $acceptance->delete());
+
+                    $seat->assigned_to = null;
+                    if (! $seat->save()) {
+                        $failures[] = "license seat {$seat->id}: check-in failed";
+
+                        continue;
+                    }
+                    event(new CheckoutableCheckedIn($seat, $from, $actor, $note));
+
                     $seat->assigned_to = $to->id;
                     if (! $seat->save()) {
-                        $failures[] = "license seat {$seat->id}: reassignment failed";
+                        $failures[] = "license seat {$seat->id}: check-out failed";
+
+                        continue;
+                    }
+                    event(new CheckoutableCheckedOut($seat, $to, $actor, $note, [], 1, false));
+                }
+
+                // Non-reassignable seats: check them in if the caller opted
+                // in, otherwise leave them with the source user. The matching
+                // bucket in the response tells the caller which path was
+                // taken. Check-in only (no corresponding check-out), with
+                // unreassignable_seat set to true so free-seat queries stop
+                // offering the seat (same write LicenseCheckinController
+                // does).
+                if ($checkInNonReassignable) {
+                    foreach ($skippedLicenseSeats as $seat) {
+                        $license = $seat->license;
+                        if (! $license || ! Gate::allows('checkin', $license)) {
+                            $failures[] = "license {$license->name}: permission denied for check-in";
+
+                            continue;
+                        }
+                        CheckoutAcceptance::pending()
+                            ->where('checkoutable_type', LicenseSeat::class)
+                            ->where('checkoutable_id', $seat->id)
+                            ->where('assigned_to_id', $from->id)
+                            ->get()
+                            ->each(fn ($acceptance) => $acceptance->delete());
+
+                        $seat->assigned_to = null;
+                        $seat->unreassignable_seat = true;
+                        if (! $seat->save()) {
+                            $failures[] = "license seat {$seat->id}: check-in failed";
+
+                            continue;
+                        }
+                        event(new CheckoutableCheckedIn($seat, $from, $actor, $note));
                     }
                 }
 
@@ -212,19 +321,30 @@ class TransferAssetsTool extends Tool
             ])));
         }
 
+        $completedSummary = trans('mcp.transfer_completed_summary', [
+            'from' => $from->username,
+            'to' => $to->username,
+            'assets' => count($preview['assets_to_transfer']),
+            'accessories' => count($preview['accessory_checkouts_to_transfer']),
+            'seats' => count($preview['license_seats_to_transfer']),
+        ]);
+        if ($preview['license_seats_skipped'] !== []) {
+            $nonReassignableNames = implode(', ', array_filter(array_column($preview['license_seats_skipped'], 'license_name')));
+            $completedSummary .= ' '.trans($checkInNonReassignable ? 'mcp.transfer_checked_in_suffix' : 'mcp.transfer_skipped_suffix', [
+                'count' => count($preview['license_seats_skipped']),
+                'names' => $nonReassignableNames,
+            ]);
+        }
+
         return $this->structuredResponse(
-            trans('mcp.transfer_completed_summary', [
-                'from' => $from->username,
-                'to' => $to->username,
-                'assets' => count($preview['assets_to_transfer']),
-                'accessories' => count($preview['accessory_checkouts_to_transfer']),
-                'seats' => count($preview['license_seats_to_transfer']),
-            ]),
+            $completedSummary,
             [
                 'success' => true,
                 'dry_run' => false,
                 'message' => trans('mcp.transfer_completed_message', ['from' => $from->username, 'to' => $to->username]),
                 'executed' => $preview,
+                'non_reassignable_license_seats_checked_in' => $checkInNonReassignable ? $preview['license_seats_skipped'] : [],
+                'non_reassignable_license_seats_skipped' => $checkInNonReassignable ? [] : $preview['license_seats_skipped'],
             ]
         );
     }
@@ -306,6 +426,7 @@ class TransferAssetsTool extends Tool
             'to_first_name' => $schema->string()->description('First name of the target user.'),
             'to_last_name' => $schema->string()->description('Last name of the target user.'),
             'dry_run' => $schema->boolean()->description('When true (default) return the preview without making changes. Set false to execute.'),
+            'checkin_non_reassignable_seats' => $schema->boolean()->description('Decision for license seats attached to non-reassignable licenses. When the source user holds any such seats, call the tool once without this parameter to see the prompt, then call again with true to check them in (seat becomes unavailable and cannot be checked out again) or false to leave them with the source user.'),
             'note' => $schema->string()->description('Optional note recorded on each asset checkin and checkout.'),
         ];
     }
