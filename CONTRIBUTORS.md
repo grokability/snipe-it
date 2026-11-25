@@ -680,6 +680,9 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/boboboboo"><img src="https://avatars.githubusercontent.com/u/38632258?v=4?s=110" width="110px;" alt="BoGeun Jang"/><br /><sub><b>BoGeun Jang</b></sub></a><br /><a href="#security-boboboboo" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/builtbybrayden"><img src="https://avatars.githubusercontent.com/u/176640731?v=4?s=110" width="110px;" alt="Brayden Arnold"/><br /><sub><b>Brayden Arnold</b></sub></a><br /><a href="#security-builtbybrayden" title="Security">🛡️</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/callmeks"><img src="https://avatars.githubusercontent.com/u/88197307?v=4?s=110" width="110px;" alt="ks"/><br /><sub><b>ks</b></sub></a><br /><a href="#security-callmeks" title="Security">🛡️</a></td>
+    </tr>
   </tbody>
 </table>
 
