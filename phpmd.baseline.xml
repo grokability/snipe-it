@@ -1,11 +1,14 @@
 <?xml version="1.0"?>
 <phpmd-baseline>
+  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Auth/Passport/BridgeUserRepository.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Console/Commands/FixMismatchedAssetsAndLogs.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Console/Commands/ImportLocations.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Console/Commands/LdapTroubleshooter.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Console/Commands/ObjectImportCommand.php"/>
+  <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Console/Commands/RegenerateAssetTags.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Console/Commands/RestoreFromBackup.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Console/Commands/SendInventoryAlerts.php"/>
+  <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Console/Commands/SyncAssetCounters.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Exceptions/Handler.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Exceptions/Handler.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Http/Controllers/Accessories/AccessoryCheckinController.php"/>
@@ -21,9 +24,10 @@
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Http/Controllers/Licenses/LicenseCheckinController.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Http/Controllers/Reports/CustomComponentReportController.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Http/Controllers/ReportsController.php"/>
-  <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Http/Controllers/SettingsController.php"/>
+  <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Http/Controllers/ReportsController.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Http/Controllers/SetupController.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Http/Controllers/Users/UsersController.php"/>
+  <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Http/Controllers/Users/UsersController.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Http/Middleware/CheckForSetup.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Http/Middleware/CheckLocale.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Http/Requests/CustomFieldRequest.php"/>
@@ -48,14 +52,12 @@
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/CompanyableScope.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/Component.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/CustomField.php"/>
-  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/CustomFieldset.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/Labels/CustomLabels/Concerns/RenderCustomLabelContent.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/Labels/CustomLabels/CustomTapeLabel.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Models/Labels/DefaultLabel.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/Labels/Label.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Models/Labels/Sheet.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Models/Labels/Sheets/Avery/L7162_A.php"/>
-  <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Models/Labels/Sheets/Avery/_5520_B.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Models/Labels/Tapes/Generic/Continuous_53mm.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Models/License.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Models/License.php"/>
@@ -79,16 +81,8 @@
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Notifications/CheckoutLicenseSeatNotification.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Notifications/ExpectedCheckinNotification.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Notifications/SendUpcomingAuditNotification.php"/>
-  <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Observers/AccessoryObserver.php"/>
-  <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Observers/AssetModelObserver.php"/>
   <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Observers/AssetObserver.php"/>
-  <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Observers/ComponentObserver.php"/>
-  <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Observers/ConsumableObserver.php"/>
-  <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Observers/LicenseObserver.php"/>
-  <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Observers/LocationObserver.php"/>
-  <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Observers/MaintenanceObserver.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Observers/SettingObserver.php"/>
-  <violation rule="PHPMD\Rule\UnusedLocalVariable" file="app/Observers/UserObserver.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Policies/AccessoryPolicy.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Policies/AssetModelPolicy.php"/>
   <violation rule="PHPMD\Rule\UnusedFormalParameter" file="app/Policies/AssetPolicy.php"/>
