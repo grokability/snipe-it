@@ -930,9 +930,14 @@ class SnipeSCIMConfig
 
                         public function doWrite($operation, $subop, $value, Model &$object, ?Path $path = null, $removeIfNotSet = false)
                         {
+                            static $recursion_counter = 0;
                             \Log::debug("Phones 'value' is: ".print_r($value, true));
+                            if ($recursion_counter > 10) {
+                                throw new SCIMException("Phones object has a recursion problem");
+                            }
                             try {
                                 if ($operation == 'patch') {
+                                    \Log::debug("Patch operation, with path: $path, 'sub-op' is: $subop");
                                     if ($path->getValuePathFilter() != null) {
                                         if ((string) $path == 'phoneNumbers[type eq "mobile"].value') {
                                             $object->mobile = $value; // I don't know why the value is the raw value, but it is?
@@ -944,13 +949,19 @@ class SnipeSCIMConfig
 
                                             return;
                                         }
+                                    } else {
+                                        \Log::debug("Failing into grand-parental call? (which might recurse)");
                                     }
-                                    parent::patch($subop, $value, $object, $path, $removeIfNotSet);
+                                    $recursion_counter++;
+                                    // This *IS* a weird syntax, but *is* a call to the grand-parent Class, which is Complex.
+                                    // So it may _look_ like a static invocation, but it's a regular instance method, with '$this'.
+                                    // Maybe think about it similarly to parent::patch()?
+                                    Complex::patch($subop, $value, $object, $path, $removeIfNotSet);
 
                                     return;
                                 }
-                                foreach ($value as $phone) {
-                                    switch ($phone['type']) {
+                                foreach ($value ?? [] as $phone) {
+                                    switch ($phone['type'] ?? 'unknown') {
                                         case 'work':
                                             $object->phone = $phone['value'];
                                             break;
