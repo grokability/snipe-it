@@ -677,6 +677,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/B1gN0Se"><img src="https://avatars.githubusercontent.com/u/86577632?v=4?s=110" width="110px;" alt="B1gN0Se"/><br /><sub><b>B1gN0Se</b></sub></a><br /><a href="#security-B1gN0Se" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/baeseungwon1010"><img src="https://avatars.githubusercontent.com/u/202220081?v=4?s=110" width="110px;" alt="baeseungwon1010"/><br /><sub><b>baeseungwon1010</b></sub></a><br /><a href="#security-baeseungwon1010" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Black1hp"><img src="https://avatars.githubusercontent.com/u/176351715?v=4?s=110" width="110px;" alt="Not Mohamed"/><br /><sub><b>Not Mohamed</b></sub></a><br /><a href="#security-Black1hp" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/boboboboo"><img src="https://avatars.githubusercontent.com/u/38632258?v=4?s=110" width="110px;" alt="BoGeun Jang"/><br /><sub><b>BoGeun Jang</b></sub></a><br /><a href="#security-boboboboo" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
