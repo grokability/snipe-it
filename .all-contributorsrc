@@ -5357,6 +5357,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "tahirsercan",
+      "name": "Tahir Gozuacik",
+      "avatar_url": "https://avatars.githubusercontent.com/u/136073736?v=4",
+      "profile": "https://github.com/tahirsercan",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }

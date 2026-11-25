@@ -767,6 +767,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Sultan0f1"><img src="https://avatars.githubusercontent.com/u/237182220?v=4?s=110" width="110px;" alt="Nijat Sultanov"/><br /><sub><b>Nijat Sultanov</b></sub></a><br /><a href="#security-Sultan0f1" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://pokayoke.sh/"><img src="https://avatars.githubusercontent.com/u/5358899?v=4?s=110" width="110px;" alt="Superbot Helper"/><br /><sub><b>Superbot Helper</b></sub></a><br /><a href="#security-superbot-helper" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Tahiniii"><img src="https://avatars.githubusercontent.com/u/309108225?v=4?s=110" width="110px;" alt="Tahiniii"/><br /><sub><b>Tahiniii</b></sub></a><br /><a href="#security-Tahiniii" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/tahirsercan"><img src="https://avatars.githubusercontent.com/u/136073736?v=4?s=110" width="110px;" alt="Tahir Gozuacik"/><br /><sub><b>Tahir Gozuacik</b></sub></a><br /><a href="#security-tahirsercan" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
