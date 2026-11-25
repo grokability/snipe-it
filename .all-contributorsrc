@@ -4565,6 +4565,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "0xjunwei",
+      "name": "Jun Wei",
+      "avatar_url": "https://avatars.githubusercontent.com/u/53926665?v=4",
+      "profile": "https://github.com/0xjunwei",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }
