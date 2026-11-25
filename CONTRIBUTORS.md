@@ -721,6 +721,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://vokecyber.com/"><img src="https://avatars.githubusercontent.com/u/20933064?v=4?s=110" width="110px;" alt="Louis Sanchez"/><br /><sub><b>Louis Sanchez</b></sub></a><br /><a href="#security-louissanchez-vokecyber" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/m0xath"><img src="https://avatars.githubusercontent.com/u/188541391?v=4?s=110" width="110px;" alt="Moath Aloufi"/><br /><sub><b>Moath Aloufi</b></sub></a><br /><a href="#security-m0xath" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/MaKaNu"><img src="https://avatars.githubusercontent.com/u/32844273?v=4?s=110" width="110px;" alt="MaKaNu"/><br /><sub><b>MaKaNu</b></sub></a><br /><a href="#security-MaKaNu" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/mamdouhmahfouz"><img src="https://avatars.githubusercontent.com/u/127619974?v=4?s=110" width="110px;" alt="Mamdouh Mahfouz"/><br /><sub><b>Mamdouh Mahfouz</b></sub></a><br /><a href="#security-mamdouhmahfouz" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
