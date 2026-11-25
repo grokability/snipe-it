@@ -5204,6 +5204,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "prboyer",
+      "name": "Paul Boyer",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6655042?v=4",
+      "profile": "https://github.com/prboyer",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }
