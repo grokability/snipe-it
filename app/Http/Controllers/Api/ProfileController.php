@@ -119,12 +119,26 @@ class ProfileController extends Controller
      * Powers the /account/view-assets#assets table and offers the same
      * server-side search, sort, and column selection as the admin asset
      * table, scoped to the caller via the assigned_to + assigned_type
-     * pair.
+     * pair. With Manager View enabled, user_id selects one of the users
+     * offered by the "View Items Assigned to User" selector.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]
      */
-    public function assets(Request $request, ProfileTransformer $transformer): array
+    public function assets(Request $request, ProfileTransformer $transformer): array|JsonResponse
     {
+        $assigned_user_id = auth()->id();
+
+        if (($request->filled('user_id')) && ($request->input('user_id') != $assigned_user_id)) {
+
+            $assigned_user = User::find($request->input('user_id'));
+
+            if (($assigned_user) && (Setting::getSettings()->manager_view_enabled) && ((auth()->user()->isSuperUser() && $assigned_user->activated) || auth()->user()->isManagerOf($assigned_user))) {
+                $assigned_user_id = $assigned_user->id;
+            } else {
+                return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/users/message.user_not_found')));
+            }
+        }
+
         $allowed_columns = [
             'id',
             'name',
@@ -142,7 +156,7 @@ class ProfileController extends Controller
             'asset_eol_date',
         ];
 
-        $assets = Asset::where('assets.assigned_to', auth()->id())
+        $assets = Asset::where('assets.assigned_to', $assigned_user_id)
             ->where('assets.assigned_type', User::class)
             ->AssetsForShow()
             ->with(

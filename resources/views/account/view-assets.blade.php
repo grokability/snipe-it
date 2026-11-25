@@ -315,7 +315,7 @@
                 data-sort-name="asset_tag"
                 id="userAssets"
                 class="table table-striped snipe-table"
-                data-url="{{ route('api.account.assets') }}"
+                data-url="{{ route('api.account.assets', $selectedUserId === auth()->id() ? [] : ['user_id' => $selectedUserId]) }}"
                 data-export-options='{
                 "fileName": "my-assets-{{ date('Y-m-d') }}",
                 "ignoreColumn": ["image"]
