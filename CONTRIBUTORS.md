@@ -785,6 +785,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/vitasec"><img src="https://avatars.githubusercontent.com/u/189550152?v=4?s=110" width="110px;" alt="David Abdurahmanov"/><br /><sub><b>David Abdurahmanov</b></sub></a><br /><a href="#security-vitasec" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/W1nterFr3ak"><img src="https://avatars.githubusercontent.com/u/55146805?v=4?s=110" width="110px;" alt="Winter"/><br /><sub><b>Winter</b></sub></a><br /><a href="#security-W1nterFr3ak" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/whatisproblem"><img src="https://avatars.githubusercontent.com/u/98449009?v=4?s=110" width="110px;" alt="whatisproblem"/><br /><sub><b>whatisproblem</b></sub></a><br /><a href="#security-whatisproblem" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/wict0rious"><img src="https://avatars.githubusercontent.com/u/211072231?v=4?s=110" width="110px;" alt="wict0rious"/><br /><sub><b>wict0rious</b></sub></a><br /><a href="#security-wict0rious" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
