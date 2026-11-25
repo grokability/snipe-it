@@ -1,7 +1,6 @@
 ![snipe-it-by-grok](https://github.com/grokability/snipe-it/assets/197404/b515673b-c7c8-4d9a-80f5-9fa58829a602)
 
-[![Crowdin](https://d322cqt584bo4o.cloudfront.net/snipe-it/localized.svg)](https://crowdin.com/project/snipe-it) [![Docker Pulls](https://img.shields.io/docker/pulls/snipe/snipe-it.svg)](https://hub.docker.com/r/snipe/snipe-it/)  [![Tests in MySQL](https://github.com/grokability/snipe-it/actions/workflows/tests-mysql.yml/badge.svg)](https://github.com/grokability/snipe-it/actions/workflows/tests-mysql.yml)
-[![All Contributors](https://img.shields.io/badge/all_contributors-331-orange.svg?style=flat-square)](#contributing) [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/yZFtShAcKk) [![Repocharts](https://repocharts.com/badge/github/grokability/snipe-it.svg)](https://repocharts.com/repo/github/grokability/snipe-it/?ref=badge)
+[![Crowdin](https://d322cqt584bo4o.cloudfront.net/snipe-it/localized.svg)](https://crowdin.com/project/snipe-it) [![Docker Pulls](https://img.shields.io/docker/pulls/snipe/snipe-it.svg)](https://hub.docker.com/r/snipe/snipe-it/)  [![Tests in MySQL](https://github.com/grokability/snipe-it/actions/workflows/tests-mysql.yml/badge.svg)](https://github.com/grokability/snipe-it/actions/workflows/tests-mysql.yml) [![All Contributors](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fgrokability%2Fsnipe-it%2Fdevelop%2F.all-contributorsrc&query=%24.contributors.length&label=all%20contributors&color=orange&style=flat-square)](CONTRIBUTORS.md) [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/yZFtShAcKk) [![Repocharts](https://repocharts.com/badge/github/grokability/snipe-it.svg)](https://repocharts.com/repo/github/grokability/snipe-it/?ref=badge)
 
 # Snipe-IT - Open Source Asset Management System
 
@@ -89,7 +88,7 @@ list!
 
 ## 🔄 Included Sync Adapters
 
-Snipe-IT comes with 25 (and growing!) sync adapters that let you integrate your favorite (or at least begrudgingly
+Snipe-IT comes with 26 (and growing!) sync adapters that let you integrate your favorite (or at least begrudgingly
 useful) MDM and RMM systems with Snipe-IT so that everything stays updated across all of your tooling.
 
 <table border="0" width="100%">
@@ -100,6 +99,7 @@ useful) MDM and RMM systems with Snipe-IT so that everything stays updated acros
 <tr>
 <td valign="top">
 
+🔄 Action1<br />
 🔄 Addigy<br />
 🔄 Apple Business Manager<br />
 🔄 Custom HTTP<br />
