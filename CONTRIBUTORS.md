@@ -687,6 +687,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/christopherfi-dev"><img src="https://avatars.githubusercontent.com/u/273243828?v=4?s=110" width="110px;" alt="christopherfi-dev"/><br /><sub><b>christopherfi-dev</b></sub></a><br /><a href="#security-christopherfi-dev" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/colinthebomb1"><img src="https://avatars.githubusercontent.com/u/194442835?v=4?s=110" width="110px;" alt="colinthebomb1"/><br /><sub><b>colinthebomb1</b></sub></a><br /><a href="#security-colinthebomb1" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/CoSunshine"><img src="https://avatars.githubusercontent.com/u/20333522?v=4?s=110" width="110px;" alt="Liuhuo Wan"/><br /><sub><b>Liuhuo Wan</b></sub></a><br /><a href="#security-CoSunshine" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/d3do-23"><img src="https://avatars.githubusercontent.com/u/73107878?v=4?s=110" width="110px;" alt="Wu Wenhao"/><br /><sub><b>Wu Wenhao</b></sub></a><br /><a href="#security-d3do-23" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
