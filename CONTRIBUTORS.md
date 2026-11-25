@@ -847,6 +847,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="http://kgoetz.id.au/"><img src="https://avatars.githubusercontent.com/u/8732490?v=4?s=110" width="110px;" alt="Karl Goetz"/><br /><sub><b>Karl Goetz</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=goetzk" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/hamilton102"><img src="https://avatars.githubusercontent.com/u/125313163?v=4?s=110" width="110px;" alt="Hamilton Ferris"/><br /><sub><b>Hamilton Ferris</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=hamilton102" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/hansenc0705"><img src="https://avatars.githubusercontent.com/u/10247644?v=4?s=110" width="110px;" alt="Chase"/><br /><sub><b>Chase</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=hansenc0705" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://iryadifarhan.vercel.app/"><img src="https://avatars.githubusercontent.com/u/128307091?v=4?s=110" width="110px;" alt="Farhan Amanullah Iryadi"/><br /><sub><b>Farhan Amanullah Iryadi</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=iryadifarhan" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
