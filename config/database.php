@@ -29,7 +29,9 @@ $dump_options['use_single_transaction'] = (env('DB_DUMP_SINGLE_TRANSACTION', 'fa
 // correct per-DBMS flag: --ssl-mode=DISABLED for MySQL 8.4+, --skip-ssl for
 // older MySQL and MariaDB. Do NOT set this via add_extra_option; that route
 // ships the raw flag as-is and mariadb-dump rejects ssl-mode.
-if (env('DB_DUMP_SKIP_SSL') === 'true') {
+// env() turns an unquoted or double-quoted `true` into a boolean, so a strict
+// comparison against the string 'true' never matched. Accept both.
+if (in_array(env('DB_DUMP_SKIP_SSL', false), [true, 'true'], true)) {
     $dump_options['skip_ssl'] = true;
 }
 

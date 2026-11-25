@@ -28,6 +28,7 @@ class DatabaseSslConfigurationTest extends TestCase
         'DB_SSL_CA_PATH',
         'DB_SSL_CIPHER',
         'DB_SSL_VERIFY_SERVER',
+        'DB_DUMP_SKIP_SSL',
     ];
 
     private array $originalSslEnv = [];
@@ -210,5 +211,24 @@ class DatabaseSslConfigurationTest extends TestCase
             $config['connections']['mysql']['options'],
             $config['connections']['mariadb']['options']
         );
+    }
+
+    public function test_dump_skip_ssl_true_adds_skip_ssl_to_dump_options(): void
+    {
+        // Regression for #20117. env() returns a boolean for `true`, so the
+        // old `=== 'true'` check never matched and the flag did nothing.
+        $config = $this->loadDatabaseConfig(['DB_DUMP_SKIP_SSL' => 'true']);
+
+        $this->assertTrue($config['connections']['mysql']['dump']['skip_ssl']);
+        $this->assertTrue($config['connections']['mariadb']['dump']['skip_ssl']);
+    }
+
+    public function test_dump_skip_ssl_unset_or_false_leaves_skip_ssl_out(): void
+    {
+        $config = $this->loadDatabaseConfig([]);
+        $this->assertArrayNotHasKey('skip_ssl', $config['connections']['mysql']['dump']);
+
+        $config = $this->loadDatabaseConfig(['DB_DUMP_SKIP_SSL' => 'false']);
+        $this->assertArrayNotHasKey('skip_ssl', $config['connections']['mysql']['dump']);
     }
 }
