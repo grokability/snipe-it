@@ -1437,6 +1437,7 @@ $(function () {
                 $('#assigned_asset').show();
                 $('#assigned_user').hide();
                 $('#assigned_location').hide();
+                $('#location_id_row').show();
                 $('.notification-callout').fadeOut();
 
                 if (resetSelections) {
@@ -1444,10 +1445,13 @@ $(function () {
                     $('[name="assigned_user"]').val('').trigger('change.select2');
                 }
             } else if (assignto_type == 'location') {
+                // Hide the location_id override when the target IS a location.
+                // See hardware/checkout.blade.php for the full rationale.
                 $('#current_assets_box').fadeOut();
                 $('#assigned_asset').hide();
                 $('#assigned_user').hide();
                 $('#assigned_location').show();
+                $('#location_id_row').hide();
                 $('.notification-callout').fadeOut();
 
                 if (resetSelections) {
@@ -1458,6 +1462,7 @@ $(function () {
                 $('#assigned_asset').hide();
                 $('#assigned_user').show();
                 $('#assigned_location').hide();
+                $('#location_id_row').show();
                 if (userid) {
                     $('#current_assets_box').fadeIn();
                 }
