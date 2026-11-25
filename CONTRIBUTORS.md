@@ -829,6 +829,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/charlieoleary"><img src="https://avatars.githubusercontent.com/u/4267857?v=4?s=110" width="110px;" alt="Charlie O'Leary"/><br /><sub><b>Charlie O'Leary</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=charlieoleary" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://chrisn.me.uk/"><img src="https://avatars.githubusercontent.com/u/2261519?v=4?s=110" width="110px;" alt="Chris Novakovic"/><br /><sub><b>Chris Novakovic</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=chrisnovakovic" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/chrisnox"><img src="https://avatars.githubusercontent.com/u/74654069?v=4?s=110" width="110px;" alt="chrisnox"/><br /><sub><b>chrisnox</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=chrisnox" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/chruoss"><img src="https://avatars.githubusercontent.com/u/208076938?v=4?s=110" width="110px;" alt="chruoss"/><br /><sub><b>chruoss</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=chruoss" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
