@@ -271,6 +271,12 @@ class BulkAccessoriesController extends Controller
     {
         $this->authorize('update', Accessory::class);
 
+        // Null-out loop below bypasses the company coercion. Gate it.
+        if ($request->boolean('null_company_id') && ! auth()->user()->isSuperUser()) {
+            return redirect()->route('accessories.index')
+                ->with('error', trans('general.insufficient_permissions'));
+        }
+
         if (! $request->filled('ids')) {
             return redirect()->route('accessories.index')
                 ->with('error', trans('admin/accessories/message.bulk.no_accessories_selected'));

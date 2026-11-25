@@ -767,9 +767,8 @@ class ConsumablesController extends Controller
     }
 
     /**
-     * Bulk edit. Mirror of BulkConsumablesController::update.
-     * Returns JSON instead of a flash redirect, otherwise identical
-     * semantics: writes only non-blank fields, routes company_id
+     * Returns JSON instead of a flash redirect, otherwise identical:
+     * writes only non-blank fields, routes company_id
      * through FMCS, supports null_{field}=1 opt-in null-outs, per-row
      * Gate check, surfaces partial-success detail in the payload.
      */

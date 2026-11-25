@@ -81,6 +81,12 @@ class BulkConsumablesController extends Controller
     {
         $this->authorize('update', Consumable::class);
 
+        // Null-out loop below bypasses the company coercion. Gate it.
+        if ($request->boolean('null_company_id') && ! auth()->user()->isSuperUser()) {
+            return redirect()->route('consumables.index')
+                ->with('error', trans('general.insufficient_permissions'));
+        }
+
         if (! $request->filled('ids')) {
             return redirect()->route('consumables.index')
                 ->with('error', trans('admin/consumables/message.bulk.no_consumables_selected'));
@@ -134,7 +140,7 @@ class BulkConsumablesController extends Controller
 
         $markOutstandingConsumed = $request->boolean('mark_outstanding_consumed');
 
-        if (empty($updateData) && !$markOutstandingConsumed) {
+        if (empty($updateData) && ! $markOutstandingConsumed) {
             return redirect()->route('consumables.index')
                 ->with('warning', trans('admin/consumables/message.bulk.no_fields_updated'));
         }
@@ -146,10 +152,10 @@ class BulkConsumablesController extends Controller
         $failed_rows = [];
         $consumedRows = 0;
         foreach ($authorized as $consumable) {
-            if (!empty($updateData)) {
+            if (! empty($updateData)) {
                 $consumable->fill($updateData);
-                if (!$consumable->save()) {
-                    $failed_rows[] = $consumable->name . ': ' . $consumable->getErrors()->first();
+                if (! $consumable->save()) {
+                    $failed_rows[] = $consumable->name.': '.$consumable->getErrors()->first();
 
                     continue;
                 }
@@ -182,7 +188,7 @@ class BulkConsumablesController extends Controller
         $message = trans_choice('admin/consumables/message.bulk.update.success', $updated, ['count' => $updated]);
 
         if ($consumedRows > 0) {
-            $message .= ' ' . trans_choice('admin/consumables/message.bulk.consumed_appended', $consumedRows, ['count' => $consumedRows]);
+            $message .= ' '.trans_choice('admin/consumables/message.bulk.consumed_appended', $consumedRows, ['count' => $consumedRows]);
         }
 
         if ($skipped > 0) {

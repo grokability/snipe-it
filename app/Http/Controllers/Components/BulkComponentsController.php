@@ -79,6 +79,12 @@ class BulkComponentsController extends Controller
     {
         $this->authorize('update', Component::class);
 
+        // Null-out loop below bypasses the company coercion. Gate it.
+        if ($request->boolean('null_company_id') && ! auth()->user()->isSuperUser()) {
+            return redirect()->route('components.index')
+                ->with('error', trans('general.insufficient_permissions'));
+        }
+
         if (! $request->filled('ids')) {
             return redirect()->route('components.index')
                 ->with('error', trans('admin/components/message.bulk.no_components_selected'));

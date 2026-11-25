@@ -268,6 +268,11 @@ class BulkAssetsController extends Controller
         // is Referer-derived and would need its own sanitize step.
         $bulk_back_url = Helper::sameOriginUrl($request->session()->pull('bulk_back_url')) ?? route('hardware.index');
 
+        // company_id=clear bypasses the company coercion below. Gate it.
+        if ($request->input('company_id') === 'clear' && ! auth()->user()->isSuperUser()) {
+            return redirect($bulk_back_url)->with('error', trans('general.insufficient_permissions'));
+        }
+
         $custom_field_columns = CustomField::pluck('db_column')->toArray();
 
         // find custom field input attributes that start with 'null_'
@@ -461,7 +466,7 @@ class BulkAssetsController extends Controller
                     }
 
                 }
-                
+
                 if ($request->filled('rtd_location_id')) {
                     $this->update_array['rtd_location_id'] = $request->input('rtd_location_id');
                 }
@@ -495,7 +500,6 @@ class BulkAssetsController extends Controller
                 /**
                  * Start all the custom fields shenanigans
                  */
-
                 if (array_key_exists('model_id', $this->update_array)) {
                     $asset->model_id = $this->update_array['model_id'];
                 }
@@ -1221,6 +1225,7 @@ class BulkAssetsController extends Controller
             ->with('fieldLabels', $this->customFieldLabels($models))
             ->with('modelNames', $modelNames);
     }
+
     /**
      * @param  Collection<int, Asset>  $assets
      * @return array<int, list<string>>
@@ -1232,7 +1237,7 @@ class BulkAssetsController extends Controller
         foreach ($assets as $asset) {
             foreach ($asset->custom_fieldset->fields ?? [] as $field) {
                 $name = $asset->model?->name;
-                if ($name !== null && !in_array($name, $labels[$field->id] ?? [], true)) {
+                if ($name !== null && ! in_array($name, $labels[$field->id] ?? [], true)) {
                     $labels[$field->id][] = $name;
                 }
             }
