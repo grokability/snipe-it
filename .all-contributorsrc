@@ -22,7 +22,8 @@
         "test",
         "bug",
         "design",
-        "review"
+        "review",
+        "security"
       ]
     },
     {
