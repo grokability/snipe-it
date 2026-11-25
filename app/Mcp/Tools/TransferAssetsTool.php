@@ -193,7 +193,18 @@ class TransferAssetsTool extends Tool
 
         try {
             DB::transaction(function () use ($assets, $accessoryCheckouts, $licenseSeats, $skippedLicenseSeats, $checkInNonReassignable, $from, $to, $note, $actor, &$failures) {
-                foreach ($assets as $asset) {
+                foreach ($assets as $previewed) {
+                    // Re-read the row with a row lock inside the outer
+                    // transaction so two concurrent transfers of the
+                    // same asset can't both pass the source-ownership
+                    // check. Rows that have moved since the preview was
+                    // taken are skipped (no error) to avoid rolling
+                    // back the valid rows the same transfer is moving.
+                    $asset = Asset::whereKey($previewed->id)->withTrashed()->lockForUpdate()->first();
+                    if (! $asset || (int) $asset->assigned_to !== $from->id || $asset->assigned_type !== User::class) {
+                        continue;
+                    }
+
                     if (! Gate::allows('checkin', $asset) || ! Gate::allows('checkout', $asset)) {
                         $failures[] = "asset {$asset->asset_tag}: permission denied";
 
@@ -214,7 +225,16 @@ class TransferAssetsTool extends Tool
                     }
                 }
 
-                foreach ($accessoryCheckouts as $checkout) {
+                foreach ($accessoryCheckouts as $previewed) {
+                    // Same row-lock + revalidate pattern as the asset
+                    // branch above.
+                    $checkout = AccessoryCheckout::with('accessory')
+                        ->whereKey($previewed->id)
+                        ->lockForUpdate()
+                        ->first();
+                    if (! $checkout || (int) $checkout->assigned_to !== $from->id || $checkout->assigned_type !== User::class) {
+                        continue;
+                    }
                     $accessory = $checkout->accessory;
                     if ($accessory && (! Gate::allows('checkin', $accessory) || ! Gate::allows('checkout', $accessory))) {
                         $failures[] = "accessory {$accessory->name}: permission denied";
@@ -239,7 +259,16 @@ class TransferAssetsTool extends Tool
                     event(new CheckoutableCheckedOut($accessory, $to, $actor, $note, [], 1, false));
                 }
 
-                foreach ($licenseSeats as $seat) {
+                foreach ($licenseSeats as $previewed) {
+                    // Same row-lock + revalidate pattern as the asset
+                    // and accessory branches above.
+                    $seat = LicenseSeat::with('license')
+                        ->whereKey($previewed->id)
+                        ->lockForUpdate()
+                        ->first();
+                    if (! $seat || (int) $seat->assigned_to !== $from->id) {
+                        continue;
+                    }
                     $license = $seat->license;
                     if (! $license || ! Gate::allows('checkin', $license) || ! Gate::allows('checkout', $license)) {
                         $failures[] = "license {$license->name}: permission denied";
@@ -286,7 +315,16 @@ class TransferAssetsTool extends Tool
                 // offering the seat (same write LicenseCheckinController
                 // does).
                 if ($checkInNonReassignable) {
-                    foreach ($skippedLicenseSeats as $seat) {
+                    foreach ($skippedLicenseSeats as $previewed) {
+                        // Same row-lock + revalidate pattern as the
+                        // reassignable branch above.
+                        $seat = LicenseSeat::with('license')
+                            ->whereKey($previewed->id)
+                            ->lockForUpdate()
+                            ->first();
+                        if (! $seat || (int) $seat->assigned_to !== $from->id) {
+                            continue;
+                        }
                         $license = $seat->license;
                         if (! $license || ! Gate::allows('checkin', $license)) {
                             $failures[] = "license {$license->name}: permission denied for check-in";

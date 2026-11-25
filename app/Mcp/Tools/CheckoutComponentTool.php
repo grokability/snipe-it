@@ -8,6 +8,7 @@ use App\Models\Asset;
 use App\Models\Component;
 use Carbon\Carbon;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
@@ -63,32 +64,44 @@ class CheckoutComponentTool extends Tool
 
         $asset = Asset::find($request->get('asset_id'));
 
-        $component->assets()->attach($component->id, [
-            'component_id' => $component->id,
-            'created_at' => Carbon::now(),
-            'assigned_qty' => $qty,
-            'created_by' => auth()->id(),
-            'asset_id' => $asset->id,
-            'note' => $request->get('note'),
-        ]);
+        // Re-fetch the parent row under lockForUpdate inside a
+        // transaction and revalidate stock against the locked snapshot.
+        // Matches Api/ComponentsController::checkout.
+        return DB::transaction(function () use ($component, $asset, $qty, $request) {
+            $locked = Component::whereKey($component->id)->lockForUpdate()->first();
+            if (! $locked || $locked->numRemaining() < $qty) {
+                return Response::make(Response::error(
+                    'Not enough units available. Requested: '.$qty.', remaining: '.($locked?->numRemaining() ?? 0)
+                ));
+            }
 
-        $pivotId = $component->assets()->wherePivot('asset_id', $asset->id)->latest('components_assets.created_at')->first()?->pivot->id;
-
-        $component->logCheckout($request->get('note'), $asset, null, [], $qty);
-
-        return $this->structuredResponse(
-            trans('mcp.component_checked_out', ['name' => $component->name, 'asset_tag' => $asset->asset_tag]),
-            [
-                'success' => true,
-                'message' => trans('mcp.component_checked_out', ['name' => $component->name, 'asset_tag' => $asset->asset_tag]),
+            $component->assets()->attach($component->id, [
                 'component_id' => $component->id,
-                'component_name' => $component->name,
-                'asset_id' => $asset->id,
-                'asset_tag' => $asset->asset_tag,
+                'created_at' => Carbon::now(),
                 'assigned_qty' => $qty,
-                'component_asset_id' => $pivotId,
-            ]
-        );
+                'created_by' => auth()->id(),
+                'asset_id' => $asset->id,
+                'note' => $request->get('note'),
+            ]);
+
+            $pivotId = $component->assets()->wherePivot('asset_id', $asset->id)->latest('components_assets.created_at')->first()?->pivot->id;
+
+            $component->logCheckout($request->get('note'), $asset, null, [], $qty);
+
+            return $this->structuredResponse(
+                trans('mcp.component_checked_out', ['name' => $component->name, 'asset_tag' => $asset->asset_tag]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.component_checked_out', ['name' => $component->name, 'asset_tag' => $asset->asset_tag]),
+                    'component_id' => $component->id,
+                    'component_name' => $component->name,
+                    'asset_id' => $asset->id,
+                    'asset_tag' => $asset->asset_tag,
+                    'assigned_qty' => $qty,
+                    'component_asset_id' => $pivotId,
+                ]
+            );
+        });
     }
 
     private function resolveComponent(Request $request): ?Component

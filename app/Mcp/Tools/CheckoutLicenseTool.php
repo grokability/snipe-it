@@ -9,6 +9,7 @@ use App\Models\Asset;
 use App\Models\License;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -53,75 +54,80 @@ class CheckoutLicenseTool extends Tool
             return Response::make(Response::error(trans('mcp.provide_user_or_asset')));
         }
 
-        $seat = $license->freeSeat();
-
-        if (! $seat) {
-            return Response::make(Response::error(trans('mcp.no_free_seat')));
-        }
-
         $note = $request->get('note');
 
-        if ($request->filled('assigned_to')) {
-            $target = User::find($request->get('assigned_to'));
-            if (! $target) {
-                return Response::make(Response::error(trans('mcp.user_not_found')));
-            }
-           
-            if (!in_array($target::class, License::allowedCheckoutTargetTypes(), true)) {
-                return Response::make(Response::error(trans('mcp.checkout_target_not_found', ['type' => 'user'])));
-            }
-            $seat->assigned_to = $target->id;
-            $seat->notes = $note;
+        // Claim the seat inside a transaction with freeSeat(lock: true),
+        // matching LicenseCheckoutController. Without this, two concurrent
+        // checkouts can both read the same "free" seat and over-assign it.
+        return DB::transaction(function () use ($request, $license, $note) {
+            $seat = $license->freeSeat(lock: true);
 
-            if ($seat->save()) {
-                event(new CheckoutableCheckedOut($seat, $target, auth()->user(), $note, [], 1));
+            if (! $seat) {
+                return Response::make(Response::error(trans('mcp.no_free_seat')));
+            }
 
-                return $this->structuredResponse(
-                    trans('mcp.license_seat_checked_out_user', ['username' => $target->username]),
-                    [
-                        'success' => true,
-                        'message' => trans('mcp.license_seat_checked_out_user', ['username' => $target->username]),
-                        'license_id' => $license->id,
-                        'license_name' => $license->name,
-                        'seat_id' => $seat->id,
-                        'assigned_to_type' => 'user',
-                        'assigned_to_id' => $target->id,
-                    ]
-                );
-            }
-        } elseif ($request->filled('asset_id')) {
-            $target = Asset::find($request->get('asset_id'));
-            if (! $target) {
-                return Response::make(Response::error(trans('mcp.asset_not_found')));
-            }
-            if (!in_array($target::class, License::allowedCheckoutTargetTypes(), true)) {
-                return Response::make(Response::error(trans('mcp.checkout_target_not_found', ['type' => 'asset'])));
-            }
-            $seat->asset_id = $target->id;
-            if ($target->checkedOutToUser()) {
-                $seat->assigned_to = $target->assigned_to;
-            }
-            $seat->notes = $note;
+            if ($request->filled('assigned_to')) {
+                $target = User::find($request->get('assigned_to'));
+                if (! $target) {
+                    return Response::make(Response::error(trans('mcp.user_not_found')));
+                }
 
-            if ($seat->save()) {
-                event(new CheckoutableCheckedOut($seat, $target, auth()->user(), $note, [], 1));
+                if (! in_array($target::class, License::allowedCheckoutTargetTypes(), true)) {
+                    return Response::make(Response::error(trans('mcp.checkout_target_not_found', ['type' => 'user'])));
+                }
+                $seat->assigned_to = $target->id;
+                $seat->notes = $note;
 
-                return $this->structuredResponse(
-                    trans('mcp.license_seat_checked_out_asset', ['asset_tag' => $target->asset_tag]),
-                    [
-                        'success' => true,
-                        'message' => trans('mcp.license_seat_checked_out_asset', ['asset_tag' => $target->asset_tag]),
-                        'license_id' => $license->id,
-                        'license_name' => $license->name,
-                        'seat_id' => $seat->id,
-                        'assigned_to_type' => 'asset',
-                        'assigned_to_id' => $target->id,
-                    ]
-                );
+                if ($seat->save()) {
+                    event(new CheckoutableCheckedOut($seat, $target, auth()->user(), $note, [], 1));
+
+                    return $this->structuredResponse(
+                        trans('mcp.license_seat_checked_out_user', ['username' => $target->username]),
+                        [
+                            'success' => true,
+                            'message' => trans('mcp.license_seat_checked_out_user', ['username' => $target->username]),
+                            'license_id' => $license->id,
+                            'license_name' => $license->name,
+                            'seat_id' => $seat->id,
+                            'assigned_to_type' => 'user',
+                            'assigned_to_id' => $target->id,
+                        ]
+                    );
+                }
+            } elseif ($request->filled('asset_id')) {
+                $target = Asset::find($request->get('asset_id'));
+                if (! $target) {
+                    return Response::make(Response::error(trans('mcp.asset_not_found')));
+                }
+                if (! in_array($target::class, License::allowedCheckoutTargetTypes(), true)) {
+                    return Response::make(Response::error(trans('mcp.checkout_target_not_found', ['type' => 'asset'])));
+                }
+                $seat->asset_id = $target->id;
+                if ($target->checkedOutToUser()) {
+                    $seat->assigned_to = $target->assigned_to;
+                }
+                $seat->notes = $note;
+
+                if ($seat->save()) {
+                    event(new CheckoutableCheckedOut($seat, $target, auth()->user(), $note, [], 1));
+
+                    return $this->structuredResponse(
+                        trans('mcp.license_seat_checked_out_asset', ['asset_tag' => $target->asset_tag]),
+                        [
+                            'success' => true,
+                            'message' => trans('mcp.license_seat_checked_out_asset', ['asset_tag' => $target->asset_tag]),
+                            'license_id' => $license->id,
+                            'license_name' => $license->name,
+                            'seat_id' => $seat->id,
+                            'assigned_to_type' => 'asset',
+                            'assigned_to_id' => $target->id,
+                        ]
+                    );
+                }
             }
-        }
 
-        return Response::make(Response::error(trans('mcp.checkout_failed')));
+            return Response::make(Response::error(trans('mcp.checkout_failed')));
+        });
     }
 
     private function resolveLicense(Request $request): ?License

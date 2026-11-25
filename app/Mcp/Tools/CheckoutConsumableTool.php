@@ -8,6 +8,7 @@ use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Consumable;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -57,34 +58,43 @@ class CheckoutConsumableTool extends Tool
             return Response::make(Response::error(trans('mcp.user_not_found')));
         }
 
-        $consumable->users()->attach($consumable->id, [
-            'consumable_id' => $consumable->id,
-            'created_by' => auth()->id(),
-            'assigned_to' => $user->id,
-            'note' => $request->get('note'),
-            'consumed_at' => $consumable->auto_consume_on_checkout ? now() : null,
-        ]);
+        // Re-fetch the parent row under lockForUpdate inside a
+        // transaction and revalidate stock against the locked snapshot.
+        return DB::transaction(function () use ($consumable, $user, $request) {
+            $locked = Consumable::whereKey($consumable->id)->lockForUpdate()->first();
+            if (! $locked || $locked->numRemaining() <= 0) {
+                return Response::make(Response::error(trans('mcp.no_units_remaining')));
+            }
 
-        event(new CheckoutableCheckedOut(
-            $consumable,
-            $user,
-            auth()->user(),
-            $request->get('note'),
-            [],
-            1,
-        ));
-
-        return $this->structuredResponse(
-            trans('mcp.consumable_checked_out', ['name' => $consumable->name, 'username' => $user->username]),
-            [
-                'success' => true,
-                'message' => trans('mcp.consumable_checked_out', ['name' => $consumable->name, 'username' => $user->username]),
+            $consumable->users()->attach($consumable->id, [
                 'consumable_id' => $consumable->id,
-                'consumable_name' => $consumable->name,
-                'assigned_to_id' => $user->id,
-                'assigned_to_username' => $user->username,
-            ]
-        );
+                'created_by' => auth()->id(),
+                'assigned_to' => $user->id,
+                'note' => $request->get('note'),
+                'consumed_at' => $consumable->auto_consume_on_checkout ? now() : null,
+            ]);
+
+            event(new CheckoutableCheckedOut(
+                $consumable,
+                $user,
+                auth()->user(),
+                $request->get('note'),
+                [],
+                1,
+            ));
+
+            return $this->structuredResponse(
+                trans('mcp.consumable_checked_out', ['name' => $consumable->name, 'username' => $user->username]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.consumable_checked_out', ['name' => $consumable->name, 'username' => $user->username]),
+                    'consumable_id' => $consumable->id,
+                    'consumable_name' => $consumable->name,
+                    'assigned_to_id' => $user->id,
+                    'assigned_to_username' => $user->username,
+                ]
+            );
+        });
     }
 
     private function resolveConsumable(Request $request): ?Consumable

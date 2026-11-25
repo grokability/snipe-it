@@ -219,7 +219,16 @@ class OffboardUserTool extends Tool
 
         try {
             DB::transaction(function () use ($assets, $accessoryCheckouts, $licenseSeats, $managedUsers, $managedLocations, $user, $note, $actor, &$failures) {
-                foreach ($assets as $asset) {
+                foreach ($assets as $previewed) {
+                    // Re-fetch under a row lock inside the outer
+                    // transaction so a concurrent transfer can't move
+                    // the asset to another user between our preview and
+                    // our check-in. Rows that have moved are silently
+                    // skipped.
+                    $asset = Asset::whereKey($previewed->id)->withTrashed()->lockForUpdate()->first();
+                    if (! $asset || (int) $asset->assigned_to !== $user->id || $asset->assigned_type !== User::class) {
+                        continue;
+                    }
                     if (! Gate::allows('checkin', $asset)) {
                         $failures[] = "asset {$asset->asset_tag}: permission denied";
 
@@ -230,7 +239,14 @@ class OffboardUserTool extends Tool
                     }
                 }
 
-                foreach ($accessoryCheckouts as $checkout) {
+                foreach ($accessoryCheckouts as $previewed) {
+                    $checkout = AccessoryCheckout::with('accessory')
+                        ->whereKey($previewed->id)
+                        ->lockForUpdate()
+                        ->first();
+                    if (! $checkout || (int) $checkout->assigned_to !== $user->id || $checkout->assigned_type !== User::class) {
+                        continue;
+                    }
                     $accessory = $checkout->accessory;
                     if (! $accessory || ! Gate::allows('checkin', $accessory)) {
                         $failures[] = "accessory checkout {$checkout->id}: permission denied";
@@ -245,7 +261,14 @@ class OffboardUserTool extends Tool
                     event(new CheckoutableCheckedIn($accessory, $user, $actor, $note));
                 }
 
-                foreach ($licenseSeats as $seat) {
+                foreach ($licenseSeats as $previewed) {
+                    $seat = LicenseSeat::with('license')
+                        ->whereKey($previewed->id)
+                        ->lockForUpdate()
+                        ->first();
+                    if (! $seat || (int) $seat->assigned_to !== $user->id) {
+                        continue;
+                    }
                     $license = $seat->license;
                     if (! $license || ! Gate::allows('checkin', $license)) {
                         $failures[] = "license seat {$seat->id}: permission denied";

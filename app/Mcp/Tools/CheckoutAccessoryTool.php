@@ -13,6 +13,7 @@ use App\Models\Location;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -80,41 +81,53 @@ class CheckoutAccessoryTool extends Tool
 
         // Reject any resolved target class that isn't in the Checkoutable
         // contract.
-        if (!in_array($target::class, Accessory::allowedCheckoutTargetTypes(), true)) {
+        if (! in_array($target::class, Accessory::allowedCheckoutTargetTypes(), true)) {
             return Response::make(Response::error(trans('mcp.checkout_target_not_found', ['type' => $checkoutType])));
         }
 
-        $checkout = new AccessoryCheckout([
-            'accessory_id' => $accessory->id,
-            'created_at' => Carbon::now(),
-            'assigned_to' => $target->id,
-            'assigned_type' => $target::class,
-            'note' => $request->get('note'),
-        ]);
-        $checkout->created_by = auth()->id();
-        $checkout->save();
+        // Re-fetch the parent row under lockForUpdate inside a
+        // transaction and revalidate stock against the locked snapshot.
+        // Matches Api/AccessoriesController::checkout. Without this, two
+        // concurrent checkouts can both see the same numRemaining count
+        // and over-assign a single-unit accessory.
+        return DB::transaction(function () use ($accessory, $target, $checkoutType, $request) {
+            $locked = Accessory::whereKey($accessory->id)->lockForUpdate()->first();
+            if (! $locked || $locked->numRemaining() < 1) {
+                return Response::make(Response::error(trans('mcp.no_units_available')));
+            }
 
-        event(new CheckoutableCheckedOut(
-            $accessory,
-            $target,
-            auth()->user(),
-            $request->get('note'),
-            [],
-            1,
-        ));
-
-        return $this->structuredResponse(
-            trans('mcp.accessory_checked_out', ['name' => $accessory->name]),
-            [
-                'success' => true,
-                'message' => trans('mcp.accessory_checked_out', ['name' => $accessory->name]),
+            $checkout = new AccessoryCheckout([
                 'accessory_id' => $accessory->id,
-                'accessory_name' => $accessory->name,
-                'checkout_id' => $checkout->id,
-                'checked_out_to_type' => $checkoutType,
-                'checked_out_to_id' => $target->id,
-            ]
-        );
+                'created_at' => Carbon::now(),
+                'assigned_to' => $target->id,
+                'assigned_type' => $target::class,
+                'note' => $request->get('note'),
+            ]);
+            $checkout->created_by = auth()->id();
+            $checkout->save();
+
+            event(new CheckoutableCheckedOut(
+                $accessory,
+                $target,
+                auth()->user(),
+                $request->get('note'),
+                [],
+                1,
+            ));
+
+            return $this->structuredResponse(
+                trans('mcp.accessory_checked_out', ['name' => $accessory->name]),
+                [
+                    'success' => true,
+                    'message' => trans('mcp.accessory_checked_out', ['name' => $accessory->name]),
+                    'accessory_id' => $accessory->id,
+                    'accessory_name' => $accessory->name,
+                    'checkout_id' => $checkout->id,
+                    'checked_out_to_type' => $checkoutType,
+                    'checked_out_to_id' => $target->id,
+                ]
+            );
+        });
     }
 
     private function resolveAccessory(Request $request): ?Accessory

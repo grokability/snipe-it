@@ -139,7 +139,16 @@ class UserItemTransferController extends Controller
         $skipped = [];
 
         foreach ($ids as $checkoutId) {
-            $checkout = AccessoryCheckout::with('accessory')->find($checkoutId);
+            // Lock the checkout row for the duration of the outer
+            // transaction so two concurrent transfers of the same
+            // AccessoryCheckout can't both pass the source-ownership
+            // check and each create a replacement checkout. Rows that
+            // have moved since the caller loaded the transfer form are
+            // skipped. Mirrors the asset branch above.
+            $checkout = AccessoryCheckout::with('accessory')
+                ->whereKey($checkoutId)
+                ->lockForUpdate()
+                ->first();
             $accessory = $checkout?->accessory;
             if (! $this->accessoryCheckoutBelongsToSource($checkout, $source) || ! $accessory?->canCheckoutTo($target)) {
                 $skipped[] = 'accessory:'.$checkoutId;
@@ -168,7 +177,14 @@ class UserItemTransferController extends Controller
         $skipped = [];
 
         foreach ($ids as $seatId) {
-            $seat = LicenseSeat::with('license')->find($seatId);
+            // Lock the seat row for the duration of the outer transaction
+            // so two concurrent transfers of the same license seat can't
+            // both pass the source-ownership check. Same shape as the
+            // asset and accessory branches above.
+            $seat = LicenseSeat::with('license')
+                ->whereKey($seatId)
+                ->lockForUpdate()
+                ->first();
             $license = $seat?->license;
             if (! $this->licenseSeatBelongsToSource($seat, $source) || ! $license?->reassignable || ! $license->canCheckoutTo($target)) {
                 $skipped[] = 'license:'.$seatId;
