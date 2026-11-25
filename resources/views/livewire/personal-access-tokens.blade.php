@@ -23,10 +23,9 @@
                 @if($tokens->count() > 0)
                     <thead>
                     <tr>
-                        <th scope="col" class="col-md-2">{{ trans('general.name') }}</th>
-                        <th scope="col" class="col-md-3">{{ trans('account/general.pat_scopes_column') }}</th>
-                        <th scope="col" class="col-md-2">{{ trans('general.created_at') }}</th>
-                        <th scope="col" class="col-md-2">{{ trans('general.expires') }}</th>
+                        <th scope="col" class="col-md-4">{{ trans('general.name') }}</th>
+                        <th scope="col" class="col-md-3">{{ trans('general.created_at') }}</th>
+                        <th scope="col" class="col-md-3">{{ trans('general.expires') }}</th>
                         <th scope="col" class="col-md-1"><span class="sr-only">{{ trans('general.delete') }}</span></th>
                     </tr>
                     </thead>
@@ -40,21 +39,11 @@
                         </td>
 
                         <td>
-                            @forelse($token->scopes ?? [] as $scope)
-                                <span class="label label-info" style="margin-right: 4px;">{{ $scope }}</span>
-                            @empty
-                                <span class="label label-default" data-tooltip="true" title="{{ trans('account/general.pat_no_scopes_tooltip') }}">
-                                    {{ trans('account/general.pat_no_scopes') }}
-                                </span>
-                            @endforelse
+                            {{ $token->created_at ? \App\Helpers\Helper::getFormattedDateObject($token->created_at, 'datetime', false) : '' }}
                         </td>
 
                         <td>
-                            {{ $token->created_at }}
-                        </td>
-
-                        <td>
-                            {{ $token->expires_at }}
+                            {{ $token->expires_at ? \App\Helpers\Helper::getFormattedDateObject($token->expires_at, 'datetime', false) : '' }}
                         </td>
                         <td class="text-right">
                             <a class="action-link btn btn-danger btn-sm" wire:click="deleteToken('{{ $token->id }}')"
@@ -86,73 +75,27 @@
                 </div>
 
                 <div class="modal-body">
-                    <!-- Form Errors -->
-                    @if($errors->has('name'))
-                        <x-alert type="danger">
-                            <p><strong>{{ trans('general.whoops') }}</strong> {{ trans('general.something_went_wrong') }}</p>
-                            <br>
-                            <ul>
-                                <li>
-                                    @error('name')
-                                    <span class="error">
-                                        {{ $message }}
-                                    </span>
-                                    @enderror
-                                </li>
-                            </ul>
-                        </x-alert>
-                    @endif
-
-                    <!-- Create Token Form -->
-                    <form class="form-horizontal" role="form">
+                    <form role="form">
                         <!-- Name -->
-                        <div class="form-group">
-                            <label class="col-md-4 control-label" for="name">{{ trans('general.name') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="create-token-name" type="text" aria-label="name" class="form-control"
-                                       name="name"
-                                       wire:keydown.enter="createToken"
-                                       wire:model="name"
-                                       autofocus
-                                       required
-                                >
-                            </div>
-                        </div>
-
-                        <!-- Scope selection -->
-                        <div class="form-group {{ $errors->has('selectedScopes') ? 'has-error' : '' }}">
-                            <label class="col-md-4 control-label">{{ trans('account/general.pat_scopes_column') }}</label>
-                            <div class="col-md-8">
-                                <p class="help-block" style="margin-top: 0;">
-                                    {{ trans('account/general.pat_scopes_help') }}
-                                </p>
-                                @foreach($availableScopes as $scopeValue => $scopeDescription)
-                                    <div class="checkbox" style="margin-bottom: 10px;">
-                                        <label style="padding-left: 30px; line-height: 1.5;">
-                                            <input type="checkbox"
-                                                   wire:model="selectedScopes"
-                                                   value="{{ $scopeValue }}"
-                                                   style="margin-left: -24px; margin-right: 10px;">
-                                            <code style="margin-right: 8px;">{{ $scopeValue }}</code>
-                                            <span class="text-muted">{{ $scopeDescription }}</span>
-                                        </label>
-                                    </div>
-                                @endforeach
-                                @error('selectedScopes')
-                                    <span class="help-block error">{{ $message }}</span>
-                                @enderror
-                            </div>
+                        <div class="form-group {{ $errors->has('name') ? 'has-error' : '' }}">
+                            <label for="create-token-name">{{ trans('general.name') }}</label>
+                            <input id="create-token-name" type="text" aria-label="name" class="form-control"
+                                   name="name"
+                                   wire:keydown.enter="createToken"
+                                   wire:model="name"
+                                   autofocus
+                                   required
+                            >
+                            <x-form.error name="name" />
                         </div>
                     </form>
-
                 </div>
 
                 <!-- Modal Actions -->
                 <div class="modal-footer">
-                    <button type="button" class="btn primary" data-dismiss="modal">{{ trans('general.close') }}</button>
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{{ trans('button.cancel') }}</button>
 
-                    <button type="button" class="btn btn-primary" wire:click="createToken">
+                    <button type="button" class="btn btn-primary pull-right" wire:click="createToken">
                         {{ trans('general.create') }}
                     </button>
                 </div>
@@ -177,7 +120,13 @@
                         {{ trans('account/general.here_is_api_key') }}
                     </p>
 
-                    <pre><code>{{ $newTokenString }}</code></pre>
+                    {{-- Copy icon floated right of the row right above
+                         the bearer <pre>. clipboard.js data-target
+                         points at the pre's .js-copy-pat-bearer class
+                         so only the token text is copied, not the
+                         icon's sr-only label. --}}
+                    <x-copy-to-clipboard copy_what="pat-bearer" class="pull-right" style="margin-bottom: 4px;" />
+                    <pre class="js-copy-pat-bearer" style="clear: both; white-space: pre-wrap; word-break: break-all;"><code>{{ $newTokenString }}</code></pre>
                 </div>
 
                 <!-- Modal Actions -->
@@ -197,6 +146,20 @@
                 $(this).find('[autofocus]').focus();
             });
         })
+        // Clear name + validation state every time the create modal
+        // closes (×, Cancel, click-outside, Esc all fire
+        // hidden.bs.modal). Without this, reopening the modal shows
+        // the previous attempt's red has-error outline and error
+        // message against a field the user has not touched again.
+        // Wrapped in DOMContentLoaded so jQuery is loaded before we
+        // touch $(). Without the wrapper the script throws at parse
+        // time ("$ is not defined") and every listener below it
+        // silently fails to register.
+        document.addEventListener('DOMContentLoaded', function () {
+            $('#modal-create-token').on('hidden.bs.modal', function () {
+                Livewire.dispatch('resetCreateTokenForm');
+            });
+        });
         // was trying to do a submit on the form when enter was pressed
         window.addEventListener("keydown", function (event) {
             if (event.key === 'Enter') {

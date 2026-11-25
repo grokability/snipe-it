@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Mcp;
 
+use App\Enums\McpScope;
 use App\Http\Middleware\CheckForSetup;
 use App\Models\OAuthClient;
 use App\Models\Setting;
@@ -135,5 +136,17 @@ class McpDynamicClientRegistrationTest extends TestCase
             'client_name' => 'Userinfo',
             'redirect_uris' => ['https://user:pass@legit.example/cb'],
         ])->assertStatus(400);
+    }
+
+    public function test_dcr_response_advertises_every_mcp_scope(): void
+    {
+        // Compliant DCR clients (per RFC 7591) read the response's
+        // `scope` field to learn what scopes they can request later.
+        $response = $this->postJson('/oauth/register', [
+            'client_name' => 'Scope Advertisement Test',
+            'redirect_uris' => ['http://127.0.0.1:5050/cb'],
+        ])->assertCreated();
+
+        $this->assertSame(implode(' ', McpScope::values()), $response->json('scope'));
     }
 }

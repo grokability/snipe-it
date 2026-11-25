@@ -1832,12 +1832,11 @@
         btnAdd: {
             text: '{{ (request()->input('status') == "deleted") ? trans('admin/users/table.show_current') : trans('admin/users/table.show_deleted') }}',
             icon: 'fa fa-plus',
+            // handles bs-tables+livewire where the table lost toolbars after modal was opened.
+            event() {
+                $('#modal-create-client').modal('show');
+            },
             attributes: {
-                event() {
-                    wire:click = "$dispatch('openModal')"
-                    onclick = "$('#modal-create-client').modal('show');"
-                },
-
                 title: '{{ trans('general.create') }}',
                 class: 'btn-warning',
                 @if ($snipeSettings->shortcuts_enabled == 1)
