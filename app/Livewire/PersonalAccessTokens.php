@@ -43,6 +43,7 @@ class PersonalAccessTokens extends Component
     {
         $this->reset('name');
         $this->resetValidation();
+        $this->skipRender();
     }
 
     public function render()

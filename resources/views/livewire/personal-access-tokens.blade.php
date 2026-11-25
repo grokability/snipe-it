@@ -104,7 +104,7 @@
     </div>
 
     <!-- View New Token Modal -->
-    <div class="modal fade" id="modal-access-token" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="modal-access-token" tabindex="-1" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
