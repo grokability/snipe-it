@@ -802,6 +802,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/zaehuncho"><img src="https://avatars.githubusercontent.com/u/269712221?v=4?s=110" width="110px;" alt="zaehuncho"/><br /><sub><b>zaehuncho</b></sub></a><br /><a href="#security-zaehuncho" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Zer0Gate"><img src="https://avatars.githubusercontent.com/u/71823107?v=4?s=110" width="110px;" alt="Zer0Gate"/><br /><sub><b>Zer0Gate</b></sub></a><br /><a href="#security-Zer0Gate" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Zero2Root-VK"><img src="https://avatars.githubusercontent.com/u/177882163?v=4?s=110" width="110px;" alt="Vinod Kumar Bontha"/><br /><sub><b>Vinod Kumar Bontha</b></sub></a><br /><a href="#security-Zero2Root-VK" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ZeroXJacks"><img src="https://avatars.githubusercontent.com/u/189536965?v=4?s=110" width="110px;" alt="Ibrahim zain "/><br /><sub><b>Ibrahim zain </b></sub></a><br /><a href="#security-ZeroXJacks" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
