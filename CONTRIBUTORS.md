@@ -826,6 +826,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/boteroTradebe"><img src="https://avatars.githubusercontent.com/u/236478825?v=4?s=110" width="110px;" alt="boteroTradebe"/><br /><sub><b>boteroTradebe</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=boteroTradebe" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/charlieoleary"><img src="https://avatars.githubusercontent.com/u/4267857?v=4?s=110" width="110px;" alt="Charlie O'Leary"/><br /><sub><b>Charlie O'Leary</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=charlieoleary" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
