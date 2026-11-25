@@ -4673,6 +4673,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "ashrexon",
+      "name": "Yash Shendge",
+      "avatar_url": "https://avatars.githubusercontent.com/u/75063323?v=4",
+      "profile": "https://github.com/ashrexon",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }
