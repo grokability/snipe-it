@@ -772,6 +772,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Theebanbabu"><img src="https://avatars.githubusercontent.com/u/116248108?v=4?s=110" width="110px;" alt="S Theeban Babu"/><br /><sub><b>S Theeban Babu</b></sub></a><br /><a href="#security-Theebanbabu" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/thinhlx-vn"><img src="https://avatars.githubusercontent.com/u/312327872?v=4?s=110" width="110px;" alt="ThinhLuu"/><br /><sub><b>ThinhLuu</b></sub></a><br /><a href="#security-thinhlx-vn" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>

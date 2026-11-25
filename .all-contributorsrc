@@ -5384,6 +5384,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "thinhlx-vn",
+      "name": "ThinhLuu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/312327872?v=4",
+      "profile": "https://github.com/thinhlx-vn",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }
