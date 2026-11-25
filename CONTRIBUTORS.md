@@ -840,6 +840,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/dylang3"><img src="https://avatars.githubusercontent.com/u/71225825?v=4?s=110" width="110px;" alt="Dylan Guthrie"/><br /><sub><b>Dylan Guthrie</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=dylang3" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://hex128.io/"><img src="https://avatars.githubusercontent.com/u/3032891?v=4?s=110" width="110px;" alt="Hex"/><br /><sub><b>Hex</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=e1ectr0cut1e" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.elliotblackburn.com/"><img src="https://avatars.githubusercontent.com/u/1068477?v=4?s=110" width="110px;" alt="Elliot Blackburn"/><br /><sub><b>Elliot Blackburn</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=elliotblackburn" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/fdiaz3000"><img src="https://avatars.githubusercontent.com/u/13112573?v=4?s=110" width="110px;" alt="Felix Diaz"/><br /><sub><b>Felix Diaz</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=fdiaz3000" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
