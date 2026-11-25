@@ -741,6 +741,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/nicetrykiddo"><img src="https://avatars.githubusercontent.com/u/175843527?v=4?s=110" width="110px;" alt="nicetrykiddo"/><br /><sub><b>nicetrykiddo</b></sub></a><br /><a href="#security-nicetrykiddo" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/nullbenny"><img src="https://avatars.githubusercontent.com/u/178788771?v=4?s=110" width="110px;" alt="Ben"/><br /><sub><b>Ben</b></sub></a><br /><a href="#security-nullbenny" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/OGLECB"><img src="https://avatars.githubusercontent.com/u/161315107?v=4?s=110" width="110px;" alt="OGLECB"/><br /><sub><b>OGLECB</b></sub></a><br /><a href="#security-OGLECB" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/pavelkohout396"><img src="https://avatars.githubusercontent.com/u/192136750?v=4?s=110" width="110px;" alt="pavelkohout396"/><br /><sub><b>pavelkohout396</b></sub></a><br /><a href="#security-pavelkohout396" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
