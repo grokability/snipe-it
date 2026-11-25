@@ -788,6 +788,9 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/wict0rious"><img src="https://avatars.githubusercontent.com/u/211072231?v=4?s=110" width="110px;" alt="wict0rious"/><br /><sub><b>wict0rious</b></sub></a><br /><a href="#security-wict0rious" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/William957-web"><img src="https://avatars.githubusercontent.com/u/85293841?v=4?s=110" width="110px;" alt="whale120"/><br /><sub><b>whale120</b></sub></a><br /><a href="#security-William957-web" title="Security">🛡️</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/windbreaker555"><img src="https://avatars.githubusercontent.com/u/232655138?v=4?s=110" width="110px;" alt="windbreaker555"/><br /><sub><b>windbreaker555</b></sub></a><br /><a href="#security-windbreaker555" title="Security">🛡️</a></td>
+    </tr>
   </tbody>
 </table>
 
