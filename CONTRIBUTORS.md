@@ -851,6 +851,9 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jarnokurlin"><img src="https://avatars.githubusercontent.com/u/1064112?v=4?s=110" width="110px;" alt="Jarno Kurlin"/><br /><sub><b>Jarno Kurlin</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=jarnokurlin" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://bergros.dev/"><img src="https://avatars.githubusercontent.com/u/55584750?v=4?s=110" width="110px;" alt="Joakim Bergros"/><br /><sub><b>Joakim Bergros</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=joakimbergros" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/johana-star"><img src="https://avatars.githubusercontent.com/u/509611?v=4?s=110" width="110px;" alt="Johana Star"/><br /><sub><b>Johana Star</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=johana-star" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
