@@ -5114,6 +5114,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "moratoantoine",
+      "name": "Morato Antoine",
+      "avatar_url": "https://avatars.githubusercontent.com/u/220617148?v=4",
+      "profile": "https://github.com/moratoantoine",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }

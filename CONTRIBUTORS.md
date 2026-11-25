@@ -732,6 +732,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Mickey777777"><img src="https://avatars.githubusercontent.com/u/87453250?v=4?s=110" width="110px;" alt="Woohyun Park"/><br /><sub><b>Woohyun Park</b></sub></a><br /><a href="#security-Mickey777777" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Mitchell45"><img src="https://avatars.githubusercontent.com/u/74776018?v=4?s=110" width="110px;" alt="Mitch311"/><br /><sub><b>Mitch311</b></sub></a><br /><a href="#security-Mitchell45" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Mon3mRT"><img src="https://avatars.githubusercontent.com/u/189364500?v=4?s=110" width="110px;" alt="Mohamed Ahmed Abd elmoneam"/><br /><sub><b>Mohamed Ahmed Abd elmoneam</b></sub></a><br /><a href="#security-Mon3mRT" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/moratoantoine"><img src="https://avatars.githubusercontent.com/u/220617148?v=4?s=110" width="110px;" alt="Morato Antoine"/><br /><sub><b>Morato Antoine</b></sub></a><br /><a href="#security-moratoantoine" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
