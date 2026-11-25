@@ -716,6 +716,9 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/leograntquinn-crypto"><img src="https://avatars.githubusercontent.com/u/348121626?v=4?s=110" width="110px;" alt="leograntquinn-crypto"/><br /><sub><b>leograntquinn-crypto</b></sub></a><br /><a href="#security-leograntquinn-crypto" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/LHAMNS"><img src="https://avatars.githubusercontent.com/u/170247300?v=4?s=110" width="110px;" alt="LHAMNS"/><br /><sub><b>LHAMNS</b></sub></a><br /><a href="#security-LHAMNS" title="Security">🛡️</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/lorenzofradeani"><img src="https://avatars.githubusercontent.com/u/188067212?v=4?s=110" width="110px;" alt="lorenzofradeani"/><br /><sub><b>lorenzofradeani</b></sub></a><br /><a href="#security-lorenzofradeani" title="Security">🛡️</a></td>
+    </tr>
   </tbody>
 </table>
 
