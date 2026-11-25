@@ -87,12 +87,17 @@
                     @include ('partials.forms.edit.asset-select', ['translated_name' => trans('general.select_asset'), 'fieldname' => 'assigned_asset', 'company_id' => $asset->company_id, 'unselect' => 'true', 'exclude_id' => $asset->id, 'style' => session('checkout_to_type') == 'asset' ? '' : 'display: none;'])
                     @include ('partials.forms.edit.location-select', ['translated_name' => trans('general.location'), 'fieldname' => 'assigned_location', 'company_id' => $asset->company_id, 'style' => session('checkout_to_type') == 'location' ? '' : 'display: none;'])
 
-                        <x-input.location-select
-                            :label="trans('general.location')"
-                            name="location_id"
-                            :selected="old('location_id', $asset->location_id)"
-                            :company-id="$asset->company_id"
-                        />
+                        {{-- Hide location select if the target is already a location --}}
+                        <div id="location_id_row"
+                             @if(session('checkout_to_type') == 'location') style="display: none;" @endif>
+                            <x-input.location-select
+                                :label="trans('general.location')"
+                                name="location_id"
+                                :selected="old('location_id', $asset->location_id)"
+                                :company-id="$asset->company_id"
+                                :helpText="trans('general.location_edit_help')"
+                            />
+                        </div>
 
                         <x-input.location-select
                             :label="trans('admin/hardware/form.default_location')"
