@@ -5069,6 +5069,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "marin-syn",
+      "name": "marin-syn",
+      "avatar_url": "https://avatars.githubusercontent.com/u/296551222?v=4",
+      "profile": "https://github.com/marin-syn",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }
