@@ -5267,6 +5267,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "sec-reex",
+      "name": "sec-reex",
+      "avatar_url": "https://avatars.githubusercontent.com/u/268716145?v=4",
+      "profile": "https://github.com/sec-reex",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }

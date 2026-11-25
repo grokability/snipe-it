@@ -755,6 +755,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/SakusenSec"><img src="https://avatars.githubusercontent.com/u/268783706?v=4?s=110" width="110px;" alt="Sakusen"/><br /><sub><b>Sakusen</b></sub></a><br /><a href="#security-SakusenSec" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/sarellaarvind"><img src="https://avatars.githubusercontent.com/u/134442786?v=4?s=110" width="110px;" alt="SARELLA ARVIND"/><br /><sub><b>SARELLA ARVIND</b></sub></a><br /><a href="#security-sarellaarvind" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/sec-reex"><img src="https://avatars.githubusercontent.com/u/268716145?v=4?s=110" width="110px;" alt="sec-reex"/><br /><sub><b>sec-reex</b></sub></a><br /><a href="#security-sec-reex" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
