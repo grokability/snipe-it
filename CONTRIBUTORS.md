@@ -707,6 +707,9 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/isanghyeon"><img src="https://avatars.githubusercontent.com/u/61901762?v=4?s=110" width="110px;" alt="h9e0n"/><br /><sub><b>h9e0n</b></sub></a><br /><a href="#security-isanghyeon" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/JaimeRamirez-coder"><img src="https://avatars.githubusercontent.com/u/58531730?v=4?s=110" width="110px;" alt="Jaime Ramírez"/><br /><sub><b>Jaime Ramírez</b></sub></a><br /><a href="#security-JaimeRamirez-coder" title="Security">🛡️</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/joostgrunwald"><img src="https://avatars.githubusercontent.com/u/19670768?v=4?s=110" width="110px;" alt="Joost Grunwald"/><br /><sub><b>Joost Grunwald</b></sub></a><br /><a href="#security-joostgrunwald" title="Security">🛡️</a></td>
+    </tr>
   </tbody>
 </table>
 
