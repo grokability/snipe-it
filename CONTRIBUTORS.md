@@ -747,6 +747,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/petriQore"><img src="https://avatars.githubusercontent.com/u/123587287?v=4?s=110" width="110px;" alt="Ahmed Limam"/><br /><sub><b>Ahmed Limam</b></sub></a><br /><a href="#security-petriQore" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.pizzasteve.me/"><img src="https://avatars.githubusercontent.com/u/168266846?v=4?s=110" width="110px;" alt="Ahmed Mohammed"/><br /><sub><b>Ahmed Mohammed</b></sub></a><br /><a href="#security-PizzaStev3" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/prboyer"><img src="https://avatars.githubusercontent.com/u/6655042?v=4?s=110" width="110px;" alt="Paul Boyer"/><br /><sub><b>Paul Boyer</b></sub></a><br /><a href="#security-prboyer" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/QwesiRED"><img src="https://avatars.githubusercontent.com/u/53085292?v=4?s=110" width="110px;" alt="Adam N."/><br /><sub><b>Adam N.</b></sub></a><br /><a href="#security-QwesiRED" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
