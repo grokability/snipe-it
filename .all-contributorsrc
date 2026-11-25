@@ -5060,6 +5060,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "manus-use",
+      "name": "Jace",
+      "avatar_url": "https://avatars.githubusercontent.com/u/213290975?v=4",
+      "profile": "https://github.com/manus-use",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }

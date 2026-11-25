@@ -725,6 +725,9 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mantraak"><img src="https://avatars.githubusercontent.com/u/195462062?v=4?s=110" width="110px;" alt="Mantraa K"/><br /><sub><b>Mantraa K</b></sub></a><br /><a href="#security-mantraak" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/manus-pi"><img src="https://avatars.githubusercontent.com/u/263165539?v=4?s=110" width="110px;" alt="Daniel Coles"/><br /><sub><b>Daniel Coles</b></sub></a><br /><a href="#security-manus-pi" title="Security">🛡️</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/manus-use"><img src="https://avatars.githubusercontent.com/u/213290975?v=4?s=110" width="110px;" alt="Jace"/><br /><sub><b>Jace</b></sub></a><br /><a href="#security-manus-use" title="Security">🛡️</a></td>
+    </tr>
   </tbody>
 </table>
 
