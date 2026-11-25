@@ -821,6 +821,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/WheezeNL"><img src="https://avatars.githubusercontent.com/u/12260054?v=4?s=110" width="110px;" alt="Wheeze_NL"/><br /><sub><b>Wheeze_NL</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=WheezeNL" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/WistfulDream"><img src="https://avatars.githubusercontent.com/u/8671456?v=4?s=110" width="110px;" alt="Wistful_Dream"/><br /><sub><b>Wistful_Dream</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=WistfulDream" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/addiedx44"><img src="https://avatars.githubusercontent.com/u/768488?v=4?s=110" width="110px;" alt="Addie"/><br /><sub><b>Addie</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=addiedx44" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ardevd"><img src="https://avatars.githubusercontent.com/u/366855?v=4?s=110" width="110px;" alt="ardevd"/><br /><sub><b>ardevd</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=ardevd" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
