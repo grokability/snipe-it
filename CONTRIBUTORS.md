@@ -874,6 +874,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/sorrowfulwarrior"><img src="https://avatars.githubusercontent.com/u/40658372?v=4?s=110" width="110px;" alt="sorrowfulwarrior"/><br /><sub><b>sorrowfulwarrior</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=sorrowfulwarrior" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/spacjalex"><img src="https://avatars.githubusercontent.com/u/57222349?v=4?s=110" width="110px;" alt="alex"/><br /><sub><b>alex</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=spacjalex" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://signal18.io/"><img src="https://avatars.githubusercontent.com/u/971260?v=4?s=110" width="110px;" alt="Guillaume Lefranc"/><br /><sub><b>Guillaume Lefranc</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=tanji" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://timo.page/"><img src="https://avatars.githubusercontent.com/u/8849554?v=4?s=110" width="110px;" alt="Timo Schwarzer"/><br /><sub><b>Timo Schwarzer</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=timoschwarzer" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
