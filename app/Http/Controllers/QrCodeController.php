@@ -26,6 +26,15 @@ class QrCodeController extends Controller
         'users' => 'users.show',
     ];
 
+    /**
+     * Storage key of the cached QR PNG for an object. The API transformer and
+     * the label renderer link to the same file, so they must use this too.
+     */
+    public static function cacheKey(string $objectType, int|string $id): string
+    {
+        return FileStorage::Barcodes->publicPath().'qr-'.str_slug($objectType).'-'.str_slug((string) $id).'.png';
+    }
+
     public function show($object_type, $id): Response|BinaryFileResponse|string|bool
     {
         // Opt this route out of Laravel's session "previous URL"
@@ -52,7 +61,7 @@ class QrCodeController extends Controller
         }
 
         $size = Helper::barcodeDimensions($settings->label2_2d_type);
-        $qr_key = FileStorage::Barcodes->publicPath().'qr-'.str_slug($object_type).'-'.str_slug($id).'.png';
+        $qr_key = self::cacheKey($object_type, $id);
 
         if (! Storage::disk('public')->exists($qr_key)) {
             $barcode = new Barcode;
