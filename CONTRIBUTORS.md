@@ -659,6 +659,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://sentry.security/"><img src="https://avatars.githubusercontent.com/u/114161501?v=4?s=110" width="110px;" alt="Redon Gashi"/><br /><sub><b>Redon Gashi</b></sub></a><br /><a href="#security-0xrdi" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://saikat.hackzar.com/"><img src="https://avatars.githubusercontent.com/u/72136146?v=4?s=110" width="110px;" alt="Sakil Hasan Saikat"/><br /><sub><b>Sakil Hasan Saikat</b></sub></a><br /><a href="#security-0xSaikat" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/5h1kh4r"><img src="https://avatars.githubusercontent.com/u/99708506?v=4?s=110" width="110px;" alt="5h1kh4r"/><br /><sub><b>5h1kh4r</b></sub></a><br /><a href="#security-5h1kh4r" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/5ud0er"><img src="https://avatars.githubusercontent.com/u/88728909?v=4?s=110" width="110px;" alt="5ud0er"/><br /><sub><b>5ud0er</b></sub></a><br /><a href="#security-5ud0er" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
