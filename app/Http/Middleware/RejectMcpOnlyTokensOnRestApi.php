@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Laravel\Passport\AccessToken;
+use Laravel\Passport\Contracts\ScopeAuthorizable;
 use Laravel\Passport\Token;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -31,15 +33,22 @@ class RejectMcpOnlyTokensOnRestApi
             return $next($request);
         }
 
+        // Passport 13's bearer guard attaches an AccessToken value object
+        // built from the PSR-7 request. Earlier versions and Passport::actingAs
+        // with a Token model may still attach the eloquent Token. Accept the
+        // shared ScopeAuthorizable contract so we're not tied to either.
         $token = $user->token();
-        if (! $token instanceof Token) {
+        if (! $token instanceof ScopeAuthorizable) {
             // Not a Passport-issued token (session cookie, OIDC bearer,
             // etc.). Nothing to scope-check here.
             return $next($request);
         }
 
-        $scopes = $token->scopes ?? [];
-        if ($scopes === []) {
+        $scopes = $token instanceof AccessToken
+            ? ($token->oauth_scopes ?? [])
+            : ($token->scopes ?? []);
+
+        if (! is_array($scopes) || $scopes === []) {
             // Empty scopes = full-power token (personal access tokens
             // and legacy pre-scope tokens). Allow.
             return $next($request);
