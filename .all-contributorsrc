@@ -4880,6 +4880,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "Haxset",
+      "name": "Haxset",
+      "avatar_url": "https://avatars.githubusercontent.com/u/293919956?v=4",
+      "profile": "https://haxset.com/",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }

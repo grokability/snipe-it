@@ -700,6 +700,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Hama1cco"><img src="https://avatars.githubusercontent.com/u/115479378?v=4?s=110" width="110px;" alt="Hama1cco"/><br /><sub><b>Hama1cco</b></sub></a><br /><a href="#security-Hama1cco" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://haxset.com/"><img src="https://avatars.githubusercontent.com/u/293919956?v=4?s=110" width="110px;" alt="Haxset"/><br /><sub><b>Haxset</b></sub></a><br /><a href="#security-Haxset" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
