@@ -653,6 +653,9 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/0xAspros"><img src="https://avatars.githubusercontent.com/u/190133983?v=4?s=110" width="110px;" alt="0xAspros"/><br /><sub><b>0xAspros</b></sub></a><br /><a href="#security-0xAspros" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://0xbbuddha.fr/"><img src="https://avatars.githubusercontent.com/u/137881590?v=4?s=110" width="110px;" alt="bbuddha"/><br /><sub><b>bbuddha</b></sub></a><br /><a href="#security-0xbbuddha" title="Security">🛡️</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/0xcelien"><img src="https://avatars.githubusercontent.com/u/71899327?v=4?s=110" width="110px;" alt="Célien"/><br /><sub><b>Célien</b></sub></a><br /><a href="#security-0xcelien" title="Security">🛡️</a></td>
+    </tr>
   </tbody>
 </table>
 
