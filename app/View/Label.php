@@ -5,6 +5,7 @@ namespace App\View;
 use App\Enums\FileStorage;
 use App\Helpers\Helper;
 use App\Helpers\StorageHelper;
+use App\Http\Controllers\QrCodeController;
 use App\Models\Labels\CustomLabels\PreviewSheetLabel;
 use App\Models\Labels\CustomLabels\PreviewTapeLabel;
 use App\Models\Labels\CustomUserLabel;
@@ -349,8 +350,7 @@ class Label implements View
             $perAsset = [];
 
             if ($qrEnabled) {
-                // QR cache key matches QrCodeController::show('hardware', $id).
-                $qrKey = $barcodeDir.'qr-hardware-'.str_slug($asset->id).'.png';
+                $qrKey = QrCodeController::cacheKey('hardware', $asset->id);
 
                 if (! isset($cachedFiles[$qrKey])) {
                     $barcode = new Barcode;

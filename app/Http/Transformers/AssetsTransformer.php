@@ -4,6 +4,7 @@ namespace App\Http\Transformers;
 
 use App\Enums\FileStorage;
 use App\Helpers\Helper;
+use App\Http\Controllers\QrCodeController;
 use App\Models\AccessoryCheckout;
 use App\Models\Asset;
 use App\Models\Component;
@@ -122,7 +123,7 @@ class AssetsTransformer
             ] : null,
             'image' => ($asset->getImageUrl()) ? $asset->getImageUrl() : null,
             'qr_code_url' => route('qr_code/common', ['object_type' => 'hardware', 'id' => $asset->id]),
-            'qr' => ($setting->qr_code == '1') ? Storage::disk('public')->url(FileStorage::Barcodes->publicPath().'qr-'.str_slug($asset->asset_tag).'-'.str_slug($asset->id).'.png') : null,
+            'qr' => ($setting->qr_code == '1') ? Storage::disk('public')->url(QrCodeController::cacheKey('hardware', $asset->id)) : null,
             'alt_barcode' => ($setting->alt_barcode_enabled == '1') ? Storage::disk('public')->url(FileStorage::Barcodes->publicPath().str_slug($setting->alt_barcode).'-'.str_slug($asset->asset_tag).'.png') : null,
             'assigned_to' => $this->transformAssignedTo($asset),
             'warranty_months' => ($asset->warranty_months > 0) ? e($asset->warranty_months.' '.trans('admin/hardware/form.months')) : null,
