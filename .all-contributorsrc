@@ -5249,6 +5249,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "SakusenSec",
+      "name": "Sakusen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/268783706?v=4",
+      "profile": "https://github.com/SakusenSec",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }
