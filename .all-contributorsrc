@@ -2885,7 +2885,9 @@
       "name": "Martin Meredith",
       "avatar_url": "https://avatars.githubusercontent.com/u/570639?v=4",
       "profile": "https://github.com/Mezzle",
-      "contributions": []
+      "contributions": [
+        "code"
+      ]
     },
     {
       "login": "dboth",
