@@ -698,6 +698,9 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/GrayOM"><img src="https://avatars.githubusercontent.com/u/85995476?v=4?s=110" width="110px;" alt="G_OM"/><br /><sub><b>G_OM</b></sub></a><br /><a href="#security-GrayOM" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/gudangkantong"><img src="https://avatars.githubusercontent.com/u/297284822?v=4?s=110" width="110px;" alt="0xpack"/><br /><sub><b>0xpack</b></sub></a><br /><a href="#security-gudangkantong" title="Security">🛡️</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Hama1cco"><img src="https://avatars.githubusercontent.com/u/115479378?v=4?s=110" width="110px;" alt="Hama1cco"/><br /><sub><b>Hama1cco</b></sub></a><br /><a href="#security-Hama1cco" title="Security">🛡️</a></td>
+    </tr>
   </tbody>
 </table>
 
