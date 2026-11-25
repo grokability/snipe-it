@@ -792,6 +792,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/windbreaker555"><img src="https://avatars.githubusercontent.com/u/232655138?v=4?s=110" width="110px;" alt="windbreaker555"/><br /><sub><b>windbreaker555</b></sub></a><br /><a href="#security-windbreaker555" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/WojciechCiemski"><img src="https://avatars.githubusercontent.com/u/223643001?v=4?s=110" width="110px;" alt="WojciechCiemski"/><br /><sub><b>WojciechCiemski</b></sub></a><br /><a href="#security-WojciechCiemski" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/wolvenspud"><img src="https://avatars.githubusercontent.com/u/57519687?v=4?s=110" width="110px;" alt="Wolvenspud"/><br /><sub><b>Wolvenspud</b></sub></a><br /><a href="#security-wolvenspud" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/wooseokdotkim"><img src="https://avatars.githubusercontent.com/u/121649701?v=4?s=110" width="110px;" alt="wooseokdotkim"/><br /><sub><b>wooseokdotkim</b></sub></a><br /><a href="#security-wooseokdotkim" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
