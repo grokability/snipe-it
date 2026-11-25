@@ -4952,6 +4952,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "kats1123",
+      "name": "Jonathan Kats",
+      "avatar_url": "https://avatars.githubusercontent.com/u/42283268?v=4",
+      "profile": "https://jonakats.com/",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }
