@@ -18,7 +18,7 @@ class CheckinLicenseToolTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actingAs(User::factory()->checkoutLicenses()->create());
+        $this->actingAs(User::factory()->checkoutLicenses()->checkinLicenses()->create());
     }
 
     private function handle(array $args): ResponseFactory
@@ -134,6 +134,42 @@ class CheckinLicenseToolTest extends TestCase
         $this->assertDatabaseHas('license_seats', [
             'id' => $seat->id,
             'assigned_to' => $user->id,
+        ]);
+    }
+
+    public function test_checkout_only_actor_cannot_check_in_a_seat(): void
+    {
+        $license = License::factory()->create(['seats' => 3, 'reassignable' => true]);
+        $holder = User::factory()->create();
+        $seat = $this->checkoutToUser($license, $holder);
+
+        $this->actingAs(User::factory()->checkoutLicenses()->create());
+
+        $this->assertTrue($this->handle(['seat_id' => $seat->id])->responses()->first()->isError());
+        $this->assertDatabaseHas('license_seats', [
+            'id' => $seat->id,
+            'assigned_to' => $holder->id,
+        ]);
+    }
+
+    public function test_checkin_only_actor_can_check_in_a_seat(): void
+    {
+        // Positive control for the policy swap. An account with only
+        // licenses.checkin (plus licenses.view for the seat lookup) must
+        // be allowed to release a seat, matching the REST and web contract.
+        $license = License::factory()->create(['seats' => 3, 'reassignable' => true]);
+        $holder = User::factory()->create();
+        $seat = $this->checkoutToUser($license, $holder);
+
+        $this->actingAs(User::factory()->viewLicenses()->checkinLicenses()->create());
+
+        $content = $this->handle(['seat_id' => $seat->id])->getStructuredContent();
+
+        $this->assertTrue($content['success']);
+        $this->assertDatabaseHas('license_seats', [
+            'id' => $seat->id,
+            'assigned_to' => null,
+            'asset_id' => null,
         ]);
     }
 }

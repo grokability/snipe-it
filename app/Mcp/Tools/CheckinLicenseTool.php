@@ -6,7 +6,6 @@ use App\Enums\McpScope;
 use App\Events\CheckoutableCheckedIn;
 use App\Mcp\Traits\SnipeMcpTool;
 use App\Models\Asset;
-use App\Models\License;
 use App\Models\LicenseSeat;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -40,10 +39,8 @@ class CheckinLicenseTool extends Tool
         $seat = LicenseSeat::with('license')->find($request->get('seat_id'));
         $license = $seat?->license;
 
-        // License checkin reuses the checkout gate. Collapse the three
-        // "no" cases so seat state can't be probed by an unauthorized
-        // caller.
-        if (! $seat || ! $license || ! Gate::allows('checkout', $license)) {
+        // Require licenses.checkin
+        if (! $seat || ! $license || ! Gate::allows('checkin', $license)) {
             return Response::make(Response::error(trans('general.generic_model_not_found', ['model' => trans('general.license')])));
         }
 
