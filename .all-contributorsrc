@@ -4538,6 +4538,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "0xAspros",
+      "name": "0xAspros",
+      "avatar_url": "https://avatars.githubusercontent.com/u/190133983?v=4",
+      "profile": "https://github.com/0xAspros",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }
