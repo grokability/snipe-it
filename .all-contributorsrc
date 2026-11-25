@@ -4583,6 +4583,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "0xSaikat",
+      "name": "Sakil Hasan Saikat",
+      "avatar_url": "https://avatars.githubusercontent.com/u/72136146?v=4",
+      "profile": "https://saikat.hackzar.com/",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }
