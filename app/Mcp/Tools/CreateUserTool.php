@@ -9,8 +9,10 @@ use App\Models\Company;
 use App\Models\Department;
 use App\Models\Group;
 use App\Models\Location;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -80,6 +82,44 @@ class CreateUserTool extends Tool
             return Response::make(Response::error($e->validator->errors()->first()));
         }
 
+        // Resolve the requested company before save
+        $requestedCompanyIds = [];
+        if (!empty($input['company_id'])) {
+            $requestedCompanyIds = [(int) $input['company_id']];
+        }
+        $permittedCompanyIds = Company::getIdsForCurrentUser($requestedCompanyIds);
+
+        if (count($requestedCompanyIds) !== count($permittedCompanyIds)) {
+            return Response::make(Response::error(trans('admin/users/message.error.company_not_permitted')));
+        }
+
+        // Mirror SaveUserRequest::withValidator floater gates so an MCP
+        // caller cannot mint an uncompanied account the REST and web paths
+        // would refuse. #19192 covers strict FMCS, #19200 covers floater-
+        // grant under null_company_is_floater.
+        if (empty($permittedCompanyIds)) {
+            $settings = Setting::getSettings();
+            $actor = auth()->user();
+            $creatorIsSuper = (bool) $actor?->isSuperUser();
+            $creatorHasCompanies = (bool) $actor?->companies()->exists();
+            $strictFmcs = $settings->full_multiple_companies_support && !$settings->null_company_is_floater;
+
+            if ($strictFmcs && !$creatorIsSuper && $creatorHasCompanies) {
+                return Response::make(Response::error(trans('validation.fmcs_company', ['attribute' => trans('general.company')])));
+            }
+
+            if (!$actor?->canGrantFloaterStatus()) {
+                return Response::make(Response::error(trans('admin/users/general.cannot_make_floater')));
+            }
+        }
+
+        // Validate the group-ids payload up front so the transaction below
+        // is a straight-line succeed-or-rollback instead of needing to
+        // unwind an already-saved user record.
+        if ($request->filled('group_ids') && !auth()->user()->isSuperUser()) {
+            return Response::make(Response::error(trans('mcp.superadmin_required_for_groups')));
+        }
+
         if ($request->filled('password')) {
             $validated['password'] = bcrypt($validated['password']);
         }
@@ -88,42 +128,50 @@ class CreateUserTool extends Tool
         $user->activated = $request->filled('activated') ? (int) $request->boolean('activated') : 1;
         $user->created_by = auth()->id();
 
-        if ($user->save()) {
-            // Company membership is pivot-based (company_user) after the
-            // parent-company feature landed. users.company_id was renamed
-            // to legacy_company_id as a non-authoritative mirror. Attach
-            // the resolved company via the pivot, then sync the legacy
-            // mirror so FMCS checks that still read either can agree.
-            $companyId = Company::getIdForCurrentUser($input['company_id'] ?? null);
-            if ($companyId !== null) {
-                $user->companies()->syncWithoutDetaching([$companyId]);
-                $user->syncLegacyCompanyIdMirror();
+        $saveFailed = false;
+        $errorMessage = null;
+        $groupIds = [];
+
+        DB::transaction(function () use (
+            $user,
+            $request,
+            $permittedCompanyIds,
+            &$saveFailed,
+            &$errorMessage,
+            &$groupIds
+        ) {
+            if (!$user->save()) {
+                $saveFailed = true;
+                $errorMessage = $user->getErrors()->first();
+
+                return;
             }
 
-            $groupIds = [];
-            if ($request->filled('group_ids') && auth()->user()->isSuperUser()) {
+            $user->syncCompaniesWithLogging($permittedCompanyIds);
+
+            if ($request->filled('group_ids')) {
                 $groupIds = Group::whereIn('id', $request->get('group_ids'))->pluck('id')->all();
                 $user->groups()->sync($groupIds);
-            } elseif ($request->filled('group_ids')) {
-                return Response::make(Response::error(trans('mcp.superadmin_required_for_groups')));
             }
+        });
 
-            return $this->structuredResponse(
-                trans('mcp.user_created', ['username' => $user->username]),
-                [
-                    'success' => true,
-                    'message' => trans('mcp.user_created', ['username' => $user->username]),
-                    'id' => $user->id,
-                    'username' => $user->username,
-                    'email' => $user->email,
-                    'first_name' => $user->first_name,
-                    'last_name' => $user->last_name,
-                    'group_ids' => $groupIds,
-                ]
-            );
+        if ($saveFailed) {
+            return Response::make(Response::error(trans('mcp.create_failed', ['error' => $errorMessage])));
         }
 
-        return Response::make(Response::error(trans('mcp.create_failed', ['error' => $user->getErrors()->first()])));
+        return $this->structuredResponse(
+            trans('mcp.user_created', ['username' => $user->username]),
+            [
+                'success' => true,
+                'message' => trans('mcp.user_created', ['username' => $user->username]),
+                'id' => $user->id,
+                'username' => $user->username,
+                'email' => $user->email,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'group_ids' => $groupIds,
+            ]
+        );
     }
 
     public function schema(JsonSchema $schema): array
