@@ -109,6 +109,16 @@ class AuthServiceProvider extends ServiceProvider
             \Laravel\Passport\Http\Controllers\AuthorizationController::class,
             \App\Auth\Passport\AuthorizationController::class,
         );
+
+        // Passport's service provider binds StatefulGuard contextually to
+        // its own AuthorizationController FQCN. When the container
+        // resolves our override it's a different class, so the parent
+        // contextual binding doesn't fire and construction fails with
+        // "Target [StatefulGuard] is not instantiable". Mirror the
+        // Passport binding onto the override FQCN.
+        $this->app->when(\App\Auth\Passport\AuthorizationController::class)
+            ->needs(\Illuminate\Contracts\Auth\StatefulGuard::class)
+            ->give(fn () => \Illuminate\Support\Facades\Auth::guard(config('passport.guard', null)));
     }
 
     /**
