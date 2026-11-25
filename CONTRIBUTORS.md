@@ -876,6 +876,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://signal18.io/"><img src="https://avatars.githubusercontent.com/u/971260?v=4?s=110" width="110px;" alt="Guillaume Lefranc"/><br /><sub><b>Guillaume Lefranc</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=tanji" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://timo.page/"><img src="https://avatars.githubusercontent.com/u/8849554?v=4?s=110" width="110px;" alt="Timo Schwarzer"/><br /><sub><b>Timo Schwarzer</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=timoschwarzer" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/trav-c"><img src="https://avatars.githubusercontent.com/u/6055998?v=4?s=110" width="110px;" alt="Travers Carter"/><br /><sub><b>Travers Carter</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=trav-c" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://artosteam.com/"><img src="https://avatars.githubusercontent.com/u/670861?v=4?s=110" width="110px;" alt="Valentine Budkin"/><br /><sub><b>Valentine Budkin</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=vabue" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
