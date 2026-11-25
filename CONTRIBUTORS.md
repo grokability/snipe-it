@@ -779,6 +779,9 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/tufanturhan"><img src="https://avatars.githubusercontent.com/u/49189594?v=4?s=110" width="110px;" alt="tufanturhan"/><br /><sub><b>tufanturhan</b></sub></a><br /><a href="#security-tufanturhan" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://udaypali.vercel.app/"><img src="https://avatars.githubusercontent.com/u/69238780?v=4?s=110" width="110px;" alt="UDAYPALI"/><br /><sub><b>UDAYPALI</b></sub></a><br /><a href="#security-udaypali" title="Security">🛡️</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://vasco0x4.me/"><img src="https://avatars.githubusercontent.com/u/63432221?v=4?s=110" width="110px;" alt="Vasco "/><br /><sub><b>Vasco </b></sub></a><br /><a href="#security-Vasco0x4" title="Security">🛡️</a></td>
+    </tr>
   </tbody>
 </table>
 
