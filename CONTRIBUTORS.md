@@ -656,6 +656,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/0xcelien"><img src="https://avatars.githubusercontent.com/u/71899327?v=4?s=110" width="110px;" alt="Célien"/><br /><sub><b>Célien</b></sub></a><br /><a href="#security-0xcelien" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/0xjunwei"><img src="https://avatars.githubusercontent.com/u/53926665?v=4?s=110" width="110px;" alt="Jun Wei"/><br /><sub><b>Jun Wei</b></sub></a><br /><a href="#security-0xjunwei" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://sentry.security/"><img src="https://avatars.githubusercontent.com/u/114161501?v=4?s=110" width="110px;" alt="Redon Gashi"/><br /><sub><b>Redon Gashi</b></sub></a><br /><a href="#security-0xrdi" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>

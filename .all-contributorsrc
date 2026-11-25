@@ -4574,6 +4574,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "0xrdi",
+      "name": "Redon Gashi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/114161501?v=4",
+      "profile": "https://sentry.security/",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }
