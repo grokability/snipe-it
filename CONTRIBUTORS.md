@@ -667,6 +667,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/adrbogacz"><img src="https://avatars.githubusercontent.com/u/9935142?v=4?s=110" width="110px;" alt="adrbogacz"/><br /><sub><b>adrbogacz</b></sub></a><br /><a href="#security-adrbogacz" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ahmadallobani"><img src="https://avatars.githubusercontent.com/u/54261085?v=4?s=110" width="110px;" alt="ahmad allobani"/><br /><sub><b>ahmad allobani</b></sub></a><br /><a href="#security-ahmadallobani" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Angl0r"><img src="https://avatars.githubusercontent.com/u/7713685?v=4?s=110" width="110px;" alt="Angl0r"/><br /><sub><b>Angl0r</b></sub></a><br /><a href="#security-Angl0r" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/archnexus707"><img src="https://avatars.githubusercontent.com/u/264354348?v=4?s=110" width="110px;" alt="archnexus707"/><br /><sub><b>archnexus707</b></sub></a><br /><a href="#security-archnexus707" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
