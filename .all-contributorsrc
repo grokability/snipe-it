@@ -5951,6 +5951,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "jotterbot",
+      "name": "James Otter",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1405388?v=4",
+      "profile": "https://github.com/jotterbot",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }
