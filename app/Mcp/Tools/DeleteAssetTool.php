@@ -16,6 +16,7 @@ use App\Models\Supplier;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -68,6 +69,11 @@ class DeleteAssetTool extends Tool
     {
         if ($denied = $this->scopeDenied(McpScope::Delete)) {
             return $denied;
+        }
+
+        // See DeleteAccessoryTool for rationale on gating the preview.
+        if (! Gate::allows('index', Asset::class) && ! Gate::allows('delete', Asset::class)) {
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {

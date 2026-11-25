@@ -14,6 +14,7 @@ use App\Models\Supplier;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -56,6 +57,13 @@ class DeleteAccessoryTool extends Tool
     {
         if ($denied = $this->scopeDenied(McpScope::Delete)) {
             return $denied;
+        }
+
+        // Gate the preview: the dry-run shape returns record names,
+        // ids and a total_matched count, so a caller without view OR
+        // delete would otherwise be able to enumerate records.
+        if (!Gate::allows('index', Accessory::class) && !Gate::allows('delete', Accessory::class)) {
+            return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 
         try {

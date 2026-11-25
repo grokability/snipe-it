@@ -60,6 +60,11 @@ class DeleteUserTool extends Tool
             return $denied;
         }
 
+        // See DeleteAccessoryTool for rationale on gating the preview.
+        if (! Gate::allows('index', User::class) && ! Gate::allows('delete', User::class)) {
+            return Response::make(Response::error(trans('mcp.unauthorized')));
+        }
+
         try {
             $request->validate([
                 'id' => 'nullable|integer',
