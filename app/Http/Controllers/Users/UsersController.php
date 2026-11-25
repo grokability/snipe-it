@@ -620,7 +620,7 @@ class UsersController extends Controller
 
             fputcsv($handle, $headers, escape: '\\', eol: "\r\n");
 
-            $users = User::with(
+            User::with(
                 'assets',
                 'accessories',
                 'consumables',

@@ -29,6 +29,11 @@ use RuntimeException;
  */
 class BridgeUserRepository extends BaseUserRepository
 {
+    /**
+     * $grantType is unused but required by the overridden Passport signature.
+     *
+     * @SuppressWarnings("PHPMD.UnusedFormalParameter")
+     */
     public function getUserEntityByUserCredentials(
         string $username,
         string $password,

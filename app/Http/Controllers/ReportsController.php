@@ -353,7 +353,7 @@ class ReportsController extends Controller
             $executionTime = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
             Log::debug('Added headers: '.$executionTime);
 
-            $actionlogs = Actionlog::with('item', 'user', 'target', 'location', 'adminuser')
+            Actionlog::with('item', 'user', 'target', 'location', 'adminuser')
                 ->when($viewableTypeFilter !== null, fn ($q) => $q->where(function ($inner) use ($viewableTypeFilter) {
                     $inner->whereIn('item_type', $viewableTypeFilter)
                         ->orWhereIn('target_type', $viewableTypeFilter);

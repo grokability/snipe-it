@@ -85,17 +85,17 @@ class RegenerateAssetTags extends Command
             $this->info("\n");
 
             if (($this->option('output') == 'all') || ($this->option('output') == 'info')) {
-                foreach ($output['info'] as $key => $output_text) {
+                foreach ($output['info'] as $output_text) {
                     $this->info($output_text);
                 }
             }
             if (($this->option('output') == 'all') || ($this->option('output') == 'warn')) {
-                foreach ($output['warn'] as $key => $output_text) {
+                foreach ($output['warn'] as $output_text) {
                     $this->warn($output_text);
                 }
             }
             if (($this->option('output') == 'all') || ($this->option('output') == 'error')) {
-                foreach ($output['error'] as $key => $output_text) {
+                foreach ($output['error'] as $output_text) {
                     $this->error($output_text);
                 }
             }

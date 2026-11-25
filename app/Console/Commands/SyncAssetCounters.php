@@ -45,7 +45,7 @@ class SyncAssetCounters extends Command
         $assets_count = Asset::withTrashed()->count();
         $bar = $this->output->createProgressBar($assets_count);
 
-        $assets = Asset::withCount('checkins as checkins_count', 'checkouts as checkouts_count', 'userRequests as user_requests_count')
+        Asset::withCount('checkins as checkins_count', 'checkouts as checkouts_count', 'userRequests as user_requests_count')
             ->withTrashed()->chunk(100, function ($assets) use ($bar) {
 
                 if ($assets->count() > 0) {
