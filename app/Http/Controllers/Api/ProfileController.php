@@ -126,17 +126,10 @@ class ProfileController extends Controller
      */
     public function assets(Request $request, ProfileTransformer $transformer): array|JsonResponse
     {
-        $assigned_user_id = auth()->id();
+        $assigned_user_id = $this->getAssignedUserId($request);
 
-        if (($request->filled('user_id')) && ($request->input('user_id') != $assigned_user_id)) {
-
-            $assigned_user = User::find($request->input('user_id'));
-
-            if (($assigned_user) && (Setting::getSettings()->manager_view_enabled) && ((auth()->user()->isSuperUser() && $assigned_user->activated) || auth()->user()->isManagerOf($assigned_user))) {
-                $assigned_user_id = $assigned_user->id;
-            } else {
-                return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/users/message.user_not_found')));
-            }
+        if (! $assigned_user_id) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/users/message.user_not_found')));
         }
 
         $allowed_columns = [
@@ -182,6 +175,25 @@ class ProfileController extends Controller
         $assets = $assets->orderBy('assets.'.$sort, $order)->skip($offset)->take($limit)->get();
 
         return $transformer->transformAssets($assets, $total);
+    }
+
+    /**
+     * Get the user whose assets the Manager View table should list.
+     * Returns null when the caller may not view the requested user.
+     */
+    private function getAssignedUserId(Request $request): ?int
+    {
+        if ((! $request->filled('user_id')) || ($request->input('user_id') == auth()->id())) {
+            return auth()->id();
+        }
+
+        $assigned_user = User::find($request->input('user_id'));
+
+        if (($assigned_user) && (Setting::getSettings()->manager_view_enabled) && ((auth()->user()->isSuperUser() && $assigned_user->activated) || auth()->user()->isManagerOf($assigned_user))) {
+            return $assigned_user->id;
+        }
+
+        return null;
     }
 
     /**
