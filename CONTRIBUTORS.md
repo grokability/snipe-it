@@ -718,6 +718,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/lorenzofradeani"><img src="https://avatars.githubusercontent.com/u/188067212?v=4?s=110" width="110px;" alt="lorenzofradeani"/><br /><sub><b>lorenzofradeani</b></sub></a><br /><a href="#security-lorenzofradeani" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://vokecyber.com/"><img src="https://avatars.githubusercontent.com/u/20933064?v=4?s=110" width="110px;" alt="Louis Sanchez"/><br /><sub><b>Louis Sanchez</b></sub></a><br /><a href="#security-louissanchez-vokecyber" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>

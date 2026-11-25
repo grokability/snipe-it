@@ -5006,6 +5006,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "louissanchez-vokecyber",
+      "name": "Louis Sanchez",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20933064?v=4",
+      "profile": "https://vokecyber.com/",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }
