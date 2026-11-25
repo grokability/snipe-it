@@ -761,6 +761,9 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/skeletonsec"><img src="https://avatars.githubusercontent.com/u/298925831?v=4?s=110" width="110px;" alt="skeletonsec"/><br /><sub><b>skeletonsec</b></sub></a><br /><a href="#security-skeletonsec" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/skroecher-gingco"><img src="https://avatars.githubusercontent.com/u/56080092?v=4?s=110" width="110px;" alt="skroecher-gingco"/><br /><sub><b>skroecher-gingco</b></sub></a><br /><a href="#security-skroecher-gingco" title="Security">🛡️</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://submersion.ai/"><img src="https://avatars.githubusercontent.com/u/317992939?v=4?s=110" width="110px;" alt="Submersion AI - Security Research Team (SRT)"/><br /><sub><b>Submersion AI - Security Research Team (SRT)</b></sub></a><br /><a href="#security-SRTSubmersionAI" title="Security">🛡️</a></td>
+    </tr>
   </tbody>
 </table>
 

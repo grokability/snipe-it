@@ -5312,6 +5312,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "SRTSubmersionAI",
+      "name": "Submersion AI - Security Research Team (SRT)",
+      "avatar_url": "https://avatars.githubusercontent.com/u/317992939?v=4",
+      "profile": "https://submersion.ai/",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }
