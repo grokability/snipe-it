@@ -683,6 +683,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/callmeks"><img src="https://avatars.githubusercontent.com/u/88197307?v=4?s=110" width="110px;" alt="ks"/><br /><sub><b>ks</b></sub></a><br /><a href="#security-callmeks" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/catAnie"><img src="https://avatars.githubusercontent.com/u/40802727?v=4?s=110" width="110px;" alt="catAnie"/><br /><sub><b>catAnie</b></sub></a><br /><a href="#security-catAnie" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/CE2Sec"><img src="https://avatars.githubusercontent.com/u/135195424?v=4?s=110" width="110px;" alt="Akamoli"/><br /><sub><b>Akamoli</b></sub></a><br /><a href="#security-CE2Sec" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
