@@ -739,6 +739,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://mut3dcybersecurity.com/"><img src="https://avatars.githubusercontent.com/u/87484792?v=4?s=110" width="110px;" alt="Muted Cybersecurity"/><br /><sub><b>Muted Cybersecurity</b></sub></a><br /><a href="#security-MutedCybersecurity" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/nguyenvantiennani"><img src="https://avatars.githubusercontent.com/u/224717050?v=4?s=110" width="110px;" alt="Nguyễn Văn Tiến"/><br /><sub><b>Nguyễn Văn Tiến</b></sub></a><br /><a href="#security-nguyenvantiennani" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/nicetrykiddo"><img src="https://avatars.githubusercontent.com/u/175843527?v=4?s=110" width="110px;" alt="nicetrykiddo"/><br /><sub><b>nicetrykiddo</b></sub></a><br /><a href="#security-nicetrykiddo" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/nullbenny"><img src="https://avatars.githubusercontent.com/u/178788771?v=4?s=110" width="110px;" alt="Ben"/><br /><sub><b>Ben</b></sub></a><br /><a href="#security-nullbenny" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
