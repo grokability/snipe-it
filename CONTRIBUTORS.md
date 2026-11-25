@@ -844,6 +844,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/gdelbergue"><img src="https://avatars.githubusercontent.com/u/4040959?v=4?s=110" width="110px;" alt="Guillaume Delbergue"/><br /><sub><b>Guillaume Delbergue</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=gdelbergue" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://kgoetz.id.au/"><img src="https://avatars.githubusercontent.com/u/8732490?v=4?s=110" width="110px;" alt="Karl Goetz"/><br /><sub><b>Karl Goetz</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=goetzk" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
