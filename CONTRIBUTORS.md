@@ -759,6 +759,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/simialfapro"><img src="https://avatars.githubusercontent.com/u/83188686?v=4?s=110" width="110px;" alt="Simi"/><br /><sub><b>Simi</b></sub></a><br /><a href="#security-simialfapro" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Sitevo"><img src="https://avatars.githubusercontent.com/u/267115173?v=4?s=110" width="110px;" alt="Sitevo"/><br /><sub><b>Sitevo</b></sub></a><br /><a href="#security-Sitevo" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/skeletonsec"><img src="https://avatars.githubusercontent.com/u/298925831?v=4?s=110" width="110px;" alt="skeletonsec"/><br /><sub><b>skeletonsec</b></sub></a><br /><a href="#security-skeletonsec" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/skroecher-gingco"><img src="https://avatars.githubusercontent.com/u/56080092?v=4?s=110" width="110px;" alt="skroecher-gingco"/><br /><sub><b>skroecher-gingco</b></sub></a><br /><a href="#security-skroecher-gingco" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
