@@ -705,6 +705,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ibrahimaljaafreh"><img src="https://avatars.githubusercontent.com/u/181156587?v=4?s=110" width="110px;" alt="Ibrahim AlJaafreh"/><br /><sub><b>Ibrahim AlJaafreh</b></sub></a><br /><a href="#security-ibrahimaljaafreh" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/iltosec"><img src="https://avatars.githubusercontent.com/u/85459074?v=4?s=110" width="110px;" alt="Ali İltizar"/><br /><sub><b>Ali İltizar</b></sub></a><br /><a href="#security-iltosec" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/isanghyeon"><img src="https://avatars.githubusercontent.com/u/61901762?v=4?s=110" width="110px;" alt="h9e0n"/><br /><sub><b>h9e0n</b></sub></a><br /><a href="#security-isanghyeon" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/JaimeRamirez-coder"><img src="https://avatars.githubusercontent.com/u/58531730?v=4?s=110" width="110px;" alt="Jaime Ramírez"/><br /><sub><b>Jaime Ramírez</b></sub></a><br /><a href="#security-JaimeRamirez-coder" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
