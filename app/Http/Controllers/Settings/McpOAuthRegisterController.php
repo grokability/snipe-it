@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Settings;
 
+use App\Enums\McpScope;
 use App\Models\OAuthClient;
 use App\Models\User;
 use App\Notifications\PendingOauthClientNotification;
@@ -13,7 +14,6 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Laravel\Mcp\Server\Http\Controllers\OAuthRegisterController;
-use Laravel\Mcp\Server\Registrar;
 use Throwable;
 
 /**
@@ -101,15 +101,17 @@ class McpOAuthRegisterController extends OAuthRegisterController
 
         // Response shape matches the vendor controller so compliant
         // DCR clients (Claude Desktop, etc.) parse it the same way.
-        // The pending-state detail is NOT surfaced in the response so
-        // the client can't tell whether it was auto-approved or is
-        // waiting on admin review until it tries the authorize flow.
+        // The scope field lists every McpScope value so a client that
+        // reads it (per RFC 7591) knows it can request capability
+        // scopes beyond the session-level mcp:use. Clients that only read
+        // auth-server metadata's `scopes_supported` get the same full list from
+        // that endpoint, so both paths work.
         return response()->json([
             'client_id' => (string) $client->id,
             'grant_types' => $client->getAttribute('grant_types'),
             'response_types' => ['code'],
             'redirect_uris' => $client->getAttribute('redirect_uris'),
-            'scope' => Registrar::OAUTH_SCOPE,
+            'scope' => implode(' ', McpScope::values()),
             'token_endpoint_auth_method' => 'none',
             ...$metadata,
         ], 201);

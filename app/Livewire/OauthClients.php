@@ -4,10 +4,12 @@ namespace App\Livewire;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Token;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Renderless;
 use Livewire\Component;
 
 class OauthClients extends Component
@@ -39,6 +41,30 @@ class OauthClients extends Component
      * revoked via the per-client delete action.
      */
     public bool $showRevoked = false;
+
+    /**
+     *   mcp     : Confidential client. External app has a backend
+     *             that can keep a secret.
+     *   mobile  : Public client. No secret. Admin tells the app to
+     *             use PKCE for the code exchange.
+     *
+     * Scopes are deliberately NOT collected here. Scopes are on the
+     * TOKEN, not to the client row (Passport does not have a
+     * per-client scope allow-list in this schema). The external app
+     * requests whichever scopes it needs at authorize time, the user
+     * consents on the Snipe-IT consent screen, and the resulting
+     * token carries exactly those scopes.
+     */
+    public string $intent = 'mcp';
+    
+    public ?string $newClientId = null;
+
+    public ?string $newClientSecret = null;
+
+    protected $listeners = [
+        'resetCreateClientForm' => 'resetCreateClientForm',
+        'resetEditClientForm' => 'resetEditClientForm',
+    ];
 
     public function mount(?string $section = null): void
     {
@@ -164,16 +190,75 @@ class OauthClients extends Component
         $this->validate([
             'name' => 'required|string|max:255',
             'redirect' => 'required|url|max:255',
+            'intent' => ['required', Rule::in(['mcp', 'mobile'])],
         ]);
 
-        app(ClientRepository::class)->createAuthorizationCodeGrantClient(
+        // MCP integrations are server-side external apps that need
+        // the client_id + secret pair to exchange authorization codes.
+        // Mobile / SPA clients cannot keep a secret and use PKCE
+        // instead, so they register as public (no secret).
+        $confidential = $this->intent === 'mcp';
+
+        $client = app(ClientRepository::class)->createAuthorizationCodeGrantClient(
             name: $this->name,
             redirectUris: [$this->redirect],
+            confidential: $confidential,
             user: auth()->user(),
         );
 
+        // plainSecret is a runtime-only attribute Passport sets on
+        // the Client model during create, so this is the only point
+        // in the request lifecycle where the cleartext value exists.
+        // Public clients have no secret, so plainSecret stays null.
+        $this->newClientId = (string) $client->id;
+        $this->newClientSecret = $client->plainSecret;
+
+        $this->reset(['name', 'redirect']);
+        // Explicit reset so the next create defaults back to the mcp
+        // intent. Livewire's reset() restores the property to its
+        // class default, but spelling it out keeps the intent next to
+        // the other post-create cleanup rather than hidden in a
+        // property initializer.
+        $this->intent = 'mcp';
+        $this->resetValidation();
+
         session()->flash('success', trans('admin/settings/message.oauth.client_created'));
         $this->dispatch('clientCreated');
+    }
+
+    /**
+     * Clear the previous info from new modals on same page load.
+     */
+    #[Renderless]
+    public function dismissNewClient(): void
+    {
+        $this->newClientId = null;
+        $this->newClientSecret = null;
+    }
+
+    /**
+     * Reset the create-modal form state server-side.
+     */
+    #[Renderless]
+    public function resetCreateClientForm(): void
+    {
+        $this->reset(['name', 'redirect']);
+        $this->intent = 'mcp';
+        $this->resetValidation();
+    }
+
+    /**
+     * Same reset hook as the create form, scoped to the edit modal's
+     * fields. editName / editRedirect are populated by editClient()
+     * when the admin clicks the row's pencil button, so this wipes
+     * them along with validation state on dismiss.
+     */
+    #[Renderless]
+    public function resetEditClientForm(): void
+    {
+        $this->reset(['editName', 'editRedirect', 'editClientId']);
+        $this->authorizationError = null;
+        $this->resetValidation();
     }
 
     public function deleteClient(Client $clientId): void
@@ -184,9 +269,15 @@ class OauthClients extends Component
             app(ClientRepository::class)->delete($clientId);
             session()->flash('success', trans('admin/settings/message.oauth.client_deleted'));
         } else {
-            Log::warning('User '.auth()->id().' attempted to delete client '.$clientId->id.' which belongs to user '.$clientId->created_by);
+            Log::warning('User ' . auth()->id() . ' attempted to delete client ' . $clientId->id . ' which belongs to user ' . $clientId->user_id);
             $this->authorizationError = trans('admin/settings/message.oauth.client_delete_denied');
         }
+
+        // Signals the view's listener to re-init bs-table after the
+        // morph strips its toolbar + pagination wrappers. Fires on
+        // both the success and the denied branch so the listener
+        // runs regardless of outcome.
+        $this->dispatch('clientDeleted');
     }
 
     public function deleteAuthorizedApplication(string $clientId): void
@@ -241,17 +332,22 @@ class OauthClients extends Component
         ]);
 
         $client = app(ClientRepository::class)->find($editClientId->id);
-        if ($client->user_id == auth()->id()) {
+        // Match the authorization shape of editClient / deleteClient:
+        // superusers can edit any client, other users can only edit
+        // their own. Previously this branch gated purely on
+        // owner-match, so a superuser editing a DCR'd client (or
+        // another user's client) would see the denied message even
+        // though they already got past the edit-modal preload.
+        if (auth()->user()?->isSuperUser() || $client->user_id == auth()->id()) {
             $client->name = $this->editName;
             $client->redirect = $this->editRedirect;
             $client->save();
             session()->flash('success', trans('admin/settings/message.oauth.client_updated'));
         } else {
-            Log::warning('User '.auth()->id().' attempted to edit client '.$editClientId->id.' which belongs to user '.$client->created_by);
+            Log::warning('User ' . auth()->id() . ' attempted to edit client ' . $editClientId->id . ' which belongs to user ' . $client->user_id);
             $this->authorizationError = trans('admin/settings/message.oauth.client_edit_denied');
         }
 
         $this->dispatch('clientUpdated');
-
     }
 }

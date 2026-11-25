@@ -8,6 +8,8 @@
                 class="table table-striped snipe-table"
                 data-toolbar="#PersonalAccessTokensToolbar"
                 data-toggle="table"
+                data-cookie-id-table="AdminPersonalAccessTokensTable"
+                data-id-table="AdminPersonalAccessTokensTable"
                 data-sort-name="created_at"
                 data-sort-order="desc"
             >
