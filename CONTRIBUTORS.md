@@ -799,6 +799,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/zachariah-mithani"><img src="https://avatars.githubusercontent.com/u/118302440?v=4?s=110" width="110px;" alt="Zachariah Mithani"/><br /><sub><b>Zachariah Mithani</b></sub></a><br /><a href="#security-zachariah-mithani" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/zaehuncho"><img src="https://avatars.githubusercontent.com/u/269712221?v=4?s=110" width="110px;" alt="zaehuncho"/><br /><sub><b>zaehuncho</b></sub></a><br /><a href="#security-zaehuncho" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
