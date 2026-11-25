@@ -4736,6 +4736,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "builtbybrayden",
+      "name": "Brayden Arnold",
+      "avatar_url": "https://avatars.githubusercontent.com/u/176640731?v=4",
+      "profile": "https://github.com/builtbybrayden",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }
