@@ -880,6 +880,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/vasiliyplotnikov"><img src="https://avatars.githubusercontent.com/u/14108695?v=4?s=110" width="110px;" alt="Vasily Plotnikov"/><br /><sub><b>Vasily Plotnikov</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=vasiliyplotnikov" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/victoralmeidaf"><img src="https://avatars.githubusercontent.com/u/23075196?v=4?s=110" width="110px;" alt="Victor Almeida"/><br /><sub><b>Victor Almeida</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=victoralmeidaf" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
