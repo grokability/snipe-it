@@ -4844,6 +4844,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "euriconicacio",
+      "name": "Eurico Nicacio",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5957301?v=4",
+      "profile": "https://euriconicacio.github.io/",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }
