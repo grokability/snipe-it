@@ -686,6 +686,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/CE2Sec"><img src="https://avatars.githubusercontent.com/u/135195424?v=4?s=110" width="110px;" alt="Akamoli"/><br /><sub><b>Akamoli</b></sub></a><br /><a href="#security-CE2Sec" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/christopherfi-dev"><img src="https://avatars.githubusercontent.com/u/273243828?v=4?s=110" width="110px;" alt="christopherfi-dev"/><br /><sub><b>christopherfi-dev</b></sub></a><br /><a href="#security-christopherfi-dev" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/colinthebomb1"><img src="https://avatars.githubusercontent.com/u/194442835?v=4?s=110" width="110px;" alt="colinthebomb1"/><br /><sub><b>colinthebomb1</b></sub></a><br /><a href="#security-colinthebomb1" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/CoSunshine"><img src="https://avatars.githubusercontent.com/u/20333522?v=4?s=110" width="110px;" alt="Liuhuo Wan"/><br /><sub><b>Liuhuo Wan</b></sub></a><br /><a href="#security-CoSunshine" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
