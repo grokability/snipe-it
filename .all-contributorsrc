@@ -4826,6 +4826,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "dylanzonix",
+      "name": "Dylan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/167351340?v=4",
+      "profile": "https://github.com/dylanzonix",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }
