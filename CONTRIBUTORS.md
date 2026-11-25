@@ -797,6 +797,9 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ya3raj"><img src="https://avatars.githubusercontent.com/u/59885197?v=4?s=110" width="110px;" alt="Bhuwan Bhetwal"/><br /><sub><b>Bhuwan Bhetwal</b></sub></a><br /><a href="#security-ya3raj" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/yssoe"><img src="https://avatars.githubusercontent.com/u/19391216?v=4?s=110" width="110px;" alt="Yves"/><br /><sub><b>Yves</b></sub></a><br /><a href="#security-yssoe" title="Security">🛡️</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/zachariah-mithani"><img src="https://avatars.githubusercontent.com/u/118302440?v=4?s=110" width="110px;" alt="Zachariah Mithani"/><br /><sub><b>Zachariah Mithani</b></sub></a><br /><a href="#security-zachariah-mithani" title="Security">🛡️</a></td>
+    </tr>
   </tbody>
 </table>
 
