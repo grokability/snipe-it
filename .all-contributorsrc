@@ -5429,6 +5429,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "udaypali",
+      "name": "UDAYPALI",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69238780?v=4",
+      "profile": "https://udaypali.vercel.app/",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }

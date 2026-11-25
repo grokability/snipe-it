@@ -777,6 +777,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/tonghuaroot"><img src="https://avatars.githubusercontent.com/u/23011166?v=4?s=110" width="110px;" alt="tonghuaroot (童话)"/><br /><sub><b>tonghuaroot (童话)</b></sub></a><br /><a href="#security-tonghuaroot" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/TristanInSec"><img src="https://avatars.githubusercontent.com/u/1075304?v=4?s=110" width="110px;" alt="Tristan"/><br /><sub><b>Tristan</b></sub></a><br /><a href="#security-TristanInSec" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/tufanturhan"><img src="https://avatars.githubusercontent.com/u/49189594?v=4?s=110" width="110px;" alt="tufanturhan"/><br /><sub><b>tufanturhan</b></sub></a><br /><a href="#security-tufanturhan" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://udaypali.vercel.app/"><img src="https://avatars.githubusercontent.com/u/69238780?v=4?s=110" width="110px;" alt="UDAYPALI"/><br /><sub><b>UDAYPALI</b></sub></a><br /><a href="#security-udaypali" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
