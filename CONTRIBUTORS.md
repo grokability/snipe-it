@@ -675,6 +675,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/avrlab233"><img src="https://avatars.githubusercontent.com/u/322990224?v=4?s=110" width="110px;" alt="avrlab233"/><br /><sub><b>avrlab233</b></sub></a><br /><a href="#security-avrlab233" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Axnco"><img src="https://avatars.githubusercontent.com/u/115355347?v=4?s=110" width="110px;" alt="Axnco"/><br /><sub><b>Axnco</b></sub></a><br /><a href="#security-Axnco" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/B1gN0Se"><img src="https://avatars.githubusercontent.com/u/86577632?v=4?s=110" width="110px;" alt="B1gN0Se"/><br /><sub><b>B1gN0Se</b></sub></a><br /><a href="#security-B1gN0Se" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/baeseungwon1010"><img src="https://avatars.githubusercontent.com/u/202220081?v=4?s=110" width="110px;" alt="baeseungwon1010"/><br /><sub><b>baeseungwon1010</b></sub></a><br /><a href="#security-baeseungwon1010" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
