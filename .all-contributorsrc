@@ -4610,6 +4610,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "adamyordan",
+      "name": "Adam Jordan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9531164?v=4",
+      "profile": "https://github.com/adamyordan",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }
