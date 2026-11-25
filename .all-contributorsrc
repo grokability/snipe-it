@@ -5411,6 +5411,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "TristanInSec",
+      "name": "Tristan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1075304?v=4",
+      "profile": "https://github.com/TristanInSec",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }

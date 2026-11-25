@@ -775,6 +775,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/thinhlx-vn"><img src="https://avatars.githubusercontent.com/u/312327872?v=4?s=110" width="110px;" alt="ThinhLuu"/><br /><sub><b>ThinhLuu</b></sub></a><br /><a href="#security-thinhlx-vn" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/tienneR"><img src="https://avatars.githubusercontent.com/u/141822225?v=4?s=110" width="110px;" alt="Lorenzo Russo"/><br /><sub><b>Lorenzo Russo</b></sub></a><br /><a href="#security-tienneR" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/tonghuaroot"><img src="https://avatars.githubusercontent.com/u/23011166?v=4?s=110" width="110px;" alt="tonghuaroot (童话)"/><br /><sub><b>tonghuaroot (童话)</b></sub></a><br /><a href="#security-tonghuaroot" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/TristanInSec"><img src="https://avatars.githubusercontent.com/u/1075304?v=4?s=110" width="110px;" alt="Tristan"/><br /><sub><b>Tristan</b></sub></a><br /><a href="#security-TristanInSec" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
