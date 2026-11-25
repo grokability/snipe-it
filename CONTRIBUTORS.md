@@ -867,6 +867,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://olivercjcox.uk/"><img src="https://avatars.githubusercontent.com/u/16722292?v=4?s=110" width="110px;" alt="Oliver Cox"/><br /><sub><b>Oliver Cox</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=oolivero45" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://othyn.com/"><img src="https://avatars.githubusercontent.com/u/7256684?v=4?s=110" width="110px;" alt="Ben"/><br /><sub><b>Ben</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=othyn" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/perkolatte"><img src="https://avatars.githubusercontent.com/u/6164726?v=4?s=110" width="110px;" alt="Ian Isaacson"/><br /><sub><b>Ian Isaacson</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=perkolatte" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/rho333"><img src="https://avatars.githubusercontent.com/u/6551003?v=4?s=110" width="110px;" alt="rho333"/><br /><sub><b>rho333</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=rho333" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
