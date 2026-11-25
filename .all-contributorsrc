@@ -5240,6 +5240,15 @@
       "contributions": [
         "security"
       ]
+    },
+    {
+      "login": "sajax",
+      "name": "Simon Trendell",
+      "avatar_url": "https://avatars.githubusercontent.com/u/140081?v=4",
+      "profile": "https://github.com/sajax",
+      "contributions": [
+        "security"
+      ]
     }
   ]
 }
