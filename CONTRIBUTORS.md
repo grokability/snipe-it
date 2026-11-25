@@ -783,6 +783,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="http://vasco0x4.me/"><img src="https://avatars.githubusercontent.com/u/63432221?v=4?s=110" width="110px;" alt="Vasco "/><br /><sub><b>Vasco </b></sub></a><br /><a href="#security-Vasco0x4" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Vectrain51"><img src="https://avatars.githubusercontent.com/u/301939316?v=4?s=110" width="110px;" alt="Vectrain51"/><br /><sub><b>Vectrain51</b></sub></a><br /><a href="#security-Vectrain51" title="Security">🛡️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/vitasec"><img src="https://avatars.githubusercontent.com/u/189550152?v=4?s=110" width="110px;" alt="David Abdurahmanov"/><br /><sub><b>David Abdurahmanov</b></sub></a><br /><a href="#security-vitasec" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/W1nterFr3ak"><img src="https://avatars.githubusercontent.com/u/55146805?v=4?s=110" width="110px;" alt="Winter"/><br /><sub><b>Winter</b></sub></a><br /><a href="#security-W1nterFr3ak" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
