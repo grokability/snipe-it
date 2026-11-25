@@ -860,6 +860,9 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://mjmair.com/"><img src="https://avatars.githubusercontent.com/u/66015116?v=4?s=110" width="110px;" alt="Matthias Mair"/><br /><sub><b>Matthias Mair</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=matmair" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mesmerus"><img src="https://avatars.githubusercontent.com/u/6693474?v=4?s=110" width="110px;" alt="Amity"/><br /><sub><b>Amity</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=mesmerus" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/moonpetaldev"><img src="https://avatars.githubusercontent.com/u/10965027?v=4?s=110" width="110px;" alt="Nyx"/><br /><sub><b>Nyx</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=moonpetaldev" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
