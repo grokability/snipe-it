@@ -810,6 +810,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/JohnyByk"><img src="https://avatars.githubusercontent.com/u/1186514?v=4?s=110" width="110px;" alt="Łukasz"/><br /><sub><b>Łukasz</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=JohnyByk" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/JorisVanEijden"><img src="https://avatars.githubusercontent.com/u/5211470?v=4?s=110" width="110px;" alt="Joris van Eijden"/><br /><sub><b>Joris van Eijden</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=JorisVanEijden" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/K4linux96"><img src="https://avatars.githubusercontent.com/u/46974897?v=4?s=110" width="110px;" alt="K4linux96"/><br /><sub><b>K4linux96</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=K4linux96" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.maniactwister.de/"><img src="https://avatars.githubusercontent.com/u/893193?v=4?s=110" width="110px;" alt="ManiacTwister"/><br /><sub><b>ManiacTwister</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=ManiacTwister" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
