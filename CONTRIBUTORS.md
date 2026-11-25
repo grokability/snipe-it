@@ -709,6 +709,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/joostgrunwald"><img src="https://avatars.githubusercontent.com/u/19670768?v=4?s=110" width="110px;" alt="Joost Grunwald"/><br /><sub><b>Joost Grunwald</b></sub></a><br /><a href="#security-joostgrunwald" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kaizhi888"><img src="https://avatars.githubusercontent.com/u/141372104?v=4?s=110" width="110px;" alt="Hiu Kai Zhi"/><br /><sub><b>Hiu Kai Zhi</b></sub></a><br /><a href="#security-kaizhi888" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
