@@ -651,6 +651,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
       <td align="center" valign="top" width="14.28%"><a href="https://bankoflamps.com"><img src="https://avatars.githubusercontent.com/u/1244112?v=4?s=110" width="110px;" alt="Oleg Andreyev"/><br /><sub><b>Oleg Andreyev</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=oleg-andreyev" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/shsteveno-dot"><img src="https://avatars.githubusercontent.com/u/345995304?v=4?s=110" width="110px;" alt="shsteveno-dot"/><br /><sub><b>shsteveno-dot</b></sub></a><br /><a href="https://github.com/snipe/snipe-it/commits?author=shsteveno-dot" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/0xAspros"><img src="https://avatars.githubusercontent.com/u/190133983?v=4?s=110" width="110px;" alt="0xAspros"/><br /><sub><b>0xAspros</b></sub></a><br /><a href="#security-0xAspros" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://0xbbuddha.fr/"><img src="https://avatars.githubusercontent.com/u/137881590?v=4?s=110" width="110px;" alt="bbuddha"/><br /><sub><b>bbuddha</b></sub></a><br /><a href="#security-0xbbuddha" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
