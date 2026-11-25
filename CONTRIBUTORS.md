@@ -664,6 +664,7 @@ Thanks goes to all of these wonderful people ([emoji key](https://github.com/ken
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/aadityasunny06"><img src="https://avatars.githubusercontent.com/u/251592748?v=4?s=110" width="110px;" alt="Aditay Kumar"/><br /><sub><b>Aditay Kumar</b></sub></a><br /><a href="#security-adityasunny06help-coder" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/adrbogacz"><img src="https://avatars.githubusercontent.com/u/9935142?v=4?s=110" width="110px;" alt="adrbogacz"/><br /><sub><b>adrbogacz</b></sub></a><br /><a href="#security-adrbogacz" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
