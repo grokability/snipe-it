@@ -35,9 +35,12 @@ class TrustHostsTest extends TestCase
 
     public function test_health_request_accepts_an_untrusted_host(): void
     {
-        $this->get('http://127.0.0.1/health')->assertOk();
+        $this->get('http://127.0.0.1/health')
+            ->assertOk()
+            ->assertCookieMissing(config('session.cookie'));
 
         $this->assertSame('127.0.0.1', $this->app['request']->getHost());
+        $this->assertFalse($this->app['request']->hasSession());
     }
 
     public function test_health_exception_does_not_allow_untrusted_hosts_on_other_requests(): void

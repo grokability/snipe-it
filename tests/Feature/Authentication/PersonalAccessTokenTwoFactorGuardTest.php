@@ -4,6 +4,7 @@ namespace Tests\Feature\Authentication;
 
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Laravel\Passport\Passport;
 use Tests\TestCase;
 
 /**
@@ -115,5 +116,178 @@ class PersonalAccessTokenTwoFactorGuardTest extends TestCase
         $this->actingAs($user, 'api')
             ->postJson(route('api.personal-access-token.create'), ['name' => 'optout'])
             ->assertOk();
+    }
+
+    public function test_bearer_token_can_manage_personal_tokens_when_two_factor_is_disabled(): void
+    {
+        $this->settings->set(['two_factor_enabled' => '']);
+        $this->seedPassportPersonalAccessClient();
+        $user = User::factory()->selfApi()->create();
+        $token = $user->createToken('existing');
+
+        // Exercise the API without the test environment's automatic CSRF bypass.
+        $this->app->instance('env', 'local');
+        $this->withHeader('Authorization', 'Bearer '.$token->accessToken);
+
+        $this->getJson(route('api.personal-access-token.index'))
+            ->assertOk()
+            ->assertJsonPath('payload.0.id', $token->token->id);
+        $response = $this->postJson(route('api.personal-access-token.create'), ['name' => 'created'])
+            ->assertOk();
+        $createdTokenId = $response->json('payload.id');
+        $this->assertNotNull($createdTokenId);
+        $this->deleteJson(route('api.personal-access-token.delete', $createdTokenId))->assertNoContent();
+
+        $this->assertDatabaseHas('oauth_access_tokens', ['id' => $createdTokenId, 'revoked' => true]);
+        $this->assertFalse($token->token->fresh()->revoked);
+        $this->getJson(route('api.users.me'))->assertOk();
+    }
+
+    public function test_api_user_without_self_api_permission_cannot_manage_personal_tokens(): void
+    {
+        $this->settings->set(['two_factor_enabled' => '']);
+        $this->actingAsForApi(User::factory()->create());
+
+        $this->getJson(route('api.personal-access-token.index'))->assertForbidden();
+        $this->postJson(route('api.personal-access-token.create'), ['name' => 'denied'])->assertForbidden();
+        $this->deleteJson(route('api.personal-access-token.delete', 'any-token'))->assertForbidden();
+    }
+
+    public function test_cannot_delete_personal_token_before_completing_two_factor(): void
+    {
+        $this->settings->set(['two_factor_enabled' => '2']);
+        $user = User::factory()->selfApi()->create([
+            'two_factor_optin' => '1',
+            'two_factor_enrolled' => '1',
+            'two_factor_secret' => 'TESTSECRET',
+        ]);
+
+        $this->actingAs($user, 'api')
+            ->deleteJson(route('api.personal-access-token.delete', 'any-token'))
+            ->assertForbidden();
+    }
+
+    public function test_can_list_and_delete_personal_token_after_completing_two_factor(): void
+    {
+        $this->settings->set(['two_factor_enabled' => '2']);
+        $this->seedPassportPersonalAccessClient();
+        $user = User::factory()->selfApi()->create([
+            'two_factor_optin' => '1',
+            'two_factor_enrolled' => '1',
+            'two_factor_secret' => 'TESTSECRET',
+        ]);
+        $token = $user->createToken('existing')->token;
+
+        $this->actingAs($user, 'api')->withSession(['2fa_authed' => $user->id]);
+
+        $this->getJson(route('api.personal-access-token.index'))
+            ->assertOk()
+            ->assertJsonPath('payload.0.id', $token->id);
+        $this->deleteJson(route('api.personal-access-token.delete', $token->id))->assertNoContent();
+        $this->assertTrue($token->fresh()->revoked);
+    }
+
+    public function test_bearer_token_without_completed_two_factor_session_cannot_manage_personal_tokens(): void
+    {
+        $this->settings->set(['two_factor_enabled' => '2']);
+        $this->seedPassportPersonalAccessClient();
+        $user = User::factory()->selfApi()->create([
+            'two_factor_optin' => '1',
+            'two_factor_enrolled' => '1',
+            'two_factor_secret' => 'TESTSECRET',
+        ]);
+        $token = $user->createToken('existing');
+
+        $this->withHeader('Authorization', 'Bearer '.$token->accessToken);
+
+        $this->getJson(route('api.personal-access-token.index'))->assertForbidden();
+        $this->postJson(route('api.personal-access-token.create'), ['name' => 'denied'])
+            ->assertForbidden();
+        $this->deleteJson(route('api.personal-access-token.delete', $token->token->id))->assertForbidden();
+
+        $this->assertDatabaseMissing('oauth_access_tokens', ['name' => 'denied']);
+        $this->assertFalse($token->token->fresh()->revoked);
+    }
+
+    public function test_browser_login_cookie_authenticates_ordinary_api_without_a_session(): void
+    {
+        // Disabled 2FA is stored as null; MySQL coerces an empty string to zero.
+        $this->settings->set(['two_factor_enabled' => null]);
+        $user = User::factory()->selfApi()->create();
+
+        $this->post(route('login'), ['username' => $user->username, 'password' => 'password'])
+            ->assertRedirect();
+        $this->assertAuthenticatedAs($user);
+        $response = $this->get(route('user.api'))->assertOk();
+        $cookie = $response->getCookie(Passport::cookie(), false);
+        $this->assertNotNull($cookie);
+        $csrfToken = session()->token();
+
+        $this->app['auth']->forgetGuards();
+
+        $this->withCredentials()
+            ->withUnencryptedCookie(Passport::cookie(), $cookie->getValue())
+            ->withHeader('X-CSRF-TOKEN', $csrfToken)
+            ->getJson(route('api.users.me'))
+            ->assertOk()
+            ->assertCookieMissing(config('session.cookie'));
+
+        $this->assertFalse($this->app['request']->hasSession());
+    }
+
+    public function test_browser_cookies_preserve_completed_two_factor_for_api_token_creation(): void
+    {
+        config(['session.driver' => 'cookie']);
+        $this->app['session']->forgetDrivers();
+        $this->app->forgetInstance('session.store');
+        $this->app['auth']->forgetGuards();
+        $this->settings->set(['two_factor_enabled' => '2']);
+        $this->seedPassportPersonalAccessClient();
+        $user = User::factory()->selfApi()->create([
+            'two_factor_optin' => '1',
+            'two_factor_enrolled' => '1',
+            'two_factor_secret' => 'TESTSECRET',
+        ]);
+
+        $this->app['session']->driver()->setRequestOnHandler($this->app['request']);
+        $this->actingAs($user)->withSession(['2fa_authed' => $user->id]);
+        $page = $this->get(route('user.api'))->assertOk();
+        $sessionId = session()->getId();
+        $csrfToken = session()->token();
+        $cookies = [];
+        foreach ($page->headers->getCookies() as $cookie) {
+            $cookies[$cookie->getName()] = $cookie->getValue();
+        }
+        $this->assertArrayHasKey(Passport::cookie(), $cookies);
+        $this->assertArrayHasKey($sessionId, $cookies);
+
+        // The next request must recover identity and 2FA solely from browser cookies.
+        $this->app['auth']->forgetGuards();
+        $this->app['session']->forgetDrivers();
+        $this->app->forgetInstance('session.store');
+        $this->app['cookie']->flushQueuedCookies();
+
+        $response = $this->withCredentials()
+            ->withUnencryptedCookies($cookies)
+            ->withHeader('X-CSRF-TOKEN', $csrfToken)
+            ->postJson(route('api.personal-access-token.create'), ['name' => 'browser-cookie-token'])
+            ->assertOk();
+
+        $this->assertDatabaseHas('oauth_access_tokens', [
+            'name' => 'browser-cookie-token',
+            'user_id' => $user->id,
+        ]);
+        $this->assertSame($user->id, $this->app['request']->session()->get('2fa_authed'));
+        $payloadCookie = $response->getCookie($sessionId);
+        $this->assertNotNull($payloadCookie);
+        $this->assertStringContainsString('2fa_authed', $payloadCookie->getValue());
+        $encryptedPayloadCookie = $response->getCookie($sessionId, false);
+        $this->assertNotNull($encryptedPayloadCookie);
+        $this->assertStringNotContainsString('2fa_authed', $encryptedPayloadCookie->getValue());
+
+        $this->app['auth']->forgetGuards();
+        $this->withHeader('X-CSRF-TOKEN', 'invalid')
+            ->getJson(route('api.personal-access-token.index'))
+            ->assertUnauthorized();
     }
 }

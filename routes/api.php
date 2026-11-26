@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api;
+use App\Http\Middleware\EncryptApiSessionCookies;
+use App\Http\Middleware\RecoverLegacyPassportSession;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Client;
 
@@ -147,26 +150,33 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
             [Api\LicensesController::class, 'requestable']
         )->name('api.licenses.requestable');
 
-        Route::post('personal-access-tokens',
-            [
-                Api\ProfileController::class,
-                'createApiToken',
-            ]
-        )->name('api.personal-access-token.create');
+        // Only token management needs the browser session's completed-2FA marker.
+        Route::middleware([
+            EncryptApiSessionCookies::class,
+            AddQueuedCookiesToResponse::class,
+            RecoverLegacyPassportSession::class,
+        ])->group(function () {
+            Route::post('personal-access-tokens',
+                [
+                    Api\ProfileController::class,
+                    'createApiToken',
+                ]
+            )->name('api.personal-access-token.create');
 
-        Route::get('personal-access-tokens',
-            [
-                Api\ProfileController::class,
-                'showApiTokens',
-            ]
-        )->name('api.personal-access-token.index');
+            Route::get('personal-access-tokens',
+                [
+                    Api\ProfileController::class,
+                    'showApiTokens',
+                ]
+            )->name('api.personal-access-token.index');
 
-        Route::delete('personal-access-tokens/{tokenId}',
-            [
-                Api\ProfileController::class,
-                'deleteApiToken',
-            ]
-        )->name('api.personal-access-token.delete');
+            Route::delete('personal-access-tokens/{tokenId}',
+                [
+                    Api\ProfileController::class,
+                    'deleteApiToken',
+                ]
+            )->name('api.personal-access-token.delete');
+        });
 
     }); // end account group
 

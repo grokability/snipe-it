@@ -13,7 +13,7 @@ class RadioRowTest extends TestCase
     {
         Route::get('/__test/radio-row', function () use ($data) {
             return view('blade.form.radio-row', $data);
-        });
+        })->middleware('web');
 
         $call = $this->withoutMiddleware([
             CheckForSetup::class,

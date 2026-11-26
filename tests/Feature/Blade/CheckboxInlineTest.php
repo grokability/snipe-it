@@ -13,7 +13,7 @@ class CheckboxInlineTest extends TestCase
     {
         Route::get('/__test/checkbox-inline', function () use ($data) {
             return view('blade.form.checkbox-inline', $data);
-        });
+        })->middleware('web');
 
         $call = $this->withoutMiddleware([
             CheckForSetup::class,

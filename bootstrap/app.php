@@ -13,7 +13,6 @@ use App\Http\Middleware\EnforceMcpScopeHandshake;
 use App\Http\Middleware\EnsureOAuthClientApproved;
 use App\Http\Middleware\IssueFreshApiTokenIfTwoFactorComplete;
 use App\Http\Middleware\LogAuthedUserHeader;
-use App\Http\Middleware\NoSessionStore;
 use App\Http\Middleware\PreventBackHistory;
 use App\Http\Middleware\RecoverLegacyPassportSession;
 use App\Http\Middleware\RejectMcpOnlyTokensOnRestApi;
@@ -23,7 +22,6 @@ use App\Http\Middleware\SetPaginationDefaults;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 $app = Application::configure(basePath: dirname(__DIR__))
     // Auto-discovers plain handle()-style listeners in app/Listeners (e.g. LogSuccessfulLogin,
@@ -34,16 +32,8 @@ $app = Application::configure(basePath: dirname(__DIR__))
         // TrimStrings, so future framework additions are inherited automatically.
         // Allow health probes by pod IP or loopback without rejecting their Host header.
         $middleware->trustHosts(fn () => config('app.allow_insecure_hosts') || request()->is('health') ? ['.*'] : []);
-        // Order matters: NoSessionStore must run before StartSession (it may force
-        // the array session driver for /health), and CheckForDebug reads auth state.
-        // Sessions and shared errors currently run globally; /health excludes the
-        // web group but does not itself require session/auth state.
         $middleware->append([
-            NoSessionStore::class,
-            RecoverLegacyPassportSession::class,
-            ShareErrorsFromSession::class,
             CheckForSetup::class,
-            CheckForDebug::class,
             SecurityHeaders::class,
             PreventBackHistory::class,
             // Blocks OAuth authorize + token for pending/rejected clients.
@@ -54,14 +44,16 @@ $app = Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(
             append: [
+                CheckForDebug::class,
                 CheckLocale::class,
                 CheckUserIsActivated::class,
                 CheckForTwoFactor::class,
                 IssueFreshApiTokenIfTwoFactorComplete::class,
                 CheckColorSettings::class,
             ],
-            // These already run globally, including for API and health requests.
-            remove: [StartSession::class, ShareErrorsFromSession::class],
+            replace: [
+                StartSession::class => RecoverLegacyPassportSession::class,
+            ],
         );
 
         $middleware->api(
