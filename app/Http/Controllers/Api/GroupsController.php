@@ -23,7 +23,7 @@ class GroupsController extends Controller
      */
     public function index(FilterRequest $request): JsonResponse|array
     {
-        $this->authorize('superadmin');
+        $this->authorize('superuser');
 
         $this->authorize('view', Group::class);
 
@@ -77,7 +77,7 @@ class GroupsController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $this->authorize('superadmin');
+        $this->authorize('superuser');
         $group = new Group;
         $defaultPermissions = Helper::selectedPermissionsArray(config('permissions'), config('permissions'));
 
@@ -109,7 +109,7 @@ class GroupsController extends Controller
      */
     public function show($id): array
     {
-        $this->authorize('superadmin');
+        $this->authorize('superuser');
         $group = Group::findOrFail($id);
 
         return (new GroupsTransformer)->transformGroup($group);
@@ -126,7 +126,7 @@ class GroupsController extends Controller
      */
     public function update(Request $request, $id): JsonResponse
     {
-        $this->authorize('superadmin');
+        $this->authorize('superuser');
         $group = Group::findOrFail($id);
 
         // Fill only the keys present in the request, so PATCH skips absent fields naturally.
@@ -160,7 +160,7 @@ class GroupsController extends Controller
      */
     public function destroy($id): JsonResponse
     {
-        $this->authorize('superadmin');
+        $this->authorize('superuser');
         $group = Group::findOrFail($id);
         if (! $group->isDeletable()) {
             return response()
@@ -173,7 +173,7 @@ class GroupsController extends Controller
 
     public function selectlist(Request $request): array
     {
-        $this->authorize('superadmin');
+        $this->authorize('superuser');
 
         $groups = Group::select(['id', 'name']);
 

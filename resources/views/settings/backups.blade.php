@@ -104,7 +104,7 @@
               <td>{{ $file['filesize'] }}</td>
               <td>
 
-                  @can('superadmin')
+                  @can('superuser')
                       @if (config('app.allow_backup_delete') == 'true')
                           <button type="button"
                                   class="btn delete-asset btn-danger btn-sm"

@@ -18,7 +18,7 @@ use Tests\TestCase;
  * The fix registers overriding routes at the same URIs in
  * routes/web.php (loaded before Passport's package service provider
  * boots, so FIFO route resolution picks ours) gated with
- * authorize:superuser to match the /admin/oauth surfaces Snipe-IT
+ * can:superuser to match the /admin/oauth surfaces Snipe-IT
  * already treats as superuser-only.
  */
 class PassportOAuthClientGateTest extends TestCase

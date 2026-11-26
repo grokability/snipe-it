@@ -1157,7 +1157,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['api', 'api-throttle:api']], fu
     /**
      * Settings API routes
      */
-    Route::group(['middleware' => ['auth', 'authorize:superuser'], 'prefix' => 'settings'], function () {
+    Route::group(['middleware' => ['auth', 'can:superuser'], 'prefix' => 'settings'], function () {
 
         Route::get('ldaptest',
             [

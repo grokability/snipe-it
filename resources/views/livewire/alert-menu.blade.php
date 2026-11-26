@@ -23,7 +23,7 @@
 
         @if ((count($alert_items) + count($deprecations)) > 0)
 
-            @can('superadmin')
+            @can('superuser')
                 @if ($deprecations)
                     @foreach ($deprecations as $deprecation)
                         @if ($deprecation['check'])

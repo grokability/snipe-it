@@ -5,7 +5,6 @@ use App\Http\Middleware\CheckForDebug;
 use App\Http\Middleware\CheckForSetup;
 use App\Http\Middleware\CheckForTwoFactor;
 use App\Http\Middleware\CheckLocale;
-use App\Http\Middleware\CheckPermissions;
 use App\Http\Middleware\CheckUserIsActivated;
 use App\Http\Middleware\EnforceApiTwoFactorEnrollment;
 use App\Http\Middleware\EnforceApiUserAgent;
@@ -77,7 +76,6 @@ $app = Application::configure(basePath: dirname(__DIR__))
         );
 
         $middleware->alias([
-            'authorize' => CheckPermissions::class,
             'api-throttle' => SetAPIResponseHeaders::class,
             'mcp.scope.handshake' => EnforceMcpScopeHandshake::class,
         ]);

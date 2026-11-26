@@ -28,7 +28,7 @@ class DeleteGroupTool extends Tool
             return $denied;
         }
 
-        if (! Gate::allows('superadmin')) {
+        if (! Gate::allows('superuser')) {
             return Response::make(Response::error(trans('mcp.unauthorized')));
         }
 

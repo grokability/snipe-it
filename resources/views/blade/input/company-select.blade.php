@@ -82,12 +82,12 @@
     @endif
 
     @if ($snipeSettings->full_multiple_companies_support == '1')
-        @cannot('superadmin')
+        @cannot('superuser')
             <div class="col-md-7 col-md-offset-3">
                 <p class="help-block"><x-icon type="tip" /> {{ trans('general.fmcs_company_select_note') }}</p>
             </div>
         @endcannot
-        @can('superadmin')
+        @can('superuser')
             <div class="col-md-7 col-md-offset-3">
                 <p class="help-block"><x-icon type="tip" /> {{ trans('general.fmcs_company_select_superadmin_note') }}</p>
             </div>

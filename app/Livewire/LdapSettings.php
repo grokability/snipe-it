@@ -198,7 +198,7 @@ class LdapSettings extends Component
      */
     public function boot(): void
     {
-        abort_unless(Gate::allows('superadmin'), 403);
+        abort_unless(Gate::allows('superuser'), 403);
     }
 
     public function mount(): void
