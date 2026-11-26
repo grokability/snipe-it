@@ -208,6 +208,57 @@ class ActionlogFmcsUserItemScopeTest extends TestCase
         );
     }
 
+    public function test_no_company_viewer_cannot_see_other_companies_user_action_logs(): void
+    {
+        // Strict FMCS (floater off) + viewer with no company_user pivot.
+        // The empty-companies branch of scopeCompanyablesDirectly was
+        // returning whereNull(company_id) for action_logs, which matched
+        // every User-item row on the install.
+        $this->settings->enableMultipleFullCompanySupport();
+        $companyB = Company::factory()->create();
+
+        // Viewer has reports.view, no company membership.
+        $viewer = User::factory()->create([
+            'permissions' => json_encode(['reports.view' => '1']),
+        ]);
+
+        $targetInB = $this->makeUserInCompanies($companyB);
+        $log = $this->seedUserItemActionLog($targetInB);
+
+        $this->actingAs($viewer);
+
+        $this->assertNotContains(
+            $log->id,
+            Actionlog::query()->pluck('id')->all(),
+        );
+    }
+
+    public function test_no_company_viewer_still_sees_global_config_action_logs(): void
+    {
+        // Positive regression: Category/Manufacturer/etc. action_logs
+        // remain cross-company visible to a no-company viewer. Those are
+        // genuinely global config, not tenant data.
+        $this->settings->enableMultipleFullCompanySupport();
+
+        $viewer = User::factory()->create([
+            'permissions' => json_encode(['reports.view' => '1']),
+        ]);
+
+        $category = Category::factory()->create();
+        $log = Actionlog::factory()->create([
+            'item_type' => Category::class,
+            'item_id' => $category->id,
+            'company_id' => null,
+        ]);
+
+        $this->actingAs($viewer);
+
+        $this->assertContains(
+            $log->id,
+            Actionlog::query()->pluck('id')->all(),
+        );
+    }
+
     public function test_superuser_sees_every_user_item_action_log_regardless_of_company(): void
     {
         // Superusers bypass FMCS entirely (Company::scopeCompanyables

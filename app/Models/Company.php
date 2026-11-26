@@ -838,6 +838,12 @@ final class Company extends SnipeModel
                     return $query;
                 }
 
+                // action_logs: route through the compound rule so the
+                // per-item-type dispatch still applies.
+                if ($query->getModel()->getTable() === 'action_logs') {
+                    return Actionlog::applyCrossCompanyScope($query, []);
+                }
+
                 return $query->whereNull($table.$column);
             }
 
