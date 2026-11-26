@@ -253,7 +253,7 @@ class ProfileController extends Controller
         }
 
         $token = $this->tokenRepository->findForUser(
-            $tokenId, auth()->user()->getAuthIdentifier()
+            $tokenId, auth()->user()
         );
 
         if (is_null($token)) {
@@ -322,7 +322,7 @@ class ProfileController extends Controller
             abort(403, trans('auth/message.two_factor.enter_two_factor_code'));
         }
 
-        $tokens = $this->tokenRepository->forUser(auth()->user()->getAuthIdentifier());
+        $tokens = $this->tokenRepository->forUser(auth()->user());
         $token_values = $tokens->load('client')->filter(function ($token) {
             return $token->client->personal_access_client && ! $token->revoked;
         })->values();
