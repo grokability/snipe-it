@@ -5,119 +5,77 @@ use App\Http\Middleware\CheckForDebug;
 use App\Http\Middleware\CheckForSetup;
 use App\Http\Middleware\CheckForTwoFactor;
 use App\Http\Middleware\CheckLocale;
-use App\Http\Middleware\CheckPermissions;
 use App\Http\Middleware\CheckUserIsActivated;
-use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\EnforceApiTwoFactorEnrollment;
 use App\Http\Middleware\EnforceApiUserAgent;
 use App\Http\Middleware\EnforceMcpScopeHandshake;
 use App\Http\Middleware\EnsureOAuthClientApproved;
 use App\Http\Middleware\IssueFreshApiTokenIfTwoFactorComplete;
 use App\Http\Middleware\LogAuthedUserHeader;
-use App\Http\Middleware\NoSessionStore;
 use App\Http\Middleware\PreventBackHistory;
 use App\Http\Middleware\RecoverLegacyPassportSession;
 use App\Http\Middleware\RejectMcpOnlyTokensOnRestApi;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetAPIResponseHeaders;
 use App\Http\Middleware\SetPaginationDefaults;
-use App\Http\Middleware\TrustHosts;
-use App\Http\Middleware\TrustProxies;
-use App\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Auth\Middleware\Authenticate;
-use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
-use Illuminate\Auth\Middleware\Authorize;
-use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Routing\Middleware\ThrottleRequests;
-use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\Session\Middleware\StartSession;
 
 $app = Application::configure(basePath: dirname(__DIR__))
     // Auto-discovers plain handle()-style listeners in app/Listeners (e.g. LogSuccessfulLogin,
     ->withEvents(true)
     ->withMiddleware(function (Middleware $middleware) {
         // --- Global stack ---
-        // ValidatePathEncoding, InvokeDeferredCallbacks, *NOT* TrustProxies, HandleCors,
-        // PreventRequestsDuringMaintenance, ValidatePostSize, ConvertEmptyStringsToNull
-        // all come from Laravel's own defaults now, so future additions there show up
-        // automatically. Only Snipe-IT's own additions are listed explicitly below.
-        $middleware->trustHosts();
-        // Swap so we let /health through, so container probes hitting the pod IP or
-        // loopback don't get rejected with 400 via our custom TrustHosts middleware.
-        $middleware->replace(\Illuminate\Http\Middleware\TrustHosts::class, TrustHosts::class);
-        $middleware->prepend(TrustProxies::class);
-        // this was overridden, inherits from the parents but makes some changes.
-        // to keep this change small enough, we keep it for now
-        $middleware->trimStrings(except: [
-            'current_password',
-            'password',
-            'password_confirmation',
-        ]);
-
-        // Order matters: NoSessionStore must run before StartSession (it may force
-        // the array session driver for /health); CheckForSetup/CheckForDebug need
-        // the session/auth state StartSession sets up. These run globally (not just
-        // in the 'web' group) because /health uses Route::withoutMiddleware(['web'])
-        // and still needs them.
+        // Keep Laravel's default global middleware, including TrustProxies and
+        // TrimStrings, so future framework additions are inherited automatically.
+        // Allow health probes by pod IP or loopback without rejecting their Host header.
+        $middleware->trustHosts(fn () => config('app.allow_insecure_hosts') || request()->is('health') ? ['.*'] : []);
         $middleware->append([
-            NoSessionStore::class,
-            RecoverLegacyPassportSession::class,
-            ShareErrorsFromSession::class,
             CheckForSetup::class,
-            CheckForDebug::class,
             SecurityHeaders::class,
             PreventBackHistory::class,
             // Blocks OAuth authorize + token for pending/rejected clients.
             EnsureOAuthClientApproved::class,
         ]);
 
-        // --- Groups (explicit, not merged with Laravel's group defaults: Snipe-IT's
-        // web/api groups intentionally diverge - e.g. StartSession/ShareErrorsFromSession
-        // are global instead of web-group-only, and VerifyCsrfToken is a custom subclass
-        // incompatible with the new validateCsrfTokens() helper) ---
-        $middleware->group('web', [
-            EncryptCookies::class,
-            AddQueuedCookiesToResponse::class,
-            VerifyCsrfToken::class,
-            CheckLocale::class,
-            CheckUserIsActivated::class,
-            CheckForTwoFactor::class,
-            IssueFreshApiTokenIfTwoFactorComplete::class,
-            CheckColorSettings::class,
-            AuthenticateSession::class,
-            SubstituteBindings::class,
-        ]);
+        $middleware->authenticateSessions();
 
-        $middleware->group('api', [
-            // oidc first: Passport's TokenGuard clears the Authorization header
-            // when it fails, so it must run AFTER the OIDC guard (which never
-            // clears it) -- otherwise an OIDC bearer would be wiped before the
-            // oidc guard sees it. A Passport token falls through cleanly.
-            'auth:oidc,api',
-            CheckUserIsActivated::class,
-            EnforceApiTwoFactorEnrollment::class,
-            EnforceApiUserAgent::class,
-            CheckLocale::class,
-            LogAuthedUserHeader::class,
-            SetPaginationDefaults::class,
-            SubstituteBindings::class,
-            // Rejects tokens scoped for MCP-only use against /api/v1 routes.
-            RejectMcpOnlyTokensOnRestApi::class,
-        ]);
+        $middleware->web(
+            append: [
+                CheckForDebug::class,
+                CheckLocale::class,
+                CheckUserIsActivated::class,
+                CheckForTwoFactor::class,
+                IssueFreshApiTokenIfTwoFactorComplete::class,
+                CheckColorSettings::class,
+            ],
+            replace: [
+                StartSession::class => RecoverLegacyPassportSession::class,
+            ],
+        );
 
-        $middleware->group('health', []);
+        $middleware->api(
+            prepend: [
+                // oidc first: Passport's TokenGuard clears the Authorization header
+                // when it fails, so it must run AFTER the OIDC guard (which never
+                // clears it) -- otherwise an OIDC bearer would be wiped before the
+                // oidc guard sees it. A Passport token falls through cleanly.
+                'auth:oidc,api',
+                CheckUserIsActivated::class,
+                EnforceApiTwoFactorEnrollment::class,
+                EnforceApiUserAgent::class,
+                CheckLocale::class,
+                LogAuthedUserHeader::class,
+                SetPaginationDefaults::class,
+            ],
+            append: [
+                // Rejects tokens scoped for MCP-only use against /api/v1 routes.
+                RejectMcpOnlyTokensOnRestApi::class,
+            ],
+        );
 
         $middleware->alias([
-            'auth' => Authenticate::class,
-            'authorize' => CheckPermissions::class,
-            'auth.basic' => AuthenticateWithBasicAuth::class,
-            'can' => Authorize::class,
-            'guest' => RedirectIfAuthenticated::class,
-            'throttle' => ThrottleRequests::class,
             'api-throttle' => SetAPIResponseHeaders::class,
             'mcp.scope.handshake' => EnforceMcpScopeHandshake::class,
         ]);

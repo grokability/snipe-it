@@ -78,7 +78,7 @@ Route::middleware(['web', 'auth', 'can:self.api'])->prefix('oauth')->group(funct
  * Gate Passport's default OAuth-client management routes behind the
  * superuser check that already protects Snipe-IT's own
  * /admin/oauth surfaces (see the /admin group below,
- * middleware ['auth', 'authorize:superuser']).
+ * middleware ['auth', 'can:superuser']).
  *
  * These four routes were auto-registered by PassportServiceProvider
  * with only `web, auth:web` middleware, so any user with a valid
@@ -92,7 +92,7 @@ Route::middleware(['web', 'auth', 'can:self.api'])->prefix('oauth')->group(funct
  * service provider boots, so these gated registrations win over the
  * package originals.
  */
-Route::middleware(['web', 'auth', 'authorize:superuser'])->prefix('oauth')->group(function () {
+Route::middleware(['web', 'auth', 'can:superuser'])->prefix('oauth')->group(function () {
     Route::get('clients', [\Laravel\Passport\Http\Controllers\ClientController::class, 'forUser'])
         ->name('passport.clients.index');
     Route::post('clients', [\Laravel\Passport\Http\Controllers\ClientController::class, 'store'])
@@ -294,7 +294,7 @@ Route::group(['middleware' => 'auth'], function () {
 |
 */
 
-Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'authorize:superuser']], function () {
+Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'can:superuser']], function () {
 
     Route::get('settings', [SettingsController::class, 'getSettings'])
         ->name('settings.general.index')

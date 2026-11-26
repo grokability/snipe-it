@@ -18,7 +18,7 @@ class LegacyPassportSessionTest extends TestCase
         $oldId = $session->getId();
         $session->getHandler()->write($oldId, $this->legacySessionPayload(new BridgeUser('123')));
 
-        $this->withUnencryptedCookie($session->getName(), $oldId)
+        $this->withCookie($session->getName(), $oldId)
             ->get(route('home'))
             ->assertRedirect(route('login'));
 
@@ -27,7 +27,7 @@ class LegacyPassportSessionTest extends TestCase
         $this->assertFalse($session->has('authRequest'));
         $this->assertNotEmpty($session->token());
 
-        $this->withUnencryptedCookie($session->getName(), $session->getId())
+        $this->withCookie($session->getName(), $session->getId())
             ->get(route('login'))
             ->assertOk();
     }
@@ -39,7 +39,7 @@ class LegacyPassportSessionTest extends TestCase
         $oldId = $session->getId();
         $session->getHandler()->write($oldId, serialize(['authRequest' => new BridgeUser('123')]));
 
-        $this->withUnencryptedCookie($session->getName(), $oldId)
+        $this->withCookie($session->getName(), $oldId)
             ->get(route('login'))
             ->assertOk();
 
@@ -57,7 +57,26 @@ class LegacyPassportSessionTest extends TestCase
         $this->expectException(TypeError::class);
         $this->expectExceptionMessage('Cannot assign int to property Laravel\\Passport\\Bridge\\Client::$identifier of type string');
 
-        $this->withUnencryptedCookie($session->getName(), $session->getId())->get(route('login'));
+        $this->withCookie($session->getName(), $session->getId())->get(route('login'));
+    }
+
+    public function test_legacy_passport_session_is_replaced_on_token_management_routes(): void
+    {
+        $this->settings->set(['two_factor_enabled' => null]);
+        $this->actingAsForApi(User::factory()->selfApi()->create());
+        $session = app('session')->driver();
+        $oldId = $session->getId();
+        $session->getHandler()->write($oldId, $this->legacySessionPayload(new BridgeUser('123')));
+
+        $this->withCredentials()
+            ->withCookie($session->getName(), $oldId)
+            ->getJson(route('api.personal-access-token.index'))
+            ->assertOk();
+
+        $this->assertNotSame($oldId, $session->getId());
+        $this->assertSame('', $session->getHandler()->read($oldId));
+        $this->assertFalse($session->has('authRequest'));
+        $this->assertNotEmpty($session->token());
     }
 
     public function test_matching_error_from_application_code_is_not_suppressed(): void

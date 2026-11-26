@@ -380,12 +380,12 @@
                                           </select>
 
                                           @if ($snipeSettings->full_multiple_companies_support == '1')
-                                              @cannot('superadmin')
+                                              @cannot('superuser')
                                                   <x-form.help name="company_ids-fmcs-note">
                                                       <x-icon type="tip" class="text-info"/> {{ trans('general.fmcs_company_select_note') }}
                                                   </x-form.help>
                                               @endcannot
-                                              @can('superadmin')
+                                              @can('superuser')
                                                   <x-form.help name="company_ids-fmcs-super-note" icon="tip">
                                                       {{ trans('general.fmcs_company_select_superadmin_note') }}
                                                   </x-form.help>

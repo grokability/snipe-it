@@ -121,7 +121,7 @@
                         />
 
                         @if ($snipeSettings->full_multiple_companies_support == '1' && $snipeSettings->scope_locations_fmcs == '1')
-                            @cannot('superadmin')
+                            @cannot('superuser')
                                 <div class="col-md-8 col-md-offset-3">
                                     <x-form.help name="location_id_fmcs" icon="tip">{{ trans('general.fmcs_location_select_note') }}</x-form.help>
                                 </div>

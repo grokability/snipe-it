@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 SCIMRouteProvider::publicRoutes(); // Make sure to load public routes *FIRST*
 
-Route::middleware(['auth:api', CheckUserIsActivated::class, EnforceApiUserAgent::class . ':allow_blank_user_agent', 'api-throttle:api', 'authorize:superadmin'])->group(function () {
+Route::middleware(['auth:api', CheckUserIsActivated::class, EnforceApiUserAgent::class.':allow_blank_user_agent', 'api-throttle:api', 'can:superuser'])->group(function () {
     SCIMRouteProvider::routes(
         [
             /*

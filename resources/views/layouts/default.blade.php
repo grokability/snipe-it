@@ -369,7 +369,7 @@
                             @endauth
 
 
-                            @can('superadmin')
+                            @can('superuser')
                                 <li>
                                     <a href="{{ route('settings.index') }}">
                                         <x-icon type="admin-settings" />

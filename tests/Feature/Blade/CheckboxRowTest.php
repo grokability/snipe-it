@@ -19,7 +19,7 @@ class CheckboxRowTest extends TestCase
     {
         Route::get('/__test/checkbox-row', function () use ($data) {
             return view('blade.form.checkbox-row', $data);
-        });
+        })->middleware('web');
 
         $call = $this->withoutMiddleware([
             CheckForSetup::class,
