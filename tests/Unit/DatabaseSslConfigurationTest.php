@@ -29,6 +29,7 @@ class DatabaseSslConfigurationTest extends TestCase
         'DB_SSL_CIPHER',
         'DB_SSL_VERIFY_SERVER',
         'DB_DUMP_SKIP_SSL',
+        'DB_DUMP_SINGLE_TRANSACTION',
     ];
 
     private array $originalSslEnv = [];
@@ -230,5 +231,24 @@ class DatabaseSslConfigurationTest extends TestCase
 
         $config = $this->loadDatabaseConfig(['DB_DUMP_SKIP_SSL' => 'false']);
         $this->assertArrayNotHasKey('skip_ssl', $config['connections']['mysql']['dump']);
+    }
+
+    public function test_dump_single_transaction_true_adds_it_to_dump_options(): void
+    {
+        $config = $this->loadDatabaseConfig(['DB_DUMP_SINGLE_TRANSACTION' => 'true']);
+
+        $this->assertTrue($config['connections']['mysql']['dump']['use_single_transaction']);
+        $this->assertTrue($config['connections']['mariadb']['dump']['use_single_transaction']);
+    }
+
+    public function test_dump_single_transaction_unset_or_false_leaves_it_out(): void
+    {
+        // A `false` value would reach spatie's callMethodOnDumper, which calls
+        // useSingleTransaction() with no args and enables it (see #19120).
+        $config = $this->loadDatabaseConfig([]);
+        $this->assertArrayNotHasKey('use_single_transaction', $config['connections']['mysql']['dump']);
+
+        $config = $this->loadDatabaseConfig(['DB_DUMP_SINGLE_TRANSACTION' => 'false']);
+        $this->assertArrayNotHasKey('use_single_transaction', $config['connections']['mysql']['dump']);
     }
 }

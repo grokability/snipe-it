@@ -19,7 +19,13 @@ $dump_options = [
 // Default to false (preserves original behavior for non-RDS installs).
 // Set DB_DUMP_SINGLE_TRANSACTION=true in .env for RDS or other environments
 // that require --single-transaction (e.g. no LOCK TABLES privilege).
-$dump_options['use_single_transaction'] = (env('DB_DUMP_SINGLE_TRANSACTION', 'false') === 'true');
+// Only add the key when it's true. Like skip_ssl below, a `false` value goes
+// through spatie's callMethodOnDumper `if (!$methodValue)` branch, which calls
+// useSingleTransaction() with no args and turns it ON. env() also returns a
+// boolean for an unquoted `true`, so accept both forms.
+if (in_array(env('DB_DUMP_SINGLE_TRANSACTION', false), [true, 'true'], true)) {
+    $dump_options['use_single_transaction'] = true;
+}
 
 // Opt-in flag for skipping SSL on the dump connection. Only add the key when
 // it's true - spatie's processExtraDumpParameters has a bug where a `false`
