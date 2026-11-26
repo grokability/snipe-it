@@ -16,6 +16,7 @@ use App\Http\Middleware\IssueFreshApiTokenIfTwoFactorComplete;
 use App\Http\Middleware\LogAuthedUserHeader;
 use App\Http\Middleware\NoSessionStore;
 use App\Http\Middleware\PreventBackHistory;
+use App\Http\Middleware\RecoverLegacyPassportSession;
 use App\Http\Middleware\RejectMcpOnlyTokensOnRestApi;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetAPIResponseHeaders;
@@ -33,7 +34,6 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 $app = Application::configure(basePath: dirname(__DIR__))
@@ -65,7 +65,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
         // and still needs them.
         $middleware->append([
             NoSessionStore::class,
-            StartSession::class,
+            RecoverLegacyPassportSession::class,
             ShareErrorsFromSession::class,
             CheckForSetup::class,
             CheckForDebug::class,
