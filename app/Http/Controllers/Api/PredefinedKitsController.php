@@ -233,7 +233,14 @@ class PredefinedKitsController extends Controller
         $this->authorize('update', PredefinedKit::class);
         $kit = PredefinedKit::findOrFail($kit_id);
 
-        $kit->licenses()->detach($license_id);
+        // Load through the relationship so the child model's scope and view gate apply.
+        $license = $kit->licenses()->whereKey($license_id)->first();
+        if (! $license) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/licenses/message.does_not_exist')), 404);
+        }
+        $this->authorize('view', $license);
+
+        $kit->licenses()->detach($license->getKey());
 
         return response()->json(Helper::formatStandardApiResponse('success', $kit, trans('admin/kits/general.delete_success')));
     }
@@ -315,7 +322,14 @@ class PredefinedKitsController extends Controller
         $this->authorize('update', PredefinedKit::class);
         $kit = PredefinedKit::findOrFail($kit_id);
 
-        $kit->models()->detach($model_id);
+        // Load through the relationship so the child model's scope and view gate apply.
+        $model = $kit->models()->whereKey($model_id)->first();
+        if (! $model) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/models/message.does_not_exist')), 404);
+        }
+        $this->authorize('view', $model);
+
+        $kit->models()->detach($model->getKey());
 
         return response()->json(Helper::formatStandardApiResponse('success', $kit, trans('admin/kits/general.model_removed_success')));
     }
@@ -393,7 +407,14 @@ class PredefinedKitsController extends Controller
         $this->authorize('update', PredefinedKit::class);
         $kit = PredefinedKit::findOrFail($kit_id);
 
-        $kit->consumables()->detach($consumable_id);
+        // Load through the relationship so the child model's scope and view gate apply.
+        $consumable = $kit->consumables()->whereKey($consumable_id)->first();
+        if (! $consumable) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/consumables/message.does_not_exist')), 404);
+        }
+        $this->authorize('view', $consumable);
+
+        $kit->consumables()->detach($consumable->getKey());
 
         return response()->json(Helper::formatStandardApiResponse('success', $kit, trans('admin/kits/general.consumable_deleted')));
     }
@@ -473,7 +494,14 @@ class PredefinedKitsController extends Controller
         $this->authorize('update', PredefinedKit::class);
         $kit = PredefinedKit::findOrFail($kit_id);
 
-        $kit->accessories()->detach($accessory_id);
+        // Load through the relationship so the child model's scope and view gate apply.
+        $accessory = $kit->accessories()->whereKey($accessory_id)->first();
+        if (! $accessory) {
+            return response()->json(Helper::formatStandardApiResponse('error', null, trans('admin/accessories/message.does_not_exist', ['id' => $accessory_id])), 404);
+        }
+        $this->authorize('view', $accessory);
+
+        $kit->accessories()->detach($accessory->getKey());
 
         return response()->json(Helper::formatStandardApiResponse('success', $kit, trans('admin/kits/general.accessory_deleted')));
     }

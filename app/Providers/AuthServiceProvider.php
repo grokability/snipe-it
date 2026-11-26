@@ -91,37 +91,6 @@ class AuthServiceProvider extends ServiceProvider
     ];
 
     /**
-     * Narrow Passport v13's string-identifier requirement to its two
-     * instantiation sites (Bridge\UserRepository + AuthorizationController)
-     * so User::getAuthIdentifier() stays int everywhere else. See
-     * App\Auth\Passport\BridgeUserRepository for the full rationale.
-     */
-    public function register(): void
-    {
-        parent::register();
-
-        $this->app->bind(
-            \Laravel\Passport\Bridge\UserRepository::class,
-            \App\Auth\Passport\BridgeUserRepository::class,
-        );
-
-        $this->app->bind(
-            \Laravel\Passport\Http\Controllers\AuthorizationController::class,
-            \App\Auth\Passport\AuthorizationController::class,
-        );
-
-        // Passport's service provider binds StatefulGuard contextually to
-        // its own AuthorizationController FQCN. When the container
-        // resolves our override it's a different class, so the parent
-        // contextual binding doesn't fire and construction fails with
-        // "Target [StatefulGuard] is not instantiable". Mirror the
-        // Passport binding onto the override FQCN.
-        $this->app->when(\App\Auth\Passport\AuthorizationController::class)
-            ->needs(\Illuminate\Contracts\Auth\StatefulGuard::class)
-            ->give(fn () => \Illuminate\Support\Facades\Auth::guard(config('passport.guard', null)));
-    }
-
-    /**
      * Register any authentication / authorization services.
      *
      * @return void
