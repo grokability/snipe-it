@@ -243,8 +243,14 @@ class PredefinedKitsController extends Controller
             return redirect()->route('kits.index')->with('error', trans('admin/kits/general.kit_none'));
         }
 
-        // Delete childs
-        $kit->models()->detach($model_id);
+        // Load through the relationship so the child model's scope and view gate apply.
+        $model = $kit->models()->whereKey($model_id)->first();
+        if (! $model) {
+            return redirect()->route('kits.edit', $kit_id)->with('error', trans('admin/models/message.does_not_exist'));
+        }
+        $this->authorize('view', $model);
+
+        $kit->models()->detach($model->getKey());
 
         // Redirect to the kit management page
         return redirect()->route('kits.edit', $kit_id)->with('success', trans('admin/kits/general.kit_model_detached'));
@@ -333,8 +339,14 @@ class PredefinedKitsController extends Controller
             return redirect()->route('kits.index')->with('error', trans('admin/kits/general.kit_none'));
         }
 
-        // Delete childs
-        $kit->licenses()->detach($license_id);
+        // Load through the relationship so the child model's scope and view gate apply.
+        $license = $kit->licenses()->whereKey($license_id)->first();
+        if (! $license) {
+            return redirect()->route('kits.edit', $kit_id)->with('error', trans('admin/licenses/message.does_not_exist'));
+        }
+        $this->authorize('view', $license);
+
+        $kit->licenses()->detach($license->getKey());
 
         // Redirect to the kit management page
         return redirect()->route('kits.edit', $kit_id)->with('success', trans('admin/kits/general.license_detached'));
@@ -421,8 +433,14 @@ class PredefinedKitsController extends Controller
             return redirect()->route('kits.index')->with('error', trans('admin/kits/general.kit_none'));
         }
 
-        // Delete childs
-        $kit->accessories()->detach($accessory_id);
+        // Load through the relationship so the child model's scope and view gate apply.
+        $accessory = $kit->accessories()->whereKey($accessory_id)->first();
+        if (! $accessory) {
+            return redirect()->route('kits.edit', $kit_id)->with('error', trans('admin/accessories/message.does_not_exist', ['id' => $accessory_id]));
+        }
+        $this->authorize('view', $accessory);
+
+        $kit->accessories()->detach($accessory->getKey());
 
         // Redirect to the kit management page
         return redirect()->route('kits.edit', $kit_id)->with('success', trans('admin/kits/general.accessory_detached'));
@@ -509,8 +527,14 @@ class PredefinedKitsController extends Controller
             return redirect()->route('kits.index')->with('error', trans('admin/kits/general.kit_none'));
         }
 
-        // Delete childs
-        $kit->consumables()->detach($consumable_id);
+        // Load through the relationship so the child model's scope and view gate apply.
+        $consumable = $kit->consumables()->whereKey($consumable_id)->first();
+        if (! $consumable) {
+            return redirect()->route('kits.edit', $kit_id)->with('error', trans('admin/consumables/message.does_not_exist'));
+        }
+        $this->authorize('view', $consumable);
+
+        $kit->consumables()->detach($consumable->getKey());
 
         // Redirect to the kit management page
         return redirect()->route('kits.edit', $kit_id)->with('success', trans('admin/kits/general.consumable_detached'));
