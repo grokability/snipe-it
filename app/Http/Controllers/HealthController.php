@@ -16,11 +16,6 @@ use Illuminate\Support\Facades\DB;
  */
 class HealthController extends BaseController
 {
-    public function __construct()
-    {
-        $this->middleware('health');
-    }
-
     /**
      * Returns a fixed JSON content ({ "status": "ok"}) which indicate the app is up and running
      */
