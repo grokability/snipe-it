@@ -31,14 +31,20 @@ if (in_array(env('DB_DUMP_SINGLE_TRANSACTION', false), [true, 'true'], true)) {
 // it's true - spatie's processExtraDumpParameters has a bug where a `false`
 // value routes through callMethodOnDumper's `if (!$methodValue)` branch, which
 // calls setSkipSsl() with no args, and that setter defaults to true. So an
-// explicit false would silently become true. When opted in, spatie emits the
-// correct per-DBMS flag: --ssl-mode=DISABLED for MySQL 8.4+, --skip-ssl for
-// older MySQL and MariaDB. Do NOT set this via add_extra_option; that route
-// ships the raw flag as-is and mariadb-dump rejects ssl-mode.
+// explicit false would silently become true. When opted in, spatie picks the
+// flag from the SERVER version: --ssl-mode=DISABLED for MySQL 8.4+, --skip-ssl
+// otherwise. Do NOT set this via add_extra_option; that route ships the raw
+// flag as-is and mariadb-dump rejects ssl-mode.
 // env() turns an unquoted or double-quoted `true` into a boolean, so a strict
 // comparison against the string 'true' never matched. Accept both.
 if (in_array(env('DB_DUMP_SKIP_SSL', false), [true, 'true'], true)) {
     $dump_options['skip_ssl'] = true;
+
+    // The flag is read by the dump CLIENT, though: mariadb-dump (the Docker
+    // images) only knows skip-ssl, even against MySQL 8.4+.
+    if (env('DB_DUMP_SSL_FLAG')) {
+        $dump_options['ssl_flag'] = env('DB_DUMP_SSL_FLAG');
+    }
 }
 
 // PDO SSL options for the app database connection. Each entry is only added
