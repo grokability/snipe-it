@@ -29,6 +29,7 @@ class DatabaseSslConfigurationTest extends TestCase
         'DB_SSL_CIPHER',
         'DB_SSL_VERIFY_SERVER',
         'DB_DUMP_SKIP_SSL',
+        'DB_DUMP_SSL_FLAG',
         'DB_DUMP_SINGLE_TRANSACTION',
     ];
 
@@ -231,6 +232,17 @@ class DatabaseSslConfigurationTest extends TestCase
 
         $config = $this->loadDatabaseConfig(['DB_DUMP_SKIP_SSL' => 'false']);
         $this->assertArrayNotHasKey('skip_ssl', $config['connections']['mysql']['dump']);
+    }
+
+    public function test_dump_ssl_flag_overrides_the_server_version_guess(): void
+    {
+        // Regression for #20155. mariadb-dump rejects the ssl-mode=DISABLED that
+        // spatie picks for a MySQL 8.4+ server.
+        $config = $this->loadDatabaseConfig(['DB_DUMP_SKIP_SSL' => 'true', 'DB_DUMP_SSL_FLAG' => 'skip-ssl']);
+        $this->assertSame('skip-ssl', $config['connections']['mysql']['dump']['ssl_flag']);
+
+        $config = $this->loadDatabaseConfig(['DB_DUMP_SKIP_SSL' => 'true']);
+        $this->assertArrayNotHasKey('ssl_flag', $config['connections']['mysql']['dump']);
     }
 
     public function test_dump_single_transaction_true_adds_it_to_dump_options(): void
